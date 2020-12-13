@@ -1,0 +1,33 @@
+language: csharp
+solution: Kvasir.sln
+dotnet: 3.1.301
+env:
+  global:
+    - AUTHOR=$(git show -s --pretty=format:"%cn")
+    - EMAIL=$(git show -s --pretty=format:"%ce")
+    - MESSAGE=$(git show -s --pretty=format:"%s")
+  jobs:
+    - CONFIGURATION=Debug
+    - CONFIGURATION=Release
+branches:
+  only:
+    - master
+install:
+  - nuget restore Kvasir.sln
+  - dotnet add Test/Test.csproj package coverlet.msbuild
+  - nuget install coveralls.net -Version 0.7.0 -OutputDirectory packages
+script:
+  - dotnet test -c $CONFIGURATION -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+  - ./packages/coveralls.net.0.7.0/tools/csmacnz.Coveralls.exe
+      --opencover
+      -i ./Test/coverage.opencover.xml
+      --commitId $TRAVIS_COMMIT
+      --commitBranch $TRAVIS_BRANCH
+      --commitAuthor "$AUTHOR"
+      --commitEmail "$EMAIL"
+      --commitMessage "$MESSAGE"
+      --jobId $TRAVIS_JOB_ID
+      --serviceName travis-ci
+      --useRelativePaths
+notifications:
+  email: false
