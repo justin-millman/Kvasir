@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Kvasir</name>
+    </assembly>
+    <members>
+        <member name="T:Kvasir.Schema.DBValue">
+            <summary>
+              A thin wrapper around a CLR object that can be stored in a back-end relational database.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Kvasir.Schema.DBValue"/> class is intended to provide an abstraction over the generalized CLR
+                <see  cref="T:System.Object"/> for use in contexts where compile-time type information is not available. The
+                advantage to using a <see cref="T:Kvasir.Schema.DBValue"/> in APIs rather than <see cref="T:System.Object"/> is the guarantee that a
+                <see cref="T:Kvasir.Schema.DBValue"/> only ever wraps an objec that can validly be stored into a database, whereas an
+                <see cref="T:System.Object"/> could feasibly hold an object of any type. Additionally, the wrapped value is never
+                a <see langword="null"/> reference: a sentinel value is used to indicate <see langword="null"/>, mitigating
+                the need for verbose checks.
+              </para>
+              <para>
+                The strong typing afforded by CLR <see cref="T:System.Enum">enums</see> is lost when the enumerator values are
+                stored in a back-end relational database. Some providers afford value checking, either through an explicit
+                <c>enum</c> data type or via <c>CHECK</c> constraints; however, even in these cases, the actual storage is
+                generally an integer or a string. For this reason, an instance of <see cref="T:Kvasir.Schema.DBValue"/> will never wrap a
+                CLR enumerator: it is the responsibility of the user to convert the CLR object into the corresponding
+                database object, be it an integer or string or other supported type.
+              </para>
+              <para>
+                The same general logic applies to any transformations applied between the CLR domain and the database
+                domain. The <see cref="T:Kvasir.Schema.DBValue"/> class is intended to exactly wrap the object that is stored, and as such
+                it is the responsibility of the user to apply any necessary transforms prior to creating the
+                <see cref="T:Kvasir.Schema.DBValue"/> object.
+              </para>
+              <para>
+                Because of the possibility that a <see cref="T:Kvasir.Schema.DBValue"/> instane wraps a sentinel indicating
+                <see langword="null"/>, it is not strictly possible to determine the DBType of a particular instance. To
+                check if a <see cref="T:Kvasir.Schema.DBValue"/> is valid for a Field of a particular DBType, use the applicable query
+                method on the DBType class, which will account for nullability support as well.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.DBValue.Datum">
+            <value>
+              The <see cref="T:System.Object"/> wrapped by this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBValue.NULL">
+            <value>
+              A sentinel <see cref="T:Kvasir.Schema.DBValue"/> instance representing the CLR concept of <see langword="null"/>.
+            </value>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Boolean)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Boolean"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Boolean"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Byte)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Byte"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Byte"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.SByte)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.SByte"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.SByte"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.UInt16)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.UInt16"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.UInt16"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Int16)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Int16"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Int16"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.UInt32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.UInt32"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.UInt32"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Int32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Int32"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Int32"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.UInt64)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.UInt64"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.UInt64"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Int64)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Int64"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Int64"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Single)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Single"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Single"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Double)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Double"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Double"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Decimal)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Decimal"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Decimal"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.DateTime)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.DateTime"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.DateTime"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Char)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Char"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Char"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.String"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.String"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Guid)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps a <see cref="T:System.Guid"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Guid"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.Create(System.Object)">
+            <summary>
+              Creates a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps an <see cref="T:System.Object"/> whose compile-time type is not
+              known.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Object"/> to be wrapped by the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if the CLR type of <paramref name="value"/> is not one for which there is an available strongly typed
+              constructor, and <paramref name="value"/> cannot be implicitly converted to such a type.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.Equals(Kvasir.Schema.DBValue)">
+            <summary>
+              Determines whether this <see cref="T:Kvasir.Schema.DBValue"/> is equal to another <see cref="T:Kvasir.Schema.DBValue"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Kvasir.Schema.DBValue"/> against which to compare this one for equality.
+            </param>
+            <returns>
+              <see langword="true"/> if this <see cref="T:Kvasir.Schema.DBValue"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.Equals(System.Object)">
+            <summary>
+              Determines whether this <see cref="T:Kvasir.Schema.DBValue"/> is equal to another <see cref="T:System.Object"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:System.Object"/> against which to compare this one for equality.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is a <see cref="T:Kvasir.Schema.DBValue"/> that is equal to this
+              <see cref="T:Kvasir.Schema.DBValue"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.GetHashCode">
+            <summary>
+              Produces the hash code for this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </summary>
+            <returns>
+              A <c>32</c>-bit signed integer that is the hash code for this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.ToString">
+            <summary>
+              Produces a string representation of this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </summary>
+            <returns>
+              A string representation of this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.op_Equality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)">
+            <summary>
+              Determines if two <see cref="T:Kvasir.Schema.DBValue">DBValues</see> are equal.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.op_Inequality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)">
+            <summary>
+              Determiens if two <see cref="T:Kvasir.Schema.DBValue">DBValues</see> are not equal.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.DBNull)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps the <c>NULL</c> sentinel.
+            </summary>
+        </member>
+    </members>
+</doc>
