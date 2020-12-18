@@ -29,10 +29,10 @@ namespace Kvasir.Schema {
     ///     <see cref="DBValue"/> object.
     ///   </para>
     ///   <para>
-    ///     Because of the possibility that a <see cref="DBValue"/> instane wraps a sentinel indicating
-    ///     <see langword="null"/>, it is not strictly possible to determine the DBType of a particular instance. To
-    ///     check if a <see cref="DBValue"/> is valid for a Field of a particular DBType, use the applicable query
-    ///     method on the DBType class, which will account for nullability support as well.
+    ///     Because of the possibility that a <see cref="DBValue"/> instance wraps a sentinel indicating
+    ///     <see langword="null"/>, it is not strictly possible to determine the <see cref="DBType"/> of a particular
+    ///     instance. To check if a <see cref="DBValue"/> is valid for a Field of a particular <see cref="DBType"/>,
+    ///     use the <see cref="DBType.IsValidValue(DBValue)"/> query method.
     ///   </para>
     /// </remarks>
     public readonly struct DBValue : IEquatable<DBValue> {

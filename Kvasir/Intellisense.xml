@@ -4,6 +4,272 @@
         <name>Kvasir</name>
     </assembly>
     <members>
+        <member name="T:Kvasir.Schema.DBType">
+            <summary>
+              An implementation-agnostic representation of a data type for a Field in a back-end database.
+            </summary>
+            <remarks>
+              <para>
+                A <see cref="T:Kvasir.Schema.DBType"/> instance represents the semantics of a data type without specifying the actual
+                storage mechanism or data type metadata. These semantics are intentionally generalized, allowing for a
+                single <see cref="T:Kvasir.Schema.DBType"/> to represent data types across a variety of back-end database providers.
+                Because different providers may offer different restrictions on data types (such as precision for floating
+                point numbers or maximum lengths for strings), these auxiliaries are excluded from the content of a
+                <see cref="T:Kvasir.Schema.DBType"/>.
+              </para>
+              <para>
+                Functionally, the <see cref="T:Kvasir.Schema.DBType"/> struct operates much like an enumeration, in that users are limited
+                to the set of predefined instances that are accessed through the <c>DBType</c> pseduo-namespace. Unlike
+                native enumerations, however, <see cref="T:Kvasir.Schema.DBType"/> instances cannot interoperate with numeric primitives
+                and cannot be used directly in a <c>switch</c> statement (though they <i>can</i> be used in pattern
+                matching expressions). Additionally, the <see cref="T:Kvasir.Schema.DBType"/> struct provides a series of member functions
+                for executing various queries.
+              </para>
+              <para>
+                One thing that is notably absent from the specification carried by a <see cref="T:Kvasir.Schema.DBType"/> is any indication
+                of nullability. Within Kvasir, nullability is a feature of Fields, and is thus fully omitted from the
+                <see cref="T:Kvasir.Schema.DBType"/> struct.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Boolean">
+            <value>
+              The representation of a Boolean value (i.e. <c>true</c>/<c>false</c>).
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Character">
+            <value>
+              The representation of a single UTF-16 character point.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int8">
+            <value>
+              The representation of an <c>8</c>-bit signed integer.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int16">
+            <value>
+              The representation of a <c>16</c>-bit signed integer.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int32">
+            <value>
+              The representation of a <c>32</c>-bit signed integer.
+            </value>
+            <remarks>
+              <see cref="P:Kvasir.Schema.DBType.Int32"/> is guaranteed to be equal to a default constructed <see cref="T:Kvasir.Schema.DBType"/> instance.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int64">
+            <value>
+              The representation of a <c>64</c>-bit signed integer.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt8">
+            <value>
+              The representation of an <c>8</c>-bit unsigned integer.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt16">
+            <value>
+              The representation of a <c>16</c>-bit unsigned integer.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt32">
+            <value>
+              The representation of a <c>32</c>-bit unsigned integer.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt64">
+            <value>
+              The representation of a <c>64</c>-bit unsigned integer.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Single">
+            <value>
+              The representation of a single-precision floating point number.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Double">
+            <value>
+              The representation of a double-precision floating point number.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Decimal">
+            <value>
+              The representation of a decimal floating point number.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.DateTime">
+            <value>
+              The representation of a timestamp consisting of a calendar date and a time.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Text">
+            <value>
+              The representation of a variable-length string of characters.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Guid">
+            <value>
+              The representation of a globally unique identifier.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Enumeration">
+            <value>
+              The representation of an enumeration, i.e. a restricted set of integral or string options.
+            </value>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.IsSupported(System.Type)">
+            <summary>
+              Determines if a particular CLR <see cref="T:System.Type"/> is supported by Kvasir.
+            </summary>
+            <param name="clrType">
+              The CLR <see cref="T:System.Type"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if there is a <see cref="T:Kvasir.Schema.DBType"/> instance that matches the semantics of
+              <paramref name="clrType"/>; otherwise, <see langword="false"/>.
+            </returns>
+            <seealso cref="M:Kvasir.Schema.DBType.Lookup(System.Type)"/>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Lookup(System.Type)">
+            <summary>
+              Looks up the <see cref="T:Kvasir.Schema.DBType"/> instance that matches the semantics of a particular CLR
+              <see cref="T:System.Type"/>.
+            </summary>
+            <param name="clrType">
+              The CLR <see cref="T:System.Type"/>.
+            </param>
+            <returns>
+              The <see cref="T:Kvasir.Schema.DBType"/> instance that matches the semantics of <paramref name="clrType"/>. This is the
+              <see cref="T:Kvasir.Schema.DBType"/> of a Field whose .NET source values are instances of <paramref name="clrType"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              If there is no <see cref="T:Kvasir.Schema.DBType"/> instance that matches the semantics of <paramref name="clrType"/>.
+            </exception>
+            <seealso cref="M:Kvasir.Schema.DBType.IsSupported(System.Type)"/>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)">
+            <summary>
+              Determines if a particular <see cref="T:Kvasir.Schema.DBValue"/> would be a valid value for a Field whose data type is
+              this <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="value"/> is <see cref="P:Kvasir.Schema.DBValue.NULL"/> or if this
+              <see cref="T:Kvasir.Schema.DBType"/> matches the semantics of the type of datum wrapped by <paramref name="value"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+            <remarks>
+              <para>
+                Within Kvasir, enums are represented as string values; this is the format by which the data is actually
+                transacted with the back-end database. For this reason, a <see cref="T:Kvasir.Schema.DBValue"/> cannot actually wrap a
+                CLR enumerator. As such, <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)"/> will return <see langword="true"/> if
+                <paramref name="value"/> wraps a <see cref="T:System.String"/> and the current <see cref="T:Kvasir.Schema.DBType"/> is
+                <i>either</i> <see cref="P:Kvasir.Schema.DBType.Text"/> or <see cref="P:Kvasir.Schema.DBType.Enumeration"/>. However, the <see cref="M:Kvasir.Schema.DBType.Lookup(System.Type)"/>
+                method will <i>always</i> return <see cref="P:Kvasir.Schema.DBType.Text"/> when the input <see cref="T:System.Type"/> is
+                <see cref="T:System.String"/>.
+              </para>
+              <para>
+                Additionally, <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)"/> does not account for any restrictions on a particular
+                realization of an abstract data type, such as range limits, valid enumerators, or nullability: just
+                because <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)"/> returns <see langword="true"/> does not mean that the value
+                can actually be stored in a Field whose data type is the current <see cref="T:Kvasir.Schema.DBType"/>.
+              </para>
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Equals(Kvasir.Schema.DBType)">
+            <summary>
+              Determines whether this <see cref="T:Kvasir.Schema.DBType"/> is equal to another <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Kvasir.Schema.DBType"/> against which to compare this one for equality.
+            </param>
+            <returns>
+              <see langword="true"/> if this <see cref="T:Kvasir.Schema.DBType"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Equals(System.Object)">
+            <summary>
+              Determines whether this <see cref="T:Kvasir.Schema.DBType"/> is equal to another <see cref="T:System.Object"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:System.Object"/> against which to compare this one for equality.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is a <see cref="T:Kvasir.Schema.DBType"/> that is equal to this
+              <see cref="T:Kvasir.Schema.DBType"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.GetHashCode">
+            <summary>
+              Produces the hash code for this <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <returns>
+              A <c>32</c>-bit signed integer that is the hash code for this <see cref="T:Kvasir.Schema.DBType"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.op_Equality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)">
+            <summary>
+              Determines if two <see cref="T:Kvasir.Schema.DBType">DBTypes</see> are equal.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.op_Inequality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)">
+            <summary>
+              Determiens if two <see cref="T:Kvasir.Schema.DBType">DBTypes</see> are not equal.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.#cctor">
+            <summary>
+              Initializes the static state of the <see cref="T:Kvasir.Schema.DBType"/> struct.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.#ctor(System.Byte)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <param name="id">
+              The identifier for the new <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <pre>
+              <paramref name="id"/> is in the range <c>[0, 16]</c>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Normalize(System.Type)">
+            <summary>
+              Nomralizes a a CLR <see cref="T:System.Type"/> for internal lookup.
+            </summary>
+            <param name="clrType">
+              The CLR <see cref="T:System.Type"/> to normalize.
+            </param>
+            <returns>
+              The normalization of <paramref name="clrType"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Schema.DBValue">
             <summary>
               A thin wrapper around a CLR object that can be stored in a back-end relational database.
@@ -33,10 +299,10 @@
                 <see cref="T:Kvasir.Schema.DBValue"/> object.
               </para>
               <para>
-                Because of the possibility that a <see cref="T:Kvasir.Schema.DBValue"/> instane wraps a sentinel indicating
-                <see langword="null"/>, it is not strictly possible to determine the DBType of a particular instance. To
-                check if a <see cref="T:Kvasir.Schema.DBValue"/> is valid for a Field of a particular DBType, use the applicable query
-                method on the DBType class, which will account for nullability support as well.
+                Because of the possibility that a <see cref="T:Kvasir.Schema.DBValue"/> instance wraps a sentinel indicating
+                <see langword="null"/>, it is not strictly possible to determine the <see cref="T:Kvasir.Schema.DBType"/> of a particular
+                instance. To check if a <see cref="T:Kvasir.Schema.DBValue"/> is valid for a Field of a particular <see cref="T:Kvasir.Schema.DBType"/>,
+                use the <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)"/> query method.
               </para>
             </remarks>
         </member>
