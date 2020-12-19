@@ -305,14 +305,14 @@ namespace Test.Kvasir.Schema {
             // Scenario #2: LHS and RHS are different named instances
             for (int i = 0; i < ALL_DBTYPES.Length; ++i) {
                 for (int j = i + 1; j < ALL_DBTYPES.Length; ++j) {
-                    FullCheck.ExpectUnequal(ALL_DBTYPES[i], ALL_DBTYPES[j]);
+                    FullCheck.ExpectNotEqual(ALL_DBTYPES[i], ALL_DBTYPES[j]);
                 }
             }
 
             // Scenario #3: Exactly one of LHS and RHS is a null DBType?
             var lhs3 = DBType.Double;
             DBType? rhs3 = null;
-            FullCheck.ExpectUnequal(lhs3, rhs3);
+            FullCheck.ExpectNotEqual(lhs3, rhs3);
 
             // Scenario #4: Both LHS and RHS are null DBType?
             DBType? lhs4 = null;
@@ -325,12 +325,12 @@ namespace Test.Kvasir.Schema {
             // Scenario #1: Exactly one of LHS and RHS is not a DBType
             var lhs1 = DBType.Enumeration;
             var rhs1 = "Drosophila melanogaster";
-            FullCheck.ExpectUnequal<object>(lhs1, rhs1);
+            FullCheck.ExpectNotEqual<object>(lhs1, rhs1);
 
             // Scenario #2: Exactly one of LHS and RHS is a null object?
             var lhs2 = DBType.UInt32;
             object? rhs2 = null;
-            FullCheck.ExpectUnequal<object?>(lhs2, rhs2);
+            FullCheck.ExpectNotEqual<object?>(lhs2, rhs2);
         }
 
         [TestMethod, TestCategory("Errors")]

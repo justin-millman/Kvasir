@@ -225,17 +225,17 @@ namespace Test.Kvasir.Schema {
             // Scenario #3: LHS and RHS have the same numeric value but the types are different
             var lhs3 = new DBValue(0);
             var rhs3 = new DBValue(0L);
-            FullCheck.ExpectUnequal(lhs3, rhs3);
+            FullCheck.ExpectNotEqual(lhs3, rhs3);
 
             // Scenario #4: LHS and RHS contain completely different values
             var lhs4 = new DBValue("Pikachu");
             var rhs4 = new DBValue(false);
-            FullCheck.ExpectUnequal(lhs4, rhs4);
+            FullCheck.ExpectNotEqual(lhs4, rhs4);
 
             // Scenario #5: Exactly one of LHS and RHS is a null DBValue?
             var lhs5 = new DBValue('=');
             DBValue? rhs5 = null;
-            FullCheck.ExpectUnequal(lhs5, rhs5);
+            FullCheck.ExpectNotEqual(lhs5, rhs5);
 
             // Scenario #6: Both LHS and RHS are null DBValue?
             DBValue? lhs6 = null;
@@ -248,12 +248,12 @@ namespace Test.Kvasir.Schema {
             // Scenario #1: Exactly one of LHS and RHS is not a DBValue
             var lhs1 = new DBValue('w');
             var rhs1 = 'w';
-            FullCheck.ExpectUnequal<object>(lhs1, rhs1);
+            FullCheck.ExpectNotEqual<object>(lhs1, rhs1);
 
             // Scenario #2: Exactly one of LHS and RHS is null object?
             var lhs2 = new DBValue(919M);
             object? rhs2 = null;
-            FullCheck.ExpectUnequal(lhs2, rhs2);
+            FullCheck.ExpectNotEqual(lhs2, rhs2);
         }
 
         [TestMethod, TestCategory("ToString")]

@@ -532,5 +532,267 @@
               Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps the <c>NULL</c> sentinel.
             </summary>
         </member>
+        <member name="T:Cybele.ConceptString`1">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> class that represents a specific application or library domain concept.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Cybele.ConceptString`1"/> class is an abstract base class intended to assist in modeling
+                application or library domain concepts whose intrinsic data form is a sequence of characters. This utility
+                is designed to afford developers an expressive and type-safe way to design APIs (for both internal and/or
+                external use) that do not suffer from "primitive obsession." This utility can thusly be used to
+                disambiguate APIs that would otherwise expect a sequence of <see cref="T:System.String">strings</see>, provide
+                return type clarity, and/or encapsulate more intricate domain validation logic.
+              </para>
+              <para>
+                To prevent escaping out of the strong typing afforded by <see cref="T:Cybele.ConceptString`1"/>, there is
+                neither an implicit conversion to nor one from <see cref="T:System.String"/>. To interoperate with APIs expecting a
+                raw <see cref="T:System.String"/> instance, a one-way <i>explicit</i> conversion operator is available. It is
+                recommended that this conversion be used only at API boundaries rather than within the domain of a single
+                application or library. A separate one-way implicit conversion from <see cref="T:Cybele.ConceptString`1"/>
+                to <see cref="T:System.ReadOnlySpan`1">ReadOnlySpan&lt;char&gt;</see> is provided for easy interoperation with the
+                .NET standard library.
+              </para>
+              <para>
+                As with <see cref="T:System.String"/>, <see cref="T:Cybele.ConceptString`1"/> offers native equality operations, both
+                in the form of the <see cref="T:System.IEquatable`1"/> interface and standard binary operators. The default
+                behavior of the <see cref="M:System.IEquatable`1.Equals(`0)"/> method is to evaluate using an ordinal,
+                case-sensitive comparison; however, this method is intentionally <see langword="virtual"/>, affording
+                derived types the opportunity to provide a more appropriate implementation. This same pattern extends to
+                ordering comparisons through the <see cref="T:System.IComparable`1"/> interface. As per usual, a
+                <see langword="null"/> <see cref="T:Cybele.ConceptString`1"/> compares equal/equivalent to other
+                <see langword="null"/> instances and compares less than any non-<see langword="null"/> ones.
+              </para>
+              <para>
+                Aside from equality and ordering comparisons, the <see cref="T:Cybele.ConceptString`1"/> class does not
+                provide much in the way of an API. There are no modification methods, no concatenation operator, no static
+                comparison overloads, etc. The minimal API provided by <see cref="T:Cybele.ConceptString`1"/> is intended to
+                be the API that is universally desired; concatenation may not make sense for all domain concepts, so it is
+                not provided by default. Derived classes are encouraged to implement additional member functions that
+                harmonize with the particular domain concept(s) being modeled.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Cybele.ConceptString`1.Length">
+            <value>
+              The number of characters in this <see cref="T:Cybele.ConceptString`1"/>.
+            </value>
+        </member>
+        <member name="P:Cybele.ConceptString`1.Item(System.Int32)">
+            <value>
+              The character in this <see cref="T:Cybele.ConceptString`1"/> at a particular position.
+            </value>
+            <param name="index">
+              The <c>0</c>-based index of the target character.
+            </param>
+            <exception cref="T:System.IndexOutOfRangeException">
+              if <c><paramref name="index"/> &lt; 0</c> or <c><paramref name="index"/> &gt;= <see cref="P:Cybele.ConceptString`1.Length"/></c>.
+            </exception>
+        </member>
+        <member name="P:Cybele.ConceptString`1.View">
+            <value>
+              A read-only, non-allocating view into the contents of this <see cref="T:Cybele.ConceptString`1"/>.
+            </value>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_Implicit(Cybele.ConceptString{`0})~System.ReadOnlySpan{System.Char}">
+            <summary>
+              Converts a <see cref="T:Cybele.ConceptString`1"/> into a
+              <see cref="T:System.ReadOnlySpan`1">ReadOnlySpan&lt;char&gt;</see>.
+            </summary>
+            <param name="concept">
+              The <see cref="T:Cybele.ConceptString`1"/> to convert.
+            </param>
+            <returns>
+              A read-only, non-allocating view into the contents of <paramref name="concept"/>, or a
+              default-constructed <see cref="T:System.ReadOnlySpan`1">ReadOnlySpan&lt;char&gt;</see> if
+              <paramref name="concept"/> is <see langword="null"/>.
+            </returns>
+            <seealso cref="P:Cybele.ConceptString`1.View"/>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_Explicit(Cybele.ConceptString{`0})~System.String">
+            <summary>
+              Converts a <see cref="T:Cybele.ConceptString`1"/> into a raw <see cref="T:System.String"/>.
+            </summary>
+            <param name="concept">
+              The <see cref="T:Cybele.ConceptString`1"/> to convert.
+            </param>
+            <returns>
+              The raw contents of <paramref name="concept"/>, or <see langword="null"/> if <paramref name="concept"/>
+              is <see langword="null"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Cybele.ConceptString`1"/>.
+            </summary>
+            <param name="contents">
+              The raw contents of the new <see cref="T:Cybele.ConceptString`1"/>.
+            </param>
+        </member>
+        <member name="M:Cybele.ConceptString`1.Equals(Cybele.ConceptString{`0})">
+            <summary>
+              Determines whether this <see cref="T:Cybele.ConceptString`1"/> is equal to another
+              <see cref="T:Cybele.ConceptString`1"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Cybele.ConceptString`1"/> against which to compare this one for equality.
+            </param>
+            <returns>
+              <see langword="true"/> if this <see cref="T:Cybele.ConceptString`1"/> is equal to <paramref name="rhs"/>
+              using an ordinal, case-sensitive comparison; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.Equals(System.Object)">
+            <summary>
+              Determines whether this <see cref="T:Cybele.ConceptString`1"/> is equal to another <see cref="T:System.Object"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:System.Object"/> against which to compare this one for equality.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is a <see cref="T:Cybele.ConceptString`1"/> that is equal
+              to this <see cref="T:Cybele.ConceptString`1"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.CompareTo(Cybele.ConceptString{`0})">
+            <summary>
+              Determines the ordering of this <see cref="T:Cybele.ConceptString`1"/> relative to another in the overall
+              total order.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Cybele.ConceptString`1"/> against which to compare this one for relative ordering.
+            </param>
+            <returns>
+              A negative integer if this <see cref="T:Cybele.ConceptString`1"/> comes before <paramref name="rhs"/> in
+              the overall total order, <c>0</c> if this <see cref="T:Cybele.ConceptString`1"/> comes at the same
+              position as <paramref name="rhs"/> in the overall total order, and a positive integer if this
+              <see cref="T:Cybele.ConceptString`1"/> comes after <paramref name="rhs"/> in the overall total order.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.GetHashCode">
+            <summary>
+              Produces the hash code for this <see cref="T:Cybele.ConceptString`1"/>.
+            </summary>
+            <returns>
+              A <c>32</c>-bit signed integer that is the hash code for this <see cref="T:Cybele.ConceptString`1"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.ToString">
+            <summary>
+              Produces a string representation of this <see cref="T:Cybele.ConceptString`1"/>.
+            </summary>
+            <returns>
+              A string representation of this <see cref="T:Cybele.ConceptString`1"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_Equality(Cybele.ConceptString{`0},Cybele.ConceptString{`0})">
+            <summary>
+              Determines if two <see cref="T:Cybele.ConceptString`1">ConceptStrings</see> are equal.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_Inequality(Cybele.ConceptString{`0},Cybele.ConceptString{`0})">
+            <summary>
+              Determiens if two <see cref="T:Cybele.ConceptString`1">ConceptStrings</see> are not equal.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_LessThan(Cybele.ConceptString{`0},Cybele.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.ConceptString`1"/> is strictly less than another.
+            </summary>
+            <param name="lhs">
+              The left-hand operand of the ordering relation.
+            </param>
+            <param name="rhs">
+              The right-hand operand of the ordering relation.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is strictly less than <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_GreaterThan(Cybele.ConceptString{`0},Cybele.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.ConceptString`1"/> is strictly greater than another.
+            </summary>
+            <param name="lhs">
+              The left-hand operand of the ordering relation.
+            </param>
+            <param name="rhs">
+              The right-hand operand of the ordering relation.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is strictly greater than <paramref name="rhs"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_LessThanOrEqual(Cybele.ConceptString{`0},Cybele.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.ConceptString`1"/> is less than or equal to another.
+            </summary>
+            <param name="lhs">
+              The left-hand operand of the ordering relation.
+            </param>
+            <param name="rhs">
+              The right-hand operand of the ordering relation.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is less than or equal to <paramref name="rhs"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.op_GreaterThanOrEqual(Cybele.ConceptString{`0},Cybele.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.ConceptString`1"/> is greater than or equal to another.
+            </summary>
+            <param name="lhs">
+              The left-hand operand of the ordering relation.
+            </param>
+            <param name="rhs">
+              The right-hand operand of the ordering relation.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is greater than or equal to <paramref name="rhs"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the characters in this <see cref="T:Cybele.ConceptString`1"/>.
+            </summary>
+            <returns>
+              An enumerator that iterates over the characters in this <see cref="T:Cybele.ConceptString`1"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.ConceptString`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the characters in this <see cref="T:Cybele.ConceptString`1"/> in
+              a type-erased manner.
+            </summary>
+            <returns>
+              An enumerator that iterates over the characters in this <see cref="T:Cybele.ConceptString`1"/> in a
+              type-erased manner.
+            </returns>
+        </member>
     </members>
 </doc>
