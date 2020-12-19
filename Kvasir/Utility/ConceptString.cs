@@ -49,7 +49,7 @@ namespace Cybele {
         /// <value>
         ///   The number of characters in this <see cref="ConceptString{TConcept}"/>.
         /// </value>
-        public int Length => contents_.Length;
+        public int Length => Contents.Length;
 
         /// <value>
         ///   The character in this <see cref="ConceptString{TConcept}"/> at a particular position.
@@ -60,12 +60,12 @@ namespace Cybele {
         /// <exception cref="IndexOutOfRangeException">
         ///   if <c><paramref name="index"/> &lt; 0</c> or <c><paramref name="index"/> &gt;= <see cref="Length"/></c>.
         /// </exception>
-        public char this[int index] => contents_[index];
+        public char this[int index] => Contents[index];
 
         /// <value>
         ///   A read-only, non-allocating view into the contents of this <see cref="ConceptString{TConcept}"/>.
         /// </value>
-        public ReadOnlySpan<char> View => contents_;
+        public ReadOnlySpan<char> View => Contents;
 
         /// <summary>
         ///   Converts a <see cref="ConceptString{TConcept}"/> into a
@@ -98,7 +98,7 @@ namespace Cybele {
         ///   is <see langword="null"/>.
         /// </returns>
         public static explicit operator string?(ConceptString<TConcept>? concept) {
-            return concept?.contents_;
+            return concept?.Contents;
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Cybele {
         ///   The raw contents of the new <see cref="ConceptString{TConcept}"/>.
         /// </param>
         public ConceptString(string contents) {
-            contents_ = contents;
+            Contents = contents;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Cybele {
         ///   using an ordinal, case-sensitive comparison; otherwise, <see langword="false"/>.
         /// </returns>
         public virtual bool Equals(ConceptString<TConcept>? rhs) {
-            return contents_ == rhs?.contents_;
+            return Contents == rhs?.Contents;
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Cybele {
         ///   <see cref="ConceptString{TConcept}"/> comes after <paramref name="rhs"/> in the overall total order.
         /// </returns>
         public virtual int CompareTo(ConceptString<TConcept>? rhs) {
-            return contents_.CompareTo(rhs?.contents_);
+            return Contents.CompareTo(rhs?.Contents);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace Cybele {
         ///   A <c>32</c>-bit signed integer that is the hash code for this <see cref="ConceptString{TConcept}"/>.
         /// </returns>
         public sealed override int GetHashCode() {
-            return contents_.GetHashCode();
+            return Contents.GetHashCode();
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace Cybele {
         ///   A string representation of this <see cref="ConceptString{TConcept}"/>.
         /// </returns>
         public sealed override string ToString() {
-            return contents_;
+            return Contents;
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace Cybele {
         ///   An enumerator that iterates over the characters in this <see cref="ConceptString{TConcept}"/>.
         /// </returns>
         public IEnumerator<char> GetEnumerator() {
-            return contents_.GetEnumerator();
+            return Contents.GetEnumerator();
         }
 
         /// <summary>
@@ -316,7 +316,9 @@ namespace Cybele {
             return GetEnumerator();
         }
 
-
-        private readonly string contents_;
+        /// <value>
+        ///   The raw contents of this <see cref="ConceptString{TConcept}"/>.
+        /// </value>
+        protected string Contents { get; }
     }
 }

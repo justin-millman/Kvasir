@@ -10,4 +10,8 @@
     <DocumentationFile>C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\Kvasir\Intellisense.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Optional" Version="4.0.0" />
+  </ItemGroup>
+
 </Project>

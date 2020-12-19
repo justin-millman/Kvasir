@@ -532,6 +532,71 @@
               Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that wraps the <c>NULL</c> sentinel.
             </summary>
         </member>
+        <member name="T:Kvasir.Schema.IField">
+            <summary>
+              The interface representing a single Field in a back-end relational database.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.IField.Name">
+            <value>
+              The name of this <see cref="T:Kvasir.Schema.IField"/>.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.IField.DataType">
+            <value>
+              The <see cref="T:Kvasir.Schema.DBType"/> of this <see cref="T:Kvasir.Schema.IField"/>.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.IField.Nullability">
+            <value>
+              Whether or not <c>NULL</c> is an acceptable value for this <see cref="T:Kvasir.Schema.IField"/>.
+            </value>
+        </member>
+        <member name="P:Kvasir.Schema.IField.DefaultValue">
+            <value>
+              The default value for this <see cref="T:Kvasir.Schema.IField"/>.
+            </value>
+            <post>
+              <see cref="P:Kvasir.Schema.IField.DefaultValue"/> is a <c>SOME</c> instance wrapping <see cref="P:Kvasir.Schema.DBValue.NULL"/> only if
+              <see cref="T:Kvasir.Schema.IsNullable"/> is <see cref="F:Kvasir.Schema.IsNullable.Yes"/>
+                --and--
+              if <see cref="P:Kvasir.Schema.IField.DefaultValue"/> iis a <c>SOME</c> instance, the value that it wraps is a
+              <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)">valid value</see> for <see cref="P:Kvasir.Schema.IField.DataType"/>.
+            </post>
+            <remarks>
+              A <c>NONE</c> instance indicates that this <see cref="T:Kvasir.Schema.IField"/> does not have a default value, while a
+              <c>SOME</c> instance indicates that a default value does exist. Notably, a <c>SOME</c> instance wrapping
+              <see cref="P:Kvasir.Schema.DBValue.NULL"/> denotes the presence of a default with this specific datum value rather than
+              the absence of a default value.
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Schema.FieldName">
+            <summary>
+              The name of an <see cref="T:Kvasir.Schema.IField"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.FieldName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.FieldName"/>.
+            </summary>
+            <param name="name">
+              The name. Any leading and trailing whitespace is trimmed.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is the empty string or consists only of whitespace characters.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.IsNullable">
+            <summary>
+              A strongly typed binary value representing the nullability of an <see cref="T:Kvasir.Schema.IField"/>
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.IsNullable.No">
+            <summary>Indicates that an <see cref="T:Kvasir.Schema.IField"/> is not nullable</summary>
+        </member>
+        <member name="F:Kvasir.Schema.IsNullable.Yes">
+            <summary>Indicates that an <see cref="T:Kvasir.Schema.IField"/> is nullable</summary>
+        </member>
         <member name="T:Cybele.ConceptString`1">
             <summary>
               A strongly typed <see cref="T:System.String"/> class that represents a specific application or library domain concept.
@@ -793,6 +858,11 @@
               An enumerator that iterates over the characters in this <see cref="T:Cybele.ConceptString`1"/> in a
               type-erased manner.
             </returns>
+        </member>
+        <member name="P:Cybele.ConceptString`1.Contents">
+            <value>
+              The raw contents of this <see cref="T:Cybele.ConceptString`1"/>.
+            </value>
         </member>
     </members>
 </doc>
