@@ -977,5 +977,69 @@
               The raw contents of this <see cref="T:Cybele.ConceptString`1"/>.
             </value>
         </member>
+        <member name="T:Cybele.Extensions.EnumExtensions">
+            <summary>
+              A collection of methods that extend user-defined <see cref="T:System.Enum"/> types.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.EnumExtensions.IsValid``1(``0)">
+            <summary>
+              Determines if an enumerator is valid.
+            </summary>
+            <typeparam name="TEnum">
+              [deduced] The type of <paramref name="enumerator"/>.
+            </typeparam>
+            <param name="enumerator">
+              The enumerator whose validity to determine.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="enumerator"/> is a valid enumerator; otherwise,
+              <see langword="false"/>.
+            </returns>
+            <remarks>
+              <para>
+                This method is intended primarily as a defensive helper to ensure that enumerators provided to an API
+                are among those that the author of the enumerator intended to be used. Because enums are simply type
+                system wrappers around integers, it is legal to convert an arbitrary integer into a enumeration even
+                if no name was assigned to that value in the enumeration's declaration. Passing such a value to an API
+                often implicitly violates preconditions, especially when <c>switch</c> statements are employed that
+                assume an enumerator is one of the explicitly defined constants.
+              </para>
+              <para>
+                When dealing with "regular" enums (as opposed to <see cref="T:System.FlagsAttribute">"flag"</see> enums), this
+                method works identically to <see cref="M:System.Enum.IsDefined(System.Type,System.Object)"/>. Specifically, an enumerator of
+                a "regular" enum is valid if and only if its value is that of one of the named constants in the enum's
+                declaration. This is not affected by enumeration aliasing (i.e. having more than one named constant
+                for the same value).
+              </para>
+              <para>
+                When dealing with a <see cref="T:System.FlagsAttribute">"flag"</see> enum, the behavior of this method diverges
+                from that of <see cref="M:System.Enum.IsDefined(System.Type,System.Object)"/> to provide a response that is more in line with
+                most users' expectations. An enumerator of a <see cref="T:System.FlagsAttribute">"flag"</see> enum is valid if
+                and only if its value is a combination of one or more of the named constants in the enum's declaration.
+                This means that un-aliased combinations will be treated as valid by this method, whereas
+                <see cref="M:System.Enum.IsDefined(System.Type,System.Object)"/> recognizes only those values specified in the enum's
+                declaration. Note that <see cref="T:System.FlagsAttribute">"flag"</see> enums do not receive a <c>None</c>
+                enumerator automatically; as such, an enumerator with numeric value <c>0</c> is only valid if such a
+                constant is explicitly defined by the enumeration.
+              </para>
+            </remarks>
+        </member>
+        <member name="M:Cybele.Extensions.EnumExtensions.AsInt64``1(``0)">
+            <summary>
+              Reinterprets the bit pattern of the numeric value of an enumerator as the bit pattern for a <c>64</c>-bit
+              signed integer (i.e. a <see cref="T:System.Int64"/>).
+            </summary>
+            <typeparam name="TEnum">
+              [deduced] The type of <paramref name="enumerator"/>.
+            </typeparam>
+            <param name="enumerator">
+              The enumerator whose bit pattern to reinterpret.
+            </param>
+            <returns>
+              A <see cref="T:System.Int64"/> whose bit pattern is the same as the bit pattern of <paramref name="enumerator"/>,
+              possibly with some extra leading <c>0</c>s.
+            </returns>
+        </member>
     </members>
 </doc>

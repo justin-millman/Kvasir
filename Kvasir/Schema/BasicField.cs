@@ -1,4 +1,5 @@
-﻿using Optional;
+﻿using Cybele.Extensions;
+using Optional;
 using System;
 using System.Diagnostics;
 
@@ -65,6 +66,7 @@ namespace Kvasir.Schema {
         /// </exception>
         internal BasicField(FieldName name, DBType dataType, IsNullable nullability, Option<DBValue> defaultValue) {
             Debug.Assert(dataType != DBType.Enumeration);
+            Debug.Assert(nullability.IsValid());
 
             // Check #1: If the Field is non-nullable, then the default value must either be a NONE instance or a SOME
             // instance that contains a value other than DBValue.NULL.
