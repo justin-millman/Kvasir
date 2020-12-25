@@ -1,4 +1,5 @@
 ﻿using Cybele.Extensions;
+using Kvasir.Transcription.Internal;
 using Optional;
 using System;
 using System.Diagnostics;
@@ -89,6 +90,11 @@ namespace Kvasir.Schema {
             DataType = dataType;
             Nullability = nullability;
             DefaultValue = defaultValue;
+        }
+
+        /// <inheritdoc/>
+        SqlSnippet IField.GenerateDeclaration(IGeneratorCollection syntax) {
+            return syntax.FieldDeclarationGenerator.GenerateSql(Name, DataType, Nullability, DefaultValue);
         }
     }
 }

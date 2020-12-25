@@ -4,6 +4,7 @@ using Optional;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Test.Mocks;
 
 namespace Test.Kvasir.Schema {
     [TestClass]
@@ -134,6 +135,24 @@ namespace Test.Kvasir.Schema {
             var fieldValues = new List<DBValue>(field.Enumerators);
             Assert.AreEqual(3, fieldValues.Count);
             Assert.IsTrue(allowedValues.All(v => fieldValues.Contains(v)));
+        }
+
+        [TestMethod, TestCategory("SQL Declaration")]
+        public void GenerateSQL() {
+            var name = new FieldName("StremingService");
+            var type = DBType.Enumeration;
+            var nullability = IsNullable.Yes;
+            var defaultValue = Option.None<DBValue>();
+            var allowedValues = new List<DBValue>() { DBValue.Create("Netflix"), DBValue.Create("Hulu"),
+                DBValue.Create("HBO Max"), DBValue.Create("Amazon Prime"), DBValue.Create("CBS All Access"),
+                DBValue.Create("Peacock"), DBValue.Create("Disney+") };
+            var field = new EnumField(name, nullability, defaultValue, allowedValues);
+
+            var mockGenerator = new MockFieldSyntaxGenerator();
+
+            var expected = mockGenerator.GenerateSql(name, type, nullability, defaultValue, allowedValues);
+            var actual = (field as IField).GenerateDeclaration(new MockFactories());
+            Assert.AreEqual(expected, actual);
         }
     }
 }

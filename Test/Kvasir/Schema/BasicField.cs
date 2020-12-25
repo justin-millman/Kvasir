@@ -1,7 +1,9 @@
 ﻿using Kvasir.Schema;
+using Kvasir.Transcription.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Optional;
 using System;
+using Test.Mocks;
 
 namespace Test.Kvasir.Schema {
     [TestClass]
@@ -70,6 +72,21 @@ namespace Test.Kvasir.Schema {
             void action() => new BasicField(name, type, nullability, defaultValue);
             var exception = Assert.ThrowsException<ArgumentException>(action);
             Assert.AreNotEqual(string.Empty, exception.Message);
+        }
+
+        [TestMethod, TestCategory("SQL Declaration")]
+        public void GenerateSQL() {
+            var name = new FieldName("Title");
+            var type = DBType.Text;
+            var nullability = IsNullable.No;
+            var defaultValue = Option.Some(DBValue.Create("A Tale of Two Cities"));
+            var field = new BasicField(name, type, nullability, defaultValue);
+
+            var mockGenerator = new MockFieldSyntaxGenerator();
+
+            var expected = mockGenerator.GenerateSql(name, type, nullability, defaultValue);
+            var actual = (field as IField).GenerateDeclaration(new MockFactories());
+            Assert.AreEqual(expected, actual);
         }
     }
 }
