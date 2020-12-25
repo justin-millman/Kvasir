@@ -7,7 +7,28 @@ using System.Diagnostics;
 using System.Linq;
 
 namespace Kvasir.Schema {
-    ///
+    /// <summary>
+    ///   An <see cref="IField"/> representing a single Field in a back-end database that has an implicit restriction
+    ///   on the values that may be assumed by the Field's data.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Within Kvasir, the role of any <see cref="IField"/> is to describe the attributes of a Field that are
+    ///     independent of the Table in which it appears. For example, the <see cref="IField"/> interface does not
+    ///     expose a column index, as this is a function of the Field's presence in a Table rather than an an inherent
+    ///     attribute of the Field itself. This also means that most constraints placed on a Field are considered
+    ///     extrinsic to the Field definition and are therefore not carried by the <see cref="IField"/> implementation.
+    ///   </para>
+    ///   <para>
+    ///     This pattern naturally extends to <see cref="EnumField"/>, which represents a Field where the data is one
+    ///     of a strict set of allowed text values. This is functionally equivalent to a <see cref="BasicField"/> of
+    ///     type <see cref="DBType.Text"/> with an appropriate inclusivity constraint; however, the difference is that
+    ///     an <see cref="EnumField"/> bakes the restriction into the nature of the Field itself rather than as a later
+    ///     add-on realized by the owning Table. It is generally unnecessary to further restrict the values allowed for
+    ///     an <see cref="EnumField"/>, though doing so is still legal and may have its niche uses.
+    ///   </para>
+    /// </remarks>
+    /// <seealso cref="BasicField"/>
     public sealed class EnumField : IField {
         /// <inheritdoc/>
         public FieldName Name { get; }

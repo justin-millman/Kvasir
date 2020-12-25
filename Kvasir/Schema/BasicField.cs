@@ -27,6 +27,7 @@ namespace Kvasir.Schema {
     ///     Kvasir by a <see cref="BasicField"/>.
     ///   </para>
     /// </remarks>
+    /// <seealso cref="EnumField"/>
     public sealed class BasicField : IField {
         /// <inheritdoc/>
         public FieldName Name { get; }
