@@ -1,4 +1,5 @@
 ﻿using Cybele;
+using Kvasir.Transcription.Internal;
 using Optional;
 using System;
 
@@ -6,6 +7,9 @@ namespace Kvasir.Schema {
     /// <summary>
     ///   The interface representing a single Field in a back-end relational database.
     /// </summary>
+    /// <remarks>
+    ///   This interface can only be implemented by classes within the <see cref="Kvasir"/> assembly.
+    /// </remarks>
     public interface IField {
         /// <value>
         ///   The name of this <see cref="IField"/>.
@@ -39,6 +43,20 @@ namespace Kvasir.Schema {
         ///   the absence of a default value.
         /// </remarks>
         Option<DBValue> DefaultValue { get; }
+
+        /// <summary>
+        ///   Generates a <see cref="SqlSnippet"/> that declares this <see cref="IField"/> as part of a <c>CREATE
+        ///   TABLE</c> statement.
+        /// </summary>
+        /// <param name="syntax">
+        ///   The <see cref="IGeneratorCollection"/> containing the factory types that this <see cref="IField"/>
+        ///   should use to generate its declaratory <see cref="SqlSnippet"/>.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="SqlSnippet"/> that declares this <see cref="IField"/> within a <c>CREATE TABLE</c>
+        ///   statement according to the syntax rules of <paramref name="syntax"/>.
+        /// </returns>
+        internal SqlSnippet GenerateDeclaration(IGeneratorCollection syntax);
     }
 
     /// <summary>

@@ -67,6 +67,9 @@
               <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)">not valid</see> for <paramref name="dataType"/>.
             </exception>
         </member>
+        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Schema.DBType">
             <summary>
               An implementation-agnostic representation of a data type for a Field in a back-end database.
@@ -645,10 +648,16 @@
               not <see cref="P:Kvasir.Schema.DBValue.NULL"/> and is not one of the values in <paramref name="enumerators"/>
             </exception>
         </member>
+        <member name="M:Kvasir.Schema.EnumField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Schema.IField">
             <summary>
               The interface representing a single Field in a back-end relational database.
             </summary>
+            <remarks>
+              This interface can only be implemented by classes within the <see cref="N:Kvasir"/> assembly.
+            </remarks>
         </member>
         <member name="P:Kvasir.Schema.IField.Name">
             <value>
@@ -683,6 +692,20 @@
               the absence of a default value.
             </remarks>
         </member>
+        <member name="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)">
+            <summary>
+              Generates a <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.IField"/> as part of a <c>CREATE
+              TABLE</c> statement.
+            </summary>
+            <param name="syntax">
+              The <see cref="T:Kvasir.Transcription.Internal.IGeneratorCollection"/> containing the factory types that this <see cref="T:Kvasir.Schema.IField"/>
+              should use to generate its declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
+            </param>
+            <returns>
+              An <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.IField"/> within a <c>CREATE TABLE</c>
+              statement according to the syntax rules of <paramref name="syntax"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Schema.FieldName">
             <summary>
               The name of an <see cref="T:Kvasir.Schema.IField"/>.
@@ -709,6 +732,88 @@
         </member>
         <member name="F:Kvasir.Schema.IsNullable.Yes">
             <summary>Indicates that an <see cref="T:Kvasir.Schema.IField"/> is nullable</summary>
+        </member>
+        <member name="T:Kvasir.Transcription.Internal.TranscriptionExtensions">
+            <summary>
+              A collection of extension methods that operate on types in the <see cref="N:Kvasir.Transcription.Internal"/> namespace.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.TranscriptionExtensions.GenerateSql(Kvasir.Transcription.Internal.IFieldDeclarationGenerator,Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue})">
+            <summary>
+              Generates an declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> for an <see cref="T:Kvasir.Schema.IField"/> that has no implicit value
+              restrictions.
+            </summary>
+            <param name="self">
+              The <see cref="T:Kvasir.Transcription.Internal.IFieldDeclarationGenerator"/> with which to generate the <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
+            </param>
+            <param name="name">
+              The name of the Field.
+            </param>
+            <param name="dataType">
+              The <see cref="T:Kvasir.Schema.DBType"/> of the Field.
+            </param>
+            <param name="nullability">
+              Whether or not the Field is nullable
+            </param>
+            <param name="defaultValue">
+              The default value for the Field.
+            </param>
+        </member>
+        <member name="T:Kvasir.Transcription.Internal.IFieldDeclarationGenerator">
+            <summary>
+              A factory that provides methods for generating declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for
+              Fields.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IFieldDeclarationGenerator.GenerateSql(Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue},System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+            <summary>
+              Generates a declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> for a Field with various traits.
+            </summary>
+            <param name="name">
+              The name of the Field.
+            </param>
+            <param name="dataType">
+              The <see cref="T:Kvasir.Schema.DBType"/> of the Field.
+            </param>
+            <param name="nullability">
+              Whether or not the Field is nullable.
+            </param>
+            <param name="defaultValue">
+              The default value of the Field.
+            </param>
+            <param name="allowedValues">
+              The collection of values that the Field is allowed to take.
+            </param>
+            <seealso cref="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)"/>
+        </member>
+        <member name="T:Kvasir.Transcription.Internal.IGeneratorCollection">
+            <summary>
+              A collection of factory methods for generating declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for
+              various schema components in a single unified syntax.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Transcription.Internal.IGeneratorCollection.FieldDeclarationGenerator">
+            <value>
+              The <see cref="T:Kvasir.Transcription.Internal.IFieldDeclarationGenerator"/> for this collection.
+            </value>
+        </member>
+        <member name="T:Kvasir.Transcription.Internal.SqlSnippet">
+            <summary>
+              A snippet of SQL that declares a complete or partial schema component according to some provider-specific
+              syntax rules.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.SqlSnippet.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
+            </summary>
+            <param name="sql">
+              The SQL snippet in string form, properly formatted and with any necesary character or substrings already
+              escaped.
+            </param>
+            <pre>
+              <paramref name="sql"/> contains at least one non-whitespace character.
+            </pre>
         </member>
         <member name="T:Cybele.ConceptString`1">
             <summary>
