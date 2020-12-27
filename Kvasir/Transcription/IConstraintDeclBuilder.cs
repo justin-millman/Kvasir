@@ -3,25 +3,10 @@ using System;
 
 namespace Kvasir.Transcription.Internal {
     /// <summary>
-    ///   A factory that provides methods for generating declaratory <see cref="SqlSnippet">SqlSnippets</see> for
-    ///   Constraints and Keys.
+    ///   An <see cref="IDeclBuilder"/> that builds declaratory <see cref="SqlSnippet">SqlSnippets</see> for non-Key
+    ///   Constraints.
     /// </summary>
-    internal interface IConstraintDeclGenerator {
-        /// <summary>
-        ///   Creates a <see cref="SqlSnippet"/> from the contents that have been added to the current constraint
-        ///   declaration. The current state is cleared, and a subsequent call to <see cref="MakeSnippet"/> prior to
-        ///   adding any additional clauses will produce undefined behavior.
-        /// </summary>
-        /// <pre>
-        ///   All <c>AND</c> and <c>OR</c> clauses have been closed
-        ///     --and--
-        ///   At least one clause has been added to this <see cref="IConstraintDeclGenerator"/>.
-        /// </pre>
-        /// <returns>
-        ///   A <see cref="SqlSnippet"/> consisting of the constraint declaration that has been built up.
-        /// </returns>
-        SqlSnippet MakeSnippet();
-
+    internal interface IConstraintDeclBuilder : IDeclBuilder {
         /// <summary>
         ///   Begins a new <c>AND</c> clause in the current constraint declaration.
         /// </summary>

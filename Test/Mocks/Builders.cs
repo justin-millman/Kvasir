@@ -1,34 +1,72 @@
 ﻿using Kvasir.Schema;
 using Kvasir.Schema.Constraints;
 using Kvasir.Transcription.Internal;
-using Optional;
 using System;
 using System.Collections.Generic;
 
 namespace Test.Mocks {
-    internal sealed class MockFactories : IGeneratorCollection {
-        public IFieldDeclGenerator FieldDeclGenerator { get; } = new MockFieldSyntaxGenerator();
-        public IConstraintDeclGenerator ConstraintDeclGenerator { get; } = new MockConstraintSyntaxGenerator();
-    }
-
-    internal sealed class MockFieldSyntaxGenerator : IFieldDeclGenerator {
-        public SqlSnippet GenerateSql(FieldName name, DBType dataType, IsNullable nullability,
-            Option<DBValue> defaultValue, IEnumerable<DBValue> allowedValues) {
-
-            var isNull = nullability == IsNullable.Yes ? "MAYBE NULL" : "NOT NULL";
-            var defaultVal = defaultValue.Match(none: () => "--no default--", some: v => $"--{v}--");
-            var values = $"( {string.Join(", ", allowedValues)} )";
-
-            return new SqlSnippet($"[{name}] of type [{dataType}] <{isNull}> {defaultVal} := {values}");
+    internal sealed class MockBuilders : IBuilderCollection {
+        public IFieldDeclBuilder FieldDeclBuilder() {
+            return new MockFieldSyntaxGenerator();
+        }
+        public IConstraintDeclBuilder ConstraintDeclBuilder() {
+            return new MockConstraintSyntaxGenerator();
         }
     }
 
-    internal sealed class MockConstraintSyntaxGenerator : IConstraintDeclGenerator {
+    internal sealed class MockFieldSyntaxGenerator : IFieldDeclBuilder {
+        public MockFieldSyntaxGenerator() {
+            name_ = string.Empty;
+            type_ = string.Empty;
+            nullability_ = string.Empty;
+            defaultValue_ = string.Empty;
+            restriction_ = string.Empty;
+
+            Reset();
+        }
+        public SqlSnippet Build() {
+            return new SqlSnippet($"{name_} {type_} {nullability_} --{defaultValue_}-- := ({restriction_})");
+        }
+        public void Reset() {
+            name_ = string.Empty;
+            type_ = string.Empty;
+            nullability_ = string.Empty;
+            defaultValue_ = "no default";
+            restriction_ = "all values";
+        }
+        public void SetName(FieldName name) {
+            name_ = (string)name!;
+        }
+        public void SetDataType(DBType type) {
+            type_ = type.ToString()!;
+        }
+        public void SetNullability(IsNullable nullability) {
+            nullability_ = (nullability == IsNullable.Yes) ? "IS NULL" : "IS NOT NULL";
+        }
+        public void SetDefaultValue(DBValue defaultValue) {
+            defaultValue_ = defaultValue.ToString();
+        }
+        public void SetAllowedValues(IEnumerable<DBValue> enumerators) {
+            restriction_ = string.Join(", ", enumerators);
+        }
+
+
+        private string name_;
+        private string type_;
+        private string nullability_;
+        private string defaultValue_;
+        private string restriction_;
+    }
+
+    internal sealed class MockConstraintSyntaxGenerator : IConstraintDeclBuilder {
         public MockConstraintSyntaxGenerator() {
             tokens_ = new Stack<string>();
         }
-        public SqlSnippet MakeSnippet() {
+        public SqlSnippet Build() {
             return new SqlSnippet(tokens_.Pop());
+        }
+        public void Reset() {
+            tokens_.Clear();
         }
         public IDisposable NewAndClause() {
             tokens_.Push(AND);

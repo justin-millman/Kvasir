@@ -49,14 +49,14 @@ namespace Kvasir.Schema {
         ///   TABLE</c> statement.
         /// </summary>
         /// <param name="syntax">
-        ///   The <see cref="IGeneratorCollection"/> containing the factories that this <see cref="IField"/> should use
-        ///   to generate its declaratory <see cref="SqlSnippet"/>.
+        ///   The <see cref="IBuilderCollection"/> exposing the <see cref="IDeclBuilder">IDeclBuilders</see> that this
+        ///   <see cref="IField"/> should use to generate its declaratory <see cref="SqlSnippet"/>.
         /// </param>
         /// <returns>
         ///   A <see cref="SqlSnippet"/> that declares this <see cref="IField"/> within a <c>CREATE TABLE</c>
         ///   statement according to the syntax rules of <paramref name="syntax"/>.
         /// </returns>
-        internal SqlSnippet GenerateDeclaration(IGeneratorCollection syntax);
+        internal SqlSnippet GenerateDeclaration(IBuilderCollection syntax);
     }
 
     /// <summary>

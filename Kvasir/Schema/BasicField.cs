@@ -94,8 +94,14 @@ namespace Kvasir.Schema {
         }
 
         /// <inheritdoc/>
-        SqlSnippet IField.GenerateDeclaration(IGeneratorCollection syntax) {
-            return syntax.FieldDeclGenerator.GenerateSql(Name, DataType, Nullability, DefaultValue);
+        SqlSnippet IField.GenerateDeclaration(IBuilderCollection syntax) {
+            var builder = syntax.FieldDeclBuilder();
+            builder.SetName(Name);
+            builder.SetDataType(DataType);
+            builder.SetNullability(Nullability);
+            DefaultValue.MatchSome(v => builder.SetDefaultValue(v));
+
+            return builder.Build();
         }
     }
 }

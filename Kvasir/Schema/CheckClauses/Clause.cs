@@ -74,12 +74,12 @@ namespace Kvasir.Schema.Constraints {
 
         /// <summary>
         ///   Appends the declaratory SQL for this <see cref="Clause"/> onto the in-progress declaration managed by
-        ///   an existing <see cref="IConstraintDeclGenerator"/>.
+        ///   an existing <see cref="IConstraintDeclBuilder"/>.
         /// </summary>
-        /// <param name="decl">
-        ///   The <see cref="IConstraintDeclGenerator"/> to which to add the declaration for this <see cref="Clause"/>.
+        /// <param name="builder">
+        ///   The <see cref="IConstraintDeclBuilder"/> to which to add the declaration for this <see cref="Clause"/>.
         /// </param>
-        internal abstract void AddDeclarationTo(IConstraintDeclGenerator decl);
+        internal abstract void AddDeclarationTo(IConstraintDeclBuilder builder);
 
         /// <summary>
         ///   Creates a compound clause that represents a unidirectional logical implication (i.e. <c>if X then Y</c>)

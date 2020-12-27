@@ -82,11 +82,9 @@ namespace Test.Kvasir.Schema {
             var defaultValue = Option.Some(DBValue.Create("A Tale of Two Cities"));
             var field = new BasicField(name, type, nullability, defaultValue);
 
-            var mockGenerator = new MockFieldSyntaxGenerator();
-
-            var expected = mockGenerator.GenerateSql(name, type, nullability, defaultValue);
-            var actual = (field as IField).GenerateDeclaration(new MockFactories());
-            Assert.AreEqual(expected, actual);
+            var expected = "Title Kvasir.Schema.DBType IS NOT NULL --\"A Tale of Two Cities\"-- := (all values)";
+            var actual = (field as IField).GenerateDeclaration(new MockBuilders());
+            Assert.AreEqual(new SqlSnippet(expected), actual);
         }
     }
 }

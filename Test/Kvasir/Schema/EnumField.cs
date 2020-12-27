@@ -1,4 +1,5 @@
 ﻿using Kvasir.Schema;
+using Kvasir.Transcription.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Optional;
 using System;
@@ -139,8 +140,7 @@ namespace Test.Kvasir.Schema {
 
         [TestMethod, TestCategory("SQL Declaration")]
         public void GenerateSQL() {
-            var name = new FieldName("StremingService");
-            var type = DBType.Enumeration;
+            var name = new FieldName("StreamingService");
             var nullability = IsNullable.Yes;
             var defaultValue = Option.None<DBValue>();
             var allowedValues = new List<DBValue>() { DBValue.Create("Netflix"), DBValue.Create("Hulu"),
@@ -148,11 +148,10 @@ namespace Test.Kvasir.Schema {
                 DBValue.Create("Peacock"), DBValue.Create("Disney+") };
             var field = new EnumField(name, nullability, defaultValue, allowedValues);
 
-            var mockGenerator = new MockFieldSyntaxGenerator();
-
-            var expected = mockGenerator.GenerateSql(name, type, nullability, defaultValue, allowedValues);
-            var actual = (field as IField).GenerateDeclaration(new MockFactories());
-            Assert.AreEqual(expected, actual);
+            var expected = "StreamingService Kvasir.Schema.DBType IS NULL --no default-- := " +
+                "(\"Netflix\", \"Hulu\", \"HBO Max\", \"Amazon Prime\", \"CBS All Access\", \"Peacock\", \"Disney+\")";
+            var actual = (field as IField).GenerateDeclaration(new MockBuilders());
+            Assert.AreEqual(new SqlSnippet(expected), actual);
         }
     }
 }

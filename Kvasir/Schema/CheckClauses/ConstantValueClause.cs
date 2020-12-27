@@ -71,8 +71,8 @@ namespace Kvasir.Schema.Constraints {
         }
 
         /// <inheritdoc/>
-        internal sealed override void AddDeclarationTo(IConstraintDeclGenerator decl) {
-            decl.AddCheck(this);
+        internal sealed override void AddDeclarationTo(IConstraintDeclBuilder builder) {
+            builder.AddCheck(this);
         }
     }
 }

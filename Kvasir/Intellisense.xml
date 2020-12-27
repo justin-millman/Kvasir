@@ -37,7 +37,7 @@
         <member name="M:Kvasir.Schema.Constraints.AndClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.Constraints.AndClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclGenerator)">
+        <member name="M:Kvasir.Schema.Constraints.AndClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.Constraints.Clause">
@@ -103,13 +103,13 @@
               necessarily) duplicated.
             </returns>
         </member>
-        <member name="M:Kvasir.Schema.Constraints.Clause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclGenerator)">
+        <member name="M:Kvasir.Schema.Constraints.Clause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <summary>
               Appends the declaratory SQL for this <see cref="T:Kvasir.Schema.Constraints.Clause"/> onto the in-progress declaration managed by
-              an existing <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclGenerator"/>.
+              an existing <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclBuilder"/>.
             </summary>
-            <param name="decl">
-              The <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclGenerator"/> to which to add the declaration for this <see cref="T:Kvasir.Schema.Constraints.Clause"/>.
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclBuilder"/> to which to add the declaration for this <see cref="T:Kvasir.Schema.Constraints.Clause"/>.
             </param>
         </member>
         <member name="M:Kvasir.Schema.Constraints.Clause.IfThen(Kvasir.Schema.Constraints.Clause,Kvasir.Schema.Constraints.Clause)">
@@ -194,7 +194,7 @@
         <member name="M:Kvasir.Schema.Constraints.ConstantValueClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.Constraints.ConstantValueClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclGenerator)">
+        <member name="M:Kvasir.Schema.Constraints.ConstantValueClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.Constraints.CrossFieldValueConstraint">
@@ -242,7 +242,7 @@
         <member name="M:Kvasir.Schema.Constraints.CrossFieldValueConstraint.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.Constraints.CrossFieldValueConstraint.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclGenerator)">
+        <member name="M:Kvasir.Schema.Constraints.CrossFieldValueConstraint.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.Constraints.FieldExpression">
@@ -351,7 +351,7 @@
         <member name="M:Kvasir.Schema.Constraints.InclusionClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.Constraints.InclusionClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclGenerator)">
+        <member name="M:Kvasir.Schema.Constraints.InclusionClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.Constraints.NullityClause">
@@ -390,7 +390,7 @@
         <member name="M:Kvasir.Schema.Constraints.NullityClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.Constraints.NullityClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclGenerator)">
+        <member name="M:Kvasir.Schema.Constraints.NullityClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.Constraints.ComparisonOperator">
@@ -489,7 +489,7 @@
         <member name="M:Kvasir.Schema.Constraints.OrClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.Constraints.OrClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclGenerator)">
+        <member name="M:Kvasir.Schema.Constraints.OrClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.BasicField">
@@ -556,7 +556,7 @@
               <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)">not valid</see> for <paramref name="dataType"/>.
             </exception>
         </member>
-        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)">
+        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.DBType">
@@ -1158,7 +1158,7 @@
               not <see cref="P:Kvasir.Schema.DBValue.NULL"/> and is not one of the values in <paramref name="enumerators"/>
             </exception>
         </member>
-        <member name="M:Kvasir.Schema.EnumField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)">
+        <member name="M:Kvasir.Schema.EnumField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.IField">
@@ -1202,14 +1202,14 @@
               the absence of a default value.
             </remarks>
         </member>
-        <member name="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)">
+        <member name="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
             <summary>
               Generates a <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.IField"/> as part of a <c>CREATE
               TABLE</c> statement.
             </summary>
             <param name="syntax">
-              The <see cref="T:Kvasir.Transcription.Internal.IGeneratorCollection"/> containing the factories that this <see cref="T:Kvasir.Schema.IField"/> should use
-              to generate its declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
+              The <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/> exposing the <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder">IDeclBuilders</see> that this
+              <see cref="T:Kvasir.Schema.IField"/> should use to generate its declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
             </param>
             <returns>
               A <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.IField"/> within a <c>CREATE TABLE</c>
@@ -1243,54 +1243,39 @@
         <member name="F:Kvasir.Schema.IsNullable.Yes">
             <summary>Indicates that an <see cref="T:Kvasir.Schema.IField"/> is nullable</summary>
         </member>
-        <member name="T:Kvasir.Transcription.Internal.TranscriptionExtensions">
+        <member name="T:Kvasir.Transcription.Internal.IBuilderCollection">
             <summary>
-              A collection of extension methods that operate on types in the <see cref="N:Kvasir.Transcription.Internal"/> namespace.
+              A collection of <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder">IDeclBuilders</see> for generating the declaratory
+              <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> of various schema components with a provider-unified syntax.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.TranscriptionExtensions.GenerateSql(Kvasir.Transcription.Internal.IFieldDeclGenerator,Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Transcription.Internal.IBuilderCollection.FieldDeclBuilder">
             <summary>
-              Generates an declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> for an <see cref="T:Kvasir.Schema.IField"/> that has no implicit value
-              restrictions.
+              Exposes an <see cref="T:Kvasir.Transcription.Internal.IFieldDeclBuilder"/> using the syntax of this <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/>
+              that is in its initial (or "reset") state.
             </summary>
-            <param name="self">
-              The <see cref="T:Kvasir.Transcription.Internal.IFieldDeclGenerator"/> with which to generate the <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
-            </param>
-            <param name="name">
-              The name of the Field.
-            </param>
-            <param name="dataType">
-              The <see cref="T:Kvasir.Schema.DBType"/> of the Field.
-            </param>
-            <param name="nullability">
-              Whether or not the Field is nullable
-            </param>
-            <param name="defaultValue">
-              The default value for the Field.
-            </param>
-        </member>
-        <member name="T:Kvasir.Transcription.Internal.IConstraintDeclGenerator">
-            <summary>
-              A factory that provides methods for generating declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for
-              Constraints and Keys.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.MakeSnippet">
-            <summary>
-              Creates a <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> from the contents that have been added to the current constraint
-              declaration. The current state is cleared, and a subsequent call to <see cref="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.MakeSnippet"/> prior to
-              adding any additional clauses will produce undefined behavior.
-            </summary>
-            <pre>
-              All <c>AND</c> and <c>OR</c> clauses have been closed
-                --and--
-              At least one clause has been added to this <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclGenerator"/>.
-            </pre>
             <returns>
-              A <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> consisting of the constraint declaration that has been built up.
+              An <see cref="T:Kvasir.Transcription.Internal.IFieldDeclBuilder"/> in its initial (or "reset") state that uses the rules of this
+              <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/>.
             </returns>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.NewAndClause">
+        <member name="M:Kvasir.Transcription.Internal.IBuilderCollection.ConstraintDeclBuilder">
+            <summary>
+              Exposes an <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclBuilder"/> using the syntax of this <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/>
+              that is in its initial (or "reset") state.
+            </summary>
+            <returns>
+              An <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclBuilder"/> in its initial (or "reset") state that uses the rules of this
+              <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Transcription.Internal.IConstraintDeclBuilder">
+            <summary>
+              An <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder"/> that builds declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for non-Key
+              Constraints.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.NewAndClause">
             <summary>
               Begins a new <c>AND</c> clause in the current constraint declaration.
             </summary>
@@ -1298,7 +1283,7 @@
               A handle that, when disposed of, terminates the new <c>AND</c> clause that has been started.
             </returns>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.NewOrClause">
+        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.NewOrClause">
             <summary>
               Begins a new <c>OR</c> clause in the current constraint declaration.
             </summary>
@@ -1306,7 +1291,7 @@
               A handle that, when disposed of, terminates the new <c>OR</c> clause that has been started.
             </returns>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.AddCheck(Kvasir.Schema.Constraints.NullityClause)">
+        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.AddCheck(Kvasir.Schema.Constraints.NullityClause)">
             <summary>
               Adds a new <see cref="T:Kvasir.Schema.Constraints.NullityClause"/> to the current constraint declaration.
             </summary>
@@ -1314,7 +1299,7 @@
               The <see cref="T:Kvasir.Schema.Constraints.NullityClause"/> to add to the constraint declaration.
             </param>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.AddCheck(Kvasir.Schema.Constraints.InclusionClause)">
+        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.AddCheck(Kvasir.Schema.Constraints.InclusionClause)">
             <summary>
               Adds a new <see cref="T:Kvasir.Schema.Constraints.InclusionClause"/> to the current constraint declaration.
             </summary>
@@ -1322,7 +1307,7 @@
               The <see cref="T:Kvasir.Schema.Constraints.InclusionClause"/> to add to the constraint declaration.
             </param>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.AddCheck(Kvasir.Schema.Constraints.ConstantValueClause)">
+        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.AddCheck(Kvasir.Schema.Constraints.ConstantValueClause)">
             <summary>
               Adds a new <see cref="T:Kvasir.Schema.Constraints.ConstantValueClause"/> to the current constraint declaration.
             </summary>
@@ -1330,7 +1315,7 @@
               The <see cref="T:Kvasir.Schema.Constraints.ConstantValueClause"/> to add to the constraint declaration.
             </param>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclGenerator.AddCheck(Kvasir.Schema.Constraints.CrossFieldValueConstraint)">
+        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.AddCheck(Kvasir.Schema.Constraints.CrossFieldValueConstraint)">
             <summary>
               Adds a new <see cref="T:Kvasir.Schema.Constraints.CrossFieldValueConstraint"/> to the current constraint declaration.
             </summary>
@@ -1338,52 +1323,75 @@
               The <see cref="T:Kvasir.Schema.Constraints.CrossFieldValueConstraint"/> to add to the constraint declaration.
             </param>
         </member>
-        <member name="T:Kvasir.Transcription.Internal.IFieldDeclGenerator">
+        <member name="T:Kvasir.Transcription.Internal.IDeclBuilder">
             <summary>
-              A factory that provides methods for generating declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for
-              Fields.
+              The interface for a builder that produces <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> that can be used in a DDL
+              statement.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.Internal.IFieldDeclGenerator.GenerateSql(Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue},System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Transcription.Internal.IDeclBuilder.Build">
             <summary>
-              Generates a declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> for a Field with various traits.
+              Builds the declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> based on the current state of this
+              <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder"/>.
+            </summary>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that reflects the current state of this <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IDeclBuilder.Reset">
+            <summary>
+              Resets the current state of this <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder"/>.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Transcription.Internal.IFieldDeclBuilder">
+            <summary>
+              An <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder"/> that builds declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for Fields.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IFieldDeclBuilder.SetName(Kvasir.Schema.FieldName)">
+            <summary>
+              Sets the name of the Field whose declaration is represented by the current state of this
+              <see cref="T:Kvasir.Transcription.Internal.IFieldDeclBuilder"/>.
             </summary>
             <param name="name">
-              The name of the Field.
+              The name.
             </param>
-            <param name="dataType">
-              The <see cref="T:Kvasir.Schema.DBType"/> of the Field.
-            </param>
-            <param name="nullability">
-              Whether or not the Field is nullable.
-            </param>
-            <param name="defaultValue">
-              The default value of the Field.
-            </param>
-            <param name="allowedValues">
-              The collection of values that the Field is allowed to take.
-            </param>
-            <returns>
-              A <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> consisting of the declaration for an <see cref="T:Kvasir.Schema.IField"/> with the given
-              traits.
-            </returns>
-            <seealso cref="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.Internal.IGeneratorCollection)"/>
         </member>
-        <member name="T:Kvasir.Transcription.Internal.IGeneratorCollection">
+        <member name="M:Kvasir.Transcription.Internal.IFieldDeclBuilder.SetDataType(Kvasir.Schema.DBType)">
             <summary>
-              A collection of factory methods for generating declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for
-              various schema components in a single unified syntax.
+              Sets the data type of the Field whose declaration is represented by the current state of this
+              <see cref="T:Kvasir.Transcription.Internal.IFieldDeclBuilder"/>.
             </summary>
+            <param name="dataType">
+              The data type.
+            </param>
         </member>
-        <member name="P:Kvasir.Transcription.Internal.IGeneratorCollection.FieldDeclGenerator">
-            <value>
-              The <see cref="T:Kvasir.Transcription.Internal.IFieldDeclGenerator"/> for this collection.
-            </value>
+        <member name="M:Kvasir.Transcription.Internal.IFieldDeclBuilder.SetNullability(Kvasir.Schema.IsNullable)">
+            <summary>
+              Sets the nullability of the Field whose declaration is represented by the current state of this
+              <see cref="T:Kvasir.Transcription.Internal.IFieldDeclBuilder"/>.
+            </summary>
+            <param name="nullability">
+              The nullability.
+            </param>
         </member>
-        <member name="P:Kvasir.Transcription.Internal.IGeneratorCollection.ConstraintDeclGenerator">
-            <value>
-              The <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclGenerator"/> for this collection.
-            </value>
+        <member name="M:Kvasir.Transcription.Internal.IFieldDeclBuilder.SetDefaultValue(Kvasir.Schema.DBValue)">
+            <summary>
+              Sets the default value of the Field whose declaration is represented by the current state of this
+              <see cref="T:Kvasir.Transcription.Internal.IFieldDeclBuilder"/>.
+            </summary>
+            <param name="defaultValue">
+              The default value.
+            </param>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IFieldDeclBuilder.SetAllowedValues(System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+            <summary>
+              Sets the list of values that are allowed for the Field whose declaration is represented by the current
+              state of this <see cref="T:Kvasir.Transcription.Internal.IFieldDeclBuilder"/>.
+            </summary>
+            <param name="enumerators">
+              The list of alloed values.
+            </param>
         </member>
         <member name="T:Kvasir.Transcription.Internal.SqlSnippet">
             <summary>
