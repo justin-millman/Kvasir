@@ -862,5 +862,110 @@ namespace Test.Kvasir.Schema {
             var exception = Assert.ThrowsException<ArgumentException>(action);
             Assert.AreNotEqual(string.Empty, exception.Message);
         }
+
+        [TestMethod, TestCategory("CheckConstraint")]
+        public void CheckConstraintNoName() {
+            var mockA = new Mock<IField>();
+            mockA.Setup(f => f.Name).Returns(new FieldName("Position"));
+            mockA.Setup(f => f.Nullability).Returns(IsNullable.Yes);
+            mockA.Setup(f => f.DataType).Returns(DBType.Text);
+            var mockB = new Mock<IField>();
+            mockB.Setup(f => f.Name).Returns(new FieldName("JerseyNum"));
+            mockB.Setup(f => f.DataType).Returns(DBType.Int32);
+
+            var fieldA = mockA.Object;
+            var fieldB = mockB.Object;
+            var aExpr = new FieldExpression(fieldA);
+            var bExpr = new FieldExpression(fieldB);
+            var aLenExpr = new FieldExpression(FieldFunction.Length, fieldA);
+
+            var zeroClause = new ConstantValueClause(bExpr, ComparisonOperator.GreaterThan, new DBValue(0));
+            var posNotNullClause = new NullityClause(fieldA, NullityOperator.IsNotNull);
+            var posLengthClause = new ConstantValueClause(aLenExpr, ComparisonOperator.GreaterThan, new DBValue(0));
+            var jersey20Clause = new ConstantValueClause(bExpr, ComparisonOperator.LessThan, new DBValue(20));
+            var qbClause = new ConstantValueClause(aExpr, ComparisonOperator.Equal, new DBValue("QB"));
+            var qbLongClause = new ConstantValueClause(aExpr, ComparisonOperator.Equal, new DBValue("Quarterback"));
+            var clause = zeroClause
+                .And(Clause.IfThen(posNotNullClause, posLengthClause))
+                .And(Clause.IfThen(jersey20Clause, qbClause.Or(qbLongClause)));
+            var constraint = new CheckConstraint(clause);
+
+            Assert.IsFalse(constraint.Name.HasValue);
+            var expected = "((JerseyNum > 0 <AND> (Length(Position) > 0 <OR> Position IS NULL)) <AND> " +
+                "((Position == \"QB\" <OR> Position == \"Quarterback\") <OR> JerseyNum >= 20))";
+            var actual = constraint.GenerateDeclaration(new MockBuilders());
+            Assert.AreEqual(new SqlSnippet(expected), actual);
+        }
+
+        [TestMethod, TestCategory("CheckConstraint")]
+        public void CheckConstraintWithName() {
+            var mockA = new Mock<IField>();
+            mockA.Setup(f => f.Name).Returns(new FieldName("Position"));
+            mockA.Setup(f => f.Nullability).Returns(IsNullable.Yes);
+            mockA.Setup(f => f.DataType).Returns(DBType.Text);
+            var mockB = new Mock<IField>();
+            mockB.Setup(f => f.Name).Returns(new FieldName("JerseyNum"));
+            mockB.Setup(f => f.DataType).Returns(DBType.Int32);
+
+            var fieldA = mockA.Object;
+            var fieldB = mockB.Object;
+            var aExpr = new FieldExpression(fieldA);
+            var bExpr = new FieldExpression(fieldB);
+            var aLenExpr = new FieldExpression(FieldFunction.Length, fieldA);
+
+            var zeroClause = new ConstantValueClause(bExpr, ComparisonOperator.GreaterThan, new DBValue(0));
+            var posNotNullClause = new NullityClause(fieldA, NullityOperator.IsNotNull);
+            var posLengthClause = new ConstantValueClause(aLenExpr, ComparisonOperator.GreaterThan, new DBValue(0));
+            var jersey20Clause = new ConstantValueClause(bExpr, ComparisonOperator.LessThan, new DBValue(20));
+            var qbClause = new ConstantValueClause(aExpr, ComparisonOperator.Equal, new DBValue("QB"));
+            var qbLongClause = new ConstantValueClause(aExpr, ComparisonOperator.Equal, new DBValue("Quarterback"));
+            var clause = zeroClause
+                .And(Clause.IfThen(posNotNullClause, posLengthClause))
+                .And(Clause.IfThen(jersey20Clause, qbClause.Or(qbLongClause)));
+            var constraint = new CheckConstraint(new ConstraintName("CHK_QB#"), clause);
+
+            Assert.IsTrue(constraint.Name.Contains(new ConstraintName("CHK_QB#")));
+            var expected = "|CHK_QB#| ((JerseyNum > 0 <AND> (Length(Position) > 0 <OR> Position IS NULL)) <AND> " +
+                "((Position == \"QB\" <OR> Position == \"Quarterback\") <OR> JerseyNum >= 20))";
+            var actual = constraint.GenerateDeclaration(new MockBuilders());
+            Assert.AreEqual(new SqlSnippet(expected), actual);
+        }
+
+        [TestMethod, TestCategory("CheckConstraint")]
+        public void CheckConstraintGetFields() {
+            var mockA = new Mock<IField>();
+            mockA.Setup(f => f.Name).Returns(new FieldName("Position"));
+            mockA.Setup(f => f.Nullability).Returns(IsNullable.Yes);
+            mockA.Setup(f => f.DataType).Returns(DBType.Text);
+            var mockB = new Mock<IField>();
+            mockB.Setup(f => f.Name).Returns(new FieldName("JerseyNum"));
+            mockB.Setup(f => f.DataType).Returns(DBType.Int32);
+
+            var fieldA = mockA.Object;
+            var fieldB = mockB.Object;
+            var aExpr = new FieldExpression(fieldA);
+            var bExpr = new FieldExpression(fieldB);
+            var aLenExpr = new FieldExpression(FieldFunction.Length, fieldA);
+
+            var zeroClause = new ConstantValueClause(bExpr, ComparisonOperator.GreaterThan, new DBValue(0));
+            var posNotNullClause = new NullityClause(fieldA, NullityOperator.IsNotNull);
+            var posLengthClause = new ConstantValueClause(aLenExpr, ComparisonOperator.GreaterThan, new DBValue(0));
+            var jersey20Clause = new ConstantValueClause(bExpr, ComparisonOperator.LessThan, new DBValue(20));
+            var qbClause = new ConstantValueClause(aExpr, ComparisonOperator.Equal, new DBValue("QB"));
+            var qbLongClause = new ConstantValueClause(aExpr, ComparisonOperator.Equal, new DBValue("Quarterback"));
+            var clause = zeroClause
+                .And(Clause.IfThen(posNotNullClause, posLengthClause))
+                .And(Clause.IfThen(jersey20Clause, qbClause.Or(qbLongClause)));
+            var constraint = new CheckConstraint(clause);
+            var dependencies = constraint.GetDependentFields().ToArray();
+
+            Assert.AreEqual(6, dependencies.Length);
+            Assert.AreSame(fieldB, dependencies[0]);
+            Assert.AreSame(fieldA, dependencies[1]);
+            Assert.AreSame(fieldA, dependencies[2]);
+            Assert.AreSame(fieldA, dependencies[3]);
+            Assert.AreSame(fieldA, dependencies[4]);
+            Assert.AreSame(fieldB, dependencies[5]);
+        }
     }
 }

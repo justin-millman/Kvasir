@@ -38,5 +38,39 @@ namespace Test.Kvasir.Schema {
             var exception = Assert.ThrowsException<ArgumentException>(action);
             Assert.AreNotEqual(string.Empty, exception.Message);
         }
+
+        [TestMethod, TestCategory("ConstraintName")]
+        public void ValidConstraintNameNoTrim() {
+            var contents = "CHK_IsPrimeNumber";
+            var name = new ConstraintName(contents);
+
+            Assert.AreEqual(contents, (string?)name);
+        }
+
+        [TestMethod, TestCategory("ConstraintName")]
+        public void ValidConstraintNameTrim() {
+            var contents = "     CHK_GraduationYearIsAfterBirthdate ";
+            var name = new ConstraintName(contents);
+
+            Assert.AreEqual(contents.Trim(), (string?)name);
+        }
+
+        [TestMethod, TestCategory("ConstraintName")]
+        public void EmptyStringConstraintName() {
+            var empty = string.Empty;
+
+            void action() => new ConstraintName(empty);
+            var exception = Assert.ThrowsException<ArgumentException>(action);
+            Assert.AreNotEqual(string.Empty, exception.Message);
+        }
+
+        [TestMethod, TestCategory("ConstraintName")]
+        public void WhitespaceOnlyConstraintName() {
+            var whitespace = "    \n     \n\t  ";
+
+            void action() => new ConstraintName(whitespace);
+            var exception = Assert.ThrowsException<ArgumentException>(action);
+            Assert.AreNotEqual(string.Empty, exception.Message);
+        }
     }
 }

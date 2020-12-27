@@ -1,4 +1,5 @@
-﻿using Kvasir.Schema.Constraints;
+﻿using Kvasir.Schema;
+using Kvasir.Schema.Constraints;
 using System;
 
 namespace Kvasir.Transcription.Internal {
@@ -7,6 +8,15 @@ namespace Kvasir.Transcription.Internal {
     ///   Constraints.
     /// </summary>
     internal interface IConstraintDeclBuilder : IDeclBuilder {
+        /// <summary>
+        ///   Sets the name of the Constraint whose declaration is represented by the current state of this
+        ///   <see cref="IConstraintDeclBuilder"/>.
+        /// </summary>
+        /// <param name="name">
+        ///   The name.
+        /// </param>
+        void SetName(ConstraintName name);
+
         /// <summary>
         ///   Begins a new <c>AND</c> clause in the current constraint declaration.
         /// </summary>

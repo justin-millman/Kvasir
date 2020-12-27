@@ -4,6 +4,73 @@
         <name>Kvasir</name>
     </assembly>
     <members>
+        <member name="T:Kvasir.Schema.BasicField">
+            <summary>
+              An <see cref="T:Kvasir.Schema.IField"/> representing a single Field in a back-end database that has no implicit restrictions
+              on the values that may be assumed by the Field's data.
+            </summary>
+            <remarks>
+              <para>
+                Within Kvasir, the role of any <see cref="T:Kvasir.Schema.IField"/> is to describe the attributes of a Field that are
+                independent of the Table in which it appears. For example, the <see cref="T:Kvasir.Schema.IField"/> interface does not
+                expose a column index, as this is a function of the Field's presence in a Table rather than an an inherent
+                attribute of the Field itself. This also means that most constraints placed on a Field are considered
+                extrinsic to the Field definition and are therefore not carried by the <see cref="T:Kvasir.Schema.IField"/> implementation.
+              </para>
+              <para>
+                This pattern naturally extends to <see cref="T:Kvasir.Schema.BasicField"/>, which represents a Field where the set of
+                allowed values is implicitly equal to the codomain of the Field's <see cref="P:Kvasir.Schema.IField.DataType"/>. This does
+                not mean, however, that the set of allowed values for a <see cref="T:Kvasir.Schema.BasicField"/> cannot be contrained via
+                a <c>CHECK</c> (or equivalent) constraint at the Table; such a constriant would be perfectly valid.
+                However, a constraint in that vein would be fundamentally different than, for example, the inherent
+                constraint placed upon a Field representing an enumeration; such a Field would not be represented within
+                Kvasir by a <see cref="T:Kvasir.Schema.BasicField"/>.
+              </para>
+            </remarks>
+            <seealso cref="T:Kvasir.Schema.EnumField"/>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.DataType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.Nullability">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.DefaultValue">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.BasicField.#ctor(Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.BasicField.Name"/> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <param name="dataType">
+              The <see cref="P:Kvasir.Schema.BasicField.DataType"/> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <param name="nullability">
+              The <see cref="P:Kvasir.Schema.BasicField.Nullability"/> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <param name="defaultValue">
+              The <see cref="P:Kvasir.Schema.BasicField.DefaultValue"/> for the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <pre>
+              <paramref name="dataType"/> is not <see cref="P:Kvasir.Schema.DBType.Enumeration"/>.
+            </pre>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="nullability"/> is <see cref="F:Kvasir.Schema.IsNullable.No"/> but <paramref name="defaultValue"/> is
+              a <c>SOME</c> instance wrapping <see cref="P:Kvasir.Schema.DBValue.NULL"/>
+                --or--
+              if <paramref name="defaultValue"/> is a <c>SOME</c> instance wrapping a <see cref="T:Kvasir.Schema.DBValue"/> that is
+              <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)">not valid</see> for <paramref name="dataType"/>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Schema.Constraints.AndClause">
             <summary>
               A compound <see cref="T:Kvasir.Schema.Constraints.Clause"/> that represents the logical conjunction between two constituent
@@ -99,8 +166,8 @@
             </summary>
             <returns>
               A collection of the <see cref="T:Kvasir.Schema.IField">Fields</see> on whose value this <see cref="T:Kvasir.Schema.Constraints.Clause"/> is at least
-              partially dependent. The order of the see Fields is not defined, and Fields may be (but are not
-              necessarily) duplicated.
+              partially dependent. The order of the Fields is not defined, and Fields may be (but are not necessarily)
+              duplicated.
             </returns>
         </member>
         <member name="M:Kvasir.Schema.Constraints.Clause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
@@ -492,72 +559,75 @@
         <member name="M:Kvasir.Schema.Constraints.OrClause.AddDeclarationTo(Kvasir.Transcription.Internal.IConstraintDeclBuilder)">
             <inheritdoc/>
         </member>
-        <member name="T:Kvasir.Schema.BasicField">
+        <member name="T:Kvasir.Schema.CheckConstraint">
             <summary>
-              An <see cref="T:Kvasir.Schema.IField"/> representing a single Field in a back-end database that has no implicit restrictions
-              on the values that may be assumed by the Field's data.
+              An arbitrary <c>CHECK</c> constraint that applies to the values of one or more Fields.
             </summary>
-            <remarks>
-              <para>
-                Within Kvasir, the role of any <see cref="T:Kvasir.Schema.IField"/> is to describe the attributes of a Field that are
-                independent of the Table in which it appears. For example, the <see cref="T:Kvasir.Schema.IField"/> interface does not
-                expose a column index, as this is a function of the Field's presence in a Table rather than an an inherent
-                attribute of the Field itself. This also means that most constraints placed on a Field are considered
-                extrinsic to the Field definition and are therefore not carried by the <see cref="T:Kvasir.Schema.IField"/> implementation.
-              </para>
-              <para>
-                This pattern naturally extends to <see cref="T:Kvasir.Schema.BasicField"/>, which represents a Field where the set of
-                allowed values is implicitly equal to the codomain of the Field's <see cref="P:Kvasir.Schema.IField.DataType"/>. This does
-                not mean, however, that the set of allowed values for a <see cref="T:Kvasir.Schema.BasicField"/> cannot be contrained via
-                a <c>CHECK</c> (or equivalent) constraint at the Table; such a constriant would be perfectly valid.
-                However, a constraint in that vein would be fundamentally different than, for example, the inherent
-                constraint placed upon a Field representing an enumeration; such a Field would not be represented within
-                Kvasir by a <see cref="T:Kvasir.Schema.BasicField"/>.
-              </para>
-            </remarks>
-            <seealso cref="T:Kvasir.Schema.EnumField"/>
         </member>
-        <member name="P:Kvasir.Schema.BasicField.Name">
-            <inheritdoc/>
-        </member>
-        <member name="P:Kvasir.Schema.BasicField.DataType">
-            <inheritdoc/>
-        </member>
-        <member name="P:Kvasir.Schema.BasicField.Nullability">
-            <inheritdoc/>
-        </member>
-        <member name="P:Kvasir.Schema.BasicField.DefaultValue">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Schema.BasicField.#ctor(Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue})">
+        <member name="P:Kvasir.Schema.CheckConstraint.Name">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Schema.BasicField"/>.
+              The name of this <see cref="T:Kvasir.Schema.CheckConstraint"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.CheckConstraint.#ctor(Kvasir.Schema.Constraints.Clause)">
+            <summary>
+              Constructs a new nameless <see cref="T:Kvasir.Schema.CheckConstraint"/>.
+            </summary>
+            <param name="condition">
+              The condition body of the new <see cref="T:Kvasir.Schema.CheckConstraint"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.CheckConstraint.#ctor(Kvasir.Schema.ConstraintName,Kvasir.Schema.Constraints.Clause)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CheckConstraint"/> with a name.
             </summary>
             <param name="name">
-              The <see cref="P:Kvasir.Schema.BasicField.Name"/> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+              The <see cref="P:Kvasir.Schema.CheckConstraint.Name"/> of the new <see cref="T:Kvasir.Schema.CheckConstraint"/>.
             </param>
-            <param name="dataType">
-              The <see cref="P:Kvasir.Schema.BasicField.DataType"/> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            <param name="condition">
+              The condition body of the new <see cref="T:Kvasir.Schema.CheckConstraint"/>.
             </param>
-            <param name="nullability">
-              The <see cref="P:Kvasir.Schema.BasicField.Nullability"/> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
-            </param>
-            <param name="defaultValue">
-              The <see cref="P:Kvasir.Schema.BasicField.DefaultValue"/> for the new <see cref="T:Kvasir.Schema.BasicField"/>.
-            </param>
-            <pre>
-              <paramref name="dataType"/> is not <see cref="P:Kvasir.Schema.DBType.Enumeration"/>.
-            </pre>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="nullability"/> is <see cref="F:Kvasir.Schema.IsNullable.No"/> but <paramref name="defaultValue"/> is
-              a <c>SOME</c> instance wrapping <see cref="P:Kvasir.Schema.DBValue.NULL"/>
-                --or--
-              if <paramref name="defaultValue"/> is a <c>SOME</c> instance wrapping a <see cref="T:Kvasir.Schema.DBValue"/> that is
-              <see cref="M:Kvasir.Schema.DBType.IsValidValue(Kvasir.Schema.DBValue)">not valid</see> for <paramref name="dataType"/>.
-            </exception>
         </member>
-        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
-            <inheritdoc/>
+        <member name="M:Kvasir.Schema.CheckConstraint.GetDependentFields">
+            <summary>
+              Gets a collection of the <see cref="T:Kvasir.Schema.IField">Fields</see> on whose value this
+              <see cref="T:Kvasir.Schema.CheckConstraint"/> is at least partially dependent.
+            </summary>
+            <returns>
+              A collection of the <see cref="T:Kvasir.Schema.IField">Fields</see> on whose value this <see cref="T:Kvasir.Schema.CheckConstraint"/> is
+              at least partially dependent. The order of the Fields is not defined, and Fields may be (but are not
+              necessarily) duplicated.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.CheckConstraint.GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
+            <summary>
+              Generates a <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.CheckConstraint"/> as part of a
+              <c>CREATE TABLE</c> statement.
+            </summary>
+            <param name="syntax">
+              The <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/> exposing the <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder">IDeclBuilders</see> that this
+              <see cref="T:Kvasir.Schema.CheckConstraint"/> should use to generate its declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.CheckConstraint"/> within a <c>CREATE TABLE</c>
+              statement according to the syntax rules of <paramref name="syntax"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.ConstraintName">
+            <summary>
+              The name of an <see cref="T:Kvasir.Schema.CheckConstraint"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.ConstraintName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.ConstraintName"/>.
+            </summary>
+            <param name="name">
+              The name. Any leading and trailing whitespace is trimmed.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is the empty string or consists only of whitespace characters.
+            </exception>
         </member>
         <member name="T:Kvasir.Schema.DBType">
             <summary>
@@ -1274,6 +1344,15 @@
               An <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder"/> that builds declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for non-Key
               Constraints.
             </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.SetName(Kvasir.Schema.ConstraintName)">
+            <summary>
+              Sets the name of the Constraint whose declaration is represented by the current state of this
+              <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclBuilder"/>.
+            </summary>
+            <param name="name">
+              The name.
+            </param>
         </member>
         <member name="M:Kvasir.Transcription.Internal.IConstraintDeclBuilder.NewAndClause">
             <summary>

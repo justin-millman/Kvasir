@@ -67,8 +67,8 @@ namespace Kvasir.Schema.Constraints {
         /// </summary>
         /// <returns>
         ///   A collection of the <see cref="IField">Fields</see> on whose value this <see cref="Clause"/> is at least
-        ///   partially dependent. The order of the see Fields is not defined, and Fields may be (but are not
-        ///   necessarily) duplicated.
+        ///   partially dependent. The order of the Fields is not defined, and Fields may be (but are not necessarily)
+        ///   duplicated.
         /// </returns>
         internal abstract IEnumerable<IField> GetDependentFields();
 

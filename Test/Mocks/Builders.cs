@@ -61,12 +61,20 @@ namespace Test.Mocks {
     internal sealed class MockConstraintSyntaxGenerator : IConstraintDeclBuilder {
         public MockConstraintSyntaxGenerator() {
             tokens_ = new Stack<string>();
+            name_ = string.Empty;
         }
         public SqlSnippet Build() {
+            if (name_ != string.Empty) {
+                return new SqlSnippet($"|{name_}| {tokens_.Pop()}");
+            }
             return new SqlSnippet(tokens_.Pop());
         }
         public void Reset() {
             tokens_.Clear();
+            name_ = string.Empty;
+        }
+        public void SetName(ConstraintName name) {
+            name_ = (string)name!;
         }
         public IDisposable NewAndClause() {
             tokens_.Push(AND);
@@ -131,6 +139,7 @@ namespace Test.Mocks {
 
 
         private readonly Stack<string> tokens_;
+        private string name_;
         private static readonly string AND = "<AND>";
         private static readonly string OR = "<OR>";
     }
