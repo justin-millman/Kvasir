@@ -12,7 +12,7 @@ namespace Kvasir.Transcription.Internal {
         ///   restrictions.
         /// </summary>
         /// <param name="self">
-        ///   The <see cref="IFieldDeclarationGenerator"/> with which to generate the <see cref="SqlSnippet"/>.
+        ///   The <see cref="IFieldDeclGenerator"/> with which to generate the <see cref="SqlSnippet"/>.
         /// </param>
         /// <param name="name">
         ///   The name of the Field.
@@ -26,7 +26,7 @@ namespace Kvasir.Transcription.Internal {
         /// <param name="defaultValue">
         ///   The default value for the Field.
         /// </param>
-        public static SqlSnippet GenerateSql(this IFieldDeclarationGenerator self, FieldName name, DBType dataType,
+        public static SqlSnippet GenerateSql(this IFieldDeclGenerator self, FieldName name, DBType dataType,
             IsNullable nullability, Option<DBValue> defaultValue) {
 
             return self.GenerateSql(name, dataType, nullability, defaultValue, Enumerable.Empty<DBValue>());

@@ -113,7 +113,7 @@ namespace Kvasir.Schema {
 
         /// <inheritdoc/>
         SqlSnippet IField.GenerateDeclaration(IGeneratorCollection syntax) {
-            return syntax.FieldDeclarationGenerator.GenerateSql(Name, DataType, Nullability, DefaultValue, Enumerators);
+            return syntax.FieldDeclGenerator.GenerateSql(Name, DataType, Nullability, DefaultValue, Enumerators);
         }
     }
 }
