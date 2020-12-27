@@ -7,7 +7,7 @@ namespace Kvasir.Transcription.Internal {
     ///   A factory that provides methods for generating declaratory <see cref="SqlSnippet">SqlSnippets</see> for
     ///   Fields.
     /// </summary>
-    internal interface IFieldDeclarationGenerator {
+    internal interface IFieldDeclGenerator {
         /// <summary>
         ///   Generates a declaratory <see cref="SqlSnippet"/> for a Field with various traits.
         /// </summary>
@@ -26,6 +26,10 @@ namespace Kvasir.Transcription.Internal {
         /// <param name="allowedValues">
         ///   The collection of values that the Field is allowed to take.
         /// </param>
+        /// <returns>
+        ///   A <see cref="SqlSnippet"/> consisting of the declaration for an <see cref="IField"/> with the given
+        ///   traits.
+        /// </returns>
         /// <seealso cref="IField.GenerateDeclaration(IGeneratorCollection)"/>
         SqlSnippet GenerateSql(FieldName name, DBType dataType, IsNullable nullability, Option<DBValue> defaultValue,
             IEnumerable<DBValue> allowedValues);

@@ -5,8 +5,13 @@
     /// </summary>
     internal interface IGeneratorCollection {
         /// <value>
-        ///   The <see cref="IFieldDeclarationGenerator"/> for this collection.
+        ///   The <see cref="IFieldDeclGenerator"/> for this collection.
         /// </value>
-        public IFieldDeclarationGenerator FieldDeclarationGenerator { get; }
+        IFieldDeclGenerator FieldDeclGenerator { get; }
+
+        /// <value>
+        ///   The <see cref="IConstraintDeclGenerator"/> for this collection.
+        /// </value>
+        IConstraintDeclGenerator ConstraintDeclGenerator { get; }
     }
 }
