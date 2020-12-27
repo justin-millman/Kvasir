@@ -50,7 +50,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{field.Name} IS NOT NULL");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -68,7 +68,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{field.Name} IS NULL");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -133,7 +133,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} NOT IN ('N', 'S', 'E', 'W')");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -152,7 +152,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} IN ('(', ')', '[', ']', '{{', '}}')");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -255,7 +255,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} != {constant}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -274,7 +274,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} == {constant}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -293,7 +293,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} >= {constant}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -312,7 +312,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} <= {constant}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -331,7 +331,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} > {constant}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -350,7 +350,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{expr.Field.Name} < {constant}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -372,7 +372,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{lhs.Field.Name} != {rhs.Field.Name}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -394,7 +394,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{lhs.Field.Name} == {rhs.Field.Name}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -416,7 +416,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{lhs.Field.Name} >= {rhs.Field.Name}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -438,7 +438,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{lhs.Field.Name} <= {rhs.Field.Name}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -460,7 +460,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{lhs.Field.Name} > {rhs.Field.Name}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -482,7 +482,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = new SqlSnippet($"{lhs.Field.Name} < {rhs.Field.Name}");
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(expected, actual);
         }
 
@@ -538,7 +538,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             clause.AddDeclarationTo(mockGenerator);
             var expected = "(URL IS NOT NULL <AND> URL != \"www.google.com\")";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -559,7 +559,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = "(URL IS NULL <OR> URL == \"www.google.com\")";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -597,7 +597,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             clause.AddDeclarationTo(mockGenerator);
             var expected = "(Age > 1 <OR> Age <= 100)";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -617,7 +617,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = "(Age <= 1 <AND> Age > 100)";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -655,7 +655,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             clause.AddDeclarationTo(mockGenerator);
             var expected = $"(({name} != '~' <AND> {name} <= 'Z') <OR> ({name} == '~' <AND> {name} > 'Z'))";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -676,7 +676,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = $"(({name} == '~' <OR> {name} > 'Z') <AND> ({name} != '~' <OR> {name} <= 'Z'))";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -715,7 +715,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             clause.AddDeclarationTo(mockGenerator);
             var expected = "(Temperature == -35.2 <OR> Temperature > 0)";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -735,7 +735,7 @@ namespace Test.Kvasir.Schema {
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
             var expected = "(Temperature != -35.2 <AND> Temperature <= 0)";
-            var actual = mockGenerator.MakeSnippet();
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 
@@ -773,8 +773,9 @@ namespace Test.Kvasir.Schema {
             var name = field.Name;
             var mockGenerator = new MockConstraintSyntaxGenerator();
             clause.AddDeclarationTo(mockGenerator);
-            var expected = $"(({name} IS NOT NULL <AND> Length({name}) > 0) <OR> ({name} IS NULL <AND> Length({name}) <= 0))";
-            var actual = mockGenerator.MakeSnippet();
+            var expected = $"(({name} IS NOT NULL <AND> Length({name}) > 0) <OR> ({name} IS NULL <AND> " +
+                $"Length({name}) <= 0))";
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
         
@@ -795,8 +796,9 @@ namespace Test.Kvasir.Schema {
             var name = field.Name;
             var mockGenerator = new MockConstraintSyntaxGenerator();
             negation.AddDeclarationTo(mockGenerator);
-            var expected = $"(({name} IS NULL <OR> Length({name}) <= 0) <AND> ({name} IS NOT NULL <OR> Length({name}) > 0))";
-            var actual = mockGenerator.MakeSnippet();
+            var expected = $"(({name} IS NULL <OR> Length({name}) <= 0) <AND> ({name} IS NOT NULL <OR> " +
+                $"Length({name}) > 0))";
+            var actual = mockGenerator.Build();
             Assert.AreEqual(new SqlSnippet(expected), actual);
         }
 

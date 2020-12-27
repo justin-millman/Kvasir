@@ -43,10 +43,10 @@ namespace Kvasir.Schema.Constraints {
         }
 
         /// <inheritdoc/>
-        internal sealed override void AddDeclarationTo(IConstraintDeclGenerator decl) {
-            using var _ = decl.NewAndClause();
-            LHS.AddDeclarationTo(decl);
-            RHS.AddDeclarationTo(decl);
+        internal sealed override void AddDeclarationTo(IConstraintDeclBuilder builder) {
+            using var _ = builder.NewAndClause();
+            LHS.AddDeclarationTo(builder);
+            RHS.AddDeclarationTo(builder);
         }
     }
 }
