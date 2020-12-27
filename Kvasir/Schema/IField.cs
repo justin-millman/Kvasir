@@ -76,7 +76,7 @@ namespace Kvasir.Schema {
             : base(name.Trim()) {
 
             if (string.IsNullOrWhiteSpace(Contents)) {
-                var msg = "The name of a Field must have non-zero length when leading/trailing whitespae is ignored";
+                var msg = "The name of a Field must have non-zero length when leading/trailing whitespace is ignored";
                 throw new ArgumentException(msg);
             }
         }
