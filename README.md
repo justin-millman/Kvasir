@@ -1,6 +1,6 @@
 ﻿[![Ubuntu Build (travis-ci.com)](https://img.shields.io/travis/com/justin-millman/Kvasir?label=Ubuntu%20Build&logo=ubuntu)](https://travis-ci.com/justin-millman/Kvasir)
 [![Windows Build (appveyor.com)](https://img.shields.io/appveyor/build/justin-millman/Kvasir/master?label=Windows%20Build&logo=windows)](https://ci.appveyor.com/project/justin-millman/kvasir)
-[![Code Coverage (coveralls.com)](https://img.shields.io/coveralls/github/justin-millman/Kvasir/master)](https://coveralls.io/github/justin-millman/KVasir)
+[![Code Coverage (coveralls.com)](https://img.shields.io/coveralls/github/justin-millman/Kvasir/master)](https://coveralls.io/github/justin-millman/Kvasir)
 [![License](https://img.shields.io/github/license/justin-millman/Kvasir)](https://github.com/justin-millman/Kvasir/blob/master/LICENSE.txt)
 [![Languages](https://img.shields.io/github/languages/count/justin-millman/Kvasir?color=blueviolet)](https://github.com/justin-millman/Kvasir)
 [![Code Size](https://img.shields.io/github/languages/code-size/justin-millman/Kvasir)](https://github.com/justin-millman/Kvasir)

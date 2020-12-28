@@ -12,6 +12,9 @@ namespace Test.Mocks {
         public IConstraintDeclBuilder ConstraintDeclBuilder() {
             return new MockConstraintSyntaxGenerator();
         }
+        public IKeyDeclBuilder KeyDeclBuilder() {
+            return new MockKeySyntaxGenerator();
+        }
     }
 
     internal sealed class MockFieldSyntaxGenerator : IFieldDeclBuilder {
@@ -57,7 +60,6 @@ namespace Test.Mocks {
         private string defaultValue_;
         private string restriction_;
     }
-
     internal sealed class MockConstraintSyntaxGenerator : IConstraintDeclBuilder {
         public MockConstraintSyntaxGenerator() {
             tokens_ = new Stack<string>();
@@ -142,5 +144,37 @@ namespace Test.Mocks {
         private string name_;
         private static readonly string AND = "<AND>";
         private static readonly string OR = "<OR>";
+    }
+    internal sealed class MockKeySyntaxGenerator : IKeyDeclBuilder {
+        public MockKeySyntaxGenerator() {
+            name_ = "/unnamed/";
+            fields_ = new List<string>();
+            primacy_ = "UNIQUE";
+        }
+        public SqlSnippet Build() {
+            return new SqlSnippet($"CONSTRAINT {name_} {primacy_} ({string.Join(", ", fields_)})");
+        }
+        public void Reset() {
+            name_ = "/unnamed/";
+            fields_.Clear();
+            primacy_ = "UNIQUE";
+        }
+        public void SetName(KeyName name) {
+            name_ = (string)name!;
+        }
+        public void AddField(FieldName fieldName) {
+            var name = (string)fieldName!;
+            if (!fields_.Contains(name)) {
+                fields_.Add(name);
+            }
+        }
+        public void SetAsPrimary() {
+            primacy_ = "PRIMARY-KEY";
+        }
+
+
+        private string name_;
+        private readonly List<string> fields_;
+        private string primacy_;
     }
 }
