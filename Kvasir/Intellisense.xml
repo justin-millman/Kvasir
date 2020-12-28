@@ -71,6 +71,49 @@
         <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Schema.CandidateKey">
+            <summary>
+              An <see cref="T:Kvasir.Schema.IKey"/> representing a <c>UNIQUE</c> constraint on a Table in a back-end relational database.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.CandidateKey.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.#ctor">
+            <summary>
+              Constructs a new nameless <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.#ctor(Kvasir.Schema.KeyName)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CandidateKey"/> with a name.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.CandidateKey.Name"/> of the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.AddField(Kvasir.Schema.IField)">
+            <summary>
+              Adds a new <see cref="T:Kvasir.Schema.IField"/> to this <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </summary>
+            <param name="field">
+              The new <see cref="T:Kvasir.Schema.IField"/>.
+            </param>
+            <remarks>
+              If <paramref name="field"/> has the same name (using as case-insensitive comparison) as any
+              <see cref="T:Kvasir.Schema.IField"/> that is already part of this <see cref="T:Kvasir.Schema.CandidateKey"/>, no action is performed.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.Kvasir#Schema#IKey#GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
+            <inheritdoc/>
+            <pre>
+              At least one <see cref="T:Kvasir.Schema.IField"/> has been <see cref="M:Kvasir.Schema.CandidateKey.AddField(Kvasir.Schema.IField)">added</see> to this
+              <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </pre>
+        </member>
         <member name="T:Kvasir.Schema.Constraints.AndClause">
             <summary>
               A compound <see cref="T:Kvasir.Schema.Constraints.Clause"/> that represents the logical conjunction between two constituent
@@ -1313,6 +1356,107 @@
         <member name="F:Kvasir.Schema.IsNullable.Yes">
             <summary>Indicates that an <see cref="T:Kvasir.Schema.IField"/> is nullable</summary>
         </member>
+        <member name="T:Kvasir.Schema.IKey">
+            <summary>
+              The interface representing a single Key in a back-end relational database.
+            </summary>
+            <remarks>
+              This interface can only be implemented by classes within the <see cref="N:Kvasir"/> assembly.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.IKey.Name">
+            <value>
+              The name of this <see cref="T:Kvasir.Schema.IKey"/>.
+            </value>
+        </member>
+        <member name="M:Kvasir.Schema.IKey.GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the set of <see cref="T:Kvasir.Schema.IField">Fields</see> that comprise this
+              <see cref="T:Kvasir.Schema.IKey"/>. The order of iteration is not defined but is guaranteed to be the same for repeated
+              iterations.
+            </summary>
+            <returns>
+              An enumerator that iterates over the set of <see cref="T:Kvasir.Schema.IField">Fields</see> that comprise this
+              <see cref="T:Kvasir.Schema.IKey"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
+            <summary>
+              Generates a <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.IKey"/> as part of a <c>CREATE
+              TABLE</c> statement.
+            </summary>
+            <param name="syntax">
+              The <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/> exposing the <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder">IDeclBuilders</see> that this
+              <see cref="T:Kvasir.Schema.IKey"/> should use to generate its declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/>.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.Internal.SqlSnippet"/> that declares this <see cref="T:Kvasir.Schema.IKey"/> within a <c>CREATE TABLE</c>
+              statement according to the syntax rules of <paramref name="syntax"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.KeyName">
+            <summary>
+              The name of an <see cref="T:Kvasir.Schema.IKey"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.KeyName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.KeyName"/>.
+            </summary>
+            <param name="name">
+              The name. Any leading and trailing whitespace is trimmed.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is the empty string or consists only of whitespace characters.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.PrimaryKey">
+            <summary>
+              An <see cref="T:Kvasir.Schema.IKey"/> representing a <c>PRIMARY KEY</c> constraint on a Table in a back-end relational
+              database.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.PrimaryKey.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.#ctor">
+            <summary>
+              Constructs a new nameless <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.#ctor(Kvasir.Schema.KeyName)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CandidateKey"/> with a name.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.PrimaryKey.Name"/> of the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.AddField(Kvasir.Schema.IField)">
+            <summary>
+              Adds a new <see cref="T:Kvasir.Schema.IField"/> to this <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </summary>
+            <param name="field">
+              The new <see cref="T:Kvasir.Schema.IField"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="field"/> is <see cref="P:Kvasir.Schema.IField.Nullability">nullable</see>.
+            </exception>
+            <remarks>
+              If <paramref name="field"/> has the same name (using as case-insensitive comparison) as any
+              <see cref="T:Kvasir.Schema.IField"/> that is already part of this <see cref="T:Kvasir.Schema.CandidateKey"/>, no action is performed.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.Kvasir#Schema#IKey#GenerateDeclaration(Kvasir.Transcription.Internal.IBuilderCollection)">
+            <inheritdoc/>
+            <pre>
+              At least one <see cref="T:Kvasir.Schema.IField"/> has been <see cref="M:Kvasir.Schema.PrimaryKey.AddField(Kvasir.Schema.IField)">added</see> to this
+              <see cref="T:Kvasir.Schema.PrimaryKey"/>.
+            </pre>
+        </member>
         <member name="T:Kvasir.Transcription.Internal.IBuilderCollection">
             <summary>
               A collection of <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder">IDeclBuilders</see> for generating the declaratory
@@ -1336,6 +1480,16 @@
             </summary>
             <returns>
               An <see cref="T:Kvasir.Transcription.Internal.IConstraintDeclBuilder"/> in its initial (or "reset") state that uses the rules of this
+              <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IBuilderCollection.KeyDeclBuilder">
+            <summary>
+              Exposes an <see cref="T:Kvasir.Transcription.Internal.IKeyDeclBuilder"/> using the syntax of this <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/> that
+              is in its initial (or "reset") state.
+            </summary>
+            <returns>
+              An <see cref="T:Kvasir.Transcription.Internal.IKeyDeclBuilder"/> in its initial (or "reset") state that uses the rules of this
               <see cref="T:Kvasir.Transcription.Internal.IBuilderCollection"/>.
             </returns>
         </member>
@@ -1471,6 +1625,36 @@
             <param name="enumerators">
               The list of alloed values.
             </param>
+        </member>
+        <member name="T:Kvasir.Transcription.Internal.IKeyDeclBuilder">
+            <summary>
+              An <see cref="T:Kvasir.Transcription.Internal.IDeclBuilder"/> that builds declaratory <see cref="T:Kvasir.Transcription.Internal.SqlSnippet">SqlSnippets</see> for internal
+              (as opposed to foreign) Keys.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IKeyDeclBuilder.SetName(Kvasir.Schema.KeyName)">
+            <summary>
+              Sets the name of the Key whose declaration is represented by the current state of this
+              <see cref="T:Kvasir.Transcription.Internal.IKeyDeclBuilder"/>.
+            </summary>
+            <param name="name">
+              The name.
+            </param>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IKeyDeclBuilder.AddField(Kvasir.Schema.FieldName)">
+            <summary>
+              Adds an <see cref="T:Kvasir.Schema.IField"/> by name to the collection of Fields that make up the Key whose declaration
+              is represented by the current state of this <see cref="T:Kvasir.Transcription.Internal.IKeyDeclBuilder"/>.
+            </summary>
+            <param name="fieldName">
+              The name of the Field.
+            </param>
+        </member>
+        <member name="M:Kvasir.Transcription.Internal.IKeyDeclBuilder.SetAsPrimary">
+            <summary>
+              Sets the Key whose declaration is represented by the current state of this <see cref="T:Kvasir.Transcription.Internal.IKeyDeclBuilder"/>
+              as a <c>PRIMARY KEY</c>.
+            </summary>
         </member>
         <member name="T:Kvasir.Transcription.Internal.SqlSnippet">
             <summary>

@@ -23,5 +23,15 @@
         ///   <see cref="IBuilderCollection"/>.
         /// </returns>
         IConstraintDeclBuilder ConstraintDeclBuilder();
+
+        /// <summary>
+        ///   Exposes an <see cref="IKeyDeclBuilder"/> using the syntax of this <see cref="IBuilderCollection"/> that
+        ///   is in its initial (or "reset") state.
+        /// </summary>
+        /// <returns>
+        ///   An <see cref="IKeyDeclBuilder"/> in its initial (or "reset") state that uses the rules of this
+        ///   <see cref="IBuilderCollection"/>.
+        /// </returns>
+        IKeyDeclBuilder KeyDeclBuilder();
     }
 }
