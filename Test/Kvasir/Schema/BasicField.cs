@@ -1,9 +1,9 @@
 ﻿using Kvasir.Schema;
 using Kvasir.Transcription.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Optional;
 using System;
-using Test.Mocks;
 
 namespace Test.Kvasir.Schema {
     [TestClass]
@@ -75,16 +75,38 @@ namespace Test.Kvasir.Schema {
         }
 
         [TestMethod, TestCategory("SQL Declaration")]
-        public void GenerateSQL() {
+        public void GenerateSQLWithDefault() {
             var name = new FieldName("Title");
             var type = DBType.Text;
             var nullability = IsNullable.No;
-            var defaultValue = Option.Some(DBValue.Create("A Tale of Two Cities"));
-            var field = new BasicField(name, type, nullability, defaultValue);
+            var defaultValue = DBValue.Create("A Tale of Two Cities");
+            var field = new BasicField(name, type, nullability, Option.Some(defaultValue));
 
-            var expected = "Title Kvasir.Schema.DBType IS NOT NULL --\"A Tale of Two Cities\"-- := (all values)";
-            var actual = (field as IField).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(new SqlSnippet(expected), actual);
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (field as IField).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.FieldBuilder().Verify(f => f.SetName(name), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetName(name), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetDataType(type), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetNullability(nullability), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetDefaultValue(defaultValue), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.Build(), Times.Exactly(1));
+            mockBuilders.FieldBuilder().VerifyNoOtherCalls();
+        }
+
+        [TestMethod, TestCategory("SQL Declaration")]
+        public void GenerateSQLNoDefault() {
+            var name = new FieldName("PublicationDate");
+            var type = DBType.DateTime;
+            var nullability = IsNullable.No;
+            var field = new BasicField(name, type, nullability, Option.None<DBValue>());
+
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (field as IField).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.FieldBuilder().Verify(f => f.SetName(name), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetDataType(type), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetNullability(nullability), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.Build(), Times.Exactly(1));
+            mockBuilders.FieldBuilder().VerifyNoOtherCalls();
         }
     }
 }

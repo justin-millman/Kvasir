@@ -1941,6 +1941,29 @@
               The raw contents of this <see cref="T:Cybele.ConceptString`1"/>.
             </value>
         </member>
+        <member name="T:Cybele.Extensions.EnumerableExtensions">
+            <summary>
+              A collection of extension methods that extend <see cref="T:System.Collections.Generic.IEnumerable`1"/> and <see cref="T:System.Collections.Generic.IEnumerator`1"/>.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.EnumerableExtensions.ToEnumerable``1(System.Collections.Generic.IEnumerator{``0})">
+            <summary>
+              Generates an <see cref="T:System.Collections.Generic.IEnumerable`1"/> whose contents are defined by an enumerator.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of object in the enumerator, and therefore in the resulting
+              <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </typeparam>
+            <param name="self">
+              The source <see cref="T:System.Collections.Generic.IEnumerator`1"/>.
+            </param>
+            <post>
+              <paramref name="self"/> has been reset.
+            </post>
+            <returns>
+              An <see cref="T:System.Collections.Generic.IEnumerable`1"/> whose contents match the sequence produced by <paramref name="self"/>.
+            </returns>
+        </member>
         <member name="T:Cybele.Extensions.EnumExtensions">
             <summary>
               A collection of methods that extend user-defined <see cref="T:System.Enum"/> types.

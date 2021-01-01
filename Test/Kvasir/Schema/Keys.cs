@@ -1,159 +1,205 @@
-﻿using Kvasir.Schema;
+﻿using Cybele.Extensions;
+using Kvasir.Schema;
 using Kvasir.Transcription.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Test.Mocks;
 
 namespace Test.Kvasir.Schema {
     [TestClass]
     public class KeyTests {
         [TestMethod, TestCategory("CandidateKey")]
         public void CandidateKeyNoName() {
-            var mock = new Mock<IField>();
-            mock.Setup(f => f.Name).Returns(new FieldName("StudentID"));
-
+            var mockField = new Mock<IField>().WithName("StudentID");
             var key = new CandidateKey();
-            key.AddField(mock.Object);
-            Assert.IsFalse(key.Name.HasValue);
+            key.AddField(mockField.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
-            var expected = new SqlSnippet("CONSTRAINT /unnamed/ UNIQUE (StudentID)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.IsFalse(key.Name.HasValue);
+            Assert.AreEqual(1, fields.Length);
+            Assert.AreSame(mockField.Object, fields[0]);
         }
 
         [TestMethod, TestCategory("CandidateKey")]
         public void CandidateKeyWithName() {
-            var mock = new Mock<IField>();
-            mock.Setup(f => f.Name).Returns(new FieldName("SSN"));
-
+            var mockField = new Mock<IField>().WithName("SSN");
             var name = new KeyName("KEY_SSN");
             var key = new CandidateKey(name);
-            key.AddField(mock.Object);
+            key.AddField(mockField.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
             Assert.IsTrue(key.Name.Contains(name));
-            var expected = new SqlSnippet("CONSTRAINT KEY_SSN UNIQUE (SSN)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(1, fields.Length);
+            Assert.AreSame(mockField.Object, fields[0]);
         }
 
         [TestMethod, TestCategory("CandidateKey")]
         public void CandidateKeyAddDuplicateField() {
-            var mockA = new Mock<IField>();
-            mockA.Setup(f => f.Name).Returns(new FieldName("Channel"));
-            var mockB = new Mock<IField>();
-            mockB.Setup(f => f.Name).Returns(new FieldName("IsNews"));
-
+            var mockFieldA = new Mock<IField>().WithName("Channel");
+            var mockFieldB = new Mock<IField>().WithName("IsNews");
             var key = new CandidateKey();
-            key.AddField(mockA.Object);
-            key.AddField(mockB.Object);
-            key.AddField(mockB.Object);
-            key.AddField(mockA.Object);
-            key.AddField(mockB.Object);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+            key.AddField(mockFieldB.Object);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
-            var expected = new SqlSnippet("CONSTRAINT /unnamed/ UNIQUE (Channel, IsNews)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.IsFalse(key.Name.HasValue);
+            Assert.AreEqual(2, fields.Length);
+            Assert.AreSame(mockFieldA.Object, fields[0]);
+            Assert.AreSame(mockFieldB.Object, fields[1]);
         }
 
         [TestMethod, TestCategory("CandidateKey")]
         public void CandidateKeyAddRepeatNameDifferentField() {
-            var mockA = new Mock<IField>();
-            mockA.Setup(f => f.Name).Returns(new FieldName("ISBN"));
-            var mockB = new Mock<IField>();
-            mockB.Setup(f => f.Name).Returns(mockA.Object.Name);
-
+            var mockFieldA = new Mock<IField>().WithName("ISBN");
+            var mockFieldB = new Mock<IField>().WithName("ISBN");
             var key = new CandidateKey();
-            key.AddField(mockA.Object);
-            key.AddField(mockB.Object);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
-            var expected = new SqlSnippet("CONSTRAINT /unnamed/ UNIQUE (ISBN)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.IsFalse(key.Name.HasValue);
+            Assert.AreEqual(1, fields.Length);
+            Assert.AreSame(mockFieldA.Object, fields[0]);
+        }
+
+        [TestMethod, TestCategory("CandidateKey")]
+        public void CandidateKeySQLNoName() {
+            var mockFieldA = new Mock<IField>().WithName("City");
+            var mockFieldB = new Mock<IField>().WithName("State");
+            var key = new CandidateKey();
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (key as IKey).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldA.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldB.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.Build(), Times.Exactly(1));
+            mockBuilders.KeyBuilder().VerifyNoOtherCalls();
+        }
+
+        [TestMethod, TestCategory("CandidateKey")]
+        public void CandidateKeySQLWithName() {
+            var mockFieldA = new Mock<IField>().WithName("City");
+            var mockFieldB = new Mock<IField>().WithName("State");
+            var name = new KeyName("KEY_Location");
+            var key = new CandidateKey(name);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (key as IKey).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.KeyBuilder().Verify(k => k.SetName(name), Times.AtLeastOnce());
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldA.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldB.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.Build(), Times.Exactly(1));
+            mockBuilders.KeyBuilder().VerifyNoOtherCalls();
         }
 
         [TestMethod, TestCategory("PrimaryKey")]
         public void PrimaryKeyNoName() {
-            var mock = new Mock<IField>();
-            mock.Setup(f => f.Name).Returns(new FieldName("StudentID"));
-            mock.Setup(f => f.Nullability).Returns(IsNullable.No);
-
+            var mockField = new Mock<IField>().WithName("StudentID");
             var key = new PrimaryKey();
-            key.AddField(mock.Object);
-            Assert.IsFalse(key.Name.HasValue);
+            key.AddField(mockField.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
-            var expected = new SqlSnippet("CONSTRAINT /unnamed/ PRIMARY-KEY (StudentID)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.IsFalse(key.Name.HasValue);
+            Assert.AreEqual(1, fields.Length);
+            Assert.AreSame(mockField.Object, fields[0]);
         }
 
         [TestMethod, TestCategory("PrimaryKey")]
         public void PrimaryKeyWithName() {
-            var mock = new Mock<IField>();
-            mock.Setup(f => f.Name).Returns(new FieldName("SSN"));
-            mock.Setup(f => f.Nullability).Returns(IsNullable.No);
-
+            var mockField = new Mock<IField>().WithName("SSN");
             var name = new KeyName("PKEY_SSN");
             var key = new PrimaryKey(name);
-            key.AddField(mock.Object);
+            key.AddField(mockField.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
             Assert.IsTrue(key.Name.Contains(name));
-            var expected = new SqlSnippet("CONSTRAINT PKEY_SSN PRIMARY-KEY (SSN)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(1, fields.Length);
+            Assert.AreSame(mockField.Object, fields[0]);
         }
 
         [TestMethod, TestCategory("PrimaryKey")]
         public void PrimaryKeyAddDuplicateField() {
-            var mockA = new Mock<IField>();
-            mockA.Setup(f => f.Name).Returns(new FieldName("Channel"));
-            mockA.Setup(f => f.Nullability).Returns(IsNullable.No);
-            var mockB = new Mock<IField>();
-            mockB.Setup(f => f.Name).Returns(new FieldName("IsNews"));
-            mockB.Setup(f => f.Nullability).Returns(IsNullable.No);
-
+            var mockFieldA = new Mock<IField>().WithName("Channel");
+            var mockFieldB = new Mock<IField>().WithName("IsNews");
             var key = new PrimaryKey();
-            key.AddField(mockA.Object);
-            key.AddField(mockB.Object);
-            key.AddField(mockB.Object);
-            key.AddField(mockA.Object);
-            key.AddField(mockB.Object);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+            key.AddField(mockFieldB.Object);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
-            var expected = new SqlSnippet("CONSTRAINT /unnamed/ PRIMARY-KEY (Channel, IsNews)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.IsFalse(key.Name.HasValue);
+            Assert.AreEqual(2, fields.Length);
+            Assert.AreSame(mockFieldA.Object, fields[0]);
+            Assert.AreSame(mockFieldB.Object, fields[1]);
         }
 
         [TestMethod, TestCategory("PrimaryKey")]
         public void PrimaryKeyAddRepeatNameDifferentField() {
-            var mockA = new Mock<IField>();
-            mockA.Setup(f => f.Name).Returns(new FieldName("ISBN"));
-            mockA.Setup(f => f.Nullability).Returns(IsNullable.No);
-            var mockB = new Mock<IField>();
-            mockB.Setup(f => f.Name).Returns(mockA.Object.Name);
-            mockB.Setup(f => f.Nullability).Returns(IsNullable.No);
-
+            var mockFieldA = new Mock<IField>().WithName("ISBN");
+            var mockFieldB = new Mock<IField>().WithName("ISBN");
             var key = new PrimaryKey();
-            key.AddField(mockA.Object);
-            key.AddField(mockB.Object);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+            var fields = key.GetEnumerator().ToEnumerable().ToArray();
 
-            var expected = new SqlSnippet("CONSTRAINT /unnamed/ PRIMARY-KEY (ISBN)");
-            var actual = (key as IKey).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(expected, actual);
+            Assert.IsFalse(key.Name.HasValue);
+            Assert.AreEqual(1, fields.Length);
+            Assert.AreSame(mockFieldA.Object, fields[0]);
         }
 
         [TestMethod, TestCategory("PrimaryKey")]
         public void PrimaryKeyNullableField() {
-            var mock = new Mock<IField>();
-            mock.Setup(f => f.Name).Returns(new FieldName("SaturatedFat"));
-            mock.Setup(f => f.Nullability).Returns(IsNullable.Yes);
-
+            var mockField = new Mock<IField>().WithName("SaturatedFat").AsNullable();
             var key = new PrimaryKey();
-            void action() => key.AddField(mock.Object);
+            void action() => key.AddField(mockField.Object);
             var exception = Assert.ThrowsException<ArgumentException>(action);
-            Assert.AreNotEqual(String.Empty, exception.Message);
+            Assert.AreNotEqual(string.Empty, exception.Message);
+        }
+
+        [TestMethod, TestCategory("PrimaryKey")]
+        public void PrimaryKeySQLNoName() {
+            var mockFieldA = new Mock<IField>().WithName("City");
+            var mockFieldB = new Mock<IField>().WithName("State");
+            var key = new PrimaryKey();
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (key as IKey).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.KeyBuilder().Verify(k => k.SetAsPrimary(), Times.AtLeast(1));
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldA.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldB.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.Build(), Times.Exactly(1));
+            mockBuilders.KeyBuilder().VerifyNoOtherCalls();
+        }
+
+        [TestMethod, TestCategory("PrimaryKey")]
+        public void PrimaryKeySQLWithName() {
+            var mockFieldA = new Mock<IField>().WithName("City");
+            var mockFieldB = new Mock<IField>().WithName("State");
+            var name = new KeyName("PK_Location");
+            var key = new PrimaryKey(name);
+            key.AddField(mockFieldA.Object);
+            key.AddField(mockFieldB.Object);
+
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (key as IKey).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.KeyBuilder().Verify(k => k.SetName(name), Times.AtLeastOnce());
+            mockBuilders.KeyBuilder().Verify(k => k.SetAsPrimary(), Times.AtLeastOnce());
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldA.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.AddField(mockFieldB.Object.Name), Times.Exactly(1));
+            mockBuilders.KeyBuilder().Verify(k => k.Build(), Times.Exactly(1));
+            mockBuilders.KeyBuilder().VerifyNoOtherCalls();
         }
     }
 }

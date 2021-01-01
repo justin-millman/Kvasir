@@ -1,11 +1,11 @@
 ﻿using Kvasir.Schema;
 using Kvasir.Transcription.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Optional;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Test.Mocks;
 
 namespace Test.Kvasir.Schema {
     [TestClass]
@@ -139,7 +139,28 @@ namespace Test.Kvasir.Schema {
         }
 
         [TestMethod, TestCategory("SQL Declaration")]
-        public void GenerateSQL() {
+        public void GenerateSQLWithDefault() {
+            var name = new FieldName("Coin");
+            var nullability = IsNullable.No;
+            var defaultValue = DBValue.Create("Quarter");
+            var allowedValues = new List<DBValue>() { DBValue.Create("Penny"), DBValue.Create("Nickel"),
+                DBValue.Create("Dime"), DBValue.Create("Quarter"), DBValue.Create("Half Dollar"),
+                DBValue.Create("Dollar Coin") };
+            var field = new EnumField(name, nullability, Option.Some(defaultValue), allowedValues);
+
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (field as IField).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.FieldBuilder().Verify(f => f.SetName(name), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetDataType(DBType.Enumeration), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetNullability(nullability), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetDefaultValue(defaultValue), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetAllowedValues(allowedValues), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.Build(), Times.Exactly(1));
+            mockBuilders.FieldBuilder().VerifyNoOtherCalls();
+        }
+
+        [TestMethod, TestCategory("SQL Declaration")]
+        public void GenerateSQLNoDefault() {
             var name = new FieldName("StreamingService");
             var nullability = IsNullable.Yes;
             var defaultValue = Option.None<DBValue>();
@@ -148,10 +169,14 @@ namespace Test.Kvasir.Schema {
                 DBValue.Create("Peacock"), DBValue.Create("Disney+") };
             var field = new EnumField(name, nullability, defaultValue, allowedValues);
 
-            var expected = "StreamingService Kvasir.Schema.DBType IS NULL --no default-- := " +
-                "(\"Netflix\", \"Hulu\", \"HBO Max\", \"Amazon Prime\", \"CBS All Access\", \"Peacock\", \"Disney+\")";
-            var actual = (field as IField).GenerateDeclaration(new MockBuilders());
-            Assert.AreEqual(new SqlSnippet(expected), actual);
+            var mockBuilders = new Mock<IBuilderCollection>().MockByDefault();
+            (field as IField).GenerateDeclaration(mockBuilders.Object);
+            mockBuilders.FieldBuilder().Verify(f => f.SetName(name), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetDataType(DBType.Enumeration), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetNullability(nullability), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.SetAllowedValues(allowedValues), Times.AtLeastOnce());
+            mockBuilders.FieldBuilder().Verify(f => f.Build(), Times.Exactly(1));
+            mockBuilders.FieldBuilder().VerifyNoOtherCalls();
         }
     }
 }
