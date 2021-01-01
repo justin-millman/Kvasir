@@ -333,6 +333,142 @@ namespace Test.Kvasir.Schema {
             FullCheck.ExpectNotEqual<object?>(lhs2, rhs2);
         }
 
+        [TestMethod, TestCategory("ToString")]
+        public void BooleanToString() {
+            var expected = "Boolean";
+            var actual = DBType.Boolean.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void CharacterToString() {
+            var expected = "Character";
+            var actual = DBType.Character.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void DateTimeToString() {
+            var expected = "Date/Time";
+            var actual = DBType.DateTime.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void DecimalToString() {
+            var expected = "Decimal";
+            var actual = DBType.Decimal.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void DoubleToString() {
+            var expected = "Double";
+            var actual = DBType.Double.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void EnumerationToString() {
+            var expected = "Enumeration";
+            var actual = DBType.Enumeration.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void GuidToString() {
+            var expected = "GUID";
+            var actual = DBType.Guid.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void Int8ToString() {
+            var expected = "Int8";
+            var actual = DBType.Int8.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void Int16ToString() {
+            var expected = "Int16";
+            var actual = DBType.Int16.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void Int32ToString() {
+            var expected = "Int32";
+            var actual = DBType.Int32.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void Int64ToString() {
+            var expected = "Int64";
+            var actual = DBType.Int64.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void SingleToString() {
+            var expected = "Single";
+            var actual = DBType.Single.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void TextToString() {
+            var expected = "Text";
+            var actual = DBType.Text.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void UInt8ToString() {
+            var expected = "UInt8";
+            var actual = DBType.UInt8.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void UInt16ToString() {
+            var expected = "UInt16";
+            var actual = DBType.UInt16.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void UInt32ToString() {
+            var expected = "UInt32";
+            var actual = DBType.UInt32.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod, TestCategory("ToString")]
+        public void UInt64ToString() {
+            var expected = "UInt64";
+            var actual = DBType.UInt64.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
         [TestMethod, TestCategory("Errors")]
         public void LookupUnsupportedType() {
             var unsupportedType = typeof(Exception);

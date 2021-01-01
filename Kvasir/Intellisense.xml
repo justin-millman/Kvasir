@@ -881,6 +881,14 @@
               A <c>32</c>-bit signed integer that is the hash code for this <see cref="T:Kvasir.Schema.DBType"/>.
             </returns>
         </member>
+        <member name="M:Kvasir.Schema.DBType.ToString">
+            <summary>
+              Produces a human-readable string representation of this <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <returns>
+              A human-readable string representation of this <see cref="T:Kvasir.Schema.DBType"/>.
+            </returns>
+        </member>
         <member name="M:Kvasir.Schema.DBType.op_Equality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)">
             <summary>
               Determines if two <see cref="T:Kvasir.Schema.DBType">DBTypes</see> are equal.

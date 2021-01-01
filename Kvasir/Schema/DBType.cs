@@ -33,22 +33,22 @@ namespace Kvasir.Schema {
         /// <value>
         ///   The representation of a Boolean value (i.e. <c>true</c>/<c>false</c>).
         /// </value>
-        public static DBType Boolean { get; } = new DBType(default(sbyte) + 1);
+        public static DBType Boolean { get; }
 
         /// <value>
         ///   The representation of a single UTF-16 character point.
         /// </value>
-        public static DBType Character { get; } = new DBType(default(sbyte) + 2);
+        public static DBType Character { get; }
 
         /// <value>
         ///   The representation of an <c>8</c>-bit signed integer.
         /// </value>
-        public static DBType Int8 { get; } = new DBType(default(sbyte) + 3);
+        public static DBType Int8 { get; }
 
         /// <value>
         ///   The representation of a <c>16</c>-bit signed integer.
         /// </value>
-        public static DBType Int16 { get; } = new DBType(default(sbyte) + 4);
+        public static DBType Int16 { get; }
 
         /// <value>
         ///   The representation of a <c>32</c>-bit signed integer.
@@ -56,67 +56,67 @@ namespace Kvasir.Schema {
         /// <remarks>
         ///   <see cref="Int32"/> is guaranteed to be equal to a default constructed <see cref="DBType"/> instance.
         /// </remarks>
-        public static DBType Int32 { get; } = new DBType(default);
+        public static DBType Int32 { get; }
 
         /// <value>
         ///   The representation of a <c>64</c>-bit signed integer.
         /// </value>
-        public static DBType Int64 { get; } = new DBType(default(sbyte) + 5);
+        public static DBType Int64 { get; }
 
         /// <value>
         ///   The representation of an <c>8</c>-bit unsigned integer.
         /// </value>
-        public static DBType UInt8 { get; } = new DBType(default(sbyte) + 6);
+        public static DBType UInt8 { get; }
 
         /// <value>
         ///   The representation of a <c>16</c>-bit unsigned integer.
         /// </value>
-        public static DBType UInt16 { get; } = new DBType(default(sbyte) + 7);
+        public static DBType UInt16 { get; }
 
         /// <value>
         ///   The representation of a <c>32</c>-bit unsigned integer.
         /// </value>
-        public static DBType UInt32 { get; } = new DBType(default(sbyte) + 8);
+        public static DBType UInt32 { get; }
 
         /// <value>
         ///   The representation of a <c>64</c>-bit unsigned integer.
         /// </value>
-        public static DBType UInt64 { get; } = new DBType(default(sbyte) + 9);
+        public static DBType UInt64 { get; }
 
         /// <value>
         ///   The representation of a single-precision floating point number.
         /// </value>
-        public static DBType Single { get; } = new DBType(default(sbyte) + 10);
+        public static DBType Single { get; }
 
         /// <value>
         ///   The representation of a double-precision floating point number.
         /// </value>
-        public static DBType Double { get; } = new DBType(default(sbyte) + 11);
+        public static DBType Double { get; }
 
         /// <value>
         ///   The representation of a decimal floating point number.
         /// </value>
-        public static DBType Decimal { get; } = new DBType(default(sbyte) + 12);
+        public static DBType Decimal { get; }
 
         /// <value>
         ///   The representation of a timestamp consisting of a calendar date and a time.
         /// </value>
-        public static DBType DateTime { get; } = new DBType(default(sbyte) + 13);
+        public static DBType DateTime { get; }
 
         /// <value>
         ///   The representation of a variable-length string of characters.
         /// </value>
-        public static DBType Text { get; } = new DBType(default(sbyte) + 14);
+        public static DBType Text { get; }
 
         /// <value>
         ///   The representation of a globally unique identifier.
         /// </value>
-        public static DBType Guid { get; } = new DBType(default(sbyte) + 15);
+        public static DBType Guid { get; }
 
         /// <value>
         ///   The representation of an enumeration, i.e. a restricted set of integral or string options.
         /// </value>
-        public static DBType Enumeration { get; } = new DBType(default(sbyte) + 16);
+        public static DBType Enumeration { get; }
 
         /// <summary>
         ///   Determines if a particular CLR <see cref="Type"/> is supported by Kvasir.
@@ -238,6 +238,16 @@ namespace Kvasir.Schema {
         }
 
         /// <summary>
+        ///   Produces a human-readable string representation of this <see cref="DBType"/>.
+        /// </summary>
+        /// <returns>
+        ///   A human-readable string representation of this <see cref="DBType"/>.
+        /// </returns>
+        public readonly override string ToString() {
+            return STRING_FORMS[id_];
+        }
+
+        /// <summary>
         ///   Determines if two <see cref="DBType">DBTypes</see> are equal.
         /// </summary>
         /// <param name="lhs">
@@ -275,6 +285,29 @@ namespace Kvasir.Schema {
         ///   Initializes the static state of the <see cref="DBType"/> struct.
         /// </summary>
         static DBType() {
+            STRING_FORMS = new string[] {
+                "Int32", "Boolean", "Character", "Date/Time", "Decimal", "Double", "Enumeration", "GUID", "Int8",
+                "Int16", "Int64", "Single", "Text", "UInt8", "UInt16", "UInt32", "UInt64"
+            };
+
+            Int32 = new DBType(default);
+            Boolean = new DBType(default(byte) + 1);
+            Character = new DBType(default(byte) + 2);
+            DateTime = new DBType(default(byte) + 3);
+            Decimal = new DBType(default(byte) + 4);
+            Double = new DBType(default(byte) + 5);
+            Enumeration = new DBType(default(byte) + 6);
+            Guid = new DBType(default(byte) + 7);
+            Int8 = new DBType(default(byte) + 8);
+            Int16 = new DBType(default(byte) + 9);
+            Int64 = new DBType(default(byte) + 10);
+            Single = new DBType(default(byte) + 11);
+            Text = new DBType(default(byte) + 12);
+            UInt8 = new DBType(default(byte) + 13);
+            UInt16 = new DBType(default(byte) + 14);
+            UInt32 = new DBType(default(byte) + 15);
+            UInt64 = new DBType(default(byte) + 16);
+
             lookup_ = new Dictionary<Type, DBType>() {
                 [typeof(bool)] = Boolean,
                 [typeof(byte)] = UInt8,
@@ -332,5 +365,6 @@ namespace Kvasir.Schema {
         private readonly byte id_;
         private static readonly IReadOnlyDictionary<Type, DBType> lookup_;
         private static readonly Type ENUM = typeof(Enum);
+        private static readonly string[] STRING_FORMS;
     }
 }
