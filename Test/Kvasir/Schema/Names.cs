@@ -73,7 +73,6 @@ namespace Test.Kvasir.Schema {
             Assert.AreNotEqual(string.Empty, exception.Message);
         }
 
-
         [TestMethod, TestCategory("KeyName")]
         public void ValidKeyNameNoTrim() {
             var contents = "KEY_StartEndPair";
