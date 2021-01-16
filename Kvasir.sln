@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kvasir", "Kvasir\Kvasir.csproj", "{A9917B55-F219-4C52-8846-991C31254DAA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{76BFD28E-C4EF-45F3-B86B-3A506D535804}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{77E420B7-E7B3-46E9-A722-E4DEC2F3E4B4}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
@@ -17,20 +13,30 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kvasir", "src\Kvasir\Kvasir.csproj", "{D9AA0340-6BFA-4F53-B933-AC3F8364F0F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cybele", "src\Cybele\Cybele.csproj", "{C6F7134B-DCC7-41CE-AD81-258926763FA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atropos", "src\Atropos\Atropos.csproj", "{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A9917B55-F219-4C52-8846-991C31254DAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9917B55-F219-4C52-8846-991C31254DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9917B55-F219-4C52-8846-991C31254DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9917B55-F219-4C52-8846-991C31254DAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76BFD28E-C4EF-45F3-B86B-3A506D535804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76BFD28E-C4EF-45F3-B86B-3A506D535804}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76BFD28E-C4EF-45F3-B86B-3A506D535804}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76BFD28E-C4EF-45F3-B86B-3A506D535804}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9AA0340-6BFA-4F53-B933-AC3F8364F0F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9AA0340-6BFA-4F53-B933-AC3F8364F0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9AA0340-6BFA-4F53-B933-AC3F8364F0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9AA0340-6BFA-4F53-B933-AC3F8364F0F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6F7134B-DCC7-41CE-AD81-258926763FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6F7134B-DCC7-41CE-AD81-258926763FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6F7134B-DCC7-41CE-AD81-258926763FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6F7134B-DCC7-41CE-AD81-258926763FA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

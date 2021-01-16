@@ -1,0 +1,507 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Cybele</name>
+    </assembly>
+    <members>
+        <member name="T:Cybele.Core.ConceptString`1">
+            <summary>
+              A strongly typed piece of text for representing specific domain concepts.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Cybele.Core.ConceptString`1"/> is designed to be a replacement for <see cref="T:System.String"/> in APIs
+                where the use of a primitive would otherwise belie a specific domain concept. The class is intended for use
+                at non-boundary points to encapsulate specific validation rules, increase readability, and avoid subtle
+                bugs that can be introduced by mixing up <see cref="T:System.String"/> arguments in function calls. At library and
+                application boundaries, a <see cref="T:Cybele.Core.ConceptString`1"/> can be explicitly converted back into the
+                raw underlying <see cref="T:System.String"/>. By using a <see cref="T:Cybele.Core.ConceptString`1"/>, a API signals to the
+                caller that the text has a specific semantic meaning and forces the caller to acknowledge any associated
+                requirements.
+              </para>
+              <para>
+                The API exposed by <see cref="T:Cybele.Core.ConceptString`1"/> is intentionally minimal, covering only the barest
+                functionality of a character sequence. Equality is performed using a case-sensitive byte-wise comparison of
+                characters, while ordering comparisons are made lexicographically. The characters of a
+                <see cref="T:Cybele.Core.ConceptString`1"/> can be accessed by index and iterated over, while substrings can be
+                obtained for particular endpoints. Concrete derived classes are encouraged to provide more
+                domain-appropriate versions of equality and comparison (such as supporting specification of a
+                <see cref="T:System.StringComparer"/>) and to expose additional functions on top of the base API. Additionally,
+                derived classes can restrict the contents of a <see cref="T:Cybele.Core.ConceptString`1"/> by performing
+                validity checks in the constructor; the base <see cref="T:Cybele.Core.ConceptString`1"/> imposes no such
+                restrictions on the raw string.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Cybele.Core.ConceptString`1.Length">
+            <summary>
+              The number of characters in this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+        </member>
+        <member name="P:Cybele.Core.ConceptString`1.Item(System.Int32)">
+            <summary>
+              The character at a particular index in this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+            <param name="index">
+              The <c>0</c>-based index of the target character.
+            </param>
+            <exception cref="T:System.IndexOutOfRangeException">
+              if <paramref name="index"/> is less than <c>0</c>
+                --or--
+              if <paramref name="index"/> is greater than or equal to <see cref="P:Cybele.Core.ConceptString`1.Length"/>.
+            </exception>
+        </member>
+        <member name="P:Cybele.Core.ConceptString`1.Item(System.Range)">
+            <summary>
+              An immutable view over a substring of this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+            <param name="range">
+              The endpoints of the target substring.
+            </param>
+        </member>
+        <member name="P:Cybele.Core.ConceptString`1.View">
+            <summary>
+              An immutable view over the contents of this string.
+            </summary>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+            <param name="contents">
+              The raw contents of the new <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="contents"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_Implicit(Cybele.Core.ConceptString{`0})~System.ReadOnlySpan{System.Char}">
+            <summary>
+              Implicitly converts this <see cref="T:Cybele.Core.ConceptString`1"/> to a
+              <see cref="T:System.ReadOnlySpan`1">ReadOnlySpan&lt;char&gt;</see>.
+            </summary>
+            <param name="concept">
+              The <see cref="T:Cybele.Core.ConceptString`1"/> to convert.
+            </param>
+            <returns>
+              A read-only view over <paramref name="concept"/> if <paramref name="concept"/> is not
+              <see langword="null"/>; otherwise, a read-only view over nothing.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_Explicit(Cybele.Core.ConceptString{`0})~System.String">
+            <summary>
+              Explicitly converts this <see cref="T:Cybele.Core.ConceptString`1"/> to a raw <see cref="T:System.String"/>.
+            </summary>
+            <param name="concept">
+              The <see cref="T:Cybele.Core.ConceptString`1"/> to convert.
+            </param>
+            <returns>
+              If <paramref name="concept"/> is not <see langword="null"/>, a <see cref="T:System.String"/> whose contents are
+              identical to the contents of <paramref name="concept"/>; otherwise, a <see langword="null"/>
+              <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.Equals(Cybele.Core.ConceptString{`0})">
+            <summary>
+              Determines if this <see cref="T:Cybele.Core.ConceptString`1"/> is equal to another.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Cybele.Core.ConceptString`1"/> against which to compare this one.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is equal to this <see cref="T:Cybele.Core.ConceptString`1"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.Equals(System.Object)">
+            <summary>
+              Determines if this <see cref="T:Cybele.Core.ConceptString`1"/> is equal to another <see cref="T:System.Object"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:System.Object"/> against which to compare this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is a non-<see langword="null"/>
+              <see cref="T:Cybele.Core.ConceptString`1"/> that is equal to this one; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.CompareTo(Cybele.Core.ConceptString{`0})">
+            <summary>
+              Performs a three-way comparison between this <see cref="T:Cybele.Core.ConceptString`1"/> and another.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Cybele.Core.ConceptString`1"/> against which to compare this one.
+            </param>
+            <returns>
+              An unspecified negative integer if this <see cref="T:Cybele.Core.ConceptString`1"/> is less than
+              <paramref name="rhs"/>, <c>0</c> if this <see cref="T:Cybele.Core.ConceptString`1"/> is equal to
+              <paramref name="rhs"/>, and an unspecified positive integer if this <see cref="T:Cybele.Core.ConceptString`1"/>
+              is greater than <paramref name="rhs"/>. A <see langword="null"/> <see cref="T:Cybele.Core.ConceptString`1"/>
+              compares less than all others.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.GetHashCode">
+            <summary>
+              Produces the hash code for this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+            <returns>
+              The hash code for this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.ToString">
+            <summary>
+              Produces a human-readable string representation of this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+            <returns>
+              A human-readable string representation of this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_Equality(Cybele.Core.ConceptString{`0},Cybele.Core.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.Core.ConceptString`1"/> is equal to another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_Inequality(Cybele.Core.ConceptString{`0},Cybele.Core.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.Core.ConceptString`1"/> is not equal to another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_LessThan(Cybele.Core.ConceptString{`0},Cybele.Core.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.Core.ConceptString`1"/> is lexicographically less than another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographially less than <paramref name="rhs"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_GreaterThan(Cybele.Core.ConceptString{`0},Cybele.Core.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.Core.ConceptString`1"/> is lexicographically greater than another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographially greater than <paramref name="rhs"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_LessThanOrEqual(Cybele.Core.ConceptString{`0},Cybele.Core.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.Core.ConceptString`1"/> is lexicographically less than or equal to
+              another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographially less than or equal to
+              <paramref name="rhs"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.op_GreaterThanOrEqual(Cybele.Core.ConceptString{`0},Cybele.Core.ConceptString{`0})">
+            <summary>
+              Determines if one <see cref="T:Cybele.Core.ConceptString`1"/> is lexicographically greater than or equal to
+              another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographially greater than or equal to
+              <paramref name="rhs"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the characters in this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+            <returns>
+              An enumerator that iterates over the characters in this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="P:Cybele.Core.ConceptString`1.Contents">
+            <summary>
+              The raw contents of this <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </summary>
+            <remarks>
+              This property is exposed to derived classes so that concrete <see cref="T:Cybele.Core.ConceptString`1"/> types
+              can provide specialized equality and/or comparison methods, expose additional domain-relevant APIs, or
+              perform validation on construction.
+            </remarks>
+        </member>
+        <member name="M:Cybele.Core.ConceptString`1.Compare(Cybele.Core.ConceptString{`0},Cybele.Core.ConceptString{`0})">
+            <summary>
+              Performs a three-way comparison between two <see cref="T:Cybele.Core.ConceptString`1">ConceptStrings</see>.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Cybele.Core.ConceptString`1"/>.
+            </param>
+            <returns>
+              An unspecified negative integer is <paramref name="lhs"/> is less than <paramref name="rhs"/>, <c>0</c>
+              if <paramref name="lhs"/> is equal to <paramref name="rhs"/>, and an unspecified positive integer if
+              <paramref name="lhs"/> is greater than <paramref name="rhs"/>. A <see langword="null"/>
+              <see cref="T:Cybele.Core.ConceptString`1"/> compares equal to another <see langword="null"/> instance and less
+              than any non-<see langword="null"/> ones.
+            </returns>
+        </member>
+        <member name="T:Cybele.Extensions.EnumExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the enumerators.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.EnumExtensions.IsValid``1(``0)">
+            <summary>
+              Determines if an enumerator is "valid."
+            </summary>
+            <remarks>
+              <para>
+                In C#, there are two types of enumerations: "regular" enumerations and "flag" enumerations. The latter
+                are distinguished by the presence of a <see cref="T:System.FlagsAttribute"/> annotation and afford the user easy
+                use of bitwise operations to combine enumerator flags. As in most languages, C# enums are little more
+                than strongly typed wrappers around a numeric value: specifically, it is generally possible to cast an
+                integer to any enumeration type without error (subject to over- and underflow). This can conceivably
+                break APIs that expect an input enumeration to be one of the explicitly defined values.
+              </para>
+              <para>
+                The "validity" of an enumerator is based on this intuitive sense of what values <i>should</i> be
+                allowed as arguments to such an API. For "regular" enumerations, only those enumerator values that are
+                explicitly defined in the enum's declaration are considered "valid"; this is identical to the behavior
+                of the standard library <see cref="M:System.Enum.IsDefined(System.Type,System.Object)"/> method. For "flag" enumerations,
+                both the individually defined flags <i>and</i> any bitwise combinations thereof are considered "valid";
+                this differs from the behavior of <see cref="M:System.Enum.IsDefined(System.Type,System.Object)"/>, which only recognizes the
+                flags.
+              </para>
+            </remarks>
+            <typeparam name="TEnum">
+              [deduced] The type of the enumeration to which the enumerator belongs.
+            </typeparam>
+            <param name="self">
+              The enumerator on which the extension method is invoked.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="self"/> is an enumerator that either is defined explicitly in
+              the declaration of <typeparamref name="TEnum"/> or is a bitwise combination of such values.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.EnumExtensions.#cctor">
+            <summary>
+              Initializes the <see langword="static"/> state of the <see cref="T:Cybele.Extensions.EnumExtensions"/> class.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.EnumExtensions.AsInt64``1(``0)">
+            <summary>
+              Produces a <c>64</c>-bit integer whose bit pattern is equivalent to the bit pattern of the numeric value
+              of an enumerator.
+            </summary>
+            <typeparam name="TEnum">
+              [deduced] The type of the enumeration to which the enumerator belongs.
+            </typeparam>
+            <param name="self">
+              The enumerator on which the extension method is invoked.
+            </param>
+            <returns>
+              A <see cref="T:System.Int64"/> whose bit pattern is equivalent to the bit pattern of the numeric value underlying
+              <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="T:Cybele.Extensions.IEnumerableExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.All``1(System.Collections.Generic.IEnumerable{``0},System.Func{System.Int32,``0,System.Boolean})">
+            <summary>
+              Checks if all elements of an enumerable pass a given predicate. The index of the element is passed to
+              the predicate along with the element for evaluation.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <param name="predicate">
+              The predicate against which to check each <c>(index, element)</c> pair of <paramref name="self"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="predicate"/> returns <see langword="true"/> for all
+              <c>(index, element)</c> pairs of <paramref name="self"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.Any``1(System.Collections.Generic.IEnumerable{``0},System.Func{System.Int32,``0,System.Boolean})">
+            <summary>
+              Checks if any element of an enumerable passes a given predicate. The index of the element is passed to
+              the predicate along with the element for evaluation.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <param name="predicate">
+              The predicate against which to check each <c>(index, element)</c> pair of <paramref name="self"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="predicate"/> returns <see langword="true"/> for any
+              <c>(index, element)</c> pair of <paramref name="self"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.ContainsNoDuplicates``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+              Checks if an enumerable contains only unique elements, using the default
+              <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> for the element type.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              <see langword="true"/> if, according to the default <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> for
+              <typeparamref name="T"/>, <paramref name="self"/> contains no duplicate elements; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.ContainsNoDuplicates``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+              Checks if an enumerable contains only unique elements, using a specific
+              <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> for the element type.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> with which to compare elements of <paramref name="self"/> for
+              uniqueness.
+            </param>
+            <returns>
+              <see langword="true"/> if, according to <paramref name="comparer"/>, <paramref name="self"/> contains no
+              duplicate elements; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.IsEmpty``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+              Checks if an enumerable is empty, i.e. contains no elements.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="self"/> contains no elements; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.None``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+              Checks if all elements of an enumerable fail a given predicate.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <param name="predicate">
+              The predicate against which to check each element of <paramref name="self"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="predicate"/> returns <see langword="false"/> for all
+              elements of <paramref name="self"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.None``1(System.Collections.Generic.IEnumerable{``0},System.Func{System.Int32,``0,System.Boolean})">
+            <summary>
+              Checks if all elements of an enumerable fail a given predicate. The index of the element is passed to
+              the predicate along with the element for evaluation.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <param name="predicate">
+              The predicate against which to check each <c>(index, element)</c> pair of <paramref name="self"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="predicate"/> returns <see langword="false"/> for all
+              <c>(index, element)</c> pairs of <paramref name="self"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="T:Cybele.Extensions.TypeExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the <see cref="T:System.Reflection.MemberInfo"/> class.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.TypeExtensions.HasAttribute``1(System.Reflection.MemberInfo)">
+            <summary>
+              Determines if a member (e.g. a <see cref="T:System.Type"/> or a <see cref="T:System.Reflection.PropertyInfo"/>) is annotated with a
+              particular <see cref="T:System.Attribute"/>.
+            </summary>
+            <typeparam name="TAttribute">
+              [explicit] The type of <see cref="T:System.Attribute"/> whose presence is being checked.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Reflection.MemberInfo"/> instance on which the extension method is invoked.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="self"/> is member that is annotated with at least one instance
+              of <typeparamref name="TAttribute"/>, possibly inherited; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+    </members>
+</doc>
