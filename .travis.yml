@@ -1,6 +1,6 @@
 language: csharp
 solution: Kvasir.sln
-dotnet: 3.1.301
+dotnet: 5.0.101
 env:
   global:
     - AUTHOR=$(git show -s --pretty=format:"%cn")

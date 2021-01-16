@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Atropos</name>
+    </assembly>
+    <members>
+        <member name="T:Atropos.FullCheck">
+            <summary>
+              A class that exposes <see langword="static"/> evaluation methods for checking user-defined equality and
+              ordering APIs.
+            </summary>
+            <remarks>
+              <para>
+                The purpose of the <see cref="T:Atropos.FullCheck"/> class is to provide a simple interface by which to evaluate the
+                full slate of API methods that describe equality and ordering for custom types. These functions are
+                generally expected to be internally consistent, but it can be tedious to manually evaluate each one
+                individually. This is exacerbated by the optionality of most elements of the API and the relative
+                difficulty of discovering their presence for an arbitrary type. The functions exposed by
+                <see cref="T:Atropos.FullCheck"/> allow unit tests to succinctly express their intents without being concerned as to
+                the actual methods that are physically invoked.
+              </para>
+              <para>
+                When evaluating equality, <see cref="T:Atropos.FullCheck"/> tests the most appropriate overload of any
+                <see langword="static"/> binary equality operators, the inherited <see cref="M:System.Object.Equals(System.Object)"/>
+                method, and any strongly typed <c>Equals(T?)</c> methods brought in via <see cref="T:System.IEquatable`1"/>.
+                Furthermore, if equality is expected, the <see cref="M:System.Object.GetHashCode"/> method is evaluated as well.
+                Appropriate symmetry is assumed: i.e. if testing that <c>A</c> is equal to <c>B</c>,
+                <see cref="T:Atropos.FullCheck"/> will also test that <c>B</c> is equal to <c>A</c>.
+              </para>
+              <para>
+                When evaluating ordering, <see cref="T:Atropos.FullCheck"/> tests the most appropriate overload of any
+                <see langword="static"/> binary ordering operators and any strongly typed <c>CompareTo(T?)</c> methods
+                brought in via <see cref="T:System.IComparable`1"/>. Note that neither <c>operator==</c> nor <c>operator!=</c> is
+                evaluated for ordering, as <i>equivalence</i> and <i>equality</i> are treated separately. Appropriate
+                symmetry is also assumed: i.e. if testing that <c>A</c> is strictly less than <c>B</c>,
+                <see cref="T:Atropos.FullCheck"/> will also test that <c>B</c> is strictly greater than <c>A</c>.
+              </para>
+              <para>
+                <see cref="T:Atropos.FullCheck"/> is intended as a utility for unit testing but is not tied to any particular unit
+                testing framework or paradigm. To support the client's choice of testing platform, all of the APIs exposed
+                by <see cref="T:Atropos.FullCheck"/> return an optional <see cref="T:System.String"/> denoting the result of the evaluation.
+                If the evaluation succeeds (i.e. the test passes), the optional will be a <c>NONE</c> instance. If, on the
+                other hand, the evaluation fails (i.e. the test fails), the optional will be a <c>SOME</c> instance that
+                contains the failed expression. This allows users to build thin adapters on top of the methods to handle
+                failure appropriately, including a useful error message if so desired.
+              </para>
+            </remarks>
+        </member>
+        <member name="M:Atropos.FullCheck.ExpectLessThan``1(``0,``0)">
+            <summary>
+              Determines if the full ordering API exposed by a type indicates that one instance of that type is
+              strictly less than another instance.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <returns>
+              A <c>SOME</c> instance with the expression that, when evaluated, indicates that <paramref name="lhs"/> is
+              not strictly less than <paramref name="rhs"/> if such an expression exists; otherwise, a <c>NONE</c>
+              instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.ExpectEquivalent``1(``0,``0)">
+            <summary>
+              Determines if the full ordering API exposed by a type indicates that one instance of that type is
+              equivalent to another instance.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <returns>
+              A <c>SOME</c> instance with the expression that, when evaluated, indicates that <paramref name="lhs"/> is
+              not equivalent to <paramref name="rhs"/> if such an expression exists; otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.ExpectGreaterThan``1(``0,``0)">
+            <summary>
+              Determines if the full ordering API exposed by a type indicates that one instance of that type is
+              strictly greater than another instance.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <returns>
+              A <c>SOME</c> instance with the expression that, when evaluated, indicates that <paramref name="lhs"/> is
+              not strictly greater than <paramref name="rhs"/> if such an expression exists; otherwise, a <c>NONE</c>
+              instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.ExpectIncomparable``1(``0,``0)">
+            <summary>
+              Determines if the full ordering API exposed by a type indicates that one instance of that type is
+              incomparable to (i.e. neither strictly less than nor equivalent to nor strictly greater than) another
+              instance.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <returns>
+              A <c>SOME</c> instance with the expression that, when evaluated, indicates that <paramref name="lhs"/> is
+              not incomparable to <paramref name="rhs"/> if such an expression exists; otherwise, a <c>NONE</c>
+              instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.TestOrdering``1(``0,``0,System.Nullable{System.Int32})">
+            <summary>
+              Evaluates the ordering relation between two instancs of a type using the full ordering API of that type.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <param name="trichotomy">
+              A negative integer if <paramref name="lhs"/> is expected to be strictly less than <paramref name="rhs"/>,
+              <c>0</c> if <paramref name="lhs"/> is expected to be equivalent to <paramref name="rhs"/>, a positive
+              integer if <paramref name="lhs"/> is expected to be strictly greater than <paramref name="rhs"/>, and
+              <see langword="null"/> if <paramref name="lhs"/> is expected to be incomparable to
+              <paramref name="rhs"/>.
+            </param>
+            <returns>
+              If the ordering relation between <paramref name="lhs"/> and <paramref name="rhs"/> is not the same as
+              that indicated by <paramref name="trichotomy"/>, a <c>SOME</c> instance whose value is the expression
+              that exposed the failed ordering. Otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.ExpectEqual``1(``0,``0)">
+            <summary>
+              Determines if the full equality API exposed by a type indicates that two instances of that type are
+              equal.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <returns>
+              A <c>SOME</c> instance with the expression that, when evaluated, indicates that <paramref name="lhs"/>
+              and <paramref name="rhs"/> are not equal if such an expression exists; otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.ExpectNotEqual``1(``0,``0)">
+            <summary>
+              Determines if the full equality API exposed by a type indicates that two instances of that type are not
+              equal.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <returns>
+              A <c>SOME</c> instance with the expression that, when evaluated, indicates that <paramref name="lhs"/>
+              and <paramref name="rhs"/> are equal if such an expression exists; otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.TestEquality``1(``0,``0,System.Boolean)">
+            <summary>
+              Evaluates the equality relation between two instancs of a type using the full ordering API of that type.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <param name="expectedEqual">
+              Whether or not <paramref name="lhs"/> and <paramref name="rhs"/> are expected to be equal.
+            </param>
+            <returns>
+              If the equality relation between <paramref name="lhs"/> and <paramref name="rhs"/>, is not the same as
+              that indicated by <paramref name="expectedEqual"/>, a <c>SOME</c> instance whose value is the expression
+              that exposed the failed equality relation. Otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.GetOperator``1(Atropos.FullCheck.Operator,System.Boolean)">
+            <summary>
+              Looks up a binary operator function for a particular <see cref="T:System.Type"/>. The result is a generalized form
+              of a binary operator that can be invoked, producing a default fallback if the target <see cref="T:System.Type"/>
+              does not actually support the specified operator.
+            </summary>
+            <typeparam name="T">
+              [explicit] The <see cref="T:System.Type"/> on which to look up the binary operator.
+            </typeparam>
+            <param name="op">
+              The binary operator functino to look up.
+            </param>
+            <param name="fallback">
+              The fallback result, in the event that <typeparamref name="T"/> does not support binary operator
+              <paramref name="op"/>.
+            </param>
+            <pre>
+              <paramref name="op"/> is valid.
+            </pre>
+            <returns>
+              A function that can be invoked on two instances of <typeparamref name="T"/> and either returns the result
+              of evaluating <paramref name="op"/> on those two instances (if <typeparamref name="T"/> supports the
+              binary operator) or returns <paramref name="fallback"/> (otherwise).
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.#cctor">
+            <summary>
+              Initializes the <see langword="static"/> state of the <see cref="T:Atropos.FullCheck"/> class.
+            </summary>
+        </member>
+        <member name="M:Atropos.FullCheck.GetBasesOf(System.Type)">
+            <summary>
+              Produces a list of interfaces and base types of a particular <see cref="T:System.Type"/>, including that
+              <see cref="T:System.Type"/> itself.
+            </summary>
+            <param name="type">
+              The target <see cref="T:System.Type"/>.
+            </param>
+            <pre>
+              <paramref name="type"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A list consisting of <paramref name="type"/>, all interfaces implemented by <paramref name="type"/>, and
+              all base classes of <paramref name="type"/>. The order of elements in the list is undefined.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.EvaluateIEquatable``1(``0,``0,System.Boolean)">
+            <summary>
+              Symmetrially evaluates the <c>IEquatable&lt;T&gt;.Equals(T?)</c> method for two arguments if the type of
+              those arguments implements the <see cref="T:System.IEquatable`1"/> interface.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <param name="expectedEqual">
+              Whether or not <paramref name="lhs"/> and <paramref name="rhs"/> are expected to be equal.
+            </param>
+            <returns>
+              If the equality relation between <paramref name="lhs"/> and <paramref name="rhs"/>, is not the same as
+              that indicated by <paramref name="expectedEqual"/>, a <c>SOME</c> instance whose value is the expression
+              that exposed the failed equality relation. Otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+        <member name="M:Atropos.FullCheck.EvaluateIComparable``1(``0,``0,System.Nullable{System.Int32})">
+            <summary>
+              Symmetrically evaluates the <c>IComparable&lt;T&gt;.CompareTo(T?)</c> method for two arguments if the
+              type of those arguments implements the <see cref="T:System.IComparable`1"/> interface.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of the arguments.
+            </typeparam>
+            <param name="lhs">
+              The first of the two arguments.
+            </param>
+            <param name="rhs">
+              The second of the two arguments.
+            </param>
+            <param name="trichotomy">
+              A negative integer if <paramref name="lhs"/> is expected to be strictly less than <paramref name="rhs"/>,
+              <c>0</c> if <paramref name="lhs"/> is expected to be equivalent to <paramref name="rhs"/>, a positive
+              integer if <paramref name="lhs"/> is expected to be strictly greater than <paramref name="rhs"/>, and
+              <see langword="null"/> if <paramref name="lhs"/> is expected to be incomparable to
+              <paramref name="rhs"/>.
+            </param>
+            <returns>
+              If the ordering relation between <paramref name="lhs"/> and <paramref name="rhs"/> is not the same as
+              that indicated by <paramref name="trichotomy"/>, a <c>SOME</c> instance whose value is the expression
+              that exposed the failed ordering. Otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+    </members>
+</doc>

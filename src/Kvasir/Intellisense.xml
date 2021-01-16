@@ -1,0 +1,2779 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Kvasir</name>
+    </assembly>
+    <members>
+        <member name="T:Kvasir.Schema.BasicField">
+            <summary>
+              A Field whose data type has no intrinsic constraints beyond those imposed by the back-end storage.
+            </summary>
+            <remarks>
+              <para>
+                The value of a Field can be restricted either intrinsically or extrinsically. An intrinsic restriction is
+                one imposed by the data type and nullability of the Field; this restriction is imposed by the actual
+                storage mechanism in the back-end provider. Intrinsic restrictions are common to all Fields of a particular
+                data type, e.g. the maximum range of allowable integer values for a Field of type <see cref="P:Kvasir.Schema.DBType.Int8"/>
+                is the same regardless of what Table the Field belongs to. Extrinsic restrictions, conversely, are those
+                that are further imposed on a Field-by-Field basis and can therefore differ inter- and intra-Table. While
+                most intrinsic constraints are abstracted behind the <see cref="T:Kvasir.Schema.DBType"/> class, most extrinsic
+                restrictions must be manually imposed by a <see cref="T:Kvasir.Schema.CheckConstraint"/> on the Table to which the Field
+                belongs. However, some extrinsic restrictions are modeled directly by the Schema Layer of Kvasir.
+              </para>
+              <para>
+                The <see cref="T:Kvasir.Schema.BasicField"/> class models a Field that does not have any such extrinsic restrictions.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.DataType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.Nullability">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.BasicField.DefaultValue">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.BasicField.#ctor(Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.BasicField.Name">name</see> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <param name="dataType">
+              The <see cref="P:Kvasir.Schema.BasicField.DataType">data type</see> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <param name="nullability">
+              The <see cref="P:Kvasir.Schema.BasicField.Nullability">nullability</see> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <param name="defaultValue">
+              The <see cref="P:Kvasir.Schema.BasicField.DefaultValue">default value</see> of the new <see cref="T:Kvasir.Schema.BasicField"/>.
+            </param>
+            <pre>
+              The arguments provided to the constructor must, collectively, define a valid Field. In addition to
+              requiring that all arguments be non-<see langword="null"/>, this means that the
+              <paramref name="defaultValue">default value</paramref>, if present, is compatible with the Field's
+              <paramref name="dataType">data type</paramref>. Furthermore, that compatible default value can
+              only be <see cref="P:Kvasir.Schema.DBValue.NULL"/> if the <paramref name="nullability"/> of the Field is
+              <see cref="F:Kvasir.Schema.IsNullable.Yes"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.CandidateKey">
+            <summary>
+              A collection of Fields that must be tuple-wise unique for each row in a Table of a relational database.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.CandidateKey.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.CandidateKey.Fields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CandidateKey"/> with no name.
+            </summary>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.CandidateKey.Fields">Fields</see> that make up the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.#ctor(Kvasir.Schema.KeyName,System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CandidateKey"/> with no name.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.CandidateKey.Name"/> of the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </param>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.CandidateKey.Fields">Fields</see> that make up the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.#ctor(Optional.Option{Kvasir.Schema.KeyName},System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CandidateKey"/> with no name.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.CandidateKey.Name">name</see> of the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </param>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.CandidateKey.Fields">Fields</see> that make up the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.CandidateKey.Kvasir#Schema#IKey#GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.AndClause">
+            <summary>
+              A compound <see cref="T:Kvasir.Schema.Clause"/> representing an conjunction between two logical expressions.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.AndClause.LHS">
+            <summary>
+              The left-hand operand of this <see cref="T:Kvasir.Schema.AndClause"/>. It is logically interchangeable with the
+              <see cref="P:Kvasir.Schema.AndClause.RHS">right-hand operand</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.AndClause.RHS">
+            <summary>
+              The right-hand operand of this <see cref="T:Kvasir.Schema.AndClause"/>. It is logically interchangeable with the
+              <see cref="P:Kvasir.Schema.AndClause.LHS">left-hand operand</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.AndClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.AndClause"/>.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.AndClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.AndClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.AndClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.AndClause"/>.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.AndClause.Negation">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.AndClause.GetDependentFields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.AndClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.AndClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.AndClause"/> that may be negated.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.AndClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.AndClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.AndClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.AndClause"/>.
+            </param>
+            <param name="negated">
+              Whether or not the new <see cref="T:Kvasir.Schema.XorClause"/> should be treated as negated.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="T:Kvasir.Schema.Clause">
+            <summary>
+              A piece of a conditional expression.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.Negation">
+            <summary>
+              Produces a new <see cref="T:Kvasir.Schema.Clause"/> that represents the negation of this one.
+            </summary>
+            <returns>
+              A new <see cref="T:Kvasir.Schema.Clause"/> whose evaluation, logically, yields <c>true</c> if and only if the evaluation
+              of this one yields <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.And(Kvasir.Schema.Clause)">
+            <summary>
+              Creates a conjunctive <see cref="T:Kvasir.Schema.Clause"/> involving this <see cref="T:Kvasir.Schema.Clause"/> and another. This
+              <see cref="T:Kvasir.Schema.Clause"/> is the left-hand operand.
+            </summary>
+            <param name="rhs">
+              The right-hand operand of the new conjunctive <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <pre>
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A new conjunctive clause where this <see cref="T:Kvasir.Schema.Clause"/> is the left-hand operand and
+              <paramref name="rhs"/> is the right-hand operand.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.Or(Kvasir.Schema.Clause)">
+            <summary>
+              Creates a disjunctive <see cref="T:Kvasir.Schema.Clause"/> involving this <see cref="T:Kvasir.Schema.Clause"/> and another. This
+              <see cref="T:Kvasir.Schema.Clause"/> is the left-hand operand.
+            </summary>
+            <param name="rhs">
+              The right-hand operand of the new disjunctive <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <pre>
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A new disjunctive clause where this <see cref="T:Kvasir.Schema.Clause"/> is the left-hand operand and
+              <paramref name="rhs"/> is the right-hand operand.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.Xor(Kvasir.Schema.Clause)">
+            <summary>
+              Creates an exclusively disjunctive <see cref="T:Kvasir.Schema.Clause"/> involving this <see cref="T:Kvasir.Schema.Clause"/> and another.
+              This <see cref="T:Kvasir.Schema.Clause"/> is the left-hand operand.
+            </summary>
+            <param name="rhs">
+              The right-hand operand of the new exclusively disjunctive <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <pre>
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A new exclusively disjunctive clause where this <see cref="T:Kvasir.Schema.Clause"/> is the left-hand operand and
+              <paramref name="rhs"/> is the right-hand operand.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.GetDependentFields">
+            <summary>
+              Produces the Fields on whose values this <see cref="T:Kvasir.Schema.Clause"/> is dependent in an undefined order.
+              If a Field's value is involved in multiple pieces of this <see cref="T:Kvasir.Schema.Clause"/>, that Field will appear
+              multiple times.
+            </summary>
+            <returns>
+              A list of the Fields on whose values this <see cref="T:Kvasir.Schema.Clause"/> is dependent.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <summary>
+              Adds this <see cref="T:Kvasir.Schema.Clause"/> to an ongoing declaration.
+            </summary>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/> to which to add the declaration of this <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <pre>
+              <paramref name="builder"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.IfThen(Kvasir.Schema.Clause,Kvasir.Schema.Clause)">
+            <summary>
+              Creates a new <see cref="T:Kvasir.Schema.Clause"/> that represents a unidirectional implication, i.e. an <c>if-then</c>
+              relation.
+            </summary>
+            <param name="predicate">
+              The predicate of the new implication <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <param name="consequent">
+              The consequent of the new implication <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <pre>
+              <paramref name="predicate"/> is not <see langword="null"/>
+                --and--
+              <paramref name="consequent"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A new <see cref="T:Kvasir.Schema.Clause"/> that represents the logical expression "if <paramref name="predicate"/> then
+              <paramref name="consequent"/>."
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.Clause.Iff(Kvasir.Schema.Clause,Kvasir.Schema.Clause)">
+            <summary>
+              Creates a new <see cref="T:Kvasir.Schema.Clause"/> that represents a bidirectional implication, i.e. an<c>if and only
+              if</c> relation.
+            </summary>
+            <param name="lhs">
+              The left-hand operand of the new implication <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <param name="rhs">
+              The right-hand operand of the new implication <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A new <see cref="T:Kvasir.Schema.Clause"/> that represents the logical expression "<paramref name="lhs"/> if and only if
+              <paramref name="rhs"/>."
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.ConstantClause">
+            <summary>
+              A simple <see cref="T:Kvasir.Schema.Clause"/> that evaluates the value of an expression on the value of a Field relative to a
+              single constant value.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ConstantClause.LHS">
+            <summary>
+              The left-hand operand of this <see cref="T:Kvasir.Schema.ConstantClause"/>, which is an expression on the value of a
+              Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ConstantClause.Operator">
+            <summary>
+              The operator of this <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ConstantClause.RHS">
+            <summary>
+              The right-hand operand of this <see cref="T:Kvasir.Schema.ConstantClause"/>, which is a single value.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.ConstantClause.#ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.ComparisonOperator,Kvasir.Schema.DBValue)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.ConstantClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </param>
+            <param name="op">
+              The <see cref="P:Kvasir.Schema.ConstantClause.Operator">operator</see> of the new <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.ConstantClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see cref="P:Kvasir.Schema.DBValue.NULL"/>
+                --and--
+              <paramref name="rhs"/> is compatible with the <see cref="P:Kvasir.Schema.FieldExpression.DataType">data type</see> of
+              <paramref name="lhs"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.ConstantClause.Negation">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.ConstantClause.GetDependentFields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.ConstantClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.CrossFieldClause">
+            <summary>
+              A simple <see cref="T:Kvasir.Schema.Clause"/> that evaluates the value of an expression on the value of a Field relative to
+              another such expression.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.CrossFieldClause.LHS">
+            <summary>
+              The left-hand operand of this <see cref="T:Kvasir.Schema.CrossFieldClause"/>, which is an expression on the value of a
+              Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.CrossFieldClause.Operator">
+            <summary>
+              The operator of this <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.CrossFieldClause.RHS">
+            <summary>
+              The right-hand operand of this <see cref="T:Kvasir.Schema.CrossFieldClause"/>, which is an expression on the value of a
+              Field.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.CrossFieldClause.#ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.ComparisonOperator,Kvasir.Schema.FieldExpression)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CrossFieldClause"/>.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.CrossFieldClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.CrossFieldClause"/>.
+            </param>
+            <param name="op">
+              The <see cref="P:Kvasir.Schema.CrossFieldClause.Operator">operator</see> of the new <see cref="T:Kvasir.Schema.CrossFieldClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.CrossFieldClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.CrossFieldClause"/>.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>
+                --and--
+              the <see cref="P:Kvasir.Schema.FieldExpression.DataType">data type</see> of <paramref name="lhs"/> is the same as that of
+              <paramref name="rhs"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.CrossFieldClause.Negation">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.CrossFieldClause.GetDependentFields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.CrossFieldClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.ClauseExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend types involved
+              in creating concrete <see cref="T:Kvasir.Schema.Clause">Clauses</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.ClauseExtensions.Negation(Kvasir.Schema.ComparisonOperator)">
+            <summary>
+              Produces the <see cref="T:Kvasir.Schema.ComparisonOperator"/> that is logically opposite another.
+            </summary>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.ComparisonOperator"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              The logical opposite of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.ClauseExtensions.Negation(Kvasir.Schema.InclusionOperator)">
+            <summary>
+              Produces the <see cref="T:Kvasir.Schema.InclusionOperator"/> that is logically opposite another.
+            </summary>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.InclusionOperator"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              The logical opposite of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.ClauseExtensions.Negation(Kvasir.Schema.NullityOperator)">
+            <summary>
+              Produces the <see cref="T:Kvasir.Schema.NullityOperator"/> that is logically opposite another.
+            </summary>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.NullityOperator"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              The logical opposite of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.FieldExpression">
+            <summary>
+              An expression over the value of a Field that can be used as part of a conditional <see cref="T:Kvasir.Schema.Clause"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.FieldExpression.Function">
+            <summary>
+              The function applied to the value of the <see cref="P:Kvasir.Schema.FieldExpression.Field">Field</see> in this
+              <see cref="T:Kvasir.Schema.FieldExpression"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.FieldExpression.Field">
+            <summary>
+              The Field whose value is the subject of this <see cref="T:Kvasir.Schema.FieldExpression"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.FieldExpression.DataType">
+            <summary>
+              The data type of the result of this <see cref="T:Kvasir.Schema.FieldExpression"/>, accounting for the
+              <see cref="P:Kvasir.Schema.FieldExpression.Function">function applied</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.FieldExpression.#ctor(Kvasir.Schema.IField)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.FieldExpression"/> with no applied function.
+            </summary>
+            <param name="field">
+              The <see cref="P:Kvasir.Schema.FieldExpression.Field">subject Field</see> of the new <see cref="T:Kvasir.Schema.FieldExpression"/>.
+            </param>
+            <pre>
+              <paramref name="field"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.FieldExpression.#ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.IField)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.FieldExpression"/> with an applied function.
+            </summary>
+            <param name="function">
+              The <see cref="P:Kvasir.Schema.FieldExpression.Function">applied function</see>.
+            </param>
+            <param name="field">
+              The <see cref="P:Kvasir.Schema.FieldExpression.Field">subject Field</see> of the new <see cref="T:Kvasir.Schema.FieldExpression"/>.
+            </param>
+            <pre>
+              <paramref name="field"/> is not <see langword="null"/>
+                --and--
+              if <paramref name="function"/> is <see cref="F:Kvasir.Schema.FieldFunction.LengthOf"/>, then the
+              <see cref="P:Kvasir.Schema.IField.DataType">data type</see> of <paramref name="field"/> is <see cref="P:Kvasir.Schema.DBType.Text"/>.
+            </pre>
+        </member>
+        <member name="T:Kvasir.Schema.FieldFunction">
+            <summary>
+              An enumeration representing the functions that can be applied to the value of a Field.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.FieldFunction.LengthOf">
+            <summary>
+              The function that takes the length of a value. This function is only valid for string-like fields, which
+              does not include enumerations.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Schema.InclusionClause">
+            <summary>
+              A simple <see cref="T:Kvasir.Schema.Clause"/> that evaluates the value of an expression on the value of a Field relative to a
+              discrete list of values.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.InclusionClause.LHS">
+            <summary>
+              The left-hand operand of this <see cref="T:Kvasir.Schema.InclusionClause"/>, which is an expression on the value of a
+              Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.InclusionClause.Operator">
+            <summary>
+              The operator of this <see cref="T:Kvasir.Schema.InclusionClause"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.InclusionClause.RHS">
+            <summary>
+              The right-hand operand of this <see cref="T:Kvasir.Schema.InclusionClause"/>, which is a non-empty list of values.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.InclusionClause.#ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.InclusionClause"/>.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.InclusionClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.InclusionClause"/>.
+            </param>
+            <param name="op">
+              The <see cref="P:Kvasir.Schema.InclusionClause.Operator">operator</see> of the new <see cref="T:Kvasir.Schema.InclusionClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.InclusionClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.InclusionClause"/>.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is neither <see langword="null"/> nor empty
+                --and--
+              no element of <paramref name="rhs"/> is <see cref="P:Kvasir.Schema.DBValue.NULL"/>
+                --and--
+              each element of <paramref name="rhs"/> is compatible with the
+              <see cref="P:Kvasir.Schema.FieldExpression.DataType">data type</see> of <paramref name="lhs"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.InclusionClause.Negation">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.InclusionClause.GetDependentFields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.InclusionClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.NullityClause">
+            <summary>
+              A simple <see cref="T:Kvasir.Schema.Clause"/> that evaluates the nullity of a Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.NullityClause.LHS">
+            <summary>
+              The left-hand operand of this <see cref="T:Kvasir.Schema.NullityClause"/>, which is the expression being evaluated for
+              nullity. This is guaranteed to be an direct expression, i.e. one without an evaluatory function.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.NullityClause.Operator">
+            <summary>
+              The operator of this <see cref="T:Kvasir.Schema.NullityClause"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.NullityClause.#ctor(Kvasir.Schema.IField,Kvasir.Schema.NullityOperator)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.NullityClause"/>.
+            </summary>
+            <param name="field">
+              The Field being evaluated for <c>NULL</c> in the new <see cref="T:Kvasir.Schema.NullityClause"/>.
+            </param>
+            <param name="op">
+              The <see cref="P:Kvasir.Schema.NullityClause.Operator">operator</see> of the new <see cref="T:Kvasir.Schema.NullityClause"/>.
+            </param>
+            <pre>
+              <paramref name="field"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.NullityClause.Negation">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.NullityClause.GetDependentFields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.NullityClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.ComparisonOperator">
+            <summary>
+              An enumeration representing the logical binary comparison operators.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.ComparisonOperator.EQ">
+            <summary>The equality operator.</summary>
+        </member>
+        <member name="F:Kvasir.Schema.ComparisonOperator.NE">
+            <summary>The non-equality operator.</summary>
+        </member>
+        <member name="F:Kvasir.Schema.ComparisonOperator.LT">
+            <summary>The strictly less than operator.</summary>
+        </member>
+        <member name="F:Kvasir.Schema.ComparisonOperator.GT">
+            <summary>The strictly greater than operator.</summary>
+        </member>
+        <member name="F:Kvasir.Schema.ComparisonOperator.LTE">
+            <summary>The less than or equal to operator.</summary>
+        </member>
+        <member name="F:Kvasir.Schema.ComparisonOperator.GTE">
+            <summary>The greater than or equal to operator.</summary>
+        </member>
+        <member name="T:Kvasir.Schema.InclusionOperator">
+            <summary>
+              An enumeration representing the logical inclusion operators, i.e. checking whether or not a particular item
+              appears in a list.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.InclusionOperator.In">
+            <summary>The does-include operator.</summary>
+        </member>
+        <member name="F:Kvasir.Schema.InclusionOperator.NotIn">
+            <summary>The does-not-include operator.</summary>
+        </member>
+        <member name="T:Kvasir.Schema.NullityOperator">
+            <summary>
+              An enumeration representing the logical <c>NULL</c>-check operators.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.NullityOperator.IsNull">
+            <summary>The is-<c>NULL</c> operator.</summary>
+        </member>
+        <member name="F:Kvasir.Schema.NullityOperator.IsNotNull">
+            <summary>The is-not-<c>NULL</c> operator.</summary>
+        </member>
+        <member name="T:Kvasir.Schema.OrClause">
+            <summary>
+              A compound <see cref="T:Kvasir.Schema.Clause"/> representing an disjunction between two logical expressions.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.OrClause.LHS">
+            <summary>
+              The left-hand operand of this <see cref="T:Kvasir.Schema.OrClause"/>. It is logically interchangeable with the
+              <see cref="P:Kvasir.Schema.OrClause.RHS">right-hand operand</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.OrClause.RHS">
+            <summary>
+              The right-hand operand of this <see cref="T:Kvasir.Schema.OrClause"/>. It is logically interchangeable with the
+              <see cref="P:Kvasir.Schema.OrClause.LHS">left-hand operand</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.OrClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.AndClause"/>.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.OrClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.OrClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.OrClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.OrClause"/>.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.OrClause.Negation">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.OrClause.GetDependentFields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.OrClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.OrClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.AndClause"/> that may be negated.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.OrClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.OrClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.OrClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.OrClause"/>.
+            </param>
+            <param name="negated">
+              Whether or not the new <see cref="T:Kvasir.Schema.XorClause"/> should be treated as negated.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="T:Kvasir.Schema.XorClause">
+            <summary>
+              A compound <see cref="T:Kvasir.Schema.Clause"/> representing an exclusive disjunction between two logical expressions.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.XorClause.LHS">
+            <summary>
+              The left-hand operand of this <see cref="T:Kvasir.Schema.XorClause"/>. It is logically interchangeable with the
+              <see cref="P:Kvasir.Schema.XorClause.RHS">right-hand operand</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.XorClause.RHS">
+            <summary>
+              The right-hand operand of this <see cref="T:Kvasir.Schema.XorClause"/>. It is logically interchangeable with the
+              <see cref="P:Kvasir.Schema.XorClause.LHS">left-hand operand</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.XorClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.XorClause"/>.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.XorClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.XorClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.XorClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.XorClause"/>.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.XorClause.Negation">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.XorClause.GetDependentFields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.XorClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.XorClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.XorClause"/> that may be negated.
+            </summary>
+            <param name="lhs">
+              The <see cref="P:Kvasir.Schema.XorClause.LHS">left-hand operand</see> of the new <see cref="T:Kvasir.Schema.XorClause"/>.
+            </param>
+            <param name="rhs">
+              The <see cref="P:Kvasir.Schema.XorClause.RHS">right-hand operand</see> of the new <see cref="T:Kvasir.Schema.XorClause"/>.
+            </param>
+            <param name="negated">
+              Whether or not the new <see cref="T:Kvasir.Schema.XorClause"/> should be treated as negated.
+            </param>
+            <pre>
+              <paramref name="lhs"/> is not <see langword="null"/>
+                --and--
+              <paramref name="rhs"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="T:Kvasir.Schema.CheckConstraint">
+            <summary>
+              An arbitrary logical restriction on the value of one or more Fields in a row of a Table in a relational
+              database.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.CheckConstraint.Name">
+            <summary>
+              The name of this <c>CHECK</c> constraint.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.CheckConstraint.Condition">
+            <summary>
+              The logical condition that is enforced by this <c>CHECK</c> constraint.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.CheckConstraint.#ctor(Kvasir.Schema.Clause)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CheckConstraint"/> with no name.
+            </summary>
+            <param name="condition">
+              The <see cref="P:Kvasir.Schema.CheckConstraint.Condition">condition</see> imposed by the new <see cref="T:Kvasir.Schema.CheckConstraint"/>
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.CheckConstraint.#ctor(Kvasir.Schema.CheckName,Kvasir.Schema.Clause)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CheckConstraint"/> with no name.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.CheckConstraint.Name">name</see> of the new <see cref="T:Kvasir.Schema.CheckConstraint"/>.
+            </param>
+            <param name="condition">
+              The <see cref="P:Kvasir.Schema.CheckConstraint.Condition">condition</see> imposed by the new <see cref="T:Kvasir.Schema.CheckConstraint"/>
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.CheckConstraint.GenerateDeclaration(Kvasir.Transcription.IConstraintDeclBuilder)">
+            <summary>
+              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              <c>CHECK</c> constraint as applying to the subject Table.
+            </summary>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="builder"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this <c>CHECK</c> constraint.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.CheckConstraint.#ctor(Optional.Option{Kvasir.Schema.CheckName},Kvasir.Schema.Clause)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CheckConstraint"/> with no name.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.CheckConstraint.Name">name</see> of the new <see cref="T:Kvasir.Schema.CheckConstraint"/>.
+            </param>
+            <param name="condition">
+              The <see cref="P:Kvasir.Schema.CheckConstraint.Condition">condition</see> imposed by the new <see cref="T:Kvasir.Schema.CheckConstraint"/>
+            </param>
+        </member>
+        <member name="T:Kvasir.Schema.CheckName">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> repreenting the name of a <c>CHECK</c> constraint.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.CheckName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.CheckName"/>.
+            </summary>
+            <param name="name">
+              The name. Leading and trailing whitspace will be discarded.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="name"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is zero-length
+                --or--
+              if <paramref name="name"/> consists only of whitspace.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.ComponentName`1">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> that represents the name of a Schema component.
+            </summary>
+            <typeparam name="TComponent">
+              The tag used to differentiate a <see cref="T:Kvasir.Schema.ComponentName`1"/> for one Schema component from one for
+              another. Two <see cref="T:Kvasir.Schema.ComponentName`1"/> types instantiated with different
+              <typeparamref name="TComponent"/> types are not interoperable.
+            </typeparam>
+        </member>
+        <member name="M:Kvasir.Schema.ComponentName`1.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.ComponentName`1"/>.
+            </summary>
+            <param name="name">
+              The name. Leading and trailing whitespace are discarded.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="name"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is zero-length
+                --or--
+              if <paramref name="name"/> consists only of whitespace.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.DBType">
+            <summary>
+              The semantic data type for a Field.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Kvasir.Schema.DBType"/> is strictly a semantic specification, incorporating nothing about the actual
+                mechanism by which the type is represented in a back-end database. Different RDBMS providers realize
+                semantic types differently; for exaple, SQL Server does not distinguish between signed and unsigned
+                integers whereas MySQL does. <see cref="T:Kvasir.Schema.DBType"/> is intended to partition the data type space along these
+                universal semantic fault lines, leaving the actual storage mechanics up to the back-end provider being
+                used.
+              </para>
+              <para>
+                Because of this abstract angle, certain aspects of a data type are not represented directly by the
+                <see cref="T:Kvasir.Schema.DBType"/> class. This includes precisions for floating point types, ranges for all numeric and
+                date-like types, encodings for text types, and others. This extends to enumeration types, where the
+                discrete set of allowed values is specified at the Field level rather than by the <see cref="T:Kvasir.Schema.DBType"/>.
+                This overall abstraction allows for a single Schema translation to be used for any back-end RDBMS.
+              </para>
+              <para>
+                The various semantic type categories are represented as distinct <see cref="T:Kvasir.Schema.DBType"/> instances exposed as
+                <see langword="static"/> psudo-enumerators: it is not possible to create custom <see cref="T:Kvasir.Schema.DBType"/>
+                instances.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Boolean">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a Boolean value.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Character">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBValue"/> representing a single UTF-16 character.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int8">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBValue"/> representing an <c>8</c>-bit signed integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int16">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBValue"/> representing a <c>16</c>-bit signed integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int32">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBValue"/> representing a <c>32</c>-bit signed integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Int64">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBValue"/> representing a <c>64</c>-bit signed integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt8">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBValue"/> representing an <c>8</c>-bit unsignd integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt16">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBValue"/> representing a <c>16</c>-bit unsigned integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt32">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a <c>32</c>-bit unsigned integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.UInt64">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a <c>64</c>-bit unsigned integer.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Single">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a single-precision floating point number.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Double">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a double-precision floating point number.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Decimal">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a decimal number.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.DateTime">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a calendar date and time.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Text">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing freeform text.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Guid">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a globally unique identifier.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBType.Enumeration">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing an enumeration.
+            </summary>
+            <remarks>
+              Note that all flavors of enumeration are collapsed into this single <see cref="T:Kvasir.Schema.DBType"/>. The specifics
+              of the enumeration--namely, what the discrete set of allowed values is--is specified at the Field level,
+              as different back-end providers have different levels of native support for enumerations.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.IsSupported(System.Type)">
+            <summary>
+              Determins if a CLR <see cref="T:System.Type"/> is supported by Kvasir.
+            </summary>
+            <param name="clrType">
+              The CLR <see cref="T:System.Type"/> for which to check for support.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="clrType"/> is supported by Kvasir; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Lookup(System.Type)">
+            <summary>
+              Looks up the <see cref="T:Kvasir.Schema.DBType"/> instance that corresponds to a CLR <see cref="T:System.Type"/>.
+            </summary>
+            <remarks>
+              The mapping of CLR <see cref="T:System.Type"/> to <see cref="T:Kvasir.Schema.DBType"/> instance is not bijective. Specifically,
+              all <see cref="T:System.Enum"/> types are mapped to the same value (<see cref="P:Kvasir.Schema.DBType.Enumeration"/>) and the generic
+              argument is used when the <see cref="T:System.Type"/> is an instantiation of the <see cref="T:System.Nullable`1"/>
+              generic.
+            </remarks>
+            <param name="clrType">
+              The CLR <see cref="T:System.Type"/> for which to look up the corresponding <see cref="T:Kvasir.Schema.DBType"/> instance.
+            </param>
+            <returns>
+              The <see cref="T:Kvasir.Schema.DBType"/> instance that corresponds to <paramref name="clrType"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="clrType"/> is not supported by Kvasir, and therefore has no corresponding
+              <see cref="T:Kvasir.Schema.DBType"/>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Equals(Kvasir.Schema.DBType)">
+            <summary>
+              Determines if this <see cref="T:Kvasir.Schema.DBType"/> is equal to another.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Kvasir.Schema.DBType"/> against which to compare this one.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is equal to this <see cref="T:Kvasir.Schema.DBType"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Equals(System.Object)">
+            <summary>
+              Determines if this <see cref="T:Kvasir.Schema.DBType"/> is equal to another <see cref="T:System.Object"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:System.Object"/> against which to compare this <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is a non-<see langword="null"/> <see cref="T:Kvasir.Schema.DBType"/>
+              that is equal to this one; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.GetHashCode">
+            <summary>
+              Produces the hash code for this <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <returns>
+              The hash code for this <see cref="T:Kvasir.Schema.DBType"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.ToString">
+            <summary>
+              Produces a human-readable string representation of this <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <returns>
+              A human-readable string representation of this <see cref="T:Kvasir.Schema.DBType"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.op_Equality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)">
+            <summary>
+              Determines if one <see cref="T:Kvasir.Schema.DBType"/> is equal to another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.op_Inequality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)">
+            <summary>
+              Determines if one <see cref="T:Kvasir.Schema.DBType"/> is not equal to another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.#cctor">
+            <summary>
+              Initializes the <see langword="static"/> state of the <see cref="T:Kvasir.Schema.DBType"/> struct.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.#ctor(System.Byte)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <param name="id">
+              The ID of the new <see cref="T:Kvasir.Schema.DBType"/>. This also serves as the indexer for the various traits of the new
+              instance, including its string representation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBType.Normalize(System.Type)">
+            <summary>
+              Normalizes a CLR <see cref="T:System.Type"/> by stripping any <see cref="T:System.Nullable`1"/> wrapper and collapsing all
+              <see cref="T:System.Enum"/> types into a single sentinel.
+            </summary>
+            <param name="clrType">
+              The CLR <see cref="T:System.Type"/> to normalize.
+            </param>
+            <returns>
+              The normalization of <paramref name="clrType"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.DBValue">
+            <summary>
+              A thin, type-controlled wrapper around a CLR object that can be stored in a back-end relational database.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Kvasir.Schema.DBValue"/> struct is intended to provide an abstraction over the generalized CLR
+                <see cref="T:System.Object"/> for use in contexts where compile-time type informaton is not available. The
+                advantage in using a <see cref="T:Kvasir.Schema.DBValue"/> over raw a <see cref="T:System.Object"/> is that the former is guaranteed
+                to only ever hold an object that can actually be stored in a back-end RDBMS, whereas the latter could
+                feasibly hold anything. Additionally, a <see cref="T:Kvasir.Schema.DBValue"/> never actually wraps a <see langword="null"/>
+                value directly: a sentinel is used such that accessing the raw value is always valid.
+              </para>
+              <para>
+                The strong typing afforded by a CLR <see cref="T:System.Enum">enum</see> is lost when the enumerator values are
+                stored in a back-end relational database. Some providers afford value checking, either through an explicit
+                <c>enum</c> data typ or via <c>CHECK</c> constraints; however, even in these cases, the actual storage is
+                generally either an integer or a string. For this reason, a <see cref="T:Kvasir.Schema.DBValue"/> cannot wrap a CLR
+                enumerator: is the client's responsibility to convert the CLR enumerator into the corresponding database
+                object, be it an integer or another supported type.
+              </para>
+              <para>
+                The same general logic applies to conversions from other CLR types, including between CLR types that are
+                otherwise supported by Kvasir. The <see cref="T:Kvasir.Schema.DBValue"/> struct is intended to wrap exactly the value that
+                is to be stored in the database, with the burden of performing any transforms falling on the client.
+              </para>
+              <para>
+                Because a <see cref="T:Kvasir.Schema.DBValue"/> might hold the <c>NULL</c> sentinel value, which is valid for any data
+                type, it is not strictly possible to determine the <see cref="T:Kvasir.Schema.DBType"/> of a particular
+                <see cref="T:Kvasir.Schema.DBValue"/>. To check if a particular <see cref="T:Kvasir.Schema.DBValue"/> instance can be safely used for a
+                Field of a particular <see cref="T:Kvasir.Schema.DBType"/>, use the <see cref="M:Kvasir.Schema.DBValue.IsInstanceOf(Kvasir.Schema.DBType)">dedicated API</see>.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.DBValue.Datum">
+            <summary>
+              The raw value of this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.DBValue.NULL">
+            <summary>
+              The sentinel <see cref="T:Kvasir.Schema.DBValue"/> representing <c>NULL</c>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Boolean)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Boolean"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Boolean"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Byte)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Byte"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Byte"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.SByte)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.SByte"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.SByte"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.UInt16)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.UInt16"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.UInt16"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Int16)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Int16"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Int16"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.UInt32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.UInt32"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.UInt32"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Int32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Int32"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Int32"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.UInt64)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.UInt64"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.UInt64"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Int64)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Int64"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Int64"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Single)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Single"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Single"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Double)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Double"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Double"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Decimal)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Decimal"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Decimal"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.DateTime)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.DateTime"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.DateTime"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Char)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Char"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Char"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.String"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.String"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.Guid)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.Guid"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.Guid"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.Create(System.Object)">
+            <summary>
+              Creates a new <see cref="T:Kvasir.Schema.DBValue"/> from an arbitrary value.
+            </summary>
+            <param name="value">
+              The value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="value"/> is non-<see langword="null"/> and of a type that is not supported by Kvasir.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.IsInstanceOf(Kvasir.Schema.DBType)">
+            <summary>
+              Determines if the current <see cref="T:Kvasir.Schema.DBValue"/> would be valid for a Field with a specific data type,
+              considering only the data type and not hte actual value.
+            </summary>
+            <param name="type">
+              The target <see cref="T:Kvasir.Schema.DBType"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if this is <see cref="P:Kvasir.Schema.DBValue.NULL"/> or if the type of this <see cref="T:Kvasir.Schema.DBValue"/> is
+              compatible with <paramref name="type"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.Equals(Kvasir.Schema.DBValue)">
+            <summary>
+              Determines if this <see cref="T:Kvasir.Schema.DBValue"/> is equal to another.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:Kvasir.Schema.DBValue"/> against which to compare this one.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is equal to this <see cref="T:Kvasir.Schema.DBValue"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.Equals(System.Object)">
+            <summary>
+              Determines if this <see cref="T:Kvasir.Schema.DBValue"/> is equal to another <see cref="T:System.Object"/>.
+            </summary>
+            <param name="rhs">
+              The <see cref="T:System.Object"/> against which to compare this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="rhs"/> is a non-<see langword="null"/> <see cref="T:Kvasir.Schema.DBValue"/>
+              that is equal to this one; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.GetHashCode">
+            <summary>
+              Produces the hash code for this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </summary>
+            <returns>
+              The hash code for this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.ToString">
+            <summary>
+              Produces a human-readable string representation of this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </summary>
+            <returns>
+              A human-readable string representation of this <see cref="T:Kvasir.Schema.DBValue"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.op_Equality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)">
+            <summary>
+              Determines if one <see cref="T:Kvasir.Schema.DBValue"/> is equal to another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.op_Inequality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)">
+            <summary>
+              Determines if one <see cref="T:Kvasir.Schema.DBValue"/> is not equal to another.
+            </summary>
+            <param name="lhs">
+              The first <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <param name="rhs">
+              The second <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#cctor">
+            <summary>
+              Initializes the <see langword="static"/> state of the <see cref="T:Kvasir.Schema.DBValue"/> struct.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.DBNull)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> that represents <c>NULL</c>.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Schema.EnumField">
+            <summary>
+              A Field whose data type has an intrinsic constraint limiting the allowed values to a discrete set of strings.
+            </summary>
+            <remarks>
+              <para>
+                The value of a Field can be restricted either intrinsically or extrinsically. An intrinsic restriction is
+                one imposed by the data type and nullability of the Field; this restriction is imposed by the actual
+                storage mechanism in the back-end provider. Intrinsic restrictions are common to all Fields of a particular
+                data type, e.g. the maximum range of allowable integer values for a Field of type <see cref="P:Kvasir.Schema.DBType.Int8"/>
+                is the same regardless of what Table the Field belongs to. Extrinsic restrictions, conversely, are those
+                that are further imposed on a Field-by-Field basis and can therefore differ inter- and intra-Table. While
+                most intrinsic constraints are abstracted behind the <see cref="T:Kvasir.Schema.DBType"/> class, most extrinsic
+                restrictions must be manually imposed by a <see cref="T:Kvasir.Schema.CheckConstraint"/> on the Table to which the Field
+                belongs. However, some extrinsic restrictions are modeled directly by the Schema Layer of Kvasir.
+              </para>
+              <para>
+                The <see cref="T:Kvasir.Schema.EnumField"/> class models a Field to which is applied an extrinsic enueration restriction.
+                Such a Field is necessarily treated as a string by users, but the allowed values are discrete rather than
+                infinite. Some back-end RDBMS providers (such as MySQL) actually offer an optimized storage mechanism for
+                such Fields, where the data is <i>stored</i> as an integer but <i>read and written</i> as a string. Similar
+                restrictions on non-text data types require a <see cref="T:Kvasir.Schema.CheckConstraint"/> with a condition based around
+                an <see cref="T:Kvasir.Schema.InclusionClause"/>.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.EnumField.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.EnumField.DataType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.EnumField.Nullability">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.EnumField.DefaultValue">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.EnumField.Enumerators">
+            <summary>
+              The list of values that are allowed for this <see cref="T:Kvasir.Schema.EnumField"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.EnumField.#ctor(Kvasir.Schema.FieldName,Kvasir.Schema.IsNullable,Optional.Option{Kvasir.Schema.DBValue},System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.EnumField"/>.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.EnumField.Name">name</see> of the new <see cref="T:Kvasir.Schema.EnumField"/>.
+            </param>
+            <param name="nullability">
+              The <see cref="P:Kvasir.Schema.EnumField.Nullability">nullability</see> of the new <see cref="T:Kvasir.Schema.EnumField"/>.
+            </param>
+            <param name="defaultValue">
+              The <see cref="P:Kvasir.Schema.EnumField.DefaultValue">default value</see> of the new <see cref="T:Kvasir.Schema.EnumField"/>.
+            </param>
+            <param name="enumerators">
+              The <see cref="P:Kvasir.Schema.EnumField.Enumerators">restricted enumerator values</see> of the new <see cref="T:Kvasir.Schema.EnumField"/>.
+            </param>
+            <pre>
+              The arguments provided to the constructor must, collectively, define a valid Field. In addition to
+              requiring that all arguments be non-<see langword="null"/>, this means that the
+              <paramref name="defaultValue">default value</paramref>, if present, is compatible with the Field's
+              <see cref="P:Kvasir.Schema.DBType.Enumeration"/> data type. Furthermore, that compatible default value can only be
+              <see cref="P:Kvasir.Schema.DBValue.NULL"/> if the <paramref name="nullability"/> of the Field is
+              <see cref="F:Kvasir.Schema.IsNullable.Yes"/>. Finally, there must be at least one
+              <paramref name="enumerators">allowed value</paramref>, and all such values must be something other than
+              <see cref="P:Kvasir.Schema.DBValue.NULL"/> while maintaining compatability with the <see cref="P:Kvasir.Schema.DBType.Enumeration"/> data
+              type.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.EnumField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.SchemaExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the types in the Schema Layer of Kvasir.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.BasicField,Kvasir.Transcription.IFieldDeclBuilder)">
+            <summary>
+              Produces a SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
+              <see cref="T:Kvasir.Schema.BasicField"/> as a member of the subject Table.
+            </summary>
+            <remarks>
+              To keep the <see cref="T:Kvasir.Schema.IField"/> interface closed to assemblies outside of Kvasir, the
+              <see cref="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)"/> method is marked as <c>internal</c>; this
+              requires that <see cref="T:Kvasir.Schema.BasicField"/> class implement the method explicitly. This extension method
+              allows for natural invocation of the interface method, encapsulating the cast-to-interface required to
+              invoke an explicit interface method.
+            </remarks>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.BasicField"/> on which the extension method is invoked.
+            </param>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="self"/> is not <see langword="null"/>
+                --and--
+              <paramref name="builder"/> is not <see langword="null"/>
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.EnumField,Kvasir.Transcription.IFieldDeclBuilder)">
+            <summary>
+              Produces a SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
+              <see cref="T:Kvasir.Schema.EnumField"/> as a member of the subject Table.
+            </summary>
+            <remarks>
+              To keep the <see cref="T:Kvasir.Schema.IField"/> interface closed to assemblies outside of Kvasir, the
+              <see cref="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)"/> method is marked as <c>internal</c>; this
+              requires that <see cref="T:Kvasir.Schema.EnumField"/> class implement the method explicitly. This extension method allows
+              for natural invocation of the interface method, encapsulating the cast-to-interface required to invoke an
+              explicit interface method.
+            </remarks>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.BasicField"/> on which the extension method is invoked.
+            </param>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="self"/> is not <see langword="null"/>
+                --and--
+              <paramref name="builder"/> is not <see langword="null"/>
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.PrimaryKey,Kvasir.Transcription.IKeyDeclBuilder)">
+            <summary>
+              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
+              <see cref="T:Kvasir.Schema.PrimaryKey"/> as applying to the subject Table.
+            </summary>
+            <remarks>
+              To keep the <see cref="T:Kvasir.Schema.IKey"/> interface closed to assemblies outside of Kvasir, the
+              <see cref="M:Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)"/> method is marked as <c>internal</c>; this
+              requires that <see cref="T:Kvasir.Schema.PrimaryKey"/> class implement the method explicitly. This extension method
+              allows for natural invocation of the interface method, encapsulating the cast-to-interface required to
+              invoke an explicit interface method.
+            </remarks>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.PrimaryKey"/> on which the extension method is invoked.
+            </param>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="builder"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Key.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.CandidateKey,Kvasir.Transcription.IKeyDeclBuilder)">
+            <summary>
+              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
+              <see cref="T:Kvasir.Schema.CandidateKey"/> as applying to the subject Table.
+            </summary>
+            <remarks>
+              To keep the <see cref="T:Kvasir.Schema.IKey"/> interface closed to assemblies outside of Kvasir, the
+              <see cref="M:Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)"/> method is marked as <c>internal</c>; this
+              requires that <see cref="T:Kvasir.Schema.CandidateKey"/> class implement the method explicitly. This extension method
+              allows for natural invocation of the interface method, encapsulating the cast-to-interface required to
+              invoke an explicit interface method.
+            </remarks>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.CandidateKey"/> on which the extension method is invoked.
+            </param>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="builder"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Key.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.Table,Kvasir.Transcription.IBuilderFactory)">
+            <summary>
+              Produces an SQL <c>CREATE TABLE</c> statement that declares a <see cref="T:Kvasir.Schema.Table"/>.
+            </summary>
+            <remarks>
+              To keep the <see cref="T:Kvasir.Schema.ITable"/> interface closed to assemblies outside of Kvasir, the
+              <see cref="M:Kvasir.Schema.ITable.GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)"/> method is marked as <c>internal</c>; this
+              requires that <see cref="T:Kvasir.Schema.Table"/> class implement the method explicitly. This extension method allows for
+              natural invocation of the interface method, encapsulating the cast-to-interface required to invoke an
+              explicit interface method.
+            </remarks>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.Table"/> on which the extension method is invoked.
+            </param>
+            <param name="builderFactory">
+              The <see cref="T:Kvasir.Transcription.IBuilderFactory"/> with which to create the various Builders needed to compose the
+              <c>CREATE TABLE</c> statement for this Table.
+            </param>
+            <pre>
+              <paramref name="self"/> is not <see langword="null"/>
+                --and--
+              <paramref name="builderFactory"/> is not <see langword="null"/>
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body is a <c>CREATE TABLE</c> statement that declares
+              <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.ForeignKey">
+            <summary>
+              A referential integrity constraint on a Table in a relational database, requiring the value of some tuple of
+              rows to match that of the primary key of some row in another Table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ForeignKey.Name">
+            <summary>
+              The name of this Foreign Key.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ForeignKey.ReferencingFields">
+            <summary>
+              The Fields that make up this Foreign Key, in the order that corresponds to the Primary Key of the
+              <see cref="P:Kvasir.Schema.ForeignKey.ReferencedTable">referenced Table</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ForeignKey.ReferencedTable">
+            <summary>
+              The Table being referenced by this Foreign Key.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ForeignKey.OnDelete">
+            <summary>
+              The <c>ON DELETE</c> behavior of this Foreign Key.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ForeignKey.OnUpdate">
+            <summary>
+              The <c>ON UPDATE</c> behavior of this Foreign Key.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.ForeignKey.#ctor(Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.ForeignKey"/>.
+            </summary>
+            <param name="reference">
+              The <see cref="P:Kvasir.Schema.ForeignKey.ReferencedTable">Table being referenced</see> by the new Foreign Key.
+            </param>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.ForeignKey.ReferencingFields">Fields</see> that make up the new Foreign Key.
+            </param>
+            <param name="onDelete">
+              The <see cref="P:Kvasir.Schema.ForeignKey.OnDelete"><c>ON DELETE</c> behavior</see> of the new Foreign Key.
+            </param>
+            <param name="onUpdate">
+              The <see cref="P:Kvasir.Schema.ForeignKey.OnUpdate"><c>ON UPDATE</c> behavior</see> of the new Foreign Key.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.ForeignKey.#ctor(Kvasir.Schema.FKName,Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.ForeignKey"/>.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.ForeignKey.Name">name</see> of the new Foreign Key.
+            </param>
+            <param name="reference">
+              The <see cref="P:Kvasir.Schema.ForeignKey.ReferencedTable">Table being referenced</see> by the new Foreign Key.
+            </param>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.ForeignKey.ReferencingFields">Fields</see> that make up the new Foreign Key.
+            </param>
+            <param name="onDelete">
+              The <see cref="P:Kvasir.Schema.ForeignKey.OnDelete"><c>ON DELETE</c> behavior</see> of the new Foreign Key.
+            </param>
+            <param name="onUpdate">
+              The <see cref="P:Kvasir.Schema.ForeignKey.OnUpdate"><c>ON UPDATE</c> behavior</see> of the new Foreign Key.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.ForeignKey.GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the Fields in this Foreign Key. The contents of those Fields
+              cannot be modified by the iteration.
+            </summary>
+            <remarks>
+              The <see cref="T:Kvasir.Schema.ForeignKey"/> class does not implement the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
+              preventing Foreign Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ForeignKey.GetEnumerator"/> method exists to
+              allow iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+              expression.
+            </remarks>
+            <returns>
+              An enumerator that iterates over the Fields in this Foreign Key.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.ForeignKey.GenerateDeclaration(Kvasir.Transcription.IForeignKeyDeclBuilder)">
+            <summary>
+              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              Foreign Key as applying to the subject Table.
+            </summary>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="builder"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Foreign Key.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.ForeignKey.#ctor(Optional.Option{Kvasir.Schema.FKName},Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.ForeignKey"/>.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.ForeignKey.Name">name</see> of the new Foreign Key.
+            </param>
+            <param name="reference">
+              The <see cref="P:Kvasir.Schema.ForeignKey.ReferencedTable">Table being referenced</see> by the new Foreign Key.
+            </param>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.ForeignKey.ReferencingFields">Fields</see> that make up the new Foreign Key.
+            </param>
+            <param name="onDelete">
+              The <see cref="P:Kvasir.Schema.ForeignKey.OnDelete"><c>ON DELETE</c> behavior</see> of the new Foreign Key.
+            </param>
+            <param name="onUpdate">
+              The <see cref="P:Kvasir.Schema.ForeignKey.OnUpdate"><c>ON UPDATE</c> behavior</see> of the new Foreign Key.
+            </param>
+            <pre>
+              The arguments provided to the constructor must, collectively, define a valid Foreign Key. In addition to
+              requiring that all arguments be non-<see langword="null"/>, this means that there be at least one
+              <paramref name="fields">constituent Field</paramref>, that the number of <paramref name="fields"/> is
+              the same as the number of fields in the Primary Key of <paramref name="reference"/>, and that Fields in
+              <paramref name="fields"/> have the same data type as the correponding referenced Field.
+            </pre>
+        </member>
+        <member name="T:Kvasir.Schema.FKName">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> repreenting the name of a Foreign Key.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.FKName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.FKName"/>.
+            </summary>
+            <param name="name">
+              The name. Leading and trailing whitspace will be discarded.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="name"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is zero-length
+                --or--
+              if <paramref name="name"/> consists only of whitspace.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.IField">
+            <summary>
+              The interface for a single Field in a Table of a relational database.
+            </summary>
+            <remarks>
+              <para>
+                Fields in a relational database are analogous to columns in the two-dimensional matrix that is a Table.
+                Each Field has, at a minimum, a name, data type, and nullability; collectively, this metadata controls how
+                the Field is referenced by other Tables and SQL statements/expressions and what values are allowed for the
+                Field. Additionally, a Field can have a default value that is used when the Field is omitted from an
+                <c>INSERT</c> statement.
+              </para>
+              <para>
+                The representation of Fields at the Schema Layer of Kvasir is an abstraction over the actual realization of
+                the Field in a back-end RDBMS. Specifically, the data type of a Field is specified in a storage-agnostic
+                manner that makes no guarantees as to the actual back-end storage mechanisms. For example, the data type of
+                a Field does not manage the precision of floating-point values or the master domain of integers. These
+                aspects of the data type can differ from provider to provider; the abstract representation of the Field
+                therefore allows a single Schema translation to be used for any back-end RDBMS provider.
+              </para>
+              <para>
+                This interface is closed: it can only be implemented by types in the Kvasir assembly. It is guaranteed that
+                at least on type in the Kvasir assembly implements this interface, though the upper bound is unspecified.
+                External assemblies can reference, use, and extend the interface to add cursory functionality and enrich
+                their own APIs if desired.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.IField.Name">
+            <summary>
+              The name of this Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.IField.DataType">
+            <summary>
+              The data type of this Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.IField.Nullability">
+            <summary>
+              The nullability of this Field.
+            </summary>
+            <remarks>
+              Nullability refers to whether or not the value of a Field can be <c>NULL</c>. This status restricts
+              several facets of a Schema, such as the <see cref="P:Kvasir.Schema.IField.DefaultValue">default value</see> that a Field can
+              take on and the reactionary behaviors of a Foreign Key that includes the Field. The nullability of a
+              Field does not depend on the Field's <see cref="P:Kvasir.Schema.IField.DataType">data type</see>.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.IField.DefaultValue">
+            <summary>
+              The default value of this Field.
+            </summary>
+            <remarks>
+              A Field is not required to have a default value, and the default value may be <see cref="P:Kvasir.Schema.DBValue.NULL"/>
+              if the Field is <see cref="P:Kvasir.Schema.IField.Nullability">nullable</see>. A <c>SOME</c> instance indicates the presene of a
+              default value, with that value being wrapped by the <see cref="T:Optional.Option`1"/>. Conversely, a
+              <c>NONE</c> instance indicates the absence of a default value.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)">
+            <summary>
+              Produces a SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              Field as a member of the subject Table.
+            </summary>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="builder"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Field.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.FieldName">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> repreenting the name of a Field.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.FieldName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.FieldName"/>.
+            </summary>
+            <param name="name">
+              The name. Leading and trailing whitspace will be discarded.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="name"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is zero-length
+                --or--
+              if <paramref name="name"/> consists only of whitspace.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.IKey">
+            <summary>
+              The interface for a single internal Key on a Table of a relational database.
+            </summary>
+            <remarks>
+              <para>
+                In a relational database, a Key is a non-empty, possibly proper subset of a Table's Fields that are
+                required to form a unique tuple for each row in that Table. Keys often reflect real-world domain identity
+                relations, such as social security numbers, client usernames, or any of various IDs. Key uniqueness is
+                imposed by the database provider, rejecting <c>INSERT</c> and <c>UPDATE</c> statements that would create
+                multiple rows with the same tuple of values.
+              </para>
+              <para>
+                This interface is closed: it can only be implemented by types in the Kvasir assembly. It is guaranteed that
+                at least on type in the Kvasir assembly implements this interface, though the upper bound is unspecified.
+                External assemblies can reference, use, and extend the interface to add cursory functionality and enrich
+                their own APIs if desired.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.IKey.Name">
+            <summary>
+              The name of this Key.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.IKey.Fields">
+            <summary>
+              The Fields that make up this Key.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.IKey.GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the Fields in this Key. The contents of those Fields cannot be
+              modified by the iteration.
+            </summary>
+            <remarks>
+              The <see cref="T:Kvasir.Schema.IKey"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
+              preventing Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.IKey.GetEnumerator"/> method exists to allow
+              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+              expression.
+            </remarks>
+            <returns>
+              An enumerator that iterates over the Fields in this Key.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)">
+            <summary>
+              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              Key as applying to the subject Table.
+            </summary>
+            <param name="builder">
+              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> to use to create the declaratory SQL expression.
+            </param>
+            <pre>
+              <paramref name="builder"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Key.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.KeyName">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> repreenting the name of a Key.
+            </summary>
+            <remarks>
+              Note: <see cref="T:Kvasir.Schema.KeyName"/> is not suitable for representing the name of a Foreign Key.
+            </remarks>
+            <seealso cref="T:Kvasir.Schema.FKName"/>
+        </member>
+        <member name="M:Kvasir.Schema.KeyName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.KeyName"/>.
+            </summary>
+            <param name="name">
+              The name. Leading and trailing whitspace will be discarded.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="name"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is zero-length
+                --or--
+              if <paramref name="name"/> consists only of whitspace.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.IsNullable">
+            <summary>
+              An enumeration that specifies whether or not <c>NULL</c> is an acceptable value, particularly for a Field.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.IsNullable.Yes">
+            <summary>
+              <c>NULL</c> <i>is</i> an acceptable value.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.IsNullable.No">
+            <summary>
+              <c>NULL</c> is <i>not</i> an acceptable value.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Schema.ITable">
+            <summary>
+              The interface for a single Table in a relational database.
+            </summary>
+            <remarks>
+              <para>
+                A Table is the primary unit of organization in a relational database. Each Table can be thought of as a
+                two-dimensional matrix of data, where the columns are Fields and the rows are data entries. A Table is
+                principally defined by its name and the collection of constitutent Fields; additionally, every Table must
+                have exactly one Primary Key - a tuple of Fields that must be unique for all member rows. Tables can
+                also have Candidate Keys, which are tuples that <i>could</i> be a Primary Key but just aren't.
+              </para>
+              <para>
+                The structure of a Table can also impose restrictions on the values of its Fields, on top of the implicit
+                and/or explicit restrictions imposed by the data type of the Fields themselves. The first form of
+                constraint is the Foreign Key constraint, which requires that the values of a tuple of Fields match the
+                values of a Primary Key for some data entry row in another Table; this constraint imposes referential
+                integrity. The second form of constraint is the <c>CHECK</c> constraint, which allows the specification of
+                arbitrary conditional logic on the values of the Fields in a row of data. A Table can have any number of
+                either type of constraint, including none at all.
+              </para>
+              <para>
+                This interface is closed: it can only be implemented by types in the Kvasir assembly. It is guaranteed that
+                at least on type in the Kvasir assembly implements this interface, though the upper bound is unspecified.
+                External assemblies can reference, use, and extend the interface to add cursory functionality and enrich
+                their own APIs if desired.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.Name">
+            <summary>
+              The name of this Table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.Dimension">
+            <summary>
+              The number of Fields that make up this Table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.Item(Kvasir.Schema.FieldName)">
+            <summary>
+              Gets the Field in this Table with a specific name.
+            </summary>
+            <param name="name">
+              The name of the Field to find.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if this Table does not have a Field with name <paramref name="name"/>
+            </exception>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.Fields">
+            <summary>
+              The Fields that make up this Table, in columnar order.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.PrimaryKey">
+            <summary>
+              The Primary Key of this Table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.CandidateKeys">
+            <summary>
+              The Candidate Keys of this Table.
+            </summary>
+            <remarks>
+              Although it would be redundant, it is possible for a Candidate Key to be identical to be non-disjoint
+              with the Table's <see cref="P:Kvasir.Schema.ITable.PrimaryKey">Primary Key</see>. Likewise, it is possible for individual
+              Candidate Keys to be non-disjoint with each other.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.ForeignKeys">
+            <summary>
+              The Foreign Keys of this Table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.ITable.CheckConstraints">
+            <summary>
+              The <c>CHECK</c> constraints applied to this Table.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.ITable.GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the Fields in this Table in columnar order. The contents of
+              those Fields cannot be modified by the iteration.
+            </summary>
+            <remarks>
+              The <see cref="T:Kvasir.Schema.ITable"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
+              preventing Tables from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ITable.GetEnumerator"/> method exists to allow
+              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+              expression.
+            </remarks>
+            <returns>
+              An enumerator that iterates over the Fields in this Table in columnar order.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Schema.ITable.GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)">
+            <summary>
+              Produces an SQL <c>CREATE TABLE</c> statement that declares this Table.
+            </summary>
+            <param name="builderFactory">
+              The <see cref="T:Kvasir.Transcription.IBuilderFactory"/> with which to create the various Builders needed to compose the
+              <c>CREATE TABLE</c> statement for this Table.
+            </param>
+            <pre>
+              <paramref name="builderFactory"/> is not <see langword="null"/>.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body is a <c>CREATE TABLE</c> statement that declares this Table.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Schema.TableName">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> repreenting the name of a Table.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Schema.TableName.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.TableName"/>.
+            </summary>
+            <param name="name">
+              The name. Leading and trailing whitspace will be discarded.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="name"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is zero-length
+                --or--
+              if <paramref name="name"/> consists only of whitspace.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Schema.OnDelete">
+            <summary>
+              An enumeration representing the various <c>ON DELETE</c> behaviors that can be applied to a Foreign Key.
+            </summary>
+            <remarks>
+              Foreign Keys are intended to enforce data integrity across multiple Tables, ensuring that a value (or tuple
+              of values) in one Table references a row in another. <c>DELETE</c> operations can therefore disrupt the
+              validity of Foreign Keys, as the row(s) being deleted can feasibly be one referenced by a Foreign Key in
+              another Table. When this happens, the behavior is controlled by the <c>ON DELETE</c> behavior of the Foreign
+              Key that referenes the to-be-deleted row(s). If multiple Foreign Keys reference the targeted row(s) with
+              different <c>ON DELETE</c> behavior, the result depends on the back-end RDBMS provider being used.
+            </remarks>
+        </member>
+        <member name="F:Kvasir.Schema.OnDelete.Prevent">
+            <summary>
+              Prevent the deletion of a row that is referenced by a row in another Table via a Foreign Key. This
+              behavior requires that the <i>referencing</i> data be modified or removed prior to removal of the
+              <i>referenced</i> data. This is the strictest behavior.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnDelete.Cascade">
+            <summary>
+              When a row that is referenced by a row in another Table via a Foreign Key is deleted, also delete the
+              referencing row(s). This behavior turns a single <c>DELETE</c> statement targeting a single Table into a
+              collection of <c>DELETE</c> statements targeting multiple Tables, as the referencing row(s) being deleted
+              can themselves be <i>referenced</i> rows in another Foreign Key.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnDelete.SetNull">
+            <summary>
+              When a row that is referenced by a row in another Table via a Foreign Key is deleted, set the values of
+              any referencing Fields to <c>NULL</c>. For obvious reasons, this behavior can only be applied to a
+              Foreign Key where all the constituent Fields are nullable.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnDelete.SetDefault">
+            <summary>
+              When a rwo that is referenced by a row in another Table via a Foreign Key is deleted, set the valus of
+              any referencing Fields to their default value. For obvious reasons, this behavior can only be applied to
+              a Foreign Key where all the constituent Fields have explicitly specified defalut values.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnDelete.NoAction">
+            <summary>
+              Take no action when a row being deleted is referenced by a row in another Table via a Foreign Key. This
+              behavior can lead to data integrity issues, as the referencing row no longer refers to an extant target.
+              This is the weakest behavior. Some back-end RDBMS providers will raise errors or exceptions when such
+              data integrity violations arse.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Schema.OnUpdate">
+            <summary>
+              An enumeration representing the various <c>ON UPDATE</c> behaviors that can be applied to a Foreign Key.
+            </summary>
+            <remarks>
+              Foreign Keys are intended to enforce data integrity across multiple Tables, ensuring that a value (or tuple
+              of values) in one Table references a row in another. <c>UPDATE</c> operations can therefore disrupt the
+              validity of Foreign Keys, as the row(s) being updated can feasibly be one referenced by a Foreign Key in
+              another Table. When this happens, the behavior is controlled by the <c>ON UPDATE</c> behavior of the Foreign
+              Key that referenes the to-be-updated row(s). If multiple Foreign Keys reference the targeted row(s) with
+              different <c>ON UPDATE</c> behavior, the result depends on the back-end RDBMS provider being used.
+            </remarks>
+        </member>
+        <member name="F:Kvasir.Schema.OnUpdate.Prevent">
+            <summary>
+              Prevent the updating of a row that is referenced by a row in another Table via a Foreign Key. This
+              behavior effectively disables updating <i>referenced</i> data unless the <i>referencing</i> data is first
+              deleted or updated itself to refer to a different, still-valid target.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnUpdate.Cascade">
+            <summary>
+              When a row that is referenced by a row in another Table via a Foreign Key is updated, also update the
+              referencing row(s). This behavior turns a single <c>UPDATE</c> statement targeting a single Table into a
+              collection of <c>UPDATE</c> statements targeting multiple Tables, as the referencing row(s) being updated
+              can themselves be <i>referenced</i> rows in another Foreign Key.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnUpdate.SetNull">
+            <summary>
+              When a row that is referenced by a row in another Table via a Foreign Key is updated, set the values of
+              any referencing Fields to <c>NULL</c>. For obvious reasons, this behavior can only be applied to a
+              Foreign Key where all the constituent Fields are nullable.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnUpdate.SetDefault">
+            <summary>
+              When a rwo that is referenced by a row in another Table via a Foreign Key is updated, set the valus of
+              any referencing Fields to their default value. For obvious reasons, this behavior can only be applied to
+              a Foreign Key where all the constituent Fields have explicitly specified defalut values.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Schema.OnUpdate.NoAction">
+            <summary>
+              Take no action when a row being updated is referenced by a row in another Table via a Foreign Key. This
+              behavior can lead to data integrity issues, as the referencing row no longer refers to an extant target.
+              This is the weakest behavior. Some back-end RDBMS providers will raise errors or exceptions when such
+              data integrity violations arse.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Schema.PrimaryKey">
+            <summary>
+              A collection of Fields that uniquely identifies a row in a Table of a relational databas and can be
+              referenced by Foreign Keys in another Table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Schema.PrimaryKey.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.PrimaryKey.Fields">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.PrimaryKey"/> with no name.
+            </summary>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.PrimaryKey.Fields">Fields</see> that make up the new <see cref="T:Kvasir.Schema.PrimaryKey"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.#ctor(Kvasir.Schema.KeyName,System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.PrimaryKey"/> with no name.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.PrimaryKey.Name">name</see> of the new <see cref="T:Kvasir.Schema.PrimaryKey"/>.
+            </param>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.PrimaryKey.Fields">Fields</see> that make up the new <see cref="T:Kvasir.Schema.PrimaryKey"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.PrimaryKey.Kvasir#Schema#IKey#GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Schema.Table">
+            <summary>
+              A single Table in a back-end relational database.
+            </summary>
+            <remarks>
+              At present, there is only one implementation of the <see cref="T:Kvasir.Schema.ITable"/> interface in Kvasir. The
+              <see cref="T:Kvasir.Schema.Table"/> class is used to represent entity Tables, list Tables, and relation Tables.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Schema.Table.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.Table.Dimension">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.Table.Item(Kvasir.Schema.FieldName)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.Table.Fields">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.Table.PrimaryKey">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.Table.CandidateKeys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.Table.ForeignKeys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Schema.Table.CheckConstraints">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.Table.#ctor(Kvasir.Schema.TableName,System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},Kvasir.Schema.PrimaryKey,System.Collections.Generic.IEnumerable{Kvasir.Schema.CandidateKey},System.Collections.Generic.IEnumerable{Kvasir.Schema.ForeignKey},System.Collections.Generic.IEnumerable{Kvasir.Schema.CheckConstraint})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.Table"/>.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Schema.Table.Name">name</see> of the new <see cref="T:Kvasir.Schema.Table"/>.
+            </param>
+            <param name="fields">
+              The <see cref="P:Kvasir.Schema.Table.Fields">Fields</see> that make up the new <see cref="T:Kvasir.Schema.Table"/>.
+            </param>
+            <param name="primaryKey">
+              The <see cref="P:Kvasir.Schema.Table.PrimaryKey">Primary Key</see> of the new <see cref="T:Kvasir.Schema.Table"/>.
+            </param>
+            <param name="candidateKeys">
+              The <see cref="P:Kvasir.Schema.Table.CandidateKeys">Candidate Keys</see> of the new <see cref="T:Kvasir.Schema.Table"/>.
+            </param>
+            <param name="foreignKeys">
+              The <see cref="P:Kvasir.Schema.Table.ForeignKeys">Foreign Keys</see> of the new <see cref="T:Kvasir.Schema.Table"/>.
+            </param>
+            <param name="checkConstraints">
+              The <see cref="P:Kvasir.Schema.Table.CheckConstraints"><c>CHECK</c> constraints</see> applied to the new <see cref="T:Kvasir.Schema.Table"/>.
+            </param>
+            <pre>
+              The arguments provided to the constructor must, collectively, define a valid Table. In addition to
+              requiring that all arguments be non-<see langword="null"/>, this means that there are at least two 
+              <paramref name="fields">Fields</paramref> that all lateral Field references (i.e. from the 
+              <paramref name="primaryKey">Primary Key</paramref>, all
+              <paramref name="candidateKeys">Candidate Keys</paramref>, all
+              <paramref name="foreignKeys">Foreign Keys</paramref>, and all
+              <paramref name="checkConstraints"><c>CHECK</c> constraints</paramref> are to Fields that are present in
+              the Table. Additionally, all Fields must have a unique <see cref="P:Kvasir.Schema.IField.Name">name</see>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Schema.Table.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Schema.Table.Kvasir#Schema#ITable#GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Transcription.IBuilderFactory">
+            <summary>
+              The interface for a factory that creates syntactically consistent declaration builders for generating
+              <c>CREATE TABLE</c> statements.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Kvasir.Transcription.IBuilderFactory"/> interface is an abstract way to represent the syntax rules of a
+                particular back-end RDBMS provider. Implementations of the <see cref="T:Kvasir.Transcription.IBuilderFactory"/> interface and the
+                builders therefrom created are passed to the various components of the Schema Layer to generate
+                <c>CREATE TABLE</c> statements once the schema structures have been synthesized. In this way, a single
+                used to interface with any back-end RDBMS provider.
+             </para>
+             <para>
+                Examples of syntax rules that can vary from provider to provider may include, but are not limited to:
+                <list type="bullet">
+                  <item>Escaping the names of Fields, Tables, and Constraints</item>
+                  <item>Specific data types</item>
+                  <item>Realization of enumeration-type Fields</item>
+                  <item>Spelling of logical comparison operators</item>
+                </list>
+             </para>
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Transcription.IBuilderFactory.NewConstraintDeclBuilder">
+            <summary>
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/> interface that produces SQL consistent
+              with the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+            </summary>
+            <returns>
+              A new <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Transcription.IBuilderFactory.NewForeignKeyDeclBuilder">
+            <summary>
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder"/> interface that produces SQL consistent
+              with the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IBuilderFactory.NewKeyDeclBuilder">
+            <summary>
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> interface that produces SQL consistent with
+              the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IBuilderFactory.NewFieldDeclBuilder">
+            <summary>
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> interface that produces SQL consistent with
+              the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IBuilderFactory.NewTableDeclBuilder">
+            <summary>
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.ITableDeclBuilder"/> interface that produces SQL consistent with
+              the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Transcription.IConstraintDeclBuilder">
+            <summary>
+              The interface for a builder that produces SQL expressions that declare a single <c>CHECK</c> constraint
+              within a <c>CREATE TABLE</c> statement.ent.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.SetName(Kvasir.Schema.CheckName)">
+            <summary>
+              Sets the name of the <c>CHECK</c> constraint whose declaration is being built by this
+              <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+            </summary>
+            <param name="name">
+              The name.
+            </param>
+            <pre>
+              <paramref name="name"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.StartClause">
+            <summary>
+              Begins a new compound clause in the <c>CHECK</c> constraint being declared by the current builder's SQL
+              expression. This is the equivalent of placing an open parenthesis when writing the full condition from
+              left-to-right.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.EndClause">
+            <summary>
+              Ends the most-recently-started compound clause in the <c>CHECK</c> constraint being declared by the
+              current builder's SQL expression. This is the equivalent of placing a close parenthesis when writing the
+              full condition from right-to-left.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.And">
+            <summary>
+              Places an <c>AND</c> operator into the <c>CHECK</c> constraint being declared by the current builder's
+              SQL expression.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.Or">
+            <summary>
+              Placs an <c>OR</c> operator into the <c>CHECK</c> constraint being declared by the current builder's SQL
+              expression.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.ConstantClause)">
+            <summary>
+              Adds a new <see cref="T:Kvasir.Schema.ConstantClause"/> to the <c>CHECK</c> constraint being declared by the current
+              builder's SQL expression.
+            </summary>
+            <param name="clause">
+              The <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </param>
+            <pre>
+              <paramref name="clause"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.CrossFieldClause)">
+            <summary>
+              Adds a new <see cref="T:Kvasir.Schema.CrossFieldClause"/> to the <c>CHECK</c> constraint being declared by the current
+              builder's SQL expression.
+            </summary>
+            <param name="clause">
+              The <see cref="T:Kvasir.Schema.CrossFieldClause"/>.
+            </param>
+            <pre>
+              <paramref name="clause"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.InclusionClause)">
+            <summary>
+              Adds a new <see cref="T:Kvasir.Schema.InclusionClause"/> to the <c>CHECK</c> constraint being declared by the current
+              builder's SQL expression.
+            </summary>
+            <param name="clause">
+              The <see cref="T:Kvasir.Schema.InclusionClause"/>.
+            </param>
+            <pre>
+              <paramref name="clause"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.NullityClause)">
+            <summary>
+              Adds a new <see cref="T:Kvasir.Schema.NullityClause"/> to the <c>CHECK</c> constraint being declared by the current
+              builder's SQL expression.
+            </summary>
+            <param name="clause">
+              The <see cref="T:Kvasir.Schema.NullityClause"/>.
+            </param>
+            <pre>
+              <paramref name="clause"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.Build">
+            <summary>
+              Produces the full SQL expression that has been built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+            </summary>
+            <pre>
+              Collectively, <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.ConstantClause)"/>, <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.CrossFieldClause)"/>,
+              <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.InclusionClause)"/>, and <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.NullityClause)"/> have been called at
+              least once
+                --and--
+              <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.StartClause"/> has been called the same number of times as <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.EndClause"/>.
+            </pre>
+            <returns>
+              A syntactically valid SQL expression declaring a single <c>CHECK</c> constraint.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Transcription.IFieldDeclBuilder">
+            <summary>
+              The interface for a builder that produces SQL expressions that declare a single Field within a
+              <c>CREATE TABLE</c> statement.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetName(Kvasir.Schema.FieldName)">
+            <summary>
+              Sets the name of the Field being declared by the current builder's SQL expression.
+            </summary>
+            <param name="name">
+              The name.
+            </param>
+            <pre>
+              <paramref name="name"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetDataType(Kvasir.Schema.DBType)">
+            <summary>
+              Sets the data type of the Field being declared by the current builder's SQL expression.
+            </summary>
+            <param name="dataType">
+              The data type.
+            </param>
+        </member>
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetNullability(Kvasir.Schema.IsNullable)">
+            <summary>
+              Sets the nullability of the Field being declared by the current builder's SQL expression.
+            </summary>
+            <param name="nullability">
+              The nullability.
+            </param>
+            <pre>
+              <paramref name="nullability"/> is valid.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetDefaultValue(Kvasir.Schema.DBValue)">
+            <summary>
+              Sets the default value of the Field being declared by the current builder's SQL expression.
+            </summary>
+            <param name="value">
+              The default value.
+            </param>
+        </member>
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetAllowedValues(System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+            <summary>
+              Sets the list of allowed values for the Field being declared by the current builder's SQL expression.
+            </summary>
+            <param name="values">
+              The allowed values.
+            </param>
+            <pre>
+              <paramref name="values"/> is not <see langword="null"/>
+                --and--
+              <paramref name="values"/> contains at last one element.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.Build">
+            <summary>
+              Produce the full SQL expression that has ben built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/>.
+            </summary>
+            <pre>
+              <see cref="M:Kvasir.Transcription.IFieldDeclBuilder.SetName(Kvasir.Schema.FieldName)"/> has been called at least once
+                --and--
+              <see cref="M:Kvasir.Transcription.IFieldDeclBuilder.SetDataType(Kvasir.Schema.DBType)"/> has been called at least once.
+            </pre>
+            <returns>
+              A syntactically valid SQL expression declaring a single Field.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Transcription.IForeignKeyDeclBuilder">
+            <summary>
+              The interface for a builder that produces SQL expressions that declare a single Foreign Key within a
+              <c>CREATE TABLE</c> statement.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetName(Kvasir.Schema.FKName)">
+            <summary>
+              Sets the name of the Foreign Key being declared by the current builder's SQL expression.
+            </summary>
+            <param name="name">
+              The name.
+            </param>
+            <pre>
+              <paramref name="name"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetOnDeleteBehavior(Kvasir.Schema.OnDelete)">
+            <summary>
+              Sets the <c>ON DELETE</c> behavior of the Foreign Key being declared by the current builder's SQL
+              expression.
+            </summary>
+            <param name="behavior">
+              The <c>ON DELETE</c> behavior.
+            </param>
+            <pre>
+              <paramref name="behavior"/> is valid.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetOnUpdateBehavior(Kvasir.Schema.OnUpdate)">
+            <summary>
+              Sets the <c>ON UPDATE</c> behavior of the Foreign Key being declared by the current builder's SQL
+              expression.
+            </summary>
+            <param name="behavior">
+              The <c>ON UPDATE</c> behavior.
+            </param>
+            <pre>
+              <paramref name="behavior"/> is valid.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetReferencedTable(Kvasir.Schema.ITable)">
+            <summary>
+              Sets the Table referenced by the Foreign Key being declared by the current builder's SQL expression.
+            </summary>
+            <param name="table">
+              The Table.
+            </param>
+            <pre>
+              <paramref name="table"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Sets the collection of Fields that comprise the Foreign Key being declared by the current builder's SQL
+              expression.
+            </summary>
+            <param name="fields">
+              The Fields.
+            </param>
+            <pre>
+              <paramref name="fields"/> is not <see langword="null"/>
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.Build">
+            <summary>
+              Produces the full SQL expression that has been built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/>.
+            </summary>
+            <pre>
+              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
+            </pre>
+            <returns>
+              A syntactically valid SQL expression declaring a single Primary Key or a single Candidate Key.
+            </returns>
+            <summary>
+              Produces the full SQL expression that has been built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder"/>.
+            </summary>
+            <pre>
+              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetReferencedTable(Kvasir.Schema.ITable)"/> has been called at least once
+                --and--
+              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
+            </pre>
+            <returns>
+              A syntactically valid SQL expression declaring a single Foreign Key.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Transcription.IKeyDeclBuilder">
+            <summary>
+              The interface for a builder that produces SQL expressions that declare a single Primary Key or a single
+              Candidate Key within a <c>CREATE TABLE</c> statement.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.SetName(Kvasir.Schema.KeyName)">
+            <summary>
+              Sets the name of the Primary Key or Candidate Key being declared by the current builder's SQL expression.
+            </summary>
+            <param name="name">
+              The name.
+            </param>
+            <pre>
+              <paramref name="name"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Sets the collection of Fields that comprise the Primary Key or Candidate Key being declared by the
+              current builder's SQL expression. expression being built.
+            </summary>
+            <param name="fields">
+              The Fields.
+            </param>
+            <pre>
+              <paramref name="fields"/> is not <see langword="null"/>
+                --and--
+              <paramref name="fields"/> contains at least one element.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.SetAsPrimaryKey">
+            <summary>
+              Marks the SQL expression being built as one for a Primary Key rather than a Candidate Key.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.Build">
+            <summary>
+              Produces the full SQL expression that has been built up by the current builder's SQL expression.
+              <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/>.
+            </summary>
+            <pre>
+              <see cref="M:Kvasir.Transcription.IKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
+            </pre>
+            <returns>
+              A syntactically valid SQL expression declaring a single Primary Key or a single Candidate Key.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Transcription.ITableDeclBuilder">
+            <summary>
+              The interface for a builder that produces <c>CREATE TABLE</c> statements for a single Table.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder.SetName(Kvasir.Schema.TableName)">
+            <summary>
+              Sets the name of the Table being declared by the current builder's <c>CREATE TABLE</c> statement.
+            </summary>
+            <param name="name">
+              The name.
+            </param>
+            <pre>
+              <paramref name="name"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddFieldDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <summary>
+              Adds a Field to the Table being declared by the current builder's <c>CREATE TABLE</c>
+              statement.
+            </summary>
+            <param name="sql">
+              The Field declaration statement.
+            </param>
+            <pre>
+              <paramref name="sql"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder.SetPrimaryKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <summary>
+              Sets the Primary Key to the Table being declared by the current builder's <c>CREATE TABLE</c> statement.
+            </summary>
+            <param name="sql">
+              The Primary Key declaration statement.
+            </param>
+            <pre>
+              <paramref name="sql"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddCandidateKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <summary>
+              Adds the declaration of a Candidate Key to the Table being declared by the current builder's
+              <c>CREATE TABLE</c> statement.
+            </summary>
+            <param name="sql">
+              The Candidate Key declaration statement.
+            </param>
+            <pre>
+              <paramref name="sql"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddForeignKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <summary>
+              Adds a Foreign Key to the Table being declared by the current builder's <c>CREATE TABLE</c> statement.
+            </summary>
+            <param name="sql">
+              The Foreign Key declaration statement.
+            </param>
+            <pre>
+              <paramref name="sql"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddCheckConstraintDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <summary>
+              Adds a <c>CHECK</c> constraint to the Table being declared by the current builder's <c>CREATE TABLE</c>
+              statement.
+            </summary>
+            <param name="sql">
+              The <c>CHECK</c> constraint declaration statement.
+            </param>
+            <pre>
+              <paramref name="sql"/> is not <see langword="null"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder.Build">
+            <summary>
+              Produces the full <c>CREATE TABLE</c> statement that has been built up by calls into the other methods on
+              this <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+            </summary>
+            <pre>
+              <see cref="M:Kvasir.Transcription.ITableDeclBuilder.SetName(Kvasir.Schema.TableName)"/> has been called at least once
+                --and--
+              <see cref="M:Kvasir.Transcription.ITableDeclBuilder.AddFieldDeclaration(Kvasir.Transcription.SqlSnippet)"/> has been called at least twice
+                --and--
+              <see cref="M:Kvasir.Transcription.ITableDeclBuilder.SetPrimaryKeyDeclaration(Kvasir.Transcription.SqlSnippet)"/> has been called at least once.
+            </pre>
+            <returns>
+              A syntactically valid <c>CREATE TABLE</c> statement.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Transcription.SqlSnippet">
+            <summary>
+              A strongly typed <see cref="T:System.String"/> that represents a full or partial SQL statement or query.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transcription.SqlSnippet.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Transcription.SqlSnippet"/>.
+            </summary>
+            <param name="sql">
+              The contents of the new <see cref="T:Kvasir.Transcription.SqlSnippet"/>. Leading and trailing whitspace are discarded.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="sql"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="sql"/> is zero-length
+                --or--
+              if <paramref name="sql"/> consists only of whitespace.
+            </exception>
+        </member>
+    </members>
+</doc>
