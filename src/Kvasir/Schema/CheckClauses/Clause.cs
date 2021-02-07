@@ -119,7 +119,7 @@ namespace Kvasir.Schema {
         ///   <paramref name="consequent"/>."
         /// </returns>
         public static Clause IfThen(Clause predicate, Clause consequent) {
-            return predicate.Or(consequent);
+            return consequent.Or(predicate.Negation());
         }
 
         /// <summary>

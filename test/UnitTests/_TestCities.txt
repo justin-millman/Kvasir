@@ -1,0 +1,76 @@
+﻿# This document lists the U.S. cities that have been used as elements of various IEnumerables in unit tests across all
+# projects.
+
+Akron
+Albuquerque
+Ann Arbor
+Atlanta
+Atlantic City
+Baltimore
+Biloxi
+Birmingham
+Boise
+Boston
+Buffalo
+Canton
+Charleston
+Charlotte
+Chicago
+Cincinnati
+Cleveland
+Denver
+Des Moines
+Dover
+El Paso
+Fairbanks
+Flagstaff
+Fort Wayne
+Fresno
+Green Bay
+Hartford
+Helena
+Honolulu
+Houston
+Ithaca
+Jacksonville
+Jersey City
+Juneau
+Kansas City
+Lansing
+Laramie
+Las Vegas
+Little Rock
+Los Angeles
+Louisville
+Memphis
+Milwaukee
+Montgomery
+Montpelier
+Myrtle Beach
+Nashville
+New Haven
+New Orleans
+Oakland
+Oklahoma City
+Omaha
+Orlando
+Peoria
+Phoenix
+Pittsburgh
+Portland
+Raleigh
+Reno
+San Antonio
+San Diego
+San Francisco
+Seattle
+Spokane
+Springfield
+St. Louis
+Tacoma
+Topeka
+Trenton
+Tulsa
+Virginia Beach
+Washington, D.C.
+Wichita

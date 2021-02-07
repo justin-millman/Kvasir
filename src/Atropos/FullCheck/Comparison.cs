@@ -162,37 +162,41 @@ namespace Atropos {
             var expectedGreater = trichotomy > 0;
             var expectedGreaterEqual = trichotomy >= 0;
 
-            var lt = GetOperator<T>(Operator.LT, expectedLess);
-            var gt = GetOperator<T>(Operator.GT, expectedGreater);
-            var lte = GetOperator<T>(Operator.LTE, expectedLessEqual);
-            var gte = GetOperator<T>(Operator.GT, expectedGreaterEqual);
+            var ltLR = GetOperator<T>(Operator.LT, expectedLess);
+            var gtLR = GetOperator<T>(Operator.GT, expectedGreater);
+            var lteLR = GetOperator<T>(Operator.LTE, expectedLessEqual);
+            var gteLR = GetOperator<T>(Operator.GTE, expectedGreaterEqual);
+            var ltRL = GetOperator<T>(Operator.LT, expectedGreater);
+            var gtRL = GetOperator<T>(Operator.GT, expectedLess);
+            var lteRL = GetOperator<T>(Operator.LTE, expectedGreaterEqual);
+            var gteRL = GetOperator<T>(Operator.GTE, expectedLessEqual);
 
             // Symmetrically evaluate operator< if it is present on `T` or a base class of `T`, selecting the overload
             // accepting the most derived type
-            if (lt(lhs, rhs) != expectedLess) { return Option.Some($"{lhs} < {rhs}"); }
-            if (lt(rhs, lhs) != expectedGreater) { return Option.Some($"{rhs} < {lhs}"); }
+            if (ltLR(lhs, rhs) != expectedLess) { return Option.Some($"{lhs} < {rhs}"); }
+            if (ltRL(rhs, lhs) != expectedGreater) { return Option.Some($"{rhs} < {lhs}"); }
 
             // Symmetrically evaluate operator> if it is present on `T` or a base class of `T`, selecting the overload
             // accepting the most derived type
-            if (gt(lhs, rhs) != expectedGreater) { return Option.Some($"{lhs} > {rhs}"); }
-            if (gt(rhs, lhs) != expectedLess) { return Option.Some($"{rhs} > {lhs}"); }
+            if (gtLR(lhs, rhs) != expectedGreater) { return Option.Some($"{lhs} > {rhs}"); }
+            if (gtRL(rhs, lhs) != expectedLess) { return Option.Some($"{rhs} > {lhs}"); }
 
             // Symmetrically evaluate operator<= if it is present on `T` or a base class of `T`, selecting the overload
             // accepting the most derived type
-            if (lte(lhs, rhs) != expectedLessEqual) { return Option.Some($"{lhs} <= {rhs}"); }
-            if (lte(rhs, lhs) != expectedGreaterEqual) { return Option.Some($"{rhs} <= {lhs}"); }
+            if (lteLR(lhs, rhs) != expectedLessEqual) { return Option.Some($"{lhs} <= {rhs}"); }
+            if (lteRL(rhs, lhs) != expectedGreaterEqual) { return Option.Some($"{rhs} <= {lhs}"); }
 
             // Symmetrically evaluate operator>= if it is present on `T` or a base class of `T`, selecting the overload
             // accepting the most derived type
-            if (gte(lhs, rhs) != expectedGreaterEqual) { return Option.Some($"{lhs} >= {rhs}"); }
-            if (gte(rhs, lhs) != expectedLess) { return Option.Some($"{rhs} >= {lhs}"); }
+            if (gteLR(lhs, rhs) != expectedGreaterEqual) { return Option.Some($"{lhs} >= {rhs}"); }
+            if (gteRL(rhs, lhs) != expectedLessEqual) { return Option.Some($"{rhs} >= {lhs}"); }
 
             // Symmetrically evaluate each `IComparable<U>` interface implemented by `T` where `U` is either `T`, an
             // interface of `T`, or a base class of `T`
             var intfcs = typeof(T).GetInterfaces();
             var bases = GetBasesOf(typeof(T));
             foreach (var intfc in intfcs) {
-                if (intfc.IsGenericType && intfc.GetGenericTypeDefinition() == typeof(IEquatable<>)) {
+                if (intfc.IsGenericType && intfc.GetGenericTypeDefinition() == typeof(IComparable<>)) {
                     var arg = intfc.GetGenericArguments()[0];
                     if (bases.IndexOf(arg) >= 0) {
                         var funcName = nameof(EvaluateIComparable);

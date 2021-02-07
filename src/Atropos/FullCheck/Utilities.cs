@@ -101,10 +101,10 @@ namespace Atropos {
             var lrActual = lhsCompRhs is null ? 0 : (lhsCompRhs < 0 ? 1 : (lhsCompRhs == 0 ? 2 : 3));
             var rlActual = rhsCompLhs is null ? 0 : (rhsCompLhs < 0 ? 1 : (rhsCompLhs == 0 ? 2 : 3));
 
-            if (lrActual != expected) {
+            if (lhs is not null && lrActual != expected) {
                 return Option.Some($"IComparable<{typeof(T).Name}>.CompareTo({lhs}, {rhs})");
             }
-            if (rlActual != (expected * 3) % 4) {
+            if (rhs is not null && rlActual != (expected * 3) % 4) {
                 return Option.Some($"IComparable<{typeof(T).Name}>.CompareTo({rhs}, {lhs})");
             }
 

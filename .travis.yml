@@ -1,6 +1,6 @@
 language: csharp
 solution: Kvasir.sln
-dotnet: 5.0.101
+dotnet: 5.0.200
 env:
   global:
     - AUTHOR=$(git show -s --pretty=format:"%cn")
@@ -14,13 +14,13 @@ branches:
     - master
 install:
   - nuget restore Kvasir.sln
-  - dotnet add Test/Test.csproj package coverlet.msbuild
+  - dotnet add test/UnitTests/UnitTest.csproj package coverlet.msbuild
   - nuget install coveralls.net -Version 0.7.0 -OutputDirectory packages
 script:
   - dotnet test -c $CONFIGURATION -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
   - ./packages/coveralls.net.0.7.0/tools/csmacnz.Coveralls.exe
       --opencover
-      -i ./Test/coverage.opencover.xml
+      -i ./test/UnitTests/coverage.opencover.xml
       --commitId $TRAVIS_COMMIT
       --commitBranch $TRAVIS_BRANCH
       --commitAuthor "$AUTHOR"
