@@ -69,7 +69,7 @@ namespace Kvasir.Schema {
                 builder.EndClause();
             }
             else {
-                var negation = LHS.Negation().Or(RHS.Negation());
+                var negation = LHS.Negation().And(RHS.Negation());
                 negation.AddDeclarationTo(builder);
             }
         }

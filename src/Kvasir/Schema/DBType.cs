@@ -130,7 +130,7 @@ namespace Kvasir.Schema {
         ///   <see langword="false"/>.
         /// </returns>
         public static bool IsSupported(Type clrType) {
-            return lookup_.ContainsKey(clrType);
+            return lookup_.ContainsKey(Normalize(clrType));
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace Kvasir.Schema {
         ///   <see cref="DBType"/>.
         /// </exception>
         public static DBType Lookup(Type clrType) {
-            if (!lookup_.TryGetValue(clrType, out DBType result)) {
+            if (!lookup_.TryGetValue(Normalize(clrType), out DBType result)) {
                 Debug.Assert(!IsSupported(clrType));
                 var msg = $"CLR type {clrType.Name} is not supported by {nameof(Kvasir)}";
                 throw new ArgumentException(msg, nameof(clrType));

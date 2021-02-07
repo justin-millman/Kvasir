@@ -64,7 +64,7 @@ namespace Kvasir.Schema {
             Debug.Assert(nullability.IsValid());
             Debug.Assert(dataType != DBType.Enumeration);
             Debug.Assert(nullability == IsNullable.Yes || !defaultValue.Contains(DBValue.NULL));
-            Debug.Assert(defaultValue.ValueOr(DBValue.NULL).IsInstanceOf(DataType));
+            Debug.Assert(defaultValue.ValueOr(DBValue.NULL).IsInstanceOf(dataType));
 
             Name = name;
             DataType = dataType;

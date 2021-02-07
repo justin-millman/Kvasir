@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kvasir", "src\Kvasir\Kvasir
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cybele", "src\Cybele\Cybele.csproj", "{C6F7134B-DCC7-41CE-AD81-258926763FA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atropos", "src\Atropos\Atropos.csproj", "{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atropos", "src\Atropos\Atropos.csproj", "{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{A9E7D917-770A-43C8-B0ED-81389AAC52F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDBAB9EE-909D-44EE-B741-AA01DBBEDD2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9E7D917-770A-43C8-B0ED-81389AAC52F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9E7D917-770A-43C8-B0ED-81389AAC52F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9E7D917-770A-43C8-B0ED-81389AAC52F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9E7D917-770A-43C8-B0ED-81389AAC52F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

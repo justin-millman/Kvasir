@@ -58,6 +58,11 @@ namespace Cybele.Core {
         /// <param name="range">
         ///   The endpoints of the target substring.
         /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///   if the beginning index of <paramref name="range"/> is less than <c>0</c>
+        ///     --or--
+        ///   if the ending index of <paramref name="range"/> is greater than or equal to <see cref="Length"/>.
+        /// </exception>
         public ReadOnlySpan<char> this[Range range] => Contents[range];
 
         /// <summary>
@@ -321,11 +326,11 @@ namespace Cybele.Core {
         ///   The second <see cref="ConceptString{TConcept}"/>.
         /// </param>
         /// <returns>
-        ///   An unspecified negative integer is <paramref name="lhs"/> is less than <paramref name="rhs"/>, <c>0</c>
+        ///   An unspecified negative integer if <paramref name="lhs"/> is less than <paramref name="rhs"/>, <c>0</c>
         ///   if <paramref name="lhs"/> is equal to <paramref name="rhs"/>, and an unspecified positive integer if
         ///   <paramref name="lhs"/> is greater than <paramref name="rhs"/>. A <see langword="null"/>
         ///   <see cref="ConceptString{TConcept}"/> compares equal to another <see langword="null"/> instance and less
-        ///   than any non-<see langword="null"/> ones.
+        ///   than any non-<see langword="null"/> one.
         /// </returns>
         private static int Compare(ConceptString<TConcept>? lhs, ConceptString<TConcept>? rhs) {
             if (lhs is null) {
