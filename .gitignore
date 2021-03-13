@@ -25,8 +25,10 @@ x86/
 *.tmp*
 
 # Generated Documentation and Code Coverage Reports
-[Dd]ocumentation/[Hh][Tt][Mm][Ll]/
+[Dd]ocs/[Hh][Tt][Mm][Ll]/
+[Dd]ocs/[Xx][Mm][Ll]/
 [Cc]overage/
+_build/
 
 # pycache
 __pycache__/
