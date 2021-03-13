@@ -14,7 +14,6 @@ branches:
     - master
 install:
   - nuget restore Kvasir.sln
-  - dotnet add test/UnitTests/UnitTest.csproj package coverlet.msbuild
   - nuget install coveralls.net -Version 0.7.0 -OutputDirectory packages
 script:
   - dotnet test -c $CONFIGURATION -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
