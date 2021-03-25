@@ -3,9 +3,11 @@
 
 Akron
 Albuquerque
+Amarillo
 Ann Arbor
 Atlanta
 Atlantic City
+Augusta
 Baltimore
 Biloxi
 Birmingham
@@ -13,6 +15,7 @@ Boise
 Boston
 Buffalo
 Canton
+Carson City
 Charleston
 Charlotte
 Chicago
@@ -27,10 +30,12 @@ Flagstaff
 Fort Wayne
 Fresno
 Green Bay
+Greensboro
 Hartford
 Helena
 Honolulu
 Houston
+Indianapolis
 Ithaca
 Jacksonville
 Jersey City
@@ -43,13 +48,17 @@ Little Rock
 Los Angeles
 Louisville
 Memphis
+Miami
 Milwaukee
+Minneapolis
 Montgomery
 Montpelier
 Myrtle Beach
 Nashville
 New Haven
 New Orleans
+New York City
+Norfolk
 Oakland
 Oklahoma City
 Omaha
@@ -63,14 +72,17 @@ Reno
 San Antonio
 San Diego
 San Francisco
+San Jose
 Seattle
 Spokane
 Springfield
 St. Louis
 Tacoma
+Toledo
 Topeka
 Trenton
 Tulsa
 Virginia Beach
 Washington, D.C.
 Wichita
+Ypsilanti
