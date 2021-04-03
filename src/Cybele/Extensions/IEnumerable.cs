@@ -42,6 +42,75 @@ namespace Cybele.Extensions {
         }
 
         /// <summary>
+        ///   Checks if some function (e.g. a property accessor) returns the same value for all elements of an
+        ///   enumerable, using the default <see cref="IEqualityComparer{T}"/> for the function's return type.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   [deduced] The type of element in the enumerable.
+        /// </typeparam>
+        /// <typeparam name="U">
+        ///   [deduced] The type of value returned by the function.
+        /// </typeparam>
+        /// <param name="self">
+        ///   The <see cref="IEnumerable{T}"/> on which the extension method is invoked.
+        /// </param>
+        /// <param name="func">
+        ///   The function.
+        /// </param>
+        /// <returns>
+        ///   <see langword="true"/> if, according to the default <see cref="EqualityComparer{T}"/> for
+        ///   <typeparamref name="U"/>, <paramref name="func"/> returns equal values for all elements of
+        ///   <paramref name="self"/>; otherwise, <see langword="false"/>.
+        /// </returns>
+        public static bool AllSame<T, U>(this IEnumerable<T> self, Func<T, U> func) {
+            Guard.Against.Null(self, nameof(self));
+            Guard.Against.Null(func, nameof(func));
+            return AllSame(self, func, EqualityComparer<U>.Default);
+        }
+
+        /// <summary>
+        ///   Checks if some function (e.g. a property accessor) returns the same value for all elements of an
+        ///   enumerable, using a specific <see cref="IEqualityComparer{T}"/> for the function's return type.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   [deduced] The type of element in the enumerable.
+        /// </typeparam>
+        /// <typeparam name="U">
+        ///   [deduced] The type of value returned by the function.
+        /// </typeparam>
+        /// <param name="self">
+        ///   The <see cref="IEnumerable{T}"/> on which the extension method is invoked.
+        /// </param>
+        /// <param name="func">
+        ///   The function.
+        /// </param>
+        /// <param name="comparer">
+        ///   The <see cref="EqualityComparer{T}"/> with which to compare the return values of <paramref name="func"/>.
+        /// </param>
+        /// <returns>
+        ///   <see langword="true"/> if, according to <paramref name="comparer"/>, <paramref name="func"/> returns
+        ///   equal values for all elements of <paramref name="self"/>; otherwise, <see langword="false"/>.
+        /// </returns>
+        public static bool AllSame<T, U>(this IEnumerable<T> self, Func<T, U> func, IEqualityComparer<U> comparer) {
+            Guard.Against.Null(self, nameof(self));
+            Guard.Against.Null(func, nameof(func));
+            Guard.Against.Null(comparer, nameof(comparer));
+
+            var enumerator = self.GetEnumerator();
+            if (!enumerator.MoveNext()) {
+                return true;
+            }
+
+            var target = func(enumerator.Current);
+            while (enumerator.MoveNext()) {
+                if (!comparer.Equals(target, func(enumerator.Current))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         ///   Checks if any element of an enumerable passes a given predicate. The index of the element is passed to
         ///   the predicate along with the element for evaluation.
         /// </summary>

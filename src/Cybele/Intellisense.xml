@@ -378,6 +378,54 @@
               <c>(index, element)</c> pairs of <paramref name="self"/>; otherwise, <see langword="false"/>.
             </returns>
         </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.AllSame``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+              Checks if some function (e.g. a property accessor) returns the same value for all elements of an
+              enumerable, using the default <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> for the function's return type.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <typeparam name="U">
+              [deduced] The type of value returned by the function.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <param name="func">
+              The function.
+            </param>
+            <returns>
+              <see langword="true"/> if, according to the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for
+              <typeparamref name="U"/>, <paramref name="func"/> returns equal values for all elements of
+              <paramref name="self"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.IEnumerableExtensions.AllSame``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+              Checks if some function (e.g. a property accessor) returns the same value for all elements of an
+              enumerable, using a specific <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> for the function's return type.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of element in the enumerable.
+            </typeparam>
+            <typeparam name="U">
+              [deduced] The type of value returned by the function.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> on which the extension method is invoked.
+            </param>
+            <param name="func">
+              The function.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.EqualityComparer`1"/> with which to compare the return values of <paramref name="func"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if, according to <paramref name="comparer"/>, <paramref name="func"/> returns
+              equal values for all elements of <paramref name="self"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
         <member name="M:Cybele.Extensions.IEnumerableExtensions.Any``1(System.Collections.Generic.IEnumerable{``0},System.Func{System.Int32,``0,System.Boolean})">
             <summary>
               Checks if any element of an enumerable passes a given predicate. The index of the element is passed to
@@ -491,6 +539,10 @@
               A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
               of the <see cref="T:System.Reflection.MemberInfo"/> class.
             </summary>
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the <see cref="T:System.Reflection.MemberInfo"/> class.
+            </summary>
         </member>
         <member name="M:Cybele.Extensions.TypeExtensions.HasAttribute``1(System.Reflection.MemberInfo)">
             <summary>
@@ -506,6 +558,23 @@
             <returns>
               <see langword="true"/> if <paramref name="self"/> is member that is annotated with at least one instance
               of <typeparamref name="TAttribute"/>, possibly inherited; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.TypeExtensions.IsInstanceOf(System.Type,System.Type)">
+            <summary>
+              Determines if an instance of one <see cref="T:System.Type"/> would also be an instance of another
+              <see cref="T:System.Type"/> based on an identity, inheritance, or interface implementation relationship.
+            </summary>
+            <param name="derivedType">
+              The hypothetical descendant <see cref="T:System.Type"/>.
+            </param>
+            <param name="ancestorType">
+              The hypothetical ancestor <see cref="T:System.Type"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="ancestorType"/> is identical to <paramref name="derivedType"/>,
+              is a base class of <paramref name="derivedType"/>, or is an interface of <paramref name="derivedType"/>;
+              otherwise, <see langword="false"/>.
             </returns>
         </member>
     </members>

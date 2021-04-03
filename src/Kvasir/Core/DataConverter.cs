@@ -105,13 +105,12 @@ namespace Kvasir.Core {
         ///   A new bidirectional <see cref="DataConverter"/> that converts from instances of
         ///   <typeparamref name="TSource"/> into instances of <typeparamref name="TResult"/> using
         ///   <paramref name="convert"/> and vice-versa using <paramref name="revert"/>.
+	/// </returns>
         public static DataConverter Create<TSource, TResult>(Converter<TSource, TResult> convert,
             Converter<TResult, TSource> revert) {
 
-            #pragma warning disable CS8604          // Possible null reference argument.
-            ConvFn fwd = o => convert((TSource?)o);
-            var bwd = Option.Some<ConvFn>(o => revert((TResult?)o));
-            #pragma warning restore CS8604          // Possible null reference argument.
+            ConvFn fwd = o => o is null ? null : convert((TSource)o);
+            var bwd = Option.Some<ConvFn>(o => o is null ? null : revert((TResult)o));
 
             return new DataConverter(typeof(TSource), typeof(TResult), fwd, bwd);
         }

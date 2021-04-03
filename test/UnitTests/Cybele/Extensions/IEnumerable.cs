@@ -245,4 +245,95 @@ namespace UT.Cybele.Extensions {
             meetsNone.Should().BeFalse();
         }
     }
+
+    [TestClass, TestCategory("IEnumerable: AllSame")]
+    public sealed class IEnumerable_AllSame : ExtensionTests {
+        [TestMethod] public void EmptyAllSameDefaultComparer() {
+            // Arrange
+            var empty = new List<string>();
+
+            // Act
+            var allSame = empty.AllSame(s => s.Length);
+
+            // Assert
+            allSame.Should().BeTrue();
+        }
+
+        [TestMethod] public void SingleAllSameDefaultComparer() {
+            // Arrange
+            var cities = new List<string>() { "Anaheim" };
+
+            // Act
+            var allSame = cities.AllSame(s => s.ToUpper());
+
+            // Assert
+            allSame.Should().BeTrue();
+        }
+
+        [TestMethod] public void MultipleAllSameDefaultComparer() {
+            // Arrange
+            var cities = new List<string>() { "Baton Rouge", "Laredo", "Madison", "Santa Fe" };
+
+            // Act
+            var allSame = cities.AllSame(s => s[1]);
+
+            // Assert
+            allSame.Should().BeTrue();
+        }
+
+        [TestMethod] public void MultipleNotAllSameDefaultComparer() {
+            // Arrange
+            var cities = new List<string>() { "Shreveport", "Tallahassee", "Tampa", "Waco", "Tucson" };
+
+            // Act
+            var allSame = cities.AllSame(s => s.Length);
+
+            // Assert
+            allSame.Should().BeFalse();
+        }
+
+        [TestMethod] public void EmptyAllSameCustomComparer() {
+            // Arrange
+            var empty = new List<string>();
+
+            // Act
+            var allSame = empty.AllSame(s => s.ToLower(), StringComparer.OrdinalIgnoreCase);
+
+            // Assert
+            allSame.Should().BeTrue();
+        }
+
+        [TestMethod] public void SingleAllSameCustomComparer() {
+            // Arrange
+            var cities = new List<string>() { "Jackson" };
+
+            // Act
+            var allSame = cities.AllSame(s => s.ToUpper(), StringComparer.OrdinalIgnoreCase);
+
+            // Assert
+            allSame.Should().BeTrue();
+        }
+
+        [TestMethod] public void MultipleAllSameCustomComparer() {
+            // Arrange
+            var cities = new List<string>() { "Glendale", "PLANO" };
+
+            // Act
+            var allSame = cities.AllSame(s => s[1].ToString(), StringComparer.OrdinalIgnoreCase);
+
+            // Assert
+            allSame.Should().BeTrue();
+        }
+
+        [TestMethod] public void MultipleNotAllSameCustomComparer() {
+            // Arrange
+            var cities = new List<string>() { "Winston-Salem", "North Las Vegas", "Bismarck" };
+
+            // Act
+            var allSame = cities.AllSame(s => s, StringComparer.OrdinalIgnoreCase);
+
+            // Assert
+            allSame.Should().BeFalse();
+        }
+    }
 }

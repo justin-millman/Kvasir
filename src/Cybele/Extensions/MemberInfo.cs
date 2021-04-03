@@ -6,7 +6,7 @@ namespace Cybele.Extensions {
     ///   A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
     ///   of the <see cref="MemberInfo"/> class.
     /// </summary>
-    public static class TypeExtensions {
+    public static partial class TypeExtensions {
         /// <summary>
         ///   Determines if a member (e.g. a <see cref="Type"/> or a <see cref="PropertyInfo"/>) is annotated with a
         ///   particular <see cref="Attribute"/>.
