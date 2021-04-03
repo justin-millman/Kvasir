@@ -184,24 +184,30 @@ namespace UT.Kvasir.Core {
 
         [TestMethod] public void ConvertNull() {
             // Arrange
-            var converter = DataConverter.Identity<string>();
+            var classConverter = DataConverter.Identity<string>();
+            var structConverter = DataConverter.Identity<int>();
 
             // Act
-            var conversion = converter.Convert(null);
+            var classConversion = classConverter.Convert(null);
+            var structConversion = structConverter.Convert(null);
 
             // Assert
-            conversion.Should().BeNull();
+            classConversion.Should().BeNull();
+            structConversion.Should().BeNull();
         }
 
         [TestMethod] public void RevertNull() {
             // Arrange
-            var converter = DataConverter.Identity<string>();
+            var classConverter = DataConverter.Identity<string>();
+            var structConverter = DataConverter.Identity<int>();
 
             // Act
-            var reversion = converter.Revert(null);
+            var classReversion = classConverter.Revert(null);
+            var structReversion = structConverter.Revert(null);
 
             // Assert
-            reversion.Should().BeNull();
+            classReversion.Should().BeNull();
+            structReversion.Should().BeNull();
         }
     }
 }

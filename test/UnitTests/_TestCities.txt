@@ -4,13 +4,19 @@
 Akron
 Albuquerque
 Amarillo
+Anaheim
+Anchorage
 Ann Arbor
+Annapolis
 Atlanta
 Atlantic City
 Augusta
+Austin
 Baltimore
+Baton Rouge
 Biloxi
 Birmingham
+Bismarck
 Boise
 Boston
 Buffalo
@@ -18,9 +24,14 @@ Canton
 Carson City
 Charleston
 Charlotte
+Chattanooga
 Chicago
 Cincinnati
 Cleveland
+Colorado Springs
+Corpus Christi
+Dallas
+Dayton
 Denver
 Des Moines
 Dover
@@ -29,25 +40,35 @@ Fairbanks
 Flagstaff
 Fort Wayne
 Fresno
+Galveston
+Glendale
 Green Bay
 Greensboro
 Hartford
 Helena
+Hialeah
 Honolulu
 Houston
 Indianapolis
 Ithaca
+Jackson
 Jacksonville
 Jersey City
 Juneau
 Kansas City
 Lansing
 Laramie
+Laredo
 Las Vegas
+Lexington
 Little Rock
+Long Beach
 Los Angeles
 Louisville
+Madison
+Manchester
 Memphis
+Mesa
 Miami
 Milwaukee
 Minneapolis
@@ -59,30 +80,44 @@ New Haven
 New Orleans
 New York City
 Norfolk
+North Las Vegas
 Oakland
 Oklahoma City
 Omaha
 Orlando
 Peoria
+Philadelphia
 Phoenix
 Pittsburgh
+Plano
 Portland
 Raleigh
 Reno
+Salem
 San Antonio
 San Diego
 San Francisco
 San Jose
+Santa Fe
+Savannah
 Seattle
+Shreveport
+Sioux City
 Spokane
 Springfield
 St. Louis
+St. Paul
 Tacoma
+Tallahassee
+Tampa
 Toledo
 Topeka
 Trenton
+Tucson
 Tulsa
 Virginia Beach
+Waco
 Washington, D.C.
 Wichita
+Winston-Salem
 Ypsilanti
