@@ -173,141 +173,236 @@
               <see cref="P:Kvasir.Core.DataConverter.ResultType"/> into instances of <see cref="P:Kvasir.Core.DataConverter.SourceType"/>, if such a function is supported.
             </param>
         </member>
-        <member name="T:Kvasir.Extraction.ExtractionPlan">
+        <member name="T:Kvasir.Extraction.DecomposingExtractionStep">
             <summary>
-              An <see cref="T:Kvasir.Extraction.IExtractionPlan"/> comprised of sub-plans that, collectively, extract one or more values from
-              an input object.
+              An <see cref="T:Kvasir.Extraction.IExtractionStep"/> that produces a collection of primitive values obtained by recursively
+              extracting Field values from an aggregate.
             </summary>
         </member>
-        <member name="P:Kvasir.Extraction.ExtractionPlan.ExpectedSource">
+        <member name="P:Kvasir.Extraction.DecomposingExtractionStep.ExpectedSource">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Extraction.ExtractionPlan.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Extraction.IExtractionPlan})">
+        <member name="M:Kvasir.Extraction.DecomposingExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor,System.Collections.Generic.IEnumerable{Kvasir.Extraction.IExtractionStep})">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.ExtractionPlan"/>.
+              Constructs a new <see cref="T:Kvasir.Extraction.DecomposingExtractionStep"/>.
+            </summary>
+            <param name="extractor">
+              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> defining how the primitive value is to be obtained.
+            </param>
+            <param name="decomposition">
+              The steps defining how to decompose the value produced by <paramref name="extractor"/>.
+            </param>
+            <pre>
+             <paramref name="decomposition"/> is not empty
+               --and--
+              The <see cref="P:Kvasir.Extraction.IExtractionStep.ExpectedSource">ExpectedSource</see> of each element of
+              <paramref name="decomposition"/> is the same as the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see>
+              of <paramref name="extractor"/>, or is a base class or interface thereof
+                --and--
+              The <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
+              not supported by the Framework.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Extraction.DecomposingExtractionStep.Execute(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Extraction.EntityExtractionPlan">
+            <summary>
+              A description of the way in which data for a particular Entity type is to be extracted from instances,
+              transformed, and prepared to be stored in a back-end database.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.EntityExtractionPlan.ExpectedSource">
+            <summary>
+              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.EntityExtractionPlan"/> is capable of
+              being executed.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Extraction.EntityExtractionPlan.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Extraction.IExtractionStep},System.Collections.Generic.IEnumerable{Kvasir.Core.DataConverter})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Extraction.EntityExtractionPlan"/>.
             </summary>
             <param name="steps">
-              The constituent steps that make up the new <see cref="T:Kvasir.Extraction.ExtractionPlan"/> in the order in which they are
-              to be executed.
+              The ordered sequence of <see cref="T:Kvasir.Extraction.IExtractionStep">extraction steps</see> that produce the intrinsically
+              converted values from a source entity.
+            </param>
+            <param name="converters">
+              The ordered sequence of <see cref="T:Kvasir.Core.DataConverter">data converters</see> that extrinsically transform the
+              values produced by <paramref name="steps"/>.
             </param>
             <pre>
               <paramref name="steps"/> is not empty
                 --and--
-              each element of <paramref name="steps"/> has the same <see cref="P:Kvasir.Extraction.ExtractionPlan.ExpectedSource"/>.
+              Each element of <paramref name="steps"/> expects the same type of
+              <see cref="P:Kvasir.Extraction.IExtractionStep.ExpectedSource">source object</see>
+                --and--
+              The number of elements in <paramref name="converters"/> matche the number of values, in total, produced
+              by <paramref name="steps"/> (note that this is not necessarily the number of elements in
+              <paramref name="steps"/>, as an <see cref="T:Kvasir.Extraction.IExtractionStep"/> may produce multiple values).
             </pre>
         </member>
-        <member name="M:Kvasir.Extraction.ExtractionPlan.Execute(System.Object)">
-            <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Extraction.IExtractionPlan">
+        <member name="M:Kvasir.Extraction.EntityExtractionPlan.Execute(System.Object)">
             <summary>
-              The interface describing how to extract one or more values from the properties of an input object.
+              Execute this <see cref="T:Kvasir.Extraction.EntityExtractionPlan"/> on a source object, producing an ordered sequence of
+              values that can be stored in a back-end database.
             </summary>
+            <param name="entity">
+              The source object on which to execute this <see cref="T:Kvasir.Extraction.IExtractionStep"/>.
+            </param>
+            <pre>
+              <see cref="P:Kvasir.Extraction.EntityExtractionPlan.ExpectedSource"/> is the dynamic type of <paramref name="entity"/> or is a base class or
+              interface thereof.
+            </pre>
+            <returns>
+              An immutable, indexable, ordered sequence of <see cref="T:Kvasir.Schema.DBValue">database values</see> extracted from
+              <paramref name="entity"/>.
+            </returns>
         </member>
-        <member name="P:Kvasir.Extraction.IExtractionPlan.ExpectedSource">
+        <member name="T:Kvasir.Extraction.IExtractionStep">
             <summary>
-              The expected <see cref="T:System.Type"/> of the source object on which this <see cref="T:Kvasir.Extraction.IExtractionPlan"/> can be
+              The interface describing a unit of logic that extracts and potentially decomposes one or more values out of
+              a source object in database-ready form.
+            </summary>
+            <remarks>
+              The <see cref="T:Kvasir.Extraction.IExtractionStep"/> interface is a companion to the <see cref="T:Kvasir.Extraction.IFieldExtractor"/> interface,
+              separating the logic for what to do with a piece of extracted data from how to obtain it. The data produced
+              by executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance is fully decomposed and has had an opportunity to
+              undergo intrinsic transformation into a database-ready form.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Extraction.IExtractionStep.ExpectedSource">
+            <summary>
+              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.IExtractionStep"/> is capable of being
               executed.
             </summary>
         </member>
-        <member name="M:Kvasir.Extraction.IExtractionPlan.Execute(System.Object)">
+        <member name="M:Kvasir.Extraction.IExtractionStep.Execute(System.Object)">
             <summary>
-              Execute this <see cref="T:Kvasir.Extraction.IExtractionPlan"/> on an input object, extracting one or more values from its
-              properties.
+              Execute this <see cref="T:Kvasir.Extraction.IExtractionStep"/> on a source object, producing an ordered sequence of values
+              that can be stored in a back-end database.
             </summary>
-            <param name="source">
-              The source object.
+            <remarks>
+              <para>
+                Every extraction plan has two phases of data transformation. The first is the intrinsic phase, which is
+                generally reserved for type conversions (e.g. converting C# enumerations into strings or integers). The
+                second is the extrinsic phase, which allows users to define custom ad hoc conversions on an
+                entity-by-entity, and even field-by-field, basis. The values produced by executing an
+                <see cref="T:Kvasir.Extraction.IExtractionStep"/> will have completed the first transformation phase only.
+              </para>
+              <para>
+                Executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> on a <see langword="null"/> source object will produce a
+                sequence of <see cref="P:Kvasir.Schema.DBValue.NULL"/> of the appropriate length. This ensures that a particular
+                <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance always produces sequences of equal length independent of the
+                source object's nullity.
+              </para>
+            </remarks>
+            <param name="sourceObject">
+              The source object on which to execute this <see cref="T:Kvasir.Extraction.IExtractionStep"/>.
             </param>
             <pre>
-              <see cref="P:Kvasir.Extraction.IExtractionPlan.ExpectedSource"/> is the same as the type of <paramref name="source"/> or is a base class or
-              interface thereof.
+              If <paramref name="sourceObject"/> is not <see langword="null"/>, then <see cref="P:Kvasir.Extraction.IExtractionStep.ExpectedSource"/> is
+              its dynamic type or is a base class or interface thereof.
             </pre>
             <returns>
-              An ordered sequence of values extracted from <paramref name="source"/> according to this
-              <see cref="T:Kvasir.Extraction.IExtractionPlan"/>.
+              An immutable, indexable, ordered sequence of <see cref="T:Kvasir.Schema.DBValue">database values</see> extracted from
+              <paramref name="sourceObject"/>.
             </returns>
         </member>
-        <member name="T:Kvasir.Extraction.RecursiveExtractionPlan">
+        <member name="T:Kvasir.Extraction.IFieldExtractor">
             <summary>
-              An <see cref="T:Kvasir.Extraction.IExtractionPlan"/> that recursively executes an <see cref="T:Kvasir.Extraction.IExtractionPlan"/> on a single
-              extracted value.
+              The interface describing a unit of logic that extracts a single, undecomposed value out of a source object.
+            </summary>
+            <remarks>
+              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> interface is a companion to the <see cref="T:Kvasir.Extraction.IExtractionStep"/> interface,
+              separating the logic for how to extract data from a source object from what to do with the extracting content
+              afterward. Because the <see cref="T:Kvasir.Extraction.IFieldExtractor"/> interface is not responsible for decomposition or any
+              form of data transformation, it cannot guarantee that the singular value produced by an execution can be
+              stored in a back-end database as is.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Extraction.IFieldExtractor.ExpectedSource">
+            <summary>
+              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.IExtractionStep"/> is capable of being
+              executed.
             </summary>
         </member>
-        <member name="P:Kvasir.Extraction.RecursiveExtractionPlan.ExpectedSource">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Extraction.RecursiveExtractionPlan.#ctor(System.Reflection.PropertyInfo,Kvasir.Core.DataConverter,Kvasir.Extraction.IExtractionPlan)">
+        <member name="P:Kvasir.Extraction.IFieldExtractor.FieldType">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.RecursiveExtractionPlan"/>.
+              The <see cref="T:System.Type"/> of the field value produced by executing this <see cref="T:Kvasir.Extraction.IExtractionStep"/>.
             </summary>
-            <param name="property">
-              The <see cref="T:System.Reflection.PropertyInfo"/> describing the property whose value is to be initially extracted by the
-              new <see cref="T:Kvasir.Extraction.RecursiveExtractionPlan"/>. That extracted value is then the input to the recursive plan.
-            </param>
-            <param name="converter">
-              The converter to apply to the extracted value. If no conversion is necessary, use an
-              <see cref="M:Kvasir.Core.DataConverter.Identity``1">identity conversion</see>.
-            </param>
-            <param name="recursiveSteps">
-              The <see cref="T:Kvasir.Extraction.IExtractionPlan"/> to be recursively executed on the extracted value.
+        </member>
+        <member name="M:Kvasir.Extraction.IFieldExtractor.Execute(System.Object)">
+            <summary>
+              Execute this <see cref="T:Kvasir.Extraction.IFieldExtractor"/> on a source object, producing a single value of unspecified
+              type and structure.
+            </summary>
+            <param name="sourceObject">
+              The source object on which to execute this <see cref="T:Kvasir.Extraction.IFieldExtractor"/>.
             </param>
             <pre>
-              The <see cref="P:Kvasir.Extraction.IExtractionPlan.ExpectedSource">expected source type</see> of
-              <paramref name="recursiveSteps"/> is the same as the property type of <paramref name="property"/> or is
-              a base class or interface thereof
-                --and--
-              The <see cref="P:Kvasir.Core.DataConverter.SourceType">SourceType</see> of <paramref name="converter"/> is the same as
-              the <see cref="P:System.Reflection.PropertyInfo.PropertyType">ReflectedType</see> of <paramref name="property"/>
-            </pre>
-        </member>
-        <member name="M:Kvasir.Extraction.RecursiveExtractionPlan.Execute(System.Object)">
-            <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Extraction.SingleExtractionStep">
-            <summary>
-              An <see cref="T:Kvasir.Extraction.IExtractionPlan"/> in which only a single property's value is read via reflection.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Extraction.SingleExtractionStep.ExpectedSource">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Extraction.SingleExtractionStep.#ctor(System.Reflection.PropertyInfo,Kvasir.Core.DataConverter)">
-            <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.SingleExtractionStep"/>.
-            </summary>
-            <param name="property">
-              The <see cref="T:System.Reflection.PropertyInfo"/> describing the property whose value is to be extracted by the new
-              <see cref="T:Kvasir.Extraction.SingleExtractionStep"/>.
-            </param>
-            <param name="converter">
-              The converter to apply to the extracted value. If no conversion is necessary, use an
-              <see cref="M:Kvasir.Core.DataConverter.Identity``1">identity conversion</see>.
-            </param>
-            <pre>
-              The <see cref="P:Kvasir.Core.DataConverter.SourceType">SourceType</see> of <paramref name="converter"/> is the same as
-              the <see cref="P:System.Reflection.PropertyInfo.PropertyType">ReflectedType</see> of <paramref name="property"/>
-                --and--
-              The <see cref="P:Kvasir.Core.DataConverter.ResultType">ResultType</see> of <paramref name="converter"/> is supported by
-              the Framework.
-            </pre>
-        </member>
-        <member name="M:Kvasir.Extraction.SingleExtractionStep.Execute(System.Object)">
-            <summary>
-              Execute this <see cref="T:Kvasir.Extraction.IExtractionPlan"/> on an input object, extracting the single configured value
-              from one of its properties.
-            </summary>
-            <param name="source">
-              The source object.
-            </param>
-            <pre>
-              <see cref="P:Kvasir.Extraction.SingleExtractionStep.ExpectedSource"/> is the same as the type of <paramref name="source"/> or is a base class or
-              interface thereof.
+              If <paramref name="sourceObject"/> is not <see langword="null"/>, then <see cref="P:Kvasir.Extraction.IFieldExtractor.ExpectedSource"/> is
+              its dynamic type or is a base class or interface thereof.
             </pre>
             <returns>
-              The value extracted from <paramref name="source"/> according to this <see cref="T:Kvasir.Extraction.SingleExtractionStep"/>.
+              The singular value extracted from <paramref name="sourceObject"/>, which is guaranteed to be
+              <see langword="null"/> if <paramref name="sourceObject"/> itself is <see langword="null"/>.
             </returns>
         </member>
-        <member name="M:Kvasir.Extraction.SingleExtractionStep.Kvasir#Extraction#IExtractionPlan#Execute(System.Object)">
+        <member name="T:Kvasir.Extraction.PrimitiveExtractionStep">
+            <summary>
+              A <see cref="T:Kvasir.Extraction.IExtractionStep"/> that produces a single, primitive value.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.PrimitiveExtractionStep.ExpectedSource">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor,Kvasir.Core.DataConverter)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Extraction.PrimitiveExtractionStep"/>.
+            </summary>
+            <param name="extractor">
+              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> defining how the primitive value is to be obtained.
+            </param>
+            <param name="converter">
+              A <see cref="T:Kvasir.Core.DataConverter"/> defining how to transform the primitive value extracted according to
+              <paramref name="extractor"/>. If no transformation is desired, an
+              <see cref="M:Kvasir.Core.DataConverter.Identity``1">identity conversion</see> should be provided.
+            </param>
+            <pre>
+              The <see cref="P:Kvasir.Core.DataConverter.SourceType">SourceType</see> of <paramref name="converter"/> is the same as
+              the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/>, or is a base
+              class or interface thereof
+                --and--
+              The <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
+              supported by the Framework.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.Execute(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Extraction.ReadPropertyExtractor">
+            <summary>
+              An <see cref="T:Kvasir.Extraction.IFieldExtractor"/> that performs extracting by reading from a property through reflection.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.ReadPropertyExtractor.ExpectedSource">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Extraction.ReadPropertyExtractor.FieldType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Extraction.ReadPropertyExtractor.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Extraction.ReadPropertyExtractor"/>.
+            </summary>
+            <param name="property">
+              The <see cref="T:System.Reflection.PropertyInfo"/> describing the property from which to read.
+            </param>
+            <pre>
+              <paramref name="property"/> is a readable instance property.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Extraction.ReadPropertyExtractor.Execute(System.Object)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.BasicField">

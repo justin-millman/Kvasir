@@ -2,6 +2,7 @@
 # projects.
 
 Akron
+Albany
 Albuquerque
 Amarillo
 Anaheim
@@ -34,6 +35,7 @@ Dallas
 Dayton
 Denver
 Des Moines
+Detroit
 Dover
 El Paso
 Fairbanks
@@ -42,6 +44,7 @@ Fort Wayne
 Fresno
 Galveston
 Glendale
+Grand Rapids
 Green Bay
 Greensboro
 Hartford
@@ -82,6 +85,7 @@ New York City
 Norfolk
 North Las Vegas
 Oakland
+Oconomowoc
 Oklahoma City
 Omaha
 Orlando
@@ -117,6 +121,7 @@ Tucson
 Tulsa
 Virginia Beach
 Waco
+Walla Walla
 Washington, D.C.
 Wichita
 Winston-Salem
