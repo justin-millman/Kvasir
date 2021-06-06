@@ -148,5 +148,17 @@ namespace UT.Cybele.Extensions {
             delegateResult.Should().BeTrue();
             interfaceResult.Should().BeFalse();
         }
+
+        [TestMethod] public void NonNullableIsInstanceOfNullable() {
+            // Arrange
+            var parent = typeof(char?);
+            var child = typeof(char);
+
+            // Act
+            var result = child.IsInstanceOf(parent);
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }

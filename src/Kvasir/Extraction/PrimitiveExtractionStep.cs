@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Kvasir.Extraction {
     /// <summary>
-    ///   A <see cref="IExtractionStep"/> that produces a single, primitive value.
+    ///   An <see cref="IExtractionStep"/> that produces a single, primitive value.
     /// </summary>
     public sealed class PrimitiveExtractionStep : IExtractionStep {
         /// <inheritdoc/>
@@ -33,7 +33,7 @@ namespace Kvasir.Extraction {
         ///   The <see cref="IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
         ///   supported by the Framework.
         /// </pre>
-        public PrimitiveExtractionStep(IFieldExtractor extractor, DataConverter converter) {
+        internal PrimitiveExtractionStep(IFieldExtractor extractor, DataConverter converter) {
             Guard.Against.Null(extractor, nameof(extractor));
             Guard.Against.Null(converter, nameof(converter));
             Debug.Assert(extractor.FieldType.IsInstanceOf(converter.SourceType));

@@ -34,7 +34,7 @@ namespace Kvasir.Extraction {
         ///   The <see cref="IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
         ///   not supported by the Framework.
         /// </pre>
-        public DecomposingExtractionStep(IFieldExtractor extractor, IEnumerable<IExtractionStep> decomposition) {
+        internal DecomposingExtractionStep(IFieldExtractor extractor, IEnumerable<IExtractionStep> decomposition) {
             Guard.Against.Null(extractor, nameof(extractor));
             Guard.Against.Null(decomposition, nameof(decomposition));
             Debug.Assert(!decomposition.IsEmpty());

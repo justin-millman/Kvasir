@@ -24,7 +24,7 @@ namespace Kvasir.Extraction {
         /// <pre>
         ///   <paramref name="property"/> is a readable instance property.
         /// </pre>
-        public ReadPropertyExtractor(PropertyInfo property) {
+        internal ReadPropertyExtractor(PropertyInfo property) {
             Guard.Against.Null(property, nameof(property));
             Debug.Assert(property.CanRead);
             Debug.Assert(!property.GetGetMethod()!.IsStatic);
