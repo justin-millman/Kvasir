@@ -18,6 +18,7 @@ Baton Rouge
 Biloxi
 Birmingham
 Bismarck
+Bloomington
 Boise
 Boston
 Buffalo
@@ -38,8 +39,10 @@ Des Moines
 Detroit
 Dover
 El Paso
+Eugene
 Fairbanks
 Flagstaff
+Fort Lauderdale
 Fort Wayne
 Fresno
 Galveston
@@ -56,6 +59,7 @@ Indianapolis
 Ithaca
 Jackson
 Jacksonville
+Jefferson City
 Jersey City
 Juneau
 Kansas City
@@ -102,6 +106,7 @@ San Antonio
 San Diego
 San Francisco
 San Jose
+Santa Clara
 Santa Fe
 Savannah
 Seattle
@@ -119,6 +124,7 @@ Topeka
 Trenton
 Tucson
 Tulsa
+Valparaiso
 Virginia Beach
 Waco
 Walla Walla

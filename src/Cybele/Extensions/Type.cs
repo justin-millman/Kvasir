@@ -27,6 +27,10 @@ namespace Cybele.Extensions {
             Guard.Against.Null(ancestorType, nameof(ancestorType));
             Guard.Against.Null(derivedType, nameof(derivedType));
 
+            if (ancestorType.IsGenericType && ancestorType.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+                ancestorType = ancestorType.GetGenericArguments()[0];
+            }
+
             if (ancestorType == typeof(object)) {
                 // We need this branch called out explicitly because Interfaces do not have object in their inheritance
                 // hierarchy, so the "standard" algorithm (i.e. the following branches) would result in a false

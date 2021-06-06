@@ -40,7 +40,7 @@ namespace Kvasir.Extraction {
         ///   by <paramref name="steps"/> (note that this is not necessarily the number of elements in
         ///   <paramref name="steps"/>, as an <see cref="IExtractionStep"/> may produce multiple values).
         /// </pre>
-        public EntityExtractionPlan(IEnumerable<IExtractionStep> steps, IEnumerable<DataConverter> converters) {
+        internal EntityExtractionPlan(IEnumerable<IExtractionStep> steps, IEnumerable<DataConverter> converters) {
             Guard.Against.Null(steps, nameof(steps));
             Guard.Against.Null(converters, nameof(converters));
             Debug.Assert(!steps.IsEmpty());
