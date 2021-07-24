@@ -577,5 +577,148 @@
               otherwise, <see langword="false"/>.
             </returns>
         </member>
+        <member name="T:Cybele.Extensions.Nullability">
+            An indication of the nullability of an aspect of a program.
+        </member>
+        <member name="F:Cybele.Extensions.Nullability.Nullable">
+            <see langword="null"/> is a valid value for the aspect in question.
+        </member>
+        <member name="F:Cybele.Extensions.Nullability.NonNullable">
+            <see langword="null"/> is an invalid value for the aspect in question.
+        </member>
+        <member name="F:Cybele.Extensions.Nullability.Ambiguous">
+            <see langword="null"/> may or may not be a valid value for the aspect in question; this generally applies
+            only to generic types, with the ambiguity being resolved by the selection of a concrete type.
+        </member>
+        <member name="T:Cybele.Extensions.NullabilityExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that provide insight to the
+              nullabilitiy of various aspects of a program.
+            </summary>
+            <remarks>
+              <para>
+                All types in C# can be separated into one of two categories: value types (primitives, enums, and structs)
+                and reference types (classes, interfaces, delegates, and dynamic types). Prior to C# 8.0, one of the
+                distinctions between these two types was that <see langword="null"/> was a valid value only for the former.
+                However, C# 8.0 introduced the notion of nullable and non-nullable reference types, meaning that the
+                nullability of a particular aspect of a program depends not only on the aspect's static type but also on
+                any user-supplied annotations <i>and</i> on the nullability context in which the aspect is defined.
+              </para>
+              <para>
+                The <c>GetNullability</c> family of methods can operate on properties, events, function parameters,
+                function return types, and member variables. There is limited support for open generics (see below) and
+                full support for closed generics. Specifically, the following types are identified as nullable:
+                    <list type="bullet">
+                        <item><description>
+                          Instantiations of the <see cref="T:System.Nullable`1"/> generic wrapper.
+                        </description></item>
+                        <item><description>
+                          Reference types defined in a nullable-disabled context; this includes code from before C# 8.0.
+                        </description></item>
+                        <item><description>
+                          Nullable-annotated reference types (e.g. <c>string?</c>); these can only be defined in a
+                          nullable-enabled context in code from C# 8.0 or later.
+                        </description></item>
+                        <item><description>
+                          Open generic types that, through a combination of annotations and constraints, can be analyzed as
+                          one of the above.
+                        </description></item>
+                    </list>
+              </para>
+              <para>
+                Some uses of closed generics can be ambiguous as to the imparted nullability; these scenarios generally
+                arise when the generic is unconstrained or constrained in such a way so as to allow both nullable and
+                non-nullable types as <c>T</c>. Unfortunately, the reflection APIs offered by the C# standard library do
+                not provide complete access to all forms of constraint, leading to an inability to properly identify these
+                ambiguities. Specificall, the following scenarios should produce <see cref="F:Cybele.Extensions.Nullability.Ambiguous"/> but
+                currently do not:
+                    <list type="bullet">
+                        <item><description>
+                          <c>T [unconstrained]</c> resolves as either nullable or non-nullable, depending on its context
+                        </description></item>
+                        <item><description>
+                          <c>T? [unconstrained]</c> resolves as nullable.
+                        </description></item>
+                        <item><description>
+                          <c>T [where T : class?]</c> resolves as non-nullable.
+                        </description></item>
+                        <item><description>
+                          <c>T? [where T : notnull]</c> resolves as nullable.
+                        </description></item>
+                    </list>
+              </para>
+              <para>
+                A complete description of how the nullable context of a type is embedded in compiler metadata for C# 8.0+
+                can be found on a <a href="https://tinyurl.com/jsm-roslyn-nullable-metadata">writeup</a> on the Roslyn
+                GitHub page.
+              </para>
+            </remarks>
+        </member>
+        <member name="M:Cybele.Extensions.NullabilityExtensions.GetNullability(System.Reflection.PropertyInfo)">
+            <summary>
+              Determines if a particular property of a class or struct is nullable.
+            </summary>
+            <param name="self">
+              The <see cref="T:System.Reflection.PropertyInfo"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              A <see cref="T:Cybele.Extensions.Nullability"/> indicator reflective of the traits of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.NullabilityExtensions.GetNullability(System.Reflection.FieldInfo)">
+            <summary>
+              Determines if a particular field (e.g. member variable) of a class or struct is nullable.
+            </summary>
+            <param name="self">
+              The <see cref="T:System.Reflection.FieldInfo"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              A <see cref="T:Cybele.Extensions.Nullability"/> indicator reflective of the traits of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.NullabilityExtensions.GetNullability(System.Reflection.ParameterInfo)">
+            <summary>
+              Determines if a particular parameter or return value of a method is nullable.
+            </summary>
+            <param name="self">
+              The <see cref="T:System.ParamArrayAttribute"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              A <see cref="T:Cybele.Extensions.Nullability"/> indicator reflective of the traits of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.NullabilityExtensions.GetNullability(System.Reflection.EventInfo)">
+            <summary>
+              Determines if a particular event of a class or struct is nullable.
+            </summary>
+            <param name="self">
+              The <see cref="T:System.Reflection.EventInfo"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              A <see cref="T:Cybele.Extensions.Nullability"/> indicator reflective of the traits of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.NullabilityExtensions.GetNullability(System.Type,System.Reflection.MemberInfo,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+              Determines if a program aspect with a given static <see cref="T:System.Type"/> defined in a particular context
+              with (or without) certain attributes is nullable.
+            </summary>
+            <param name="type">
+              The <see cref="T:System.Type"/> of the aspect being evaluated.
+            </param>
+            <param name="context">
+              The context of the aspect being evaluated. For most aspects, this should be the <see cref="T:System.Type"/> in
+              whih the aspect is being declared. For method parameters and return types, this should be the method
+              itself.
+            </param>
+            <param name="attributes">
+              The collection of attributes applied to the aspect.
+            </param>
+            <returns>
+              A <see cref="T:Cybele.Extensions.Nullability"/> indicator reflective of the traits of an aspect with static
+              <see cref="T:System.Type"/> <paramref name="type"/> defined in <paramref name="context"/> with
+              <paramref name="attributes"/>.
+            </returns>
+        </member>
     </members>
 </doc>
