@@ -4,6 +4,263 @@
         <name>Cybele</name>
     </assembly>
     <members>
+        <member name="T:Cybele.Collections.StickyList`1">
+            <summary>
+              An indexable collection in which certain elements are "stuck" in specific slots while others may move from
+              slot to slot.
+            </summary>
+            <remarks>
+              <para>
+                Elements in a <see cref="T:Cybele.Collections.StickyList`1"/> come in two flavors: sticky and non-sticky. A sticky element is
+                inserted with a specific index and will not move from that slot. A non-sticky element is added to the
+                collection in the first available slot, being appended on the end if there are no gaps; that element may
+                move to a new slot if a gap arises later. Because of this, the order of elements within the collection is
+                volatile and should not be relied on; only the positions of sticky elements is guaranteed.
+              </para>
+              <para>
+                The nature of sticky elements means that performing operations on a <see cref="T:Cybele.Collections.StickyList`1"/> may lead to
+                "gaps." For example, inserting a sticky element at index <c>3</c> into an empty list will produce a gap in
+                slots <c>0</c>, <c>1</c>, and <c>2</c>. Attempting to access an element at this index for any reason will
+                result in an exception, much like attempting to read beyond the end of the list. However, the
+                <see cref="T:Cybele.Collections.StickyList`1"/> will do what it can to minimize gaps by rearranging non-sticky elements when
+                gaps arise; if the gaps cannot be fully eliminated, they will be pushed as far to the back of the list as
+                possible. On iteration, gaps are ignored.
+              </para>
+            </remarks>
+            <typeparam name="T">
+              The type of element to be stored in the StickyList.
+            </typeparam>
+        </member>
+        <member name="P:Cybele.Collections.StickyList`1.Item(System.Int32)">
+            <summary>
+              Gets or sets the element at the specified index in the <see cref="T:Cybele.Collections.StickyList`1"/>.
+            </summary>
+            <param name="index">
+              [GET] The <c>0</c>-based index of the element to return.
+              [SET] The <c>0</c>-based index at which to insert the new element.
+            </param>
+            <returns>
+              [GET] The element at index <paramref name="index"/>.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              [GET] if <paramref name="index"/> is negative or if there is no element at the specified position,
+                including if it is larger than <see cref="P:Cybele.Collections.StickyList`1.LargestIndex"/>.
+              [SET] if <paramref name="index"/> is negative
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+              [SET] if a sticky element is already in the StickyList at position <paramref name="index"/>.
+            </exception>
+        </member>
+        <member name="P:Cybele.Collections.StickyList`1.Count">
+            <summary>
+              The number of elements contained in the <see cref="T:Cybele.Collections.StickyList`1"/>. This count ignores gaps, and
+              therefore may be less than <see cref="P:Cybele.Collections.StickyList`1.LargestIndex"/>.
+            </summary>
+        </member>
+        <member name="P:Cybele.Collections.StickyList`1.LargestIndex">
+            <summary>
+              The largest <c>0</c>-based index that is <see cref="M:Cybele.Collections.StickyList`1.IsOccupied(System.Int32)">occupied</see> by an element in the
+              <see cref="T:Cybele.Collections.StickyList`1"/>. If the list is empty, this property returns <c>-1</c>.
+            </summary>
+        </member>
+        <member name="P:Cybele.Collections.StickyList`1.HasGaps">
+            <summary>
+              Whether or not there are any gaps in the <see cref="T:Cybele.Collections.StickyList`1"/>.
+            </summary>
+        </member>
+        <member name="P:Cybele.Collections.StickyList`1.System#Collections#Generic#ICollection{T}#IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.#ctor">
+            <summary>
+              Constructs a new, empty <see cref="T:Cybele.Collections.StickyList`1"/> that uses the default <see cref="T:System.Collections.IEqualityComparer"/>
+              for <typeparamref name="T"/> for comparison purposes.
+            </summary>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+              Constructs a new <see cref="T:Cybele.Collections.StickyList`1"/> that uses the default <see cref="T:System.Collections.IEqualityComparer"/> for
+              <typeparamref name="T"/> for comparison purposes and is populated with the non-sticky contents of another
+              enumerable.
+            </summary>
+            <param name="enumerable">
+              The enumerable from which to populate the initial state of the new StickyList. All elemenets will be
+              initialized as non-sticky.
+            </param>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.#ctor(System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+              Constructs a new, empty <see cref="T:Cybele.Collections.StickyList`1"/> that uses a custom <see cref="T:System.Collections.IEqualityComparer"/>
+              for comparison purposes.
+            </summary>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> that the new StickyList should use for comparisons.
+            </param>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+              Constructs a new <see cref="T:Cybele.Collections.StickyList`1"/> that uses a custom <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> for
+              comparison purposes and is populated with the non-sticky contents of another enumerable.
+            </summary>
+            <param name="enumerable">
+              The enumerable from which to populate the initial state of the new StickyList. All elemenets will be
+              initialized as non-sticky.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> that the new StickyList should use for comparisons.
+            </param>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.IsOccupied(System.Int32)">
+            <summary>
+              Checks if a particular index in the <see cref="T:Cybele.Collections.StickyList`1"/> is occupied by an element.
+            </summary>
+            <param name="index">
+              The <c>0</c>-based index at which to check.
+            </param>
+            <returns>
+              <see langword="true"/> if the StickyList contains an element at position <paramref name="index"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="index"/> is negative or not less than <see cref="P:Cybele.Collections.StickyList`1.LargestIndex"/>.
+            </exception>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.IsSticky(System.Int32)">
+            <summary>
+              Checks if an element at a particular index in the <see cref="T:Cybele.Collections.StickyList`1"/> is "sticky."
+            </summary>
+            <param name="index">
+              The <c>0</c>-based index at which to check.
+            </param>
+            <returns>
+              <see langword="true"/> if the element at position <paramref name="index"/> is "sticky"; otherwise,
+              <see langword="false"/>.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="index"/> is negative or if there is no element at the specified position, including if
+              it is larger than <see cref="P:Cybele.Collections.StickyList`1.LargestIndex"/>.
+            </exception>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.Contains(`0)">
+            <summary>
+              Checks if an elemment exists in the <see cref="T:Cybele.Collections.StickyList`1"/>.
+            </summary>
+            <param name="element">
+              The probe element.
+            </param>
+            <returns>
+              <see langword="true"/> if the StickyList contains an element that compares equal to
+              <paramref name="element"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.IndexOf(`0)">
+            <summary>
+              Determines the <c>0</c>-based index of an element in the <see cref="T:Cybele.Collections.StickyList`1"/>.
+            </summary>
+            <param name="element">
+              The probe element.
+            </param>
+            <returns>
+              The <c>0</c>-based index of the first element in the StickList that compares equal to
+              <paramref name="element"/>, if suh an element exists; otherwise, <c>-1</c>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.Add(`0)">
+            <summary>
+              Adds a new non-sticky element into the <see cref="T:Cybele.Collections.StickyList`1"/>. If there are no gaps, the element
+              will be appended onto the end of the collection. If there are any gaps, the element will be placed into
+              the unoccupied slot with the smallest index.
+            </summary>
+            <param name="element">
+              The new element to add.
+            </param>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.Insert(System.Int32,`0)">
+            <summary>
+              Adds a new sticky element into the <see cref="T:Cybele.Collections.StickyList`1"/> at a specified position. If that position
+              is occupied by a non-sticky element, it will be displaced and <see cref="M:Cybele.Collections.StickyList`1.Add(`0)">added back</see>. If
+              that position is beyond the current endpoint of the collection, a new gap will be created.
+            </summary>
+            <param name="index">
+              The <c>0</c>-based index at which to add the new element.
+            </param>
+            <param name="element">
+              The new element to add.
+            </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="index"/> is negative.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+              if a sticky element already occupies position <paramref name="index"/>.
+            </exception>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.Remove(`0)">
+            <summary>
+              Removes the first element in the <see cref="T:Cybele.Collections.StickyList`1"/> that compares equal to a probe. If the
+              removal creates a gap, non-sticky elements will be rearranged so as to push the gap toward the end.
+              Elements will not be rearranged otherwise.
+            </summary>
+            <param name="element">
+              The probe element.
+            </param>
+            <returns>
+              <see langword="true"/> if an element was removed; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.RemoveAt(System.Int32)">
+            <summary>
+              Removes the element at a specified index from the <see cref="T:Cybele.Collections.StickyList`1"/>. If the removal creates a
+              gap, non-sticky elements will be rearranged so as to push the gap toward the end. Elements will not be
+              rearranged otherwise.
+            </summary>
+            <param name="index">
+              The <c>0</c>-based index of the element to remove.
+            </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="index"/> is negative or if there is no element at the specified position, including if
+              it is larger than <see cref="P:Cybele.Collections.StickyList`1.LargestIndex"/>.
+            </exception>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.Clear">
+            <summary>
+              Removes all elements from the <see cref="T:Cybele.Collections.StickyList`1"/>.
+            </summary>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.GetEnumerator">
+            <summary>
+              Produces an enumerator that iterates over the elements of the <see cref="T:Cybele.Collections.StickyList`1"/>, skipping any
+              gaps.
+            </summary>
+            <remarks>
+              Because the StickyList's enumerator skips gaps, the sequence of items (and, by extension, the sequence
+              produced by using LINQ to convert a StickyList to an Array or standard List) may not line up with indices
+              as reported by other aspects of the API.
+            </remarks>
+            <returns>
+              An enumerator over the elements of the StickyList in order, with all gaps skipped.
+            </returns>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.EnsureInvariant">
+            <summary>
+              Checks that the <see cref="T:Cybele.Collections.StickyList`1"/> invariant is maintained. Specifically, there should be no
+              non-sticky elements present after the first gap; and, the Count should always reflect the number of
+              non-empty entries in the collection.
+            </summary>
+            <remarks>
+              Violation of a class invariant is always due to programmer error. User input should be sanitized and
+              checked to ensure that its use does not violate invariants, with appropriate (documented) exceptions
+              raised if necessary.
+            </remarks>
+            <exception cref="T:System.ApplicationException">
+              if the current state of the StickList violates the class's invariant.
+            </exception>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Cybele.Collections.StickyList`1.System#Collections#Generic#ICollection{T}#CopyTo(`0[],System.Int32)">
+            <inheritdoc/>
+        </member>
         <member name="T:Cybele.Core.ConceptString`1">
             <summary>
               A strongly typed piece of text for representing specific domain concepts.
@@ -719,6 +976,29 @@
               <see cref="T:System.Type"/> <paramref name="type"/> defined in <paramref name="context"/> with
               <paramref name="attributes"/>.
             </returns>
+        </member>
+        <member name="T:Cybele.Extensions.OptionExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the <see cref="T:Optional.Option`1"/> class.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.OptionExtensions.Unwrap``1(Optional.Option{``0})">
+            <summary>
+              Unwraps an <see cref="T:Optional.Option`1"/>, exposing the wrapped value.
+            </summary>
+            <typeparam name="T">
+              [deduced] The type of value wrapped in the option.
+            </typeparam>
+            <param name="self">
+              The option on which the extension method is invoked.
+            </param>
+            <returns>
+              The value wrapped by <paramref name="self"/>.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+              if <paramref name="self"/> is a <c>NONE</c> instance (i.e. an empty option).
+            </exception>
         </member>
     </members>
 </doc>

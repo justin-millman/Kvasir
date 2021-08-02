@@ -1,5 +1,4 @@
-﻿# This document lists the U.S. cities that have been used as elements of various IEnumerables in unit tests across all
-# projects.
+﻿# This document lists the U.S. cities that have been used in unit tests across all projects.
 
 Akron
 Albany
@@ -9,47 +8,63 @@ Anaheim
 Anchorage
 Ann Arbor
 Annapolis
+Arlington
+Asheville
 Atlanta
 Atlantic City
 Augusta
+Aurora
 Austin
+Bakersfield
 Baltimore
 Baton Rouge
+Bentonville
+Billings
 Biloxi
 Birmingham
 Bismarck
 Bloomington
 Boise
 Boston
+Boulder
+Bridgeport
 Buffalo
 Canton
 Carson City
 Charleston
 Charlotte
 Chattanooga
+Cheyenne
 Chicago
 Cincinnati
 Cleveland
+Coeur d'Alene
 Colorado Springs
 Corpus Christi
 Dallas
+Davenport
 Dayton
 Denver
 Des Moines
 Detroit
 Dover
+Duluth
+Durham
 El Paso
 Eugene
 Fairbanks
+Fargo
 Flagstaff
 Fort Lauderdale
 Fort Wayne
+Fort Worth
 Fresno
 Galveston
 Glendale
 Grand Rapids
 Green Bay
 Greensboro
+Harrisburg
 Hartford
 Helena
 Hialeah
@@ -61,17 +76,24 @@ Jackson
 Jacksonville
 Jefferson City
 Jersey City
+Joliet
 Juneau
+Kalamazoo
 Kansas City
+Knoxville
 Lansing
 Laramie
 Laredo
+Las Cruces
 Las Vegas
+Lawrence
 Lexington
+Lincoln
 Little Rock
 Long Beach
 Los Angeles
 Louisville
+Lubbock
 Madison
 Manchester
 Memphis
@@ -79,13 +101,16 @@ Mesa
 Miami
 Milwaukee
 Minneapolis
+Mobile
 Montgomery
 Montpelier
+Murfreesboro
 Myrtle Beach
 Nashville
 New Haven
 New Orleans
 New York City
+Newark
 Norfolk
 North Las Vegas
 Oakland
@@ -93,11 +118,14 @@ Oconomowoc
 Oklahoma City
 Omaha
 Orlando
+Pasadena
 Peoria
 Philadelphia
 Phoenix
+Pierre
 Pittsburgh
 Plano
+Pomona
 Portland
 Raleigh
 Reno
@@ -106,16 +134,23 @@ San Antonio
 San Diego
 San Francisco
 San Jose
+Santa Ana
 Santa Clara
+Santa Cruz
 Santa Fe
 Savannah
+Scottsdale
+Scranton
 Seattle
 Shreveport
 Sioux City
+South Bend
 Spokane
 Springfield
+St. Augustine
 St. Louis
 St. Paul
+Stillwater
 Tacoma
 Tallahassee
 Tampa
@@ -124,11 +159,14 @@ Topeka
 Trenton
 Tucson
 Tulsa
+Tuscaloosa
 Valparaiso
 Virginia Beach
 Waco
 Walla Walla
 Washington, D.C.
 Wichita
+Wilmington
 Winston-Salem
+Wisconsin Dells
 Ypsilanti
