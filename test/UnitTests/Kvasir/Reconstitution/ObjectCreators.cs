@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Core;
+using Cybele.Core;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

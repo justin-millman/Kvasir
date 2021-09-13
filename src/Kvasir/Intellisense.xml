@@ -4,175 +4,6 @@
         <name>Kvasir</name>
     </assembly>
     <members>
-        <member name="T:Kvasir.Core.DataConverter">
-            <summary>
-              A utility for converting objects of one type into objects of another type, and possibly vice-versa.
-            </summary>
-            <remarks>
-              <para>
-                A <see cref="T:Kvasir.Core.DataConverter"/> represents a possibly reversible function that maps instance of one CLR type
-                into instances of another. This mapping can be relatively simple (i.e. formatting a string to be
-                <c>ALL CAPS</c>) or relatively complex (establishing a database connection from an user-defined structure).
-                This allows flexibility in the definition of the conversion mechanism without burdening the user on the
-                potential complexities that underlie that logic. The client is presented with a simple conversion interface
-                with which they can perform transformations.
-              </para>
-              <para>
-                A <see cref="T:Kvasir.Core.DataConverter"/>, at a minimum, must support conversion of every instance of some "source
-                type" into instances of some "result type." This forward conversion can only fail when the source instance
-                is malformed or in some other invalid state: conversion of a valid source instance can never result in an
-                exception. Optionally, DataConverts can provide for converting <i>back</i> from instances of the "result"
-                type into instances of the "source" type; this is known as a "bidirectional" converter, and the specifics
-                of the reversal mechanism (e.g. what happens when two or more source instances map to the same result
-                instance, which is then reversed) are defined by the underlying conversion mechanic. Clients should thus be
-                careful when using the <see cref="M:Kvasir.Core.DataConverter.Revert(System.Object)"/> API, as <c>Revert(Convert(X))</c> is not required to
-                yield <c>X</c>.
-              </para>
-              <para>
-                Both the conversion and reversion APIs operate in type-erased contexts. <see cref="T:Kvasir.Core.DataConverter"/> will
-                throw a runtime exception if an input object does not match the expected type; the class further guarantees
-                that the returned value, though type-erased, can be safely cast.
-              </para>
-            </remarks>
-        </member>
-        <member name="P:Kvasir.Core.DataConverter.SourceType">
-            <summary>
-              The <see cref="T:System.Type"/> of the input objects in the forward conversion supported by this
-              <see cref="T:Kvasir.Core.DataConverter"/>.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Core.DataConverter.ResultType">
-            <summary>
-              The <see cref="T:System.Type"/> of the output objects in the forward conversion supported by this
-              <see cref="T:Kvasir.Core.DataConverter"/>.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Core.DataConverter.IsBidirectional">
-            <summary>
-              Whether or not this <see cref="T:Kvasir.Core.DataConverter"/> supports
-              <see cref="M:Kvasir.Core.DataConverter.Revert(System.Object)">reverse conversion</see>.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Core.DataConverter.Create``2(System.Converter{``0,``1})">
-            <summary>
-              Creates a new <see cref="T:Kvasir.Core.DataConverter"/> that is not <see cref="P:Kvasir.Core.DataConverter.IsBidirectional">bidirectional</see>.
-            </summary>
-            <typeparam name="TSource">
-              The <see cref="P:Kvasir.Core.DataConverter.SourceType"/> of the new <see cref="T:Kvasir.Core.DataConverter"/>.
-            </typeparam>
-            <typeparam name="TResult">
-              The <see cref="P:Kvasir.Core.DataConverter.ResultType"/> of the new <see cref="T:Kvasir.Core.DataConverter"/>.
-            </typeparam>
-            <param name="convert">
-              The function by which the new <see cref="T:Kvasir.Core.DataConverter"/> is to convert instances of
-              <see cref="P:Kvasir.Core.DataConverter.SourceType"/> (i.e. <typeparamref name="TSource"/>) into instances of <see cref="P:Kvasir.Core.DataConverter.ResultType"/>
-              (i.e. <typeparamref name="TResult"/>).
-            </param>
-            <returns>
-              A new unidirectional <see cref="T:Kvasir.Core.DataConverter"/> that converts from instances of
-              <typeparamref name="TSource"/> into instances of <typeparamref name="TResult"/> using
-              <paramref name="convert"/>.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Core.DataConverter.Create``2(System.Converter{``0,``1},System.Converter{``1,``0})">
-            <summary>
-              Creates a new <see cref="T:Kvasir.Core.DataConverter"/> that is <see cref="P:Kvasir.Core.DataConverter.IsBidirectional">bidirectional</see>.
-            </summary>
-            <typeparam name="TSource">
-              The <see cref="P:Kvasir.Core.DataConverter.SourceType"/> of the new <see cref="T:Kvasir.Core.DataConverter"/>.
-            </typeparam>
-            <typeparam name="TResult">
-              The <see cref="P:Kvasir.Core.DataConverter.ResultType"/> of the new <see cref="T:Kvasir.Core.DataConverter"/>.
-            </typeparam>
-            <param name="convert">
-              The function by which the new <see cref="T:Kvasir.Core.DataConverter"/> is to convert instances of
-              <see cref="P:Kvasir.Core.DataConverter.SourceType"/> (i.e. <typeparamref name="TSource"/>) into instances of <see cref="P:Kvasir.Core.DataConverter.ResultType"/>
-              (i.e. <typeparamref name="TResult"/>).
-            </param>
-            <param name="revert">
-              The function by which the new <see cref="T:Kvasir.Core.DataConverter"/> is to convert instances of
-              <see cref="P:Kvasir.Core.DataConverter.ResultType"/> (i.e. <typeparamref name="TResult"/>) into instances of <see cref="P:Kvasir.Core.DataConverter.SourceType"/>
-              (i.e. <typeparamref name="TSource"/>).
-            </param>
-            <returns>
-              A new bidirectional <see cref="T:Kvasir.Core.DataConverter"/> that converts from instances of
-              <typeparamref name="TSource"/> into instances of <typeparamref name="TResult"/> using
-              <paramref name="convert"/> and vice-versa using <paramref name="revert"/>.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Core.DataConverter.Convert(System.Object)">
-            <summary>
-              Converts an instance of <see cref="P:Kvasir.Core.DataConverter.SourceType"/> into an instance of <see cref="P:Kvasir.Core.DataConverter.ResultType"/>.
-            </summary>
-            <param name="source">
-              The source object.
-            </param>
-            <returns>
-              The coversion of <paramref name="source"/> into an instance of <see cref="P:Kvasir.Core.DataConverter.ResultType"/>.
-            </returns>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="source"/> is neither an instance of <see cref="P:Kvasir.Core.DataConverter.SourceType"/> nor a derived class or an
-              implementation thereof
-                --or--
-              if <paramref name="source"/> cannot be converted.
-            </exception>
-        </member>
-        <member name="M:Kvasir.Core.DataConverter.Revert(System.Object)">
-            <summary>
-              Converts an instance of <see cref="P:Kvasir.Core.DataConverter.ResultType"/> back into an instance of <see cref="P:Kvasir.Core.DataConverter.SourceType"/>.
-            </summary>
-            <remarks>
-              Because the underlying conversion mechanism need not be bijective (that is, multiple different source
-              objects can convert into the same result object), the <see cref="M:Kvasir.Core.DataConverter.Revert(System.Object)"/> API does not
-              necessarily present a true inversion. For a given result object <c>R</c>, the only guarantees are that
-              repeated calls to the API will yield the same source object and that <c>Convert(Revert(R)) == R</c>.
-            </remarks>
-            <param name="result">
-              The result object.
-            </param>
-            <returns>
-              The reversion of <paramref name="result"/> into an instance of <see cref="P:Kvasir.Core.DataConverter.SourceType"/>.
-            </returns>
-            <exception cref="T:System.NotSupportedException">
-              if this <see cref="T:Kvasir.Core.DataConverter"/> is not <see cref="P:Kvasir.Core.DataConverter.IsBidirectional">bidirectional</see>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="result"/> is neither an instance of <see cref="P:Kvasir.Core.DataConverter.ResultType"/> nor a derived class or an
-              implementation thereof
-                --or--
-              if <paramref name="result"/> cannot be reverted.
-            </exception>
-        </member>
-        <member name="M:Kvasir.Core.DataConverter.Identity``1">
-            <summary>
-              Creates a new <see cref="T:Kvasir.Core.DataConverter"/> that represents an bidirectional identity conversion.
-            </summary>
-            <typeparam name="T">
-              The type on which the identity converter is to operate.
-            </typeparam>
-            <returns>
-              A new bidirectional <see cref="T:Kvasir.Core.DataConverter"/> that performs identity conversion.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Core.DataConverter.#ctor(System.Type,System.Type,System.Converter{System.Object,System.Object},Optional.Option{System.Converter{System.Object,System.Object}})">
-            <summary>
-              Constructs a new <see cref="T:Kvasir.Core.DataConverter"/>.
-            </summary>
-            <param name="sourceType">
-              The <see cref="P:Kvasir.Core.DataConverter.SourceType"/> of the new <see cref="T:Kvasir.Core.DataConverter"/>.
-            </param>
-            <param name="resultType">
-              The <see cref="P:Kvasir.Core.DataConverter.ResultType"/> of the new <see cref="T:Kvasir.Core.DataConverter"/>.
-            </param>
-            <param name="fwd">
-              The function by which the new <see cref="T:Kvasir.Core.DataConverter"/> is to convert instances of
-              <see cref="P:Kvasir.Core.DataConverter.SourceType"/> into instances of <see cref="P:Kvasir.Core.DataConverter.ResultType"/>.
-            </param>
-            <param name="bwd">
-              The function by which the new <see cref="T:Kvasir.Core.DataConverter"/> is to convert instances of
-              <see cref="P:Kvasir.Core.DataConverter.ResultType"/> into instances of <see cref="P:Kvasir.Core.DataConverter.SourceType"/>, if such a function is supported.
-            </param>
-        </member>
         <member name="T:Kvasir.Extraction.DecomposingExtractionStep">
             <summary>
               An <see cref="T:Kvasir.Extraction.IExtractionStep"/> that produces a collection of primitive values obtained by recursively
@@ -218,7 +49,7 @@
               being executed.
             </summary>
         </member>
-        <member name="M:Kvasir.Extraction.EntityExtractionPlan.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Extraction.IExtractionStep},System.Collections.Generic.IEnumerable{Kvasir.Core.DataConverter})">
+        <member name="M:Kvasir.Extraction.EntityExtractionPlan.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Extraction.IExtractionStep},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter})">
             <summary>
               Constructs a new <see cref="T:Kvasir.Extraction.EntityExtractionPlan"/>.
             </summary>
@@ -227,7 +58,7 @@
               converted values from a source entity.
             </param>
             <param name="converters">
-              The ordered sequence of <see cref="T:Kvasir.Core.DataConverter">data converters</see> that extrinsically transform the
+              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that extrinsically transform the
               values produced by <paramref name="steps"/>.
             </param>
             <pre>
@@ -356,7 +187,7 @@
         <member name="P:Kvasir.Extraction.PrimitiveExtractionStep.ExpectedSource">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor,Kvasir.Core.DataConverter)">
+        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor,Cybele.Core.DataConverter)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Extraction.PrimitiveExtractionStep"/>.
             </summary>
@@ -364,12 +195,12 @@
               The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> defining how the primitive value is to be obtained.
             </param>
             <param name="converter">
-              A <see cref="T:Kvasir.Core.DataConverter"/> defining how to transform the primitive value extracted according to
+              A <see cref="T:Cybele.Core.DataConverter"/> defining how to transform the primitive value extracted according to
               <paramref name="extractor"/>. If no transformation is desired, an
-              <see cref="M:Kvasir.Core.DataConverter.Identity``1">identity conversion</see> should be provided.
+              <see cref="M:Cybele.Core.DataConverter.Identity``1">identity conversion</see> should be provided.
             </param>
             <pre>
-              The <see cref="P:Kvasir.Core.DataConverter.SourceType">SourceType</see> of <paramref name="converter"/> is the same as
+              The <see cref="P:Cybele.Core.DataConverter.SourceType">SourceType</see> of <paramref name="converter"/> is the same as
               the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/>, or is a base
               class or interface thereof
                 --and--
@@ -447,7 +278,7 @@
               The <see cref="T:System.Type"/> of CLR object produced by this <see cref="T:Kvasir.Reconstitution.EntityReconstitutionPlan"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Reconstitution.EntityReconstitutionPlan.#ctor(Kvasir.Reconstitution.IReconstitutor,System.Collections.Generic.IEnumerable{Kvasir.Core.DataConverter})">
+        <member name="M:Kvasir.Reconstitution.EntityReconstitutionPlan.#ctor(Kvasir.Reconstitution.IReconstitutor,System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter})">
             <summary>
               Construct a new <see cref="T:Kvasir.Reconstitution.EntityReconstitutionPlan"/>.
             </summary>
@@ -456,13 +287,13 @@
               <see cref="T:Kvasir.Reconstitution.EntityReconstitutionPlan"/> is executed.
             </param>
             <param name="reverters">
-              The ordered sequence of <see cref="T:Kvasir.Core.DataConverter">data converters</see> that extrinsically transform the
+              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that extrinsically transform the
               values extracted from the back-end database..
             </param>
             <pre>
               <paramref name="reverters"/> is not empty
                 --and--
-              each element of <paramref name="reverters"/> is a bidirectional <see cref="T:Kvasir.Core.DataConverter"/>.
+              each element of <paramref name="reverters"/> is a bidirectional <see cref="T:Cybele.Core.DataConverter"/>.
             </pre>
         </member>
         <member name="M:Kvasir.Reconstitution.EntityReconstitutionPlan.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
@@ -603,7 +434,7 @@
         <member name="P:Kvasir.Reconstitution.PrimitiveCreator.Target">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.#ctor(System.Index,Kvasir.Core.DataConverter)">
+        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.#ctor(System.Index,Cybele.Core.DataConverter)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Reconstitution.PrimitiveCreator"/>.
             </summary>
@@ -611,14 +442,14 @@
               The index in the to-be-provided array of database values at which the target primitive value resides.
             </param>
             <param name="reverter">
-              A <see cref="T:Kvasir.Core.DataConverter"/> defining how to undo the transform performed on the primitive value. If no
-              transformation was applied on storage, an <see cref="M:Kvasir.Core.DataConverter.Identity``1">identity conversion</see>
+              A <see cref="T:Cybele.Core.DataConverter"/> defining how to undo the transform performed on the primitive value. If no
+              transformation was applied on storage, an <see cref="M:Cybele.Core.DataConverter.Identity``1">identity conversion</see>
               should be provided.
             </param>
             <pre>
               <paramref name="reverter"/> supports bidirectional conversion
                 --and--
-              The <see cref="P:Kvasir.Core.DataConverter.ResultType"/> of <paramref name="reverter"/> is a data type supported by the
+              The <see cref="P:Cybele.Core.DataConverter.ResultType"/> of <paramref name="reverter"/> is a data type supported by the
               Framework.
             </pre>
         </member>

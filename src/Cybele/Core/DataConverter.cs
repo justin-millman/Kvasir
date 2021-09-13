@@ -5,18 +5,18 @@ using System;
 
 using ConvFn = System.Converter<object?, object?>;
 
-namespace Kvasir.Core {
+namespace Cybele.Core {
     /// <summary>
     ///   A utility for converting objects of one type into objects of another type, and possibly vice-versa.
     /// </summary>
     /// <remarks>
     ///   <para>
-    ///     A <see cref="DataConverter"/> represents a possibly reversible function that maps instance of one CLR type
-    ///     into instances of another. This mapping can be relatively simple (i.e. formatting a string to be
-    ///     <c>ALL CAPS</c>) or relatively complex (establishing a database connection from an user-defined structure).
-    ///     This allows flexibility in the definition of the conversion mechanism without burdening the user on the
-    ///     potential complexities that underlie that logic. The client is presented with a simple conversion interface
-    ///     with which they can perform transformations.
+    ///     A <see cref="DataConverter"/> represents a possibly reversible function that maps instances of one CLR type
+    ///     into instances of another. This mapping can be relatively simple (e.g. formatting a string to be
+    ///     <c>ALL CAPS</c>) or relatively complex (e.g. involving the establishment of a database connection from an
+    ///     user-defined structure). This allows flexibility in the definition of the conversion mechanism without
+    ///     burdening the user on the potential complexities that underlie that logic. The client is presented with a
+    ///     simple conversion interface with which they can perform transformations.
     ///   </para>
     ///   <para>
     ///     A <see cref="DataConverter"/>, at a minimum, must support conversion of every instance of some "source
@@ -105,7 +105,7 @@ namespace Kvasir.Core {
         ///   A new bidirectional <see cref="DataConverter"/> that converts from instances of
         ///   <typeparamref name="TSource"/> into instances of <typeparamref name="TResult"/> using
         ///   <paramref name="convert"/> and vice-versa using <paramref name="revert"/>.
-	/// </returns>
+	    /// </returns>
         public static DataConverter Create<TSource, TResult>(Converter<TSource, TResult> convert,
             Converter<TResult, TSource> revert) {
 
