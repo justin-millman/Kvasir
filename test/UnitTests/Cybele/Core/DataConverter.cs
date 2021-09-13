@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using Kvasir.Core;
+using Cybele.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UT.Kvasir.Core {
+namespace UT.Cybele.Core {
     [TestClass, TestCategory("DataConverter")]
     public class DataConverterTests {
         [TestMethod] public void CreateUnidirectional() {

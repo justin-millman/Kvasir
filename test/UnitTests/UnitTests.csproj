@@ -25,4 +25,8 @@
     <ProjectReference Include="..\..\src\Kvasir\Kvasir.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Kvasir\Core\" />
+  </ItemGroup>
+
 </Project>
