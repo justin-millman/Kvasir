@@ -1,15 +1,19 @@
 ﻿# This document lists the U.S. cities that have been used in unit tests across all projects.
 
+Abilene
 Akron
 Albany
 Albuquerque
+Alpharetta
 Amarillo
+Ames
 Anaheim
 Anchorage
 Ann Arbor
 Annapolis
 Arlington
 Asheville
+Athens
 Atlanta
 Atlantic City
 Augusta
@@ -18,38 +22,52 @@ Austin
 Bakersfield
 Baltimore
 Baton Rouge
+Beaumont
+Bellevue
 Bentonville
 Billings
 Biloxi
 Birmingham
 Bismarck
 Bloomington
+Boca Raton
 Boise
 Boston
 Boulder
+Bozeman
 Bridgeport
 Buffalo
+Cambridge
 Canton
 Carson City
 Charleston
 Charlotte
+Carlsbad
+Cedar Rapids
 Chattanooga
 Cheyenne
 Chicago
+Chula Vista
 Cincinnati
 Cleveland
 Coeur d'Alene
 Colorado Springs
+Columbia
+Columbus
+Concord
+Cooperstown
 Corpus Christi
 Dallas
 Davenport
 Dayton
+Dearborn
 Denver
 Des Moines
 Detroit
 Dover
 Duluth
 Durham
+East St. Louis
 El Paso
 Eugene
 Fairbanks
@@ -59,7 +77,10 @@ Fort Lauderdale
 Fort Wayne
 Fort Worth
 Fresno
+Gainesville
 Galveston
+Gary
+Gilbert
 Glendale
 Grand Rapids
 Green Bay
@@ -67,10 +88,13 @@ Greensboro
 Harrisburg
 Hartford
 Helena
+Hershey
 Hialeah
 Honolulu
+Hot Springs
 Houston
 Indianapolis
+Inglewood
 Ithaca
 Jackson
 Jacksonville
@@ -78,9 +102,11 @@ Jefferson City
 Jersey City
 Joliet
 Juneau
+Jupiter
 Kalamazoo
 Kansas City
 Knoxville
+Lafayette
 Lansing
 Laramie
 Laredo
@@ -91,6 +117,7 @@ Lexington
 Lincoln
 Little Rock
 Long Beach
+Los Alamos
 Los Angeles
 Louisville
 Lubbock
@@ -102,6 +129,7 @@ Miami
 Milwaukee
 Minneapolis
 Mobile
+Modesto
 Montgomery
 Montpelier
 Murfreesboro
@@ -111,6 +139,7 @@ New Haven
 New Orleans
 New York City
 Newark
+Nome
 Norfolk
 North Las Vegas
 Oakland
@@ -118,7 +147,9 @@ Oconomowoc
 Oklahoma City
 Omaha
 Orlando
+Palm Beach
 Pasadena
+Pearl City
 Peoria
 Philadelphia
 Phoenix
@@ -127,13 +158,23 @@ Pittsburgh
 Plano
 Pomona
 Portland
+Providence
+Provo
 Raleigh
 Reno
+Riverside
+Roanoke
+Roswell
+Round Rock
 Salem
+Salinas
 San Antonio
+San Bernardino
 San Diego
 San Francisco
+San Jacinto
 San Jose
+Sandy Springs
 Santa Ana
 Santa Clara
 Santa Cruz
@@ -142,8 +183,10 @@ Savannah
 Scottsdale
 Scranton
 Seattle
+Selma
 Shreveport
 Sioux City
+Sioux Falls
 South Bend
 Spokane
 Springfield
@@ -151,9 +194,11 @@ St. Augustine
 St. Louis
 St. Paul
 Stillwater
+Syracuse
 Tacoma
 Tallahassee
 Tampa
+Texarkana
 Toledo
 Topeka
 Trenton
@@ -165,7 +210,11 @@ Virginia Beach
 Waco
 Walla Walla
 Washington, D.C.
+Waukesha
+West Lafayette
 Wichita
+Wichita Falls
+Wilkes-Barre
 Wilmington
 Winston-Salem
 Wisconsin Dells

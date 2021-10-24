@@ -579,6 +579,21 @@ namespace UT.Kvasir.Schema {
             enumQuery.Should().BeFalse();
         }
 
+        [TestMethod] public void ZeroIsInstanceOfAnyNumeric() {
+            // Arrange
+            DBType[] numerics = new DBType[] {
+                DBType.Int8, DBType.Int16, DBType.Int32, DBType.Int64, DBType.UInt8, DBType.UInt16, DBType.UInt32,
+                DBType.UInt64, DBType.Single, DBType.Double
+            };
+            var zero = DBValue.Create(0);
+
+            // Act & Assert
+            foreach (var type in numerics) {
+                var isValid = zero.IsInstanceOf(type);
+                isValid.Should().BeTrue();
+            }
+        }
+
         [TestMethod] public void StrongEquality() {
             // Arrange
             var zero = DBValue.Create(0);

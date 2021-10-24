@@ -779,6 +779,19 @@
               <paramref name="self"/>.
             </returns>
         </member>
+        <member name="T:Cybele.Extensions.GuardClauseExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the <see cref="T:Ardalis.GuardClauses.IGuardClause"/> interface.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.GuardClauseExtensions.TypeOtherThan(Ardalis.GuardClauses.IGuardClause,System.Type,System.String,System.Type,System.String)">
+            <summary>
+              Throws an <see cref="T:System.ArgumentException"/> if input isn't a <see cref="T:System.Type"/> that "is-a" 'nother
+              <see cref="T:System.Type"/>.
+            </summary>
+            <seealso cref="M:Cybele.Extensions.TypeExtensions.IsInstanceOf(System.Type,System.Type)"/>
+        </member>
         <member name="T:Cybele.Extensions.IEnumerableExtensions">
             <summary>
               A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
