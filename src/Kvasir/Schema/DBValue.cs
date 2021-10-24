@@ -244,11 +244,19 @@ namespace Kvasir.Schema {
         ///   compatible with <paramref name="type"/>.
         /// </returns>
         public readonly bool IsInstanceOf(DBType type) {
+            bool isNumeric =
+                type == DBType.Int8 || type == DBType.Int16 || type == DBType.Int32 || type == DBType.Int64 ||
+                type == DBType.UInt8 || type == DBType.UInt16 || type == DBType.UInt32 || type == DBType.UInt64 ||
+                type == DBType.Single || type == DBType.Double;
+
             if (Equals(NULL)) {
                 return true;
             }
             else if (type == DBType.Enumeration) {
                 return Datum.GetType() == typeof(string);
+            }
+            else if (isNumeric && (Equals(Datum, 0))) {
+                return true;
             }
             else {
                 return type == DBType.Lookup(Datum.GetType());

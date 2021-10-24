@@ -4,6 +4,1064 @@
         <name>Kvasir</name>
     </assembly>
     <members>
+        <member name="T:Kvasir.Annotations.CalculatedAttribute">
+            <summary>
+              An annotation that marks the Field backing a particular property as "calculated."
+            </summary>
+            <remarks>
+              <para>
+                A "calculated" Field is one whose value is stored in the back-end database but not loaded therefrom on read
+                operations. The value of such a Field is invariably determined by the value of one or more other Fields in
+                the same Table; common examples include alphabetization keys, computed averages/percentages, deduced
+                geographies, and checksums. Because the value of such a Field is not loaded, the annotated property does
+                not participate in construction resolution.
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Annotations.CalculatedAttribute"/> that is applied to a property of aggregate type recursively applies to
+                all properties of the aggregate. 
+              </para>
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Annotations.CheckAttribute">
+            <summary>
+              An annotation that imposes a <c>CHECK</c> constraint on the Field backing a particular property.
+            </summary>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNotAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsLessThanAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterThanAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNonZeroAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsPositiveAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNegativeAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.ComplexAttribute"/>
+        </member>
+        <member name="P:Kvasir.Annotations.CheckAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute.MakeConstraint(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter},Kvasir.Core.Settings)">
+            <summary>
+              Creates a <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> for one or more Fields using the generator type
+              specified in the annotation.
+            </summary>
+            <param name="fields">
+              The list of Fields to which the constraint applies.
+            </param>
+            <param name="converters">
+              The list of data converters that correspond to <paramref name="fields"/>, which are to be used as needed
+              to transform any user-provided input.
+            </param>
+            <param name="settings">
+              The Kvasir framework settings.
+            </param>
+            <pre>
+              <paramref name="fields"/> has at least one element
+                --and--
+              <paramref name="converters"/> is the same length as <paramref name="fields"/>
+            </pre>
+            <returns>
+              A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(System.Type)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute"/> class.
+            </summary>
+            <param name="constraint">
+              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
+              clause for this annotation.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
+              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface.
+            </exception>
+            <exception cref="T:System.MissingMethodException">
+              if <paramref name="constraint"/> does not have a default (i.e. no-argument) constructor.
+            </exception>
+            <exception cref="T:System.Reflection.TargetInvocationException">
+              if invoking the default (i.e. no-argument) constructor of <paramref name="constraint"/> results in an
+              exception.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(System.Type,System.Object[])">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute"/> class.
+            </summary>
+            <param name="constraint">
+              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
+              clause for this annotation.
+            </param>
+            <param name="args">
+              The parameterization of the <c>CHECK</c> constraint.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
+              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface.
+            </exception>
+            <exception cref="T:System.MissingMethodException">
+              if <paramref name="constraint"/> does not have a constructor that can be invoked with
+              <paramref name="args"/>.
+            </exception>
+            <exception cref="T:System.Reflection.TargetInvocationException">
+              if invoking the constructor of <paramref name="constraint"/> with <paramref name="args"/> results in an
+              exception.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.Check">
+            <summary>
+              A pseudo-namespace within which annotations in which specific, predefined constraints are defined.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.ComplexAttribute">
+            <summary>
+              An annotation that imposes a <c>CHECK</c> constraint on the Fields backing a particular set of property.
+            </summary>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNotAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsLessThanAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterThanAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNonZeroAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsPositiveAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNegativeAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.CheckAttribute"/>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComplexAttribute.FieldNames">
+            <summary>
+              The names of the Fields to which the <c>CHECK</c> constraint imposed by this attribute apply.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.ComplexAttribute.MakeConstraint(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter},Kvasir.Core.Settings)">
+            <summary>
+              Creates a <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> for one or more Fields using the generator
+              type specified in the annotation.
+            </summary>
+            <param name="fields">
+              The list of Fields to which the constraint applies.
+            </param>
+            <param name="converters">
+              The list of data converters that correspond to <paramref name="fields"/>, which are to be used as
+              needed to transform any user-provided input.
+            </param>
+            <param name="settings">
+              The Kvasir framework settings.
+            </param>
+            <pre>
+              <paramref name="fields"/> has at least one element
+                --and--
+              <paramref name="converters"/> is the same length as <paramref name="fields"/>
+            </pre>
+            <returns>
+              A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.ComplexAttribute.#ctor(System.Type,System.String[])">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.ComplexAttribute"/> class.
+            </summary>
+            <param name="constraint">
+              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
+              clause for this annotation.
+            </param>
+            <param name="fieldNames">
+              The names of the backing Fields (<i>NOT</i> the C# properties) to which the <c>CHECK</c> constraint
+              imposed by this annotation applies.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
+              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface
+                --or--
+              if <paramref name="fieldNames"/> is empty.
+            </exception>
+            <exception cref="T:System.MissingMethodException">
+              if <paramref name="constraint"/> does not have a default (i.e. no-argument) constructor.
+            </exception>
+            <exception cref="T:System.Reflection.TargetInvocationException">
+              if invoking the default (i.e. no-argument) constructor of <paramref name="constraint"/> results in an
+              exception.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.ComplexAttribute.#ctor(System.Type,System.String[],System.Object[])">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.ComplexAttribute"/> class.
+            </summary>
+            <param name="constraint">
+              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
+              clause for this annotation.
+            </param>
+            <param name="fieldNames">
+              The names of the backing Fields (<i>NOT</i> the C# properties) to which the <c>CHECK</c> constraint
+              imposed by this annotation applies.
+            </param>
+            <param name="args">
+              The parameterization of the <c>CHECK</c> constraint.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
+              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface
+                --or--
+              if <paramref name="fieldNames"/> is empty.
+            </exception>
+            <exception cref="T:System.MissingMethodException">
+              if <paramref name="constraint"/> does not have a constructor that can be invoked with
+              <paramref name="args"/>.
+            </exception>
+            <exception cref="T:System.Reflection.TargetInvocationException">
+              if invoking the constructor of <paramref name="constraint"/> with <paramref name="args"/> results in
+              an exception.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsNotAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property cannot have a
+              specific value.
+            </summary>
+            <seealso cref="T:Kvasir.Annotations.NonNullableAttribute"/>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNotAttribute.#ctor(System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNotAttribute"/> class.
+            </summary>
+            <param name="value">
+              The value that the Field backing the annotated property cannot take.
+            </param>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsGreaterThanAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property must be strictly
+              greater than a specific value.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsGreaterThanAttribute.#ctor(System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsGreaterThanAttribute"/> class.
+            </summary>
+            <param name="lowerBound">
+              The value that the Field backing the annotated property must be strictly greater than.
+            </param>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsLessThanAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property must be strictly
+              less than a specific value.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsLessThanAttribute.#ctor(System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsLessThanAttribute"/> class.
+            </summary>
+            <param name="upperBound">
+              The value that the Field backing the annotated property must be strictly less than.
+            </param>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property must be greater
+              than or equal to a specific value.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute.#ctor(System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute"/> class.
+            </summary>
+            <param name="lowerBound">
+              The value that the Field backing the annotated property must be greater than or equal to.
+            </param>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property must be less
+              than or equal to a specific value.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsLessOrEqualToAttribute.#ctor(System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute"/> class.
+            </summary>
+            <param name="upperBound">
+              The value that the Field backing the annotated property must be less than or equal to.
+            </param>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsOneOfAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property must be one of a
+              discrete set of options.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsOneOfAttribute.#ctor(System.Object[])">
+            <summary>
+              Construct a new instance of the <see cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/> class.
+            </summary>
+            <param name="values">
+              The discrete set of options, of which the value that the Field backing the annotated property must be
+              one.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="values"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="values"/> is empty.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsNotOneOfAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property cannot be one of
+              a discrete set of options
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNotOneOfAttribute.#ctor(System.Object[])">
+            <summary>
+              Construct a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute"/> class.
+            </summary>
+            <param name="values">
+              The discrete set of options, of which the value that the Field backing the annotated property cannot
+              be one.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="values"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="values"/> is empty.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsNonZeroAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property cannot be
+              <c>0</c>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNonZeroAttribute.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNonZeroAttribute"/> class.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsPositiveAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property must be positive
+              (i.e. <c>&gt;= 0</c>).
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsPositiveAttribute.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsPositiveAttribute"/> class.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsNegativeAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property must be positive
+              (i.e. <c>&lt;= 0</c>).
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNegativeAttribute.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNegativeAttribute"/> class.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.IsNonEmptyAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular string-type property must
+              be non-empty.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNonEmptyAttribute.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute"/> class.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular string-type property must
+              be at least a certain length.
+            </summary>///
+        </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsAtLeastAttribute.#ctor(System.Int32)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute"/> class.
+            </summary>
+            <param name="lowerBound">
+              The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="lowerBound"/> is not positive.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular string-type property can
+              be at most a certain length.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsAtMostAttribute.#ctor(System.Int32)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute"/> class.
+            </summary>
+            <param name="upperBound">
+              The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="upperBound"/> is not positive.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular string-type property must
+              have a length within a certain range.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsBetweenAttribute.#ctor(System.Int32,System.Int32)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/> class.
+            </summary>
+            <param name="lowerBound">
+              The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
+            </param>
+            <param name="upperBound">
+              The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="lowerBound"/> is not positive
+                --or--
+              if <paramref name="upperBound"/> is less than <paramref name="lowerBound"/>.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.CodeOnlyAttribute">
+            <summary>
+              An annotation that marks a particular property as "code-only."
+            </summary>
+            <remarks>
+              <para>
+                A "code-only" property is one whose value is not stored in the back-end database. The value of such a
+                property is the domain of the application solely; examples include internal state tracking, sensitive user
+                data that is otherwise persisted, or content that is temporally dependent. Because the value of a code-only
+                property never propagates to the database, the property itself does not participate in construction
+                resolution (that is, it must have an implicit default value).
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Annotations.CodeOnlyAttribute"/> that is applied to a property of aggregate type <i>without</i> a path
+                parameterization recursively applies to all nested properties.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Annotations.CodeOnlyAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.ColumnAttribute">
+            <summary>
+              An annotation that specifies the column index for the Field backing a particular property.
+            </summary>
+            <remarks>
+              A <see cref="T:Kvasir.Annotations.ColumnAttribute"/> that is applied to a property of aggregate type defines the offset of the
+              nested properties thereof. When applied to a property within an aggregate, the absolute position of the
+              backing Field will depend on the offset defined by the owning Entity (and, therefore, can be different from
+              Entity to Entity).
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Annotations.ColumnAttribute.Column">
+            <summary>
+              The <c>0</c>-based column index.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.ColumnAttribute.#ctor(System.Int32)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ColumnAttribute"/> class.
+            </summary>
+            <param name="column">
+              The <c>0</c>-based column index.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              [on evaluation] if <paramref name="column"/> is less than <c>0</c>.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.ConstraintAttribute">
+            <summary>
+              An attribute that imposes a simple <c>CHECK</c> constraint (one of the form <c>[field] [op] [value]</c>) on
+              the Field backing a particular property.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.ConstraintAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.ConstraintAttribute.MakeConstraint(Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
+            <summary>
+              Creates a <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> for one or more Fields using the generator type
+              specified in the annotation.
+            </summary>
+            <param name="field">
+              The Field to which the constraint applies.
+            </param>
+            <param name="converter">
+              The list of data converter that corresponds to <paramref name="field"/>, which is to be used as needed
+              to transform any user-provided input.
+            </param>
+            <param name="settings">
+              The Kvasir framework settings.
+            </param>
+            <returns>
+              A new <c>CHECK</c> constraint clause that applies to <paramref name="field"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.ComparisonOperator,System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes a comparison-based
+              constraint on the Field backing the annotated property.
+            </summary>
+            <param name="op">
+              The comparison operator.
+            </param>
+            <param name="anchor">
+              The anchor value.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes an inclusion-based
+              constraint on the Field backing the annotated property.
+            </summary>
+            <param name="op">
+              The inclusion operator.
+            </param>
+            <param name="anchor">
+              The list of allowd or disallowed values.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.ComparisonOperator,System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes a comparison-based
+              constraint on the transformation of the Field backing the annotated property.
+            </summary>
+            <param name="func">
+              The transformation function be applied.
+            </param>
+            <param name="op">
+              The comparison operator.
+            </param>
+            <param name="anchor">
+              The anchor value.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes an inclusion-based
+              constraint on the transformation of the Field backing the annotated property.
+            </summary>
+            <param name="func">
+              The transformation function be applied.
+            </param>
+            <param name="op">
+              The comparison operator.
+            </param>
+            <param name="anchor">
+              The list of allowd or disallowed values.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Optional.Option{Kvasir.Schema.FieldFunction},Kvasir.Schema.ComparisonOperator,System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes a comparison-based
+              constraint on the Field backing the annotated property.
+            </summary>
+            <param name="func">
+              The optional transformation function be applied.
+            </param>
+            <param name="op">
+              The comparison operator.
+            </param>
+            <param name="anchor">
+              The anchor value.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Optional.Option{Kvasir.Schema.FieldFunction},Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes an inclusion-based
+              constraint on the Field backing the annotated property.
+            </summary>
+            <param name="func">
+              The optional transformation function be applied.
+            </param>
+            <param name="op">
+              The inclusion operator.
+            </param>
+            <param name="anchor">
+              The list of allowd or disallowed values.
+            </param>
+        </member>
+        <member name="T:Kvasir.Annotations.DataConverterAttribute">
+            <summary>
+              An annotation that defines the data converter to be used to convert between C# values for a particular
+              property and values of the backing Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.DataConverterAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.DataConverterAttribute.DataConverter">
+            <summary>
+              The <see cref="P:Kvasir.Annotations.DataConverterAttribute.DataConverter"/> instance specified in the annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.DataConverterAttribute.#ctor(System.Type)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.DataConverterAttribute"/> class.
+            </summary>
+            <param name="converter">
+              The <see cref="T:System.Type"/> of the data converter to be used to convert between C# values of the annotated
+              property and values of the backing Field.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="converter"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="converter"/> is not a <see cref="T:System.Type"/> that implements the
+              <see cref="T:Kvasir.Core.IDataConverter"/> interface.
+            </exception>
+            <exception cref="T:System.MissingMethodException">
+              if <paramref name="converter"/> does not have a default (i.e. no-argument) constructor.
+            </exception>
+            <exception cref="T:System.Reflection.TargetInvocationException">
+              if invoking the default (i.e. no-argument) constructor of <paramref name="converter"/> results in an
+              exception.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.DefaultAttribute">
+            <summary>
+              An annotation that defines the default value for the Field backing a particular property.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.DefaultAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.DefaultAttribute.Value">
+            <summary>
+              The default value specified by the annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.DefaultAttribute.#ctor(System.Object)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.DefaultAttribute"/> class.
+            </summary>
+            <param name="value">
+              The default value.
+            </param>
+            <remarks>
+              A default value of <c>NULL</c> is fundamentally different than the absence of a default value. The former
+              indicates that, in the absence of a user-provided value, a Field should take on the value of <c>NULL</c>.
+              The latter, meanwhile, indicates that it is an error for the user to omit a value for a Field. If the
+              desire is to make a Field "required," do not place a <see cref="T:Kvasir.Annotations.DefaultAttribute"/> on the corresponding
+              property.
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Annotations.NameAttribute">
+            <summary>
+              An annotation that specifies the name of the Field backing a particular property.
+            </summary>
+            <remarks>
+              The Kvasir framework will automatically determine the name of backing Fields based on the name of the POCO
+              property. The <see cref="T:Kvasir.Annotations.NameAttribute"/> can be used to override the default deduction when that deduction
+              would be incorrect or undesirable.
+            </remarks>
+            <seealso cref="T:Kvasir.Schema.FieldName"/>
+        </member>
+        <member name="P:Kvasir.Annotations.NameAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.NameAttribute.Name">
+            <summary>
+              The <see cref="T:Kvasir.Schema.FieldName"/> specified by the annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.NameAttribute.#ctor(System.String)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.NameAttribute"/>.
+            </summary>
+            <param name="name">
+              The name of the Field.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is not a valid name for a database Field.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.NullableAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property <i>cannot</i> be
+              <c>NULL</c>.
+            </summary>
+            <remarks>
+              The Kvasir framework will automatically determine the nullability of backing Fields based on the nullability
+              of the POCO property's type. The <see cref="T:Kvasir.Annotations.NullableAttribute"/> can be used to override the default
+              deduction when that deduction would be incorrect or undesirable.
+            </remarks>
+            <seealso cref="T:Kvasir.Annotations.NonNullableAttribute"/>
+        </member>
+        <member name="T:Kvasir.Annotations.NonNullableAttribute">
+            <summary>
+              An annotation that specifies that the value for the Field backing a particular property <i>can</i> be
+              <c>NULL</c>.
+            </summary>
+            <remarks>
+              The Kvasir framework will automatically determine the nullability of backing Fields based on the nullability
+              of the POCO property's type. The <see cref="T:Kvasir.Annotations.NonNullableAttribute"/> can be used to override the default
+              deduction when that deduction would be incorrect.
+            </remarks>
+            <seealso cref="T:Kvasir.Annotations.NonNullableAttribute"/>
+        </member>
+        <member name="T:Kvasir.Annotations.PrimaryKeyAttribute">
+            <summary>
+              An attribute that specifies that the Field backing a particular property is part of the owning Entity's
+              Primary Key.
+            </summary>
+            <remarks>
+              <para>
+                By default, the Kvasir framework will determine the Primary Key for a Table by analyzing the names of the
+                Table's Fields and applying a sequence of well-defined rule. For example, a Field named <c>FooID</c> or
+                <c>FooId</c> for a Table named <c>Foo</c> is assumed to be the Table's single-Field Primary Key. The
+                <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute"/> can be used to override the default deduction when that deduction would
+                be incorrect or undesirable.
+              </para>
+              <para>
+                When a <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute"/> is applied to multiple POCO properties, the result is a composite
+                Primary Key where the order of the constituent Fields is undefined (and mathematically irrelevant).
+                Regardless of the number of Fields involved, a Primary Key by default has no name; to provide a name to a
+                Primary Key (either the automatic deduction or the annotation-specified), apply a
+                <see cref="T:Kvasir.Annotations.NamedPrimaryKeyAttribute"/> to the POCO class.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Annotations.PrimaryKeyAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.NamedPrimaryKeyAttribute">
+            <summary>
+              An attribute that specifie the name of the Primary Key of the Table backing a particular class.
+            </summary>
+            <seealso cref="T:Kvasir.Annotations.PrimaryKeyAttribute"/>
+            <seealso cref="T:Kvasir.Schema.KeyName"/>
+        </member>
+        <member name="P:Kvasir.Annotations.NamedPrimaryKeyAttribute.Name">
+            <summary>
+              The <see cref="T:Kvasir.Schema.KeyName"/> specified by the annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.NamedPrimaryKeyAttribute.#ctor(System.String)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.NamedPrimaryKeyAttribute"/>.
+            </summary>
+            <param name="name">
+              The name of the Primary Key.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is not a valid name for a database Primary Key.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.TableAttribute">
+            <summary>
+              An annotation that specifies the name of the Table backing a particula class.
+            </summary>
+            <remarks>
+              The Kvasir framework will automatically determine the name of backing Tables based on the name of the POCO
+              class. The <see cref="T:Kvasir.Annotations.TableAttribute"/> can be used to override the default deduction when that deduction
+              would be incorrect or undesirable.
+            </remarks>
+            <seealso cref="T:Kvasir.Schema.FieldName"/>
+        </member>
+        <member name="P:Kvasir.Annotations.TableAttribute.Name">
+            <summary>
+              The <see cref="T:Kvasir.Schema.TableName"/> specified by the annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.TableAttribute.#ctor(System.String)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.TableAttribute"/>.
+            </summary>
+            <param name="name">
+              The name of the Table.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is not a valid name for a database Table.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Annotations.UniqueAttribute">
+            <summary>
+              An annotation that marks the Field backing a particular property as being part of a <c>UNIQUE</c> constraint.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.UniqueAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.UniqueAttribute.Name">
+            <summary>
+              The key name specified by the annotation
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.UniqueAttribute.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.UniqueAttribute"/> class with an implementation-defined name.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.UniqueAttribute.#ctor(System.String)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.UniqueAttribute"/> class with a user-defined name.
+            </summary>
+            <param name="name">
+              The name of the <c>UNIQUE</c> constraint.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="name"/> is not a valid name for a <c>UNIQUE</c> constraint.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Core.IConstraintGenerator">
+            <summary>
+              The interface for tying a user-defined <c>CHECK</c> constraint to one or more Fields.
+            </summary>
+            <remarks>
+              <para>
+                The Kvasir framework provides a collection of basic constraints natively as part of its annotation system.
+                These constraints can be applied to a single Field by placing the relevant attribute directly on the target
+                property, with minimal parametrization available. The set of pre-defined constraints is by no means
+                exhaustive, and this mechanic is also limited: it cannot be used to apply a constraint that takes into
+                account the values of multiple Fields.
+              </para>
+              <para>
+                To provide users with the power to define their own constraints outside of the library, Kvasir's annotation
+                system allows for the specification of a <i>Type</i> that encapsulates the custom constraint logic. When
+                used, the provided Type must implement this interface, which exposes the method necessary to convert one
+                or more Fields into the actual constraint. This pattern allows for the re-use of custom constraint classes
+                on multiple Fields in the same Entity or in wholly separate Entities altogether; it also permits the use
+                of non-compile-time-constants (which are forbidden in C# attributes).
+              </para>
+            </remarks>
+            <seealso cref="T:Kvasir.Annotations.CheckAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.ComplexAttribute"/>
+        </member>
+        <member name="M:Kvasir.Core.IConstraintGenerator.MakeConstraint(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter},Kvasir.Core.Settings)">
+            <summary>
+              Produces a constraint <see cref="T:Kvasir.Schema.Clause"/> that restricts the values of one or more Fields.
+            </summary>
+            <param name="fields">
+              The collection of <see cref="T:Kvasir.Schema.IField">Fields</see> on whose values the <c>CHECK</c> constraint depends.
+              The order of the Fields reflects the order in which they were listed in the annotation and should be used
+              to fill in the <see cref="T:Kvasir.Schema.FieldExpression">FieldExpressions</see> of the resultant <see cref="T:Kvasir.Schema.Clause"/>.
+            </param>
+            <param name="converters">
+              The <see cref="T:Cybele.Core.DataConverter">DataConverters</see> relevant to the <paramref name="fields"/>. The
+              <i>i<sup>th</sup></i> item in this list corresponds to the <i>i<sup>th</sup></i> item in
+              <paramref name="fields"/>. These should be used to transform any parameterized values, if present.
+            </param>
+            <param name="settings">
+              The system <see cref="T:Kvasir.Core.Settings"/>.
+            </param>
+            <pre>
+              Both <paramref name="fields"/> and <paramref name="converters"/> are non-empty and of equal length. None
+              of the arguments, nor any of the collection items, is <see langword="null"/>.
+            </pre>
+            <returns>
+              A <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> that is configured to constrain <paramref name="fields"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Core.IDataConverter">
+            <summary>
+              The untyped interface for a user-defined data converter.
+            </summary>
+            <remarks>
+              This is the interface that is leveraged internally, in a type-erased context, by the Kvasir framework.
+              Clients are expected to implement the <see cref="T:Kvasir.Core.IDataConverter`2"/>, which inherits from
+              this one, to produce their custom data converters. This extra level of indirection allows for clients to
+              operate in a type-safe manner, a luxury that the framework does not have due to the need to use reflection.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Core.IDataConverter.ConverterImpl">
+            <summary>
+              The bidirectional <see cref="T:Cybele.Core.DataConverter"/> that wraps the user-defined conversion and reversion
+              methods.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Core.IDataConverter`2">
+            <summary>
+              The interface for a user-defined data converter, which is used to convert from in-source values to database
+              values and vice-versa.
+            </summary>
+            <typeparam name="TSource">
+              The <see cref="T:System.Type"/> of the in-source values on which this <see cref="T:Kvasir.Core.IDataConverter`2"/>
+              operates.
+            </typeparam>
+            <typeparam name="TResult">
+              The <see cref="T:System.Type"/> of the database values on which this <see cref="T:Kvasir.Core.IDataConverter`2"/>
+              operates.
+            </typeparam>
+            <see cref="T:Cybele.Core.DataConverter"/>
+        </member>
+        <member name="M:Kvasir.Core.IDataConverter`2.Convert(`0)">
+            <summary>
+              Converts an instance of <typeparamref name="TSource"/> into an instance of
+              <typeparamref name="TResult"/>.
+            </summary>
+            <param name="source">
+              The source object.
+            </param>
+            <returns>
+              The coversion of <paramref name="source"/> into an instance of <typeparamref name="TResult"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Core.IDataConverter`2.Revert(`1)">
+            <summary>
+              Converts an instance of <typeparamref name="TResult"/> back into an instance of
+              <see typeparamref="TSource"/>.
+            </summary>
+            <remarks>
+              Because the underlying conversion mechanism need not be bijective (that is, multiple different source
+              objects can convert into the same result object), the <see cref="M:Kvasir.Core.IDataConverter`2.Revert(`1)"/> API does not
+              necessarily present a true inversion. For a given result object <c>R</c>, the only guarantees are that
+              repeated calls to the API will yield the same source object and that <c>Convert(Revert(R)) == R</c>.
+            </remarks>
+            <param name="result">
+              The result object.
+            </param>
+            <returns>
+              The reversion of <paramref name="result"/> into an instance of <typeparamref name="TSource"/>.
+            </returns>
+        </member>
+        <member name="P:Kvasir.Core.IDataConverter`2.Kvasir#Core#IDataConverter#ConverterImpl">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Core.Settings">
+            <summary>
+              The settings to be used by the Kvasir framework in the course of its deductions, translations, and other
+              built-in behaviors.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Core.Settings.Default">
+            <summary>
+              The default settings used by the Kvasir framework.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Core.Settings.DateTimeStyle">
+            <summary>
+              The style with which <see cref="T:System.DateTime"/> values are represented as strings in property
+              annotations.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Core.TransformUserValues">
+            <summary>
+              A set of internal utilities for converting a value provided by the user through the front-end UI.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Core.TransformUserValues.Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
+            <summary>
+              Transforms a user-provided value--either a single object or a set thereof--so that it of the correct form
+              for a particular Field.
+            </summary>
+            <remarks>
+              This function is largely responsible for performing the following actions:
+                <list type="bullet">
+                  <item>Converting enumerator values to their string or numeric representations</item>
+                  <item>Converting any other type of value according to a user-specified Data Converter</item>
+                  <item>Parsing a string into a Guid for Guid-typed Fields</item>
+                  <item>Parsing a string into a DateTime for DateTime-typed Fields</item>
+                </list>
+            </remarks>
+            <param name="value">
+              The user-provided value.
+            </param>
+            <param name="field">
+              The Field to which <paramref name="value"/> belongs.
+            </param>
+            <param name="converter">
+              The <see cref="T:Cybele.Core.DataConverter"/> for <paramref name="field"/>.
+            </param>
+            <param name="settings">
+              The Kvasir framework settings.
+            </param>
+            <returns>
+              The result of converting <paramref name="value"/> according to <paramref name="field"/>,
+              <paramref name="converter"/>, and <paramref name="settings"/>. It will either be a single
+              <see cref="T:Kvasir.Schema.DBValue"/> or a set thereof.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Core.TransformUserValues.DoTransform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
+            <see cref="M:Kvasir.Core.TransformUserValues.Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)"/>
+        </member>
+        <member name="M:Kvasir.Core.TransformUserValues.DoTransform(System.Collections.Generic.IEnumerable{System.Object},Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
+            <see cref="M:Kvasir.Core.TransformUserValues.Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)"/>
+        </member>
+        <member name="T:Kvasir.Exceptions.KvasirException">
+            <summary>
+              A base exception to be raised by the Kvasir framework when malformed, invalid, or contradictory user input
+              is encountered.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Exceptions.KvasirException.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Exceptions.KvasirException"/> class, setting the <c>Message</c> property
+              to an implementation-defined default value and the <c>InnerException</c> property to
+              <see langword="null"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Exceptions.KvasirException.#ctor(System.String)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Exceptions.KvasirException"/> class, setting the <c>Message</c> property
+              to a user-defined value and the <c>InnerException</c> property to <see langword="null"/>.
+            </summary>
+            <param name="message">
+              A description of the error.
+            </param>
+        </member>
+        <member name="M:Kvasir.Exceptions.KvasirException.#ctor(System.String,System.Exception)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Exceptions.KvasirException"/> class, setting both the <c>Message</c> and
+              <c>InnerException</c> properties to user-defined values.
+            </summary>
+            <param name="message">
+              A description of the error.
+            </param>
+            <param name="innerException">
+              The cause of the new exception.
+            </param>
+        </member>
+        <member name="M:Kvasir.Exceptions.KvasirException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Exceptions.KvasirException"/> class from serialized data.
+            </summary>
+            <param name="info">
+              The object that holds the serialized data.
+            </param>
+            <param name="context">
+              The contextual information about the source or destination.
+            </param>
+        </member>
         <member name="T:Kvasir.Extraction.DecomposingExtractionStep">
             <summary>
               An <see cref="T:Kvasir.Extraction.IExtractionStep"/> that produces a collection of primitive values obtained by recursively
@@ -1092,8 +2150,6 @@
               <paramref name="lhs"/> is not <see langword="null"/>
                 --and--
               <paramref name="rhs"/> is neither <see langword="null"/> nor empty
-                --and--
-              no element of <paramref name="rhs"/> is <see cref="P:Kvasir.Schema.DBValue.NULL"/>
                 --and--
               each element of <paramref name="rhs"/> is compatible with the
               <see cref="P:Kvasir.Schema.FieldExpression.DataType">data type</see> of <paramref name="lhs"/>.

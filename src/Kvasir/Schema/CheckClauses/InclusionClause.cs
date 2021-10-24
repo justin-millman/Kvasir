@@ -43,8 +43,6 @@ namespace Kvasir.Schema {
         ///     --and--
         ///   <paramref name="rhs"/> is neither <see langword="null"/> nor empty
         ///     --and--
-        ///   no element of <paramref name="rhs"/> is <see cref="DBValue.NULL"/>
-        ///     --and--
         ///   each element of <paramref name="rhs"/> is compatible with the
         ///   <see cref="FieldExpression.DataType">data type</see> of <paramref name="lhs"/>.
         /// </pre>
@@ -53,7 +51,6 @@ namespace Kvasir.Schema {
             Debug.Assert(op.IsValid());
             Debug.Assert(rhs is not null);
             Debug.Assert(!rhs.IsEmpty());
-            Debug.Assert(!rhs.Any(v => v.Equals(DBValue.NULL)));
             Debug.Assert(rhs.All(v => v.IsInstanceOf(lhs.DataType)));
 
             // Note: It is valid for the data type of the LHS to be DBType.Enumeration because the Clause could be part
