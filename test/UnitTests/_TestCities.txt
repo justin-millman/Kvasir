@@ -4,27 +4,36 @@ Abilene
 Akron
 Albany
 Albuquerque
+Alexandria
+Alomogordo
 Alpharetta
+Altoona
 Amarillo
 Ames
 Anaheim
 Anchorage
+Andersonville
 Ann Arbor
 Annapolis
+Appleton
 Arlington
 Asheville
 Athens
 Atlanta
 Atlantic City
+Auburn
 Augusta
 Aurora
 Austin
+Aynor
 Bakersfield
 Baltimore
 Baton Rouge
 Beaumont
 Bellevue
 Bentonville
+Berkeley
+Bethesda
 Billings
 Biloxi
 Birmingham
@@ -34,16 +43,33 @@ Boca Raton
 Boise
 Boston
 Boulder
+Bowling Green
 Bozeman
 Bridgeport
+Bristol
+Brownsville
+Buena Vista
 Buffalo
+Burbank
+Burlington
+Butte
 Cambridge
+Cairo
 Canton
+Cape Girardeau
+Carbondale
+Carmel
+Carlsbad
 Carson City
+Casper
+Chapel Hill
 Charleston
 Charlotte
-Carlsbad
+Charlotte Amalie
+Charlottesville
+Christiansted
 Cedar Rapids
+Champaign
 Chattanooga
 Cheyenne
 Chicago
@@ -51,121 +77,212 @@ Chula Vista
 Cincinnati
 Cleveland
 Coeur d'Alene
+College Station
 Colorado Springs
 Columbia
 Columbus
 Concord
 Cooperstown
+Coral Gables
 Corpus Christi
 Dallas
+Danbury
 Davenport
 Dayton
+Daytona Beach
 Dearborn
+Decatur
+Dededo
+DeKalb
 Denver
 Des Moines
+Des Plaines
 Detroit
 Dover
+Dubuque
 Duluth
 Durham
+East Hartford
 East St. Louis
+Eau Claire
 El Paso
+Erie
 Eugene
+Eureka
+Evansville
 Fairbanks
 Fargo
+Farmington Hills
+Fayetteville
 Flagstaff
+Flint
+Florida City
+Fort Hood
 Fort Lauderdale
+Fort Myers
 Fort Wayne
 Fort Worth
+Frankfort
 Fresno
 Gainesville
 Galveston
 Gary
+Georgetown
+Germantown
 Gilbert
 Glendale
+Grand Forks
 Grand Rapids
 Green Bay
 Greensboro
+Gulfport
+Hagåtña
+Hardin
 Harrisburg
 Hartford
+Hattiesburg
 Helena
 Hershey
 Hialeah
+High Point
+Hollywood
 Honolulu
 Hot Springs
 Houston
+Huntsville
 Indianapolis
 Inglewood
+Iowa City
+Irving
 Ithaca
 Jackson
+Jackson Hole
 Jacksonville
 Jefferson City
 Jersey City
 Joliet
+Joplin
 Juneau
 Jupiter
+Kailua
 Kalamazoo
+Kalispell
+Kaneohe
 Kansas City
+Kennewick
+Kenosha
+Ketchikan
+Kettering
+Key West
+Kirkland
+Kokomo
 Knoxville
+La Crosse
 Lafayette
+Lahaina
+Lake Charles
+Lake Placid
+Lander
+Langley
 Lansing
 Laramie
 Laredo
 Las Cruces
 Las Vegas
 Lawrence
+Levittown
 Lexington
 Lincoln
+Lima
 Little Rock
 Long Beach
 Los Alamos
 Los Angeles
 Louisville
 Lubbock
+Macomb
+Macon
 Madison
+Malibu
+Manassas
 Manchester
 Memphis
 Mesa
 Miami
 Milwaukee
 Minneapolis
+Minnetonka
+Miramar
+Missoula
+Metairie
 Mobile
 Modesto
 Montgomery
 Montpelier
+Morgantown
 Murfreesboro
 Myrtle Beach
+Naperville
+Narragansett Pier
+Nashua
 Nashville
+Nauvoo
 New Haven
 New Orleans
+New Rochelle
 New York City
 Newark
+Newport News
 Nome
 Norfolk
+Norman
 North Las Vegas
+North Platte
+Novi
 Oakland
 Oconomowoc
 Oklahoma City
 Omaha
+Oregon City
 Orlando
+Oshkosh
+Owensboro
+Oxford
+Oxnard
+Pago Pago
+Palatine
 Palm Beach
 Pasadena
+Paterson
+Pawtucket
 Pearl City
+Pembroke Pines
 Peoria
 Philadelphia
 Phoenix
 Pierre
+Pine Bluff
 Pittsburgh
 Plano
+Pocatello
 Pomona
+Pontiac
+Port St. Lucie
 Portland
 Providence
 Provo
+Quincy
+Racine
 Raleigh
+Rancho Cucamonga
 Reno
+Reston
 Riverside
 Roanoke
+Rochester
 Roswell
 Round Rock
+Saipan
 Salem
 Salinas
 San Antonio
@@ -174,48 +291,81 @@ San Diego
 San Francisco
 San Jacinto
 San Jose
+San Juan
+San Luis Obispo
 Sandy Springs
 Santa Ana
+Santa Barbara
 Santa Clara
 Santa Cruz
 Santa Fe
 Savannah
+Schenectady
 Scottsdale
 Scranton
 Seattle
 Selma
+Seward
+Shaker Heights
 Shreveport
 Sioux City
 Sioux Falls
+Sitka
+Smyrna
 South Bend
+Spearfish
 Spokane
 Springfield
 St. Augustine
+St. Cloud
 St. Louis
 St. Paul
+Stamford
 Stillwater
+Stockton
 Syracuse
 Tacoma
+Tafuna
+Tahlequa
 Tallahassee
 Tampa
+Terre Haute
 Texarkana
 Toledo
+Toms River
 Topeka
 Trenton
 Tucson
 Tulsa
+Tupelo
 Tuscaloosa
+Unalaska
+Urbana
 Valparaiso
 Virginia Beach
 Waco
 Walla Walla
+Waimanalo
 Washington, D.C.
+Wasilla
+Waterbury
+Wabaunsee
+Waterloo
 Waukesha
+West Covina
 West Lafayette
+West Point
+Wheeling
+Whitefish
 Wichita
 Wichita Falls
 Wilkes-Barre
 Wilmington
 Winston-Salem
 Wisconsin Dells
+Worcester
+Yonkers
+Youngstown
 Ypsilanti
+Yuma
+Zzyzx
