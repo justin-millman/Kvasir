@@ -8,6 +8,9 @@ namespace FluentAssertions {
         public static RelationAssertion Should<T>(this RelationList<T> self) {
             return new RelationAssertion(self);
         }
+        public static RelationAssertion Should<T>(this RelationSet<T> self) {
+            return new RelationAssertion(self);
+        }
 
         public class RelationAssertion : Primitives.ObjectAssertions {
             public new IRelation Subject { get; }

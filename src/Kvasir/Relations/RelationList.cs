@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Kvasir.Relations {
     /// <summary>
-    ///     An unordered collection that tracks the state of its elements for interaction with a back-end database.
+    ///     An ordered collection that tracks the state of its elements for interaction with a back-end database.
     /// </summary>
     /// <remarks>
     ///   <para>
@@ -20,26 +20,26 @@ namespace Kvasir.Relations {
     ///     API (e.g. <see cref="CopyTo(T[])"/>) or LINQ, drops the change tracking capabilities.
     ///   </para>
     ///   <para>
-    ///     Every item in a <see cref="RelationList{T}"/> is in one of three state: <c>NEW</c>, <c>SAVED</c>, and
+    ///     Every item in a <see cref="RelationList{T}"/> is in one of three state: <c>NEW</c>, <c>SAVED</c>, or
     ///     <c>DELETED</c>. Each state corresponds to the action or actions that should be taken with respect to that
     ///     item to synchronize the back-end database table corresponding to the relation. An item enters the
-    ///     <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c> items
+    ///     <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c> item
     ///     transitions to the <c>SAVED</c> state, indicating that it does not need to be written to the database on
     ///     the next write. When a <c>SAVED</c> item is removed from the collection, it transitions to the
-    ///     <c>DELETED</c> stat; <c>NEW</c> items do no transition to <c>DELETED</c>. Note that if a <c>SAVED</c> item
-    ///     is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
+    ///     <c>DELETED</c> state; <c>NEW</c> items do not transition to <c>DELETED</c>. Note that if a <c>SAVED</c>
+    ///     item is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
     ///   </para>
     ///   <para>
     ///     Items used in a <see cref="RelationList{T}"/> should be immutable: structs, <see cref="string"/>, etc. This
     ///     is because read access is <i>not</i> tracked: when using mutable elements, it is possible for the user to
-    ///     access an ite (e.g. through <c>[]</c>) and mutate that element without the collection knowing, preventing
+    ///     access an item (e.g. through <c>[]</c>) and mutate that element without the collection knowing, preventing
     ///     that change from being reflected in the back-end database. This also means that actions that convert the
     ///     collection into another form will <i>copy</i> the elements, ensuring that the tracking data remains
     ///     up-to-date.
     ///   </para>
     ///   <para>
     ///     A <see cref="RelationList{T}"/> technically permits duplicate elements, though it is strongly advised that
-    ///     users treat the collection as more of an unordered set, as the back-end relational database table will
+    ///     users treat the collection as more of an ordered set, as the back-end relational database table will
     ///     not permit duplicates. For example, it is possile for the collection to expose a single item in multiple
     ///     seemingly incompatible states (e.g. <c>SAVED</c> and <c>DELETED</c>). Though different search APIs enable
     ///     the use of custom comparators, the internal comparison logic always uses the default comparison.
@@ -49,7 +49,7 @@ namespace Kvasir.Relations {
     ///   The type of element to be stored in the collection.
     /// </typeparam>
     public sealed class RelationList<T> : ICollection<T>, IEnumerable, IEnumerable<T>, IList, IList<T>,
-        IReadOnlyCollection<T>, IReadOnlyList<T>, IRelation {
+        IReadOnlyCollection<T>, IReadOnlyList<T>, IRelation where T : notnull {
 
         // *************************************** PROPERTIES ***************************************
 
@@ -351,6 +351,7 @@ namespace Kvasir.Relations {
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override bool Equals(object? obj) {
             return (obj is RelationList<T> list) &&
                    impl_.Equals(list.impl_) &&
@@ -586,11 +587,13 @@ namespace Kvasir.Relations {
         /// <returns>
         ///   A <see cref="List{T}.Enumerator"/> for the <see cref="RelationList{T}"/>.
         /// </returns>
+        [ExcludeFromCodeCoverage]
         public List<T>.Enumerator GetEnumerator() {
             return impl_.GetEnumerator();
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override int GetHashCode() {
             return HashCode.Combine(impl_.GetHashCode(), statuses_.GetHashCode(), deletions_.GetHashCode());
         }
@@ -1003,10 +1006,11 @@ namespace Kvasir.Relations {
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override string? ToString() {
             var builder = new StringBuilder();
             for (int idx = 0; idx < impl_.Count; ++idx) {
-                builder.Append($"{impl_[idx]} [{statuses_[idx]}");
+                builder.AppendLine($"{impl_[idx]} [{statuses_[idx]}]");
             }
 
             return builder.ToString();
@@ -1066,7 +1070,6 @@ namespace Kvasir.Relations {
         object ICollection.SyncRoot => (impl_ as ICollection).SyncRoot;
 
         /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
         object? IList.this[int index] {
             get {
                 return this[index];
