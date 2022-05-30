@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace FluentAssertions {
     internal static partial class AssertionExtensions {
-        public static RelationAssertion Should<T>(this RelationList<T> self) {
+        public static RelationAssertion Should<T>(this RelationList<T> self) where T : notnull {
             return new RelationAssertion(self);
         }
-        public static RelationAssertion Should<T>(this RelationSet<T> self) {
+        public static RelationAssertion Should<T>(this RelationSet<T> self) where T : notnull {
             return new RelationAssertion(self);
         }
 

@@ -1657,19 +1657,19 @@
                 API (e.g. <see cref="M:Kvasir.Relations.RelationList`1.CopyTo(`0[])"/>) or LINQ, drops the change tracking capabilities.
               </para>
               <para>
-                Every item in a <see cref="T:Kvasir.Relations.RelationList`1"/> is in one of three state: <c>NEW</c>, <c>SAVED</c>, and
+                Every item in a <see cref="T:Kvasir.Relations.RelationList`1"/> is in one of three state: <c>NEW</c>, <c>SAVED</c>, or
                 <c>DELETED</c>. Each state corresponds to the action or actions that should be taken with respect to that
                 item to synchronize the back-end database table corresponding to the relation. An item enters the
-                <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c> items
+                <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c> item
                 transitions to the <c>SAVED</c> state, indicating that it does not need to be written to the database on
                 the next write. When a <c>SAVED</c> item is removed from the collection, it transitions to the
-                <c>DELETED</c> stat; <c>NEW</c> items do no transition to <c>DELETED</c>. Note that if a <c>SAVED</c> item
-                is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
+                <c>DELETED</c> state; <c>NEW</c> items do not transition to <c>DELETED</c>. Note that if a <c>SAVED</c>
+                item is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
               </para>
               <para>
                 Items used in a <see cref="T:Kvasir.Relations.RelationList`1"/> should be immutable: structs, <see cref="T:System.String"/>, etc. This
                 is because read access is <i>not</i> tracked: when using mutable elements, it is possible for the user to
-                access an ite (e.g. through <c>[]</c>) and mutate that element without the collection knowing, preventing
+                access an item (e.g. through <c>[]</c>) and mutate that element without the collection knowing, preventing
                 that change from being reflected in the back-end database. This also means that actions that convert the
                 collection into another form will <i>copy</i> the elements, ensuring that the tracking data remains
                 up-to-date.
@@ -2526,7 +2526,43 @@
             </param>
         </member>
         <member name="T:Kvasir.Relations.RelationSet`1">
-            
+            <summary>
+              An unordered collection that tracks that state of its unique elements for interaction with a back-end
+              database.
+            </summary>
+            <remarks>
+              <para>
+                A <see cref="T:Kvasir.Relations.RelationSet`1"/> implements the same interfaces and behaves identically to a standard
+                <see cref="T:System.Collections.Generic.HashSet`1"/> collection. Operations that mutate the collection are used to track changes that
+                can then be reflected in a back-end database, while view- or read-only operations have no additional side
+                effect. Converting a <see cref="T:Kvasir.Relations.RelationSet`1"/> into another collection type, suhc as through a member
+                API (e.g. <see cref="M:Kvasir.Relations.RelationSet`1.CopyTo(`0[])"/> or LINQ, drops the change tracking capabilities.
+              </para>
+              <para>
+                Every item in a <see cref="T:Kvasir.Relations.RelationSet`1"/> is in one of three state: <c>NEW</c>, <c>SAVED</c>, or
+                <c>DELETED</c>. Each state corresponds to the action or actions that should be taken with respect to that
+                item to synchronize the back-end database table corresponding to the relation. An item enters the
+                <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c> item
+                transitions to the <c>SAVED</c> state, indicating that it does not need to be written to the database on
+                the next write. When a <c>SAVED</c> item is removed from the collection, it transitions to the
+                <c>DELETED</c> state; <c>NEW</c> items do not transition to <c>DELETED</c>. Note that if a <c>SAVED</c>
+                item is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
+              </para>
+              <para>
+                Items used in a <see cref="T:Kvasir.Relations.RelationSet`1"/> should be immutable: structs, <see cref="T:System.String"/>, etc. This
+                is because read access is <i>not</i> tracked: when using mutable elements, it is possible for the uer to
+                access an item (e.g. through <c>TryGetValue</c>) and mutate that element without the collection knowing,
+                preventing that change from being reflected in the back-end database. This also means that actions that
+                convert the collection into another form will <i>copy</i> the elements, ensuring that the tracking data
+                remains up-to-date.
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Relations.RelationSet`1"/> does not permit duplicate elements.
+              </para>
+            </remarks>
+            <typeparam name="T">
+              The type of element to be stored in the collection.
+            </typeparam>
         </member>
         <member name="P:Kvasir.Relations.RelationSet`1.Comparer">
             <summary>

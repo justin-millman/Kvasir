@@ -121,7 +121,8 @@ namespace UT.Kvasir.Reconstitution {
 
             // Assert
             var expected = new TestCategoryAttribute(arg);
-            value.Should().Equals(expected);
+            value.Should().BeOfType<TestCategoryAttribute>();
+            (value as TestCategoryAttribute)!.TestCategories.Should().Equal(expected.TestCategories);
         }
 
         [TestMethod] public void ProduceFromMultipleArguments() {
@@ -144,7 +145,7 @@ namespace UT.Kvasir.Reconstitution {
 
             // Assert
             var expected = new System.Range(arg0, arg1);
-            value.Should().Equals(expected);
+            value.Should().Be(expected);
         }
 
         [TestMethod] public void ProduceFromAllNulls() {
