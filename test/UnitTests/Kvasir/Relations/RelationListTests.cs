@@ -14,7 +14,7 @@ namespace UT.Kvasir.Relations {
 
             // Assert
             list.Count.Should().Be(0);
-            (list as IRelation).ConnectionType.Should().Be(typeof(string));
+            list.Should().HaveConnectionType<string>();
             list.Should().HaveEntryCount(0);
         }
 

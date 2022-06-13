@@ -2525,9 +2525,389 @@
               The index of the item in the <see cref="T:Kvasir.Relations.RelationList`1"/> to be removed.
             </param>
         </member>
+        <member name="T:Kvasir.Relations.RelationMap`2">
+            <summary>
+              A collection that trakcs the state of its key-value mappings for interaction with a back-end database.
+            </summary>
+            <remarks>
+              <para>
+                A <see cref="T:Kvasir.Relations.RelationMap`2"/> implements the same interfaces as and behaves identically to a
+                standard <see cref="T:System.Collections.Generic.Dictionary`2"/> collection. Operations that mutate the collection are used
+                to track changes that can then be reflected in a back-end database, while view- or read-only operationsh
+                have no additional side effects. Converting a <see cref="T:Kvasir.Relations.RelationMap`2"/> into another
+                collection, such as through a member API or LINQ, drops the change tracking capabilities.
+              </para>
+              <para>
+                Every key-value pair in a <see cref="T:Kvasir.Relations.RelationMap`2"/> is in one of three states: <c>NEW</c>,
+                <c>SAVED</c>, or <c>DELETED</c>. Each state corresponds to the action or actions that should be taken with
+                respect to that item to synchronize the back-end database table corresponding to the relation. An item
+                enters the <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c>
+                item transitions to the <c>SAVED</c> state, indicating that it does not need to be written to the database
+                on the next write. When a <c>SAVED</c> item is removed from the collection, it transitions to the
+                <c>DELETED</c> state; <c>NEW</c> items do not transition to <c>DELETED</c>. Note that if a <c>SAVED</c>
+                item is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
+              </para>
+              <para>
+                The <see cref="T:Kvasir.Relations.RelationMap`2"/> does not support the <c>MODIFIED</c> state; instead, each
+                key-value pair is treated as its own unit. This means that changing the value mapped to by an existing key
+                results in two separate operations in the back-end database: first a removal of the old key-value pair,
+                then an insertion of the new one. This behavior <i>may</i> change in the future, so clients should not rely
+                on it. The guarantee, however, is that Kvasir will properly respond to an overwrite by ensuring that the
+                resulting back-end database contains only the new key-value pair.
+              </para>
+              <para>
+                Items used for the value in a <see cref="T:Kvasir.Relations.RelationMap`2"/> should be immutable: structs,
+                <see cref="T:System.String"/>, etc. This is because read access is <i>not</i> tracked: when usiing mutable values,
+                it is possible for the user to access an item (e.g. through <c>operator[]</c>) and mutate that value
+                without the collection knowing, preventing the change from being reflected in the back-end database. This
+                also means that actions that convert the collection into another form will <i>copy</i> the elements,
+                ensuring that the tracing data remains up-to-date.
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Relations.RelationMap`2"/> does not permit duplicate keys, but it does support duplicate
+                values.
+              </para>
+            </remarks>
+            <typeparam name="TKey">
+              The type of the key of the collection's key-value pairs.
+            </typeparam>
+            <typeparam name="TValue">
+              The type of the value of the collection's key-value pairs.
+            </typeparam>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.Comparer">
+            <summary>
+              Gets the <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> object that is used to determine equality of keys for the
+              <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </summary>
+            <value>
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> object that is used to determine equality of keys for the
+              <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </value>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.Count">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.Item(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.Keys">
+            <summary>
+              Gets a collection containing the keys in the <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </summary>
+            <value>
+              A <see cref="T:System.Collections.Generic.Dictionary`2.KeyCollection"/> containing the keys in the
+              <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </value>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.Values">
+            <summary>
+              Gets a collection containing the keys in the <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </summary>
+            <value>
+              A <see cref="T:System.Collections.Generic.Dictionary`2.ValueCollection"/> containing the values in the
+              <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </value>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that is empty, has the
+              default initial capacity, and uses the default equality comparer for the key type.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor(System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that is empty, has the
+              default initial capacity, and uses the specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing keys, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the key.
+            </param>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that contains elements
+              copied from the specified <see cref="T:System.Collections.Generic.IDictionary`2"/> and use the default equality comparer
+              for the key type.
+            </summary>
+            <param name="dictionary">
+              The <see cref="T:System.Collections.Generic.IDictionary`2"/> whose elements are copied to the new
+              <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="dictionary"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor(System.Collections.Generic.IDictionary{`0,`1},System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that contains elements
+              copied from the specified <see cref="T:System.Collections.Generic.IDictionary`2"/> and uses the specified
+              <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="dictionary">
+              The <see cref="T:System.Collections.Generic.IDictionary`2"/> whose elements are copied to the new
+              <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing keys, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the key.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="dictionary"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that contains elements
+              copied from the specified <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <param name="collection">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> whose elements are copied to the new
+              <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="collection"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}},System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that contains elements
+              copied from the specified <see cref="T:System.Collections.Generic.IEnumerable`1"/> and uses the specified
+              <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="collection">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> whose elements are copied to the new
+              <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to ue when comparing keys, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the key.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="collection"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor(System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that is empty, has the
+              specified initial capacity, and uses the default equality comparer for the key type.
+            </summary>
+            <param name="capacity">
+              The initial number of elements that the <see cref="T:Kvasir.Relations.RelationMap`2"/> can contain.
+            </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="capacity"/> is less than <c>0</c>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.#ctor(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Relations.RelationMap`2"/> class that is empty, has the
+              specified initial capacity, and uses the specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="capacity">
+              The initial number of elements that the <see cref="T:Kvasir.Relations.RelationMap`2"/> can contain.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing keys, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the key.
+            </param>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Add(`0,`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Clear">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.ContainsKey(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.ContainsValue(`1)">
+            <summary>
+              Determines whether the <see cref="T:Kvasir.Relations.RelationMap`2"/> contains a specific value.
+            </summary>
+            <param name="value">
+              The value to locate in the <see cref="T:Kvasir.Relations.RelationMap`2"/>. The value can be
+              <see langword="null"/> for nullable reference types.
+            </param>
+            <returns>
+              <see langword="true"/> if the <see cref="T:Kvasir.Relations.RelationMap`2"/> contains an element with the
+              specified value; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.GetEnumerator">
+            <summary>
+              Returns an enumerator that iterates through a <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </summary>
+            <returns>
+              A <see cref="T:System.Collections.Generic.Dictionary`2.Enumerator"/> object for the <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Remove(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Remove(`0,`1@)">
+            <summary>
+              Removes the value with the specified key from the <see cref="T:Kvasir.Relations.RelationMap`2"/>, and copies
+              the element to the <paramref name="value"/> parameter.
+            </summary>
+            <param name="key">
+              The key of the element to remove.
+            </param>
+            <param name="value">
+              The removed element.
+            </param>
+            <returns>
+              <see langword="true"/> if the element is successfully found and removed; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.TrimExcess">
+            <summary>
+              Sets the capacity of this <see cref="T:Kvasir.Relations.RelationMap`2"/> to what it would be if it had
+              originally been initialized with all its entries.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.TrimExcess(System.Int32)">
+            <summary>
+              Sets the capacity of this <see cref="T:Kvasir.Relations.RelationMap`2"/> to hold up to a specified number of
+              entries without further expansion of its backing storage.
+            </summary>
+            <param name="capacity">
+              The new capacity.
+            </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              <paramref name="capacity"/> is less than the size of the <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.TryAdd(`0,`1)">
+            <summary>
+              Attempts to add the specific key and value to the <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </summary>
+            <param name="key">
+              The key of the element to add.
+            </param>
+            <param name="value">
+              The value of the element to add. It can be <see langword="null"/> for nullable reference types.
+            </param>
+            <returns>
+              <see langword="true"/> if the key/value pair was added to the <see cref="T:Kvasir.Relations.RelationMap`2"/>;
+              otherwise, <see langword="false"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="key"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.TryGetValue(`0,`1@)">
+            <summary>
+              Gets the alue associated with the specified key.
+            </summary>
+            <param name="key">
+              The key of the value to get.
+            </param>
+            <param name="value">
+              When this method returns, contains the value associated with the specified key, if the key is found;
+              otherwise, the default value for the type of the <paramref name="value"/> parameter. This parameter is
+              passed uninitialized.
+            </param>
+            <returns>
+              <see langword="true"/> if the <see cref="T:Kvasir.Relations.RelationMap`2"/> contains an element with the
+              specified key; otherwise, <see langword="false"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="key"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.Kvasir#Relations#IRelation#ConnectionType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#ICollection#IsSynchronized">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#ICollection#SyncRoot">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TKey,TValue}}#IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#IsFixedSize">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#Item(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#Values">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#Generic#IReadOnlyDictionary{TKey,TValue}#Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#Generic#IReadOnlyDictionary{TKey,TValue}#Values">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#Generic#IDictionary{TKey,TValue}#Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Relations.RelationMap`2.System#Collections#Generic#IDictionary{TKey,TValue}#Values">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#ICollection#CopyTo(System.Array,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TKey,TValue}}#Add(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TKey,TValue}}#Contains(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TKey,TValue}}#CopyTo(System.Collections.Generic.KeyValuePair{`0,`1}[],System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TKey,TValue}}#Remove(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#Add(System.Object,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#Contains(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#IDictionary#Remove(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.System#Collections#Generic#IEnumerable{System#Collections#Generic#KeyValuePair{TKey,TValue}}#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Kvasir#Relations#IRelation#Canonicalize">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Kvasir#Relations#IRelation#GetEnumerator">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Relations.RelationSet`1">
             <summary>
-              An unordered collection that tracks that state of its unique elements for interaction with a back-end
+              An unordered collection that tracks the state of its unique elements for interaction with a back-end
               database.
             </summary>
             <remarks>
@@ -2535,11 +2915,11 @@
                 A <see cref="T:Kvasir.Relations.RelationSet`1"/> implements the same interfaces and behaves identically to a standard
                 <see cref="T:System.Collections.Generic.HashSet`1"/> collection. Operations that mutate the collection are used to track changes that
                 can then be reflected in a back-end database, while view- or read-only operations have no additional side
-                effect. Converting a <see cref="T:Kvasir.Relations.RelationSet`1"/> into another collection type, suhc as through a member
+                effect. Converting a <see cref="T:Kvasir.Relations.RelationSet`1"/> into another collection type, such as through a member
                 API (e.g. <see cref="M:Kvasir.Relations.RelationSet`1.CopyTo(`0[])"/> or LINQ, drops the change tracking capabilities.
               </para>
               <para>
-                Every item in a <see cref="T:Kvasir.Relations.RelationSet`1"/> is in one of three state: <c>NEW</c>, <c>SAVED</c>, or
+                Every item in a <see cref="T:Kvasir.Relations.RelationSet`1"/> is in one of three states: <c>NEW</c>, <c>SAVED</c>, or
                 <c>DELETED</c>. Each state corresponds to the action or actions that should be taken with respect to that
                 item to synchronize the back-end database table corresponding to the relation. An item enters the
                 <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c> item
