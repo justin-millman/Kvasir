@@ -11,10 +11,13 @@ namespace FluentAssertions {
         public static RelationAssertion Should<T>(this RelationSet<T> self) where T : notnull {
             return new RelationAssertion(self);
         }
+        public static RelationAssertion Should<K, V>(this RelationMap<K, V> self) where K : notnull {
+            return new RelationAssertion(self);
+        }
 
         public class RelationAssertion : Primitives.ObjectAssertions {
             public new IRelation Subject { get; }
-            private List<(object Item, Status Status)> SubjectList { get; }
+            public List<(object Item, Status Status)> SubjectList { get; }
             public RelationAssertion(IRelation subject)
                 : base(subject) {
 
@@ -74,7 +77,7 @@ namespace FluentAssertions {
 
                 Execute.Assertion
                     .BecauseOf(because, becauseArgs)
-                    .ForCondition(SubjectList.Count(entry => entry.Item == item && entry.Status == status) == count)
+                    .ForCondition(SubjectList.Count(entry => entry.Item.Equals(item) && entry.Status.Equals(status)) == count)
                     .FailWith($"Expected {{context:relation}} to expose the entry ({item}, {status}){{reason}} (x{count})");
 
                 return new AndConstraint<RelationAssertion>(this);
@@ -86,7 +89,7 @@ namespace FluentAssertions {
 
                 Execute.Assertion
                     .BecauseOf(because, becauseArgs)
-                    .ForCondition(SubjectList.FindIndex(entry => entry.Item == item) == -1)
+                    .ForCondition(SubjectList.FindIndex(entry => entry.Item.Equals(item)) == -1)
                     .FailWith($"Expected {{context:relation}} not to expose an entry for {item}{{reason}}");
 
                 return new AndConstraint<RelationAssertion>(this);

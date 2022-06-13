@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Kvasir.Relations {
     /// <summary>
-    ///   An unordered collection that tracks that state of its unique elements for interaction with a back-end
+    ///   An unordered collection that tracks the state of its unique elements for interaction with a back-end
     ///   database.
     /// </summary>
     /// <remarks>
@@ -16,11 +16,11 @@ namespace Kvasir.Relations {
     ///     A <see cref="RelationSet{T}"/> implements the same interfaces and behaves identically to a standard
     ///     <see cref="HashSet{T}"/> collection. Operations that mutate the collection are used to track changes that
     ///     can then be reflected in a back-end database, while view- or read-only operations have no additional side
-    ///     effect. Converting a <see cref="RelationSet{T}"/> into another collection type, suhc as through a member
+    ///     effect. Converting a <see cref="RelationSet{T}"/> into another collection type, such as through a member
     ///     API (e.g. <see cref="CopyTo(T[])"/> or LINQ, drops the change tracking capabilities.
     ///   </para>
     ///   <para>
-    ///     Every item in a <see cref="RelationSet{T}"/> is in one of three state: <c>NEW</c>, <c>SAVED</c>, or
+    ///     Every item in a <see cref="RelationSet{T}"/> is in one of three states: <c>NEW</c>, <c>SAVED</c>, or
     ///     <c>DELETED</c>. Each state corresponds to the action or actions that should be taken with respect to that
     ///     item to synchronize the back-end database table corresponding to the relation. An item enters the
     ///     <c>NEW</c> state when it is first added; when the collection is canonicalized, each <c>NEW</c> item

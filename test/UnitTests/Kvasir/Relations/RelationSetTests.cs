@@ -431,7 +431,7 @@ namespace UT.Kvasir.Relations {
 
         [TestMethod] public void ExceptWithSelf() {
             // Arrange
-            var elements = new string[] { "Paris", "Mexico City", "Kinshasa", "Tel Aviv", "Sao Paolo", "Seoul" };
+            var elements = new string[] { "Paris", "Mexico City", "Kinshasa", "Tel Aviv", "São Paolo", "Seoul" };
             var set = new RelationSet<string>() { elements[0], elements[1], elements[2] };
             (set as IRelation).Canonicalize();
             set.Add(elements[3]);
