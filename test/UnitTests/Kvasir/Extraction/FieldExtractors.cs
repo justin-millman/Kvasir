@@ -57,4 +57,42 @@ namespace UT.Kvasir.Extraction {
             value.Should().BeNull();
         }
     }
+
+    [TestClass, TestCategory("IdentityExtractor")]
+    public class IdentityExtractorTests {
+        [TestMethod] public void Construct() {
+            // Arrange
+
+            // Act
+            var extractor = new IdentityExtractor<int>();
+
+            // Assert
+            extractor.FieldType.Should().Be(typeof(int));
+            extractor.ExpectedSource.Should().Be(typeof(int));
+        }
+
+        [TestMethod] public void ExtractFromPrimitive() {
+            // Arrange
+            var extractor = new IdentityExtractor<bool>();
+            bool? source = false;
+
+            // Act
+            var value = extractor.Execute(source);
+
+            // Assert
+            value.Should().Be(source);
+        }
+
+        [TestMethod] public void ExtractFromNull() {
+            // Arrange
+            var extractor = new IdentityExtractor<DateTime>();
+            DateTime? source = null;
+
+            // Act
+            var value = extractor.Execute(source);
+
+            // Assert
+            value.Should().BeNull();
+        }
+    }
 }
