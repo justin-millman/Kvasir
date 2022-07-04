@@ -26,7 +26,7 @@ namespace Kvasir.Reconstitution {
         ///   <see cref="EntityReconstitutionPlan"/> is executed.
         /// </param>
         /// <param name="reverters">
-        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that extrinsically transform the
+        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that intrinsically transform the
         ///   values extracted from the back-end database..
         /// </param>
         /// <pre>
@@ -47,7 +47,7 @@ namespace Kvasir.Reconstitution {
 
         /// <summary>
         ///   Execute this <see cref="EntityReconstitutionPlan"/> to create a brand new CLR object from a "row" of
-        ///   datbase values.
+        ///   database values.
         /// </summary>
         /// <param name="rawValues">
         ///   The database values from which to reconstitute a CLR object.

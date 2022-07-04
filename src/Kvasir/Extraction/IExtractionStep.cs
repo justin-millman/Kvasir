@@ -30,7 +30,7 @@ namespace Kvasir.Extraction {
         ///     generally reserved for type conversions (e.g. converting C# enumerations into strings or integers). The
         ///     second is the extrinsic phase, which allows users to define custom ad hoc conversions on an
         ///     entity-by-entity, and even field-by-field, basis. The values produced by executing an
-        ///     <see cref="IExtractionStep"/> will have completed the first transformation phase only.
+        ///     <see cref="IExtractionStep"/> will have completed the second transformation phase only.
         ///   </para>
         ///   <para>
         ///     Executing an <see cref="IExtractionStep"/> on a <see langword="null"/> source object will produce a
