@@ -1112,11 +1112,11 @@
               Constructs a new <see cref="T:Kvasir.Extraction.EntityExtractionPlan"/>.
             </summary>
             <param name="steps">
-              The ordered sequence of <see cref="T:Kvasir.Extraction.IExtractionStep">extraction steps</see> that produce the intrinsically
+              The ordered sequence of <see cref="T:Kvasir.Extraction.IExtractionStep">extraction steps</see> that produce the extrinsically
               converted values from a source entity.
             </param>
             <param name="converters">
-              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that extrinsically transform the
+              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that intrinsically transform the
               values produced by <paramref name="steps"/>.
             </param>
             <pre>
@@ -1202,7 +1202,7 @@
                 generally reserved for type conversions (e.g. converting C# enumerations into strings or integers). The
                 second is the extrinsic phase, which allows users to define custom ad hoc conversions on an
                 entity-by-entity, and even field-by-field, basis. The values produced by executing an
-                <see cref="T:Kvasir.Extraction.IExtractionStep"/> will have completed the first transformation phase only.
+                <see cref="T:Kvasir.Extraction.IExtractionStep"/> will have completed the second transformation phase only.
               </para>
               <para>
                 Executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> on a <see langword="null"/> source object will produce a
@@ -1320,6 +1320,64 @@
         <member name="M:Kvasir.Extraction.ReadPropertyExtractor.Execute(System.Object)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Extraction.ExtractedRelationData">
+            <summary>
+              A grouping of data extracted from an <see cref="!:IRelation"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Extraction.ExtractedRelationData.#ctor(System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <summary>
+              A grouping of data extracted from an <see cref="!:IRelation"/>.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Extraction.RelationExtractionPlan">
+            <summary>
+              A description of the way in which data is extracted from an <see cref="T:Kvasir.Relations.IRelation"/> stored on a particular
+              Entity type and then transformed and prepared to be stored in a back-end database.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.RelationExtractionPlan.ExpectedSource">
+            <summary>
+              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/> is capable of
+              being executed.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Extraction.RelationExtractionPlan.#ctor(Kvasir.Extraction.IFieldExtractor,Kvasir.Extraction.EntityExtractionPlan)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
+            </summary>
+            <param name="relationExtractor">
+              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> that describes how to obtain the target <see cref="T:Kvasir.Relations.IRelation"/> from a
+              source entity.
+            </param>
+            <param name="plan">
+              The <see cref="T:Kvasir.Extraction.EntityExtractionPlan"/> that describes how to extract data from an entry in the relation
+              obtained from <paramref name="relationExtractor"/>.
+            </param>
+            <pre>
+              The <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType"/> of <paramref name="relationExtractor"/> is a type that
+              implements the <see cref="T:Kvasir.Relations.IRelation"/> interface (or is that interface itself)
+                --and--
+              The type of data stored in the relation obtained from <paramref name="relationExtractor"/> is compatible
+              with the <see cref="P:Kvasir.Extraction.EntityExtractionPlan.ExpectedSource"/> of <paramref name="plan"/>.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Extraction.RelationExtractionPlan.Execute(System.Object)">
+            <summary>
+              Execute this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/> on a source object.
+            </summary>
+            <param name="entity">
+              The source object on which to execute this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
+            </param>
+            <pre>
+              <see cref="P:Kvasir.Extraction.RelationExtractionPlan.ExpectedSource"/> is the dynamic type of <paramref name="entity"/> or is a base class or
+              interface thereof.
+            </pre>
+            <returns>
+              A <see cref="T:Kvasir.Extraction.ExtractedRelationData"/> containing the values extracted from the relation targeted on
+              <paramref name="entity"/> by this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Reconstitution.ByConstructorCreator">
             <summary>
               An <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> that produces a single, complex CLR object by invoking a constructor via
@@ -1371,7 +1429,7 @@
               <see cref="T:Kvasir.Reconstitution.EntityReconstitutionPlan"/> is executed.
             </param>
             <param name="reverters">
-              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that extrinsically transform the
+              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that intrinsically transform the
               values extracted from the back-end database..
             </param>
             <pre>
@@ -1383,7 +1441,7 @@
         <member name="M:Kvasir.Reconstitution.EntityReconstitutionPlan.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <summary>
               Execute this <see cref="T:Kvasir.Reconstitution.EntityReconstitutionPlan"/> to create a brand new CLR object from a "row" of
-              datbase values.
+              database values.
             </summary>
             <param name="rawValues">
               The database values from which to reconstitute a CLR object.

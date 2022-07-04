@@ -23,11 +23,11 @@ namespace Kvasir.Extraction {
         ///   Constructs a new <see cref="EntityExtractionPlan"/>.
         /// </summary>
         /// <param name="steps">
-        ///   The ordered sequence of <see cref="IExtractionStep">extraction steps</see> that produce the intrinsically
+        ///   The ordered sequence of <see cref="IExtractionStep">extraction steps</see> that produce the extrinsically
         ///   converted values from a source entity.
         /// </param>
         /// <param name="converters">
-        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that extrinsically transform the
+        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that intrinsically transform the
         ///   values produced by <paramref name="steps"/>.
         /// </param>
         /// <pre>
