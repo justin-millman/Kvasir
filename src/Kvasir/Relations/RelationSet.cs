@@ -464,6 +464,18 @@ namespace Kvasir.Relations {
             }
         }
 
+        /// <inheritdoc/>
+        void IRelation.Repopulate(object item) {
+            Debug.Assert(item.GetType() == typeof(T));
+            Debug.Assert(deletions_.Count == 0);
+            Debug.Assert(statuses_.Values.All(v => v == Status.Saved));
+            Debug.Assert(!impl_.Contains((T)item));
+
+            var castedItem = (T)item;
+            impl_.Add(castedItem);
+            statuses_[castedItem] = Status.Saved;
+        }
+
         // ************************************ MEMBER VARIABLES ************************************
 
         private readonly HashSet<T> impl_;

@@ -979,5 +979,33 @@ namespace UT.Kvasir.Relations {
             set.Should().ExposeEntry(otherElements[1], Status.New);
             set.Should().ExposeEntry(otherElements[3], Status.New);
         }
+
+        [TestMethod] public void Repopulate() {
+            // Arrange
+            var set = new RelationSet<string>();
+            var item0 = "Sri Jayawardenepura Kotte";
+            var item1 = "Aachen";
+            var item2 = "Banjul";
+            var item3 = "Zanzibar City";
+
+            // Act
+            (set as IRelation).Repopulate(item0);
+            (set as IRelation).Repopulate(item1);
+            (set as IRelation).Repopulate(item2);
+            (set as IRelation).Repopulate(item3);
+
+            // Assert
+            set.Count.Should().Be(4);
+            set.Contains(item0).Should().BeTrue();
+            set.Contains(item1).Should().BeTrue();
+            set.Contains(item2).Should().BeTrue();
+            set.Contains(item3).Should().BeTrue();
+            set.Should().HaveEntryCount(4);
+            set.Should().ExposeDeletesFirst();
+            set.Should().ExposeEntry(item0, Status.Saved);
+            set.Should().ExposeEntry(item1, Status.Saved);
+            set.Should().ExposeEntry(item2, Status.Saved);
+            set.Should().ExposeEntry(item3, Status.Saved);
+        }
     }
 }

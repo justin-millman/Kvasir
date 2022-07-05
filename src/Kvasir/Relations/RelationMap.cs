@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -561,6 +562,19 @@ namespace Kvasir.Relations {
             foreach (var kvp in impl_) {
                 yield return (kvp, statuses_[kvp.Key]);
             }
+        }
+
+        /// <inheritdoc/>
+        void IRelation.Repopulate(object item) {
+            Debug.Assert(item.GetType() == typeof(KeyValuePair<TKey, TValue>));
+            Debug.Assert(deletions_.Count == 0);
+            Debug.Assert(statuses_.Values.All(v => v == Status.Saved));
+
+            var castedItem = (KeyValuePair<TKey, TValue>)item;
+            Debug.Assert(!impl_.ContainsKey(castedItem.Key));
+
+            impl_[castedItem.Key] = castedItem.Value;
+            statuses_[castedItem.Key] = Status.Saved;
         }
 
         // ************************************ HELPER FUNCTIONS ************************************
