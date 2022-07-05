@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -1145,6 +1146,16 @@ namespace Kvasir.Relations {
         void IList.Remove(object? value) {
             Guard.Against.Null(value, nameof(value));
             Remove((T)value);
+        }
+
+        /// <inheritdoc/>
+        void IRelation.Repopulate(object item) {
+            Debug.Assert(item.GetType() == typeof(T));
+            Debug.Assert(deletions_.Count == 0);
+            Debug.Assert(statuses_.All(s => s == Status.Saved));
+
+            impl_.Add((T)item);
+            statuses_.Add(Status.Saved);
         }
 
         // ************************************ HELPER FUNCTIONS ************************************

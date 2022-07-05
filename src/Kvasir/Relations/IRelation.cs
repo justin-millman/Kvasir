@@ -34,5 +34,24 @@ namespace Kvasir.Relations {
         ///   An enumerator that iterates over the connections that are tracked by this Relation.
         /// </returns>
         internal IEnumerator<(object Item, Status Status)> GetEnumerator();
+
+        /// <summary>
+        ///   Places an item into the collection in the <see cref="Status.Saved">saved</see> state.
+        /// </summary>
+        /// <remarks>
+        ///   This method is intended to be used when reconstituting an <see cref="IRelation"/> from values stored in
+        ///   a back-end database. Its method is intentionally different than any common API for adding items into a
+        ///   collection to prevent unintentional ambiguity.
+        /// </remarks>
+        /// <param name="item">
+        ///   The item to repopulate into the <see cref="IRelation"/>.
+        /// </param>
+        /// <pre>
+        ///   <see cref="ConnectionType"/> is the dynamic type of <paramref name="item"/>
+        ///     --and--
+        ///   There is otherwise no reason that <paramref name="item"/> cannot be added into the
+        ///   <see cref="IRelation"/>.
+        /// </pre>
+        internal void Repopulate(object item);
     }
 }

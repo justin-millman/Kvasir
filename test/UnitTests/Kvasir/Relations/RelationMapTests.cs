@@ -685,5 +685,29 @@ namespace UT.Kvasir.Relations {
             map.Should().ExposeEntry(single0, Status.New);
             map.Should().ExposeEntry(single1, Status.New);
         }
+
+        [TestMethod] public void Repopulate() {
+            // Arrange
+            var map = new RelationMap<string, string>();
+            var kvp0 = new KVP("Łódź", "Poland");
+            var kvp1 = new KVP("Toulouse", "France");
+            var kvp2 = new KVP("Córdoba", "Spain");
+
+            // Act
+            (map as IRelation).Repopulate(kvp0);
+            (map as IRelation).Repopulate(kvp1);
+            (map as IRelation).Repopulate(kvp2);
+
+            // Assert
+            map.Count.Should().Be(3);
+            map[kvp0.Key].Should().Be(kvp0.Value);
+            map[kvp1.Key].Should().Be(kvp1.Value);
+            map[kvp2.Key].Should().Be(kvp2.Value);
+            map.Should().HaveEntryCount(3);
+            map.Should().ExposeDeletesFirst();
+            map.Should().ExposeEntry(kvp0, Status.Saved);
+            map.Should().ExposeEntry(kvp1, Status.Saved);
+            map.Should().ExposeEntry(kvp2, Status.Saved);
+        }
     }
 }

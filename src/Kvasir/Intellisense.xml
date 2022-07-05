@@ -1322,12 +1322,12 @@
         </member>
         <member name="T:Kvasir.Extraction.ExtractedRelationData">
             <summary>
-              A grouping of data extracted from an <see cref="!:IRelation"/>.
+              A grouping of data extracted from an <see cref="T:Kvasir.Relations.IRelation"/>.
             </summary>
         </member>
         <member name="M:Kvasir.Extraction.ExtractedRelationData.#ctor(System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
-              A grouping of data extracted from an <see cref="!:IRelation"/>.
+              A grouping of data extracted from an <see cref="T:Kvasir.Relations.IRelation"/>.
             </summary>
         </member>
         <member name="T:Kvasir.Extraction.RelationExtractionPlan">
@@ -1727,6 +1727,25 @@
             <returns>
               An enumerator that iterates over the connections that are tracked by this Relation.
             </returns>
+        </member>
+        <member name="M:Kvasir.Relations.IRelation.Repopulate(System.Object)">
+            <summary>
+              Places an item into the collection in the <see cref="F:Kvasir.Relations.Status.Saved">saved</see> state.
+            </summary>
+            <remarks>
+              This method is intended to be used when reconstituting an <see cref="T:Kvasir.Relations.IRelation"/> from values stored in
+              a back-end database. Its method is intentionally different than any common API for adding items into a
+              collection to prevent unintentional ambiguity.
+            </remarks>
+            <param name="item">
+              The item to repopulate into the <see cref="T:Kvasir.Relations.IRelation"/>.
+            </param>
+            <pre>
+              <see cref="P:Kvasir.Relations.IRelation.ConnectionType"/> is the dynamic type of <paramref name="item"/>
+                --and--
+              There is otherwise no reason that <paramref name="item"/> cannot be added into the
+              <see cref="T:Kvasir.Relations.IRelation"/>.
+            </pre>
         </member>
         <member name="T:Kvasir.Relations.RelationList`1">
             <summary>
@@ -2581,6 +2600,9 @@
         <member name="M:Kvasir.Relations.RelationList`1.System#Collections#IList#Remove(System.Object)">
             <inheritdoc/>
         </member>
+        <member name="M:Kvasir.Relations.RelationList`1.Kvasir#Relations#IRelation#Repopulate(System.Object)">
+            <inheritdoc/>
+        </member>
         <member name="M:Kvasir.Relations.RelationList`1.BookkeepAddition(`0)">
             <summary>
               Removes an item from the deletions of the current <see cref="T:Kvasir.Relations.RelationList`1"/> if it's there, and
@@ -2989,6 +3011,9 @@
         <member name="M:Kvasir.Relations.RelationMap`2.Kvasir#Relations#IRelation#GetEnumerator">
             <inheritdoc/>
         </member>
+        <member name="M:Kvasir.Relations.RelationMap`2.Kvasir#Relations#IRelation#Repopulate(System.Object)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Relations.RelationSet`1">
             <summary>
               An unordered collection that tracks the state of its unique elements for interaction with a back-end
@@ -3257,6 +3282,9 @@
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Relations.RelationSet`1.Kvasir#Relations#IRelation#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Relations.RelationSet`1.Kvasir#Relations#IRelation#Repopulate(System.Object)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Relations.Status">

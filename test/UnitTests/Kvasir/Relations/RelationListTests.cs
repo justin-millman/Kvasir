@@ -947,5 +947,62 @@ namespace UT.Kvasir.Relations {
             list.Should().ExposeEntry(elements[2], Status.Saved);
             list.Should().ExposeEntry(single, Status.New);
         }
+
+        [TestMethod] public void RepopulateSingleItem() {
+            // Arrange
+            var list = new RelationList<string>();
+            var item = "Bridgetown";
+
+            // Act
+            (list as IRelation).Repopulate(item);
+
+            // Assert
+            list.Count.Should().Be(1);
+            list[0].Should().Be(item);
+            list.Should().HaveEntryCount(1);
+            list.Should().ExposeDeletesFirst();
+            list.Should().ExposeEntry(item, Status.Saved);
+        }
+
+        [TestMethod] public void RepopulateMultipleItems() {
+            // Arrange
+            var list = new RelationList<string>();
+            var item0 = "Lomé";
+            var item1 = "Acapulco";
+            var item2 = "Yaren";
+
+            // Act
+            (list as IRelation).Repopulate(item0);
+            (list as IRelation).Repopulate(item1);
+            (list as IRelation).Repopulate(item2);
+
+            // Assert
+            list.Count.Should().Be(3);
+            list[0].Should().Be(item0);
+            list[1].Should().Be(item1);
+            list[2].Should().Be(item2);
+            list.Should().HaveEntryCount(3);
+            list.Should().ExposeDeletesFirst();
+            list.Should().ExposeEntry(item0, Status.Saved);
+            list.Should().ExposeEntry(item1, Status.Saved);
+            list.Should().ExposeEntry(item2, Status.Saved);
+        }
+
+        [TestMethod] public void RepopulateMultipleIdenticalItems() {
+            // Arrange
+            var list = new RelationList<string>();
+            var item = "Tegucigalpa";
+
+            // Act
+            (list as IRelation).Repopulate(item);
+            (list as IRelation).Repopulate(item);
+
+            // Assert
+            list.Count.Should().Be(2);
+            list[0].Should().Be(item);
+            list[1].Should().Be(item);
+            list.Should().ExposeDeletesFirst();
+            list.Should().ExposeEntry(item, Status.Saved, 2);
+        }
     }
 }
