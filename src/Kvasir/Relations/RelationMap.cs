@@ -58,8 +58,8 @@ namespace Kvasir.Relations {
     /// </typeparam>
     public sealed class RelationMap<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>>, IDictionary,
         IDictionary<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>,
-        IReadOnlyCollection<KeyValuePair<TKey, TValue>>, IReadOnlyDictionary<TKey, TValue>, IRelation
-        where TKey : notnull {
+        IReadOnlyCollection<KeyValuePair<TKey, TValue>>, IReadOnlyDictionary<TKey, TValue>,
+        IReadOnlyRelationMap<TKey, TValue>, IRelation where TKey : notnull where TValue : notnull {
 
         // *************************************** PROPERTIES ***************************************
 
@@ -601,4 +601,22 @@ namespace Kvasir.Relations {
         private readonly Dictionary<TKey, Status> statuses_;
         private readonly Dictionary<TKey, TValue> deletions_;
     }
+
+    /// <summary>
+    ///   An interface denoting a read-only view over a <see cref="RelationMap{TKey, TValue}"/>.
+    /// </summary>
+    /// <remarks>
+    ///   This interface is intended to allow class authors to expose a relation through a read-only property while
+    ///   controlling mutating operations on the underlying relation via member functions. Users would call, e.g., an
+    ///   insertion function that essentially "intercepts" the call to the underlying collection's mutator, permitting
+    ///   validation or ordering or logging or any other custom behavior.
+    /// </remarks>
+    /// <typeparam name="TKey">
+    ///   The type of the key of the collection's key-value pairs.
+    /// </typeparam>
+    /// <typeparam name="TValue">
+    ///   The type of the value of the collection's key-value pairs.
+    /// </typeparam>
+    public interface IReadOnlyRelationMap<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>, IRelation
+        where TKey : notnull where TValue : notnull {}
 }
