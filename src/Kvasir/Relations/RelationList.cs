@@ -50,7 +50,7 @@ namespace Kvasir.Relations {
     ///   The type of element to be stored in the collection.
     /// </typeparam>
     public sealed class RelationList<T> : ICollection<T>, IEnumerable, IEnumerable<T>, IList, IList<T>,
-        IReadOnlyCollection<T>, IReadOnlyList<T>, IRelation where T : notnull {
+        IReadOnlyCollection<T>, IReadOnlyList<T>, IReadOnlyRelationList<T>, IRelation where T : notnull {
 
         // *************************************** PROPERTIES ***************************************
 
@@ -1204,4 +1204,19 @@ namespace Kvasir.Relations {
         private readonly List<Status> statuses_;
         private readonly List<T> deletions_;
     }
+
+
+    /// <summary>
+    ///   An interface denoting a read-only view over a <see cref="RelationList{T}"/>.
+    /// </summary>
+    /// <remarks>
+    ///   This interface is intended to allow class authors to expose a relation through a read-only property while
+    ///   controlling mutating operations on the underlying relation via member functions. Users would call, e.g., an
+    ///   insertion function that essentially "intercepts" the call to the underlying collection's mutator, permitting
+    ///   validation or ordering or logging or any other custom behavior.
+    /// </remarks>
+    /// <typeparam name="T">
+    ///   The type of element to be stored in the collection.
+    /// </typeparam>
+    public interface IReadOnlyRelationList<out T> : IReadOnlyList<T>, IRelation where T : notnull {}
 }

@@ -1325,7 +1325,7 @@
               A grouping of data extracted from an <see cref="T:Kvasir.Relations.IRelation"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Extraction.ExtractedRelationData.#ctor(System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+        <member name="M:Kvasir.Extraction.ExtractedRelationData.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
               A grouping of data extracted from an <see cref="T:Kvasir.Relations.IRelation"/>.
             </summary>
@@ -2631,6 +2631,20 @@
               The index of the item in the <see cref="T:Kvasir.Relations.RelationList`1"/> to be removed.
             </param>
         </member>
+        <member name="T:Kvasir.Relations.IReadOnlyRelationList`1">
+            <summary>
+              An interface denoting a read-only view over a <see cref="T:Kvasir.Relations.RelationList`1"/>.
+            </summary>
+            <remarks>
+              This interface is intended to allow class authors to expose a relation through a read-only property while
+              controlling mutating operations on the underlying relation via member functions. Users would call, e.g., an
+              insertion function that essentially "intercepts" the call to the underlying collection's mutator, permitting
+              validation or ordering or logging or any other custom behavior.
+            </remarks>
+            <typeparam name="T">
+              The type of element to be stored in the collection.
+            </typeparam>
+        </member>
         <member name="T:Kvasir.Relations.RelationMap`2">
             <summary>
               A collection that trakcs the state of its key-value mappings for interaction with a back-end database.
@@ -3014,6 +3028,23 @@
         <member name="M:Kvasir.Relations.RelationMap`2.Kvasir#Relations#IRelation#Repopulate(System.Object)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Relations.IReadOnlyRelationMap`2">
+            <summary>
+              An interface denoting a read-only view over a <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+            </summary>
+            <remarks>
+              This interface is intended to allow class authors to expose a relation through a read-only property while
+              controlling mutating operations on the underlying relation via member functions. Users would call, e.g., an
+              insertion function that essentially "intercepts" the call to the underlying collection's mutator, permitting
+              validation or ordering or logging or any other custom behavior.
+            </remarks>
+            <typeparam name="TKey">
+              The type of the key of the collection's key-value pairs.
+            </typeparam>
+            <typeparam name="TValue">
+              The type of the value of the collection's key-value pairs.
+            </typeparam>
+        </member>
         <member name="T:Kvasir.Relations.RelationSet`1">
             <summary>
               An unordered collection that tracks the state of its unique elements for interaction with a back-end
@@ -3286,6 +3317,20 @@
         </member>
         <member name="M:Kvasir.Relations.RelationSet`1.Kvasir#Relations#IRelation#Repopulate(System.Object)">
             <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Relations.IReadOnlyRelationSet`1">
+            <summary>
+              An interface denoting a read-only view over a <see cref="T:Kvasir.Relations.RelationSet`1"/>.
+            </summary>
+            <remarks>
+              This interface is intended to allow class authors to expose a relation through a read-only property while
+              controlling mutating operations on the underlying relation via member functions. Users would call, e.g., an
+              insertion function that essentially "intercepts" the call to the underlying collection's mutator, permitting
+              validation or ordering or logging or any other custom behavior.
+            </remarks>
+            <typeparam name="T">
+              The type of element to be stored in the collection.
+            </typeparam>
         </member>
         <member name="T:Kvasir.Relations.Status">
             <summary>
