@@ -1454,6 +1454,33 @@
               <see cref="P:Kvasir.Reconstitution.EntityReconstitutionPlan.Target"/>, produces <paramref name="rawValues"/>.
             </returns>
         </member>
+        <member name="T:Kvasir.Reconstitution.FromPropertyRepopulator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.IRepopulator"/> that obtains its target <see cref="T:Kvasir.Relations.IRelation"/> by calling the getter on a
+              readable instance property of a CLR object.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.FromPropertyRepopulator.ExpectedSubject">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Reconstitution.FromPropertyRepopulator.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Reconstitution.FromPropertyRepopulator"/>.
+            </summary>
+            <param name="property">
+              The <see cref="T:System.Reflection.PropertyInfo"/> describing the property from which to read the <see cref="T:Kvasir.Relations.IRelation"/>
+              instance to be populated.
+            </param>
+            <pre>
+              <paramref name="property"/> is a readable instance property
+                --and--
+              the <see cref="P:System.Reflection.PropertyInfo.PropertyType"/> of <paramref name="property"/> is <see cref="T:Kvasir.Relations.IRelation"/> or
+              a type that implements the <see cref="T:Kvasir.Relations.IRelation"/> interface.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Reconstitution.FromPropertyRepopulator.Execute(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Reconstitution.IMutationStep">
             <summary>
               The interface that defines how an existing CLR object is modified based on a list of values extraced from a
@@ -1475,6 +1502,7 @@
               </para>
             </remarks>
             <seealso cref="T:Kvasir.Reconstitution.IObjectCreator"/>
+            <seealso cref="T:Kvasir.Reconstitution.IRepopulator"/>
             <seealso cref="T:Kvasir.Reconstitution.Reconstitutor"/>
         </member>
         <member name="P:Kvasir.Reconstitution.IMutationStep.ExpectedSubject">
@@ -1567,6 +1595,33 @@
               A CLR object of type <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target"/> that, when run through the dedicated extractor for
               <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target"/>, produces <paramref name="rawValues"/>.
             </returns>
+        </member>
+        <member name="T:Kvasir.Reconstitution.IRepopulator">
+            <summary>
+              The interface that defines how CLR objects that have been reconstituted from a back-end relation database are
+              placed into a <see cref="T:Kvasir.Relations.IRelation"/> on another CLR instance.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.IRepopulator.ExpectedSubject">
+            <summary>
+              The <see cref="T:System.Type"/> of object on which this <see cref="T:Kvasir.Reconstitution.IRepopulator"/> is expected to operate.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.IRepopulator.Execute(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Execute this <see cref="T:Kvasir.Reconstitution.IRepopulator"/> to modify a relation on an existing CLR object in-place.
+            </summary>
+            <param name="subject">
+              The non-<see langword="null"/> object to mutate.
+            </param>
+            <param name="entries">
+              The reconstituted elements that are to be placed into the relation.
+            </param>
+            <pre>
+              <paramref name="subject"/> is an instance of <see cref="P:Kvasir.Reconstitution.IRepopulator.ExpectedSubject"/>
+                --and--
+              <paramref name="entries"/> is non-empty.
+            </pre>
         </member>
         <member name="T:Kvasir.Reconstitution.PrimitiveCreator">
             <summary>
@@ -1664,6 +1719,49 @@
         </member>
         <member name="M:Kvasir.Reconstitution.ReconstitutorFacade.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Reconstitution.RelationReconstitutionPlan">
+            <summary>
+              A description of the way in which data for a particular Relation is to be extracted from a back-end database,
+              transformed, and reimagined as the elements of some CLR collection.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.RelationReconstitutionPlan.ExpectedSubject">
+            <summary>
+              The <see cref="T:System.Type"/> of object on which this <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan"/> is expected to
+              operate.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.RelationReconstitutionPlan.#ctor(Kvasir.Reconstitution.EntityReconstitutionPlan,Kvasir.Reconstitution.IRepopulator)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan"/>.
+            </summary>
+            <param name="plan">
+              The <see cref="T:Kvasir.Reconstitution.EntityReconstitutionPlan"/> with which to reconstitute the individual elements of the
+              relation.
+            </param>
+            <param name="repopulator">
+              The <see cref="T:Kvasir.Reconstitution.IRepopulator"/> dictating how elements are to be placed into the
+              <see cref="T:Kvasir.Relations.IRelation"/> during repopulation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Reconstitution.RelationReconstitutionPlan.RepopulateFrom(System.Object,System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <summary>
+              Execute this <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan"/> to repopulate some
+              <see cref="T:Kvasir.Relations.IRelation"/> on some CLR object.
+            </summary>
+            <param name="subject">
+              The non-<see langword="null"/> object on which to repopulate a <see cref="T:Kvasir.Relations.IRelation"/>.
+            </param>
+            <param name="rawValues">
+              The list of raw database values from which to reconstitute the elements with which to repopulate the
+              target <see cref="T:Kvasir.Relations.IRelation"/>.
+            </param>
+            <pre>
+              <paramref name="subject"/> is an instance of <see cref="P:Kvasir.Reconstitution.RelationReconstitutionPlan.ExpectedSubject"/>
+                --and--
+              Each of the "rows" in <paramref name="rawValues"/> is non-empty.
+            </pre>
         </member>
         <member name="T:Kvasir.Reconstitution.SetPropertyMutationStep">
             <summary>
