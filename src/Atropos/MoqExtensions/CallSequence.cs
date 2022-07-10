@@ -14,7 +14,7 @@ namespace Atropos.Moq {
     ///   <para>
     ///     A common need when unit testing complex components is to ensure that a series of calls to the system under
     ///     test occur in a particular order. While the <see href="https://github.com/Moq">Moq</see> library provides
-    ///     many powerful facilities for mocking objects and evaluating the ensuring behavior, the library is lacking
+    ///     many powerful facilities for mocking objects and evaluating the ensuing behavior, the library is lacking
     ///     when it comes to evaluating call sequences. <see cref="CallSequence{T}"/> fills this gap, interoperating
     ///     with the <see cref="Mock{T}"/> hierarchy seamlessly to provide a fluent way to expect a speific order of
     ///     invocations.

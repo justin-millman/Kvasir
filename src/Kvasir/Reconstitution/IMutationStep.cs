@@ -23,6 +23,7 @@ namespace Kvasir.Reconstitution {
     ///   </para>
     /// </remarks>
     /// <seealso cref="IObjectCreator"/>
+    /// <seealso cref="IRepopulator"/>
     /// <seealso cref="Reconstitutor"/>
     public interface IMutationStep {
         /// <summary>
