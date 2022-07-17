@@ -9,21 +9,21 @@ using System.Linq;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
-    ///   A description of the way in which data for a particular Entity type is to be extracted from a back-end
-    ///   database, transformed, and reimagined as an Entity data object.
+    ///   A description of the way in which data for a particular CLR object type is to be extracted from a back-end
+    ///   database, transformd, and reimaginged as an instance.
     /// </summary>
-    public sealed class EntityReconstitutionPlan {
+    public sealed class DataReconstitutionPlan {
         /// <summary>
-        ///   The <see cref="Type"/> of CLR object produced by this <see cref="EntityReconstitutionPlan"/>.
+        ///   The <see cref="Type"/> of CLR object produced by this <see cref="DataReconstitutionPlan"/>.
         /// </summary>
         public Type Target { get; }
 
         /// <summary>
-        ///   Construct a new <see cref="EntityReconstitutionPlan"/>.
+        ///   Construct a new <see cref="DataReconstitutionPlan"/>.
         /// </summary>
         /// <param name="reconstitutor">
         ///   The <see cref="IReconstitutor"/> with which to produce the CLR object when the new
-        ///   <see cref="EntityReconstitutionPlan"/> is executed.
+        ///   <see cref="DataReconstitutionPlan"/> is executed.
         /// </param>
         /// <param name="reverters">
         ///   The ordered sequence of <see cref="DataConverter">data converters</see> that intrinsically transform the
@@ -34,7 +34,7 @@ namespace Kvasir.Reconstitution {
         ///     --and--
         ///   each element of <paramref name="reverters"/> is a bidirectional <see cref="DataConverter"/>.
         /// </pre>
-        internal EntityReconstitutionPlan(IReconstitutor reconstitutor, IEnumerable<DataConverter> reverters) {
+        internal DataReconstitutionPlan(IReconstitutor reconstitutor, IEnumerable<DataConverter> reverters) {
             Guard.Against.Null(reconstitutor, nameof(reconstitutor));
             Guard.Against.Null(reverters, nameof(reverters));
             Debug.Assert(!reverters.IsEmpty());
@@ -46,7 +46,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <summary>
-        ///   Execute this <see cref="EntityReconstitutionPlan"/> to create a brand new CLR object from a "row" of
+        ///   Execute this <see cref="DataReconstitutionPlan"/> to create a brand new CLR object from a "row" of
         ///   database values.
         /// </summary>
         /// <param name="rawValues">

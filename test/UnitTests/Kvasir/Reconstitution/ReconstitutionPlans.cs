@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace UT.Kvasir.Reconstitution {
-    [TestClass, TestCategory("EntityReconstitutionPlan")]
-    public class EntityReconstitutionPlanTests {
+    [TestClass, TestCategory("DataReconstitutionPlan")]
+    public class DataReconstitutionPlanTests {
         [TestMethod] public void Construction() {
             // Arrange
             var mockReconstitutor = new Mock<IReconstitutor>();
@@ -21,7 +21,7 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var reverters = new DataConverter[] { reverter };
-            var plan = new EntityReconstitutionPlan(mockReconstitutor.Object, reverters);
+            var plan = new DataReconstitutionPlan(mockReconstitutor.Object, reverters);
 
             // Assert
             plan.Target.Should().Be(typeof(string));
@@ -41,7 +41,7 @@ namespace UT.Kvasir.Reconstitution {
             reconstitutor.Setup(r => r.Target).Returns(typeof(DateTime));
             reconstitutor.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(new DateTime());
 
-            var plan = new EntityReconstitutionPlan(reconstitutor.Object, reverters);
+            var plan = new DataReconstitutionPlan(reconstitutor.Object, reverters);
 
             // Act
             _ = plan.ReconstituteFrom(values);
@@ -62,7 +62,7 @@ namespace UT.Kvasir.Reconstitution {
             var converter = DataConverter.Identity<string>();
             var creator = new PrimitiveCreator(0, converter);
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
-            var entityPlan = new EntityReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
+            var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
             var mockRepopulator = new Mock<IRepopulator>();
             mockRepopulator.Setup(r => r.ExpectedSubject).Returns(typeof(object));
@@ -79,7 +79,7 @@ namespace UT.Kvasir.Reconstitution {
             var converter = DataConverter.Identity<string>();
             var creator = new PrimitiveCreator(0, converter);
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
-            var entityPlan = new EntityReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
+            var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
             var mockRepopulator = new Mock<IRepopulator>();
             mockRepopulator.Setup(r => r.ExpectedSubject).Returns(typeof(object));
@@ -99,7 +99,7 @@ namespace UT.Kvasir.Reconstitution {
             var converter = DataConverter.Identity<string>();
             var creator = new PrimitiveCreator(0, converter);
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
-            var entityPlan = new EntityReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
+            var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
             var mockRepopulator = new Mock<IRepopulator>();
             mockRepopulator.Setup(r => r.ExpectedSubject).Returns(typeof(object));
@@ -123,7 +123,7 @@ namespace UT.Kvasir.Reconstitution {
             var converter = DataConverter.Identity<string>();
             var creator = new PrimitiveCreator(0, converter);
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
-            var entityPlan = new EntityReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
+            var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
             var mockRepopulator = new Mock<IRepopulator>();
             mockRepopulator.Setup(r => r.ExpectedSubject).Returns(typeof(object));

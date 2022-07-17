@@ -18,7 +18,7 @@ namespace Kvasir.Extraction {
 
     /// <summary>
     ///   A description of the way in which data is extracted from an <see cref="IRelation"/> stored on a particular
-    ///   Entity type and then transformed and prepared to be stored in a back-end database.
+    ///   CLR object type and then transformed and prepared to be stored in a back-end database.
     /// </summary>
     public sealed class RelationExtractionPlan {
         /// <summary>
@@ -32,10 +32,10 @@ namespace Kvasir.Extraction {
         /// </summary>
         /// <param name="relationExtractor">
         ///   The <see cref="IFieldExtractor"/> that describes how to obtain the target <see cref="IRelation"/> from a
-        ///   source entity.
+        ///   source object.
         /// </param>
         /// <param name="plan">
-        ///   The <see cref="EntityExtractionPlan"/> that describes how to extract data from an entry in the relation
+        ///   The <see cref="DataExtractionPlan"/> that describes how to extract data from an entry in the relation
         ///   obtained from <paramref name="relationExtractor"/>.
         /// </param>
         /// <pre>
@@ -43,9 +43,9 @@ namespace Kvasir.Extraction {
         ///   implements the <see cref="IRelation"/> interface (or is that interface itself)
         ///     --and--
         ///   The type of data stored in the relation obtained from <paramref name="relationExtractor"/> is compatible
-        ///   with the <see cref="EntityExtractionPlan.ExpectedSource"/> of <paramref name="plan"/>.
+        ///   with the <see cref="DataExtractionPlan.ExpectedSource"/> of <paramref name="plan"/>.
         /// </pre>
-        internal RelationExtractionPlan(IFieldExtractor relationExtractor, EntityExtractionPlan plan) {
+        internal RelationExtractionPlan(IFieldExtractor relationExtractor, DataExtractionPlan plan) {
             Guard.Against.Null(relationExtractor, nameof(relationExtractor));
             Guard.Against.Null(plan, nameof(plan));
             Debug.Assert(relationExtractor.FieldType.IsInstanceOf(typeof(IRelation)));
@@ -63,19 +63,19 @@ namespace Kvasir.Extraction {
         /// <summary>
         ///   Execute this <see cref="RelationExtractionPlan"/> on a source object.
         /// </summary>
-        /// <param name="entity">
+        /// <param name="source">
         ///   The source object on which to execute this <see cref="RelationExtractionPlan"/>.
         /// </param>
         /// <pre>
-        ///   <see cref="ExpectedSource"/> is the dynamic type of <paramref name="entity"/> or is a base class or
+        ///   <see cref="ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
         ///   interface thereof.
         /// </pre>
         /// <returns>
         ///   A <see cref="ExtractedRelationData"/> containing the values extracted from the relation targeted on
-        ///   <paramref name="entity"/> by this <see cref="RelationExtractionPlan"/>.
+        ///   <paramref name="source"/> by this <see cref="RelationExtractionPlan"/>.
         /// </returns>
-        public ExtractedRelationData Execute(object entity) {
-            Debug.Assert(entity.GetType().IsInstanceOf(ExpectedSource));
+        public ExtractedRelationData Execute(object source) {
+            Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
 
             // In order to keep the API of the extracted data wrapper "read only," we have to build up the containers
             // a priori and then construct the wrapper, rather than constructing the wrapper with empty containers and
@@ -87,7 +87,7 @@ namespace Kvasir.Extraction {
             // It's a little annoying that we can't just do a for-each loop over the contents of the Relation, but
             // that's inhibited by the GetEnumerator() function in the IRelation interface being internal. We don't
             // want to change that, because we only want the Framework to have access to that introspection.
-            IRelation relation = (IRelation)extractor_.Execute(entity)!;
+            IRelation relation = (IRelation)extractor_.Execute(source)!;
             var iter = relation.GetEnumerator();
             while (iter.MoveNext()) {
                 switch (iter.Current.Status) {
@@ -112,6 +112,6 @@ namespace Kvasir.Extraction {
 
 
         private readonly IFieldExtractor extractor_;
-        private readonly EntityExtractionPlan plan_;
+        private readonly DataExtractionPlan plan_;
     }
 }

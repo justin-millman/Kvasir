@@ -8,7 +8,7 @@ namespace Kvasir.Extraction {
     /// </summary>
     /// <remarks>
     ///   The <see cref="IdentityExtractor{T}"/> class is intended to be used with collection elements, where primitive
-    ///   values may be stored directly. In such circumstances, there is no wrapping Entity and therefore no property
+    ///   values may be stored directly. In such circumstances, there is no wrapping object and therefore no property
     ///   or function that can be used to access the value. Note, however, that if the element type of a collection is
     ///   itself a complex type (either an Entity or an Aggregate), the <see cref="IdentityExtractor{T}"/> should not
     ///   be used.

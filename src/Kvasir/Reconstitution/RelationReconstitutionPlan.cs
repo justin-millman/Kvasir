@@ -22,14 +22,14 @@ namespace Kvasir.Reconstitution {
         ///   Constructs a new <see cref="RelationReconstitutionPlan"/>.
         /// </summary>
         /// <param name="plan">
-        ///   The <see cref="EntityReconstitutionPlan"/> with which to reconstitute the individual elements of the
+        ///   The <see cref="DataReconstitutionPlan"/> with which to reconstitute the individual elements of the
         ///   relation.
         /// </param>
         /// <param name="repopulator">
         ///   The <see cref="IRepopulator"/> dictating how elements are to be placed into the
         ///   <see cref="Relations.IRelation"/> during repopulation.
         /// </param>
-        internal RelationReconstitutionPlan(EntityReconstitutionPlan plan, IRepopulator repopulator) {
+        internal RelationReconstitutionPlan(DataReconstitutionPlan plan, IRepopulator repopulator) {
             Guard.Against.Null(plan, nameof(plan));
             Guard.Against.Null(repopulator, nameof(repopulator));
 
@@ -71,7 +71,7 @@ namespace Kvasir.Reconstitution {
         }
 
 
-        private readonly EntityReconstitutionPlan plan_;
+        private readonly DataReconstitutionPlan plan_;
         private readonly IRepopulator repopulator_;
     }
 }
