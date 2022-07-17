@@ -1,8 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Cybele.Extensions;
-using Kvasir.Schema;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -43,7 +41,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public void Execute(object subject, IReadOnlyList<DBValue> rawValues) {
+        public void Execute(object subject, Row rawValues) {
             Guard.Against.Null(subject, nameof(subject));
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
             Debug.Assert(subject.GetType().IsInstanceOf(ExpectedSubject));

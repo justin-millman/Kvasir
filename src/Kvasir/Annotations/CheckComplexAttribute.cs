@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using FieldList = System.Collections.Generic.IEnumerable<Kvasir.Schema.IField>;
-using ConverterList = System.Collections.Generic.IEnumerable<Cybele.Core.DataConverter>;
-
 namespace Kvasir.Annotations {
     public static partial class Check {
         /// <summary>

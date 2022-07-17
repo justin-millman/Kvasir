@@ -1,6 +1,4 @@
-﻿using Kvasir.Schema;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
@@ -45,6 +43,6 @@ namespace Kvasir.Reconstitution {
         ///   of this <see cref="IObjectCreator"/>. If the relevant slots of <paramref name="rawValues"/> correspond to
         ///   a <see langword="null"/> object, <see langword="null"/> is returned.
         /// </returns>
-        object? Execute(IReadOnlyList<DBValue> rawValues);
+        object? Execute(Row rawValues);
     }
 }
