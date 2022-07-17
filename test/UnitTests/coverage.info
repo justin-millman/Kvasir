@@ -1,0 +1,4383 @@
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Atropos\FullCheck\Comparison.cs
+FN:64,Optional.Option`1<System.String> Atropos.FullCheck::ExpectLessThan(T,T)
+FNDA:31,Optional.Option`1<System.String> Atropos.FullCheck::ExpectLessThan(T,T)
+DA:65,31
+DA:66,31
+DA:67,31
+FN:85,Optional.Option`1<System.String> Atropos.FullCheck::ExpectEquivalent(T,T)
+FNDA:21,Optional.Option`1<System.String> Atropos.FullCheck::ExpectEquivalent(T,T)
+DA:86,21
+DA:87,21
+DA:88,21
+FN:107,Optional.Option`1<System.String> Atropos.FullCheck::ExpectGreaterThan(T,T)
+FNDA:29,Optional.Option`1<System.String> Atropos.FullCheck::ExpectGreaterThan(T,T)
+DA:108,29
+DA:109,29
+DA:110,29
+FN:130,Optional.Option`1<System.String> Atropos.FullCheck::ExpectIncomparable(T,T)
+FNDA:2,Optional.Option`1<System.String> Atropos.FullCheck::ExpectIncomparable(T,T)
+DA:131,2
+DA:132,2
+DA:133,2
+FN:158,Optional.Option`1<System.String> Atropos.FullCheck::TestOrdering(T,T,System.Nullable`1<System.Int32>)
+FNDA:83,Optional.Option`1<System.String> Atropos.FullCheck::TestOrdering(T,T,System.Nullable`1<System.Int32>)
+DA:159,83
+DA:160,83
+DA:161,83
+DA:162,83
+DA:163,83
+DA:165,83
+DA:166,83
+DA:167,83
+DA:168,83
+DA:169,83
+DA:170,83
+DA:171,83
+DA:172,83
+DA:176,87
+DA:177,85
+DA:181,83
+DA:182,81
+DA:186,79
+DA:187,77
+DA:191,75
+DA:192,73
+DA:196,67
+DA:197,67
+DA:198,395
+DA:199,95
+DA:200,29
+DA:201,58
+DA:202,29
+DA:203,29
+DA:205,29
+DA:206,29
+DA:207,29
+DA:209,33
+DA:210,4
+DA:212,25
+DA:213,25
+DA:214,62
+DA:217,63
+DA:218,83
+BRDA:160,8,0,81
+BRDA:160,8,1,2
+BRDA:161,46,0,81
+BRDA:161,46,1,2
+BRDA:176,236,0,2
+BRDA:176,236,1,81
+BRDA:177,302,0,2
+BRDA:177,302,1,79
+BRDA:181,368,0,2
+BRDA:181,368,1,77
+BRDA:182,434,0,2
+BRDA:182,434,1,75
+BRDA:186,500,0,2
+BRDA:186,500,1,73
+BRDA:187,566,0,2
+BRDA:187,566,1,71
+BRDA:191,632,0,2
+BRDA:191,632,1,69
+BRDA:192,698,0,2
+BRDA:192,698,1,67
+BRDA:198,1002,1,66
+BRDA:199,797,0,62
+BRDA:199,797,1,4
+BRDA:199,828,0,29
+BRDA:201,864,0,29
+BRDA:209,978,0,4
+BRDA:209,978,1,25
+BRDA:201,864,1,25
+BRDA:199,828,1,62
+BRDA:198,1002,0,63
+LF:51
+LH:51
+BRF:30
+BRH:30
+FNF:5
+FNH:5
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Atropos\FullCheck\Equality.cs
+FN:23,Optional.Option`1<System.String> Atropos.FullCheck::ExpectEqual(T,T)
+FNDA:35,Optional.Option`1<System.String> Atropos.FullCheck::ExpectEqual(T,T)
+DA:24,35
+DA:25,35
+DA:26,35
+FN:44,Optional.Option`1<System.String> Atropos.FullCheck::ExpectNotEqual(T,T)
+FNDA:48,Optional.Option`1<System.String> Atropos.FullCheck::ExpectNotEqual(T,T)
+DA:45,48
+DA:46,48
+DA:47,48
+FN:68,Optional.Option`1<System.String> Atropos.FullCheck::TestEquality(T,T,System.Boolean)
+FNDA:83,Optional.Option`1<System.String> Atropos.FullCheck::TestEquality(T,T,System.Boolean)
+DA:69,83
+DA:70,83
+DA:71,83
+DA:75,89
+DA:76,82
+DA:80,85
+DA:81,78
+DA:85,75
+DA:86,75
+DA:87,455
+DA:88,115
+DA:89,37
+DA:90,74
+DA:91,37
+DA:92,37
+DA:94,37
+DA:95,37
+DA:96,37
+DA:98,41
+DA:99,4
+DA:101,33
+DA:102,33
+DA:103,74
+DA:109,77
+DA:110,70
+DA:115,68
+DA:116,1
+DA:120,66
+DA:121,83
+BRDA:75,48,0,3
+BRDA:75,48,1,80
+BRDA:76,113,0,1
+BRDA:76,113,1,79
+BRDA:80,181,0,3
+BRDA:80,181,1,76
+BRDA:81,249,0,1
+BRDA:81,249,1,75
+BRDA:87,552,1,78
+BRDA:88,345,0,68
+BRDA:88,345,1,10
+BRDA:88,376,0,37
+BRDA:90,411,0,37
+BRDA:98,525,0,4
+BRDA:98,525,1,33
+BRDA:90,411,1,33
+BRDA:88,376,1,74
+BRDA:87,552,0,71
+BRDA:109,563,0,17
+BRDA:109,563,1,54
+BRDA:109,632,0,3
+BRDA:109,632,1,68
+BRDA:110,675,0,23
+BRDA:110,675,1,45
+BRDA:110,744,0,1
+BRDA:110,744,1,67
+BRDA:115,782,0,27
+BRDA:115,790,0,10
+BRDA:115,790,1,17
+BRDA:115,830,0,10
+BRDA:115,830,1,17
+BRDA:115,782,1,40
+BRDA:115,907,0,1
+BRDA:115,907,1,66
+LF:35
+LH:35
+BRF:34
+BRH:34
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Atropos\FullCheck\Operators.cs
+FN:31,Atropos.FullCheck/BinaryOp Atropos.FullCheck::GetOperator(Atropos.FullCheck/Operator,System.Boolean)
+FNDA:830,Atropos.FullCheck/BinaryOp Atropos.FullCheck::GetOperator(Atropos.FullCheck/Operator,System.Boolean)
+DA:32,830
+DA:33,830
+DA:35,830
+DA:36,928
+DA:47,98
+DA:48,98
+DA:54,136
+DA:58,456
+DA:59,38
+DA:62,98
+DA:63,98
+DA:67,1756
+DA:68,830
+BRDA:36,71,0,98
+BRDA:54,169,0,48
+BRDA:54,169,1,50
+BRDA:54,199,0,38
+BRDA:54,199,1,98
+BRDA:36,71,1,830
+BRDA:67,7,0,508
+BRDA:67,7,1,418
+FN:72,System.Void Atropos.FullCheck::.cctor()
+FNDA:1,System.Void Atropos.FullCheck::.cctor()
+DA:73,1
+DA:74,1
+DA:75,1
+DA:76,1
+DA:77,1
+DA:78,1
+DA:79,1
+DA:80,1
+DA:81,1
+DA:82,1
+DA:83,1
+DA:84,1
+LF:25
+LH:25
+BRF:8
+BRH:8
+FNF:2
+FNH:2
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Atropos\FullCheck\Utilities.cs
+FN:21,System.Collections.Generic.IList`1<System.Type> Atropos.FullCheck::GetBasesOf(System.Type)
+FNDA:142,System.Collections.Generic.IList`1<System.Type> Atropos.FullCheck::GetBasesOf(System.Type)
+DA:22,142
+DA:23,142
+DA:25,142
+DA:26,142
+DA:28,929
+DA:29,215
+DA:30,215
+DA:32,142
+DA:33,142
+BRDA:28,70,1,215
+BRDA:28,70,0,142
+FN:55,Optional.Option`1<System.String> Atropos.FullCheck::EvaluateIEquatable(T,T,System.Boolean)
+FNDA:37,Optional.Option`1<System.String> Atropos.FullCheck::EvaluateIEquatable(T,T,System.Boolean)
+DA:56,37
+DA:61,40
+DA:62,3
+DA:64,35
+DA:65,1
+DA:68,33
+DA:69,37
+BRDA:61,13,0,7
+BRDA:61,13,1,30
+BRDA:61,64,0,3
+BRDA:61,64,1,34
+BRDA:64,125,0,8
+BRDA:64,125,1,26
+BRDA:64,178,0,1
+BRDA:64,178,1,33
+FN:95,Optional.Option`1<System.String> Atropos.FullCheck::EvaluateIComparable(T,T,System.Nullable`1<System.Int32>)
+FNDA:29,Optional.Option`1<System.String> Atropos.FullCheck::EvaluateIComparable(T,T,System.Nullable`1<System.Int32>)
+DA:96,29
+DA:97,29
+DA:98,29
+DA:100,29
+DA:101,29
+DA:102,29
+DA:104,31
+DA:105,2
+DA:107,29
+DA:108,2
+DA:111,25
+DA:112,29
+BRDA:97,13,0,8
+BRDA:97,13,1,21
+BRDA:98,52,0,7
+BRDA:98,52,1,22
+BRDA:100,86,0,29
+BRDA:100,113,0,18
+BRDA:100,140,0,9
+BRDA:100,140,1,9
+BRDA:100,113,1,11
+BRDA:100,86,1,0
+BRDA:101,160,0,21
+BRDA:101,187,0,14
+BRDA:101,214,0,9
+BRDA:101,214,1,5
+BRDA:101,187,1,7
+BRDA:101,160,1,8
+BRDA:102,234,0,22
+BRDA:102,261,0,16
+BRDA:102,288,0,11
+BRDA:102,288,1,5
+BRDA:102,261,1,6
+BRDA:102,234,1,7
+BRDA:104,308,0,21
+BRDA:104,308,1,8
+BRDA:104,324,0,2
+BRDA:104,324,1,27
+BRDA:107,379,0,20
+BRDA:107,379,1,7
+BRDA:107,400,0,2
+BRDA:107,400,1,25
+LF:28
+LH:28
+BRF:40
+BRH:39
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Atropos\MoqExtensions\CallSequence.cs
+FN:73,System.String Atropos.Moq.CallSequence`1::get_Name()
+FNDA:7,System.String Atropos.Moq.CallSequence`1::get_Name()
+DA:74,7
+FN:128,Moq.Language.Flow.ICallbackResult Atropos.Moq.CallSequence`1::Add(System.Linq.Expressions.Expression`1<System.Action`1<T>>)
+FNDA:102,Moq.Language.Flow.ICallbackResult Atropos.Moq.CallSequence`1::Add(System.Linq.Expressions.Expression`1<System.Action`1<T>>)
+DA:129,102
+DA:130,102
+DA:132,102
+DA:133,204
+DA:134,102
+FN:151,Moq.Language.Flow.IReturnsThrows`2<T,U> Atropos.Moq.CallSequence`1::Add(System.Linq.Expressions.Expression`1<System.Func`2<T,U>>)
+FNDA:7,Moq.Language.Flow.IReturnsThrows`2<T,U> Atropos.Moq.CallSequence`1::Add(System.Linq.Expressions.Expression`1<System.Func`2<T,U>>)
+DA:152,7
+DA:153,7
+DA:155,7
+DA:156,13
+DA:157,7
+FN:164,System.Void Atropos.Moq.CallSequence`1::VerifyCompleted()
+FNDA:17,System.Void Atropos.Moq.CallSequence`1::VerifyCompleted()
+DA:165,17
+DA:166,290
+DA:167,80
+DA:168,79
+DA:169,16
+BRDA:166,169,1,80
+BRDA:167,51,1,3
+BRDA:167,51,0,80
+BRDA:166,169,0,16
+FN:180,System.Void Atropos.Moq.CallSequence`1::AddToBookkeeping(System.Linq.Expressions.Expression)
+FNDA:109,System.Void Atropos.Moq.CallSequence`1::AddToBookkeeping(System.Linq.Expressions.Expression)
+DA:181,109
+DA:182,109
+DA:183,109
+DA:185,195
+DA:186,86
+DA:187,86
+DA:188,23
+DA:189,23
+DA:190,23
+DA:191,109
+BRDA:185,41,0,86
+BRDA:185,41,1,23
+FN:212,System.Void Atropos.Moq.CallSequence`1::VerifyInOrder(System.Linq.Expressions.Expression)
+FNDA:108,System.Void Atropos.Moq.CallSequence`1::VerifyInOrder(System.Linq.Expressions.Expression)
+DA:213,108
+DA:214,108
+DA:215,108
+DA:218,109
+DA:219,1
+DA:220,1
+DA:224,108
+DA:225,1
+DA:226,1
+DA:227,1
+DA:230,106
+DA:231,106
+BRDA:218,53,0,1
+BRDA:218,53,1,107
+BRDA:224,114,0,1
+BRDA:224,114,1,106
+FN:85,System.Void Atropos.Moq.CallSequence`1::.ctor(Moq.Mock`1<T>)
+FNDA:63,System.Void Atropos.Moq.CallSequence`1::.ctor(Moq.Mock`1<T>)
+DA:86,63
+FN:101,System.Void Atropos.Moq.CallSequence`1::.ctor(Moq.Mock`1<T>,System.String)
+FNDA:44,System.Void Atropos.Moq.CallSequence`1::.ctor(Moq.Mock`1<T>,System.String)
+DA:102,44
+DA:103,22
+DA:104,22
+DA:106,22
+DA:107,22
+DA:108,22
+DA:109,22
+DA:110,22
+DA:111,22
+FN:256,System.Boolean Atropos.Moq.CallSequence`1/ExpressionEq::Equals(System.Linq.Expressions.Expression,System.Linq.Expressions.Expression)
+FNDA:284,System.Boolean Atropos.Moq.CallSequence`1/ExpressionEq::Equals(System.Linq.Expressions.Expression,System.Linq.Expressions.Expression)
+DA:257,284
+DA:258,284
+DA:259,284
+FN:269,System.Int32 Atropos.Moq.CallSequence`1/ExpressionEq::GetHashCode(System.Linq.Expressions.Expression)
+FNDA:331,System.Int32 Atropos.Moq.CallSequence`1/ExpressionEq::GetHashCode(System.Linq.Expressions.Expression)
+DA:270,331
+DA:271,331
+DA:272,331
+LF:54
+LH:54
+BRF:10
+BRH:10
+FNF:10
+FNH:10
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Atropos\MoqExtensions\Extensions.cs
+FN:21,Atropos.Moq.CallSequence`1<T> Atropos.Moq.MoqExtensions::MakeSequence(Moq.Mock`1<T>)
+FNDA:21,Atropos.Moq.CallSequence`1<T> Atropos.Moq.MoqExtensions::MakeSequence(Moq.Mock`1<T>)
+DA:22,21
+DA:23,21
+DA:24,21
+FN:41,Atropos.Moq.CallSequence`1<T> Atropos.Moq.MoqExtensions::MakeSequence(Moq.Mock`1<T>,System.String)
+FNDA:1,Atropos.Moq.CallSequence`1<T> Atropos.Moq.MoqExtensions::MakeSequence(Moq.Mock`1<T>,System.String)
+DA:42,1
+DA:43,1
+DA:44,1
+LF:6
+LH:6
+BRF:0
+BRH:0
+FNF:2
+FNH:2
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Atropos\MoqExtensions\Matchers.cs
+FN:26,T Atropos.Moq.Arg::IsSameSequence(System.Collections.IEnumerable)
+FNDA:18,T Atropos.Moq.Arg::IsSameSequence(System.Collections.IEnumerable)
+DA:27,18
+DA:28,18
+DA:29,18
+FN:51,T Atropos.Moq.Arg::IsSameSequence(System.Collections.IEnumerable,System.Collections.IEqualityComparer)
+FNDA:19,T Atropos.Moq.Arg::IsSameSequence(System.Collections.IEnumerable,System.Collections.IEqualityComparer)
+DA:52,19
+DA:53,19
+DA:54,19
+DA:56,33
+DA:57,14
+DA:58,14
+DA:59,19
+DA:60,83
+DA:61,36
+DA:62,1
+DA:63,19
+DA:64,34
+DA:65,13
+DA:66,33
+DA:67,19
+BRDA:60,87,1,35
+BRDA:61,36,0,35
+BRDA:61,36,1,0
+BRDA:61,69,0,1
+BRDA:61,69,1,34
+BRDA:60,87,0,13
+LF:18
+LH:18
+BRF:6
+BRH:5
+FNF:2
+FNH:2
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Extensions\Enum.cs
+FN:43,System.Boolean Cybele.Extensions.EnumExtensions::IsValid(TEnum)
+FNDA:421,System.Boolean Cybele.Extensions.EnumExtensions::IsValid(TEnum)
+DA:44,421
+DA:45,421
+DA:46,421
+DA:47,421
+DA:51,436
+DA:52,15
+DA:53,15
+DA:54,15
+DA:60,739
+DA:61,318
+DA:68,107
+DA:69,60
+DA:70,4
+DA:71,4
+DA:75,103
+DA:76,421
+BRDA:51,53,0,15
+BRDA:51,53,1,421
+BRDA:60,78,0,109
+BRDA:60,78,1,312
+BRDA:60,92,0,318
+BRDA:60,92,1,103
+BRDA:68,131,0,4
+BRDA:69,153,0,4
+BRDA:69,153,1,4
+BRDA:68,131,1,103
+FN:100,System.Int64 Cybele.Extensions.EnumExtensions::AsInt64(TEnum)
+FNDA:477,System.Int64 Cybele.Extensions.EnumExtensions::AsInt64(TEnum)
+DA:101,477
+DA:106,477
+DA:107,477
+DA:108,477
+DA:110,477
+DA:111,477
+BRDA:106,16,0,462
+BRDA:106,16,1,15
+FN:80,System.Void Cybele.Extensions.EnumExtensions::.cctor()
+FNDA:1,System.Void Cybele.Extensions.EnumExtensions::.cctor()
+DA:81,1
+DA:83,1
+DA:84,1
+DA:85,1
+LF:26
+LH:26
+BRF:12
+BRH:12
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Extensions\GuardClause.cs
+FN:15,System.Type Cybele.Extensions.GuardClauseExtensions::TypeOtherThan(Ardalis.GuardClauses.IGuardClause,System.Type,System.String,System.Type,System.String)
+FNDA:22,System.Type Cybele.Extensions.GuardClauseExtensions::TypeOtherThan(Ardalis.GuardClauses.IGuardClause,System.Type,System.String,System.Type,System.String)
+DA:16,22
+DA:18,22
+DA:19,44
+DA:20,21
+LF:4
+LH:4
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Extensions\IEnumerable.cs
+FN:28,System.Boolean Cybele.Extensions.IEnumerableExtensions::All(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<System.Int32,T,System.Boolean>)
+FNDA:13,System.Boolean Cybele.Extensions.IEnumerableExtensions::All(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<System.Int32,T,System.Boolean>)
+DA:29,13
+DA:30,13
+DA:31,13
+DA:33,13
+DA:34,13
+DA:35,68
+DA:36,29
+DA:37,1
+DA:39,27
+DA:40,27
+DA:41,12
+DA:42,13
+BRDA:35,89,1,28
+BRDA:36,67,0,1
+BRDA:36,67,1,27
+BRDA:35,89,0,12
+FN:64,System.Boolean Cybele.Extensions.IEnumerableExtensions::AllSame(System.Collections.Generic.IEnumerable`1<T>,System.Func`2<T,U>)
+FNDA:18,System.Boolean Cybele.Extensions.IEnumerableExtensions::AllSame(System.Collections.Generic.IEnumerable`1<T>,System.Func`2<T,U>)
+DA:65,18
+DA:66,18
+DA:67,18
+DA:68,18
+DA:69,18
+FN:93,System.Boolean Cybele.Extensions.IEnumerableExtensions::AllSame(System.Collections.Generic.IEnumerable`1<T>,System.Func`2<T,U>,System.Collections.Generic.IEqualityComparer`1<U>)
+FNDA:22,System.Boolean Cybele.Extensions.IEnumerableExtensions::AllSame(System.Collections.Generic.IEnumerable`1<T>,System.Func`2<T,U>,System.Collections.Generic.IEqualityComparer`1<U>)
+DA:94,22
+DA:95,22
+DA:96,22
+DA:97,22
+DA:99,22
+DA:100,24
+DA:101,2
+DA:104,20
+DA:105,74
+DA:106,30
+DA:107,2
+DA:109,26
+DA:110,18
+DA:111,22
+BRDA:100,73,0,2
+BRDA:100,73,1,20
+BRDA:105,140,1,28
+BRDA:106,122,0,2
+BRDA:106,122,1,26
+BRDA:105,140,0,18
+FN:129,System.Boolean Cybele.Extensions.IEnumerableExtensions::Any(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<System.Int32,T,System.Boolean>)
+FNDA:3,System.Boolean Cybele.Extensions.IEnumerableExtensions::Any(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<System.Int32,T,System.Boolean>)
+DA:130,3
+DA:131,3
+DA:132,3
+DA:134,3
+DA:135,3
+DA:136,18
+DA:137,9
+DA:138,1
+DA:140,7
+DA:141,7
+DA:142,2
+DA:143,3
+BRDA:136,86,1,8
+BRDA:137,64,0,1
+BRDA:137,64,1,7
+BRDA:136,86,0,2
+FN:159,System.Boolean Cybele.Extensions.IEnumerableExtensions::ContainsNoDuplicates(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:16,System.Boolean Cybele.Extensions.IEnumerableExtensions::ContainsNoDuplicates(System.Collections.Generic.IEnumerable`1<T>)
+DA:160,16
+DA:161,16
+DA:162,16
+DA:163,16
+FN:182,System.Boolean Cybele.Extensions.IEnumerableExtensions::ContainsNoDuplicates(System.Collections.Generic.IEnumerable`1<T>,System.Collections.Generic.IEqualityComparer`1<T>)
+FNDA:19,System.Boolean Cybele.Extensions.IEnumerableExtensions::ContainsNoDuplicates(System.Collections.Generic.IEnumerable`1<T>,System.Collections.Generic.IEqualityComparer`1<T>)
+DA:183,19
+DA:184,19
+DA:185,19
+DA:187,19
+DA:188,19
+DA:189,19
+FN:203,System.Boolean Cybele.Extensions.IEnumerableExtensions::IsEmpty(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:3132,System.Boolean Cybele.Extensions.IEnumerableExtensions::IsEmpty(System.Collections.Generic.IEnumerable`1<T>)
+DA:204,3132
+DA:205,3132
+DA:207,3132
+DA:208,3132
+DA:209,3132
+FN:226,System.Boolean Cybele.Extensions.IEnumerableExtensions::None(System.Collections.Generic.IEnumerable`1<T>,System.Func`2<T,System.Boolean>)
+FNDA:4,System.Boolean Cybele.Extensions.IEnumerableExtensions::None(System.Collections.Generic.IEnumerable`1<T>,System.Func`2<T,System.Boolean>)
+DA:227,4
+DA:228,4
+DA:229,4
+DA:231,4
+DA:232,4
+DA:233,21
+DA:234,10
+DA:235,1
+DA:237,8
+DA:238,8
+DA:239,3
+DA:240,4
+BRDA:233,85,1,9
+BRDA:234,63,0,1
+BRDA:234,63,1,8
+BRDA:233,85,0,3
+FN:258,System.Boolean Cybele.Extensions.IEnumerableExtensions::None(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<System.Int32,T,System.Boolean>)
+FNDA:3,System.Boolean Cybele.Extensions.IEnumerableExtensions::None(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<System.Int32,T,System.Boolean>)
+DA:259,3
+DA:260,3
+DA:261,3
+DA:263,3
+DA:264,3
+DA:265,18
+DA:266,9
+DA:267,1
+DA:269,7
+DA:270,7
+DA:271,2
+DA:272,3
+BRDA:265,86,1,8
+BRDA:266,64,0,1
+BRDA:266,64,1,7
+BRDA:265,86,0,2
+LF:82
+LH:82
+BRF:22
+BRH:22
+FNF:9
+FNH:9
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Extensions\MemberInfo.cs
+FN:23,System.Boolean Cybele.Extensions.TypeExtensions::HasAttribute(System.Reflection.MemberInfo)
+FNDA:37,System.Boolean Cybele.Extensions.TypeExtensions::HasAttribute(System.Reflection.MemberInfo)
+DA:24,37
+DA:25,37
+DA:26,37
+LF:3
+LH:3
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Extensions\Type.cs
+FN:45,System.Boolean Cybele.Extensions.TypeExtensions::IsInstanceOf(System.Type,System.Type)
+FNDA:131,System.Boolean Cybele.Extensions.TypeExtensions::IsInstanceOf(System.Type,System.Type)
+DA:46,131
+DA:47,131
+DA:48,131
+DA:50,197
+DA:51,66
+DA:53,69
+DA:58,4
+DA:60,62
+DA:61,1
+DA:63,74
+DA:64,14
+DA:66,71
+DA:67,25
+DA:69,21
+DA:70,21
+DA:72,131
+BRDA:50,46,0,66
+BRDA:50,46,1,65
+BRDA:53,59,0,7
+BRDA:53,59,1,58
+BRDA:53,87,0,4
+BRDA:53,87,1,61
+BRDA:60,113,0,60
+BRDA:60,113,1,1
+BRDA:60,126,0,1
+BRDA:60,126,1,60
+BRDA:63,144,0,14
+BRDA:63,144,1,46
+BRDA:66,167,0,25
+BRDA:66,167,1,21
+LF:16
+LH:16
+BRF:14
+BRH:14
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Extensions\Nullability.cs
+FN:94,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.PropertyInfo)
+FNDA:17,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.PropertyInfo)
+DA:95,17
+DA:96,17
+DA:97,17
+FN:107,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.FieldInfo)
+FNDA:17,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.FieldInfo)
+DA:108,17
+DA:109,17
+DA:110,17
+FN:120,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.ParameterInfo)
+FNDA:80,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.ParameterInfo)
+DA:121,80
+DA:122,80
+DA:123,80
+FN:133,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.EventInfo)
+FNDA:3,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Reflection.EventInfo)
+DA:134,3
+DA:135,3
+DA:136,3
+FN:157,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Type,System.Reflection.MemberInfo,System.Collections.Generic.IEnumerable`1<System.Attribute>)
+FNDA:117,Cybele.Extensions.Nullability Cybele.Extensions.NullabilityExtensions::GetNullability(System.Type,System.Reflection.MemberInfo,System.Collections.Generic.IEnumerable`1<System.Attribute>)
+DA:158,117
+DA:160,117
+DA:161,117
+DA:162,117
+DA:167,168
+DA:168,80
+DA:169,29
+DA:171,22
+DA:177,98
+DA:178,83
+DA:179,17
+DA:180,17
+DA:181,17
+DA:186,17
+DA:192,263
+DA:193,75
+DA:194,105
+DA:196,105
+DA:197,30
+DA:198,30
+DA:202,36
+DA:203,6
+DA:205,24
+DA:207,45
+DA:211,19
+DA:212,117
+BRDA:167,17,0,51
+BRDA:168,33,0,29
+BRDA:168,33,1,22
+BRDA:167,17,1,66
+BRDA:178,98,0,17
+BRDA:181,139,0,17
+BRDA:181,146,0,17
+BRDA:181,139,1,0
+BRDA:181,146,1,0
+BRDA:186,169,0,0
+BRDA:186,169,1,17
+BRDA:178,98,1,49
+BRDA:192,351,1,75
+BRDA:196,249,0,30
+BRDA:198,286,0,27
+BRDA:198,291,0,3
+BRDA:198,286,1,27
+BRDA:198,291,1,27
+BRDA:202,319,0,6
+BRDA:202,319,1,24
+BRDA:196,249,1,45
+BRDA:192,351,0,19
+FN:217,System.Void Cybele.Extensions.NullabilityExtensions::.cctor()
+FNDA:1,System.Void Cybele.Extensions.NullabilityExtensions::.cctor()
+DA:218,1
+DA:219,1
+DA:220,1
+LF:41
+LH:41
+BRF:22
+BRH:19
+FNF:6
+FNH:6
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Extensions\Option.cs
+FN:24,T Cybele.Extensions.OptionExtensions::Unwrap(Optional.Option`1<T>)
+FNDA:175,T Cybele.Extensions.OptionExtensions::Unwrap(Optional.Option`1<T>)
+DA:25,175
+DA:26,175
+DA:27,174
+DA:28,1
+DA:29,175
+DA:30,174
+BRDA:26,9,0,7
+BRDA:26,9,1,175
+BRDA:26,42,0,7
+BRDA:26,42,1,175
+LF:6
+LH:6
+BRF:4
+BRH:4
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Core\ConceptString.cs
+FN:39,System.Int32 Cybele.Core.ConceptString`1::get_Length()
+FNDA:1,System.Int32 Cybele.Core.ConceptString`1::get_Length()
+DA:40,1
+FN:52,System.Char Cybele.Core.ConceptString`1::get_Item(System.Int32)
+FNDA:3,System.Char Cybele.Core.ConceptString`1::get_Item(System.Int32)
+DA:53,3
+FN:65,System.ReadOnlySpan`1<System.Char> Cybele.Core.ConceptString`1::get_Item(System.Range)
+FNDA:2,System.ReadOnlySpan`1<System.Char> Cybele.Core.ConceptString`1::get_Item(System.Range)
+DA:66,2
+FN:70,System.ReadOnlySpan`1<System.Char> Cybele.Core.ConceptString`1::get_View()
+FNDA:2,System.ReadOnlySpan`1<System.Char> Cybele.Core.ConceptString`1::get_View()
+DA:71,2
+FN:97,System.ReadOnlySpan`1<System.Char> Cybele.Core.ConceptString`1::op_Implicit(Cybele.Core.ConceptString`1<TConcept>)
+FNDA:2,System.ReadOnlySpan`1<System.Char> Cybele.Core.ConceptString`1::op_Implicit(Cybele.Core.ConceptString`1<TConcept>)
+DA:98,2
+DA:99,3
+DA:100,1
+DA:102,1
+DA:103,2
+BRDA:99,7,0,1
+BRDA:99,7,1,1
+FN:115,System.String Cybele.Core.ConceptString`1::op_Explicit(Cybele.Core.ConceptString`1<TConcept>)
+FNDA:2,System.String Cybele.Core.ConceptString`1::op_Explicit(Cybele.Core.ConceptString`1<TConcept>)
+DA:116,2
+DA:117,2
+DA:118,2
+BRDA:117,2,0,1
+BRDA:117,2,1,1
+FN:129,System.Boolean Cybele.Core.ConceptString`1::Equals(Cybele.Core.ConceptString`1<TConcept>)
+FNDA:26,System.Boolean Cybele.Core.ConceptString`1::Equals(Cybele.Core.ConceptString`1<TConcept>)
+DA:130,26
+DA:131,26
+DA:132,26
+BRDA:131,8,0,3
+BRDA:131,8,1,23
+FN:143,System.Boolean Cybele.Core.ConceptString`1::Equals(System.Object)
+FNDA:8,System.Boolean Cybele.Core.ConceptString`1::Equals(System.Object)
+DA:144,8
+DA:145,8
+DA:146,8
+BRDA:145,9,0,5
+BRDA:145,9,1,3
+FN:160,System.Int32 Cybele.Core.ConceptString`1::CompareTo(Cybele.Core.ConceptString`1<TConcept>)
+FNDA:5,System.Int32 Cybele.Core.ConceptString`1::CompareTo(Cybele.Core.ConceptString`1<TConcept>)
+DA:161,5
+DA:164,5
+DA:165,5
+BRDA:164,8,0,1
+BRDA:164,8,1,4
+FN:172,System.Int32 Cybele.Core.ConceptString`1::GetHashCode()
+FNDA:35,System.Int32 Cybele.Core.ConceptString`1::GetHashCode()
+DA:173,35
+DA:174,35
+DA:175,35
+FN:182,System.String Cybele.Core.ConceptString`1::ToString()
+FNDA:21,System.String Cybele.Core.ConceptString`1::ToString()
+DA:183,21
+DA:184,21
+DA:185,21
+FN:199,System.Boolean Cybele.Core.ConceptString`1::op_Equality(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+FNDA:22,System.Boolean Cybele.Core.ConceptString`1::op_Equality(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+DA:200,22
+DA:201,28
+DA:202,6
+DA:204,16
+DA:205,22
+BRDA:201,7,0,6
+BRDA:201,7,1,16
+FN:219,System.Boolean Cybele.Core.ConceptString`1::op_Inequality(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+FNDA:8,System.Boolean Cybele.Core.ConceptString`1::op_Inequality(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+DA:220,8
+DA:221,8
+DA:222,8
+FN:236,System.Boolean Cybele.Core.ConceptString`1::op_LessThan(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+FNDA:8,System.Boolean Cybele.Core.ConceptString`1::op_LessThan(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+DA:237,8
+DA:238,8
+DA:239,8
+FN:253,System.Boolean Cybele.Core.ConceptString`1::op_GreaterThan(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+FNDA:8,System.Boolean Cybele.Core.ConceptString`1::op_GreaterThan(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+DA:254,8
+DA:255,8
+DA:256,8
+FN:271,System.Boolean Cybele.Core.ConceptString`1::op_LessThanOrEqual(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+FNDA:8,System.Boolean Cybele.Core.ConceptString`1::op_LessThanOrEqual(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+DA:272,8
+DA:273,8
+DA:274,8
+FN:289,System.Boolean Cybele.Core.ConceptString`1::op_GreaterThanOrEqual(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+FNDA:8,System.Boolean Cybele.Core.ConceptString`1::op_GreaterThanOrEqual(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+DA:290,8
+DA:291,8
+DA:292,8
+FN:299,System.Collections.Generic.IEnumerator`1<System.Char> Cybele.Core.ConceptString`1::GetEnumerator()
+FNDA:10,System.Collections.Generic.IEnumerator`1<System.Char> Cybele.Core.ConceptString`1::GetEnumerator()
+DA:300,10
+DA:301,10
+DA:302,10
+FN:304,System.Collections.IEnumerator Cybele.Core.ConceptString`1::System.Collections.IEnumerable.GetEnumerator()
+FNDA:5,System.Collections.IEnumerator Cybele.Core.ConceptString`1::System.Collections.IEnumerable.GetEnumerator()
+DA:305,5
+DA:306,5
+DA:307,5
+FN:316,System.String Cybele.Core.ConceptString`1::get_Contents()
+FNDA:173,System.String Cybele.Core.ConceptString`1::get_Contents()
+DA:317,173
+FN:334,System.Int32 Cybele.Core.ConceptString`1::Compare(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+FNDA:32,System.Int32 Cybele.Core.ConceptString`1::Compare(Cybele.Core.ConceptString`1<TConcept>,Cybele.Core.ConceptString`1<TConcept>)
+DA:335,32
+DA:336,44
+DA:337,12
+DA:339,20
+DA:340,32
+BRDA:336,7,0,12
+BRDA:337,11,0,4
+BRDA:337,11,1,8
+BRDA:336,7,1,20
+BRDA:339,27,0,4
+BRDA:339,27,1,16
+FN:81,System.Void Cybele.Core.ConceptString`1::.ctor(System.String)
+FNDA:170,System.Void Cybele.Core.ConceptString`1::.ctor(System.String)
+DA:82,170
+DA:83,85
+DA:84,85
+DA:85,85
+LF:63
+LH:63
+BRF:18
+BRH:18
+FNF:22
+FNH:22
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Core\DataConverter.cs
+FN:42,System.Type Cybele.Core.DataConverter::get_SourceType()
+FNDA:71,System.Type Cybele.Core.DataConverter::get_SourceType()
+DA:43,71
+FN:48,System.Type Cybele.Core.DataConverter::get_ResultType()
+FNDA:26,System.Type Cybele.Core.DataConverter::get_ResultType()
+DA:49,26
+FN:54,System.Boolean Cybele.Core.DataConverter::get_IsBidirectional()
+FNDA:48,System.Boolean Cybele.Core.DataConverter::get_IsBidirectional()
+DA:55,48
+FN:75,Cybele.Core.DataConverter Cybele.Core.DataConverter::Create(System.Converter`2<TSource,TResult>)
+FNDA:8,Cybele.Core.DataConverter Cybele.Core.DataConverter::Create(System.Converter`2<TSource,TResult>)
+DA:76,8
+DA:78,16
+DA:79,8
+DA:82,8
+DA:83,8
+FN:109,Cybele.Core.DataConverter Cybele.Core.DataConverter::Create(System.Converter`2<TSource,TResult>,System.Converter`2<TResult,TSource>)
+FNDA:55,Cybele.Core.DataConverter Cybele.Core.DataConverter::Create(System.Converter`2<TSource,TResult>,System.Converter`2<TResult,TSource>)
+DA:110,55
+DA:112,83
+DA:113,80
+DA:115,55
+DA:116,55
+BRDA:112,1,0,26
+BRDA:112,1,1,2
+BRDA:113,1,0,21
+BRDA:113,1,1,4
+FN:132,System.Object Cybele.Core.DataConverter::Convert(System.Object)
+FNDA:37,System.Object Cybele.Core.DataConverter::Convert(System.Object)
+DA:133,37
+DA:134,38
+DA:135,1
+DA:136,1
+DA:139,36
+DA:140,36
+BRDA:134,2,0,35
+BRDA:134,2,1,2
+BRDA:134,24,0,1
+BRDA:134,24,1,36
+FN:165,System.Object Cybele.Core.DataConverter::Revert(System.Object)
+FNDA:27,System.Object Cybele.Core.DataConverter::Revert(System.Object)
+DA:166,27
+DA:167,28
+DA:168,1
+DA:169,1
+DA:171,27
+DA:172,1
+DA:173,1
+DA:176,25
+DA:177,25
+DA:178,25
+BRDA:167,12,0,1
+BRDA:167,12,1,26
+BRDA:171,29,0,22
+BRDA:171,29,1,4
+BRDA:171,51,0,1
+BRDA:171,51,1,25
+FN:188,Cybele.Core.DataConverter Cybele.Core.DataConverter::Identity()
+FNDA:38,Cybele.Core.DataConverter Cybele.Core.DataConverter::Identity()
+DA:189,38
+DA:190,70
+DA:191,38
+BRDA:190,7,0,7
+BRDA:190,7,1,38
+BRDA:190,40,0,7
+BRDA:190,40,1,38
+FN:209,System.Void Cybele.Core.DataConverter::.ctor(System.Type,System.Type,System.Converter`2<System.Object,System.Object>,Optional.Option`1<System.Converter`2<System.Object,System.Object>>)
+FNDA:126,System.Void Cybele.Core.DataConverter::.ctor(System.Type,System.Type,System.Converter`2<System.Object,System.Object>,Optional.Option`1<System.Converter`2<System.Object,System.Object>>)
+DA:210,126
+DA:211,63
+DA:212,63
+DA:213,63
+DA:214,63
+DA:216,63
+DA:217,63
+DA:218,63
+DA:219,63
+DA:220,63
+LF:42
+LH:42
+BRF:18
+BRH:18
+FNF:9
+FNH:9
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Cybele\Collections\StickyList.cs
+FN:56,T Cybele.Collections.StickyList`1::get_Item(System.Int32)
+FNDA:24,T Cybele.Collections.StickyList`1::get_Item(System.Int32)
+DA:57,24
+DA:58,24
+DA:59,1
+DA:60,24
+DA:61,21
+BRDA:58,22,0,3
+BRDA:58,22,1,22
+FN:61,System.Void Cybele.Collections.StickyList`1::set_Item(System.Int32,T)
+FNDA:5,System.Void Cybele.Collections.StickyList`1::set_Item(System.Int32,T)
+DA:62,5
+DA:63,5
+DA:64,4
+FN:70,System.Int32 Cybele.Collections.StickyList`1::get_Count()
+FNDA:632,System.Int32 Cybele.Collections.StickyList`1::get_Count()
+DA:71,632
+FN:76,System.Int32 Cybele.Collections.StickyList`1::get_LargestIndex()
+FNDA:5,System.Int32 Cybele.Collections.StickyList`1::get_LargestIndex()
+DA:77,5
+FN:81,System.Boolean Cybele.Collections.StickyList`1::get_HasGaps()
+FNDA:143,System.Boolean Cybele.Collections.StickyList`1::get_HasGaps()
+DA:82,143
+FN:84,System.Boolean Cybele.Collections.StickyList`1::System.Collections.Generic.ICollection<T>.get_IsReadOnly()
+FNDA:1,System.Boolean Cybele.Collections.StickyList`1::System.Collections.Generic.ICollection<T>.get_IsReadOnly()
+DA:85,1
+FN:150,System.Boolean Cybele.Collections.StickyList`1::IsOccupied(System.Int32)
+FNDA:237,System.Boolean Cybele.Collections.StickyList`1::IsOccupied(System.Int32)
+DA:151,237
+DA:152,237
+DA:153,136
+FN:168,System.Boolean Cybele.Collections.StickyList`1::IsSticky(System.Int32)
+FNDA:242,System.Boolean Cybele.Collections.StickyList`1::IsSticky(System.Int32)
+DA:169,242
+DA:170,383
+DA:171,141
+BRDA:170,22,0,3
+BRDA:170,22,1,141
+BRDA:170,53,0,3
+BRDA:170,53,1,141
+FN:182,System.Boolean Cybele.Collections.StickyList`1::Contains(T)
+FNDA:11,System.Boolean Cybele.Collections.StickyList`1::Contains(T)
+DA:183,11
+DA:184,46
+DA:185,11
+FN:196,System.Int32 Cybele.Collections.StickyList`1::IndexOf(T)
+FNDA:15,System.Int32 Cybele.Collections.StickyList`1::IndexOf(T)
+DA:197,15
+DA:198,8916
+DA:199,2982
+DA:200,12
+DA:202,2958
+DA:203,3
+DA:204,15
+BRDA:198,97,1,2970
+BRDA:199,26,0,41
+BRDA:199,26,1,2929
+BRDA:199,67,0,12
+BRDA:199,67,1,2958
+BRDA:198,97,0,3
+FN:213,System.Void Cybele.Collections.StickyList`1::Add(T)
+FNDA:65,System.Void Cybele.Collections.StickyList`1::Add(T)
+DA:214,65
+DA:215,65
+DA:216,65
+DA:218,526
+DA:219,162
+DA:220,18
+DA:221,18
+DA:223,126
+DA:224,47
+DA:226,47
+DA:227,65
+BRDA:218,104,1,144
+BRDA:219,62,0,18
+BRDA:219,62,1,126
+BRDA:218,104,0,47
+FN:245,System.Void Cybele.Collections.StickyList`1::Insert(System.Int32,T)
+FNDA:40,System.Void Cybele.Collections.StickyList`1::Insert(System.Int32,T)
+DA:246,40
+DA:247,40
+DA:250,64
+DA:251,24
+DA:252,24
+DA:253,24
+DA:254,24
+DA:255,24
+DA:256,24
+DA:260,24
+DA:261,8
+DA:262,8
+DA:263,8
+DA:264,8
+DA:268,17
+DA:269,5
+DA:270,5
+DA:271,5
+DA:272,5
+DA:276,1
+DA:277,1
+DA:278,37
+BRDA:250,33,0,24
+BRDA:250,33,1,16
+BRDA:260,146,0,8
+BRDA:260,146,1,6
+BRDA:268,214,0,2
+BRDA:268,214,1,6
+BRDA:268,248,0,5
+BRDA:268,248,1,1
+FN:290,System.Boolean Cybele.Collections.StickyList`1::Remove(T)
+FNDA:6,System.Boolean Cybele.Collections.StickyList`1::Remove(T)
+DA:291,6
+DA:292,6
+DA:293,7
+DA:294,1
+DA:297,5
+DA:298,5
+DA:299,5
+DA:300,6
+BRDA:293,15,0,1
+BRDA:293,15,1,5
+FN:313,System.Void Cybele.Collections.StickyList`1::RemoveAt(System.Int32)
+FNDA:12,System.Void Cybele.Collections.StickyList`1::RemoveAt(System.Int32)
+DA:314,12
+DA:315,13
+DA:316,1
+DA:319,9
+DA:320,25376
+DA:321,8461
+DA:322,7
+DA:323,9
+DA:324,2
+DA:325,2
+DA:326,2
+DA:328,5
+DA:329,8452
+DA:331,5813
+DA:332,2902
+DA:333,2902
+DA:335,9
+DA:336,9
+DA:337,9
+BRDA:315,26,0,1
+BRDA:315,26,1,9
+BRDA:320,209,1,8454
+BRDA:321,102,0,7
+BRDA:323,146,0,2
+BRDA:323,146,1,5
+BRDA:321,102,1,8452
+BRDA:331,293,1,2902
+BRDA:320,209,0,2911
+BRDA:331,254,0,2910
+BRDA:331,254,1,1
+BRDA:331,293,0,9
+FN:341,System.Void Cybele.Collections.StickyList`1::Clear()
+FNDA:1,System.Void Cybele.Collections.StickyList`1::Clear()
+DA:342,1
+DA:343,1
+DA:344,1
+DA:345,1
+DA:346,1
+FN:409,System.Collections.IEnumerator Cybele.Collections.StickyList`1::System.Collections.IEnumerable.GetEnumerator()
+FNDA:1,System.Collections.IEnumerator Cybele.Collections.StickyList`1::System.Collections.IEnumerable.GetEnumerator()
+DA:410,1
+DA:411,1
+DA:412,1
+FN:414,System.Void Cybele.Collections.StickyList`1::System.Collections.Generic.ICollection<T>.CopyTo(T[],System.Int32)
+FNDA:1,System.Void Cybele.Collections.StickyList`1::System.Collections.Generic.ICollection<T>.CopyTo(T[],System.Int32)
+DA:415,1
+DA:416,18
+DA:417,5
+DA:418,5
+DA:419,1
+BRDA:416,39,1,5
+BRDA:416,39,0,1
+FN:91,System.Void Cybele.Collections.StickyList`1::.ctor()
+FNDA:78,System.Void Cybele.Collections.StickyList`1::.ctor()
+DA:92,78
+FN:103,System.Void Cybele.Collections.StickyList`1::.ctor(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:81,System.Void Cybele.Collections.StickyList`1::.ctor(System.Collections.Generic.IEnumerable`1<T>)
+DA:104,81
+FN:113,System.Void Cybele.Collections.StickyList`1::.ctor(System.Collections.Generic.IEqualityComparer`1<T>)
+FNDA:6,System.Void Cybele.Collections.StickyList`1::.ctor(System.Collections.Generic.IEqualityComparer`1<T>)
+DA:114,6
+FN:126,System.Void Cybele.Collections.StickyList`1::.ctor(System.Collections.Generic.IEnumerable`1<T>,System.Collections.Generic.IEqualityComparer`1<T>)
+FNDA:60,System.Void Cybele.Collections.StickyList`1::.ctor(System.Collections.Generic.IEnumerable`1<T>,System.Collections.Generic.IEqualityComparer`1<T>)
+DA:127,60
+DA:128,30
+DA:129,30
+DA:131,40
+DA:132,30
+DA:134,30
+DA:135,30
+DA:136,30
+BRDA:131,52,0,6
+BRDA:131,52,1,30
+FN:359,System.Boolean Cybele.Collections.StickyList`1/<GetEnumerator>d__26::MoveNext()
+FNDA:14,System.Boolean Cybele.Collections.StickyList`1/<GetEnumerator>d__26::MoveNext()
+DA:360,14
+DA:361,470
+DA:362,205
+DA:363,60
+DA:364,53
+DA:365,138
+DA:366,7
+BRDA:361,170,1,145
+BRDA:362,101,0,60
+BRDA:362,101,1,138
+BRDA:361,170,0,7
+LF:119
+LH:119
+BRF:46
+BRH:46
+FNF:22
+FNH:22
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Transcription\SqlSnippet.cs
+FN:23,System.Void Kvasir.Transcription.SqlSnippet::.ctor(System.String)
+FNDA:8,System.Void Kvasir.Transcription.SqlSnippet::.ctor(System.String)
+DA:24,8
+DA:26,6
+DA:27,2
+DA:28,2
+DA:29,2
+DA:31,2
+BRDA:26,27,0,2
+BRDA:26,27,1,2
+LF:6
+LH:6
+BRF:2
+BRH:2
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\BasicField.cs
+FN:27,Kvasir.Schema.FieldName Kvasir.Schema.BasicField::get_Name()
+FNDA:3,Kvasir.Schema.FieldName Kvasir.Schema.BasicField::get_Name()
+DA:28,3
+FN:30,Kvasir.Schema.DBType Kvasir.Schema.BasicField::get_DataType()
+FNDA:3,Kvasir.Schema.DBType Kvasir.Schema.BasicField::get_DataType()
+DA:31,3
+FN:33,Kvasir.Schema.IsNullable Kvasir.Schema.BasicField::get_Nullability()
+FNDA:3,Kvasir.Schema.IsNullable Kvasir.Schema.BasicField::get_Nullability()
+DA:34,3
+FN:36,Optional.Option`1<Kvasir.Schema.DBValue> Kvasir.Schema.BasicField::get_DefaultValue()
+FNDA:3,Optional.Option`1<Kvasir.Schema.DBValue> Kvasir.Schema.BasicField::get_DefaultValue()
+DA:37,3
+FN:85,Kvasir.Transcription.SqlSnippet Kvasir.Schema.BasicField::Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)
+FNDA:2,Kvasir.Transcription.SqlSnippet Kvasir.Schema.BasicField::Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)
+DA:86,2
+DA:87,2
+DA:89,2
+DA:90,2
+DA:91,2
+DA:92,3
+DA:94,2
+DA:95,2
+FN:61,System.Void Kvasir.Schema.BasicField::.ctor(Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option`1<Kvasir.Schema.DBValue>)
+FNDA:18,System.Void Kvasir.Schema.BasicField::.ctor(Kvasir.Schema.FieldName,Kvasir.Schema.DBType,Kvasir.Schema.IsNullable,Optional.Option`1<Kvasir.Schema.DBValue>)
+DA:62,18
+DA:63,9
+DA:64,9
+DA:65,9
+DA:66,9
+DA:67,9
+DA:69,9
+DA:70,9
+DA:71,9
+DA:72,9
+DA:73,9
+BRDA:66,48,0,8
+BRDA:66,48,1,1
+LF:23
+LH:23
+BRF:2
+BRH:2
+FNF:6
+FNH:6
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CandidateKey.cs
+FN:12,Optional.Option`1<Kvasir.Schema.KeyName> Kvasir.Schema.CandidateKey::get_Name()
+FNDA:10,Optional.Option`1<Kvasir.Schema.KeyName> Kvasir.Schema.CandidateKey::get_Name()
+DA:13,10
+FN:15,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.CandidateKey::get_Fields()
+FNDA:45,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.CandidateKey::get_Fields()
+DA:16,45
+FN:39,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.CandidateKey::GetEnumerator()
+FNDA:1,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.CandidateKey::GetEnumerator()
+DA:40,1
+DA:41,1
+DA:42,1
+FN:79,Kvasir.Transcription.SqlSnippet Kvasir.Schema.CandidateKey::Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)
+FNDA:3,Kvasir.Transcription.SqlSnippet Kvasir.Schema.CandidateKey::Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)
+DA:80,3
+DA:81,3
+DA:83,4
+DA:84,3
+DA:86,3
+DA:87,3
+FN:24,System.Void Kvasir.Schema.CandidateKey::.ctor(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+FNDA:27,System.Void Kvasir.Schema.CandidateKey::.ctor(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+DA:25,27
+FN:36,System.Void Kvasir.Schema.CandidateKey::.ctor(Kvasir.Schema.KeyName,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+FNDA:12,System.Void Kvasir.Schema.CandidateKey::.ctor(Kvasir.Schema.KeyName,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+DA:37,12
+FN:62,System.Void Kvasir.Schema.CandidateKey::.ctor(Optional.Option`1<Kvasir.Schema.KeyName>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+FNDA:26,System.Void Kvasir.Schema.CandidateKey::.ctor(Optional.Option`1<Kvasir.Schema.KeyName>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+DA:63,26
+DA:64,17
+DA:65,13
+DA:66,13
+DA:68,13
+DA:69,13
+DA:76,13
+DA:77,13
+LF:21
+LH:21
+BRF:0
+BRH:0
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\AndClause.cs
+FN:14,Kvasir.Schema.Clause Kvasir.Schema.AndClause::get_LHS()
+FNDA:25,Kvasir.Schema.Clause Kvasir.Schema.AndClause::get_LHS()
+DA:15,25
+FN:20,Kvasir.Schema.Clause Kvasir.Schema.AndClause::get_RHS()
+FNDA:25,Kvasir.Schema.Clause Kvasir.Schema.AndClause::get_RHS()
+DA:21,25
+FN:50,Kvasir.Schema.Clause Kvasir.Schema.AndClause::Negation()
+FNDA:1,Kvasir.Schema.Clause Kvasir.Schema.AndClause::Negation()
+DA:51,1
+DA:52,1
+DA:53,1
+FN:55,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField> Kvasir.Schema.AndClause::GetDependentFields()
+FNDA:2,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField> Kvasir.Schema.AndClause::GetDependentFields()
+DA:56,2
+DA:57,2
+DA:58,2
+FN:60,System.Void Kvasir.Schema.AndClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:12,System.Void Kvasir.Schema.AndClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:61,12
+DA:62,12
+DA:64,23
+DA:65,11
+DA:66,11
+DA:67,11
+DA:68,11
+DA:69,11
+DA:70,11
+DA:71,1
+DA:72,1
+DA:73,1
+DA:74,1
+DA:75,12
+BRDA:64,22,0,11
+BRDA:64,22,1,1
+FN:37,System.Void Kvasir.Schema.AndClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+FNDA:42,System.Void Kvasir.Schema.AndClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+DA:38,42
+FN:93,System.Void Kvasir.Schema.AndClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)
+FNDA:30,System.Void Kvasir.Schema.AndClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)
+DA:94,30
+DA:95,15
+DA:96,15
+DA:98,15
+DA:99,15
+DA:100,15
+DA:101,15
+LF:30
+LH:30
+BRF:2
+BRH:2
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\Clause.cs
+FN:31,Kvasir.Schema.Clause Kvasir.Schema.Clause::And(Kvasir.Schema.Clause)
+FNDA:14,Kvasir.Schema.Clause Kvasir.Schema.Clause::And(Kvasir.Schema.Clause)
+DA:32,14
+DA:33,14
+DA:34,14
+FN:49,Kvasir.Schema.Clause Kvasir.Schema.Clause::Or(Kvasir.Schema.Clause)
+FNDA:5,Kvasir.Schema.Clause Kvasir.Schema.Clause::Or(Kvasir.Schema.Clause)
+DA:50,5
+DA:51,5
+DA:52,5
+FN:67,Kvasir.Schema.Clause Kvasir.Schema.Clause::Xor(Kvasir.Schema.Clause)
+FNDA:4,Kvasir.Schema.Clause Kvasir.Schema.Clause::Xor(Kvasir.Schema.Clause)
+DA:68,4
+DA:69,4
+DA:70,4
+FN:120,Kvasir.Schema.Clause Kvasir.Schema.Clause::IfThen(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+FNDA:2,Kvasir.Schema.Clause Kvasir.Schema.Clause::IfThen(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+DA:121,2
+DA:122,2
+DA:123,2
+FN:143,Kvasir.Schema.Clause Kvasir.Schema.Clause::Iff(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+FNDA:2,Kvasir.Schema.Clause Kvasir.Schema.Clause::Iff(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+DA:144,2
+DA:145,2
+DA:146,2
+LF:15
+LH:15
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\ConstantClause.cs
+FN:15,Kvasir.Schema.FieldExpression Kvasir.Schema.ConstantClause::get_LHS()
+FNDA:704,Kvasir.Schema.FieldExpression Kvasir.Schema.ConstantClause::get_LHS()
+DA:16,704
+FN:20,Kvasir.Schema.ComparisonOperator Kvasir.Schema.ConstantClause::get_Operator()
+FNDA:353,Kvasir.Schema.ComparisonOperator Kvasir.Schema.ConstantClause::get_Operator()
+DA:21,353
+FN:25,Kvasir.Schema.DBValue Kvasir.Schema.ConstantClause::get_RHS()
+FNDA:173,Kvasir.Schema.DBValue Kvasir.Schema.ConstantClause::get_RHS()
+DA:26,173
+FN:69,Kvasir.Schema.Clause Kvasir.Schema.ConstantClause::Negation()
+FNDA:22,Kvasir.Schema.Clause Kvasir.Schema.ConstantClause::Negation()
+DA:70,22
+DA:71,22
+DA:72,22
+FN:79,System.Void Kvasir.Schema.ConstantClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:34,System.Void Kvasir.Schema.ConstantClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:80,34
+DA:81,34
+DA:82,34
+DA:83,34
+FN:47,System.Void Kvasir.Schema.ConstantClause::.ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.ComparisonOperator,Kvasir.Schema.DBValue)
+FNDA:190,System.Void Kvasir.Schema.ConstantClause::.ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.ComparisonOperator,Kvasir.Schema.DBValue)
+DA:48,190
+DA:49,95
+DA:50,95
+DA:51,95
+DA:52,95
+DA:54,95
+DA:55,95
+DA:56,95
+DA:57,95
+FN:74,System.Boolean Kvasir.Schema.ConstantClause/<GetDependentFields>d__13::MoveNext()
+FNDA:21,System.Boolean Kvasir.Schema.ConstantClause/<GetDependentFields>d__13::MoveNext()
+DA:75,21
+DA:76,21
+DA:77,21
+LF:22
+LH:22
+BRF:0
+BRH:0
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\CrossFieldClause.cs
+FN:15,Kvasir.Schema.FieldExpression Kvasir.Schema.CrossFieldClause::get_LHS()
+FNDA:32,Kvasir.Schema.FieldExpression Kvasir.Schema.CrossFieldClause::get_LHS()
+DA:16,32
+FN:20,Kvasir.Schema.ComparisonOperator Kvasir.Schema.CrossFieldClause::get_Operator()
+FNDA:19,Kvasir.Schema.ComparisonOperator Kvasir.Schema.CrossFieldClause::get_Operator()
+DA:21,19
+FN:26,Kvasir.Schema.FieldExpression Kvasir.Schema.CrossFieldClause::get_RHS()
+FNDA:32,Kvasir.Schema.FieldExpression Kvasir.Schema.CrossFieldClause::get_RHS()
+DA:27,32
+FN:71,Kvasir.Schema.Clause Kvasir.Schema.CrossFieldClause::Negation()
+FNDA:6,Kvasir.Schema.Clause Kvasir.Schema.CrossFieldClause::Negation()
+DA:72,6
+DA:73,6
+DA:74,6
+FN:82,System.Void Kvasir.Schema.CrossFieldClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:6,System.Void Kvasir.Schema.CrossFieldClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:83,6
+DA:84,6
+DA:85,6
+DA:86,6
+FN:48,System.Void Kvasir.Schema.CrossFieldClause::.ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.ComparisonOperator,Kvasir.Schema.FieldExpression)
+FNDA:38,System.Void Kvasir.Schema.CrossFieldClause::.ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.ComparisonOperator,Kvasir.Schema.FieldExpression)
+DA:49,38
+DA:50,19
+DA:51,19
+DA:52,19
+DA:53,19
+DA:55,19
+DA:56,19
+DA:57,19
+DA:58,19
+FN:76,System.Boolean Kvasir.Schema.CrossFieldClause/<GetDependentFields>d__13::MoveNext()
+FNDA:1,System.Boolean Kvasir.Schema.CrossFieldClause/<GetDependentFields>d__13::MoveNext()
+DA:77,1
+DA:78,1
+DA:79,1
+DA:80,1
+LF:23
+LH:23
+BRF:0
+BRH:0
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\Extensions.cs
+FN:19,Kvasir.Schema.ComparisonOperator Kvasir.Schema.ClauseExtensions::Negation(Kvasir.Schema.ComparisonOperator)
+FNDA:28,Kvasir.Schema.ComparisonOperator Kvasir.Schema.ClauseExtensions::Negation(Kvasir.Schema.ComparisonOperator)
+DA:20,28
+DA:21,28
+DA:23,28
+DA:24,2
+DA:25,2
+DA:26,3
+DA:27,2
+DA:28,9
+DA:29,10
+DA:30,0
+DA:31,28
+DA:32,28
+BRDA:23,18,1,2
+BRDA:23,18,2,2
+BRDA:23,18,3,3
+BRDA:23,18,4,2
+BRDA:23,18,5,9
+BRDA:23,18,6,10
+BRDA:23,18,0,0
+FN:42,Kvasir.Schema.InclusionOperator Kvasir.Schema.ClauseExtensions::Negation(Kvasir.Schema.InclusionOperator)
+FNDA:2,Kvasir.Schema.InclusionOperator Kvasir.Schema.ClauseExtensions::Negation(Kvasir.Schema.InclusionOperator)
+DA:43,2
+DA:44,2
+DA:46,2
+DA:47,1
+DA:48,1
+DA:49,0
+DA:50,2
+DA:51,2
+BRDA:46,18,0,1
+BRDA:46,18,1,1
+BRDA:46,24,1,1
+BRDA:46,24,0,0
+FN:61,Kvasir.Schema.NullityOperator Kvasir.Schema.ClauseExtensions::Negation(Kvasir.Schema.NullityOperator)
+FNDA:2,Kvasir.Schema.NullityOperator Kvasir.Schema.ClauseExtensions::Negation(Kvasir.Schema.NullityOperator)
+DA:62,2
+DA:63,2
+DA:65,2
+DA:66,1
+DA:67,1
+DA:68,0
+DA:69,2
+DA:70,2
+BRDA:65,18,0,1
+BRDA:65,18,1,1
+BRDA:65,24,1,1
+BRDA:65,24,0,0
+LF:28
+LH:25
+BRF:15
+BRH:12
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\FieldExpression.cs
+FN:14,Optional.Option`1<Kvasir.Schema.FieldFunction> Kvasir.Schema.FieldExpression::get_Function()
+FNDA:367,Optional.Option`1<Kvasir.Schema.FieldFunction> Kvasir.Schema.FieldExpression::get_Function()
+DA:15,367
+FN:19,Kvasir.Schema.IField Kvasir.Schema.FieldExpression::get_Field()
+FNDA:463,Kvasir.Schema.IField Kvasir.Schema.FieldExpression::get_Field()
+DA:20,463
+FN:25,Kvasir.Schema.DBType Kvasir.Schema.FieldExpression::get_DataType()
+FNDA:181,Kvasir.Schema.DBType Kvasir.Schema.FieldExpression::get_DataType()
+DA:26,181
+FN:36,System.Void Kvasir.Schema.FieldExpression::.ctor(Kvasir.Schema.IField)
+FNDA:118,System.Void Kvasir.Schema.FieldExpression::.ctor(Kvasir.Schema.IField)
+DA:37,118
+DA:38,59
+DA:40,59
+DA:41,59
+DA:42,59
+DA:43,59
+FN:59,System.Void Kvasir.Schema.FieldExpression::.ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.IField)
+FNDA:18,System.Void Kvasir.Schema.FieldExpression::.ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.IField)
+DA:60,18
+DA:61,9
+DA:62,9
+DA:63,9
+DA:65,9
+DA:66,9
+DA:67,9
+DA:68,9
+DA:69,0
+DA:70,9
+DA:71,9
+BRDA:63,31,0,9
+BRDA:63,31,1,0
+BRDA:67,83,1,9
+BRDA:67,83,0,0
+LF:20
+LH:19
+BRF:4
+BRH:2
+FNF:5
+FNH:5
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\InclusionClause.cs
+FN:16,Kvasir.Schema.FieldExpression Kvasir.Schema.InclusionClause::get_LHS()
+FNDA:28,Kvasir.Schema.FieldExpression Kvasir.Schema.InclusionClause::get_LHS()
+DA:17,28
+FN:21,Kvasir.Schema.InclusionOperator Kvasir.Schema.InclusionClause::get_Operator()
+FNDA:15,Kvasir.Schema.InclusionOperator Kvasir.Schema.InclusionClause::get_Operator()
+DA:22,15
+FN:26,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue> Kvasir.Schema.InclusionClause::get_RHS()
+FNDA:15,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue> Kvasir.Schema.InclusionClause::get_RHS()
+DA:27,15
+FN:76,Kvasir.Schema.Clause Kvasir.Schema.InclusionClause::Negation()
+FNDA:2,Kvasir.Schema.Clause Kvasir.Schema.InclusionClause::Negation()
+DA:77,2
+DA:78,2
+DA:79,2
+FN:86,System.Void Kvasir.Schema.InclusionClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:2,System.Void Kvasir.Schema.InclusionClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:87,2
+DA:88,2
+DA:89,2
+DA:90,2
+FN:48,System.Void Kvasir.Schema.InclusionClause::.ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue>)
+FNDA:30,System.Void Kvasir.Schema.InclusionClause::.ctor(Kvasir.Schema.FieldExpression,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue>)
+DA:49,30
+DA:50,15
+DA:51,15
+DA:52,15
+DA:53,15
+DA:54,61
+DA:61,15
+DA:62,15
+DA:63,15
+DA:64,15
+FN:81,System.Boolean Kvasir.Schema.InclusionClause/<GetDependentFields>d__13::MoveNext()
+FNDA:1,System.Boolean Kvasir.Schema.InclusionClause/<GetDependentFields>d__13::MoveNext()
+DA:82,1
+DA:83,1
+DA:84,1
+LF:23
+LH:23
+BRF:0
+BRH:0
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\NullityClause.cs
+FN:14,Kvasir.Schema.FieldExpression Kvasir.Schema.NullityClause::get_LHS()
+FNDA:11,Kvasir.Schema.FieldExpression Kvasir.Schema.NullityClause::get_LHS()
+DA:15,11
+FN:19,Kvasir.Schema.NullityOperator Kvasir.Schema.NullityClause::get_Operator()
+FNDA:7,Kvasir.Schema.NullityOperator Kvasir.Schema.NullityClause::get_Operator()
+DA:20,7
+FN:52,Kvasir.Schema.Clause Kvasir.Schema.NullityClause::Negation()
+FNDA:2,Kvasir.Schema.Clause Kvasir.Schema.NullityClause::Negation()
+DA:53,2
+DA:54,2
+DA:55,2
+FN:62,System.Void Kvasir.Schema.NullityClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:2,System.Void Kvasir.Schema.NullityClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:63,2
+DA:64,2
+DA:65,2
+DA:66,2
+FN:33,System.Void Kvasir.Schema.NullityClause::.ctor(Kvasir.Schema.IField,Kvasir.Schema.NullityOperator)
+FNDA:14,System.Void Kvasir.Schema.NullityClause::.ctor(Kvasir.Schema.IField,Kvasir.Schema.NullityOperator)
+DA:34,14
+DA:35,7
+DA:36,7
+DA:38,7
+DA:39,7
+DA:40,7
+FN:57,System.Boolean Kvasir.Schema.NullityClause/<GetDependentFields>d__10::MoveNext()
+FNDA:1,System.Boolean Kvasir.Schema.NullityClause/<GetDependentFields>d__10::MoveNext()
+DA:58,1
+DA:59,1
+DA:60,1
+LF:18
+LH:18
+BRF:0
+BRH:0
+FNF:6
+FNH:6
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\OrClause.cs
+FN:14,Kvasir.Schema.Clause Kvasir.Schema.OrClause::get_LHS()
+FNDA:11,Kvasir.Schema.Clause Kvasir.Schema.OrClause::get_LHS()
+DA:15,11
+FN:20,Kvasir.Schema.Clause Kvasir.Schema.OrClause::get_RHS()
+FNDA:11,Kvasir.Schema.Clause Kvasir.Schema.OrClause::get_RHS()
+DA:21,11
+FN:50,Kvasir.Schema.Clause Kvasir.Schema.OrClause::Negation()
+FNDA:2,Kvasir.Schema.Clause Kvasir.Schema.OrClause::Negation()
+DA:51,2
+DA:52,2
+DA:53,2
+FN:55,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField> Kvasir.Schema.OrClause::GetDependentFields()
+FNDA:4,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField> Kvasir.Schema.OrClause::GetDependentFields()
+DA:56,4
+DA:57,4
+DA:58,4
+FN:60,System.Void Kvasir.Schema.OrClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:5,System.Void Kvasir.Schema.OrClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:61,5
+DA:62,5
+DA:64,8
+DA:65,3
+DA:66,3
+DA:67,3
+DA:68,3
+DA:69,3
+DA:70,3
+DA:71,2
+DA:72,2
+DA:73,2
+DA:74,2
+DA:75,5
+BRDA:64,22,0,3
+BRDA:64,22,1,2
+FN:37,System.Void Kvasir.Schema.OrClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+FNDA:15,System.Void Kvasir.Schema.OrClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+DA:38,15
+FN:93,System.Void Kvasir.Schema.OrClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)
+FNDA:14,System.Void Kvasir.Schema.OrClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)
+DA:94,14
+DA:95,7
+DA:96,7
+DA:98,7
+DA:99,7
+DA:100,7
+DA:101,7
+LF:30
+LH:30
+BRF:2
+BRH:2
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckClauses\XorClause.cs
+FN:14,Kvasir.Schema.Clause Kvasir.Schema.XorClause::get_LHS()
+FNDA:16,Kvasir.Schema.Clause Kvasir.Schema.XorClause::get_LHS()
+DA:15,16
+FN:20,Kvasir.Schema.Clause Kvasir.Schema.XorClause::get_RHS()
+FNDA:16,Kvasir.Schema.Clause Kvasir.Schema.XorClause::get_RHS()
+DA:21,16
+FN:50,Kvasir.Schema.Clause Kvasir.Schema.XorClause::Negation()
+FNDA:4,Kvasir.Schema.Clause Kvasir.Schema.XorClause::Negation()
+DA:51,4
+DA:52,4
+DA:53,4
+FN:55,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField> Kvasir.Schema.XorClause::GetDependentFields()
+FNDA:4,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField> Kvasir.Schema.XorClause::GetDependentFields()
+DA:56,4
+DA:57,4
+DA:58,4
+FN:60,System.Void Kvasir.Schema.XorClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:4,System.Void Kvasir.Schema.XorClause::AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:61,4
+DA:62,4
+DA:64,4
+DA:65,4
+DA:67,4
+DA:68,4
+DA:69,4
+DA:70,4
+DA:71,4
+DA:72,4
+BRDA:64,17,0,2
+BRDA:64,17,1,2
+BRDA:65,67,0,2
+BRDA:65,67,1,2
+FN:37,System.Void Kvasir.Schema.XorClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+FNDA:12,System.Void Kvasir.Schema.XorClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause)
+DA:38,12
+FN:90,System.Void Kvasir.Schema.XorClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)
+FNDA:16,System.Void Kvasir.Schema.XorClause::.ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)
+DA:91,16
+DA:92,8
+DA:93,8
+DA:95,8
+DA:96,8
+DA:97,8
+DA:98,8
+LF:26
+LH:26
+BRF:4
+BRH:4
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\CheckConstraint.cs
+FN:13,Optional.Option`1<Kvasir.Schema.CheckName> Kvasir.Schema.CheckConstraint::get_Name()
+FNDA:5,Optional.Option`1<Kvasir.Schema.CheckName> Kvasir.Schema.CheckConstraint::get_Name()
+DA:14,5
+FN:18,Kvasir.Schema.Clause Kvasir.Schema.CheckConstraint::get_Condition()
+FNDA:6,Kvasir.Schema.Clause Kvasir.Schema.CheckConstraint::get_Condition()
+DA:19,6
+FN:64,Kvasir.Transcription.SqlSnippet Kvasir.Schema.CheckConstraint::GenerateDeclaration(Kvasir.Transcription.IConstraintDeclBuilder)
+FNDA:3,Kvasir.Transcription.SqlSnippet Kvasir.Schema.CheckConstraint::GenerateDeclaration(Kvasir.Transcription.IConstraintDeclBuilder)
+DA:65,3
+DA:66,3
+DA:68,4
+DA:69,3
+DA:70,3
+DA:71,3
+FN:27,System.Void Kvasir.Schema.CheckConstraint::.ctor(Kvasir.Schema.Clause)
+FNDA:9,System.Void Kvasir.Schema.CheckConstraint::.ctor(Kvasir.Schema.Clause)
+DA:28,9
+FN:39,System.Void Kvasir.Schema.CheckConstraint::.ctor(Kvasir.Schema.CheckName,Kvasir.Schema.Clause)
+FNDA:6,System.Void Kvasir.Schema.CheckConstraint::.ctor(Kvasir.Schema.CheckName,Kvasir.Schema.Clause)
+DA:40,6
+FN:81,System.Void Kvasir.Schema.CheckConstraint::.ctor(Optional.Option`1<Kvasir.Schema.CheckName>,Kvasir.Schema.Clause)
+FNDA:10,System.Void Kvasir.Schema.CheckConstraint::.ctor(Optional.Option`1<Kvasir.Schema.CheckName>,Kvasir.Schema.Clause)
+DA:82,10
+DA:83,7
+DA:84,5
+DA:86,5
+DA:87,5
+DA:88,5
+FN:109,System.Void Kvasir.Schema.CheckName::.ctor(System.String)
+FNDA:11,System.Void Kvasir.Schema.CheckName::.ctor(System.String)
+DA:110,11
+LF:17
+LH:17
+BRF:0
+BRH:0
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\ComponentName.cs
+FN:28,System.Void Kvasir.Schema.ComponentName`1::.ctor(System.String)
+FNDA:128,System.Void Kvasir.Schema.ComponentName`1::.ctor(System.String)
+DA:29,128
+DA:31,77
+DA:32,13
+DA:33,13
+DA:34,13
+DA:36,51
+BRDA:31,22,0,13
+BRDA:31,22,1,51
+LF:6
+LH:6
+BRF:2
+BRH:2
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\DBType.cs
+FN:34,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Boolean()
+FNDA:10,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Boolean()
+DA:35,10
+FN:39,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Character()
+FNDA:9,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Character()
+DA:40,9
+FN:44,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int8()
+FNDA:233,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int8()
+DA:45,233
+FN:49,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int16()
+FNDA:229,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int16()
+DA:50,229
+FN:54,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int32()
+FNDA:259,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int32()
+DA:55,259
+FN:59,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int64()
+FNDA:119,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Int64()
+DA:60,119
+FN:64,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt8()
+FNDA:115,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt8()
+DA:65,115
+FN:69,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt16()
+FNDA:110,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt16()
+DA:70,110
+FN:74,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt32()
+FNDA:107,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt32()
+DA:75,107
+FN:79,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt64()
+FNDA:102,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_UInt64()
+DA:80,102
+FN:84,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Single()
+FNDA:97,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Single()
+DA:85,97
+FN:89,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Double()
+FNDA:94,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Double()
+DA:90,94
+FN:94,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Decimal()
+FNDA:7,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Decimal()
+DA:95,7
+FN:99,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_DateTime()
+FNDA:99,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_DateTime()
+DA:100,99
+FN:104,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Text()
+FNDA:25,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Text()
+DA:105,25
+FN:109,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Guid()
+FNDA:101,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Guid()
+DA:110,101
+FN:119,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Enumeration()
+FNDA:317,Kvasir.Schema.DBType Kvasir.Schema.DBType::get_Enumeration()
+DA:120,317
+FN:131,System.Boolean Kvasir.Schema.DBType::IsSupported(System.Type)
+FNDA:308,System.Boolean Kvasir.Schema.DBType::IsSupported(System.Type)
+DA:132,308
+DA:133,308
+DA:134,308
+FN:154,Kvasir.Schema.DBType Kvasir.Schema.DBType::Lookup(System.Type)
+FNDA:205,Kvasir.Schema.DBType Kvasir.Schema.DBType::Lookup(System.Type)
+DA:155,205
+DA:156,208
+DA:157,3
+DA:158,3
+DA:159,3
+DA:162,202
+DA:163,202
+DA:164,202
+BRDA:156,24,0,3
+BRDA:156,24,1,202
+FN:175,System.Boolean Kvasir.Schema.DBType::Equals(Kvasir.Schema.DBType)
+FNDA:2084,System.Boolean Kvasir.Schema.DBType::Equals(Kvasir.Schema.DBType)
+DA:176,2084
+DA:177,2084
+DA:178,2084
+FN:189,System.Boolean Kvasir.Schema.DBType::Equals(System.Object)
+FNDA:48,System.Boolean Kvasir.Schema.DBType::Equals(System.Object)
+DA:190,48
+DA:191,48
+DA:192,48
+BRDA:191,7,0,46
+BRDA:191,7,1,2
+FN:199,System.Int32 Kvasir.Schema.DBType::GetHashCode()
+FNDA:32,System.Int32 Kvasir.Schema.DBType::GetHashCode()
+DA:200,32
+DA:201,32
+DA:202,32
+FN:209,System.String Kvasir.Schema.DBType::ToString()
+FNDA:17,System.String Kvasir.Schema.DBType::ToString()
+DA:210,17
+DA:211,17
+DA:212,17
+FN:226,System.Boolean Kvasir.Schema.DBType::op_Equality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)
+FNDA:2034,System.Boolean Kvasir.Schema.DBType::op_Equality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)
+DA:227,2034
+DA:228,2034
+DA:229,2034
+FN:243,System.Boolean Kvasir.Schema.DBType::op_Inequality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)
+FNDA:13,System.Boolean Kvasir.Schema.DBType::op_Inequality(Kvasir.Schema.DBType,Kvasir.Schema.DBType)
+DA:244,13
+DA:245,13
+DA:246,13
+FN:322,System.Type Kvasir.Schema.DBType::Normalize(System.Type)
+FNDA:513,System.Type Kvasir.Schema.DBType::Normalize(System.Type)
+DA:323,513
+DA:327,513
+DA:330,513
+DA:331,513
+BRDA:327,8,0,465
+BRDA:327,8,1,513
+BRDA:330,19,0,507
+BRDA:330,19,1,6
+FN:250,System.Void Kvasir.Schema.DBType::.cctor()
+FNDA:1,System.Void Kvasir.Schema.DBType::.cctor()
+DA:251,1
+DA:252,1
+DA:254,1
+DA:255,1
+DA:256,1
+DA:257,1
+DA:259,1
+DA:260,1
+DA:261,1
+DA:262,1
+DA:263,1
+DA:264,1
+DA:265,1
+DA:266,1
+DA:267,1
+DA:268,1
+DA:269,1
+DA:270,1
+DA:271,1
+DA:272,1
+DA:273,1
+DA:274,1
+DA:275,1
+DA:276,1
+DA:280,1
+DA:281,1
+DA:282,1
+DA:283,1
+DA:284,1
+DA:285,1
+DA:286,1
+DA:287,1
+DA:288,1
+DA:289,1
+DA:290,1
+DA:291,1
+DA:292,1
+DA:293,1
+DA:294,1
+DA:295,1
+DA:296,1
+DA:297,1
+DA:298,1
+DA:299,1
+FN:307,System.Void Kvasir.Schema.DBType::.ctor(System.Byte)
+FNDA:17,System.Void Kvasir.Schema.DBType::.ctor(System.Byte)
+DA:308,17
+DA:309,17
+DA:310,17
+DA:311,17
+BRDA:309,3,0,17
+BRDA:309,3,1,0
+LF:98
+LH:98
+BRF:10
+BRH:9
+FNF:28
+FNH:28
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\DBValue.cs
+FN:40,System.Object Kvasir.Schema.DBValue::get_Datum()
+FNDA:1578,System.Object Kvasir.Schema.DBValue::get_Datum()
+DA:41,1578
+FN:45,Kvasir.Schema.DBValue Kvasir.Schema.DBValue::get_NULL()
+FNDA:389,Kvasir.Schema.DBValue Kvasir.Schema.DBValue::get_NULL()
+DA:46,389
+FN:217,Kvasir.Schema.DBValue Kvasir.Schema.DBValue::Create(System.Object)
+FNDA:344,Kvasir.Schema.DBValue Kvasir.Schema.DBValue::Create(System.Object)
+DA:218,344
+DA:225,344
+DA:226,344
+DA:227,344
+DA:229,8
+DA:230,4
+DA:231,4
+DA:233,340
+BRDA:226,4,0,26
+BRDA:226,4,1,344
+BRDA:227,18,1,1
+BRDA:227,18,0,344
+FN:245,System.Boolean Kvasir.Schema.DBValue::IsInstanceOf(Kvasir.Schema.DBType)
+FNDA:225,System.Boolean Kvasir.Schema.DBValue::IsInstanceOf(Kvasir.Schema.DBType)
+DA:246,225
+DA:247,225
+DA:248,225
+DA:249,225
+DA:250,225
+DA:252,255
+DA:253,30
+DA:255,205
+DA:256,10
+DA:258,201
+DA:259,16
+DA:261,169
+DA:262,169
+DA:264,225
+BRDA:247,12,0,221
+BRDA:247,25,0,217
+BRDA:247,38,0,110
+BRDA:247,51,0,106
+BRDA:247,64,0,102
+BRDA:247,77,0,98
+BRDA:247,90,0,93
+BRDA:247,103,0,88
+BRDA:247,116,0,83
+BRDA:247,12,1,142
+BRDA:247,25,1,142
+BRDA:247,38,1,142
+BRDA:247,51,1,142
+BRDA:247,64,1,142
+BRDA:247,77,1,142
+BRDA:247,90,1,142
+BRDA:247,103,1,142
+BRDA:247,116,1,142
+BRDA:252,146,0,30
+BRDA:252,146,1,195
+BRDA:255,166,0,10
+BRDA:255,166,1,185
+BRDA:258,199,0,140
+BRDA:258,199,1,45
+BRDA:258,225,0,16
+BRDA:258,225,1,169
+FN:275,System.Boolean Kvasir.Schema.DBValue::Equals(Kvasir.Schema.DBValue)
+FNDA:565,System.Boolean Kvasir.Schema.DBValue::Equals(Kvasir.Schema.DBValue)
+DA:276,565
+DA:277,565
+DA:278,565
+FN:289,System.Boolean Kvasir.Schema.DBValue::Equals(System.Object)
+FNDA:124,System.Boolean Kvasir.Schema.DBValue::Equals(System.Object)
+DA:290,124
+DA:291,124
+DA:292,124
+BRDA:291,7,0,122
+BRDA:291,7,1,2
+FN:299,System.Int32 Kvasir.Schema.DBValue::GetHashCode()
+FNDA:4,System.Int32 Kvasir.Schema.DBValue::GetHashCode()
+DA:300,4
+DA:301,4
+DA:302,4
+FN:309,System.String Kvasir.Schema.DBValue::ToString()
+FNDA:19,System.String Kvasir.Schema.DBValue::ToString()
+DA:310,19
+DA:311,20
+DA:312,1
+DA:314,19
+DA:315,1
+DA:317,18
+DA:318,1
+DA:320,16
+DA:321,16
+DA:323,19
+BRDA:311,14,0,1
+BRDA:311,14,1,18
+BRDA:314,53,0,1
+BRDA:314,53,1,17
+BRDA:317,103,0,1
+BRDA:317,103,1,16
+FN:337,System.Boolean Kvasir.Schema.DBValue::op_Equality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)
+FNDA:183,System.Boolean Kvasir.Schema.DBValue::op_Equality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)
+DA:338,183
+DA:339,183
+DA:340,183
+FN:354,System.Boolean Kvasir.Schema.DBValue::op_Inequality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)
+FNDA:103,System.Boolean Kvasir.Schema.DBValue::op_Inequality(Kvasir.Schema.DBValue,Kvasir.Schema.DBValue)
+DA:355,103
+DA:356,103
+DA:357,103
+FN:53,System.Void Kvasir.Schema.DBValue::.ctor(System.Boolean)
+FNDA:3,System.Void Kvasir.Schema.DBValue::.ctor(System.Boolean)
+DA:54,3
+DA:55,3
+DA:56,3
+FN:63,System.Void Kvasir.Schema.DBValue::.ctor(System.Byte)
+FNDA:2,System.Void Kvasir.Schema.DBValue::.ctor(System.Byte)
+DA:64,2
+DA:65,2
+DA:66,2
+FN:73,System.Void Kvasir.Schema.DBValue::.ctor(System.SByte)
+FNDA:2,System.Void Kvasir.Schema.DBValue::.ctor(System.SByte)
+DA:74,2
+DA:75,2
+DA:76,2
+FN:83,System.Void Kvasir.Schema.DBValue::.ctor(System.UInt16)
+FNDA:2,System.Void Kvasir.Schema.DBValue::.ctor(System.UInt16)
+DA:84,2
+DA:85,2
+DA:86,2
+FN:93,System.Void Kvasir.Schema.DBValue::.ctor(System.Int16)
+FNDA:2,System.Void Kvasir.Schema.DBValue::.ctor(System.Int16)
+DA:94,2
+DA:95,2
+DA:96,2
+FN:103,System.Void Kvasir.Schema.DBValue::.ctor(System.UInt32)
+FNDA:3,System.Void Kvasir.Schema.DBValue::.ctor(System.UInt32)
+DA:104,3
+DA:105,3
+DA:106,3
+FN:113,System.Void Kvasir.Schema.DBValue::.ctor(System.Int32)
+FNDA:150,System.Void Kvasir.Schema.DBValue::.ctor(System.Int32)
+DA:114,150
+DA:115,150
+DA:116,150
+FN:123,System.Void Kvasir.Schema.DBValue::.ctor(System.UInt64)
+FNDA:2,System.Void Kvasir.Schema.DBValue::.ctor(System.UInt64)
+DA:124,2
+DA:125,2
+DA:126,2
+FN:133,System.Void Kvasir.Schema.DBValue::.ctor(System.Int64)
+FNDA:4,System.Void Kvasir.Schema.DBValue::.ctor(System.Int64)
+DA:134,4
+DA:135,4
+DA:136,4
+FN:143,System.Void Kvasir.Schema.DBValue::.ctor(System.Single)
+FNDA:2,System.Void Kvasir.Schema.DBValue::.ctor(System.Single)
+DA:144,2
+DA:145,2
+DA:146,2
+FN:153,System.Void Kvasir.Schema.DBValue::.ctor(System.Double)
+FNDA:3,System.Void Kvasir.Schema.DBValue::.ctor(System.Double)
+DA:154,3
+DA:155,3
+DA:156,3
+FN:163,System.Void Kvasir.Schema.DBValue::.ctor(System.Decimal)
+FNDA:2,System.Void Kvasir.Schema.DBValue::.ctor(System.Decimal)
+DA:164,2
+DA:165,2
+DA:166,2
+FN:173,System.Void Kvasir.Schema.DBValue::.ctor(System.DateTime)
+FNDA:12,System.Void Kvasir.Schema.DBValue::.ctor(System.DateTime)
+DA:174,12
+DA:175,12
+DA:176,12
+FN:183,System.Void Kvasir.Schema.DBValue::.ctor(System.Char)
+FNDA:29,System.Void Kvasir.Schema.DBValue::.ctor(System.Char)
+DA:184,29
+DA:185,29
+DA:186,29
+FN:193,System.Void Kvasir.Schema.DBValue::.ctor(System.String)
+FNDA:137,System.Void Kvasir.Schema.DBValue::.ctor(System.String)
+DA:194,137
+DA:195,137
+DA:196,137
+DA:197,137
+FN:204,System.Void Kvasir.Schema.DBValue::.ctor(System.Guid)
+FNDA:8,System.Void Kvasir.Schema.DBValue::.ctor(System.Guid)
+DA:205,8
+DA:206,8
+DA:207,8
+FN:361,System.Void Kvasir.Schema.DBValue::.cctor()
+FNDA:1,System.Void Kvasir.Schema.DBValue::.cctor()
+DA:362,1
+DA:363,1
+DA:364,1
+DA:365,1
+FN:369,System.Void Kvasir.Schema.DBValue::.ctor(System.DBNull)
+FNDA:27,System.Void Kvasir.Schema.DBValue::.ctor(System.DBNull)
+DA:370,27
+DA:371,27
+DA:372,27
+LF:105
+LH:105
+BRF:38
+BRH:38
+FNF:28
+FNH:28
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\EnumField.cs
+FN:34,Kvasir.Schema.FieldName Kvasir.Schema.EnumField::get_Name()
+FNDA:3,Kvasir.Schema.FieldName Kvasir.Schema.EnumField::get_Name()
+DA:35,3
+FN:37,Kvasir.Schema.DBType Kvasir.Schema.EnumField::get_DataType()
+FNDA:13,Kvasir.Schema.DBType Kvasir.Schema.EnumField::get_DataType()
+DA:38,13
+FN:40,Kvasir.Schema.IsNullable Kvasir.Schema.EnumField::get_Nullability()
+FNDA:3,Kvasir.Schema.IsNullable Kvasir.Schema.EnumField::get_Nullability()
+DA:41,3
+FN:43,Optional.Option`1<Kvasir.Schema.DBValue> Kvasir.Schema.EnumField::get_DefaultValue()
+FNDA:3,Optional.Option`1<Kvasir.Schema.DBValue> Kvasir.Schema.EnumField::get_DefaultValue()
+DA:44,3
+FN:48,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Schema.EnumField::get_Enumerators()
+FNDA:3,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Schema.EnumField::get_Enumerators()
+DA:49,3
+FN:108,Kvasir.Transcription.SqlSnippet Kvasir.Schema.EnumField::Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)
+FNDA:2,Kvasir.Transcription.SqlSnippet Kvasir.Schema.EnumField::Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)
+DA:109,2
+DA:110,2
+DA:112,2
+DA:113,2
+DA:114,2
+DA:115,3
+DA:116,2
+DA:118,2
+DA:119,2
+FN:94,System.Boolean Kvasir.Schema.EnumField::<.ctor>b__17_0(Kvasir.Schema.DBValue)
+FNDA:10,System.Boolean Kvasir.Schema.EnumField::<.ctor>b__17_0(Kvasir.Schema.DBValue)
+DA:95,10
+FN:76,System.Void Kvasir.Schema.EnumField::.ctor(Kvasir.Schema.FieldName,Kvasir.Schema.IsNullable,Optional.Option`1<Kvasir.Schema.DBValue>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue>)
+FNDA:3,System.Void Kvasir.Schema.EnumField::.ctor(Kvasir.Schema.FieldName,Kvasir.Schema.IsNullable,Optional.Option`1<Kvasir.Schema.DBValue>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue>)
+DA:77,3
+DA:78,6
+DA:80,3
+DA:81,3
+DA:82,3
+DA:83,3
+DA:84,3
+DA:86,3
+DA:87,3
+DA:88,3
+DA:89,3
+DA:90,3
+DA:94,3
+DA:96,3
+BRDA:83,42,0,2
+BRDA:83,42,1,1
+LF:29
+LH:29
+BRF:2
+BRH:2
+FNF:8
+FNH:8
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\Extensions.cs
+FN:34,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.BasicField,Kvasir.Transcription.IFieldDeclBuilder)
+FNDA:2,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.BasicField,Kvasir.Transcription.IFieldDeclBuilder)
+DA:35,2
+DA:36,2
+DA:37,2
+DA:39,2
+DA:40,2
+FN:66,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.EnumField,Kvasir.Transcription.IFieldDeclBuilder)
+FNDA:2,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.EnumField,Kvasir.Transcription.IFieldDeclBuilder)
+DA:67,2
+DA:68,2
+DA:69,2
+DA:71,2
+DA:72,2
+FN:96,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.PrimaryKey,Kvasir.Transcription.IKeyDeclBuilder)
+FNDA:3,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.PrimaryKey,Kvasir.Transcription.IKeyDeclBuilder)
+DA:97,3
+DA:98,3
+DA:99,3
+DA:101,3
+DA:102,3
+FN:126,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.CandidateKey,Kvasir.Transcription.IKeyDeclBuilder)
+FNDA:3,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.CandidateKey,Kvasir.Transcription.IKeyDeclBuilder)
+DA:127,3
+DA:128,3
+DA:129,3
+DA:131,3
+DA:132,3
+FN:159,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.Table,Kvasir.Transcription.IBuilderFactory)
+FNDA:1,Kvasir.Transcription.SqlSnippet Kvasir.Schema.SchemaExtensions::GenerateSqlDeclaration(Kvasir.Schema.Table,Kvasir.Transcription.IBuilderFactory)
+DA:160,1
+DA:161,1
+DA:162,1
+DA:164,1
+DA:165,1
+LF:25
+LH:25
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\ForeignKey.cs
+FN:16,Optional.Option`1<Kvasir.Schema.FKName> Kvasir.Schema.ForeignKey::get_Name()
+FNDA:5,Optional.Option`1<Kvasir.Schema.FKName> Kvasir.Schema.ForeignKey::get_Name()
+DA:17,5
+FN:22,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.ForeignKey::get_ReferencingFields()
+FNDA:7,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.ForeignKey::get_ReferencingFields()
+DA:23,7
+FN:27,Kvasir.Schema.ITable Kvasir.Schema.ForeignKey::get_ReferencedTable()
+FNDA:6,Kvasir.Schema.ITable Kvasir.Schema.ForeignKey::get_ReferencedTable()
+DA:28,6
+FN:32,Kvasir.Schema.OnDelete Kvasir.Schema.ForeignKey::get_OnDelete()
+FNDA:5,Kvasir.Schema.OnDelete Kvasir.Schema.ForeignKey::get_OnDelete()
+DA:33,5
+FN:37,Kvasir.Schema.OnUpdate Kvasir.Schema.ForeignKey::get_OnUpdate()
+FNDA:11,Kvasir.Schema.OnUpdate Kvasir.Schema.ForeignKey::get_OnUpdate()
+DA:38,11
+FN:102,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.ForeignKey::GetEnumerator()
+FNDA:1,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.ForeignKey::GetEnumerator()
+DA:103,1
+DA:104,1
+DA:105,1
+FN:119,Kvasir.Transcription.SqlSnippet Kvasir.Schema.ForeignKey::GenerateDeclaration(Kvasir.Transcription.IForeignKeyDeclBuilder)
+FNDA:3,Kvasir.Transcription.SqlSnippet Kvasir.Schema.ForeignKey::GenerateDeclaration(Kvasir.Transcription.IForeignKeyDeclBuilder)
+DA:120,3
+DA:121,3
+DA:123,4
+DA:124,3
+DA:125,3
+DA:126,3
+DA:127,3
+DA:129,3
+DA:130,3
+FN:55,System.Void Kvasir.Schema.ForeignKey::.ctor(Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)
+FNDA:12,System.Void Kvasir.Schema.ForeignKey::.ctor(Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)
+DA:56,12
+FN:77,System.Void Kvasir.Schema.ForeignKey::.ctor(Kvasir.Schema.FKName,Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)
+FNDA:6,System.Void Kvasir.Schema.ForeignKey::.ctor(Kvasir.Schema.FKName,Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)
+DA:78,6
+FN:156,System.Void Kvasir.Schema.ForeignKey::.ctor(Optional.Option`1<Kvasir.Schema.FKName>,Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)
+FNDA:6,System.Void Kvasir.Schema.ForeignKey::.ctor(Optional.Option`1<Kvasir.Schema.FKName>,Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)
+DA:157,6
+DA:158,12
+DA:160,8
+DA:161,6
+DA:162,6
+DA:163,6
+DA:164,6
+DA:165,17
+DA:166,6
+DA:167,6
+DA:169,6
+DA:170,6
+DA:171,6
+DA:172,6
+DA:173,6
+DA:174,6
+FN:195,System.Void Kvasir.Schema.FKName::.ctor(System.String)
+FNDA:11,System.Void Kvasir.Schema.FKName::.ctor(System.String)
+DA:196,11
+LF:36
+LH:36
+BRF:0
+BRH:0
+FNF:11
+FNH:11
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\IField.cs
+FN:98,System.Void Kvasir.Schema.FieldName::.ctor(System.String)
+FNDA:90,System.Void Kvasir.Schema.FieldName::.ctor(System.String)
+DA:99,90
+LF:1
+LH:1
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\IKey.cs
+FN:88,System.Void Kvasir.Schema.KeyName::.ctor(System.String)
+FNDA:39,System.Void Kvasir.Schema.KeyName::.ctor(System.String)
+DA:89,39
+LF:1
+LH:1
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\ITable.cs
+FN:133,System.Void Kvasir.Schema.TableName::.ctor(System.String)
+FNDA:15,System.Void Kvasir.Schema.TableName::.ctor(System.String)
+DA:134,15
+LF:1
+LH:1
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\PrimaryKey.cs
+FN:12,Optional.Option`1<Kvasir.Schema.KeyName> Kvasir.Schema.PrimaryKey::get_Name()
+FNDA:5,Optional.Option`1<Kvasir.Schema.KeyName> Kvasir.Schema.PrimaryKey::get_Name()
+DA:13,5
+FN:15,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.PrimaryKey::get_Fields()
+FNDA:25,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.PrimaryKey::get_Fields()
+DA:16,25
+FN:41,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.PrimaryKey::GetEnumerator()
+FNDA:1,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.PrimaryKey::GetEnumerator()
+DA:42,1
+DA:43,1
+DA:44,1
+FN:56,Kvasir.Transcription.SqlSnippet Kvasir.Schema.PrimaryKey::Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)
+FNDA:3,Kvasir.Transcription.SqlSnippet Kvasir.Schema.PrimaryKey::Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)
+DA:57,3
+DA:58,3
+DA:60,4
+DA:61,3
+DA:62,3
+DA:64,3
+DA:65,3
+FN:23,System.Void Kvasir.Schema.PrimaryKey::.ctor(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+FNDA:10,System.Void Kvasir.Schema.PrimaryKey::.ctor(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+DA:24,10
+DA:25,5
+DA:26,5
+FN:36,System.Void Kvasir.Schema.PrimaryKey::.ctor(Kvasir.Schema.KeyName,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+FNDA:4,System.Void Kvasir.Schema.PrimaryKey::.ctor(Kvasir.Schema.KeyName,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>)
+DA:37,4
+DA:38,2
+DA:39,2
+LF:18
+LH:18
+BRF:0
+BRH:0
+FNF:6
+FNH:6
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Schema\Table.cs
+FN:17,Kvasir.Schema.TableName Kvasir.Schema.Table::get_Name()
+FNDA:4,Kvasir.Schema.TableName Kvasir.Schema.Table::get_Name()
+DA:18,4
+FN:20,System.Int32 Kvasir.Schema.Table::get_Dimension()
+FNDA:1,System.Int32 Kvasir.Schema.Table::get_Dimension()
+DA:21,1
+FN:24,Kvasir.Schema.IField Kvasir.Schema.Table::get_Item(Kvasir.Schema.FieldName)
+FNDA:2,Kvasir.Schema.IField Kvasir.Schema.Table::get_Item(Kvasir.Schema.FieldName)
+DA:25,2
+DA:26,8
+DA:27,3
+DA:28,1
+DA:29,1
+DA:31,1
+DA:32,1
+BRDA:27,44,0,1
+BRDA:27,44,1,1
+FN:35,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.Table::get_Fields()
+FNDA:8,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.IField> Kvasir.Schema.Table::get_Fields()
+DA:36,8
+FN:38,Kvasir.Schema.PrimaryKey Kvasir.Schema.Table::get_PrimaryKey()
+FNDA:1,Kvasir.Schema.PrimaryKey Kvasir.Schema.Table::get_PrimaryKey()
+DA:39,1
+FN:41,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.CandidateKey> Kvasir.Schema.Table::get_CandidateKeys()
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.CandidateKey> Kvasir.Schema.Table::get_CandidateKeys()
+DA:42,1
+FN:44,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.ForeignKey> Kvasir.Schema.Table::get_ForeignKeys()
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.ForeignKey> Kvasir.Schema.Table::get_ForeignKeys()
+DA:45,1
+FN:47,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.CheckConstraint> Kvasir.Schema.Table::get_CheckConstraints()
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.CheckConstraint> Kvasir.Schema.Table::get_CheckConstraints()
+DA:48,1
+FN:117,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.Table::GetEnumerator()
+FNDA:1,System.Collections.Generic.IEnumerator`1<Kvasir.Schema.IField> Kvasir.Schema.Table::GetEnumerator()
+DA:118,1
+DA:119,1
+DA:120,1
+FN:122,Kvasir.Transcription.SqlSnippet Kvasir.Schema.Table::Kvasir.Schema.ITable.GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)
+FNDA:1,Kvasir.Transcription.SqlSnippet Kvasir.Schema.Table::Kvasir.Schema.ITable.GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)
+DA:123,1
+DA:124,1
+DA:127,1
+DA:128,1
+DA:131,12
+DA:132,3
+DA:133,3
+DA:134,3
+DA:137,1
+DA:138,1
+DA:141,6
+DA:142,1
+DA:143,1
+DA:144,1
+DA:147,6
+DA:148,1
+DA:149,1
+DA:150,1
+DA:153,6
+DA:154,1
+DA:155,1
+DA:156,1
+DA:159,1
+DA:160,1
+BRDA:131,84,1,3
+BRDA:131,84,0,1
+BRDA:141,183,1,1
+BRDA:141,183,0,1
+BRDA:147,258,1,1
+BRDA:147,258,0,1
+BRDA:153,333,1,1
+BRDA:153,333,0,1
+FN:80,System.Void Kvasir.Schema.Table::.ctor(Kvasir.Schema.TableName,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.PrimaryKey,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.CandidateKey>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.ForeignKey>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.CheckConstraint>)
+FNDA:1,System.Void Kvasir.Schema.Table::.ctor(Kvasir.Schema.TableName,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,Kvasir.Schema.PrimaryKey,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.CandidateKey>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.ForeignKey>,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.CheckConstraint>)
+DA:81,1
+DA:82,1
+DA:83,2
+DA:85,1
+DA:86,1
+DA:87,1
+DA:88,4
+DA:89,1
+DA:90,2
+DA:91,1
+DA:92,3
+DA:93,1
+DA:94,2
+DA:95,3
+DA:96,1
+DA:97,2
+DA:99,1
+DA:100,1
+DA:101,1
+DA:102,1
+DA:103,1
+DA:104,1
+DA:105,1
+BRDA:92,13,0,1
+BRDA:92,13,1,1
+BRDA:95,13,0,1
+BRDA:95,13,1,1
+BRDA:97,18,0,1
+BRDA:97,18,1,1
+LF:64
+LH:64
+BRF:16
+BRH:16
+FNF:11
+FNH:11
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Relations\RelationList.cs
+FN:69,System.Int32 Kvasir.Relations.RelationList`1::get_Capacity()
+FNDA:2,System.Int32 Kvasir.Relations.RelationList`1::get_Capacity()
+DA:70,2
+DA:71,2
+DA:72,2
+FN:72,System.Void Kvasir.Relations.RelationList`1::set_Capacity(System.Int32)
+FNDA:0,System.Void Kvasir.Relations.RelationList`1::set_Capacity(System.Int32)
+DA:73,0
+DA:74,0
+DA:75,0
+FN:78,System.Int32 Kvasir.Relations.RelationList`1::get_Count()
+FNDA:47,System.Int32 Kvasir.Relations.RelationList`1::get_Count()
+DA:79,47
+FN:82,T Kvasir.Relations.RelationList`1::get_Item(System.Int32)
+FNDA:124,T Kvasir.Relations.RelationList`1::get_Item(System.Int32)
+DA:83,124
+DA:84,124
+DA:85,124
+FN:85,System.Void Kvasir.Relations.RelationList`1::set_Item(System.Int32,T)
+FNDA:13,System.Void Kvasir.Relations.RelationList`1::set_Item(System.Int32,T)
+DA:86,13
+DA:87,13
+DA:88,13
+DA:89,13
+DA:90,13
+FN:136,System.Void Kvasir.Relations.RelationList`1::Add(T)
+FNDA:30,System.Void Kvasir.Relations.RelationList`1::Add(T)
+DA:137,30
+DA:138,30
+DA:139,30
+DA:140,30
+FN:149,System.Void Kvasir.Relations.RelationList`1::AddRange(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:0,System.Void Kvasir.Relations.RelationList`1::AddRange(System.Collections.Generic.IEnumerable`1<T>)
+DA:150,0
+DA:151,0
+DA:152,0
+DA:153,0
+DA:154,0
+DA:155,0
+BRDA:151,58,1,0
+BRDA:151,58,0,0
+FN:260,System.Void Kvasir.Relations.RelationList`1::Clear()
+FNDA:1,System.Void Kvasir.Relations.RelationList`1::Clear()
+DA:261,1
+DA:262,14
+DA:263,4
+DA:264,4
+DA:265,1
+DA:266,1
+BRDA:262,35,1,4
+BRDA:262,35,0,1
+FN:692,System.Void Kvasir.Relations.RelationList`1::Insert(System.Int32,T)
+FNDA:17,System.Void Kvasir.Relations.RelationList`1::Insert(System.Int32,T)
+DA:693,17
+DA:694,17
+DA:695,13
+DA:696,13
+DA:697,13
+FN:714,System.Void Kvasir.Relations.RelationList`1::InsertRange(System.Int32,System.Collections.Generic.IEnumerable`1<T>)
+FNDA:6,System.Void Kvasir.Relations.RelationList`1::InsertRange(System.Int32,System.Collections.Generic.IEnumerable`1<T>)
+DA:715,6
+DA:716,6
+DA:718,40
+DA:719,9
+DA:720,7
+DA:721,3
+BRDA:718,58,1,9
+BRDA:718,58,0,3
+FN:798,System.Boolean Kvasir.Relations.RelationList`1::Remove(T)
+FNDA:10,System.Boolean Kvasir.Relations.RelationList`1::Remove(T)
+DA:799,10
+DA:800,10
+DA:801,11
+DA:802,1
+DA:805,9
+DA:806,9
+DA:807,10
+BRDA:801,15,0,1
+BRDA:801,15,1,9
+FN:817,System.Int32 Kvasir.Relations.RelationList`1::RemoveAll(System.Predicate`1<T>)
+FNDA:1,System.Int32 Kvasir.Relations.RelationList`1::RemoveAll(System.Predicate`1<T>)
+DA:818,1
+DA:819,1
+DA:820,17
+DA:821,7
+DA:822,2
+DA:823,2
+DA:824,2
+DA:825,5
+DA:826,1
+DA:827,1
+BRDA:820,70,1,5
+BRDA:821,40,0,2
+BRDA:821,40,1,5
+BRDA:820,70,0,1
+FN:829,System.Void Kvasir.Relations.RelationList`1::RemoveAt(System.Int32)
+FNDA:18,System.Void Kvasir.Relations.RelationList`1::RemoveAt(System.Int32)
+DA:830,18
+DA:831,18
+DA:832,16
+DA:833,16
+DA:834,16
+FN:853,System.Int32 Kvasir.Relations.RelationList`1::RemoveRange(System.Int32,System.Int32)
+FNDA:5,System.Int32 Kvasir.Relations.RelationList`1::RemoveRange(System.Int32,System.Int32)
+DA:854,5
+DA:855,5
+DA:856,4
+DA:857,6
+DA:859,13
+DA:860,3
+DA:861,3
+DA:862,2
+DA:863,2
+BRDA:859,166,1,3
+BRDA:859,166,0,2
+FN:867,System.Void Kvasir.Relations.RelationList`1::Reverse()
+FNDA:1,System.Void Kvasir.Relations.RelationList`1::Reverse()
+DA:868,1
+DA:869,1
+DA:870,1
+DA:871,1
+FN:890,System.Void Kvasir.Relations.RelationList`1::Reverse(System.Int32,System.Int32)
+FNDA:1,System.Void Kvasir.Relations.RelationList`1::Reverse(System.Int32,System.Int32)
+DA:891,1
+DA:892,1
+DA:893,1
+DA:894,1
+FN:903,System.Void Kvasir.Relations.RelationList`1::Sort()
+FNDA:1,System.Void Kvasir.Relations.RelationList`1::Sort()
+DA:904,1
+DA:905,1
+DA:906,1
+FN:918,System.Void Kvasir.Relations.RelationList`1::Sort(System.Comparison`1<T>)
+FNDA:2,System.Void Kvasir.Relations.RelationList`1::Sort(System.Comparison`1<T>)
+DA:919,2
+DA:920,2
+DA:921,31
+DA:922,9
+DA:923,9
+DA:925,2
+DA:926,31
+DA:927,9
+DA:928,9
+DA:929,9
+DA:930,2
+BRDA:921,93,1,9
+BRDA:921,93,0,2
+BRDA:926,200,1,9
+BRDA:926,200,0,2
+FN:947,System.Void Kvasir.Relations.RelationList`1::Sort(System.Collections.Generic.IComparer`1<T>)
+FNDA:2,System.Void Kvasir.Relations.RelationList`1::Sort(System.Collections.Generic.IComparer`1<T>)
+DA:948,2
+DA:949,15
+DA:950,2
+FN:982,System.Void Kvasir.Relations.RelationList`1::Sort(System.Int32,System.Int32,System.Collections.Generic.IComparer`1<T>)
+FNDA:1,System.Void Kvasir.Relations.RelationList`1::Sort(System.Int32,System.Int32,System.Collections.Generic.IComparer`1<T>)
+DA:983,1
+DA:984,1
+DA:986,1
+DA:987,14
+DA:988,4
+DA:989,4
+DA:991,1
+DA:992,14
+DA:993,4
+DA:994,4
+DA:995,4
+DA:996,1
+BRDA:987,98,1,4
+BRDA:987,98,0,1
+BRDA:992,199,1,4
+BRDA:992,199,0,1
+FN:1050,System.Type Kvasir.Relations.RelationList`1::Kvasir.Relations.IRelation.get_ConnectionType()
+FNDA:3,System.Type Kvasir.Relations.RelationList`1::Kvasir.Relations.IRelation.get_ConnectionType()
+DA:1051,3
+FN:1074,System.Object Kvasir.Relations.RelationList`1::System.Collections.IList.get_Item(System.Int32)
+FNDA:0,System.Object Kvasir.Relations.RelationList`1::System.Collections.IList.get_Item(System.Int32)
+DA:1075,0
+DA:1076,0
+DA:1077,0
+FN:1077,System.Void Kvasir.Relations.RelationList`1::System.Collections.IList.set_Item(System.Int32,System.Object)
+FNDA:0,System.Void Kvasir.Relations.RelationList`1::System.Collections.IList.set_Item(System.Int32,System.Object)
+DA:1078,0
+DA:1079,0
+DA:1080,0
+DA:1081,0
+FN:1084,System.Int32 Kvasir.Relations.RelationList`1::System.Collections.IList.Add(System.Object)
+FNDA:0,System.Int32 Kvasir.Relations.RelationList`1::System.Collections.IList.Add(System.Object)
+DA:1085,0
+DA:1086,0
+DA:1087,0
+DA:1088,0
+DA:1089,0
+FN:1091,System.Void Kvasir.Relations.RelationList`1::Kvasir.Relations.IRelation.Canonicalize()
+FNDA:26,System.Void Kvasir.Relations.RelationList`1::Kvasir.Relations.IRelation.Canonicalize()
+DA:1092,26
+DA:1093,26
+DA:1094,292
+DA:1095,80
+DA:1096,80
+DA:1097,26
+BRDA:1094,53,1,80
+BRDA:1094,53,0,26
+FN:1139,System.Void Kvasir.Relations.RelationList`1::System.Collections.IList.Insert(System.Int32,System.Object)
+FNDA:0,System.Void Kvasir.Relations.RelationList`1::System.Collections.IList.Insert(System.Int32,System.Object)
+DA:1140,0
+DA:1141,0
+DA:1142,0
+DA:1143,0
+FN:1145,System.Void Kvasir.Relations.RelationList`1::System.Collections.IList.Remove(System.Object)
+FNDA:0,System.Void Kvasir.Relations.RelationList`1::System.Collections.IList.Remove(System.Object)
+DA:1146,0
+DA:1147,0
+DA:1148,0
+DA:1149,0
+FN:1151,System.Void Kvasir.Relations.RelationList`1::Kvasir.Relations.IRelation.Repopulate(System.Object)
+FNDA:6,System.Void Kvasir.Relations.RelationList`1::Kvasir.Relations.IRelation.Repopulate(System.Object)
+DA:1152,6
+DA:1153,6
+DA:1154,6
+DA:1155,10
+DA:1157,6
+DA:1158,6
+DA:1159,6
+BRDA:1155,60,0,1
+BRDA:1155,60,1,6
+FN:1179,Kvasir.Relations.Status Kvasir.Relations.RelationList`1::BookkeepAddition(T)
+FNDA:56,Kvasir.Relations.Status Kvasir.Relations.RelationList`1::BookkeepAddition(T)
+DA:1180,56
+DA:1181,56
+DA:1182,66
+DA:1183,10
+DA:1184,10
+DA:1185,56
+DA:1186,56
+BRDA:1181,13,0,46
+BRDA:1181,13,1,10
+BRDA:1182,26,0,10
+BRDA:1182,26,1,56
+FN:1194,System.Void Kvasir.Relations.RelationList`1::BookkeepRemoval(System.Int32)
+FNDA:35,System.Void Kvasir.Relations.RelationList`1::BookkeepRemoval(System.Int32)
+DA:1195,35
+DA:1196,61
+DA:1197,26
+DA:1198,26
+DA:1199,33
+BRDA:1196,18,0,26
+BRDA:1196,18,1,33
+FN:98,System.Void Kvasir.Relations.RelationList`1::.ctor()
+FNDA:26,System.Void Kvasir.Relations.RelationList`1::.ctor()
+DA:99,26
+DA:100,13
+DA:101,13
+DA:102,13
+DA:103,13
+FN:111,System.Void Kvasir.Relations.RelationList`1::.ctor(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:70,System.Void Kvasir.Relations.RelationList`1::.ctor(System.Collections.Generic.IEnumerable`1<T>)
+DA:112,70
+DA:113,35
+DA:114,35
+DA:115,35
+DA:116,35
+FN:127,System.Void Kvasir.Relations.RelationList`1::.ctor(System.Int32)
+FNDA:2,System.Void Kvasir.Relations.RelationList`1::.ctor(System.Int32)
+DA:128,2
+DA:129,1
+DA:130,1
+DA:131,1
+DA:132,1
+FN:1123,System.Boolean Kvasir.Relations.RelationList`1/<Kvasir-Relations-IRelation-GetEnumerator>d__81::MoveNext()
+FNDA:208,System.Boolean Kvasir.Relations.RelationList`1/<Kvasir-Relations-IRelation-GetEnumerator>d__81::MoveNext()
+DA:1124,208
+DA:1125,662
+DA:1126,82
+DA:1127,82
+DA:1128,2528
+DA:1129,704
+DA:1130,704
+DA:1131,208
+BRDA:1125,154,1,82
+BRDA:1125,154,0,208
+BRDA:1128,285,1,704
+BRDA:1128,285,0,208
+LF:179
+LH:150
+BRF:36
+BRH:34
+FNF:34
+FNH:27
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Relations\RelationMap.cs
+FN:73,System.Collections.Generic.IEqualityComparer`1<TKey> Kvasir.Relations.RelationMap`2::get_Comparer()
+FNDA:8,System.Collections.Generic.IEqualityComparer`1<TKey> Kvasir.Relations.RelationMap`2::get_Comparer()
+DA:74,8
+FN:76,System.Int32 Kvasir.Relations.RelationMap`2::get_Count()
+FNDA:27,System.Int32 Kvasir.Relations.RelationMap`2::get_Count()
+DA:77,27
+FN:80,TValue Kvasir.Relations.RelationMap`2::get_Item(TKey)
+FNDA:57,TValue Kvasir.Relations.RelationMap`2::get_Item(TKey)
+DA:81,57
+DA:82,57
+DA:83,57
+FN:83,System.Void Kvasir.Relations.RelationMap`2::set_Item(TKey,TValue)
+FNDA:7,System.Void Kvasir.Relations.RelationMap`2::set_Item(TKey,TValue)
+DA:84,7
+DA:85,7
+DA:86,7
+DA:87,7
+FN:96,System.Collections.Generic.Dictionary`2/KeyCollection<TKey,TValue> Kvasir.Relations.RelationMap`2::get_Keys()
+FNDA:4,System.Collections.Generic.Dictionary`2/KeyCollection<TKey,TValue> Kvasir.Relations.RelationMap`2::get_Keys()
+DA:97,4
+FN:105,System.Collections.Generic.Dictionary`2/ValueCollection<TKey,TValue> Kvasir.Relations.RelationMap`2::get_Values()
+FNDA:4,System.Collections.Generic.Dictionary`2/ValueCollection<TKey,TValue> Kvasir.Relations.RelationMap`2::get_Values()
+DA:106,4
+FN:241,System.Void Kvasir.Relations.RelationMap`2::Add(TKey,TValue)
+FNDA:29,System.Void Kvasir.Relations.RelationMap`2::Add(TKey,TValue)
+DA:242,29
+DA:243,29
+DA:244,28
+DA:245,28
+FN:247,System.Void Kvasir.Relations.RelationMap`2::Clear()
+FNDA:1,System.Void Kvasir.Relations.RelationMap`2::Clear()
+DA:248,1
+DA:249,15
+DA:250,4
+DA:251,4
+DA:252,1
+DA:253,1
+BRDA:249,46,1,4
+BRDA:249,46,0,1
+FN:303,System.Boolean Kvasir.Relations.RelationMap`2::Remove(TKey)
+FNDA:16,System.Boolean Kvasir.Relations.RelationMap`2::Remove(TKey)
+DA:304,16
+DA:305,16
+DA:306,16
+FN:321,System.Boolean Kvasir.Relations.RelationMap`2::Remove(TKey,TValue&)
+FNDA:19,System.Boolean Kvasir.Relations.RelationMap`2::Remove(TKey,TValue&)
+DA:322,19
+DA:323,32
+DA:324,13
+DA:325,13
+DA:326,19
+DA:327,19
+BRDA:323,15,0,13
+BRDA:323,15,1,19
+FN:383,System.Boolean Kvasir.Relations.RelationMap`2::TryAdd(TKey,TValue)
+FNDA:4,System.Boolean Kvasir.Relations.RelationMap`2::TryAdd(TKey,TValue)
+DA:384,4
+DA:385,5
+DA:386,1
+DA:389,3
+DA:390,3
+DA:391,4
+BRDA:385,10,0,1
+BRDA:385,10,1,3
+FN:418,System.Type Kvasir.Relations.RelationMap`2::Kvasir.Relations.IRelation.get_ConnectionType()
+FNDA:8,System.Type Kvasir.Relations.RelationMap`2::Kvasir.Relations.IRelation.get_ConnectionType()
+DA:419,8
+FN:443,System.Object Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.get_Item(System.Object)
+FNDA:0,System.Object Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.get_Item(System.Object)
+DA:444,0
+DA:445,0
+DA:446,0
+DA:447,0
+BRDA:445,18,0,0
+BRDA:445,18,1,0
+FN:447,System.Void Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.set_Item(System.Object,System.Object)
+FNDA:0,System.Void Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.set_Item(System.Object,System.Object)
+DA:448,0
+DA:449,0
+DA:450,0
+DA:451,0
+DA:452,0
+BRDA:449,18,0,0
+BRDA:449,18,1,0
+BRDA:450,67,0,0
+BRDA:450,67,1,0
+BRDA:451,107,0,0
+BRDA:451,107,1,0
+BRDA:450,1,0,0
+BRDA:450,1,1,0
+FN:485,System.Void Kvasir.Relations.RelationMap`2::System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Add(System.Collections.Generic.KeyValuePair`2<TKey,TValue>)
+FNDA:0,System.Void Kvasir.Relations.RelationMap`2::System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Add(System.Collections.Generic.KeyValuePair`2<TKey,TValue>)
+DA:486,0
+DA:487,0
+DA:488,0
+FN:502,System.Boolean Kvasir.Relations.RelationMap`2::System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Remove(System.Collections.Generic.KeyValuePair`2<TKey,TValue>)
+FNDA:0,System.Boolean Kvasir.Relations.RelationMap`2::System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Remove(System.Collections.Generic.KeyValuePair`2<TKey,TValue>)
+DA:503,0
+DA:504,0
+DA:505,0
+DA:506,0
+DA:508,0
+DA:509,0
+BRDA:504,19,0,0
+BRDA:504,19,1,0
+BRDA:504,66,0,0
+BRDA:504,66,1,0
+FN:511,System.Void Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.Add(System.Object,System.Object)
+FNDA:0,System.Void Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.Add(System.Object,System.Object)
+DA:512,0
+DA:513,0
+DA:514,0
+DA:515,0
+DA:516,0
+BRDA:513,18,0,0
+BRDA:513,18,1,0
+BRDA:514,67,0,0
+BRDA:514,67,1,0
+BRDA:515,107,0,0
+BRDA:515,107,1,0
+BRDA:514,1,0,0
+BRDA:514,1,1,0
+FN:531,System.Void Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.Remove(System.Object)
+FNDA:0,System.Void Kvasir.Relations.RelationMap`2::System.Collections.IDictionary.Remove(System.Object)
+DA:532,0
+DA:533,0
+DA:534,0
+DA:535,0
+BRDA:533,18,0,0
+BRDA:533,18,1,0
+FN:549,System.Void Kvasir.Relations.RelationMap`2::Kvasir.Relations.IRelation.Canonicalize()
+FNDA:12,System.Void Kvasir.Relations.RelationMap`2::Kvasir.Relations.IRelation.Canonicalize()
+DA:550,12
+DA:551,12
+DA:552,171
+DA:553,45
+DA:554,45
+DA:555,12
+BRDA:552,64,1,45
+BRDA:552,64,0,12
+FN:567,System.Void Kvasir.Relations.RelationMap`2::Kvasir.Relations.IRelation.Repopulate(System.Object)
+FNDA:3,System.Void Kvasir.Relations.RelationMap`2::Kvasir.Relations.IRelation.Repopulate(System.Object)
+DA:568,3
+DA:569,3
+DA:570,3
+DA:571,6
+DA:573,3
+DA:574,3
+DA:576,3
+DA:577,3
+DA:578,3
+BRDA:571,65,0,1
+BRDA:571,65,1,3
+FN:581,Kvasir.Relations.Status Kvasir.Relations.RelationMap`2::BookkeepAddition(TKey,TValue)
+FNDA:28,Kvasir.Relations.Status Kvasir.Relations.RelationMap`2::BookkeepAddition(TKey,TValue)
+DA:582,28
+DA:583,28
+DA:584,28
+DA:586,32
+DA:587,4
+DA:588,4
+DA:589,28
+DA:590,28
+BRDA:583,13,0,6
+BRDA:583,13,1,24
+BRDA:583,47,0,24
+BRDA:583,47,1,4
+BRDA:586,60,0,4
+BRDA:586,60,1,28
+FN:591,System.Void Kvasir.Relations.RelationMap`2::BookkeepRemoval(TKey)
+FNDA:17,System.Void Kvasir.Relations.RelationMap`2::BookkeepRemoval(TKey)
+DA:592,17
+DA:593,30
+DA:594,13
+DA:595,13
+DA:596,17
+BRDA:593,18,0,13
+BRDA:593,18,1,17
+FN:113,System.Void Kvasir.Relations.RelationMap`2::.ctor()
+FNDA:14,System.Void Kvasir.Relations.RelationMap`2::.ctor()
+DA:114,14
+DA:115,7
+DA:116,7
+DA:117,7
+DA:118,7
+FN:127,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IEqualityComparer`1<TKey>)
+FNDA:2,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IEqualityComparer`1<TKey>)
+DA:128,2
+DA:129,1
+DA:130,1
+DA:131,1
+DA:132,1
+FN:146,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IDictionary`2<TKey,TValue>)
+FNDA:3,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IDictionary`2<TKey,TValue>)
+DA:147,3
+FN:164,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IDictionary`2<TKey,TValue>,System.Collections.Generic.IEqualityComparer`1<TKey>)
+FNDA:4,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IDictionary`2<TKey,TValue>,System.Collections.Generic.IEqualityComparer`1<TKey>)
+DA:165,4
+DA:166,2
+DA:167,2
+DA:168,10
+DA:169,2
+DA:170,2
+BRDA:167,34,0,1
+BRDA:167,34,1,2
+FN:183,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IEnumerable`1<System.Collections.Generic.KeyValuePair`2<TKey,TValue>>)
+FNDA:48,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IEnumerable`1<System.Collections.Generic.KeyValuePair`2<TKey,TValue>>)
+DA:184,48
+FN:201,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IEnumerable`1<System.Collections.Generic.KeyValuePair`2<TKey,TValue>>,System.Collections.Generic.IEqualityComparer`1<TKey>)
+FNDA:34,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Collections.Generic.IEnumerable`1<System.Collections.Generic.KeyValuePair`2<TKey,TValue>>,System.Collections.Generic.IEqualityComparer`1<TKey>)
+DA:202,34
+DA:203,17
+DA:204,17
+DA:205,79
+DA:206,17
+DA:207,17
+BRDA:204,29,0,1
+BRDA:204,29,1,17
+FN:219,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Int32)
+FNDA:3,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Int32)
+DA:220,3
+FN:232,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Int32,System.Collections.Generic.IEqualityComparer`1<TKey>)
+FNDA:4,System.Void Kvasir.Relations.RelationMap`2::.ctor(System.Int32,System.Collections.Generic.IEqualityComparer`1<TKey>)
+DA:233,4
+DA:234,2
+DA:235,2
+DA:236,2
+DA:237,2
+FN:557,System.Boolean Kvasir.Relations.RelationMap`2/<Kvasir-Relations-IRelation-GetEnumerator>d__72::MoveNext()
+FNDA:131,System.Boolean Kvasir.Relations.RelationMap`2/<Kvasir-Relations-IRelation-GetEnumerator>d__72::MoveNext()
+DA:558,131
+DA:559,531
+DA:560,46
+DA:561,46
+DA:562,1770
+DA:563,459
+DA:564,459
+DA:565,131
+BRDA:559,171,1,46
+BRDA:559,171,0,131
+BRDA:562,335,1,459
+BRDA:562,335,0,131
+LF:130
+LH:103
+BRF:50
+BRH:26
+FNF:31
+FNH:25
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Relations\RelationSet.cs
+FN:59,System.Collections.Generic.IEqualityComparer`1<T> Kvasir.Relations.RelationSet`1::get_Comparer()
+FNDA:6,System.Collections.Generic.IEqualityComparer`1<T> Kvasir.Relations.RelationSet`1::get_Comparer()
+DA:60,6
+FN:62,System.Int32 Kvasir.Relations.RelationSet`1::get_Count()
+FNDA:38,System.Int32 Kvasir.Relations.RelationSet`1::get_Count()
+DA:63,38
+FN:161,System.Boolean Kvasir.Relations.RelationSet`1::Add(T)
+FNDA:92,System.Boolean Kvasir.Relations.RelationSet`1::Add(T)
+DA:162,92
+DA:163,93
+DA:164,1
+DA:165,1
+DA:166,1
+DA:167,1
+DA:168,1
+DA:171,163
+DA:172,72
+DA:173,72
+DA:174,72
+DA:177,19
+DA:178,92
+BRDA:163,15,0,1
+BRDA:163,15,1,91
+BRDA:171,97,0,72
+BRDA:171,97,1,19
+FN:180,System.Void Kvasir.Relations.RelationSet`1::Clear()
+FNDA:1,System.Void Kvasir.Relations.RelationSet`1::Clear()
+DA:181,1
+DA:182,24
+DA:183,7
+DA:184,7
+DA:185,1
+DA:186,1
+BRDA:182,41,1,7
+BRDA:182,41,0,1
+FN:251,System.Void Kvasir.Relations.RelationSet`1::ExceptWith(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:5,System.Void Kvasir.Relations.RelationSet`1::ExceptWith(System.Collections.Generic.IEnumerable`1<T>)
+DA:252,5
+DA:253,93
+DA:257,26
+DA:258,26
+DA:259,5
+BRDA:253,34,1,26
+BRDA:253,34,0,5
+FN:278,System.Void Kvasir.Relations.RelationSet`1::IntersectWith(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:5,System.Void Kvasir.Relations.RelationSet`1::IntersectWith(System.Collections.Generic.IEnumerable`1<T>)
+DA:279,5
+DA:280,90
+DA:281,35
+DA:282,10
+DA:283,10
+DA:284,25
+DA:285,5
+BRDA:280,57,1,25
+BRDA:281,37,0,10
+BRDA:281,37,1,25
+BRDA:280,57,0,5
+FN:317,System.Boolean Kvasir.Relations.RelationSet`1::Remove(T)
+FNDA:73,System.Boolean Kvasir.Relations.RelationSet`1::Remove(T)
+DA:318,73
+DA:319,135
+DA:320,62
+DA:321,103
+DA:322,41
+DA:323,41
+DA:325,62
+DA:326,62
+DA:327,62
+DA:329,11
+DA:330,73
+BRDA:319,15,0,62
+BRDA:321,56,0,41
+BRDA:321,56,1,62
+BRDA:319,15,1,11
+FN:341,System.Int32 Kvasir.Relations.RelationSet`1::RemoveWhere(System.Predicate`1<T>)
+FNDA:1,System.Int32 Kvasir.Relations.RelationSet`1::RemoveWhere(System.Predicate`1<T>)
+DA:342,1
+DA:343,1
+DA:344,21
+DA:345,6
+DA:346,6
+DA:347,1
+DA:348,1
+BRDA:344,40,0,1
+BRDA:344,40,1,1
+BRDA:344,102,1,6
+BRDA:344,102,0,1
+FN:356,System.Void Kvasir.Relations.RelationSet`1::SymmetricExceptWith(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:5,System.Void Kvasir.Relations.RelationSet`1::SymmetricExceptWith(System.Collections.Generic.IEnumerable`1<T>)
+DA:357,5
+DA:358,5
+DA:360,93
+DA:361,36
+DA:362,10
+DA:363,10
+DA:364,26
+DA:365,90
+DA:366,41
+DA:367,16
+DA:368,16
+DA:369,25
+DA:370,45
+DA:371,10
+DA:372,10
+DA:373,5
+BRDA:360,61,1,26
+BRDA:361,42,0,10
+BRDA:361,42,1,26
+BRDA:360,61,0,5
+BRDA:365,135,1,25
+BRDA:366,114,0,16
+BRDA:366,114,1,25
+BRDA:365,135,0,5
+BRDA:370,192,1,10
+BRDA:370,192,0,5
+FN:415,System.Void Kvasir.Relations.RelationSet`1::UnionWith(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:5,System.Void Kvasir.Relations.RelationSet`1::UnionWith(System.Collections.Generic.IEnumerable`1<T>)
+DA:416,5
+DA:417,96
+DA:418,27
+DA:419,27
+DA:420,5
+BRDA:417,34,1,27
+BRDA:417,34,0,5
+FN:424,System.Type Kvasir.Relations.RelationSet`1::Kvasir.Relations.IRelation.get_ConnectionType()
+FNDA:4,System.Type Kvasir.Relations.RelationSet`1::Kvasir.Relations.IRelation.get_ConnectionType()
+DA:425,4
+FN:431,System.Void Kvasir.Relations.RelationSet`1::System.Collections.Generic.ICollection<T>.Add(T)
+FNDA:0,System.Void Kvasir.Relations.RelationSet`1::System.Collections.Generic.ICollection<T>.Add(T)
+DA:432,0
+DA:433,0
+DA:434,0
+FN:436,System.Void Kvasir.Relations.RelationSet`1::Kvasir.Relations.IRelation.Canonicalize()
+FNDA:26,System.Void Kvasir.Relations.RelationSet`1::Kvasir.Relations.IRelation.Canonicalize()
+DA:437,26
+DA:438,26
+DA:439,381
+DA:440,101
+DA:441,101
+DA:442,101
+DA:443,26
+BRDA:439,77,1,101
+BRDA:439,77,0,26
+FN:467,System.Void Kvasir.Relations.RelationSet`1::Kvasir.Relations.IRelation.Repopulate(System.Object)
+FNDA:4,System.Void Kvasir.Relations.RelationSet`1::Kvasir.Relations.IRelation.Repopulate(System.Object)
+DA:468,4
+DA:469,4
+DA:470,4
+DA:471,10
+DA:472,4
+DA:474,4
+DA:475,4
+DA:476,4
+DA:477,4
+BRDA:471,65,0,1
+BRDA:471,65,1,4
+FN:70,System.Void Kvasir.Relations.RelationSet`1::.ctor()
+FNDA:14,System.Void Kvasir.Relations.RelationSet`1::.ctor()
+DA:71,14
+DA:72,7
+DA:73,7
+DA:74,7
+DA:75,7
+FN:83,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Int32)
+FNDA:2,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Int32)
+DA:84,2
+DA:85,1
+DA:86,1
+DA:87,1
+DA:88,1
+FN:97,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Collections.Generic.IEnumerable`1<T>)
+FNDA:54,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Collections.Generic.IEnumerable`1<T>)
+DA:98,54
+DA:99,27
+DA:100,139
+DA:101,27
+DA:102,27
+BRDA:100,33,0,1
+BRDA:100,33,1,27
+FN:112,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Collections.Generic.IEqualityComparer`1<T>)
+FNDA:2,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Collections.Generic.IEqualityComparer`1<T>)
+DA:113,2
+DA:114,1
+DA:115,1
+DA:116,1
+DA:117,1
+FN:131,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Int32,System.Collections.Generic.IEqualityComparer`1<T>)
+FNDA:2,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Int32,System.Collections.Generic.IEqualityComparer`1<T>)
+DA:132,2
+DA:133,1
+DA:134,1
+DA:135,1
+DA:136,1
+FN:150,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Collections.Generic.IEnumerable`1<T>,System.Collections.Generic.IEqualityComparer`1<T>)
+FNDA:2,System.Void Kvasir.Relations.RelationSet`1::.ctor(System.Collections.Generic.IEnumerable`1<T>,System.Collections.Generic.IEqualityComparer`1<T>)
+DA:151,2
+DA:152,1
+DA:153,1
+DA:154,4
+DA:155,1
+DA:156,1
+DA:157,1
+BRDA:153,34,0,1
+BRDA:153,34,1,1
+FN:457,System.Boolean Kvasir.Relations.RelationSet`1/<Kvasir-Relations-IRelation-GetEnumerator>d__42::MoveNext()
+FNDA:259,System.Boolean Kvasir.Relations.RelationSet`1/<Kvasir-Relations-IRelation-GetEnumerator>d__42::MoveNext()
+DA:458,259
+DA:459,1704
+DA:460,309
+DA:461,309
+DA:462,3927
+DA:463,1050
+DA:464,1050
+DA:465,259
+BRDA:459,171,1,309
+BRDA:459,171,0,259
+BRDA:462,330,1,1050
+BRDA:462,330,0,259
+LF:132
+LH:129
+BRF:44
+BRH:44
+FNF:21
+FNH:20
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\ByConstructorCreator.cs
+FN:16,System.Type Kvasir.Reconstitution.ByConstructorCreator::get_Target()
+FNDA:1,System.Type Kvasir.Reconstitution.ByConstructorCreator::get_Target()
+DA:17,1
+FN:47,System.Object Kvasir.Reconstitution.ByConstructorCreator::Execute(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+FNDA:3,System.Object Kvasir.Reconstitution.ByConstructorCreator::Execute(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+DA:48,3
+DA:49,3
+DA:51,8
+DA:52,3
+DA:53,3
+FN:35,System.Void Kvasir.Reconstitution.ByConstructorCreator::.ctor(System.Reflection.ConstructorInfo,System.Collections.Generic.IEnumerable`1<Kvasir.Reconstitution.IReconstitutor>)
+FNDA:8,System.Void Kvasir.Reconstitution.ByConstructorCreator::.ctor(System.Reflection.ConstructorInfo,System.Collections.Generic.IEnumerable`1<Kvasir.Reconstitution.IReconstitutor>)
+DA:36,8
+DA:37,4
+DA:38,4
+DA:39,4
+DA:40,10
+DA:42,4
+DA:43,4
+DA:44,4
+DA:45,4
+LF:15
+LH:15
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\DataReconstitutionPlan.cs
+FN:18,System.Type Kvasir.Reconstitution.DataReconstitutionPlan::get_Target()
+FNDA:1,System.Type Kvasir.Reconstitution.DataReconstitutionPlan::get_Target()
+DA:19,1
+FN:61,System.Object Kvasir.Reconstitution.DataReconstitutionPlan::ReconstituteFrom(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+FNDA:7,System.Object Kvasir.Reconstitution.DataReconstitutionPlan::ReconstituteFrom(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+DA:62,7
+DA:63,7
+DA:64,7
+DA:66,7
+DA:67,7
+DA:69,48
+DA:70,9
+DA:74,9
+DA:75,9
+DA:77,7
+DA:78,7
+BRDA:69,114,1,9
+BRDA:69,114,0,7
+FN:36,System.Void Kvasir.Reconstitution.DataReconstitutionPlan::.ctor(Kvasir.Reconstitution.IReconstitutor,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>)
+FNDA:12,System.Void Kvasir.Reconstitution.DataReconstitutionPlan::.ctor(Kvasir.Reconstitution.IReconstitutor,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>)
+DA:37,12
+DA:38,6
+DA:39,6
+DA:40,6
+DA:41,14
+DA:43,6
+DA:44,6
+DA:45,6
+DA:46,6
+LF:21
+LH:21
+BRF:2
+BRH:2
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\FromPropertyRepopulator.cs
+FN:15,System.Type Kvasir.Reconstitution.FromPropertyRepopulator::get_ExpectedSubject()
+FNDA:2,System.Type Kvasir.Reconstitution.FromPropertyRepopulator::get_ExpectedSubject()
+DA:16,2
+FN:42,System.Void Kvasir.Reconstitution.FromPropertyRepopulator::Execute(System.Object,System.Collections.Generic.IEnumerable`1<System.Object>)
+FNDA:1,System.Void Kvasir.Reconstitution.FromPropertyRepopulator::Execute(System.Object,System.Collections.Generic.IEnumerable`1<System.Object>)
+DA:43,1
+DA:44,1
+DA:45,1
+DA:47,1
+DA:48,15
+DA:49,4
+DA:50,4
+DA:51,1
+BRDA:48,90,1,4
+BRDA:48,90,0,1
+FN:30,System.Void Kvasir.Reconstitution.FromPropertyRepopulator::.ctor(System.Reflection.PropertyInfo)
+FNDA:4,System.Void Kvasir.Reconstitution.FromPropertyRepopulator::.ctor(System.Reflection.PropertyInfo)
+DA:31,4
+DA:32,2
+DA:33,2
+DA:34,2
+DA:35,2
+DA:36,2
+DA:38,2
+DA:39,2
+DA:40,2
+LF:18
+LH:18
+BRF:2
+BRH:2
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\PrimitiveCreator.cs
+FN:13,System.Type Kvasir.Reconstitution.PrimitiveCreator::get_Target()
+FNDA:6,System.Type Kvasir.Reconstitution.PrimitiveCreator::get_Target()
+DA:14,6
+FN:43,System.Object Kvasir.Reconstitution.PrimitiveCreator::Execute(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+FNDA:10,System.Object Kvasir.Reconstitution.PrimitiveCreator::Execute(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+DA:44,10
+DA:45,10
+DA:50,12
+DA:51,2
+DA:53,8
+DA:54,10
+BRDA:50,56,0,2
+BRDA:50,56,1,8
+FN:32,System.Void Kvasir.Reconstitution.PrimitiveCreator::.ctor(System.Index,Cybele.Core.DataConverter)
+FNDA:20,System.Void Kvasir.Reconstitution.PrimitiveCreator::.ctor(System.Index,Cybele.Core.DataConverter)
+DA:33,20
+DA:34,10
+DA:35,10
+DA:36,10
+DA:38,10
+DA:39,10
+DA:40,10
+DA:41,10
+LF:15
+LH:15
+BRF:2
+BRH:2
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\Reconstitutor.cs
+FN:15,System.Type Kvasir.Reconstitution.Reconstitutor::get_Target()
+FNDA:5,System.Type Kvasir.Reconstitution.Reconstitutor::get_Target()
+DA:16,5
+FN:43,System.Object Kvasir.Reconstitution.Reconstitutor::ReconstituteFrom(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+FNDA:8,System.Object Kvasir.Reconstitution.Reconstitutor::ReconstituteFrom(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+DA:44,8
+DA:45,8
+DA:50,8
+DA:51,9
+DA:52,1
+DA:57,27
+DA:58,2
+DA:59,2
+DA:60,7
+DA:61,8
+BRDA:51,38,0,1
+BRDA:51,38,1,7
+BRDA:57,86,1,2
+BRDA:57,86,0,7
+FN:32,System.Void Kvasir.Reconstitution.Reconstitutor::.ctor(Kvasir.Reconstitution.IObjectCreator,System.Collections.Generic.IEnumerable`1<Kvasir.Reconstitution.IMutationStep>)
+FNDA:14,System.Void Kvasir.Reconstitution.Reconstitutor::.ctor(Kvasir.Reconstitution.IObjectCreator,System.Collections.Generic.IEnumerable`1<Kvasir.Reconstitution.IMutationStep>)
+DA:33,14
+DA:34,7
+DA:35,7
+DA:36,11
+DA:38,7
+DA:39,7
+DA:40,7
+DA:41,7
+LF:19
+LH:19
+BRF:4
+BRH:4
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\ReconstitutorFacade.cs
+FN:21,System.Type Kvasir.Reconstitution.ReconstitutorFacade::get_Target()
+FNDA:1,System.Type Kvasir.Reconstitution.ReconstitutorFacade::get_Target()
+DA:22,1
+FN:50,System.Object Kvasir.Reconstitution.ReconstitutorFacade::ReconstituteFrom(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+FNDA:1,System.Object Kvasir.Reconstitution.ReconstitutorFacade::ReconstituteFrom(System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+DA:51,1
+DA:52,1
+DA:54,1
+DA:55,1
+DA:56,1
+FN:39,System.Void Kvasir.Reconstitution.ReconstitutorFacade::.ctor(Kvasir.Reconstitution.IReconstitutor,System.Index,System.Int32)
+FNDA:4,System.Void Kvasir.Reconstitution.ReconstitutorFacade::.ctor(Kvasir.Reconstitution.IReconstitutor,System.Index,System.Int32)
+DA:40,4
+DA:41,2
+DA:42,2
+DA:44,2
+DA:45,2
+DA:46,2
+DA:47,2
+DA:48,2
+LF:14
+LH:14
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\RelationReconstitutionPlan.cs
+FN:18,System.Type Kvasir.Reconstitution.RelationReconstitutionPlan::get_ExpectedSubject()
+FNDA:4,System.Type Kvasir.Reconstitution.RelationReconstitutionPlan::get_ExpectedSubject()
+DA:19,4
+FN:56,System.Void Kvasir.Reconstitution.RelationReconstitutionPlan::RepopulateFrom(System.Object,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>)
+FNDA:3,System.Void Kvasir.Reconstitution.RelationReconstitutionPlan::RepopulateFrom(System.Object,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>)
+DA:57,3
+DA:58,3
+DA:59,3
+DA:60,3
+DA:61,9
+DA:63,3
+DA:64,27
+DA:65,6
+DA:66,6
+DA:68,5
+DA:69,2
+DA:70,2
+DA:71,3
+BRDA:64,153,1,6
+BRDA:64,153,0,3
+BRDA:68,179,0,2
+BRDA:68,179,1,3
+FN:31,System.Void Kvasir.Reconstitution.RelationReconstitutionPlan::.ctor(Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Reconstitution.IRepopulator)
+FNDA:8,System.Void Kvasir.Reconstitution.RelationReconstitutionPlan::.ctor(Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Reconstitution.IRepopulator)
+DA:32,8
+DA:33,4
+DA:34,4
+DA:36,4
+DA:37,4
+DA:38,4
+DA:39,4
+LF:21
+LH:21
+BRF:4
+BRH:4
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Reconstitution\SetPropertyMutationStep.cs
+FN:15,System.Type Kvasir.Reconstitution.SetPropertyMutationStep::get_ExpectedSubject()
+FNDA:4,System.Type Kvasir.Reconstitution.SetPropertyMutationStep::get_ExpectedSubject()
+DA:16,4
+FN:45,System.Void Kvasir.Reconstitution.SetPropertyMutationStep::Execute(System.Object,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+FNDA:3,System.Void Kvasir.Reconstitution.SetPropertyMutationStep::Execute(System.Object,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>)
+DA:46,3
+DA:47,3
+DA:48,3
+DA:49,3
+DA:51,3
+DA:52,3
+DA:53,3
+FN:32,System.Void Kvasir.Reconstitution.SetPropertyMutationStep::.ctor(System.Reflection.PropertyInfo,Kvasir.Reconstitution.IReconstitutor)
+FNDA:8,System.Void Kvasir.Reconstitution.SetPropertyMutationStep::.ctor(System.Reflection.PropertyInfo,Kvasir.Reconstitution.IReconstitutor)
+DA:33,8
+DA:34,4
+DA:35,4
+DA:36,4
+DA:37,4
+DA:38,4
+DA:40,4
+DA:41,4
+DA:42,4
+DA:43,4
+LF:18
+LH:18
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Extraction\DataExtractionPlan.cs
+FN:19,System.Type Kvasir.Extraction.DataExtractionPlan::get_ExpectedSource()
+FNDA:8,System.Type Kvasir.Extraction.DataExtractionPlan::get_ExpectedSource()
+DA:20,8
+FN:69,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Extraction.DataExtractionPlan::Execute(System.Object)
+FNDA:7,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Extraction.DataExtractionPlan::Execute(System.Object)
+DA:70,7
+DA:71,7
+DA:73,7
+DA:74,7
+DA:76,45
+DA:77,8
+DA:78,60
+DA:79,12
+DA:84,12
+DA:85,12
+DA:86,8
+DA:87,7
+DA:88,7
+BRDA:76,165,1,8
+BRDA:78,141,1,12
+BRDA:78,141,0,8
+BRDA:76,165,0,7
+FN:42,System.Void Kvasir.Extraction.DataExtractionPlan::.ctor(System.Collections.Generic.IEnumerable`1<Kvasir.Extraction.IExtractionStep>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>)
+FNDA:8,System.Void Kvasir.Extraction.DataExtractionPlan::.ctor(System.Collections.Generic.IEnumerable`1<Kvasir.Extraction.IExtractionStep>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>)
+DA:43,8
+DA:44,4
+DA:45,4
+DA:46,4
+DA:47,4
+DA:48,9
+DA:50,4
+DA:51,4
+DA:52,4
+DA:53,4
+LF:24
+LH:24
+BRF:4
+BRH:4
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Extraction\DecomposingExtractionStep.cs
+FN:15,System.Type Kvasir.Extraction.DecomposingExtractionStep::get_ExpectedSource()
+FNDA:3,System.Type Kvasir.Extraction.DecomposingExtractionStep::get_ExpectedSource()
+DA:16,3
+FN:49,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Extraction.DecomposingExtractionStep::Execute(System.Object)
+FNDA:3,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Extraction.DecomposingExtractionStep::Execute(System.Object)
+DA:50,3
+DA:51,3
+DA:59,3
+DA:60,3
+DA:62,21
+DA:63,4
+DA:64,4
+DA:65,3
+DA:66,3
+BRDA:51,2,0,2
+BRDA:51,2,1,1
+BRDA:62,93,1,4
+BRDA:62,93,0,3
+FN:36,System.Void Kvasir.Extraction.DecomposingExtractionStep::.ctor(Kvasir.Extraction.IFieldExtractor,System.Collections.Generic.IEnumerable`1<Kvasir.Extraction.IExtractionStep>)
+FNDA:8,System.Void Kvasir.Extraction.DecomposingExtractionStep::.ctor(Kvasir.Extraction.IFieldExtractor,System.Collections.Generic.IEnumerable`1<Kvasir.Extraction.IExtractionStep>)
+DA:37,8
+DA:38,4
+DA:39,4
+DA:40,4
+DA:41,9
+DA:42,4
+DA:44,4
+DA:45,4
+DA:46,4
+DA:47,4
+LF:20
+LH:20
+BRF:4
+BRH:4
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Extraction\IdentityExtractor.cs
+FN:17,System.Type Kvasir.Extraction.IdentityExtractor`1::get_ExpectedSource()
+FNDA:9,System.Type Kvasir.Extraction.IdentityExtractor`1::get_ExpectedSource()
+DA:18,9
+FN:20,System.Type Kvasir.Extraction.IdentityExtractor`1::get_FieldType()
+FNDA:2,System.Type Kvasir.Extraction.IdentityExtractor`1::get_FieldType()
+DA:21,2
+FN:28,System.Object Kvasir.Extraction.IdentityExtractor`1::Execute(System.Object)
+FNDA:8,System.Object Kvasir.Extraction.IdentityExtractor`1::Execute(System.Object)
+DA:29,8
+DA:30,8
+DA:31,8
+DA:32,8
+BRDA:30,2,0,7
+BRDA:30,2,1,1
+FN:25,System.Void Kvasir.Extraction.IdentityExtractor`1::.ctor()
+FNDA:12,System.Void Kvasir.Extraction.IdentityExtractor`1::.ctor()
+DA:26,12
+LF:7
+LH:7
+BRF:2
+BRH:2
+FNF:4
+FNH:4
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Extraction\PrimitiveExtractionStep.cs
+FN:14,System.Type Kvasir.Extraction.PrimitiveExtractionStep::get_ExpectedSource()
+FNDA:12,System.Type Kvasir.Extraction.PrimitiveExtractionStep::get_ExpectedSource()
+DA:15,12
+FN:47,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Extraction.PrimitiveExtractionStep::Execute(System.Object)
+FNDA:10,System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue> Kvasir.Extraction.PrimitiveExtractionStep::Execute(System.Object)
+DA:48,10
+DA:49,10
+DA:51,11
+DA:52,1
+DA:59,9
+DA:60,9
+DA:61,9
+DA:62,10
+BRDA:49,2,0,9
+BRDA:49,2,1,1
+BRDA:51,36,0,1
+BRDA:51,36,1,9
+FN:35,System.Void Kvasir.Extraction.PrimitiveExtractionStep::.ctor(Kvasir.Extraction.IFieldExtractor,Cybele.Core.DataConverter)
+FNDA:12,System.Void Kvasir.Extraction.PrimitiveExtractionStep::.ctor(Kvasir.Extraction.IFieldExtractor,Cybele.Core.DataConverter)
+DA:36,12
+DA:37,6
+DA:38,6
+DA:39,6
+DA:40,6
+DA:42,6
+DA:43,6
+DA:44,6
+DA:45,6
+LF:18
+LH:18
+BRF:4
+BRH:4
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Extraction\ReadPropertyExtractor.cs
+FN:12,System.Type Kvasir.Extraction.ReadPropertyExtractor::get_ExpectedSource()
+FNDA:3,System.Type Kvasir.Extraction.ReadPropertyExtractor::get_ExpectedSource()
+DA:13,3
+FN:15,System.Type Kvasir.Extraction.ReadPropertyExtractor::get_FieldType()
+FNDA:1,System.Type Kvasir.Extraction.ReadPropertyExtractor::get_FieldType()
+DA:16,1
+FN:38,System.Object Kvasir.Extraction.ReadPropertyExtractor::Execute(System.Object)
+FNDA:3,System.Object Kvasir.Extraction.ReadPropertyExtractor::Execute(System.Object)
+DA:39,3
+DA:40,3
+DA:42,4
+DA:43,1
+DA:45,2
+DA:46,3
+BRDA:40,2,0,2
+BRDA:40,2,1,1
+BRDA:42,36,0,1
+BRDA:42,36,1,2
+FN:26,System.Void Kvasir.Extraction.ReadPropertyExtractor::.ctor(System.Reflection.PropertyInfo)
+FNDA:8,System.Void Kvasir.Extraction.ReadPropertyExtractor::.ctor(System.Reflection.PropertyInfo)
+DA:27,8
+DA:28,4
+DA:29,4
+DA:30,4
+DA:31,4
+DA:33,4
+DA:34,4
+DA:35,4
+DA:36,4
+LF:17
+LH:17
+BRF:4
+BRH:4
+FNF:4
+FNH:4
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Extraction\RelationExtractionPlan.cs
+FN:13,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>> Kvasir.Extraction.ExtractedRelationData::get_Insertions()
+FNDA:4,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>> Kvasir.Extraction.ExtractedRelationData::get_Insertions()
+DA:14,4
+FN:14,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>> Kvasir.Extraction.ExtractedRelationData::get_Modifications()
+FNDA:3,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>> Kvasir.Extraction.ExtractedRelationData::get_Modifications()
+DA:15,3
+FN:15,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>> Kvasir.Extraction.ExtractedRelationData::get_Deletions()
+FNDA:5,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>> Kvasir.Extraction.ExtractedRelationData::get_Deletions()
+DA:16,5
+FN:12,System.Void Kvasir.Extraction.ExtractedRelationData::.ctor(System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>)
+FNDA:1,System.Void Kvasir.Extraction.ExtractedRelationData::.ctor(System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>,System.Collections.Generic.IEnumerable`1<System.Collections.Generic.IReadOnlyList`1<Kvasir.Schema.DBValue>>)
+DA:13,1
+DA:17,1
+FN:27,System.Type Kvasir.Extraction.RelationExtractionPlan::get_ExpectedSource()
+FNDA:2,System.Type Kvasir.Extraction.RelationExtractionPlan::get_ExpectedSource()
+DA:28,2
+FN:76,Kvasir.Extraction.ExtractedRelationData Kvasir.Extraction.RelationExtractionPlan::Execute(System.Object)
+FNDA:1,Kvasir.Extraction.ExtractedRelationData Kvasir.Extraction.RelationExtractionPlan::Execute(System.Object)
+DA:77,1
+DA:78,1
+DA:83,1
+DA:84,1
+DA:85,1
+DA:90,1
+DA:91,1
+DA:92,19
+DA:93,9
+DA:95,3
+DA:97,2
+DA:98,2
+DA:100,1
+DA:101,1
+DA:103,3
+DA:104,3
+DA:106,0
+DA:108,6
+DA:110,1
+DA:111,1
+BRDA:92,238,1,9
+BRDA:93,94,1,2
+BRDA:93,94,4,1
+BRDA:93,94,3,3
+BRDA:93,94,0,0
+BRDA:93,94,2,10
+BRDA:92,238,0,1
+FN:47,System.Void Kvasir.Extraction.RelationExtractionPlan::.ctor(Kvasir.Extraction.IFieldExtractor,Kvasir.Extraction.DataExtractionPlan)
+FNDA:4,System.Void Kvasir.Extraction.RelationExtractionPlan::.ctor(Kvasir.Extraction.IFieldExtractor,Kvasir.Extraction.DataExtractionPlan)
+DA:48,4
+DA:49,2
+DA:50,2
+DA:51,2
+DA:58,2
+DA:59,2
+DA:60,2
+DA:61,2
+LF:34
+LH:33
+BRF:7
+BRH:6
+FNF:7
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Exceptions\KvasirException.cs
+FN:16,System.Void Kvasir.Exceptions.KvasirException::.ctor()
+FNDA:3,System.Void Kvasir.Exceptions.KvasirException::.ctor()
+DA:17,3
+FN:26,System.Void Kvasir.Exceptions.KvasirException::.ctor(System.String)
+FNDA:3,System.Void Kvasir.Exceptions.KvasirException::.ctor(System.String)
+DA:27,3
+FN:39,System.Void Kvasir.Exceptions.KvasirException::.ctor(System.String,System.Exception)
+FNDA:3,System.Void Kvasir.Exceptions.KvasirException::.ctor(System.String,System.Exception)
+DA:40,3
+FN:51,System.Void Kvasir.Exceptions.KvasirException::.ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+FNDA:0,System.Void Kvasir.Exceptions.KvasirException::.ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+DA:52,0
+LF:4
+LH:3
+BRF:0
+BRH:0
+FNF:4
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Core\IDataConverter.cs
+FN:69,Cybele.Core.DataConverter Kvasir.Core.IDataConverter`2::Kvasir.Core.IDataConverter.get_ConverterImpl()
+FNDA:3,Cybele.Core.DataConverter Kvasir.Core.IDataConverter`2::Kvasir.Core.IDataConverter.get_ConverterImpl()
+DA:70,3
+DA:71,3
+DA:72,0
+DA:75,3
+DA:76,3
+BRDA:71,21,0,0
+BRDA:71,21,1,3
+LF:5
+LH:4
+BRF:2
+BRH:1
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Core\Settings.cs
+FN:12,Kvasir.Core.Settings Kvasir.Core.Settings::get_Default()
+FNDA:19,Kvasir.Core.Settings Kvasir.Core.Settings::get_Default()
+DA:13,19
+DA:14,19
+DA:15,19
+DA:16,19
+DA:17,19
+FN:23,System.Globalization.DateTimeStyles Kvasir.Core.Settings::get_DateTimeStyle()
+FNDA:27,System.Globalization.DateTimeStyles Kvasir.Core.Settings::get_DateTimeStyle()
+DA:24,27
+LF:6
+LH:6
+BRF:0
+BRH:0
+FNF:2
+FNH:2
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Core\TransformUserValues.cs
+FN:44,System.Object Kvasir.Core.TransformUserValues::Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+FNDA:44,System.Object Kvasir.Core.TransformUserValues::Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+DA:45,44
+DA:47,57
+DA:48,13
+DA:50,31
+DA:51,44
+BRDA:47,7,0,32
+BRDA:47,7,1,12
+BRDA:47,25,0,13
+BRDA:47,25,1,31
+FN:54,Kvasir.Schema.DBValue Kvasir.Core.TransformUserValues::DoTransform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+FNDA:109,Kvasir.Schema.DBValue Kvasir.Core.TransformUserValues::DoTransform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+DA:55,109
+DA:57,109
+DA:58,109
+DA:59,109
+DA:61,124
+DA:62,15
+DA:64,98
+DA:65,4
+DA:67,93
+DA:68,3
+DA:69,3
+DA:71,91
+DA:72,4
+DA:73,4
+DA:75,83
+DA:76,83
+DA:78,109
+BRDA:61,37,0,15
+BRDA:61,37,1,94
+BRDA:64,70,0,4
+BRDA:64,70,1,90
+BRDA:67,109,0,3
+BRDA:67,109,1,87
+BRDA:71,166,0,4
+BRDA:71,166,1,83
+FN:81,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue> Kvasir.Core.TransformUserValues::DoTransform(System.Collections.Generic.IEnumerable`1<System.Object>,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+FNDA:13,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.DBValue> Kvasir.Core.TransformUserValues::DoTransform(System.Collections.Generic.IEnumerable`1<System.Object>,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+DA:82,13
+DA:84,13
+DA:85,13
+DA:86,13
+DA:87,13
+DA:89,91
+DA:90,13
+BRDA:84,29,0,13
+BRDA:84,29,1,0
+LF:29
+LH:29
+BRF:14
+BRH:13
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\CheckAttribute.cs
+FN:36,System.String Kvasir.Annotations.CheckAttribute::get_Path()
+FNDA:26,System.String Kvasir.Annotations.CheckAttribute::get_Path()
+DA:37,26
+FN:60,Kvasir.Schema.Clause Kvasir.Annotations.CheckAttribute::MakeConstraint(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>,Kvasir.Core.Settings)
+FNDA:8,Kvasir.Schema.Clause Kvasir.Annotations.CheckAttribute::MakeConstraint(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>,Kvasir.Core.Settings)
+DA:61,8
+DA:62,8
+DA:63,8
+DA:64,8
+DA:65,8
+DA:67,8
+DA:68,8
+BRDA:62,2,0,8
+BRDA:62,2,1,0
+BRDA:63,26,0,8
+BRDA:63,26,1,0
+FN:88,System.Void Kvasir.Annotations.CheckAttribute::.ctor(System.Type)
+FNDA:10,System.Void Kvasir.Annotations.CheckAttribute::.ctor(System.Type)
+DA:89,10
+FN:112,System.Void Kvasir.Annotations.CheckAttribute::.ctor(System.Type,System.Object[])
+FNDA:34,System.Void Kvasir.Annotations.CheckAttribute::.ctor(System.Type,System.Object[])
+DA:113,34
+DA:114,17
+DA:115,17
+DA:116,17
+DA:118,17
+DA:119,13
+LF:15
+LH:15
+BRF:4
+BRH:2
+FNF:4
+FNH:4
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\CheckComplexAttribute.cs
+FN:35,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.FieldName> Kvasir.Annotations.Check/ComplexAttribute::get_FieldNames()
+FNDA:2,System.Collections.Generic.IEnumerable`1<Kvasir.Schema.FieldName> Kvasir.Annotations.Check/ComplexAttribute::get_FieldNames()
+DA:36,2
+FN:59,Kvasir.Schema.Clause Kvasir.Annotations.Check/ComplexAttribute::MakeConstraint(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>,Kvasir.Core.Settings)
+FNDA:2,Kvasir.Schema.Clause Kvasir.Annotations.Check/ComplexAttribute::MakeConstraint(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>,Kvasir.Core.Settings)
+DA:60,2
+DA:61,2
+DA:62,2
+FN:88,System.Void Kvasir.Annotations.Check/ComplexAttribute::.ctor(System.Type,System.String[])
+FNDA:7,System.Void Kvasir.Annotations.Check/ComplexAttribute::.ctor(System.Type,System.String[])
+DA:89,7
+FN:118,System.Void Kvasir.Annotations.Check/ComplexAttribute::.ctor(System.Type,System.String[],System.Object[])
+FNDA:10,System.Void Kvasir.Annotations.Check/ComplexAttribute::.ctor(System.Type,System.String[],System.Object[])
+DA:119,10
+DA:120,5
+DA:121,5
+DA:122,7
+DA:123,3
+LF:10
+LH:10
+BRF:0
+BRH:0
+FNF:4
+FNH:4
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\ComparisonAttributes.cs
+FN:19,System.Void Kvasir.Annotations.Check/IsNotAttribute::.ctor(System.Object)
+FNDA:9,System.Void Kvasir.Annotations.Check/IsNotAttribute::.ctor(System.Object)
+DA:20,9
+FN:35,System.Void Kvasir.Annotations.Check/IsGreaterThanAttribute::.ctor(System.Object)
+FNDA:9,System.Void Kvasir.Annotations.Check/IsGreaterThanAttribute::.ctor(System.Object)
+DA:36,9
+FN:51,System.Void Kvasir.Annotations.Check/IsLessThanAttribute::.ctor(System.Object)
+FNDA:9,System.Void Kvasir.Annotations.Check/IsLessThanAttribute::.ctor(System.Object)
+DA:52,9
+FN:67,System.Void Kvasir.Annotations.Check/IsGreaterOrEqualToAttribute::.ctor(System.Object)
+FNDA:9,System.Void Kvasir.Annotations.Check/IsGreaterOrEqualToAttribute::.ctor(System.Object)
+DA:68,9
+FN:83,System.Void Kvasir.Annotations.Check/IsLessOrEqualToAttribute::.ctor(System.Object)
+FNDA:9,System.Void Kvasir.Annotations.Check/IsLessOrEqualToAttribute::.ctor(System.Object)
+DA:84,9
+LF:5
+LH:5
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\InclusionAttributes.cs
+FN:26,System.Void Kvasir.Annotations.Check/IsOneOfAttribute::.ctor(System.Object[])
+FNDA:11,System.Void Kvasir.Annotations.Check/IsOneOfAttribute::.ctor(System.Object[])
+DA:27,11
+DA:29,5
+DA:30,5
+FN:52,System.Void Kvasir.Annotations.Check/IsNotOneOfAttribute::.ctor(System.Object[])
+FNDA:16,System.Void Kvasir.Annotations.Check/IsNotOneOfAttribute::.ctor(System.Object[])
+DA:53,16
+LF:4
+LH:4
+BRF:0
+BRH:0
+FNF:2
+FNH:2
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\SignednessAttributes.cs
+FN:15,System.Void Kvasir.Annotations.Check/IsNonZeroAttribute::.ctor()
+FNDA:9,System.Void Kvasir.Annotations.Check/IsNonZeroAttribute::.ctor()
+DA:16,9
+FN:28,System.Void Kvasir.Annotations.Check/IsPositiveAttribute::.ctor()
+FNDA:9,System.Void Kvasir.Annotations.Check/IsPositiveAttribute::.ctor()
+DA:29,9
+FN:41,System.Void Kvasir.Annotations.Check/IsNegativeAttribute::.ctor()
+FNDA:9,System.Void Kvasir.Annotations.Check/IsNegativeAttribute::.ctor()
+DA:42,9
+LF:3
+LH:3
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\StringLengthAttributes.cs
+FN:22,System.Void Kvasir.Annotations.Check/IsNonEmptyAttribute::.ctor()
+FNDA:9,System.Void Kvasir.Annotations.Check/IsNonEmptyAttribute::.ctor()
+DA:23,9
+FN:41,System.Void Kvasir.Annotations.Check/LengthIsAtLeastAttribute::.ctor(System.Int32)
+FNDA:14,System.Void Kvasir.Annotations.Check/LengthIsAtLeastAttribute::.ctor(System.Int32)
+DA:42,14
+DA:44,7
+DA:45,6
+FN:63,System.Void Kvasir.Annotations.Check/LengthIsAtMostAttribute::.ctor(System.Int32)
+FNDA:10,System.Void Kvasir.Annotations.Check/LengthIsAtMostAttribute::.ctor(System.Int32)
+DA:64,10
+DA:66,5
+DA:67,3
+FN:90,System.Void Kvasir.Annotations.Check/LengthIsBetweenAttribute::.ctor(System.Int32,System.Int32)
+FNDA:10,System.Void Kvasir.Annotations.Check/LengthIsBetweenAttribute::.ctor(System.Int32,System.Int32)
+DA:91,10
+DA:93,5
+DA:94,8
+DA:95,3
+FN:102,Kvasir.Schema.Clause Kvasir.Annotations.Check/LengthIsBetweenAttribute/Constraint::MakeConstraint(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>,Kvasir.Core.Settings)
+FNDA:2,Kvasir.Schema.Clause Kvasir.Annotations.Check/LengthIsBetweenAttribute/Constraint::MakeConstraint(System.Collections.Generic.IEnumerable`1<Kvasir.Schema.IField>,System.Collections.Generic.IEnumerable`1<Cybele.Core.DataConverter>,Kvasir.Core.Settings)
+DA:103,2
+DA:104,2
+DA:105,4
+DA:106,2
+DA:107,2
+DA:109,2
+DA:110,2
+DA:111,2
+DA:112,2
+DA:113,2
+FN:98,System.Void Kvasir.Annotations.Check/LengthIsBetweenAttribute/Constraint::.ctor(System.Int32,System.Int32)
+FNDA:5,System.Void Kvasir.Annotations.Check/LengthIsBetweenAttribute/Constraint::.ctor(System.Int32,System.Int32)
+DA:99,5
+DA:100,5
+DA:101,5
+DA:102,5
+LF:25
+LH:25
+BRF:0
+BRH:0
+FNF:6
+FNH:6
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\CodeOnlyAttribute.cs
+FN:25,System.String Kvasir.Annotations.CodeOnlyAttribute::get_Path()
+FNDA:2,System.String Kvasir.Annotations.CodeOnlyAttribute::get_Path()
+DA:26,2
+LF:1
+LH:1
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\ColumnAttribute.cs
+FN:18,System.Int32 Kvasir.Annotations.ColumnAttribute::get_Column()
+FNDA:1,System.Int32 Kvasir.Annotations.ColumnAttribute::get_Column()
+DA:19,1
+FN:29,System.Void Kvasir.Annotations.ColumnAttribute::.ctor(System.Int32)
+FNDA:6,System.Void Kvasir.Annotations.ColumnAttribute::.ctor(System.Int32)
+DA:30,6
+DA:31,3
+DA:32,2
+LF:4
+LH:4
+BRF:0
+BRH:0
+FNF:2
+FNH:2
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\ConstraintAttribute.cs
+FN:23,System.String Kvasir.Annotations.ConstraintAttribute::get_Path()
+FNDA:91,System.String Kvasir.Annotations.ConstraintAttribute::get_Path()
+DA:24,91
+FN:42,Kvasir.Schema.Clause Kvasir.Annotations.ConstraintAttribute::MakeConstraint(Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+FNDA:30,Kvasir.Schema.Clause Kvasir.Annotations.ConstraintAttribute::MakeConstraint(Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)
+DA:43,30
+DA:44,30
+DA:45,30
+DA:46,30
+DA:48,60
+DA:49,30
+DA:51,30
+DA:52,22
+DA:53,8
+DA:54,0
+DA:55,30
+DA:56,30
+BRDA:51,127,0,22
+BRDA:51,144,0,22
+BRDA:51,127,1,8
+BRDA:51,163,0,8
+BRDA:51,184,1,8
+BRDA:51,144,1,0
+BRDA:51,163,1,0
+BRDA:51,184,0,0
+FN:68,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.ComparisonOperator,System.Object)
+FNDA:72,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.ComparisonOperator,System.Object)
+DA:69,72
+FN:81,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<System.Object>)
+FNDA:32,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<System.Object>)
+DA:82,32
+FN:97,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.ComparisonOperator,System.Object)
+FNDA:36,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.ComparisonOperator,System.Object)
+DA:98,36
+FN:113,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<System.Object>)
+FNDA:0,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<System.Object>)
+DA:114,0
+FN:128,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Optional.Option`1<Kvasir.Schema.FieldFunction>,Kvasir.Schema.ComparisonOperator,System.Object)
+FNDA:72,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Optional.Option`1<Kvasir.Schema.FieldFunction>,Kvasir.Schema.ComparisonOperator,System.Object)
+DA:129,72
+DA:130,60
+DA:131,72
+DA:132,36
+DA:133,72
+DA:135,36
+DA:136,36
+DA:137,36
+DA:138,36
+FN:152,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Optional.Option`1<Kvasir.Schema.FieldFunction>,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<System.Object>)
+FNDA:24,System.Void Kvasir.Annotations.ConstraintAttribute::.ctor(Optional.Option`1<Kvasir.Schema.FieldFunction>,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable`1<System.Object>)
+DA:153,24
+DA:154,12
+DA:155,24
+DA:156,12
+DA:158,21
+DA:159,20
+DA:160,51
+DA:162,10
+DA:163,10
+DA:164,10
+DA:165,10
+BRDA:158,170,0,2
+BRDA:158,170,1,8
+BRDA:159,6,0,8
+BRDA:159,6,1,2
+BRDA:160,8,0,14
+BRDA:160,8,1,37
+BRDA:160,13,0,4
+BRDA:160,13,1,31
+LF:37
+LH:35
+BRF:16
+BRH:13
+FNF:8
+FNH:7
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\DataConverterAttribute.cs
+FN:17,System.String Kvasir.Annotations.DataConverterAttribute::get_Path()
+FNDA:8,System.String Kvasir.Annotations.DataConverterAttribute::get_Path()
+DA:18,8
+FN:22,Cybele.Core.DataConverter Kvasir.Annotations.DataConverterAttribute::get_DataConverter()
+FNDA:2,Cybele.Core.DataConverter Kvasir.Annotations.DataConverterAttribute::get_DataConverter()
+DA:23,2
+FN:45,System.Void Kvasir.Annotations.DataConverterAttribute::.ctor(System.Type)
+FNDA:10,System.Void Kvasir.Annotations.DataConverterAttribute::.ctor(System.Type)
+DA:46,10
+DA:47,5
+DA:48,4
+DA:49,3
+LF:6
+LH:6
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\DefaultAttribute.cs
+FN:12,System.String Kvasir.Annotations.DefaultAttribute::get_Path()
+FNDA:7,System.String Kvasir.Annotations.DefaultAttribute::get_Path()
+DA:13,7
+FN:17,System.Object Kvasir.Annotations.DefaultAttribute::get_Value()
+FNDA:3,System.Object Kvasir.Annotations.DefaultAttribute::get_Value()
+DA:18,3
+FN:32,System.Void Kvasir.Annotations.DefaultAttribute::.ctor(System.Object)
+FNDA:8,System.Void Kvasir.Annotations.DefaultAttribute::.ctor(System.Object)
+DA:33,8
+DA:34,4
+DA:35,4
+BRDA:34,22,0,1
+BRDA:34,22,1,4
+LF:5
+LH:5
+BRF:2
+BRH:2
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\EnumAttributes.cs
+FN:19,System.String Kvasir.Annotations.NumericAttribute::get_Path()
+FNDA:6,System.String Kvasir.Annotations.NumericAttribute::get_Path()
+DA:20,6
+LF:1
+LH:1
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\NameAttribute.cs
+FN:19,System.String Kvasir.Annotations.NameAttribute::get_Path()
+FNDA:7,System.String Kvasir.Annotations.NameAttribute::get_Path()
+DA:20,7
+FN:24,Kvasir.Schema.FieldName Kvasir.Annotations.NameAttribute::get_Name()
+FNDA:2,Kvasir.Schema.FieldName Kvasir.Annotations.NameAttribute::get_Name()
+DA:25,2
+FN:35,System.Void Kvasir.Annotations.NameAttribute::.ctor(System.String)
+FNDA:8,System.Void Kvasir.Annotations.NameAttribute::.ctor(System.String)
+DA:36,8
+DA:37,4
+DA:38,3
+LF:5
+LH:5
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\PrimaryKeyAttributes.cs
+FN:30,System.String Kvasir.Annotations.PrimaryKeyAttribute::get_Path()
+FNDA:6,System.String Kvasir.Annotations.PrimaryKeyAttribute::get_Path()
+DA:31,6
+FN:43,Kvasir.Schema.KeyName Kvasir.Annotations.NamedPrimaryKeyAttribute::get_Name()
+FNDA:1,Kvasir.Schema.KeyName Kvasir.Annotations.NamedPrimaryKeyAttribute::get_Name()
+DA:44,1
+FN:54,System.Void Kvasir.Annotations.NamedPrimaryKeyAttribute::.ctor(System.String)
+FNDA:6,System.Void Kvasir.Annotations.NamedPrimaryKeyAttribute::.ctor(System.String)
+DA:55,6
+DA:56,3
+DA:57,2
+LF:5
+LH:5
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\TableAttribute.cs
+FN:18,Kvasir.Schema.TableName Kvasir.Annotations.TableAttribute::get_Name()
+FNDA:1,Kvasir.Schema.TableName Kvasir.Annotations.TableAttribute::get_Name()
+DA:19,1
+FN:29,System.Void Kvasir.Annotations.TableAttribute::.ctor(System.String)
+FNDA:6,System.Void Kvasir.Annotations.TableAttribute::.ctor(System.String)
+DA:30,6
+DA:31,3
+DA:32,2
+LF:4
+LH:4
+BRF:0
+BRH:0
+FNF:2
+FNH:2
+end_of_record
+SF:C:\Users\jsmil\OneDrive\Documents\Software\Kvasir\src\Kvasir\Annotations\UniqueAttribute.cs
+FN:13,System.String Kvasir.Annotations.UniqueAttribute::get_Path()
+FNDA:11,System.String Kvasir.Annotations.UniqueAttribute::get_Path()
+DA:14,11
+FN:18,Kvasir.Schema.KeyName Kvasir.Annotations.UniqueAttribute::get_Name()
+FNDA:4,Kvasir.Schema.KeyName Kvasir.Annotations.UniqueAttribute::get_Name()
+DA:19,4
+FN:23,System.Void Kvasir.Annotations.UniqueAttribute::.ctor()
+FNDA:6,System.Void Kvasir.Annotations.UniqueAttribute::.ctor()
+DA:24,6
+DA:25,6
+DA:26,3
+DA:27,3
+DA:28,3
+FN:38,System.Void Kvasir.Annotations.UniqueAttribute::.ctor(System.String)
+FNDA:4,System.Void Kvasir.Annotations.UniqueAttribute::.ctor(System.String)
+DA:39,4
+DA:40,2
+DA:41,2
+FN:43,System.Void Kvasir.Annotations.UniqueAttribute::.cctor()
+FNDA:1,System.Void Kvasir.Annotations.UniqueAttribute::.cctor()
+DA:44,1
+DA:45,1
+LF:12
+LH:12
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record

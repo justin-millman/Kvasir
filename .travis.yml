@@ -14,10 +14,10 @@ branches:
     - master
 install:
   - nuget restore Kvasir.sln
-  - nuget install coveralls.net -Version 0.7.0 -OutputDirectory packages
+  - dotnet tool install coveralls.net --version 4.0.0 --tool-path coverage_tools/
 script:
   - dotnet test -c $CONFIGURATION -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
-  - ./packages/coveralls.net.0.7.0/tools/csmacnz.Coveralls.exe
+  - ./coverage_tools/csmacnz.Coveralls
       --opencover
       -i ./test/UnitTests/coverage.opencover.xml
       --commitId $TRAVIS_COMMIT
