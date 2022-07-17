@@ -1,0 +1,49 @@
+name: Kvasir
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  CI:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        os: [ubuntu, windows]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 5.0.400
+      - name: Restore Dependencies
+        run: dotnet restore
+      - name: Build Project(s)
+        run: dotnet build -c ${{ matrix.configuration }} --no-restore
+      - name: Run Unit Tests and Collect Coverage
+        if: ${{ matrix.os == 'ubuntu' }}
+        run: dotnet test --no-build  -c ${{ matrix.configuration }} -p:CollectCoverage=true -p:CoverletOutputFormat=lcov
+      - name: Run Unit Tests
+        if: ${{ matrix.os != 'ubuntu' }}
+        run: dotnet test --no-build  -c ${{ matrix.configuration }}
+      - name: Upload Coverage to Coveralls
+        if: ${{ matrix.os == 'ubuntu' }}
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./test/UnitTests/coverage.info
+          flag-name: ${{ matrix.configuration }}
+          parallel: true
+  Finish:
+    needs: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Complete Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
