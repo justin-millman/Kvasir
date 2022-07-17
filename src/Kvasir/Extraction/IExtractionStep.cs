@@ -11,7 +11,7 @@ namespace Kvasir.Extraction {
     ///   The <see cref="IExtractionStep"/> interface is a companion to the <see cref="IFieldExtractor"/> interface,
     ///   separating the logic for what to do with a piece of extracted data from how to obtain it. The data produced
     ///   by executing an <see cref="IExtractionStep"/> instance is fully decomposed and has had an opportunity to
-    ///   undergo intrinsic transformation into a database-ready form.
+    ///   undergo extrinsic transformation.
     /// </remarks>
     public interface IExtractionStep {
         /// <summary>
@@ -26,11 +26,11 @@ namespace Kvasir.Extraction {
         /// </summary>
         /// <remarks>
         ///   <para>
-        ///     Every extraction plan has two phases of data transformation. The first is the intrinsic phase, which is
-        ///     generally reserved for type conversions (e.g. converting C# enumerations into strings or integers). The
-        ///     second is the extrinsic phase, which allows users to define custom ad hoc conversions on an
-        ///     entity-by-entity, and even field-by-field, basis. The values produced by executing an
-        ///     <see cref="IExtractionStep"/> will have completed the second transformation phase only.
+        ///     Every extraction plan has two phases of data transformation. The first is the extrinsic phase, in which
+        ///     the value is modified (and its type possibly changed) according to a user-provided rule. The second is
+        ///     the intrinsic phase, in which the once-transformed value undergoe a transformation specific to the
+        ///     storage mechanics of the target back-end relational database. The values produced by executing an
+        ///     <see cref="IExtractionStep"/> will have completed the first phase only.
         ///   </para>
         ///   <para>
         ///     Executing an <see cref="IExtractionStep"/> on a <see langword="null"/> source object will produce a
