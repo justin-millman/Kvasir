@@ -1,6 +1,5 @@
 ﻿using Kvasir.Schema;
 using System;
-using System.Collections.Generic;
 
 namespace Kvasir.Extraction {
     /// <summary>
@@ -50,6 +49,6 @@ namespace Kvasir.Extraction {
         ///   An immutable, indexable, ordered sequence of <see cref="DBValue">database values</see> extracted from
         ///   <paramref name="sourceObject"/>.
         /// </returns>
-        IReadOnlyList<DBValue> Execute(object? sourceObject);
+        Row Execute(object? sourceObject);
     }
 }

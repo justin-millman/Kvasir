@@ -2,7 +2,6 @@
 using Cybele.Core;
 using Kvasir.Schema;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kvasir.Reconstitution {
@@ -41,7 +40,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? Execute(IReadOnlyList<DBValue> values) {
+        public object? Execute(Row values) {
             Guard.Against.NullOrEmpty(values, nameof(values));
 
             // DataConverters operate on raw values, of which DBNull is not one. If we pass DBNull to the revert

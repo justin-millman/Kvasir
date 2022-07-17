@@ -1,21 +1,11 @@
 ﻿using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Kvasir.Relations;
-using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kvasir.Extraction {
-    /// <summary>
-    ///   A grouping of data extracted from an <see cref="Kvasir.Relations.IRelation"/>.
-    /// </summary>
-    public sealed record ExtractedRelationData(
-        IEnumerable<IReadOnlyList<DBValue>> Insertions,
-        IEnumerable<IReadOnlyList<DBValue>> Modifications,
-        IEnumerable<IReadOnlyList<DBValue>> Deletions
-    );
-
     /// <summary>
     ///   A description of the way in which data is extracted from an <see cref="IRelation"/> stored on a particular
     ///   CLR object type and then transformed and prepared to be stored in a back-end database.
@@ -71,18 +61,19 @@ namespace Kvasir.Extraction {
         ///   interface thereof.
         /// </pre>
         /// <returns>
-        ///   A <see cref="ExtractedRelationData"/> containing the values extracted from the relation targeted on
-        ///   <paramref name="source"/> by this <see cref="RelationExtractionPlan"/>.
+        ///   A triplet containing the values extracted from the relation targeted on <paramref name="source"/> by this
+        ///   <see cref="RelationExtractionPlan"/>.
         /// </returns>
-        public ExtractedRelationData Execute(object source) {
+        public (IEnumerable<Row> Insertions, IEnumerable<Row> Modifications, IEnumerable<Row> Deletions)
+        Execute(object source) {
             Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
 
             // In order to keep the API of the extracted data wrapper "read only," we have to build up the containers
             // a priori and then construct the wrapper, rather than constructing the wrapper with empty containers and
             // then incrementally adding.
-            var insertions = new List<IReadOnlyList<DBValue>>();
-            var modifications = new List<IReadOnlyList<DBValue>>();
-            var deletions = new List<IReadOnlyList<DBValue>>();
+            var insertions = new List<Row>();
+            var modifications = new List<Row>();
+            var deletions = new List<Row>();
 
             // It's a little annoying that we can't just do a for-each loop over the contents of the Relation, but
             // that's inhibited by the GetEnumerator() function in the IRelation interface being internal. We don't
@@ -107,7 +98,7 @@ namespace Kvasir.Extraction {
                 }
             }
 
-            return new ExtractedRelationData(insertions, modifications, deletions);
+            return (insertions, modifications, deletions);
         }
 
 

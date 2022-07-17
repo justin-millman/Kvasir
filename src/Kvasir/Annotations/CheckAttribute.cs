@@ -6,9 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-using FieldList = System.Collections.Generic.IEnumerable<Kvasir.Schema.IField>;
-using ConverterList = System.Collections.Generic.IEnumerable<Cybele.Core.DataConverter>;
-
 namespace Kvasir.Annotations {
     /// <summary>
     ///   An annotation that imposes a <c>CHECK</c> constraint on the Field backing a particular property.
@@ -59,7 +56,7 @@ namespace Kvasir.Annotations {
         ///   A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
         /// </returns>
         internal Clause MakeConstraint(FieldList fields, ConverterList converters, Settings settings) {
-            Debug.Assert(fields is not null && fields.Count() >= 1);
+            Debug.Assert(fields is not null && !fields.IsEmpty());
             Debug.Assert(converters is not null && !converters.IsEmpty());
             Debug.Assert(fields.Count() == converters.Count());
             Debug.Assert(settings is not null);

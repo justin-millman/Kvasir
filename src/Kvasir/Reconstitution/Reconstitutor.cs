@@ -1,6 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using Cybele.Extensions;
-using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -41,7 +40,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? ReconstituteFrom(IReadOnlyList<DBValue> rawValues) {
+        public object? ReconstituteFrom(Row rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
             // Mutators cannot operate on null objects, because there would be no target on which to call the property

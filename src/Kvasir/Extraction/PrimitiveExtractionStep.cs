@@ -3,7 +3,6 @@ using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Schema;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kvasir.Extraction {
@@ -45,7 +44,7 @@ namespace Kvasir.Extraction {
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<DBValue> Execute(object? source) {
+        public Row Execute(object? source) {
             Debug.Assert(source is null || source.GetType().IsInstanceOf(ExpectedSource));
 
             if (source is null) {

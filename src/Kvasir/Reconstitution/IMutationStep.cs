@@ -1,6 +1,4 @@
-﻿using Kvasir.Schema;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
@@ -43,6 +41,6 @@ namespace Kvasir.Reconstitution {
         /// <pre>
         ///   <paramref name="subject"/> is an instance of <see cref="ExpectedSubject"/>.
         /// </pre>
-        void Execute(object subject, IReadOnlyList<DBValue> rawValues);
+        void Execute(object subject, Row rawValues);
     }
 }
