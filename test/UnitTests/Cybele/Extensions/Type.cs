@@ -2,22 +2,44 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace UT.Cybele.Extensions {
     [TestClass, TestCategory("Type: IsInstanceOf")]
     public sealed class Type_IsInstanceOf : ExtensionTests {
         [TestMethod] public void Identity() {
             // Arrange
-            var type = typeof(string);
+            var classType = typeof(string);
+            var structType = typeof(DateTime);
+            var primitiveType = typeof(ulong);
+            var nullableType = typeof(int?);
+            var enumType = typeof(Color);
+            var delegateType = typeof(Predicate<bool>);
+            var interfaceType = typeof(ICustomFormatter);
+            var openGenericType = typeof(Lazy<>);
 
             // Act
-            var result = type.IsInstanceOf(type);
+            var classResult = classType.IsInstanceOf(classType);
+            var structResult = structType.IsInstanceOf(structType);
+            var primitiveResult = primitiveType.IsInstanceOf(primitiveType);
+            var nullableResult = nullableType.IsInstanceOf(nullableType);
+            var enumResult = enumType.IsInstanceOf(enumType);
+            var delegateResult = delegateType.IsInstanceOf(delegateType);
+            var interfaceResult = interfaceType.IsInstanceOf(interfaceType);
+            var openGenericResult = openGenericType.IsInstanceOf(openGenericType);
 
             // Assert
-            result.Should().BeTrue();
+            classResult.Should().BeTrue();
+            structResult.Should().BeTrue();
+            primitiveResult.Should().BeTrue();
+            nullableResult.Should().BeTrue();
+            enumResult.Should().BeTrue();
+            delegateResult.Should().BeTrue();
+            interfaceResult.Should().BeTrue();
+            openGenericResult.Should().BeTrue();
         }
 
-        [TestMethod] public void DerivedClassIsInstanceOfBase() {
+        [TestMethod] public void DerivedTypeIsInstanceOfBase() {
             // Arrange
             var parent = typeof(Exception);
             var child = typeof(ArgumentNullException);
@@ -29,7 +51,7 @@ namespace UT.Cybele.Extensions {
             result.Should().BeTrue();
         }
 
-        [TestMethod] public void BaseClassIsNotInstanceOfDerived() {
+        [TestMethod] public void BaseTypeIsNotInstanceOfDerived() {
             // Arrange
             var parent = typeof(Exception);
             var child = typeof(ArgumentNullException);
@@ -151,14 +173,81 @@ namespace UT.Cybele.Extensions {
 
         [TestMethod] public void NonNullableIsInstanceOfNullable() {
             // Arrange
-            var parent = typeof(char?);
-            var child = typeof(char);
+            var nullablePrimitive = typeof(char?);
+            var nullableStruct = typeof(DateTime?);
+            var nullableEnum = typeof(Color?);
+            var nonNullablePrimitive = typeof(char);
+            var nonNullableStruct = typeof(DateTime);
+            var nonNullableEnum = typeof(Color);
 
             // Act
-            var result = child.IsInstanceOf(parent);
+            var primitiveResult = nonNullablePrimitive.IsInstanceOf(nullablePrimitive);
+            var structResult = nonNullableStruct.IsInstanceOf(nullableStruct);
+            var enumResult = nonNullableEnum.IsInstanceOf(nullableEnum);
 
             // Assert
-            result.Should().BeTrue();
+            primitiveResult.Should().BeTrue();
+            structResult.Should().BeTrue();
+            enumResult.Should().BeTrue();
+        }
+
+        [TestMethod] public void NullableIsNotInstanceOfNonNullable() {
+            // Arrange
+            var nullablePrimitive = typeof(char?);
+            var nullableStruct = typeof(DateTime?);
+            var nullableEnum = typeof(Color?);
+            var nonNullablePrimitive = typeof(char);
+            var nonNullableStruct = typeof(DateTime);
+            var nonNullableEnum = typeof(Color);
+
+            // Act
+            var primitiveResult = nullablePrimitive.IsInstanceOf(nonNullablePrimitive);
+            var structResult = nullableStruct.IsInstanceOf(nonNullableStruct);
+            var enumResult = nullableEnum.IsInstanceOf(nonNullableEnum);
+
+            // Assert
+            primitiveResult.Should().BeFalse();
+            structResult.Should().BeFalse();
+            enumResult.Should().BeFalse();
+        }
+
+        [TestMethod] public void ClosedGenericIsNotInstanceOfOpenGeneric() {
+            // Arrange
+            var openGeneric = typeof(ReadOnlySpan<>);
+            var closedGeneric = typeof(ReadOnlySpan<char>);
+
+            // Act
+            var result = closedGeneric.IsInstanceOf(openGeneric);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod] public void CovariantCompatibleGenericIsNotInstanceOfBase() {
+            // Arrange
+            var original = typeof(IReadOnlyCollection<object>);
+            var covariant = typeof(IReadOnlyCollection<string?>);
+
+            // Act
+            var result = covariant.IsInstanceOf(original);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+
+        delegate void First(int a, int b, char c);
+        delegate void Second(int a, int b, char c);
+        [TestMethod] public void EquivalentDelegatesAreNotInstances() {
+            // Arrange
+            var first = typeof(First);
+            var second = typeof(Second);
+
+            // Act
+            var result = first.IsInstanceOf(second);
+
+            // Assert
+            result.Should().BeFalse();
         }
     }
 }
