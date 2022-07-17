@@ -1000,21 +1000,41 @@
             </returns>
         </member>
         <member name="M:Cybele.Extensions.TypeExtensions.IsInstanceOf(System.Type,System.Type)">
-            <summary>
-              Determines if an instance of one <see cref="T:System.Type"/> would also be an instance of another
-              <see cref="T:System.Type"/> based on an identity, inheritance, or interface implementation relationship.
-            </summary>
-            <param name="derivedType">
-              The hypothetical descendant <see cref="T:System.Type"/>.
-            </param>
-            <param name="ancestorType">
-              The hypothetical ancestor <see cref="T:System.Type"/>.
-            </param>
-            <returns>
-              <see langword="true"/> if <paramref name="ancestorType"/> is identical to <paramref name="derivedType"/>,
-              is a base class of <paramref name="derivedType"/>, or is an interface of <paramref name="derivedType"/>;
-              otherwise, <see langword="false"/>.
-            </returns>
+             <summary>
+               Determines if an instance of one <see cref="T:System.Type"/> is also an instance of another <see cref="T:System.Type"/>
+               using a limited set of possible conversions.
+             </summary>
+             <remarks>
+               A type <c>DERIVED</c> is said to be an instance of another type <c>ANCESTOR</c> if, and only if, at least
+               one of the following is true:
+            
+                   * <c>DERIVED</c> and <c>ANCESTOR</c> are the same, including open (or partially open) generics
+                   * <c>ANCESTOR</c> is a direct or indirect base of <c>DERIVED</c>; this covers the former being
+                         <see cref="T:System.Object"/> for all types, <see cref="T:System.ValueType"/> for structs and primitives,
+                         <see cref="T:System.Enum"/> for enumerations, and <see cref="T:System.Delegate"/> for delegates
+                   * <c>ANCESTOR</c> is an interface that is implemented by <c>DERIVED</c>
+                   * <c>ANCESTOR</c> is an instantiation of <see cref="T:System.Nullable`1"/> and <c>DERIVED</c> is the
+                         corresponding generic argument
+            
+               Note specifically that a handful of situations that one may otherwise expect to be recognized as
+               fulfilling the "is-instance-of" relation specifically do not:
+            
+                   * <c>DERIVED</c> is a narrower numeric type compared to <c>ANCESTOR</c>
+                   * There exists an implicit conversion between otherwise unrelated <c>DERIVED</c> and <c>ANCESTOR</c>
+                   * <c>DERIVED</c> is an instantiation of the open (or partially open) generic <c>ANCESTOR</c>
+                   * <c>DERIVED</c> is a co- or contravariant instantiation of <c>ANCESTOR</c>
+                   * <c>DERIVED</c> and <c>ANCESTOR</c> are interchangeable delegates
+             </remarks>
+             <param name="derivedType">
+               The hypothetical descendant <see cref="T:System.Type"/>.
+             </param>
+             <param name="ancestorType">
+               The hypothetical ancestor <see cref="T:System.Type"/>.
+             </param>
+             <returns>
+               <see langword="true"/> if any of the above-listed relationships holds between
+               <paramref name="derivedType"/> and <paramref name="ancestorType"/>; otherwise, <see langword="false"/>.
+             </returns>
         </member>
         <member name="T:Cybele.Extensions.Nullability">
             An indication of the nullability of an aspect of a program.
