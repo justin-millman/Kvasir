@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace UT.Kvasir.Extraction {
-    [TestClass, TestCategory("EntityExtractionPlan")]
-    public class EntityExtractionPlanTests {
+    [TestClass, TestCategory("DataExtractionPlan")]
+    public class DataExtractionPlanTests {
         [TestMethod] public void Construct() {
             // Arrange
             var mockExtractor = new Mock<IExtractionStep>();
@@ -22,7 +22,7 @@ namespace UT.Kvasir.Extraction {
             // Act
             var extractors = new IExtractionStep[] { mockExtractor.Object };
             var converters = new DataConverter[] { converter };
-            var plan = new EntityExtractionPlan(extractors, converters);
+            var plan = new DataExtractionPlan(extractors, converters);
 
             // Assert
             plan.ExpectedSource.Should().Be(typeof(string));
@@ -49,7 +49,7 @@ namespace UT.Kvasir.Extraction {
 
             var extractors = new IExtractionStep[] { ymd.Object, hms.Object };
             var converters = Enumerable.Repeat(offsetCnv, 3).Concat(Enumerable.Repeat(identityCnv, 3));
-            var plan = new EntityExtractionPlan(extractors, converters);
+            var plan = new DataExtractionPlan(extractors, converters);
             var source = DateTime.Now;
 
             // Act
@@ -82,7 +82,7 @@ namespace UT.Kvasir.Extraction {
 
             var steps = new IExtractionStep[] { mockStep.Object };
             var converters = new DataConverter[] { DataConverter.Identity<double>() };
-            var entityPlan = new EntityExtractionPlan(steps, converters);
+            var entityPlan = new DataExtractionPlan(steps, converters);
 
             // Act
             var relationPlan = new RelationExtractionPlan(mockExtractor.Object, entityPlan);
@@ -117,7 +117,7 @@ namespace UT.Kvasir.Extraction {
             var step = new IdentityExtractor<string>();
             var steps = new IExtractionStep[] { new PrimitiveExtractionStep(step, DataConverter.Identity<string>()) };
             var converters = new DataConverter[] { DataConverter.Identity<string>() };
-            var entityPlan = new EntityExtractionPlan(steps, converters);
+            var entityPlan = new DataExtractionPlan(steps, converters);
 
             var relationPlan = new RelationExtractionPlan(mockExtractor.Object, entityPlan);
 
