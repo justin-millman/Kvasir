@@ -108,5 +108,29 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
+
+        [TestMethod] public void Numeric_Construct() {
+            // Arrange
+            var path = "Nested.Path";
+
+            // Act
+            var direct = new NumericAttribute();
+            var nested = new NumericAttribute() { Path = path };
+
+            // Assert
+            direct.Path.Should().BeEmpty();
+            nested.Path.Should().Be(path);
+        }
+
+        [TestMethod] public void Numeric_UniqueId() {
+            // Arrange
+            var attr = new NumericAttribute();
+
+            // Act
+            var isUnique = ids_.Add(attr.TypeId);
+
+            // Assert
+            isUnique.Should().BeTrue();
+        }
     }
 }
