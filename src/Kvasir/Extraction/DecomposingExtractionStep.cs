@@ -47,7 +47,7 @@ namespace Kvasir.Extraction {
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<DBValue> Execute(object? source) {
+        public Row Execute(object? source) {
             Debug.Assert(source is null || source.GetType().IsInstanceOf(ExpectedSource));
 
             // If the source object is null, we cannot simply return a collection with 1 DBValue.NULL instance, as the

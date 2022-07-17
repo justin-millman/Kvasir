@@ -1338,16 +1338,6 @@
         <member name="M:Kvasir.Extraction.ReadPropertyExtractor.Execute(System.Object)">
             <inheritdoc/>
         </member>
-        <member name="T:Kvasir.Extraction.ExtractedRelationData">
-            <summary>
-              A grouping of data extracted from an <see cref="T:Kvasir.Relations.IRelation"/>.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Extraction.ExtractedRelationData.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
-            <summary>
-              A grouping of data extracted from an <see cref="T:Kvasir.Relations.IRelation"/>.
-            </summary>
-        </member>
         <member name="T:Kvasir.Extraction.RelationExtractionPlan">
             <summary>
               A description of the way in which data is extracted from an <see cref="T:Kvasir.Relations.IRelation"/> stored on a particular
@@ -1392,8 +1382,8 @@
               interface thereof.
             </pre>
             <returns>
-              A <see cref="T:Kvasir.Extraction.ExtractedRelationData"/> containing the values extracted from the relation targeted on
-              <paramref name="source"/> by this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
+              A triplet containing the values extracted from the relation targeted on <paramref name="source"/> by this
+              <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
             </returns>
         </member>
         <member name="T:Kvasir.Reconstitution.ByConstructorCreator">

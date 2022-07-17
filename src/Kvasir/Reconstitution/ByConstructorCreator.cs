@@ -45,7 +45,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? Execute(IReadOnlyList<DBValue> rawValues) {
+        public object? Execute(Row rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
             var args = arguments_.Select(r => r.ReconstituteFrom(rawValues));
