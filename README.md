@@ -1,5 +1,5 @@
-﻿[![Ubuntu Build (travis-ci.com)](https://img.shields.io/travis/com/justin-millman/Kvasir?label=Ubuntu%20Build&logo=ubuntu)](https://travis-ci.com/justin-millman/Kvasir)
-[![Windows Build (appveyor.com)](https://img.shields.io/appveyor/build/justin-millman/Kvasir/master?label=Windows%20Build&logo=windows)](https://ci.appveyor.com/project/justin-millman/kvasir)
+﻿[![Windows Build](https://img.shields.io/github/workflow/status/justin-millman/Kvasir/Windows/master?label=Windows%20Build&logo=windows)](https://github.com/justin-millman/Kvasir/blob/master/.github/workflows/windows.yml)
+[![Ubuntu Build](https://img.shields.io/github/workflow/status/justin-millman/Kvasir/Ubuntu/master?label=Ubuntu%20Build&logo=ubuntu)](https://github.com/justin-millman/Kvasir/blob/master/.github/workflows/ubuntu.yml)
 [![Code Coverage (coveralls.com)](https://img.shields.io/coveralls/github/justin-millman/Kvasir/master)](https://coveralls.io/github/justin-millman/Kvasir)
 [![License](https://img.shields.io/github/license/justin-millman/Kvasir)](https://github.com/justin-millman/Kvasir/blob/master/LICENSE.txt)
 [![Languages](https://img.shields.io/github/languages/count/justin-millman/Kvasir?color=blueviolet)](https://github.com/justin-millman/Kvasir)
