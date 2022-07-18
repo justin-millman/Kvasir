@@ -1,10 +1,10 @@
 ﻿#pragma warning disable CS0660    // overrides operator== or operator== but does not override Object.Equals(object?)
 #pragma warning disable CS0661    // overrides operator== or operator!= but does not override Object.GetHashCode()
+#pragma warning disable CA2231    // Implement the equality operators
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UT.Atropos {
     public class FullCheckTests {
@@ -183,22 +183,22 @@ namespace UT.Atropos {
             public int ID { private get; init; }
             public static CallTracker Tracker { get; } = new CallTracker();
 
-            public static bool operator ==(StructAlternateOperators _, int __) {
+            public static bool operator ==(StructAlternateOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator !=(StructAlternateOperators _, int __) {
+            public static bool operator !=(StructAlternateOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <(StructAlternateOperators _, int __) {
+            public static bool operator <(StructAlternateOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >(StructAlternateOperators _, int __) {
+            public static bool operator >(StructAlternateOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <=(StructAlternateOperators _, int __) {
+            public static bool operator <=(StructAlternateOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >=(StructAlternateOperators _, int __) {
+            public static bool operator >=(StructAlternateOperators _, int _1) {
                 throw new NotSupportedException();
             }
         }
@@ -206,22 +206,22 @@ namespace UT.Atropos {
             public int ID { private get; init; }
             public static CallTracker Tracker { get; } = new CallTracker();
 
-            public static int operator ==(StructNonBoolOperators _, StructNonBoolOperators __) {
+            public static int operator ==(StructNonBoolOperators _, StructNonBoolOperators _1) {
                 throw new NotSupportedException();
             }
-            public static int operator !=(StructNonBoolOperators _, StructNonBoolOperators __) {
+            public static int operator !=(StructNonBoolOperators _, StructNonBoolOperators _1) {
                 throw new NotSupportedException();
             }
-            public static int operator <(StructNonBoolOperators _, StructNonBoolOperators __) {
+            public static int operator <(StructNonBoolOperators _, StructNonBoolOperators _1) {
                 throw new NotSupportedException();
             }
-            public static int operator >(StructNonBoolOperators _, StructNonBoolOperators __) {
+            public static int operator >(StructNonBoolOperators _, StructNonBoolOperators _1) {
                 throw new NotSupportedException();
             }
-            public static int operator <=(StructNonBoolOperators _, StructNonBoolOperators __) {
+            public static int operator <=(StructNonBoolOperators _, StructNonBoolOperators _1) {
                 throw new NotSupportedException();
             }
-            public static int operator >=(StructNonBoolOperators _, StructNonBoolOperators __) {
+            public static int operator >=(StructNonBoolOperators _, StructNonBoolOperators _1) {
                 throw new NotSupportedException();
             }
         }
@@ -233,22 +233,22 @@ namespace UT.Atropos {
                 return source.ID;
             }
 
-            public static bool operator ==(StructConversionOperators lhs, int rhs) {
+            public static bool operator ==(StructConversionOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator !=(StructConversionOperators lhs, int rhs) {
+            public static bool operator !=(StructConversionOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <(StructConversionOperators lhs, int rhs) {
+            public static bool operator <(StructConversionOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >(StructConversionOperators lhs, int rhs) {
+            public static bool operator >(StructConversionOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <=(StructConversionOperators lhs, int rhs) {
+            public static bool operator <=(StructConversionOperators _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >=(StructConversionOperators lhs, int rhs) {
+            public static bool operator >=(StructConversionOperators _, int _1) {
                 throw new NotSupportedException();
             }
         }
@@ -256,27 +256,27 @@ namespace UT.Atropos {
             public int ID { private get; init; }
             public static CallTracker Tracker { get; } = new CallTracker();
 
-            public static bool operator ==(StructIncomparable _, StructIncomparable __) {
+            public static bool operator ==(StructIncomparable _, StructIncomparable _1) {
                 Tracker.Increment(CallKey.OpEQ);
                 return false;
             }
-            public static bool operator !=(StructIncomparable _, StructIncomparable __) {
+            public static bool operator !=(StructIncomparable _, StructIncomparable _1) {
                 Tracker.Increment(CallKey.OpNEQ);
                 return false;
             }
-            public static bool operator <(StructIncomparable _, StructIncomparable __) {
+            public static bool operator <(StructIncomparable _, StructIncomparable _1) {
                 Tracker.Increment(CallKey.OpLT);
                 return false;
             }
-            public static bool operator >(StructIncomparable _, StructIncomparable __) {
+            public static bool operator >(StructIncomparable _, StructIncomparable _1) {
                 Tracker.Increment(CallKey.OpGT);
                 return false;
             }
-            public static bool operator <=(StructIncomparable _, StructIncomparable __) {
+            public static bool operator <=(StructIncomparable _, StructIncomparable _1) {
                 Tracker.Increment(CallKey.OpLTE);
                 return false;
             }
-            public static bool operator >=(StructIncomparable _, StructIncomparable __) {
+            public static bool operator >=(StructIncomparable _, StructIncomparable _1) {
                 Tracker.Increment(CallKey.OpGTE);
                 return false;
             }
@@ -376,22 +376,22 @@ namespace UT.Atropos {
             public int ID { private get; init; }
             public static CallTracker Tracker { get; } = new CallTracker();
 
-            public static bool operator ==(ClassAlternateOperators? _, int __) {
+            public static bool operator ==(ClassAlternateOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator !=(ClassAlternateOperators? _, int __) {
+            public static bool operator !=(ClassAlternateOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <(ClassAlternateOperators? _, int __) {
+            public static bool operator <(ClassAlternateOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >(ClassAlternateOperators? _, int __) {
+            public static bool operator >(ClassAlternateOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <=(ClassAlternateOperators? _, int __) {
+            public static bool operator <=(ClassAlternateOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >=(ClassAlternateOperators? _, int __) {
+            public static bool operator >=(ClassAlternateOperators? _, int _1) {
                 throw new NotSupportedException();
             }
         }
@@ -399,22 +399,22 @@ namespace UT.Atropos {
             public int ID { private get; init; }
             public static CallTracker Tracker { get; } = new CallTracker();
 
-            public static int operator ==(ClassNonBoolOperators? _, ClassNonBoolOperators? __) {
+            public static int operator ==(ClassNonBoolOperators? _, ClassNonBoolOperators? _1) {
                 throw new NotSupportedException();
             }
-            public static int operator !=(ClassNonBoolOperators? _, ClassNonBoolOperators? __) {
+            public static int operator !=(ClassNonBoolOperators? _, ClassNonBoolOperators? _1) {
                 throw new NotSupportedException();
             }
-            public static int operator <(ClassNonBoolOperators? _, ClassNonBoolOperators? __) {
+            public static int operator <(ClassNonBoolOperators? _, ClassNonBoolOperators? _1) {
                 throw new NotSupportedException();
             }
-            public static int operator >(ClassNonBoolOperators? _, ClassNonBoolOperators? __) {
+            public static int operator >(ClassNonBoolOperators? _, ClassNonBoolOperators? _1) {
                 throw new NotSupportedException();
             }
-            public static int operator <=(ClassNonBoolOperators? _, ClassNonBoolOperators? __) {
+            public static int operator <=(ClassNonBoolOperators? _, ClassNonBoolOperators? _1) {
                 throw new NotSupportedException();
             }
-            public static int operator >=(ClassNonBoolOperators? _, ClassNonBoolOperators? __) {
+            public static int operator >=(ClassNonBoolOperators? _, ClassNonBoolOperators? _1) {
                 throw new NotSupportedException();
             }
         }
@@ -426,22 +426,22 @@ namespace UT.Atropos {
                 return source?.ID;
             }
 
-            public static bool operator ==(ClassConversionOperators? lhs, int rhs) {
+            public static bool operator ==(ClassConversionOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator !=(ClassConversionOperators? lhs, int rhs) {
+            public static bool operator !=(ClassConversionOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <(ClassConversionOperators? lhs, int rhs) {
+            public static bool operator <(ClassConversionOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >(ClassConversionOperators? lhs, int rhs) {
+            public static bool operator >(ClassConversionOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator <=(ClassConversionOperators? lhs, int rhs) {
+            public static bool operator <=(ClassConversionOperators? _, int _1) {
                 throw new NotSupportedException();
             }
-            public static bool operator >=(ClassConversionOperators? lhs, int rhs) {
+            public static bool operator >=(ClassConversionOperators? _, int _1) {
                 throw new NotSupportedException();
             }
         }
@@ -449,27 +449,27 @@ namespace UT.Atropos {
             public int ID { private get; init; }
             public static CallTracker Tracker { get; } = new CallTracker();
 
-            public static bool operator ==(ClassIncomparable? _, ClassIncomparable? __) {
+            public static bool operator ==(ClassIncomparable? _, ClassIncomparable? _1) {
                 Tracker.Increment(CallKey.OpEQ);
                 return false;
             }
-            public static bool operator !=(ClassIncomparable? _, ClassIncomparable? __) {
+            public static bool operator !=(ClassIncomparable? _, ClassIncomparable? _1) {
                 Tracker.Increment(CallKey.OpNEQ);
                 return false;
             }
-            public static bool operator <(ClassIncomparable? _, ClassIncomparable? __) {
+            public static bool operator <(ClassIncomparable? _, ClassIncomparable? _1) {
                 Tracker.Increment(CallKey.OpLT);
                 return false;
             }
-            public static bool operator >(ClassIncomparable? _, ClassIncomparable? __) {
+            public static bool operator >(ClassIncomparable? _, ClassIncomparable? _1) {
                 Tracker.Increment(CallKey.OpGT);
                 return false;
             }
-            public static bool operator <=(ClassIncomparable? _, ClassIncomparable? __) {
+            public static bool operator <=(ClassIncomparable? _, ClassIncomparable? _1) {
                 Tracker.Increment(CallKey.OpLTE);
                 return false;
             }
-            public static bool operator >=(ClassIncomparable? _, ClassIncomparable? __) {
+            public static bool operator >=(ClassIncomparable? _, ClassIncomparable? _1) {
                 Tracker.Increment(CallKey.OpGTE);
                 return false;
             }
@@ -515,5 +515,6 @@ namespace UT.Atropos {
     }
 }
 
+#pragma warning restore CA2231    // Implement the equality operators
 #pragma warning restore CS0660    // overrides operator== or operator== but does not override Object.Equals(object?)
 #pragma warning restore CS0661    // overrides operator== or operator!= but does not override Object.GetHashCode()

@@ -191,7 +191,7 @@ namespace UT.Kvasir.Annotations {
         private static readonly DataConverter[] multiConvs_;
 
         private class SimpleConstraint : IConstraintGenerator {
-            public static IConstraintGenerator Mock { get; set; }
+            public static IConstraintGenerator Mock { get; set; } = default!;
             public SimpleConstraint() {}
             public Clause MakeConstraint(IEnumerable<IField> fields, IEnumerable<DataConverter> converters, Settings settings) {
                 return Mock!.MakeConstraint(fields, converters, settings);
@@ -199,7 +199,7 @@ namespace UT.Kvasir.Annotations {
         }
         private class ComplexConstraint : IConstraintGenerator {
             public static int Argument { get; } = 174;
-            public static IConstraintGenerator Mock { get; set; }
+            public static IConstraintGenerator Mock { get; set; } = default!;
             public ComplexConstraint(int arg) { if(arg != Argument) { throw new ArgumentException(); } }
             public Clause MakeConstraint(IEnumerable<IField> fields, IEnumerable<DataConverter> converters, Settings settings) {
                 return Mock!.MakeConstraint(fields, converters, settings);
