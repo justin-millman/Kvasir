@@ -1,4 +1,4 @@
-name: Kvasir
+name: Ubuntu
 
 on:
   push:
@@ -11,8 +11,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
-        os: [ubuntu, windows]
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -24,14 +23,9 @@ jobs:
         run: dotnet restore
       - name: Build Project(s)
         run: dotnet build -c ${{ matrix.configuration }} --no-restore
-      - name: Run Unit Tests and Collect Coverage
-        if: ${{ matrix.os == 'ubuntu' }}
-        run: dotnet test --no-build  -c ${{ matrix.configuration }} -p:CollectCoverage=true -p:CoverletOutputFormat=lcov
       - name: Run Unit Tests
-        if: ${{ matrix.os != 'ubuntu' }}
-        run: dotnet test --no-build  -c ${{ matrix.configuration }}
+        run: dotnet test --no-build  -c ${{ matrix.configuration }} -p:CollectCoverage=true -p:CoverletOutputFormat=lcov
       - name: Upload Coverage to Coveralls
-        if: ${{ matrix.os == 'ubuntu' }}
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

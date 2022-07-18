@@ -1,0 +1,27 @@
+name: Windows
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  CI:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 5.0.400
+      - name: Restore Dependencies
+        run: dotnet restore
+      - name: Build Project(s)
+        run: dotnet build -c ${{ matrix.configuration }} --no-restore
+      - name: Run Unit Tests
+        run: dotnet test --no-build  -c ${{ matrix.configuration }}
