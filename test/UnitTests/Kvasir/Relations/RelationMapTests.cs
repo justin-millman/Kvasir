@@ -2,6 +2,7 @@
 using Kvasir.Relations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using KVP = System.Collections.Generic.KeyValuePair<string, string>;
@@ -87,10 +88,10 @@ namespace UT.Kvasir.Relations {
             // Assert
             map.Count.Should().Be(4);
             map.Comparer.Should().Be(EqualityComparer<string>.Default);
-            map[kvps[0].Key].Should().Be(kvps[0].Value);
-            map[kvps[1].Key].Should().Be(kvps[1].Value);
-            map[kvps[2].Key].Should().Be(kvps[2].Value);
-            map[kvps[3].Key].Should().Be(kvps[3].Value);
+            map[kvps[0].Key].Should().Be(kvps[0].Value);   (map as IDictionary)[kvps[0].Key].Should().Be(kvps[0].Value);
+            map[kvps[1].Key].Should().Be(kvps[1].Value);   (map as IDictionary)[kvps[1].Key].Should().Be(kvps[1].Value);
+            map[kvps[2].Key].Should().Be(kvps[2].Value);   (map as IDictionary)[kvps[2].Key].Should().Be(kvps[2].Value);
+            map[kvps[3].Key].Should().Be(kvps[3].Value);   (map as IDictionary)[kvps[3].Key].Should().Be(kvps[3].Value);
             map.Should().HaveConnectionType<KVP>();
             map.Should().HaveEntryCount(dict.Count);
             map.Should().ExposeDeletesFirst();
@@ -187,16 +188,21 @@ namespace UT.Kvasir.Relations {
             var pairs = new KVP[] {
                 new KVP("Perth", "Australia"),
                 new KVP("Puerto Vallarta", "Mexico"),
-                new KVP("Windsor", "Canada")
+                new KVP("Windsor", "Canada"),
+                new KVP("Voronezh", "Russia"),
+                new KVP("Ahmedabad", "India"),
             };
             var map = new RelationMap<string, string>(pairs);
 
             // Act
-            var success = map.Remove(pairs[1].Key);
+            var first_success = map.Remove(pairs[1].Key);
+            var second_success = (map as ICollection<KVP>).Remove(pairs[3]);
+            (map as IDictionary).Remove(pairs[4].Key);
 
             // Assert
             map.Count.Should().Be(2);
-            success.Should().BeTrue();
+            first_success.Should().BeTrue();
+            second_success.Should().BeTrue();
             map[pairs[0].Key].Should().Be(pairs[0].Value);
             map[pairs[2].Key].Should().Be(pairs[2].Value);
             map.Should().HaveEntryCount(2);
@@ -236,11 +242,13 @@ namespace UT.Kvasir.Relations {
             var map = new RelationMap<string, string>() { { "Tianjin", "China" }, { "Manama", "Bahrain" } };
 
             // Act
-            var success = map.Remove("Bangui");
+            var first_success = map.Remove("Bangui");
+            var second_success = (map as ICollection<KVP>).Remove(new KVP("Abidjan", "Côte d'Ivoire"));
 
             // Assert
             map.Count.Should().Be(2);
-            success.Should().BeFalse();
+            first_success.Should().BeFalse();
+            second_success.Should().BeFalse();
         }
 
         [TestMethod] public void RemoveExistingNewItemObtainValue() {
@@ -364,19 +372,23 @@ namespace UT.Kvasir.Relations {
             var map = new RelationMap<string, string>();
             var pair0 = new KVP("Yangon", "Myanmar");
             var pair1 = new KVP("Port Louis", "Mauritius");
+            var pair2 = new KVP("Port of Spain", "Trinidad and Tobago");
 
             // Act
             map.Add(pair0.Key, pair0.Value);
-            map.Add(pair1.Key, pair1.Value);
+            (map as IDictionary).Add(pair1.Key, pair1.Value);
+            (map as ICollection<KVP>).Add(pair2);
 
             // Assert
-            map.Count.Should().Be(2);
+            map.Count.Should().Be(3);
             map[pair0.Key].Should().Be(pair0.Value);
             map[pair1.Key].Should().Be(pair1.Value);
-            map.Should().HaveEntryCount(2);
+            map[pair2.Key].Should().Be(pair2.Value);
+            map.Should().HaveEntryCount(3);
             map.Should().ExposeDeletesFirst();
             map.Should().ExposeEntry(pair0, Status.New);
             map.Should().ExposeEntry(pair1, Status.New);
+            map.Should().ExposeEntry(pair2, Status.New);
         }
 
         [TestMethod] public void AddExistingDeletedItem() {
@@ -525,6 +537,7 @@ namespace UT.Kvasir.Relations {
             // Act
             var newValue = "~~~Portugal~~~";
             map[single1.Key] = newValue;
+            (map as IDictionary)[single1.Key] = newValue;
 
             // Assert
             map.Count.Should().Be(6);
@@ -560,6 +573,7 @@ namespace UT.Kvasir.Relations {
             // Act
             var newValue = "Yisra'el";
             map[pairs[2].Key] = newValue;
+            (map as IDictionary)[pairs[2].Key] = newValue;
 
             // Assert
             map.Count.Should().Be(6);

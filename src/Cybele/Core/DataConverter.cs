@@ -74,11 +74,8 @@ namespace Cybele.Core {
         ///   <paramref name="convert"/>.
         /// </returns>
         public static DataConverter Create<TSource, TResult>(Converter<TSource, TResult> convert) {
-            #pragma warning disable CS8604          // Possible null reference argument.
-            object? fwd(object? o) => convert((TSource?)o);
+            object? fwd(object? o) => o is null ? null : convert((TSource)o);
             var bwd = Option.None<ConvFn>();
-            #pragma warning restore CS8604          // Possible null reference argument.
-
             return new DataConverter(typeof(TSource), typeof(TResult), fwd, bwd);
         }
 
@@ -111,7 +108,6 @@ namespace Cybele.Core {
 
             object? fwd(object? o) => o is null ? null : convert((TSource)o);
             var bwd = Option.Some<ConvFn>(o => o is null ? null : revert((TResult)o));
-
             return new DataConverter(typeof(TSource), typeof(TResult), fwd, bwd);
         }
 

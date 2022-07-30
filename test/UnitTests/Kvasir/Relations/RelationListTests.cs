@@ -2,6 +2,7 @@
 using Kvasir.Relations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections;
 
 namespace UT.Kvasir.Relations {
     [TestClass, TestCategory("RelationList")]
@@ -18,6 +19,19 @@ namespace UT.Kvasir.Relations {
             list.Should().HaveEntryCount(0);
         }
 
+        [TestMethod] public void SetCapacity() {
+            // Arrange
+            var list = new RelationList<string>();
+            var initialCapacity = list.Capacity;
+            var newCapacity = initialCapacity + 200;
+
+            // Act
+            list.Capacity = newCapacity;
+
+            // Assert
+            list.Capacity.Should().Be(newCapacity);
+        }
+
         [TestMethod] public void ConstructFromElements() {
             // Arrange
             var elements = new string[] { "Kalispell", "Bethesda", "Yuma", "Oregon City", "Unalaska" };
@@ -27,11 +41,11 @@ namespace UT.Kvasir.Relations {
 
             // Assert
             list.Count.Should().Be(5);
-            list[0].Should().Be(elements[0]);
-            list[1].Should().Be(elements[1]);
-            list[2].Should().Be(elements[2]);
-            list[3].Should().Be(elements[3]);
-            list[4].Should().Be(elements[4]);
+            list[0].Should().Be(elements[0]);   (list as IList)[0].Should().Be(elements[0]);
+            list[1].Should().Be(elements[1]);   (list as IList)[1].Should().Be(elements[1]);
+            list[2].Should().Be(elements[2]);   (list as IList)[2].Should().Be(elements[2]);
+            list[3].Should().Be(elements[3]);   (list as IList)[3].Should().Be(elements[3]);
+            list[4].Should().Be(elements[4]);   (list as IList)[4].Should().Be(elements[4]);
             list.Capacity.Should().BeGreaterOrEqualTo(5);
             list.Should().HaveConnectionType<string>();
             list.Should().HaveEntryCount(elements.Length);
@@ -82,15 +96,15 @@ namespace UT.Kvasir.Relations {
 
             // Act
             var success = list.Remove(elements[1]);
+            (list as IList).Remove(elements[0]);
 
             // Assert
-            list.Count.Should().Be(2);
+            list.Count.Should().Be(1);
             success.Should().BeTrue();
-            list[0].Should().Be(elements[0]);
-            list[1].Should().Be(elements[2]);
-            list.Should().HaveEntryCount(2);
+            list[0].Should().Be(elements[2]);
+            list.Should().HaveEntryCount(1);
             list.Should().ExposeDeletesFirst();
-            list.Should().ExposeEntry(elements[0], Status.New);
+            list.Should().NotExposeEntryFor(elements[0]);
             list.Should().NotExposeEntryFor(elements[1]);
             list.Should().ExposeEntry(elements[2], Status.New);
         }
@@ -103,17 +117,17 @@ namespace UT.Kvasir.Relations {
 
             // Act
             var success = list.Remove(elements[0]);
+            (list as IList).Remove(elements[2]);
 
             // Assert
-            list.Count.Should().Be(2);
+            list.Count.Should().Be(1);
             success.Should().BeTrue();
             list[0].Should().Be(elements[1]);
-            list[1].Should().Be(elements[2]);
             list.Should().HaveEntryCount(3);
             list.Should().ExposeDeletesFirst();
             list.Should().ExposeEntry(elements[0], Status.Deleted);
             list.Should().ExposeEntry(elements[1], Status.Saved);
-            list.Should().ExposeEntry(elements[2], Status.Saved);
+            list.Should().ExposeEntry(elements[2], Status.Deleted);
         }
 
         [TestMethod] public void RemoveTwiceThenReplace() {
@@ -309,9 +323,10 @@ namespace UT.Kvasir.Relations {
 
             // Act
             list.Add(element0);
-            list.Add(element1);
+            var position = (list as IList).Add(element1);
 
             // Assert
+            position.Should().Be(1);
             list.Count.Should().Be(2);
             list[0].Should().Be(element0);
             list[1].Should().Be(element1);
@@ -329,15 +344,18 @@ namespace UT.Kvasir.Relations {
 
             // Act
             list.Add(repeat);
+            var position = (list as IList).Add(repeat);
 
             // Assert
-            list.Count.Should().Be(3);
+            position.Should().Be(3);
+            list.Count.Should().Be(4);
             list[0].Should().Be(elements[0]);
             list[1].Should().Be(elements[1]);
             list[2].Should().Be(repeat);
-            list.Should().HaveEntryCount(3);
+            list[3].Should().Be(repeat);
+            list.Should().HaveEntryCount(4);
             list.Should().ExposeDeletesFirst();
-            list.Should().ExposeEntry(repeat, Status.New, 2);
+            list.Should().ExposeEntry(repeat, Status.New, 3);
         }
 
         [TestMethod] public void AddExitingSavedItem() {
@@ -349,17 +367,20 @@ namespace UT.Kvasir.Relations {
 
             // Act
             list.Add(repeat);
+            var position = (list as IList).Add(repeat);
 
             // Assert
-            list.Count.Should().Be(4);
+            position.Should().Be(4);
+            list.Count.Should().Be(5);
             list[0].Should().Be(elements[0]);
             list[1].Should().Be(elements[1]);
             list[2].Should().Be(elements[2]);
             list[3].Should().Be(repeat);
-            list.Should().HaveEntryCount(4);
+            list[4].Should().Be(repeat);
+            list.Should().HaveEntryCount(5);
             list.Should().ExposeDeletesFirst();
             list.Should().ExposeEntry(repeat, Status.Saved);
-            list.Should().ExposeEntry(repeat, Status.New);
+            list.Should().ExposeEntry(repeat, Status.New, 2);
         }
 
         [TestMethod] public void AddExistingDeletedItem() {
@@ -383,24 +404,114 @@ namespace UT.Kvasir.Relations {
             list.Should().ExposeEntry(deleted, Status.Saved);
         }
 
-        [TestMethod] public void InsertNewItem() {
+        [TestMethod] public void AddRangeNewItems() {
             // Arrange
-            var elements = new string[] { "Farmington Hills", "Terre Haute", "Tupelo" };
-            var list = new RelationList<string>(elements);
-            var insertion = "Kaneohe";
+            var elements = new string[] { "Fullerton", "Texas City" };
+            var list = new RelationList<string>();
 
             // Act
-            list.Insert(1, insertion);
+            list.AddRange(elements);
+
+            // Assert
+            list.Count.Should().Be(2);
+            list[0].Should().Be(elements[0]);
+            list[1].Should().Be(elements[1]);
+            list.Should().HaveEntryCount(2);
+            list.Should().ExposeDeletesFirst();
+            list.Should().ExposeEntry(elements[0], Status.New);
+            list.Should().ExposeEntry(elements[1], Status.New);
+        }
+
+        [TestMethod] public void AddRangeExistingNewItems() {
+            // Arrange
+            var elements = new string[] { "Normal", "Northridge", "Mount Pleasant" };
+            var list = new RelationList<string>(elements);
+
+            // Act
+            list.AddRange(elements);
+
+            // Assert
+            list.Count.Should().Be(6);
+            list[0].Should().Be(elements[0]);
+            list[1].Should().Be(elements[1]);
+            list[2].Should().Be(elements[2]);
+            list[3].Should().Be(elements[0]);
+            list[4].Should().Be(elements[1]);
+            list[5].Should().Be(elements[2]);
+            list.Should().HaveEntryCount(6);
+            list.Should().ExposeDeletesFirst();
+            list.Should().ExposeEntry(elements[0], Status.New, 2);
+            list.Should().ExposeEntry(elements[1], Status.New, 2);
+            list.Should().ExposeEntry(elements[2], Status.New, 2);
+        }
+
+        [TestMethod] public void AddRangeExistingSavedItems() {
+            // Arrange
+            var elements = new string[] { "Fort Collins", "Lynchburg" };
+            var list = new RelationList<string>(elements);
+            (list as IRelation).Canonicalize();
+
+            // Act
+            list.AddRange(elements);
 
             // Assert
             list.Count.Should().Be(4);
             list[0].Should().Be(elements[0]);
-            list[1].Should().Be(insertion);
-            list[2].Should().Be(elements[1]);
-            list[3].Should().Be(elements[2]);
+            list[1].Should().Be(elements[1]);
+            list[2].Should().Be(elements[0]);
+            list[3].Should().Be(elements[1]);
             list.Should().HaveEntryCount(4);
             list.Should().ExposeDeletesFirst();
-            list.Should().ExposeEntry(insertion, Status.New);
+            list.Should().ExposeEntry(elements[0], Status.Saved);
+            list.Should().ExposeEntry(elements[0], Status.New);
+            list.Should().ExposeEntry(elements[1], Status.Saved);
+            list.Should().ExposeEntry(elements[1], Status.New);
+        }
+
+        [TestMethod] public void AddRangeExistingDeletedItems() {
+            // Arrange
+            var elements = new string[] { "Storrs", "Cedar Falls", "Bayamón" };
+            var list = new RelationList<string>(elements);
+            (list as IRelation).Canonicalize();
+            list.Clear();
+
+            // Act
+            list.AddRange(elements);
+
+            // Assert
+            list.Count.Should().Be(3);
+            list[0].Should().Be(elements[0]);
+            list[1].Should().Be(elements[1]);
+            list[2].Should().Be(elements[2]);
+            list.Should().ExposeDeletesFirst();
+            list.Should().HaveEntryCount(3);
+            list.Should().ExposeEntry(elements[0], Status.Saved);
+            list.Should().ExposeEntry(elements[1], Status.Saved);
+            list.Should().ExposeEntry(elements[2], Status.Saved);
+        }
+
+        [TestMethod] public void InsertNewItem() {
+            // Arrange
+            var elements = new string[] { "Farmington Hills", "Terre Haute", "Tupelo" };
+            var list = new RelationList<string>(elements);
+            var first_insertion = "Kaneohe";
+            var second_insertion = "Guaynabo";
+
+            // Act
+            list.Insert(1, first_insertion);
+            (list as IList).Insert(1, second_insertion);
+
+            // Assert
+            list.Count.Should().Be(5);
+            list[0].Should().Be(elements[0]);
+            list[1].Should().Be(second_insertion);
+            list[2].Should().Be(first_insertion);
+            list[3].Should().Be(elements[1]);
+            list[4].Should().Be(elements[2]);
+            list.Should().HaveEntryCount(5);
+            list.Should().ExposeDeletesFirst();
+            list.Should().ExposeEntry(first_insertion, Status.New);
+            list.Should().ExposeEntry(second_insertion, Status.New);
         }
 
         [TestMethod] public void InsertExistingNewItem() {
@@ -411,15 +522,17 @@ namespace UT.Kvasir.Relations {
 
             // Act
             list.Insert(0, repeat);
+            (list as IList).Insert(0, repeat);
 
             // Assert
-            list.Count.Should().Be(3);
+            list.Count.Should().Be(4);
             list[0].Should().Be(repeat);
-            list[1].Should().Be(elements[0]);
-            list[2].Should().Be(elements[1]);
-            list.Should().HaveEntryCount(3);
+            list[1].Should().Be(repeat);
+            list[2].Should().Be(elements[0]);
+            list[3].Should().Be(elements[1]);
+            list.Should().HaveEntryCount(4);
             list.Should().ExposeDeletesFirst();
-            list.Should().ExposeEntry(repeat, Status.New, 2);
+            list.Should().ExposeEntry(repeat, Status.New, 3);
         }
 
         [TestMethod] public void InsertExitingSavedItem() {
@@ -431,17 +544,19 @@ namespace UT.Kvasir.Relations {
 
             // Act
             list.Insert(2, repeat);
+            (list as IList).Insert(2, repeat);
 
             // Assert
-            list.Count.Should().Be(4);
+            list.Count.Should().Be(5);
             list[0].Should().Be(elements[0]);
             list[1].Should().Be(elements[1]);
             list[2].Should().Be(repeat);
-            list[3].Should().Be(elements[2]);
-            list.Should().HaveEntryCount(4);
+            list[3].Should().Be(repeat);
+            list[4].Should().Be(elements[2]);
+            list.Should().HaveEntryCount(5);
             list.Should().ExposeDeletesFirst();
             list.Should().ExposeEntry(repeat, Status.Saved);
-            list.Should().ExposeEntry(repeat, Status.New);
+            list.Should().ExposeEntry(repeat, Status.New, 2);
         }
 
         [TestMethod] public void InsertExistingDeletedItem() {
@@ -470,10 +585,12 @@ namespace UT.Kvasir.Relations {
             var list = new RelationList<string>() { "Lander", "East Hartford" };
 
             // Act
-            Action act = () => list.Insert(-4, "Shaker Heights");
+            Action first_act = () => list.Insert(-4, "Shaker Heights");
+            Action second_act = () => (list as IList).Insert(-182, "Vicksburg");
 
             // Assert
-            act.Should().ThrowExactly<ArgumentOutOfRangeException>().WithAnyMessage();
+            first_act.Should().ThrowExactly<ArgumentOutOfRangeException>().WithAnyMessage();
+            second_act.Should().ThrowExactly<ArgumentOutOfRangeException>().WithAnyMessage();
         }
 
         [TestMethod] public void InsertOverlargeIndex() {
@@ -668,17 +785,21 @@ namespace UT.Kvasir.Relations {
             // Arrange
             var elements = new string[] { "Urbana", "Missoula" };
             var list = new RelationList<string>(elements);
+            var replacement = "West Des Moines";
 
             // Act
             list[0] = elements[1];
+            (list as IList)[1] = replacement;
 
             // Assert
             list.Count.Should().Be(2);
             list[0].Should().Be(elements[1]);
-            list[1].Should().Be(elements[1]);
+            list[1].Should().Be(replacement);
             list.Should().HaveEntryCount(2);
             list.Should().ExposeDeletesFirst();
-            list.Should().ExposeEntry(elements[1], Status.New, 2);
+            list.Should().ExposeEntry(elements[1], Status.New);
+            list.Should().ExposeEntry(replacement, Status.New);
+            list.Should().NotExposeEntryFor(elements[0]);
         }
 
         [TestMethod] public void OverwriteNewWithSaved() {

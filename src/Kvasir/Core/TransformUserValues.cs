@@ -81,10 +81,11 @@ namespace Kvasir.Core {
         private static IEnumerable<DBValue> DoTransform(IEnumerable<object?> val, IField field,
             DataConverter converter, Settings settings) {
 
-            Debug.Assert(val is not null && !val.IsEmpty());
+            Debug.Assert(val is not null);
             Debug.Assert(field is not null);
             Debug.Assert(converter is not null);
             Debug.Assert(settings is not null);
+            Debug.Assert(!val.IsEmpty());
 
             return val.Select(o => DoTransform(o, field, converter, settings));
         }

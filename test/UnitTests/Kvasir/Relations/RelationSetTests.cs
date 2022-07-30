@@ -299,25 +299,29 @@ namespace UT.Kvasir.Relations {
             var elements = new string[] { "Quebec City", "Beirut", "Florence", "Hamburg" };
             var set = new RelationSet<string>(elements);
             (set as IRelation).Canonicalize();
-            var single = "Moscow";
+            var first_single = "Moscow";
+            var second_single = "Fukuoka";
 
             // Act
-            set.Add(single);
+            set.Add(first_single);
+            (set as ICollection<string>).Add(second_single);
 
             // Assert
-            set.Count.Should().Be(5);
+            set.Count.Should().Be(6);
             set.Contains(elements[0]).Should().BeTrue();
             set.Contains(elements[1]).Should().BeTrue();
             set.Contains(elements[2]).Should().BeTrue();
             set.Contains(elements[3]).Should().BeTrue();
-            set.Contains(single).Should().BeTrue();
-            set.Should().HaveEntryCount(5);
+            set.Contains(first_single).Should().BeTrue();
+            set.Contains(second_single).Should().BeTrue();
+            set.Should().HaveEntryCount(6);
             set.Should().ExposeDeletesFirst();
             set.Should().ExposeEntry(elements[0], Status.Saved);
             set.Should().ExposeEntry(elements[1], Status.Saved);
             set.Should().ExposeEntry(elements[2], Status.Saved);
             set.Should().ExposeEntry(elements[3], Status.Saved);
-            set.Should().ExposeEntry(single, Status.New);
+            set.Should().ExposeEntry(first_single, Status.New);
+            set.Should().ExposeEntry(second_single, Status.New);
         }
 
         [TestMethod] public void AddExistingNewItem() {
@@ -332,6 +336,7 @@ namespace UT.Kvasir.Relations {
 
             // Act
             var success = set.Add(secondHalf[1]);
+            (set as ICollection<string>).Add(secondHalf[2]);
 
             // Assert
             success.Should().BeFalse();
@@ -360,6 +365,7 @@ namespace UT.Kvasir.Relations {
 
             // Act
             var success = set.Add(elements[0]);
+            (set as ICollection<string>).Add(elements[1]);
 
             // Assert
             success.Should().BeFalse();
@@ -386,11 +392,10 @@ namespace UT.Kvasir.Relations {
 
             // Act
             var success0 = set.Add(elements[1]);
-            var success1 = set.Add(single);
+            (set as ICollection<string>).Add(single);
 
             // Assert
             success0.Should().BeTrue();
-            success1.Should().BeTrue();
             set.Count.Should().Be(5);
             set.Contains(elements[0]).Should().BeTrue();
             set.Contains(elements[1]).Should().BeTrue();

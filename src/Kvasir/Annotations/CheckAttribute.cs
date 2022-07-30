@@ -56,10 +56,11 @@ namespace Kvasir.Annotations {
         ///   A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
         /// </returns>
         internal Clause MakeConstraint(FieldList fields, ConverterList converters, Settings settings) {
-            Debug.Assert(fields is not null && !fields.IsEmpty());
-            Debug.Assert(converters is not null && !converters.IsEmpty());
-            Debug.Assert(fields.Count() == converters.Count());
+            Debug.Assert(fields is not null);
+            Debug.Assert(converters is not null);
             Debug.Assert(settings is not null);
+            Debug.Assert(!fields.IsEmpty());
+            Debug.Assert(fields.Count() == converters.Count());
 
             return generator_.MakeConstraint(fields, converters, settings);
         }
