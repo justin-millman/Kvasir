@@ -442,13 +442,13 @@ namespace Kvasir.Relations {
         /// <inheritdoc/>
         object? IDictionary.this[object key] {
             get {
-                Guard.Against.InvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
+                Guard.Against.NullOrInvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
                 return this[(TKey)key];
             }
             set {
-                Guard.Against.InvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
-                Guard.Against.InvalidInput(value, nameof(value), v => v is null || v.GetType() == typeof(TKey));
-                this[(TKey)key] = (value is null ? default : (TValue)value)!;
+                Guard.Against.NullOrInvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
+                Guard.Against.NullOrInvalidInput(value, nameof(value), v => v!.GetType() == typeof(TKey));
+                this[(TKey)key] = (TValue)value!;
             }
         }
 
@@ -510,9 +510,9 @@ namespace Kvasir.Relations {
 
         /// <inheritdoc/>
         void IDictionary.Add(object key, object? value) {
-            Guard.Against.InvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
-            Guard.Against.InvalidInput(value, nameof(value), v => v is null || v.GetType() == typeof(TKey));
-            Add((TKey)key, (value is null ? default : (TValue)value)!);
+            Guard.Against.NullOrInvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
+            Guard.Against.NullOrInvalidInput(value, nameof(value), v => v!.GetType() == typeof(TKey));
+            Add((TKey)key, (TValue)value!);
         }
 
         /// <inheritdoc/>
@@ -530,7 +530,7 @@ namespace Kvasir.Relations {
 
         /// <inheritdoc/>
         void IDictionary.Remove(object key) {
-            Guard.Against.InvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
+            Guard.Against.NullOrInvalidInput(key, nameof(key), k => k.GetType() == typeof(TKey));
             Remove((TKey)key);
         }
 
