@@ -1132,6 +1132,21 @@
               <paramref name="source"/>.
             </returns>
         </member>
+        <member name="M:Kvasir.Extraction.DataExtractionPlan.ExecutePiecewise(System.Object)">
+            <summary>
+              Execute this <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> on a source object by extracting and presenting a single
+              value at a time, producing (in totality) an ordered sequence of values that can be stored in a back-end
+              database.
+            </summary>
+            <pre>
+              <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
+              instance thereof.
+            </pre>
+            <returns>
+              A lazily-evaluted, immutable, non-indexable ordered sequence of <see cref="T:Kvasir.Schema.DBValue">database values</see>
+              extracted from <paramref name="source"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Extraction.DecomposingExtractionStep">
             <summary>
               An <see cref="T:Kvasir.Extraction.IExtractionStep"/> that produces a collection of primitive values obtained by recursively
@@ -1423,6 +1438,35 @@
         <member name="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Reconstitution.ByKeyLookupCreator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> that looks up an existing CLR object by a primary or secondary key.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.ByKeyLookupCreator.Target">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Reconstitution.ByKeyLookupCreator.#ctor(System.Func{System.Collections.Generic.IEnumerable{System.Object}},Kvasir.Extraction.DataExtractionPlan)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Reconstitution.ByKeyLookupCreator"/>.
+            </summary>
+            <param name="factory">
+              A function that produces the collection of possible Entity matches, which can produce different results
+              each time it is invoked (if so desired).
+            </param>
+            <param name="keyExtractor">
+              The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> that produces the key for possible Entity matches against which to
+              compare the raw values upon <see cref="M:Kvasir.Reconstitution.ByKeyLookupCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">execution</see>.
+            </param>
+            <pre>
+              The <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> of <paramref name="keyExtractor"/> is the dynamic type
+              of each item produced by every invocation of <paramref name="factory"/>, or is a base class or interface
+              thereof.
+            </pre>
+        </member>
+        <member name="M:Kvasir.Reconstitution.ByKeyLookupCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Reconstitution.DataReconstitutionPlan">
             <summary>
               A description of the way in which data for a particular CLR object type is to be extracted from a back-end
@@ -1635,6 +1679,30 @@
               <paramref name="subject"/> is an instance of <see cref="P:Kvasir.Reconstitution.IRepopulator.ExpectedSubject"/>
                 --and--
               <paramref name="entries"/> is non-empty.
+            </pre>
+        </member>
+        <member name="T:Kvasir.Reconstitution.Lookup">
+            <summary>
+              A collection of utilities for performing look-up operations during Reconstitution.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.Lookup.ByKey(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue},System.Collections.Generic.IEnumerable{System.Object},Kvasir.Extraction.DataExtractionPlan)">
+            <summary>
+              Lookup the Entity from a list of options that matches a given key.
+            </summary>
+            <param name="key">
+              The probe key, which may be the primary key of the Entities or any other collection of unique Fields.
+            </param>
+            <param name="entities">
+              The collection of possible Entity matches.
+            </param>
+            <param name="extractor">
+              The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> that produces the key for possible Entity matches against which to
+              compare <paramref name="key"/>.
+            </param>
+            <pre>
+              The <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> of <paramref name="extractor"/> is the dynamic type
+              of each item in <paramref name="entities"/>, or is a base class or interface thereof.
             </pre>
         </member>
         <member name="T:Kvasir.Reconstitution.PrimitiveCreator">

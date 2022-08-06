@@ -69,10 +69,26 @@ namespace Kvasir.Extraction {
         /// </returns>
         public DBData Execute(object source) {
             Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
+            return ExecutePiecewise(source).ToList();
+        }
 
-            List<DBValue> results = new List<DBValue>();
+        /// <summary>
+        ///   Execute this <see cref="DataExtractionPlan"/> on a source object by extracting and presenting a single
+        ///   value at a time, producing (in totality) an ordered sequence of values that can be stored in a back-end
+        ///   database.
+        /// </summary>
+        /// <pre>
+        ///   <see cref="ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
+        ///   instance thereof.
+        /// </pre>
+        /// <returns>
+        ///   A lazily-evaluted, immutable, non-indexable ordered sequence of <see cref="DBValue">database values</see>
+        ///   extracted from <paramref name="source"/>.
+        /// </returns>
+        public IEnumerable<DBValue> ExecutePiecewise(object source) {
+            Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
+
             var converterIter = converters_.GetEnumerator();
-
             foreach (var step in paramSteps_) {
                 var extractedParams = step.Execute(source);
                 foreach (var param in extractedParams) {
@@ -81,10 +97,9 @@ namespace Kvasir.Extraction {
                     // The unwrap-and-rewrap paradigm here is a little annoying, but at least this way we can leverage
                     // the DBValue in the IExtractionStep's return content to ensure that identity conversions are
                     // perfectly valid.
-                    results.Add(DBValue.Create(converterIter.Current.Convert(param.Datum)));
+                    yield return DBValue.Create(converterIter.Current.Convert(param.Datum));
                 }
             }
-            return results;
         }
 
 
