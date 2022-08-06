@@ -26,6 +26,12 @@ namespace Kvasir.Reconstitution {
         ///   A list of <see cref="IReconstitutor">Reconstitutors</see> to be used to create the arguments to the
         ///   reflection invocation of <paramref name="ctor"/>, in the order in which they are listed.
         /// </param>
+        /// <param name="opt">
+        ///   Whether or not the object being constructed is "optional." An optional object is one that can take on the
+        ///   value of <see langword="null"/>. Specifically, this argument controls the behavior of
+        ///   <see cref="Execute(IReadOnlyList{DBValue})"/> in the event that a set of all <see cref="DBValue.NULL"/>
+        ///   is provided.
+        /// </param>
         /// <pre>
         ///   <paramref name="argReconstitutors"/> is not empty
         ///     --and--
@@ -33,7 +39,7 @@ namespace Kvasir.Reconstitution {
         ///   <paramref name="argReconstitutors"/> is compatible with the corresponding argument to
         ///   <paramref name="ctor"/>.
         /// </pre>
-        internal ByConstructorCreator(ConstructorInfo ctor, IEnumerable<IReconstitutor> argReconstitutors) {
+        internal ByConstructorCreator(ConstructorInfo ctor, IEnumerable<IReconstitutor> argReconstitutors, bool opt) {
             Guard.Against.Null(ctor, nameof(ctor));
             Guard.Against.NullOrEmpty(argReconstitutors, nameof(argReconstitutors));
             Debug.Assert(ctor.IsPublic);
@@ -42,17 +48,22 @@ namespace Kvasir.Reconstitution {
             Target = ctor.ReflectedType!;
             ctor_ = ctor;
             arguments_ = argReconstitutors;
+            constructFromNulls_ = !opt;
         }
 
         /// <inheritdoc/>
         public object? Execute(DBData rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
-            var args = arguments_.Select(r => r.ReconstituteFrom(rawValues));
-            return ctor_.Invoke(args.ToArray());
+            if (constructFromNulls_ || rawValues.Any(v => v != DBValue.NULL)) {
+                var args = arguments_.Select(r => r.ReconstituteFrom(rawValues));
+                return ctor_.Invoke(args.ToArray());
+            }
+            return null;
         }
 
 
+        private readonly bool constructFromNulls_;
         private readonly ConstructorInfo ctor_;
         private readonly IEnumerable<IReconstitutor> arguments_;
     }
