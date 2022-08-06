@@ -46,7 +46,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? ReconstituteFrom(Row rawValues) {
+        public object? ReconstituteFrom(DBData rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
             var view = rawValues.Skip(start_.Value).Take(length_).ToList();

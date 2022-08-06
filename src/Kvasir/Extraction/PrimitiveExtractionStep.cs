@@ -44,7 +44,7 @@ namespace Kvasir.Extraction {
         }
 
         /// <inheritdoc/>
-        public Row Execute(object? source) {
+        public DBData Execute(object? source) {
             Debug.Assert(source is null || source.GetType().IsInstanceOf(ExpectedSource));
 
             if (source is null) {

@@ -59,7 +59,7 @@ namespace Kvasir.Reconstitution {
         ///   A CLR object of type <see cref="Target"/> that, when run through the dedicated extractor for
         ///   <see cref="Target"/>, produces <paramref name="rawValues"/>.
         /// </returns>
-        public object ReconstituteFrom(Row rawValues) {
+        public object ReconstituteFrom(DBData rawValues) {
             Guard.Against.Null(rawValues, nameof(rawValues));
             Debug.Assert(!rawValues.IsEmpty());
 

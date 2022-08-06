@@ -53,7 +53,7 @@ namespace Kvasir.Reconstitution {
         ///     --and--
         ///   Each of the "rows" in <paramref name="rawValues"/> is non-empty.
         /// </pre>
-        public void RepopulateFrom(object subject, IEnumerable<Row> rawValues) {
+        public void RepopulateFrom(object subject, IEnumerable<DBData> rawValues) {
             Guard.Against.Null(subject, nameof(subject));
             Guard.Against.Null(rawValues, nameof(rawValues));
             Debug.Assert(subject.GetType().IsInstanceOf(ExpectedSubject));

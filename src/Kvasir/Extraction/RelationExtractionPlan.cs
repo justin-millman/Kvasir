@@ -64,16 +64,16 @@ namespace Kvasir.Extraction {
         ///   A triplet containing the values extracted from the relation targeted on <paramref name="source"/> by this
         ///   <see cref="RelationExtractionPlan"/>.
         /// </returns>
-        public (IEnumerable<Row> Insertions, IEnumerable<Row> Modifications, IEnumerable<Row> Deletions)
+        public (IEnumerable<DBData> Insertions, IEnumerable<DBData> Modifications, IEnumerable<DBData> Deletions)
         Execute(object source) {
             Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
 
             // In order to keep the API of the extracted data wrapper "read only," we have to build up the containers
             // a priori and then construct the wrapper, rather than constructing the wrapper with empty containers and
             // then incrementally adding.
-            var insertions = new List<Row>();
-            var modifications = new List<Row>();
-            var deletions = new List<Row>();
+            var insertions = new List<DBData>();
+            var modifications = new List<DBData>();
+            var deletions = new List<DBData>();
 
             // It's a little annoying that we can't just do a for-each loop over the contents of the Relation, but
             // that's inhibited by the GetEnumerator() function in the IRelation interface being internal. We don't

@@ -49,6 +49,6 @@ namespace Kvasir.Extraction {
         ///   An immutable, indexable, ordered sequence of <see cref="DBValue">database values</see> extracted from
         ///   <paramref name="sourceObject"/>.
         /// </returns>
-        Row Execute(object? sourceObject);
+        DBData Execute(object? sourceObject);
     }
 }

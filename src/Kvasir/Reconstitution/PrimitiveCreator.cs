@@ -40,7 +40,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? Execute(Row values) {
+        public object? Execute(DBData values) {
             Guard.Against.NullOrEmpty(values, nameof(values));
 
             // DataConverters operate on raw values, of which DBNull is not one. If we pass DBNull to the revert
