@@ -67,7 +67,7 @@ namespace Kvasir.Extraction {
         ///   An immutable, indexable, ordered sequence of <see cref="DBValue">database values</see> extracted from
         ///   <paramref name="source"/>.
         /// </returns>
-        public Row Execute(object source) {
+        public DBData Execute(object source) {
             Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
 
             List<DBValue> results = new List<DBValue>();

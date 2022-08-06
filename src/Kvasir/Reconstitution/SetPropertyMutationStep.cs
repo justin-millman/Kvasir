@@ -41,7 +41,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public void Execute(object subject, Row rawValues) {
+        public void Execute(object subject, DBData rawValues) {
             Guard.Against.Null(subject, nameof(subject));
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
             Debug.Assert(subject.GetType().IsInstanceOf(ExpectedSubject));

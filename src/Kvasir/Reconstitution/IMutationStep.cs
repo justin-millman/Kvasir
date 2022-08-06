@@ -41,6 +41,6 @@ namespace Kvasir.Reconstitution {
         /// <pre>
         ///   <paramref name="subject"/> is an instance of <see cref="ExpectedSubject"/>.
         /// </pre>
-        void Execute(object subject, Row rawValues);
+        void Execute(object subject, DBData rawValues);
     }
 }
