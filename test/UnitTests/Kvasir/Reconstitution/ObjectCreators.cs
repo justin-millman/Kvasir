@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Cybele.Core;
+using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -210,6 +211,56 @@ namespace UT.Kvasir.Reconstitution {
             var expected = new KeyValuePair<int, string?>(arg0, arg1);
             optValue.Should().Be(expected);
             reqValue.Should().Be(expected);
+        }
+    }
+
+    [TestClass, TestCategory("ByKeyLookupCreator")]
+    public class ByKeyLookupCreatorTests {
+        [TestMethod] public void Construct() {
+            // Arrange
+            var conv = DataConverter.Identity<string>();
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var plan = new DataExtractionPlan(new IExtractionStep[] { step }, new DataConverter[] { conv });
+
+            // Act
+            var creator = new ByKeyLookupCreator(() => Array.Empty<string>(), plan);
+
+            // Assert
+            creator.Target.Should().Be(typeof(string));
+        }
+
+        [TestMethod] public void ProduceFromNonNullKey() {
+            // Arrange
+            var conv = DataConverter.Identity<string>();
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var plan = new DataExtractionPlan(new IExtractionStep[] { step, step }, new DataConverter[] { conv, conv });
+            var entities = new string[] { "Belo Horizonte", "Gladstone", "Cluj-Napoca" };
+            var target = entities[2];
+            var data = new DBValue[] { DBValue.Create(target), DBValue.Create(target) };
+            var creator = new ByKeyLookupCreator(() => entities, plan);
+
+            // Act
+            var value = creator.Execute(data);
+
+            // Assert
+            value.Should().Be(target);
+        }
+
+        [TestMethod] public void ProduceFromNullKey() {
+            // Arrange
+            var conv = DataConverter.Identity<string>();
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var plan = new DataExtractionPlan(new IExtractionStep[] { step, step }, new DataConverter[] { conv, conv });
+            var entities = new string[] { "Whanganui", "Valladolid", "Chișinău" };
+            var target = entities[0];
+            var data = new DBValue[] { DBValue.NULL, DBValue.NULL };
+            var creator = new ByKeyLookupCreator(() => entities, plan);
+
+            // Act
+            var value = creator.Execute(data);
+
+            // Assert
+            value.Should().BeNull();
         }
     }
 }
