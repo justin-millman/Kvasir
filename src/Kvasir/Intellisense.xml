@@ -1395,7 +1395,7 @@
         <member name="P:Kvasir.Reconstitution.ByConstructorCreator.Target">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.ByConstructorCreator.#ctor(System.Reflection.ConstructorInfo,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.IReconstitutor})">
+        <member name="M:Kvasir.Reconstitution.ByConstructorCreator.#ctor(System.Reflection.ConstructorInfo,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.IReconstitutor},System.Boolean)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Reconstitution.ByConstructorCreator"/>.
             </summary>
@@ -1405,6 +1405,12 @@
             <param name="argReconstitutors">
               A list of <see cref="T:Kvasir.Reconstitution.IReconstitutor">Reconstitutors</see> to be used to create the arguments to the
               reflection invocation of <paramref name="ctor"/>, in the order in which they are listed.
+            </param>
+            <param name="opt">
+              Whether or not the object being constructed is "optional." An optional object is one that can take on the
+              value of <see langword="null"/>. Specifically, this argument controls the behavior of
+              <see cref="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})"/> in the event that a set of all <see cref="P:Kvasir.Schema.DBValue.NULL"/>
+              is provided.
             </param>
             <pre>
               <paramref name="argReconstitutors"/> is not empty
