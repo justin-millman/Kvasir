@@ -39,10 +39,10 @@ namespace UT.Kvasir.Schema {
             // Arrange
             var fields = fields_;
             var key = new CandidateKey(fields);
-            var mockBuilder = new Mock<IKeyDeclBuilder>();
+            var mockBuilder = new Mock<IKeyDeclBuilder<SqlSnippet>>();
 
             // Act
-            key.GenerateSqlDeclaration(mockBuilder.Object);
+            (key as IKey).GenerateDeclaration(mockBuilder.Object);
 
             // Assert
             mockBuilder.Verify(builder => builder.SetFields(Arg.IsSameSequence<IEnumerable<IField>>(fields)));
@@ -55,10 +55,10 @@ namespace UT.Kvasir.Schema {
             var fields = fields_;
             var name = new KeyName("KeyName");
             var key = new CandidateKey(name, fields);
-            var mockBuilder = new Mock<IKeyDeclBuilder>();
+            var mockBuilder = new Mock<IKeyDeclBuilder<SqlSnippet>>();
 
             // Act
-            key.GenerateSqlDeclaration(mockBuilder.Object);
+            (key as IKey).GenerateDeclaration(mockBuilder.Object);
 
             // Assert
             mockBuilder.Verify(builder => builder.SetName(name));

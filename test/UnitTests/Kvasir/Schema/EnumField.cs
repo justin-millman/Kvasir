@@ -33,11 +33,11 @@ namespace UT.Kvasir.Schema {
             var name = new FieldName("Status");
             var nullability = IsNullable.No;
             var enums = new DBValue[] { DBValue.Create("Independent"), DBValue.Create("Colony") };
-            var mockBuilder = new Mock<IFieldDeclBuilder>();
+            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
             var field = new EnumField(name, nullability, Option.None<DBValue>(), enums);
 
             // Act
-            _ = field.GenerateSqlDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
 
             // Assert
             mockBuilder.Verify(builder => builder.SetName(name));
@@ -54,11 +54,11 @@ namespace UT.Kvasir.Schema {
             var nullability = IsNullable.No;
             var enums = new DBValue[] { DBValue.Create("Monarchy"), DBValue.Create("Democracy") };
             var defaultValue = enums[1];
-            var mockBuilder = new Mock<IFieldDeclBuilder>();
+            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
             var field = new EnumField(name, nullability, Option.Some(defaultValue), enums);
 
             // Act
-            _ = field.GenerateSqlDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
 
             // Assert
             mockBuilder.Verify(builder => builder.SetName(name));

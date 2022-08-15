@@ -1,18 +1,19 @@
 ﻿namespace Kvasir.Transcription {
     /// <summary>
-    ///   The interface for a factory that creates syntactically consistent declaration builders for generating
-    ///   <c>CREATE TABLE</c> statements.
+    ///   The interface for a factory that creates internally consistent declaration builders for generating
+    ///   Table-creating declarations.
     /// </summary>
     /// <remarks>
     ///   <para>
-    ///     The <see cref="IBuilderFactory"/> interface is an abstract way to represent the syntax rules of a
-    ///     particular back-end RDBMS provider. Implementations of the <see cref="IBuilderFactory"/> interface and the
+    ///     The <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/> interface is
+    ///     an abstract way to represent the rules of a particular back-end RDBMS provider. Implementations of the
+    ///     <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/> interface and the
     ///     builders therefrom created are passed to the various components of the Schema Layer to generate
-    ///     <c>CREATE TABLE</c> statements once the schema structures have been synthesized. In this way, a single
-    ///     used to interface with any back-end RDBMS provider.
+    ///     Table-creating declarations once the schema structures have been synthesized. In this way, a single set of
+    ///     interfaces, defined by the builder factory, can be used to interface with any back-end RDBMS provider.
     ///  </para>
     ///  <para>
-    ///     Examples of syntax rules that can vary from provider to provider may include, but are not limited to:
+    ///     Examples of rules that can vary from provider to provider may include, but are not limited to:
     ///     <list type="bullet">
     ///       <item>Escaping the names of Fields, Tables, and Constraints</item>
     ///       <item>Specific data types</item>
@@ -21,38 +22,44 @@
     ///     </list>
     ///  </para>
     /// </remarks>
-    public interface IBuilderFactory {
+    public interface IBuilderFactory<TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl> {
         /// <summary>
-        ///   Creates a new instance of the <see cref="IConstraintDeclBuilder"/> interface that produces SQL consistent
-        ///   with the syntax rules of this <see cref="IBuilderFactory"/>.
+        ///   Creates a new instance of the <see cref="IConstraintDeclBuilder{TDecl}"/> interface that produces
+        ///   declarations consistent with the rules of this
+        ///   <see cref="IBuilderFactory{TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/>.
         /// </summary>
         /// <returns>
-        ///   A new <see cref="IConstraintDeclBuilder"/>.
+        ///   A new <see cref="IConstraintDeclBuilder{TDecl}"/>.
         /// </returns>
-        IConstraintDeclBuilder NewConstraintDeclBuilder();
+        IConstraintDeclBuilder<TConstraintDecl> NewConstraintDeclBuilder();
 
         /// <summary>
-        ///   Creates a new instance of the <see cref="IForeignKeyDeclBuilder"/> interface that produces SQL consistent
-        ///   with the syntax rules of this <see cref="IBuilderFactory"/>.
+        ///   Creates a new instance of the <see cref="IForeignKeyDeclBuilder{TFKDecl}"/> interface that produces
+        ///   declarations consistent with the rules of this
+        ///   <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/>.
         /// </summary>
-        IForeignKeyDeclBuilder NewForeignKeyDeclBuilder();
+        IForeignKeyDeclBuilder<TFKDecl> NewForeignKeyDeclBuilder();
 
         /// <summary>
-        ///   Creates a new instance of the <see cref="IKeyDeclBuilder"/> interface that produces SQL consistent with
-        ///   the syntax rules of this <see cref="IBuilderFactory"/>.
+        ///   Creates a new instance of the <see cref="IKeyDeclBuilder{TKeyDecl}"/> interface that produces declarations
+        ///   consistent with the rules of this
+        ///   <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/>.
         /// </summary>
-        IKeyDeclBuilder NewKeyDeclBuilder();
+        IKeyDeclBuilder<TKeyDecl> NewKeyDeclBuilder();
 
         /// <summary>
-        ///   Creates a new instance of the <see cref="IFieldDeclBuilder"/> interface that produces SQL consistent with
-        ///   the syntax rules of this <see cref="IBuilderFactory"/>.
+        ///   Creates a new instance of the <see cref="IFieldDeclBuilder{TDecl}"/> interface that produces declarations
+        ///   consistent with the rules of this
+        ///   <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/>.
         /// </summary>
-        IFieldDeclBuilder NewFieldDeclBuilder();
+        IFieldDeclBuilder<TFieldDecl> NewFieldDeclBuilder();
 
         /// <summary>
-        ///   Creates a new instance of the <see cref="ITableDeclBuilder"/> interface that produces SQL consistent with
-        ///   the syntax rules of this <see cref="IBuilderFactory"/>.
+        ///   Creates a new instance of the
+        ///   <see cref="ITableDeclBuilder{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/> interface that
+        ///   produces declarations consistent with the rules of this
+        ///   <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/>.
         /// </summary>
-        ITableDeclBuilder NewTableDeclBuilder();
+        ITableDeclBuilder<TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl> NewTableDeclBuilder();
     }
 }

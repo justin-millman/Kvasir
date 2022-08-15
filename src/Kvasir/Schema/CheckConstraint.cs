@@ -50,19 +50,22 @@ namespace Kvasir.Schema {
          */
 
         /// <summary>
-        ///   Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+        ///   Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
         ///   <c>CHECK</c> constraint as applying to the subject Table.
         /// </summary>
+        /// <typeparam name="TDecl">
+        ///   [deduced] The type of declaration produced by <paramref name="builder"/>.
+        /// </typeparam>
         /// <param name="builder">
-        ///   The <see cref="IConstraintDeclBuilder"/> to use to create the declaratory SQL expression.
+        ///   The <see cref="IConstraintDeclBuilder{TDecl}"/> to use to create the declaration.
         /// </param>
         /// <pre>
         ///   <paramref name="builder"/> is not <see langword="null"/>.
         /// </pre>
         /// <returns>
-        ///   A <see cref="SqlSnippet"/> whose body declares this <c>CHECK</c> constraint.
+        ///   A <typeparamref name="TDecl"/> that declares this <c>CHECK</c> constraint.
         /// </returns>
-        internal SqlSnippet GenerateDeclaration(IConstraintDeclBuilder builder) {
+        internal TDecl GenerateDeclaration<TDecl>(IConstraintDeclBuilder<TDecl> builder) {
             Debug.Assert(builder is not null);
 
             Name.MatchSome(n => builder.SetName(n));

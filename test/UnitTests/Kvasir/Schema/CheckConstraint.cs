@@ -38,7 +38,7 @@ namespace UT.Kvasir.Schema {
             // Arrange
             var mockClause = new Mock<Clause>();
             var constraint = new CheckConstraint(mockClause.Object);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             constraint.GenerateDeclaration(mockBuilder.Object);
@@ -55,7 +55,7 @@ namespace UT.Kvasir.Schema {
             var name = new CheckName("CHECK");
             var mockClause = new Mock<Clause>();
             var constraint = new CheckConstraint(name, mockClause.Object);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             constraint.GenerateDeclaration(mockBuilder.Object);

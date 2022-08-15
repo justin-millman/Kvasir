@@ -58,7 +58,7 @@ namespace Kvasir.Schema {
         }
 
         /// <inheritdoc/>
-        internal sealed override void AddDeclarationTo(IConstraintDeclBuilder builder) {
+        internal sealed override void AddDeclarationTo<TDecl>(IConstraintDeclBuilder<TDecl> builder) {
             Debug.Assert(builder is not null);
 
             if (!isNegated_) {

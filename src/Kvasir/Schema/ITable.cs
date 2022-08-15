@@ -97,19 +97,21 @@ namespace Kvasir.Schema {
         IEnumerator<IField> GetEnumerator();
 
         /// <summary>
-        ///   Produces an SQL <c>CREATE TABLE</c> statement that declares this Table.
+        ///   Produces a declaration that defines this Table.
         /// </summary>
         /// <param name="builderFactory">
-        ///   The <see cref="IBuilderFactory"/> with which to create the various Builders needed to compose the
-        ///   <c>CREATE TABLE</c> statement for this Table.
+        ///   The <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, Table}"/> with which to
+        ///   create the various Builders needed to compose the declaration that defines this Table.
         /// </param>
         /// <pre>
         ///   <paramref name="builderFactory"/> is not <see langword="null"/>.
         /// </pre>
         /// <returns>
-        ///   A <see cref="SqlSnippet"/> whose body is a <c>CREATE TABLE</c> statement that declares this Table.
+        ///   A <typeparamref name="TTableDecl"/> that declares this Table.
         /// </returns>
-        internal SqlSnippet GenerateDeclaration(IBuilderFactory builderFactory);
+        internal TTableDecl
+        GenerateDeclaration<TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl>
+        (IBuilderFactory<TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl> builderFactory);
     }
 
     /// <summary>
