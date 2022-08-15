@@ -48,19 +48,22 @@ namespace Kvasir.Schema {
         IEnumerator<IField> GetEnumerator();
 
         /// <summary>
-        ///   Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+        ///   Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
         ///   Key as applying to the subject Table.
         /// </summary>
+        /// <typeparam name="TDecl">
+        ///   [deduced] The type of declaration produced by <paramref name="builder"/>.
+        /// </typeparam>
         /// <param name="builder">
-        ///   The <see cref="IKeyDeclBuilder"/> to use to create the declaratory SQL expression.
+        ///   The <see cref="IKeyDeclBuilder{TDecl}"/> to use to create the declaration.
         /// </param>
         /// <pre>
         ///   <paramref name="builder"/> is not <see langword="null"/>.
         /// </pre>
         /// <returns>
-        ///   A <see cref="SqlSnippet"/> whose body declares this Key.
+        ///   A <typeparamref name="TDecl"/> that declares this Key.
         /// </returns>
-        internal SqlSnippet GenerateDeclaration(IKeyDeclBuilder builder);
+        internal TDecl GenerateDeclaration<TDecl>(IKeyDeclBuilder<TDecl> builder);
     }
 
     /// <summary>

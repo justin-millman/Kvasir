@@ -31,10 +31,10 @@ namespace UT.Kvasir.Schema {
             var dbType = DBType.Text;
             var nullability = IsNullable.No;
             var field = new BasicField(name, dbType, nullability, Option.None<DBValue>());
-            var mockBuilder = new Mock<IFieldDeclBuilder>();
+            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
 
             // Act
-            _ = field.GenerateSqlDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
 
             // Assert
             mockBuilder.Verify(builder => builder.SetName(name));
@@ -51,10 +51,10 @@ namespace UT.Kvasir.Schema {
             var nullability = IsNullable.Yes;
             var defaultValue = DBValue.Create(2500000u);
             var field = new BasicField(name, dbType, nullability, Option.Some(defaultValue));
-            var mockBuilder = new Mock<IFieldDeclBuilder>();
+            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
 
             // Act
-            _ = field.GenerateSqlDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
 
             // Assert
             mockBuilder.Verify(builder => builder.SetName(name));

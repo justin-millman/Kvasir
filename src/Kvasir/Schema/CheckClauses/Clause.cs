@@ -91,13 +91,17 @@ namespace Kvasir.Schema {
         /// <summary>
         ///   Adds this <see cref="Clause"/> to an ongoing declaration.
         /// </summary>
+        /// <typeparam name="TDecl">
+        ///   [deduced] The type of declaration produced by <paramref name="builder"/>.
+        /// </typeparam>
         /// <param name="builder">
-        ///   The <see cref="IConstraintDeclBuilder"/> to which to add the declaration of this <see cref="Clause"/>.
+        ///   The <see cref="IConstraintDeclBuilder{TDecl}"/> to which to add the declaration of this
+        ///   <see cref="Clause"/>.
         /// </param>
         /// <pre>
         ///   <paramref name="builder"/> is not <see langword="null"/>.
         /// </pre>
-        internal abstract void AddDeclarationTo(IConstraintDeclBuilder builder);
+        internal abstract void AddDeclarationTo<TDecl>(IConstraintDeclBuilder<TDecl> builder);
 
         /// <summary>
         ///   Creates a new <see cref="Clause"/> that represents a unidirectional implication, i.e. an <c>if-then</c>

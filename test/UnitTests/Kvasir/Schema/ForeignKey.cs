@@ -53,7 +53,7 @@ namespace UT.Kvasir.Schema {
             var onDelete = OnDelete.SetDefault;
             var onUpdate = OnUpdate.Cascade;
             var fkey = new ForeignKey(reference, fields, onDelete, onUpdate);
-            var mockBuilder = new Mock<IForeignKeyDeclBuilder>();
+            var mockBuilder = new Mock<IForeignKeyDeclBuilder<SqlSnippet>>();
 
             // Act
             fkey.GenerateDeclaration(mockBuilder.Object);
@@ -75,7 +75,7 @@ namespace UT.Kvasir.Schema {
             var onDelete = OnDelete.SetDefault;
             var onUpdate = OnUpdate.Cascade;
             var fkey = new ForeignKey(name, reference, fields, onDelete, onUpdate);
-            var mockBuilder = new Mock<IForeignKeyDeclBuilder>();
+            var mockBuilder = new Mock<IForeignKeyDeclBuilder<SqlSnippet>>();
 
             // Act
             fkey.GenerateDeclaration(mockBuilder.Object);

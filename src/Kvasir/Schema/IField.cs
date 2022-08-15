@@ -62,19 +62,22 @@ namespace Kvasir.Schema {
         Option<DBValue> DefaultValue { get; }
 
         /// <summary>
-        ///   Produces a SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+        ///   Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
         ///   Field as a member of the subject Table.
         /// </summary>
+        /// <typeparam name="TDecl">
+        ///   [deduced] The type of declaration produced by <paramref name="builder"/>.
+        /// </typeparam>
         /// <param name="builder">
-        ///   The <see cref="IFieldDeclBuilder"/> to use to create the declaratory SQL expression.
+        ///   The <see cref="IFieldDeclBuilder{TDecl}"/> to use to create the declaration.
         /// </param>
         /// <pre>
         ///   <paramref name="builder"/> is not <see langword="null"/>.
         /// </pre>
         /// <returns>
-        ///   A <see cref="SqlSnippet"/> whose body declares this Field.
+        ///   A <typeparamref name="TDecl"/> that declares this Table.
         /// </returns>
-        internal SqlSnippet GenerateDeclaration(IFieldDeclBuilder builder);
+        internal TDecl GenerateDeclaration<TDecl>(IFieldDeclBuilder<TDecl> builder);
     }
 
     /// <summary>

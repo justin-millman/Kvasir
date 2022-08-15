@@ -50,7 +50,7 @@ namespace UT.Kvasir.Schema {
             var table = table_;
             var snippet = snippet_;
 
-            var mockFactory = new Mock<IBuilderFactory>();
+            var mockFactory = new Mock<IBuilderFactory<SqlSnippet, SqlSnippet, SqlSnippet, SqlSnippet, SqlSnippet>>();
             mockFactory.DefaultValue = DefaultValue.Mock;
 
             var mockConstraintBuilder = Mock.Get(mockFactory.Object.NewConstraintDeclBuilder());
@@ -64,7 +64,7 @@ namespace UT.Kvasir.Schema {
             var mockTableBuilder = Mock.Get(mockFactory.Object.NewTableDeclBuilder());
 
             // Act
-            table.GenerateSqlDeclaration(mockFactory.Object);
+            (table as ITable).GenerateDeclaration(mockFactory.Object);
 
             // Assert
             mockTableBuilder.Verify(builder => builder.SetName(table.Name));
@@ -97,17 +97,17 @@ namespace UT.Kvasir.Schema {
             mockField0.Setup(field => field.Name).Returns(new FieldName("A"));
             mockField0.Setup(field => field.Nullability).Returns(IsNullable.No);
             mockField0.Setup(field => field.DataType).Returns(DBType.Int32);
-            mockField0.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder>())).Returns(snippet_);
+            mockField0.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder<SqlSnippet>>())).Returns(snippet_);
             var mockField1 = new Mock<IField>();
             mockField1.Setup(field => field.Name).Returns(new FieldName("B"));
             mockField1.Setup(field => field.Nullability).Returns(IsNullable.No);
             mockField1.Setup(field => field.DataType).Returns(DBType.Guid);
-            mockField1.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder>())).Returns(snippet_);
+            mockField1.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder<SqlSnippet>>())).Returns(snippet_);
             var mockField2 = new Mock<IField>();
             mockField2.Setup(field => field.Name).Returns(new FieldName("C"));
             mockField2.Setup(field => field.Nullability).Returns(IsNullable.No);
             mockField2.Setup(field => field.DataType).Returns(DBType.Enumeration);
-            mockField2.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder>())).Returns(snippet_);
+            mockField2.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder<SqlSnippet>>())).Returns(snippet_);
 
             var pkey = new PrimaryKey(new IField[] { mockField0.Object });
             var ckey = new CandidateKey(new IField[] { mockField1.Object });

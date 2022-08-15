@@ -70,7 +70,7 @@ namespace UT.Kvasir.Schema {
             var value = DBValue.Create(100);
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new ConstantClause(expr, op, value);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -91,7 +91,7 @@ namespace UT.Kvasir.Schema {
             var value = DBValue.Create(100);
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new ConstantClause(expr, op, value);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -112,7 +112,7 @@ namespace UT.Kvasir.Schema {
             var value = DBValue.Create(100);
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new ConstantClause(expr, op, value);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -133,7 +133,7 @@ namespace UT.Kvasir.Schema {
             var value = DBValue.Create(100);
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new ConstantClause(expr, op, value);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -154,7 +154,7 @@ namespace UT.Kvasir.Schema {
             var value = DBValue.Create(100);
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new ConstantClause(expr, op, value);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -175,7 +175,7 @@ namespace UT.Kvasir.Schema {
             var value = DBValue.Create(100);
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new ConstantClause(expr, op, value);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -213,7 +213,7 @@ namespace UT.Kvasir.Schema {
             var op = ComparisonOperator.EQ;
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new CrossFieldClause(expr, op, expr);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -233,7 +233,7 @@ namespace UT.Kvasir.Schema {
             var op = ComparisonOperator.NE;
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new CrossFieldClause(expr, op, expr);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -253,7 +253,7 @@ namespace UT.Kvasir.Schema {
             var op = ComparisonOperator.LT;
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new CrossFieldClause(expr, op, expr);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -273,7 +273,7 @@ namespace UT.Kvasir.Schema {
             var op = ComparisonOperator.LTE;
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new CrossFieldClause(expr, op, expr);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -293,7 +293,7 @@ namespace UT.Kvasir.Schema {
             var op = ComparisonOperator.GT;
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new CrossFieldClause(expr, op, expr);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -313,7 +313,7 @@ namespace UT.Kvasir.Schema {
             var op = ComparisonOperator.GTE;
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new CrossFieldClause(expr, op, expr);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -354,7 +354,7 @@ namespace UT.Kvasir.Schema {
             var values = new DBValue[] { DBValue.Create(100), DBValue.Create(200), DBValue.Create(300) };
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new InclusionClause(expr, op, values);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -375,7 +375,7 @@ namespace UT.Kvasir.Schema {
             var values = new DBValue[] { DBValue.Create(100), DBValue.Create(200), DBValue.Create(300) };
             mockField.Setup(field => field.DataType).Returns(DBType.Int32);
             var clause = new InclusionClause(expr, op, values);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -410,7 +410,7 @@ namespace UT.Kvasir.Schema {
             var mockField = new Mock<IField>();
             var op = NullityOperator.IsNull;
             var clause = new NullityClause(mockField.Object, op);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -428,7 +428,7 @@ namespace UT.Kvasir.Schema {
             var mockField = new Mock<IField>();
             var op = NullityOperator.IsNotNull;
             var clause = new NullityClause(mockField.Object, op);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Act
             var negation = clause.Negation();
@@ -448,7 +448,7 @@ namespace UT.Kvasir.Schema {
             var lhs = new ConstantClause(expr, ComparisonOperator.GTE, DBValue.Create(100));
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var clause = lhs.And(rhs);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -478,7 +478,7 @@ namespace UT.Kvasir.Schema {
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var rhsNeg = new ConstantClause(expr, ComparisonOperator.GT, DBValue.Create(200));
             var clause = lhs.And(rhs).Negation();
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -506,7 +506,7 @@ namespace UT.Kvasir.Schema {
             var lhs = new ConstantClause(expr, ComparisonOperator.GTE, DBValue.Create(100));
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var clause = lhs.Or(rhs);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -536,7 +536,7 @@ namespace UT.Kvasir.Schema {
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var rhsNeg = new ConstantClause(expr, ComparisonOperator.GT, DBValue.Create(200));
             var clause = lhs.Or(rhs).Negation();
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -566,7 +566,7 @@ namespace UT.Kvasir.Schema {
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var rhsNeg = new ConstantClause(expr, ComparisonOperator.GT, DBValue.Create(200));
             var clause = lhs.Xor(rhs);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -604,7 +604,7 @@ namespace UT.Kvasir.Schema {
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var rhsNeg = new ConstantClause(expr, ComparisonOperator.GT, DBValue.Create(200));
             var clause = lhs.Xor(rhs).Negation();
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -641,7 +641,7 @@ namespace UT.Kvasir.Schema {
             var predNeg = new ConstantClause(expr, ComparisonOperator.LT, DBValue.Create(100));
             var subseq = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var clause = Clause.IfThen(pred, subseq);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -670,7 +670,7 @@ namespace UT.Kvasir.Schema {
             var subseq = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var subseqNeg = new ConstantClause(expr, ComparisonOperator.GT, DBValue.Create(200));
             var clause = Clause.IfThen(pred, subseq).Negation();
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -700,7 +700,7 @@ namespace UT.Kvasir.Schema {
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var rhsNeg = new ConstantClause(expr, ComparisonOperator.GT, DBValue.Create(200));
             var clause = Clause.Iff(lhs, rhs);
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();
@@ -738,7 +738,7 @@ namespace UT.Kvasir.Schema {
             var rhs = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(200));
             var rhsNeg = new ConstantClause(expr, ComparisonOperator.GT, DBValue.Create(200));
             var clause = Clause.Iff(lhs, rhs).Negation();
-            var mockBuilder = new Mock<IConstraintDeclBuilder>();
+            var mockBuilder = new Mock<IConstraintDeclBuilder<SqlSnippet>>();
 
             // Sequence
             var sequence = mockBuilder.MakeSequence();

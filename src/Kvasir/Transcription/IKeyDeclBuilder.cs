@@ -3,12 +3,15 @@ using System.Collections.Generic;
 
 namespace Kvasir.Transcription {
     /// <summary>
-    ///   The interface for a builder that produces SQL expressions that declare a single Primary Key or a single
-    ///   Candidate Key within a <c>CREATE TABLE</c> statement.
+    ///   The interface for a builder that produces declarations that define a single Primary Key or a single Candidate
+    ///   Key within a larger Table-creating declaration.
     /// </summary>
-    public interface IKeyDeclBuilder {
+    /// <typeparam name="TDecl">
+    ///   The type of declaration object produced by the builder.
+    /// </typeparam>
+    public interface IKeyDeclBuilder<TDecl> {
         /// <summary>
-        ///   Sets the name of the Primary Key or Candidate Key being declared by the current builder's SQL expression.
+        ///   Sets the name of the Primary Key or Candidate Key being defined by the current builder's declaration.
         /// </summary>
         /// <param name="name">
         ///   The name.
@@ -19,8 +22,8 @@ namespace Kvasir.Transcription {
         void SetName(KeyName name);
 
         /// <summary>
-        ///   Sets the collection of Fields that comprise the Primary Key or Candidate Key being declared by the
-        ///   current builder's SQL expression. expression being built.
+        ///   Sets the collection of Fields that comprise the Primary Key or Candidate Key being defined by the
+        ///   current builder's declaration.
         /// </summary>
         /// <param name="fields">
         ///   The Fields.
@@ -33,20 +36,20 @@ namespace Kvasir.Transcription {
         void SetFields(IEnumerable<IField> fields);
 
         /// <summary>
-        ///   Marks the SQL expression being built as one for a Primary Key rather than a Candidate Key.
+        ///   Marks the declaration being built as one for a Primary Key rather than a Candidate Key.
         /// </summary>
         void SetAsPrimaryKey();
 
         /// <summary>
-        ///   Produces the full SQL expression that has been built up by the current builder's SQL expression.
-        ///   <see cref="IKeyDeclBuilder"/>.
+        ///   Produces the full declaration that has been built up by calls into other methods on this
+        ///   <see cref="IKeyDeclBuilder{TDecl}"/>.
         /// </summary>
         /// <pre>
         ///   <see cref="SetFields(IEnumerable{IField})"/> has been called at least once.
         /// </pre>
         /// <returns>
-        ///   A syntactically valid SQL expression declaring a single Primary Key or a single Candidate Key.
+        ///   A <typeparamref name="TDecl"/> declaring a single Primary Key or a single Candidate Key.
         /// </returns>
-        SqlSnippet Build();
+        TDecl Build();
     }
 }

@@ -3588,7 +3588,7 @@
               <see cref="F:Kvasir.Schema.IsNullable.Yes"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)">
+        <member name="M:Kvasir.Schema.BasicField.Kvasir#Schema#IField#GenerateDeclaration``1(Kvasir.Transcription.IFieldDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.CandidateKey">
@@ -3635,7 +3635,7 @@
               The <see cref="P:Kvasir.Schema.CandidateKey.Fields">Fields</see> that make up the new <see cref="T:Kvasir.Schema.CandidateKey"/>.
             </param>
         </member>
-        <member name="M:Kvasir.Schema.CandidateKey.Kvasir#Schema#IKey#GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)">
+        <member name="M:Kvasir.Schema.CandidateKey.Kvasir#Schema#IKey#GenerateDeclaration``1(Kvasir.Transcription.IKeyDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.AndClause">
@@ -3677,7 +3677,7 @@
         <member name="M:Kvasir.Schema.AndClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.AndClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.AndClause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Schema.AndClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)">
@@ -3771,12 +3771,16 @@
               A list of the Fields on whose values this <see cref="T:Kvasir.Schema.Clause"/> is dependent.
             </returns>
         </member>
-        <member name="M:Kvasir.Schema.Clause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.Clause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <summary>
               Adds this <see cref="T:Kvasir.Schema.Clause"/> to an ongoing declaration.
             </summary>
+            <typeparam name="TDecl">
+              [deduced] The type of declaration produced by <paramref name="builder"/>.
+            </typeparam>
             <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/> to which to add the declaration of this <see cref="T:Kvasir.Schema.Clause"/>.
+              The <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/> to which to add the declaration of this
+              <see cref="T:Kvasir.Schema.Clause"/>.
             </param>
             <pre>
               <paramref name="builder"/> is not <see langword="null"/>.
@@ -3874,7 +3878,7 @@
         <member name="M:Kvasir.Schema.ConstantClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.ConstantClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.ConstantClause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.CrossFieldClause">
@@ -3928,7 +3932,7 @@
         <member name="M:Kvasir.Schema.CrossFieldClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.CrossFieldClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.CrossFieldClause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.ClauseExtensions">
@@ -4081,7 +4085,7 @@
         <member name="M:Kvasir.Schema.InclusionClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.InclusionClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.InclusionClause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.NullityClause">
@@ -4120,7 +4124,7 @@
         <member name="M:Kvasir.Schema.NullityClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.NullityClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.NullityClause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.ComparisonOperator">
@@ -4208,7 +4212,7 @@
         <member name="M:Kvasir.Schema.OrClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.OrClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.OrClause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Schema.OrClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)">
@@ -4269,7 +4273,7 @@
         <member name="M:Kvasir.Schema.XorClause.GetDependentFields">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.XorClause.AddDeclarationTo(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.XorClause.AddDeclarationTo``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Schema.XorClause.#ctor(Kvasir.Schema.Clause,Kvasir.Schema.Clause,System.Boolean)">
@@ -4326,19 +4330,22 @@
               The <see cref="P:Kvasir.Schema.CheckConstraint.Condition">condition</see> imposed by the new <see cref="T:Kvasir.Schema.CheckConstraint"/>
             </param>
         </member>
-        <member name="M:Kvasir.Schema.CheckConstraint.GenerateDeclaration(Kvasir.Transcription.IConstraintDeclBuilder)">
+        <member name="M:Kvasir.Schema.CheckConstraint.GenerateDeclaration``1(Kvasir.Transcription.IConstraintDeclBuilder{``0})">
             <summary>
-              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
               <c>CHECK</c> constraint as applying to the subject Table.
             </summary>
+            <typeparam name="TDecl">
+              [deduced] The type of declaration produced by <paramref name="builder"/>.
+            </typeparam>
             <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/> to use to create the declaratory SQL expression.
+              The <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/> to use to create the declaration.
             </param>
             <pre>
               <paramref name="builder"/> is not <see langword="null"/>.
             </pre>
             <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this <c>CHECK</c> constraint.
+              A <typeparamref name="TDecl"/> that declares this <c>CHECK</c> constraint.
             </returns>
         </member>
         <member name="M:Kvasir.Schema.CheckConstraint.#ctor(Optional.Option{Kvasir.Schema.CheckName},Kvasir.Schema.Clause)">
@@ -4992,146 +4999,8 @@
               type.
             </pre>
         </member>
-        <member name="M:Kvasir.Schema.EnumField.Kvasir#Schema#IField#GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)">
+        <member name="M:Kvasir.Schema.EnumField.Kvasir#Schema#IField#GenerateDeclaration``1(Kvasir.Transcription.IFieldDeclBuilder{``0})">
             <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Schema.SchemaExtensions">
-            <summary>
-              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
-              of the types in the Schema Layer of Kvasir.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.BasicField,Kvasir.Transcription.IFieldDeclBuilder)">
-            <summary>
-              Produces a SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
-              <see cref="T:Kvasir.Schema.BasicField"/> as a member of the subject Table.
-            </summary>
-            <remarks>
-              To keep the <see cref="T:Kvasir.Schema.IField"/> interface closed to assemblies outside of Kvasir, the
-              <see cref="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)"/> method is marked as <c>internal</c>; this
-              requires that <see cref="T:Kvasir.Schema.BasicField"/> class implement the method explicitly. This extension method
-              allows for natural invocation of the interface method, encapsulating the cast-to-interface required to
-              invoke an explicit interface method.
-            </remarks>
-            <param name="self">
-              The <see cref="T:Kvasir.Schema.BasicField"/> on which the extension method is invoked.
-            </param>
-            <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> to use to create the declaratory SQL expression.
-            </param>
-            <pre>
-              <paramref name="self"/> is not <see langword="null"/>
-                --and--
-              <paramref name="builder"/> is not <see langword="null"/>
-            </pre>
-            <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares <paramref name="self"/>.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.EnumField,Kvasir.Transcription.IFieldDeclBuilder)">
-            <summary>
-              Produces a SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
-              <see cref="T:Kvasir.Schema.EnumField"/> as a member of the subject Table.
-            </summary>
-            <remarks>
-              To keep the <see cref="T:Kvasir.Schema.IField"/> interface closed to assemblies outside of Kvasir, the
-              <see cref="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)"/> method is marked as <c>internal</c>; this
-              requires that <see cref="T:Kvasir.Schema.EnumField"/> class implement the method explicitly. This extension method allows
-              for natural invocation of the interface method, encapsulating the cast-to-interface required to invoke an
-              explicit interface method.
-            </remarks>
-            <param name="self">
-              The <see cref="T:Kvasir.Schema.BasicField"/> on which the extension method is invoked.
-            </param>
-            <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> to use to create the declaratory SQL expression.
-            </param>
-            <pre>
-              <paramref name="self"/> is not <see langword="null"/>
-                --and--
-              <paramref name="builder"/> is not <see langword="null"/>
-            </pre>
-            <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares <paramref name="self"/>.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.PrimaryKey,Kvasir.Transcription.IKeyDeclBuilder)">
-            <summary>
-              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
-              <see cref="T:Kvasir.Schema.PrimaryKey"/> as applying to the subject Table.
-            </summary>
-            <remarks>
-              To keep the <see cref="T:Kvasir.Schema.IKey"/> interface closed to assemblies outside of Kvasir, the
-              <see cref="M:Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)"/> method is marked as <c>internal</c>; this
-              requires that <see cref="T:Kvasir.Schema.PrimaryKey"/> class implement the method explicitly. This extension method
-              allows for natural invocation of the interface method, encapsulating the cast-to-interface required to
-              invoke an explicit interface method.
-            </remarks>
-            <param name="self">
-              The <see cref="T:Kvasir.Schema.PrimaryKey"/> on which the extension method is invoked.
-            </param>
-            <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> to use to create the declaratory SQL expression.
-            </param>
-            <pre>
-              <paramref name="builder"/> is not <see langword="null"/>.
-            </pre>
-            <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Key.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.CandidateKey,Kvasir.Transcription.IKeyDeclBuilder)">
-            <summary>
-              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares a
-              <see cref="T:Kvasir.Schema.CandidateKey"/> as applying to the subject Table.
-            </summary>
-            <remarks>
-              To keep the <see cref="T:Kvasir.Schema.IKey"/> interface closed to assemblies outside of Kvasir, the
-              <see cref="M:Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)"/> method is marked as <c>internal</c>; this
-              requires that <see cref="T:Kvasir.Schema.CandidateKey"/> class implement the method explicitly. This extension method
-              allows for natural invocation of the interface method, encapsulating the cast-to-interface required to
-              invoke an explicit interface method.
-            </remarks>
-            <param name="self">
-              The <see cref="T:Kvasir.Schema.CandidateKey"/> on which the extension method is invoked.
-            </param>
-            <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> to use to create the declaratory SQL expression.
-            </param>
-            <pre>
-              <paramref name="builder"/> is not <see langword="null"/>.
-            </pre>
-            <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Key.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Schema.SchemaExtensions.GenerateSqlDeclaration(Kvasir.Schema.Table,Kvasir.Transcription.IBuilderFactory)">
-            <summary>
-              Produces an SQL <c>CREATE TABLE</c> statement that declares a <see cref="T:Kvasir.Schema.Table"/>.
-            </summary>
-            <remarks>
-              To keep the <see cref="T:Kvasir.Schema.ITable"/> interface closed to assemblies outside of Kvasir, the
-              <see cref="M:Kvasir.Schema.ITable.GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)"/> method is marked as <c>internal</c>; this
-              requires that <see cref="T:Kvasir.Schema.Table"/> class implement the method explicitly. This extension method allows for
-              natural invocation of the interface method, encapsulating the cast-to-interface required to invoke an
-              explicit interface method.
-            </remarks>
-            <param name="self">
-              The <see cref="T:Kvasir.Schema.Table"/> on which the extension method is invoked.
-            </param>
-            <param name="builderFactory">
-              The <see cref="T:Kvasir.Transcription.IBuilderFactory"/> with which to create the various Builders needed to compose the
-              <c>CREATE TABLE</c> statement for this Table.
-            </param>
-            <pre>
-              <paramref name="self"/> is not <see langword="null"/>
-                --and--
-              <paramref name="builderFactory"/> is not <see langword="null"/>
-            </pre>
-            <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body is a <c>CREATE TABLE</c> statement that declares
-              <paramref name="self"/>.
-            </returns>
         </member>
         <member name="T:Kvasir.Schema.ForeignKey">
             <summary>
@@ -5217,19 +5086,22 @@
               An enumerator that iterates over the Fields in this Foreign Key.
             </returns>
         </member>
-        <member name="M:Kvasir.Schema.ForeignKey.GenerateDeclaration(Kvasir.Transcription.IForeignKeyDeclBuilder)">
+        <member name="M:Kvasir.Schema.ForeignKey.GenerateDeclaration``1(Kvasir.Transcription.IForeignKeyDeclBuilder{``0})">
             <summary>
-              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
               Foreign Key as applying to the subject Table.
             </summary>
+            <typeparam name="TDecl">
+              [deduced] The type of declaration produced by <paramref name="builder"/>.
+            </typeparam>
             <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder"/> to use to create the declaratory SQL expression.
+              The <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/> to use to create the declaratory SQL expression.
             </param>
             <pre>
               <paramref name="builder"/> is not <see langword="null"/>.
             </pre>
             <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Foreign Key.
+              A <typeparamref name="TDecl"/> that declares this Foreign Key.
             </returns>
         </member>
         <member name="M:Kvasir.Schema.ForeignKey.#ctor(Optional.Option{Kvasir.Schema.FKName},Kvasir.Schema.ITable,System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},Kvasir.Schema.OnDelete,Kvasir.Schema.OnUpdate)">
@@ -5340,19 +5212,22 @@
               <c>NONE</c> instance indicates the absence of a default value.
             </remarks>
         </member>
-        <member name="M:Kvasir.Schema.IField.GenerateDeclaration(Kvasir.Transcription.IFieldDeclBuilder)">
+        <member name="M:Kvasir.Schema.IField.GenerateDeclaration``1(Kvasir.Transcription.IFieldDeclBuilder{``0})">
             <summary>
-              Produces a SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
               Field as a member of the subject Table.
             </summary>
+            <typeparam name="TDecl">
+              [deduced] The type of declaration produced by <paramref name="builder"/>.
+            </typeparam>
             <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> to use to create the declaratory SQL expression.
+              The <see cref="T:Kvasir.Transcription.IFieldDeclBuilder`1"/> to use to create the declaration.
             </param>
             <pre>
               <paramref name="builder"/> is not <see langword="null"/>.
             </pre>
             <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Field.
+              A <typeparamref name="TDecl"/> that declares this Table.
             </returns>
         </member>
         <member name="T:Kvasir.Schema.FieldName">
@@ -5421,19 +5296,22 @@
               An enumerator that iterates over the Fields in this Key.
             </returns>
         </member>
-        <member name="M:Kvasir.Schema.IKey.GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)">
+        <member name="M:Kvasir.Schema.IKey.GenerateDeclaration``1(Kvasir.Transcription.IKeyDeclBuilder{``0})">
             <summary>
-              Produces an SQL expression that, when used in the body of a <c>CREATE TABLE</c> statement, declares this
+              Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
               Key as applying to the subject Table.
             </summary>
+            <typeparam name="TDecl">
+              [deduced] The type of declaration produced by <paramref name="builder"/>.
+            </typeparam>
             <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> to use to create the declaratory SQL expression.
+              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder`1"/> to use to create the declaratory SQL expression.
             </param>
             <pre>
               <paramref name="builder"/> is not <see langword="null"/>.
             </pre>
             <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body declares this Key.
+              A <typeparamref name="TDecl"/> that declares this Key.
             </returns>
         </member>
         <member name="T:Kvasir.Schema.KeyName">
@@ -5571,19 +5449,19 @@
               An enumerator that iterates over the Fields in this Table in columnar order.
             </returns>
         </member>
-        <member name="M:Kvasir.Schema.ITable.GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)">
+        <member name="M:Kvasir.Schema.ITable.GenerateDeclaration``5(Kvasir.Transcription.IBuilderFactory{``0,``1,``2,``3,``4})">
             <summary>
-              Produces an SQL <c>CREATE TABLE</c> statement that declares this Table.
+              Produces a declaration that defines this Table.
             </summary>
             <param name="builderFactory">
-              The <see cref="T:Kvasir.Transcription.IBuilderFactory"/> with which to create the various Builders needed to compose the
-              <c>CREATE TABLE</c> statement for this Table.
+              The <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/> with which to
+              create the various Builders needed to compose the declaration that defines this Table.
             </param>
             <pre>
               <paramref name="builderFactory"/> is not <see langword="null"/>.
             </pre>
             <returns>
-              A <see cref="T:Kvasir.Transcription.SqlSnippet"/> whose body is a <c>CREATE TABLE</c> statement that declares this Table.
+              A <typeparamref name="TTableDecl"/> that declares this Table.
             </returns>
         </member>
         <member name="T:Kvasir.Schema.TableName">
@@ -5741,7 +5619,7 @@
         <member name="M:Kvasir.Schema.PrimaryKey.GetEnumerator">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.PrimaryKey.Kvasir#Schema#IKey#GenerateDeclaration(Kvasir.Transcription.IKeyDeclBuilder)">
+        <member name="M:Kvasir.Schema.PrimaryKey.Kvasir#Schema#IKey#GenerateDeclaration``1(Kvasir.Transcription.IKeyDeclBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Schema.Table">
@@ -5813,24 +5691,25 @@
         <member name="M:Kvasir.Schema.Table.GetEnumerator">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Schema.Table.Kvasir#Schema#ITable#GenerateDeclaration(Kvasir.Transcription.IBuilderFactory)">
+        <member name="M:Kvasir.Schema.Table.Kvasir#Schema#ITable#GenerateDeclaration``5(Kvasir.Transcription.IBuilderFactory{``0,``1,``2,``3,``4})">
             <inheritdoc/>
         </member>
-        <member name="T:Kvasir.Transcription.IBuilderFactory">
+        <member name="T:Kvasir.Transcription.IBuilderFactory`5">
             <summary>
-              The interface for a factory that creates syntactically consistent declaration builders for generating
-              <c>CREATE TABLE</c> statements.
+              The interface for a factory that creates internally consistent declaration builders for generating
+              Table-creating declarations.
             </summary>
             <remarks>
               <para>
-                The <see cref="T:Kvasir.Transcription.IBuilderFactory"/> interface is an abstract way to represent the syntax rules of a
-                particular back-end RDBMS provider. Implementations of the <see cref="T:Kvasir.Transcription.IBuilderFactory"/> interface and the
+                The <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/> interface is
+                an abstract way to represent the rules of a particular back-end RDBMS provider. Implementations of the
+                <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/> interface and the
                 builders therefrom created are passed to the various components of the Schema Layer to generate
-                <c>CREATE TABLE</c> statements once the schema structures have been synthesized. In this way, a single
-                used to interface with any back-end RDBMS provider.
+                Table-creating declarations once the schema structures have been synthesized. In this way, a single set of
+                interfaces, defined by the builder factory, can be used to interface with any back-end RDBMS provider.
              </para>
              <para>
-                Examples of syntax rules that can vary from provider to provider may include, but are not limited to:
+                Examples of rules that can vary from provider to provider may include, but are not limited to:
                 <list type="bullet">
                   <item>Escaping the names of Fields, Tables, and Constraints</item>
                   <item>Specific data types</item>
@@ -5840,49 +5719,58 @@
              </para>
             </remarks>
         </member>
-        <member name="M:Kvasir.Transcription.IBuilderFactory.NewConstraintDeclBuilder">
+        <member name="M:Kvasir.Transcription.IBuilderFactory`5.NewConstraintDeclBuilder">
             <summary>
-              Creates a new instance of the <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/> interface that produces SQL consistent
-              with the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/> interface that produces
+              declarations consistent with the rules of this
+              <see cref="!:IBuilderFactory&lt;TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl&gt;"/>.
             </summary>
             <returns>
-              A new <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+              A new <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>.
             </returns>
         </member>
-        <member name="M:Kvasir.Transcription.IBuilderFactory.NewForeignKeyDeclBuilder">
+        <member name="M:Kvasir.Transcription.IBuilderFactory`5.NewForeignKeyDeclBuilder">
             <summary>
-              Creates a new instance of the <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder"/> interface that produces SQL consistent
-              with the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/> interface that produces
+              declarations consistent with the rules of this
+              <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IBuilderFactory.NewKeyDeclBuilder">
+        <member name="M:Kvasir.Transcription.IBuilderFactory`5.NewKeyDeclBuilder">
             <summary>
-              Creates a new instance of the <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/> interface that produces SQL consistent with
-              the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IKeyDeclBuilder`1"/> interface that produces declarations
+              consistent with the rules of this
+              <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IBuilderFactory.NewFieldDeclBuilder">
+        <member name="M:Kvasir.Transcription.IBuilderFactory`5.NewFieldDeclBuilder">
             <summary>
-              Creates a new instance of the <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/> interface that produces SQL consistent with
-              the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+              Creates a new instance of the <see cref="T:Kvasir.Transcription.IFieldDeclBuilder`1"/> interface that produces declarations
+              consistent with the rules of this
+              <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IBuilderFactory.NewTableDeclBuilder">
+        <member name="M:Kvasir.Transcription.IBuilderFactory`5.NewTableDeclBuilder">
             <summary>
-              Creates a new instance of the <see cref="T:Kvasir.Transcription.ITableDeclBuilder"/> interface that produces SQL consistent with
-              the syntax rules of this <see cref="T:Kvasir.Transcription.IBuilderFactory"/>.
+              Creates a new instance of the
+              <see cref="T:Kvasir.Transcription.ITableDeclBuilder`5"/> interface that
+              produces declarations consistent with the rules of this
+              <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>.
             </summary>
         </member>
-        <member name="T:Kvasir.Transcription.IConstraintDeclBuilder">
+        <member name="T:Kvasir.Transcription.IConstraintDeclBuilder`1">
             <summary>
-              The interface for a builder that produces SQL expressions that declare a single <c>CHECK</c> constraint
-              within a <c>CREATE TABLE</c> statement.ent.
+              The interface for a builder that produces declarations that define a single <c>CHECK</c>-style constraint
+              within a larger Table-creating declaration.
             </summary>
+            <typeparam name="TDecl">
+              The type of declaration object produced by the builder.
+            </typeparam>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.SetName(Kvasir.Schema.CheckName)">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.SetName(Kvasir.Schema.CheckName)">
             <summary>
-              Sets the name of the <c>CHECK</c> constraint whose declaration is being built by this
-              <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+              Sets the name of the <c>CHECK</c>-style constraint whose declaration is being built by this
+              <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>.
             </summary>
             <param name="name">
               The name.
@@ -5891,36 +5779,36 @@
               <paramref name="name"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.StartClause">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.StartClause">
             <summary>
-              Begins a new compound clause in the <c>CHECK</c> constraint being declared by the current builder's SQL
-              expression. This is the equivalent of placing an open parenthesis when writing the full condition from
+              Begins a new compound clause in the <c>CHECK</c>-style constraint being defined by the current builder's
+              declaration. This is the equivalent of placing an open parenthesis when writing the full condition from
               left-to-right.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.EndClause">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.EndClause">
             <summary>
-              Ends the most-recently-started compound clause in the <c>CHECK</c> constraint being declared by the
-              current builder's SQL expression. This is the equivalent of placing a close parenthesis when writing the
+              Ends the most-recently-started compound clause in the <c>CHECK</c>-style constraint being defined by the
+              current builder's declaration. This is the equivalent of placing a close parenthesis when writing the
               full condition from right-to-left.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.And">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.And">
             <summary>
-              Places an <c>AND</c> operator into the <c>CHECK</c> constraint being declared by the current builder's
-              SQL expression.
+              Places an <c>AND</c> operator into the <c>CHECK</c>-style constraint being defined by the current
+              builder's declaration.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.Or">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.Or">
             <summary>
-              Placs an <c>OR</c> operator into the <c>CHECK</c> constraint being declared by the current builder's SQL
-              expression.
+              Placs an <c>OR</c> operator into the <c>CHECK</c>-style constraint being defined by the current builder's
+              declaration.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.ConstantClause)">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.ConstantClause)">
             <summary>
-              Adds a new <see cref="T:Kvasir.Schema.ConstantClause"/> to the <c>CHECK</c> constraint being declared by the current
-              builder's SQL expression.
+              Adds a new <see cref="T:Kvasir.Schema.ConstantClause"/> to the <c>CHECK</c>-style constraint being defined by the current
+              builder's declaration.
             </summary>
             <param name="clause">
               The <see cref="T:Kvasir.Schema.ConstantClause"/>.
@@ -5929,10 +5817,10 @@
               <paramref name="clause"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.CrossFieldClause)">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.CrossFieldClause)">
             <summary>
-              Adds a new <see cref="T:Kvasir.Schema.CrossFieldClause"/> to the <c>CHECK</c> constraint being declared by the current
-              builder's SQL expression.
+              Adds a new <see cref="T:Kvasir.Schema.CrossFieldClause"/> to the <c>CHECK</c>-style constraint being defined by the
+              current builder's declaration.
             </summary>
             <param name="clause">
               The <see cref="T:Kvasir.Schema.CrossFieldClause"/>.
@@ -5941,10 +5829,10 @@
               <paramref name="clause"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.InclusionClause)">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.InclusionClause)">
             <summary>
-              Adds a new <see cref="T:Kvasir.Schema.InclusionClause"/> to the <c>CHECK</c> constraint being declared by the current
-              builder's SQL expression.
+              Adds a new <see cref="T:Kvasir.Schema.InclusionClause"/> to the <c>CHECK</c>-style constraint being defined by the current
+              builder's declaration.
             </summary>
             <param name="clause">
               The <see cref="T:Kvasir.Schema.InclusionClause"/>.
@@ -5953,10 +5841,10 @@
               <paramref name="clause"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.NullityClause)">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.NullityClause)">
             <summary>
-              Adds a new <see cref="T:Kvasir.Schema.NullityClause"/> to the <c>CHECK</c> constraint being declared by the current
-              builder's SQL expression.
+              Adds a new <see cref="T:Kvasir.Schema.NullityClause"/> to the <c>CHECK</c>-style constraint being defined by the current
+              builder's declaration.
             </summary>
             <param name="clause">
               The <see cref="T:Kvasir.Schema.NullityClause"/>.
@@ -5965,31 +5853,34 @@
               <paramref name="clause"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder.Build">
+        <member name="M:Kvasir.Transcription.IConstraintDeclBuilder`1.Build">
             <summary>
-              Produces the full SQL expression that has been built up by calls into other methods on this
-              <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+              Produces the full declaration that has been built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>.
             </summary>
             <pre>
-              Collectively, <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.ConstantClause)"/>, <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.CrossFieldClause)"/>,
-              <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.InclusionClause)"/>, and <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.AddClause(Kvasir.Schema.NullityClause)"/> have been called at
+              At least one of <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.ConstantClause)"/>, <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.CrossFieldClause)"/>,
+              <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.InclusionClause)"/>, and <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder`1.AddClause(Kvasir.Schema.NullityClause)"/> has been called at
               least once
                 --and--
-              <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.StartClause"/> has been called the same number of times as <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder.EndClause"/>.
+              <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder`1.StartClause"/> has been called the same number of times as <see cref="M:Kvasir.Transcription.IConstraintDeclBuilder`1.EndClause"/>.
             </pre>
             <returns>
-              A syntactically valid SQL expression declaring a single <c>CHECK</c> constraint.
+              A <typeparamref name="TDecl"/> declaring a single <c>CHECK</c>-style constraint.
             </returns>
         </member>
-        <member name="T:Kvasir.Transcription.IFieldDeclBuilder">
+        <member name="T:Kvasir.Transcription.IFieldDeclBuilder`1">
             <summary>
-              The interface for a builder that produces SQL expressions that declare a single Field within a
-              <c>CREATE TABLE</c> statement.
+              The interface for a builder that produces declarations that define a single Field within a larger
+              Table-creating declaration.
             </summary>
+            <typeparam name="TDecl">
+              The type of declaration object produced by the builder.
+            </typeparam>
         </member>
-        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetName(Kvasir.Schema.FieldName)">
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder`1.SetName(Kvasir.Schema.FieldName)">
             <summary>
-              Sets the name of the Field being declared by the current builder's SQL expression.
+              Sets the name of the Field being defined by the current builder's declaration.
             </summary>
             <param name="name">
               The name.
@@ -5998,17 +5889,17 @@
               <paramref name="name"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetDataType(Kvasir.Schema.DBType)">
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder`1.SetDataType(Kvasir.Schema.DBType)">
             <summary>
-              Sets the data type of the Field being declared by the current builder's SQL expression.
+              Sets the data type of the Field being defined by the current builder's declaration.
             </summary>
             <param name="dataType">
               The data type.
             </param>
         </member>
-        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetNullability(Kvasir.Schema.IsNullable)">
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder`1.SetNullability(Kvasir.Schema.IsNullable)">
             <summary>
-              Sets the nullability of the Field being declared by the current builder's SQL expression.
+              Sets the nullability of the Field being defined by the current builder's declaration.
             </summary>
             <param name="nullability">
               The nullability.
@@ -6017,17 +5908,17 @@
               <paramref name="nullability"/> is valid.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetDefaultValue(Kvasir.Schema.DBValue)">
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder`1.SetDefaultValue(Kvasir.Schema.DBValue)">
             <summary>
-              Sets the default value of the Field being declared by the current builder's SQL expression.
+              Sets the default value of the Field being defined by the current builder's declaration.
             </summary>
             <param name="value">
               The default value.
             </param>
         </member>
-        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.SetAllowedValues(System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder`1.SetAllowedValues(System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
             <summary>
-              Sets the list of allowed values for the Field being declared by the current builder's SQL expression.
+              Sets the list of allowed values for the Field being defined by the current builder's declaration.
             </summary>
             <param name="values">
               The allowed values.
@@ -6038,29 +5929,32 @@
               <paramref name="values"/> contains at last one element.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IFieldDeclBuilder.Build">
+        <member name="M:Kvasir.Transcription.IFieldDeclBuilder`1.Build">
             <summary>
-              Produce the full SQL expression that has ben built up by calls into other methods on this
-              <see cref="T:Kvasir.Transcription.IFieldDeclBuilder"/>.
+              Produce the full declaration that has ben built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IFieldDeclBuilder`1"/>.
             </summary>
             <pre>
-              <see cref="M:Kvasir.Transcription.IFieldDeclBuilder.SetName(Kvasir.Schema.FieldName)"/> has been called at least once
+              <see cref="M:Kvasir.Transcription.IFieldDeclBuilder`1.SetName(Kvasir.Schema.FieldName)"/> has been called at least once
                 --and--
-              <see cref="M:Kvasir.Transcription.IFieldDeclBuilder.SetDataType(Kvasir.Schema.DBType)"/> has been called at least once.
+              <see cref="M:Kvasir.Transcription.IFieldDeclBuilder`1.SetDataType(Kvasir.Schema.DBType)"/> has been called at least once.
             </pre>
             <returns>
-              A syntactically valid SQL expression declaring a single Field.
+              A <typeparamref name="TDecl"/> declaring a single Field.
             </returns>
         </member>
-        <member name="T:Kvasir.Transcription.IForeignKeyDeclBuilder">
+        <member name="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1">
             <summary>
-              The interface for a builder that produces SQL expressions that declare a single Foreign Key within a
-              <c>CREATE TABLE</c> statement.
+              The interface for a builder that produces declarations that define a single Foreign Key within a larger
+              Table-creating declaration.
             </summary>
+            <typeparam name="TDecl">
+              The type of declaration object produced by the builder.
+            </typeparam>
         </member>
-        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetName(Kvasir.Schema.FKName)">
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.SetName(Kvasir.Schema.FKName)">
             <summary>
-              Sets the name of the Foreign Key being declared by the current builder's SQL expression.
+              Sets the name of the Foreign Key being defined by the current builder's declaration.
             </summary>
             <param name="name">
               The name.
@@ -6069,10 +5963,9 @@
               <paramref name="name"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetOnDeleteBehavior(Kvasir.Schema.OnDelete)">
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.SetOnDeleteBehavior(Kvasir.Schema.OnDelete)">
             <summary>
-              Sets the <c>ON DELETE</c> behavior of the Foreign Key being declared by the current builder's SQL
-              expression.
+              Sets the <c>ON DELETE</c> behavior of the Foreign Key being defined by the current builder's declaration.
             </summary>
             <param name="behavior">
               The <c>ON DELETE</c> behavior.
@@ -6081,10 +5974,9 @@
               <paramref name="behavior"/> is valid.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetOnUpdateBehavior(Kvasir.Schema.OnUpdate)">
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.SetOnUpdateBehavior(Kvasir.Schema.OnUpdate)">
             <summary>
-              Sets the <c>ON UPDATE</c> behavior of the Foreign Key being declared by the current builder's SQL
-              expression.
+              Sets the <c>ON UPDATE</c> behavior of the Foreign Key being defined by the current builder's declaration.
             </summary>
             <param name="behavior">
               The <c>ON UPDATE</c> behavior.
@@ -6093,9 +5985,9 @@
               <paramref name="behavior"/> is valid.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetReferencedTable(Kvasir.Schema.ITable)">
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.SetReferencedTable(Kvasir.Schema.ITable)">
             <summary>
-              Sets the Table referenced by the Foreign Key being declared by the current builder's SQL expression.
+              Sets the Table referenced by the Foreign Key being defined by the current builder's declaration.
             </summary>
             <param name="table">
               The Table.
@@ -6104,10 +5996,10 @@
               <paramref name="table"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
             <summary>
-              Sets the collection of Fields that comprise the Foreign Key being declared by the current builder's SQL
-              expression.
+              Sets the collection of Fields that comprise the Foreign Key being defined by the current builder's
+              declaration.
             </summary>
             <param name="fields">
               The Fields.
@@ -6116,39 +6008,32 @@
               <paramref name="fields"/> is not <see langword="null"/>
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder.Build">
+        <member name="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.Build">
             <summary>
-              Produces the full SQL expression that has been built up by calls into other methods on this
-              <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/>.
+              Produces the full declaration that has been built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/>.
             </summary>
             <pre>
-              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
-            </pre>
-            <returns>
-              A syntactically valid SQL expression declaring a single Primary Key or a single Candidate Key.
-            </returns>
-            <summary>
-              Produces the full SQL expression that has been built up by calls into other methods on this
-              <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder"/>.
-            </summary>
-            <pre>
-              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetReferencedTable(Kvasir.Schema.ITable)"/> has been called at least once
+              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.SetReferencedTable(Kvasir.Schema.ITable)"/> has been called at least once
                 --and--
-              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
+              <see cref="M:Kvasir.Transcription.IForeignKeyDeclBuilder`1.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
             </pre>
             <returns>
-              A syntactically valid SQL expression declaring a single Foreign Key.
+              A <typeparamref name="TDecl"/> declaring a single Foreign Key.
             </returns>
         </member>
-        <member name="T:Kvasir.Transcription.IKeyDeclBuilder">
+        <member name="T:Kvasir.Transcription.IKeyDeclBuilder`1">
             <summary>
-              The interface for a builder that produces SQL expressions that declare a single Primary Key or a single
-              Candidate Key within a <c>CREATE TABLE</c> statement.
+              The interface for a builder that produces declarations that define a single Primary Key or a single Candidate
+              Key within a larger Table-creating declaration.
             </summary>
+            <typeparam name="TDecl">
+              The type of declaration object produced by the builder.
+            </typeparam>
         </member>
-        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.SetName(Kvasir.Schema.KeyName)">
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder`1.SetName(Kvasir.Schema.KeyName)">
             <summary>
-              Sets the name of the Primary Key or Candidate Key being declared by the current builder's SQL expression.
+              Sets the name of the Primary Key or Candidate Key being defined by the current builder's declaration.
             </summary>
             <param name="name">
               The name.
@@ -6157,10 +6042,10 @@
               <paramref name="name"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder`1.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
             <summary>
-              Sets the collection of Fields that comprise the Primary Key or Candidate Key being declared by the
-              current builder's SQL expression. expression being built.
+              Sets the collection of Fields that comprise the Primary Key or Candidate Key being defined by the
+              current builder's declaration.
             </summary>
             <param name="fields">
               The Fields.
@@ -6171,31 +6056,46 @@
               <paramref name="fields"/> contains at least one element.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.SetAsPrimaryKey">
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder`1.SetAsPrimaryKey">
             <summary>
-              Marks the SQL expression being built as one for a Primary Key rather than a Candidate Key.
+              Marks the declaration being built as one for a Primary Key rather than a Candidate Key.
             </summary>
         </member>
-        <member name="M:Kvasir.Transcription.IKeyDeclBuilder.Build">
+        <member name="M:Kvasir.Transcription.IKeyDeclBuilder`1.Build">
             <summary>
-              Produces the full SQL expression that has been built up by the current builder's SQL expression.
-              <see cref="T:Kvasir.Transcription.IKeyDeclBuilder"/>.
+              Produces the full declaration that has been built up by calls into other methods on this
+              <see cref="T:Kvasir.Transcription.IKeyDeclBuilder`1"/>.
             </summary>
             <pre>
-              <see cref="M:Kvasir.Transcription.IKeyDeclBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
+              <see cref="M:Kvasir.Transcription.IKeyDeclBuilder`1.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})"/> has been called at least once.
             </pre>
             <returns>
-              A syntactically valid SQL expression declaring a single Primary Key or a single Candidate Key.
+              A <typeparamref name="TDecl"/> declaring a single Primary Key or a single Candidate Key.
             </returns>
         </member>
-        <member name="T:Kvasir.Transcription.ITableDeclBuilder">
+        <member name="T:Kvasir.Transcription.ITableDeclBuilder`5">
             <summary>
-              The interface for a builder that produces <c>CREATE TABLE</c> statements for a single Table.
+              The interface for a builder that produces declarations that define a single Table.
             </summary>
+            <typeparam name="TTableDecl">
+              The type of declaration object produced by the builder.
+            </typeparam>
+            <typeparam name="TFieldDecl">
+              The type of declaration object through which the builder will manage Fields.
+            </typeparam>
+            <typeparam name="TKeyDecl">
+              The type of declaration object through which the builder will manage Primary Keys and Candidate Keys.
+            </typeparam>
+            <typeparam name="TConstraintDecl">
+              The type of declaration object through which the builder will manage <c>CHECK</c>-style constraints.
+            </typeparam>
+            <typeparam name="TFKDecl">
+              The type of declaration object through which the builder will manage Foreign Keys.
+            </typeparam>
         </member>
-        <member name="M:Kvasir.Transcription.ITableDeclBuilder.SetName(Kvasir.Schema.TableName)">
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder`5.SetName(Kvasir.Schema.TableName)">
             <summary>
-              Sets the name of the Table being declared by the current builder's <c>CREATE TABLE</c> statement.
+              Sets the name of the Table being declared by the current builder's overall declaration.
             </summary>
             <param name="name">
               The name.
@@ -6204,78 +6104,77 @@
               <paramref name="name"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddFieldDeclaration(Kvasir.Transcription.SqlSnippet)">
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder`5.AddFieldDeclaration(`1)">
             <summary>
-              Adds a Field to the Table being declared by the current builder's <c>CREATE TABLE</c>
-              statement.
+              Adds a Field to the Table being declared by the current builder's overall declaration.
             </summary>
-            <param name="sql">
-              The Field declaration statement.
+            <param name="decl">
+              The Field declaration.
             </param>
             <pre>
-              <paramref name="sql"/> is not <see langword="null"/>.
+              <paramref name="decl"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.ITableDeclBuilder.SetPrimaryKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder`5.SetPrimaryKeyDeclaration(`2)">
             <summary>
-              Sets the Primary Key to the Table being declared by the current builder's <c>CREATE TABLE</c> statement.
+              Sets the Primary Key of the Table being declared by the current builder's overall declaration.
             </summary>
-            <param name="sql">
-              The Primary Key declaration statement.
+            <param name="decl">
+              The Primary Key declaration.
             </param>
             <pre>
-              <paramref name="sql"/> is not <see langword="null"/>.
+              <paramref name="decl"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddCandidateKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder`5.AddCandidateKeyDeclaration(`2)">
             <summary>
-              Adds the declaration of a Candidate Key to the Table being declared by the current builder's
-              <c>CREATE TABLE</c> statement.
+              Adds the declaration of a Candidate Key to the Table being declared by the current builder's overall
+              declaration.
             </summary>
-            <param name="sql">
-              The Candidate Key declaration statement.
+            <param name="decl">
+              The Candidate Key declaration.
             </param>
             <pre>
-              <paramref name="sql"/> is not <see langword="null"/>.
+              <paramref name="decl"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddForeignKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder`5.AddForeignKeyDeclaration(`4)">
             <summary>
-              Adds a Foreign Key to the Table being declared by the current builder's <c>CREATE TABLE</c> statement.
+              Adds a Foreign Key to the Table being declared by the current builder's overall declaration.
             </summary>
-            <param name="sql">
-              The Foreign Key declaration statement.
+            <param name="decl">
+              The Foreign Key declaration.
             </param>
             <pre>
-              <paramref name="sql"/> is not <see langword="null"/>.
+              <paramref name="decl"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.ITableDeclBuilder.AddCheckConstraintDeclaration(Kvasir.Transcription.SqlSnippet)">
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder`5.AddCheckConstraintDeclaration(`3)">
             <summary>
-              Adds a <c>CHECK</c> constraint to the Table being declared by the current builder's <c>CREATE TABLE</c>
-              statement.
+              Adds a <c>CHECK</c>-style constraint to the Table being declared by the current builder's overall
+              declaration.
             </summary>
-            <param name="sql">
-              The <c>CHECK</c> constraint declaration statement.
+            <param name="decl">
+              The <c>CHECK</c>-style constraint declaration.
             </param>
             <pre>
-              <paramref name="sql"/> is not <see langword="null"/>.
+              <paramref name="decl"/> is not <see langword="null"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Transcription.ITableDeclBuilder.Build">
+        <member name="M:Kvasir.Transcription.ITableDeclBuilder`5.Build">
             <summary>
-              Produces the full <c>CREATE TABLE</c> statement that has been built up by calls into the other methods on
-              this <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder"/>.
+              Produces the full statement that has been built up by calls into the other methods on this
+              <see cref="T:Kvasir.Transcription.ITableDeclBuilder`5"/>.
             </summary>
             <pre>
-              <see cref="M:Kvasir.Transcription.ITableDeclBuilder.SetName(Kvasir.Schema.TableName)"/> has been called at least once
+              <see cref="M:Kvasir.Transcription.ITableDeclBuilder`5.SetName(Kvasir.Schema.TableName)"/> has been called at least once
                 --and--
-              <see cref="M:Kvasir.Transcription.ITableDeclBuilder.AddFieldDeclaration(Kvasir.Transcription.SqlSnippet)"/> has been called at least twice
+              <see cref="M:Kvasir.Transcription.ITableDeclBuilder`5.AddFieldDeclaration(`1)"/> has been called at least twice
                 --and--
-              <see cref="M:Kvasir.Transcription.ITableDeclBuilder.SetPrimaryKeyDeclaration(Kvasir.Transcription.SqlSnippet)"/> has been called at least once.
+              <see cref="M:Kvasir.Transcription.ITableDeclBuilder`5.SetPrimaryKeyDeclaration(`2)"/> has been called at least once.
             </pre>
             <returns>
-              A syntactically valid <c>CREATE TABLE</c> statement.
+              A <typeparamref name="TTableDecl"/> declaring a single Table.
             </returns>
         </member>
         <member name="T:Kvasir.Transcription.SqlSnippet">

@@ -120,7 +120,9 @@ namespace Kvasir.Schema {
         }
 
         /// <inheritdoc/>
-        SqlSnippet ITable.GenerateDeclaration(IBuilderFactory builderFactory) {
+        TTableDecl
+        ITable.GenerateDeclaration<TTableDecl, TFielDecl, TKeyDecl, TConstraintDecl, TFKDecl>
+        (IBuilderFactory<TTableDecl, TFielDecl, TKeyDecl, TConstraintDecl, TFKDecl> builderFactory) {
             Debug.Assert(builderFactory is not null);
 
             // Core Table Content
@@ -129,30 +131,30 @@ namespace Kvasir.Schema {
             
             // Fields
             foreach (var field in Fields) {
-                var fieldSql = field.GenerateDeclaration(builderFactory.NewFieldDeclBuilder());
-                builder.AddFieldDeclaration(fieldSql);
+                var fieldDecl = field.GenerateDeclaration(builderFactory.NewFieldDeclBuilder());
+                builder.AddFieldDeclaration(fieldDecl);
             }
 
             // Primary Key
-            var pkSql = PrimaryKey.GenerateSqlDeclaration(builderFactory.NewKeyDeclBuilder());
-            builder.SetPrimaryKeyDeclaration(pkSql);
+            var pkDecl = (PrimaryKey as IKey).GenerateDeclaration(builderFactory.NewKeyDeclBuilder());
+            builder.SetPrimaryKeyDeclaration(pkDecl);
 
             // Candidate Keys
-            foreach (var ck in CandidateKeys) {
-                var ckSql = ck.GenerateSqlDeclaration(builderFactory.NewKeyDeclBuilder());
-                builder.AddCandidateKeyDeclaration(ckSql);
+            foreach (IKey ck in CandidateKeys) {
+                var ckDecl = ck.GenerateDeclaration(builderFactory.NewKeyDeclBuilder());
+                builder.AddCandidateKeyDeclaration(ckDecl);
             }
 
             // Foreign Keys
             foreach (var fk in ForeignKeys) {
-                var fkSql = fk.GenerateDeclaration(builderFactory.NewForeignKeyDeclBuilder());
-                builder.AddForeignKeyDeclaration(fkSql);
+                var fkDecl = fk.GenerateDeclaration(builderFactory.NewForeignKeyDeclBuilder());
+                builder.AddForeignKeyDeclaration(fkDecl);
             }
 
             // Check Constraints
             foreach (var check in CheckConstraints) {
-                var checkSql = check.GenerateDeclaration(builderFactory.NewConstraintDeclBuilder());
-                builder.AddCheckConstraintDeclaration(checkSql);
+                var checkDecl = check.GenerateDeclaration(builderFactory.NewConstraintDeclBuilder());
+                builder.AddCheckConstraintDeclaration(checkDecl);
             }
 
             // Build Result

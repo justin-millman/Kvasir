@@ -77,7 +77,7 @@ namespace Kvasir.Schema {
         }
 
         /// <inheritdoc/>
-        SqlSnippet IKey.GenerateDeclaration(IKeyDeclBuilder builder) {
+        TDecl IKey.GenerateDeclaration<TDecl>(IKeyDeclBuilder<TDecl> builder) {
             Debug.Assert(builder is not null);
 
             Name.MatchSome(n => builder.SetName(n));

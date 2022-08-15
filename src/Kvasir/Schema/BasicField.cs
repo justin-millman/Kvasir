@@ -83,7 +83,7 @@ namespace Kvasir.Schema {
          */
 
         /// <inheritdoc/>
-        SqlSnippet IField.GenerateDeclaration(IFieldDeclBuilder builder) {
+        TDecl IField.GenerateDeclaration<TDecl>(IFieldDeclBuilder<TDecl> builder) {
             Debug.Assert(builder is not null);
 
             builder.SetName(Name);

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 
 namespace Kvasir.Transcription {
     /// <summary>
-    ///   The interface for a builder that produces SQL expressions that declare a single Foreign Key within a
-    ///   <c>CREATE TABLE</c> statement.
+    ///   The interface for a builder that produces declarations that define a single Foreign Key within a larger
+    ///   Table-creating declaration.
     /// </summary>
-    public interface IForeignKeyDeclBuilder {
+    /// <typeparam name="TDecl">
+    ///   The type of declaration object produced by the builder.
+    /// </typeparam>
+    public interface IForeignKeyDeclBuilder<TDecl> {
         /// <summary>
-        ///   Sets the name of the Foreign Key being declared by the current builder's SQL expression.
+        ///   Sets the name of the Foreign Key being defined by the current builder's declaration.
         /// </summary>
         /// <param name="name">
         ///   The name.
@@ -19,8 +22,7 @@ namespace Kvasir.Transcription {
         void SetName(FKName name);
 
         /// <summary>
-        ///   Sets the <c>ON DELETE</c> behavior of the Foreign Key being declared by the current builder's SQL
-        ///   expression.
+        ///   Sets the <c>ON DELETE</c> behavior of the Foreign Key being defined by the current builder's declaration.
         /// </summary>
         /// <param name="behavior">
         ///   The <c>ON DELETE</c> behavior.
@@ -31,8 +33,7 @@ namespace Kvasir.Transcription {
         void SetOnDeleteBehavior(OnDelete behavior);
 
         /// <summary>
-        ///   Sets the <c>ON UPDATE</c> behavior of the Foreign Key being declared by the current builder's SQL
-        ///   expression.
+        ///   Sets the <c>ON UPDATE</c> behavior of the Foreign Key being defined by the current builder's declaration.
         /// </summary>
         /// <param name="behavior">
         ///   The <c>ON UPDATE</c> behavior.
@@ -43,7 +44,7 @@ namespace Kvasir.Transcription {
         void SetOnUpdateBehavior(OnUpdate behavior);
 
         /// <summary>
-        ///   Sets the Table referenced by the Foreign Key being declared by the current builder's SQL expression.
+        ///   Sets the Table referenced by the Foreign Key being defined by the current builder's declaration.
         /// </summary>
         /// <param name="table">
         ///   The Table.
@@ -54,8 +55,8 @@ namespace Kvasir.Transcription {
         void SetReferencedTable(ITable table);
 
         /// <summary>
-        ///   Sets the collection of Fields that comprise the Foreign Key being declared by the current builder's SQL
-        ///   expression.
+        ///   Sets the collection of Fields that comprise the Foreign Key being defined by the current builder's
+        ///   declaration.
         /// </summary>
         /// <param name="fields">
         ///   The Fields.
@@ -66,19 +67,8 @@ namespace Kvasir.Transcription {
         void SetFields(IEnumerable<IField> fields);
 
         /// <summary>
-        ///   Produces the full SQL expression that has been built up by calls into other methods on this
-        ///   <see cref="IKeyDeclBuilder"/>.
-        /// </summary>
-        /// <pre>
-        ///   <see cref="SetFields(IEnumerable{IField})"/> has been called at least once.
-        /// </pre>
-        /// <returns>
-        ///   A syntactically valid SQL expression declaring a single Primary Key or a single Candidate Key.
-        /// </returns>
-
-        /// <summary>
-        ///   Produces the full SQL expression that has been built up by calls into other methods on this
-        ///   <see cref="IForeignKeyDeclBuilder"/>.
+        ///   Produces the full declaration that has been built up by calls into other methods on this
+        ///   <see cref="IForeignKeyDeclBuilder{TDecl}"/>.
         /// </summary>
         /// <pre>
         ///   <see cref="SetReferencedTable(ITable)"/> has been called at least once
@@ -86,8 +76,8 @@ namespace Kvasir.Transcription {
         ///   <see cref="SetFields(IEnumerable{IField})"/> has been called at least once.
         /// </pre>
         /// <returns>
-        ///   A syntactically valid SQL expression declaring a single Foreign Key.
+        ///   A <typeparamref name="TDecl"/> declaring a single Foreign Key.
         /// </returns>
-        SqlSnippet Build();
+        TDecl Build();
     }
 }

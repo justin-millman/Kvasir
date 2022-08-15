@@ -3,12 +3,15 @@ using System.Collections.Generic;
 
 namespace Kvasir.Transcription {
     /// <summary>
-    ///   The interface for a builder that produces SQL expressions that declare a single Field within a
-    ///   <c>CREATE TABLE</c> statement.
+    ///   The interface for a builder that produces declarations that define a single Field within a larger
+    ///   Table-creating declaration.
     /// </summary>
-    public interface IFieldDeclBuilder {
+    /// <typeparam name="TDecl">
+    ///   The type of declaration object produced by the builder.
+    /// </typeparam>
+    public interface IFieldDeclBuilder<TDecl> {
         /// <summary>
-        ///   Sets the name of the Field being declared by the current builder's SQL expression.
+        ///   Sets the name of the Field being defined by the current builder's declaration.
         /// </summary>
         /// <param name="name">
         ///   The name.
@@ -19,7 +22,7 @@ namespace Kvasir.Transcription {
         void SetName(FieldName name);
 
         /// <summary>
-        ///   Sets the data type of the Field being declared by the current builder's SQL expression.
+        ///   Sets the data type of the Field being defined by the current builder's declaration.
         /// </summary>
         /// <param name="dataType">
         ///   The data type.
@@ -27,7 +30,7 @@ namespace Kvasir.Transcription {
         void SetDataType(DBType dataType);
 
         /// <summary>
-        ///   Sets the nullability of the Field being declared by the current builder's SQL expression.
+        ///   Sets the nullability of the Field being defined by the current builder's declaration.
         /// </summary>
         /// <param name="nullability">
         ///   The nullability.
@@ -38,7 +41,7 @@ namespace Kvasir.Transcription {
         void SetNullability(IsNullable nullability);
 
         /// <summary>
-        ///   Sets the default value of the Field being declared by the current builder's SQL expression.
+        ///   Sets the default value of the Field being defined by the current builder's declaration.
         /// </summary>
         /// <param name="value">
         ///   The default value.
@@ -46,7 +49,7 @@ namespace Kvasir.Transcription {
         void SetDefaultValue(DBValue value);
 
         /// <summary>
-        ///   Sets the list of allowed values for the Field being declared by the current builder's SQL expression.
+        ///   Sets the list of allowed values for the Field being defined by the current builder's declaration.
         /// </summary>
         /// <param name="values">
         ///   The allowed values.
@@ -59,8 +62,8 @@ namespace Kvasir.Transcription {
         void SetAllowedValues(IEnumerable<DBValue> values);
 
         /// <summary>
-        ///   Produce the full SQL expression that has ben built up by calls into other methods on this
-        ///   <see cref="IFieldDeclBuilder"/>.
+        ///   Produce the full declaration that has ben built up by calls into other methods on this
+        ///   <see cref="IFieldDeclBuilder{TDecl}"/>.
         /// </summary>
         /// <pre>
         ///   <see cref="SetName(FieldName)"/> has been called at least once
@@ -68,8 +71,8 @@ namespace Kvasir.Transcription {
         ///   <see cref="SetDataType(DBType)"/> has been called at least once.
         /// </pre>
         /// <returns>
-        ///   A syntactically valid SQL expression declaring a single Field.
+        ///   A <typeparamref name="TDecl"/> declaring a single Field.
         /// </returns>
-        SqlSnippet Build();
+        TDecl Build();
     }
 }
