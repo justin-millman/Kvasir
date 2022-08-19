@@ -60,7 +60,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void Construct() {
             // Arrange
             var converter = DataConverter.Identity<string>();
-            var creator = new PrimitiveCreator(0, converter);
+            var creator = new PrimitiveCreator(0, typeof(string));
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
             var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
@@ -77,7 +77,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ExecuteOnEmptyRows() {
             // Arrange
             var converter = DataConverter.Identity<string>();
-            var creator = new PrimitiveCreator(0, converter);
+            var creator = new PrimitiveCreator(0, typeof(string));
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
             var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
@@ -97,7 +97,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ExecuteOnSingleRow() {
             // Arrange
             var converter = DataConverter.Identity<string>();
-            var creator = new PrimitiveCreator(0, converter);
+            var creator = new PrimitiveCreator(0, typeof(string));
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
             var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
@@ -121,7 +121,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ExecuteOnMultipleRows() {
             // Arrange
             var converter = DataConverter.Identity<string>();
-            var creator = new PrimitiveCreator(0, converter);
+            var creator = new PrimitiveCreator(0, typeof(string));
             var reconstitutor = new Reconstitutor(creator, Enumerable.Empty<IMutationStep>());
             var entityPlan = new DataReconstitutionPlan(reconstitutor, Enumerable.Repeat(converter, 1));
 
@@ -130,13 +130,14 @@ namespace UT.Kvasir.Reconstitution {
             var plan = new RelationReconstitutionPlan(entityPlan, mockRepopulator.Object);
             var source = new object();
 
-            var values = new string[] { "Fairfax", "Highland Park", "Nacogdoches", "Taos Pubelo", "Hilo" };
+            var values = new string[] { "Fairfax", "Highland Park", "Nacogdoches", "Taos Pubelo", "Hilo", "Detroit" };
             var data = new List<List<DBValue>>() {
                 new List<DBValue>(){ DBValue.Create(values[0]) },
                 new List<DBValue>(){ DBValue.Create(values[1]) },
                 new List<DBValue>(){ DBValue.Create(values[2]) },
                 new List<DBValue>(){ DBValue.Create(values[3]) },
-                new List<DBValue>(){ DBValue.Create(values[4]) }
+                new List<DBValue>(){ DBValue.Create(values[4]) },
+                new List<DBValue>(){ DBValue.Create(values[5]) }
             };
 
             // Act

@@ -11,36 +11,22 @@ using System.Collections.Generic;
 namespace UT.Kvasir.Reconstitution {
     [TestClass, TestCategory("PrimitiveCreator")]
     public class PrimitiveCreatorTests {
-        [TestMethod] public void ConstructNoReversion() {
+        [TestMethod] public void Construct() {
             // Arrange
             var idx = new Index(3);
-            var reverter = DataConverter.Identity<int>();
 
             // Act
-            var creator = new PrimitiveCreator(idx, reverter);
+            var creator = new PrimitiveCreator(idx, typeof(int));
 
             // Assert
             creator.Target.Should().Be(typeof(int));
         }
 
-        [TestMethod] public void ConstructWithReversion() {
-            // Arrange
-            var idx = new Index(491);
-            var reverter = DataConverter.Create<char, int>(c => c, i => (char)i);
-
-            // Act
-            var creator = new PrimitiveCreator(idx, reverter);
-
-            // Assert
-            creator.Target.Should().Be(typeof(char));
-        }
-
-        [TestMethod] public void ProduceNonNullNoReversion() {
+        [TestMethod] public void ProduceNonNull() {
             // Arrange
             var idx = new Index(1);
-            var reverter = DataConverter.Identity<string>();
             var data = new DBValue[] { DBValue.Create(7), DBValue.Create("Jefferson City") };
-            var creator = new PrimitiveCreator(idx, reverter);
+            var creator = new PrimitiveCreator(idx, typeof(string));
 
             // Act
             var value = creator.Execute(data);
@@ -49,40 +35,11 @@ namespace UT.Kvasir.Reconstitution {
             value.Should().Be(data[idx].Datum);
         }
 
-        [TestMethod] public void ProduceNonNullWithReversion() {
-            // Arrange
-            var idx = new Index(0);
-            var reverter = DataConverter.Create<int, string>(i => i.ToString(), s => int.Parse(s));
-            var data = new DBValue[] { DBValue.Create("7"), DBValue.NULL, DBValue.Create(7) };
-            var creator = new PrimitiveCreator(idx, reverter);
-
-            // Act
-            var value = creator.Execute(data);
-
-            // Assert
-            value.Should().Be(7);
-        }
-
-        [TestMethod] public void ProduceNullNoReversion() {
+        [TestMethod] public void ProduceNull() {
             // Arrange
             var idx = new Index(1);
-            var reverter = DataConverter.Identity<ushort>();
             var data = new DBValue[] { DBValue.Create('&'), DBValue.NULL, DBValue.Create(-4L) };
-            var creator = new PrimitiveCreator(idx, reverter);
-
-            // Act
-            var value = creator.Execute(data);
-
-            // Assert
-            value.Should().BeNull();
-        }
-
-        [TestMethod] public void ProduceNullWithReversion() {
-            // Arrange
-            var idx = new Index(1);
-            var reverter = DataConverter.Create<DateTime, int>(d => d.Year, i => new DateTime(i, 1, 1));
-            var data = new DBValue[] { DBValue.Create("Bloomington"), DBValue.NULL };
-            var creator = new PrimitiveCreator(idx, reverter);
+            var creator = new PrimitiveCreator(idx, typeof(ushort));
 
             // Act
             var value = creator.Execute(data);
@@ -219,7 +176,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void Construct() {
             // Arrange
             var conv = DataConverter.Identity<string>();
-            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var plan = new DataExtractionPlan(new IExtractionStep[] { step }, new DataConverter[] { conv });
 
             // Act
@@ -232,7 +189,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ProduceFromNonNullKey() {
             // Arrange
             var conv = DataConverter.Identity<string>();
-            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var plan = new DataExtractionPlan(new IExtractionStep[] { step, step }, new DataConverter[] { conv, conv });
             var entities = new string[] { "Belo Horizonte", "Gladstone", "Cluj-Napoca" };
             var target = entities[2];
@@ -249,7 +206,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ProduceFromNullKey() {
             // Arrange
             var conv = DataConverter.Identity<string>();
-            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var plan = new DataExtractionPlan(new IExtractionStep[] { step, step }, new DataConverter[] { conv, conv });
             var entities = new string[] { "Whanganui", "Valladolid", "Chișinău" };
             var target = entities[0];

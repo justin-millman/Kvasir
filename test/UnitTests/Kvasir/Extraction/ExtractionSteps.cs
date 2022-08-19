@@ -14,24 +14,22 @@ namespace UT.Kvasir.Extraction {
             var mockExtractor = new Mock<IFieldExtractor>();
             mockExtractor.Setup(e => e.ExpectedSource).Returns(typeof(string));
             mockExtractor.Setup(e => e.FieldType).Returns(typeof(int));
-            var conv = DataConverter.Identity<int>();
 
             // Act
-            var step = new PrimitiveExtractionStep(mockExtractor.Object, conv);
+            var step = new PrimitiveExtractionStep(mockExtractor.Object);
 
             // Assert
             step.ExpectedSource.Should().Be(typeof(string));
         }
 
-        [TestMethod] public void ExtractWithIdentityConversion() {
+        [TestMethod] public void ExtractFromExact() {
             // Arrange
             var result = 10;
             var mockExtractor = new Mock<IFieldExtractor>();
             mockExtractor.Setup(e => e.ExpectedSource).Returns(typeof(string));
             mockExtractor.Setup(e => e.FieldType).Returns(typeof(int));
             mockExtractor.Setup(e => e.Execute(It.IsAny<string>())).Returns(result);
-            var conv = DataConverter.Identity<int>();
-            var step = new PrimitiveExtractionStep(mockExtractor.Object, conv);
+            var step = new PrimitiveExtractionStep(mockExtractor.Object);
             var source = "Grand Rapids";
 
             // Act
@@ -42,25 +40,6 @@ namespace UT.Kvasir.Extraction {
             value.Should().BeEquivalentTo(new DBValue[] { DBValue.Create(result) });
         }
 
-        [TestMethod] public void ExtractWithNonIdentityConversion() {
-            // Arrange
-            var result = 10;
-            var mockExtractor = new Mock<IFieldExtractor>();
-            mockExtractor.Setup(e => e.ExpectedSource).Returns(typeof(string));
-            mockExtractor.Setup(e => e.FieldType).Returns(typeof(int));
-            mockExtractor.Setup(e => e.Execute(It.IsAny<string>())).Returns(result);
-            var conv = DataConverter.Create<int, int>(i => i * 2);
-            var step = new PrimitiveExtractionStep(mockExtractor.Object, conv);
-            var source = "Detroit";
-
-            // Act
-            var value = step.Execute(source);
-
-            // Assert
-            mockExtractor.Verify(e => e.Execute(source), Times.Once);
-            value.Should().BeEquivalentTo(new DBValue[] { DBValue.Create(conv.Convert(result)) });
-        }
-
         [TestMethod] public void ExtractFromDerived() {
             // Arrange
             var result = 10;
@@ -68,8 +47,7 @@ namespace UT.Kvasir.Extraction {
             mockExtractor.Setup(e => e.ExpectedSource).Returns(typeof(Exception));
             mockExtractor.Setup(e => e.FieldType).Returns(typeof(int));
             mockExtractor.Setup(e => e.Execute(It.IsAny<Exception>())).Returns(result);
-            var conv = DataConverter.Identity<int>();
-            var step = new PrimitiveExtractionStep(mockExtractor.Object, conv);
+            var step = new PrimitiveExtractionStep(mockExtractor.Object);
             var source = new NullReferenceException();
 
             // Act
@@ -87,8 +65,7 @@ namespace UT.Kvasir.Extraction {
             mockExtractor.Setup(e => e.ExpectedSource).Returns(typeof(string));
             mockExtractor.Setup(e => e.FieldType).Returns(typeof(int));
             mockExtractor.Setup(e => e.Execute(It.IsAny<string>())).Returns(result);
-            var conv = DataConverter.Identity<int>();
-            var step = new PrimitiveExtractionStep(mockExtractor.Object, conv);
+            var step = new PrimitiveExtractionStep(mockExtractor.Object);
             string? source = null;
 
             // Act

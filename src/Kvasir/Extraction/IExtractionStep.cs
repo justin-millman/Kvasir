@@ -9,8 +9,8 @@ namespace Kvasir.Extraction {
     /// <remarks>
     ///   The <see cref="IExtractionStep"/> interface is a companion to the <see cref="IFieldExtractor"/> interface,
     ///   separating the logic for what to do with a piece of extracted data from how to obtain it. The data produced
-    ///   by executing an <see cref="IExtractionStep"/> instance is fully decomposed and has had an opportunity to
-    ///   undergo extrinsic transformation.
+    ///   by executing an <see cref="IExtractionStep"/> instance is fully decomposed but has not undergone any
+    ///   transforms.
     /// </remarks>
     public interface IExtractionStep {
         /// <summary>
@@ -24,19 +24,10 @@ namespace Kvasir.Extraction {
         ///   that can be stored in a back-end database.
         /// </summary>
         /// <remarks>
-        ///   <para>
-        ///     Every extraction plan has two phases of data transformation. The first is the extrinsic phase, in which
-        ///     the value is modified (and its type possibly changed) according to a user-provided rule. The second is
-        ///     the intrinsic phase, in which the once-transformed value undergoe a transformation specific to the
-        ///     storage mechanics of the target back-end relational database. The values produced by executing an
-        ///     <see cref="IExtractionStep"/> will have completed the first phase only.
-        ///   </para>
-        ///   <para>
-        ///     Executing an <see cref="IExtractionStep"/> on a <see langword="null"/> source object will produce a
-        ///     sequence of <see cref="DBValue.NULL"/> of the appropriate length. This ensures that a particular
-        ///     <see cref="IExtractionStep"/> instance always produces sequences of equal length independent of the
-        ///     source object's nullity.
-        ///   </para>
+        ///   Executing an <see cref="IExtractionStep"/> on a <see langword="null"/> source object will produce a
+        ///   sequence of <see cref="DBValue.NULL"/> of the appropriate length. This ensures that a particular
+        ///   <see cref="IExtractionStep"/> instance always produces sequences of equal length independent of the
+        ///   source object's nullity.
         /// </remarks>
         /// <param name="sourceObject">
         ///   The source object on which to execute this <see cref="IExtractionStep"/>.

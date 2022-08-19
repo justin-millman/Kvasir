@@ -26,8 +26,8 @@ namespace Kvasir.Reconstitution {
         ///   <see cref="DataReconstitutionPlan"/> is executed.
         /// </param>
         /// <param name="reverters">
-        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that intrinsically transform the
-        ///   values extracted from the back-end database..
+        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that transform the values
+        ///   extracted from the back-end database..
         /// </param>
         /// <pre>
         ///   <paramref name="reverters"/> is not empty

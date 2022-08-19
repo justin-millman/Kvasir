@@ -10,7 +10,7 @@ using System.Linq;
 namespace Kvasir.Extraction {
     /// <summary>
     ///   A description of the way in which data for a particular CLR object type is to be extracted from instances,
-    ///   transformd, and prepared to be stored in a back-end database.
+    ///   transformed, and prepared to be stored in a back-end database.
     /// </summary>
     public sealed class DataExtractionPlan {
         /// <summary>
@@ -23,12 +23,12 @@ namespace Kvasir.Extraction {
         ///   Constructs a new <see cref="DataExtractionPlan"/>.
         /// </summary>
         /// <param name="steps">
-        ///   The ordered sequence of <see cref="IExtractionStep">extraction steps</see> that produce the extrinsically
-        ///   converted values from a source CLR object.
+        ///   The ordered sequence of <see cref="IExtractionStep">extraction steps</see> that produce the unconverted
+        ///   values from a source CLR object.
         /// </param>
         /// <param name="converters">
-        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that intrinsically transform the
-        ///   values produced by <paramref name="steps"/>.
+        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that transform the values produced
+        ///   by <paramref name="steps"/>.
         /// </param>
         /// <pre>
         ///   <paramref name="steps"/> is not empty

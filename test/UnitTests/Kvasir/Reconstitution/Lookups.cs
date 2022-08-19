@@ -14,7 +14,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void MatchesFirstPossibleEntity() {
             // Arrange
             var conv = DataConverter.Identity<string>();
-            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var plan = new DataExtractionPlan(new IExtractionStep[] { step }, new DataConverter[] { conv });
             var data = new string[] { "Juárez", "Tarawa", "Leeds" };
             var target = data[0];
@@ -30,7 +30,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void MatchesIntermediatePossibleEntity() {
             // Arrange
             var conv = DataConverter.Identity<string>();
-            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var plan = new DataExtractionPlan(new IExtractionStep[] { step }, new DataConverter[] { conv });
             var data = new string[] { "Düsseldorf", "Naypyidaw", "Tirana" };
             var target = data[1];
@@ -46,7 +46,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void MatchesLastPossibleEntity() {
             // Arrange
             var conv = DataConverter.Identity<string>();
-            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var plan = new DataExtractionPlan(new IExtractionStep[] { step }, new DataConverter[] { conv });
             var data = new string[] { "Siem Reap", "Caesarea", "Bissau" };
             var target = data[2];
@@ -62,7 +62,7 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void NoMatchingEntity() {
             // Arrange
             var conv = DataConverter.Identity<string>();
-            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var plan = new DataExtractionPlan(new IExtractionStep[] { step }, new DataConverter[] { conv });
             var data = new string[] { "Corfu", "Cologne", "Victoria" };
             var target = "Monterrey";
@@ -81,7 +81,7 @@ namespace UT.Kvasir.Reconstitution {
             var data = new string[] { "Bamako", "Monte Carlo", "Genoa" };
             var target = data[^1];
             var key = new List<DBValue>() { DBValue.Create(target), DBValue.Create("!!!") };
-            var step0 = new PrimitiveExtractionStep(new IdentityExtractor<string>(), conv);
+            var step0 = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var mockStep = new Mock<IExtractionStep>();
             mockStep.Setup(e => e.ExpectedSource).Returns(typeof(string));
             mockStep.Setup(e => e.Execute(It.Is<string>(s => s == target))).Returns(new List<DBValue>() { key[1] });
