@@ -26,7 +26,7 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var mockRelation = new Mock<IRelation>();
             var source = new Tuple<IRelation>(mockRelation.Object);
-            var entries = new List<string>() { "Seneca Falls", "Richmond", "Hackensack", "Ogden" };
+            var entries = new List<string>() { "Seneca Falls", "Richmond", "Hackensack", "Ogden", "Bloomington" };
             var repopulator = new FromPropertyRepopulator(source.GetType().GetProperty("Item1")!);
 
             // Sequence
@@ -35,6 +35,7 @@ namespace UT.Kvasir.Reconstitution {
             sequence.Add(r => r.Repopulate(entries[1]));
             sequence.Add(r => r.Repopulate(entries[2]));
             sequence.Add(r => r.Repopulate(entries[3]));
+            sequence.Add(r => r.Repopulate(entries[4]));
 
             // Act
             repopulator.Execute(source, entries);

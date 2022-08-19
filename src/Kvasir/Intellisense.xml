@@ -1083,7 +1083,7 @@
         <member name="T:Kvasir.Extraction.DataExtractionPlan">
             <summary>
               A description of the way in which data for a particular CLR object type is to be extracted from instances,
-              transformd, and prepared to be stored in a back-end database.
+              transformed, and prepared to be stored in a back-end database.
             </summary>
         </member>
         <member name="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource">
@@ -1097,12 +1097,12 @@
               Constructs a new <see cref="T:Kvasir.Extraction.DataExtractionPlan"/>.
             </summary>
             <param name="steps">
-              The ordered sequence of <see cref="T:Kvasir.Extraction.IExtractionStep">extraction steps</see> that produce the extrinsically
-              converted values from a source CLR object.
+              The ordered sequence of <see cref="T:Kvasir.Extraction.IExtractionStep">extraction steps</see> that produce the unconverted
+              values from a source CLR object.
             </param>
             <param name="converters">
-              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that intrinsically transform the
-              values produced by <paramref name="steps"/>.
+              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that transform the values produced
+              by <paramref name="steps"/>.
             </param>
             <pre>
               <paramref name="steps"/> is not empty
@@ -1214,8 +1214,8 @@
             <remarks>
               The <see cref="T:Kvasir.Extraction.IExtractionStep"/> interface is a companion to the <see cref="T:Kvasir.Extraction.IFieldExtractor"/> interface,
               separating the logic for what to do with a piece of extracted data from how to obtain it. The data produced
-              by executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance is fully decomposed and has had an opportunity to
-              undergo extrinsic transformation.
+              by executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance is fully decomposed but has not undergone any
+              transforms.
             </remarks>
         </member>
         <member name="P:Kvasir.Extraction.IExtractionStep.ExpectedSource">
@@ -1230,19 +1230,10 @@
               that can be stored in a back-end database.
             </summary>
             <remarks>
-              <para>
-                Every extraction plan has two phases of data transformation. The first is the extrinsic phase, in which
-                the value is modified (and its type possibly changed) according to a user-provided rule. The second is
-                the intrinsic phase, in which the once-transformed value undergoe a transformation specific to the
-                storage mechanics of the target back-end relational database. The values produced by executing an
-                <see cref="T:Kvasir.Extraction.IExtractionStep"/> will have completed the first phase only.
-              </para>
-              <para>
-                Executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> on a <see langword="null"/> source object will produce a
-                sequence of <see cref="P:Kvasir.Schema.DBValue.NULL"/> of the appropriate length. This ensures that a particular
-                <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance always produces sequences of equal length independent of the
-                source object's nullity.
-              </para>
+              Executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> on a <see langword="null"/> source object will produce a
+              sequence of <see cref="P:Kvasir.Schema.DBValue.NULL"/> of the appropriate length. This ensures that a particular
+              <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance always produces sequences of equal length independent of the
+              source object's nullity.
             </remarks>
             <param name="sourceObject">
               The source object on which to execute this <see cref="T:Kvasir.Extraction.IExtractionStep"/>.
@@ -1304,23 +1295,14 @@
         <member name="P:Kvasir.Extraction.PrimitiveExtractionStep.ExpectedSource">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor,Cybele.Core.DataConverter)">
+        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Extraction.PrimitiveExtractionStep"/>.
             </summary>
             <param name="extractor">
               The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> defining how the primitive value is to be obtained.
             </param>
-            <param name="converter">
-              A <see cref="T:Cybele.Core.DataConverter"/> defining how to transform the primitive value extracted according to
-              <paramref name="extractor"/>. If no transformation is desired, an
-              <see cref="M:Cybele.Core.DataConverter.Identity``1">identity conversion</see> should be provided.
-            </param>
             <pre>
-              The <see cref="P:Cybele.Core.DataConverter.SourceType">SourceType</see> of <paramref name="converter"/> is the same as
-              the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/>, or is a base
-              class or interface thereof
-                --and--
               The <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
               supported by the Framework.
             </pre>
@@ -1487,8 +1469,8 @@
               <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/> is executed.
             </param>
             <param name="reverters">
-              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that intrinsically transform the
-              values extracted from the back-end database..
+              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that transform the values
+              extracted from the back-end database..
             </param>
             <pre>
               <paramref name="reverters"/> is not empty
@@ -1588,19 +1570,9 @@
               relational database
             </summary>
             <remarks>
-              <para>
-                The process of creating a CLR object from a "row" of database values is a two-step process. In the first
-                step, the object is <i>created</i>; that is, some valid CLR object is brought into existence according to
-                the APIs exposed by the target type. In the second step, that object is modified so that its state reflects
-                the full slate of values in the "row." This two-step dance allows for the use of, for exaple, read-only
-                properties in conjunction with constructors, which is a more natural object model for most users (as
-                compared to requiring that all properties be writeable).
-              </para>
-              <para>
-                The <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> interface describes the shape of the first step in the object-building
-                process only. The guarantee of the interface is that a produced object is valid according to the domain
-                object being created, though it is not necessarily fully reflective of the database state.
-              </para>
+              The <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> interface describes the shape of the first step in the object-building
+              process only. The guarantee of the interface is that a produced object is valid according to the domain object
+              being created, though it is not necessarily fully reflective of the database state.
             </remarks>
             <seealso cref="T:Kvasir.Reconstitution.IMutationStep"/>
             <seealso cref="T:Kvasir.Reconstitution.Reconstitutor"/>
@@ -1713,23 +1685,18 @@
         <member name="P:Kvasir.Reconstitution.PrimitiveCreator.Target">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.#ctor(System.Index,Cybele.Core.DataConverter)">
+        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.#ctor(System.Index,System.Type)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Reconstitution.PrimitiveCreator"/>.
             </summary>
             <param name="index">
               The index in the to-be-provided array of database values at which the target primitive value resides.
             </param>
-            <param name="reverter">
-              A <see cref="T:Cybele.Core.DataConverter"/> defining how to undo the transform performed on the primitive value. If no
-              transformation was applied on storage, an <see cref="M:Cybele.Core.DataConverter.Identity``1">identity conversion</see>
-              should be provided.
+            <param name="targetType">
+              The type of primitive type that can be handled.
             </param>
             <pre>
-              <paramref name="reverter"/> supports bidirectional conversion
-                --and--
-              The <see cref="P:Cybele.Core.DataConverter.ResultType"/> of <paramref name="reverter"/> is a data type supported by the
-              Framework.
+              <paramref name="targetType"/> is a data type supported by the Framework.
             </pre>
         </member>
         <member name="M:Kvasir.Reconstitution.PrimitiveCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">

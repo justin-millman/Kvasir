@@ -19,27 +19,13 @@ namespace Kvasir.Extraction {
         /// <param name="extractor">
         ///   The <see cref="IFieldExtractor"/> defining how the primitive value is to be obtained.
         /// </param>
-        /// <param name="converter">
-        ///   A <see cref="DataConverter"/> defining how to transform the primitive value extracted according to
-        ///   <paramref name="extractor"/>. If no transformation is desired, an
-        ///   <see cref="DataConverter.Identity{T}">identity conversion</see> should be provided.
-        /// </param>
         /// <pre>
-        ///   The <see cref="DataConverter.SourceType">SourceType</see> of <paramref name="converter"/> is the same as
-        ///   the <see cref="IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/>, or is a base
-        ///   class or interface thereof
-        ///     --and--
         ///   The <see cref="IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
         ///   supported by the Framework.
         /// </pre>
-        internal PrimitiveExtractionStep(IFieldExtractor extractor, DataConverter converter) {
+        internal PrimitiveExtractionStep(IFieldExtractor extractor) {
             Guard.Against.Null(extractor, nameof(extractor));
-            Guard.Against.Null(converter, nameof(converter));
-            Debug.Assert(extractor.FieldType.IsInstanceOf(converter.SourceType));
-            Debug.Assert(DBType.IsSupported(converter.SourceType));
-
             extractor_ = extractor;
-            converter_ = converter;
             ExpectedSource = extractor_.ExpectedSource;
         }
 
@@ -56,12 +42,10 @@ namespace Kvasir.Extraction {
             // this and produce DBValue.NULL. The PrimitiveExtractionStep can only ever return a collection of size 1,
             // so this heuristic is sufficient to satisfy all postconditions.
             var extraction = extractor_.Execute(source);
-            var conversion = converter_.Convert(extraction);
-            return new DBValue[] { DBValue.Create(conversion) };
+            return new DBValue[] { DBValue.Create(extraction) };
         }
 
 
         private readonly IFieldExtractor extractor_;
-        private readonly DataConverter converter_;
     }
 }

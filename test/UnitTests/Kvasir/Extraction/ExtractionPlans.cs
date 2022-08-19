@@ -115,7 +115,7 @@ namespace UT.Kvasir.Extraction {
             mockExtractor.Setup(e => e.Execute(It.IsAny<object>())).Returns(mockRelation.Object);
 
             var step = new IdentityExtractor<string>();
-            var steps = new IExtractionStep[] { new PrimitiveExtractionStep(step, DataConverter.Identity<string>()) };
+            var steps = new IExtractionStep[] { new PrimitiveExtractionStep(step) };
             var converters = new DataConverter[] { DataConverter.Identity<string>() };
             var entityPlan = new DataExtractionPlan(steps, converters);
 

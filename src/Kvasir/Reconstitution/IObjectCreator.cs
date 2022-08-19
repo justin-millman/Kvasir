@@ -6,19 +6,9 @@ namespace Kvasir.Reconstitution {
     ///   relational database
     /// </summary>
     /// <remarks>
-    ///   <para>
-    ///     The process of creating a CLR object from a "row" of database values is a two-step process. In the first
-    ///     step, the object is <i>created</i>; that is, some valid CLR object is brought into existence according to
-    ///     the APIs exposed by the target type. In the second step, that object is modified so that its state reflects
-    ///     the full slate of values in the "row." This two-step dance allows for the use of, for exaple, read-only
-    ///     properties in conjunction with constructors, which is a more natural object model for most users (as
-    ///     compared to requiring that all properties be writeable).
-    ///   </para>
-    ///   <para>
-    ///     The <see cref="IObjectCreator"/> interface describes the shape of the first step in the object-building
-    ///     process only. The guarantee of the interface is that a produced object is valid according to the domain
-    ///     object being created, though it is not necessarily fully reflective of the database state.
-    ///   </para>
+    ///   The <see cref="IObjectCreator"/> interface describes the shape of the first step in the object-building
+    ///   process only. The guarantee of the interface is that a produced object is valid according to the domain object
+    ///   being created, though it is not necessarily fully reflective of the database state.
     /// </remarks>
     /// <seealso cref="IMutationStep"/>
     /// <seealso cref="Reconstitutor"/>
