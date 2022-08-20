@@ -718,6 +718,244 @@
               <see cref="P:Cybele.Core.DataConverter.ResultType"/> into instances of <see cref="P:Cybele.Core.DataConverter.SourceType"/>, if such a function is supported.
             </param>
         </member>
+        <member name="T:Cybele.Core.PropertyChain">
+            <summary>
+              A chain of readable properties.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Cybele.Core.PropertyChain"/> class is intended to facilitate repeated, iterated property reads via
+                reflection. Each "link" in the chain represents a single readable property; the value read for each "link"
+                serves as the input to the subsequent "link." If at any point a <see langword="null"/> value is obtained,
+                continuation down the chain is immediately terminated. In this way, a <see cref="T:Cybele.Core.PropertyChain"/> mimics the
+                behavior of performing a property access of the form <c>A?.B?.C?.D</c>.
+              </para>
+              <para>
+                The "links" in a <see cref="T:Cybele.Core.PropertyChain"/> are fully covariant: if the value produed by "link" <c>N</c> is
+                of the type <c>T</c>, then the subsequent "link" <c>N + 1</c> can expect a source object of <c>T</c> or any
+                base class or interface of <c>T</c>. The read operations see through <see langword="virtual"/> and
+                <see langword="abstract"/> functions, resolving to the most derived definition regardless of the source
+                object. The same is true for explicit interface implementations, provided that the "link" expects the type
+                of the interface: the result is the equivalent of <c>A?.B?.(C as SomeInterface)?.D</c>.
+              </para>
+              <para>
+                There are generally three ways to create or extend a <see cref="T:Cybele.Core.PropertyChain"/>: by property, by name, and
+                by chain. The first and third of these are straightforward: the covariance rules applied to verify that the
+                resulting chain is still valid, and a new <see cref="T:Cybele.Core.PropertyChain"/> is created. The middle option,
+                however, carries a nuance when it come to property hiding. If the expected source type of the chain inherits
+                a definition of a property with the given name and then hides it with the <c>new</c> keyword, the hiding
+                property will be used rather than the hidden property. To use the hidden property instead, use the
+                by-property API and provide a <see cref="T:System.Reflection.PropertyInfo"/> sourced from a base type or interface that knows
+                only about the hidden property.
+              </para>
+              <para>
+                Because the purpose of a <see cref="T:Cybele.Core.PropertyChain"/> is to enable iterated reads, all properties used in a
+                <see cref="T:Cybele.Core.PropertyChain"/> must be readable; this means that write-only and init-only properties are
+                forbidden. However, there is no limit to the access specifier of the properties used: <c>public</c>,
+                <c>private</c>, <c>protected</c>, <c>internal</c>, and <c>internal protected</c> properties are all
+                supported. Likewise, both instance properties and <see langword="static"/> properties are supported.
+              </para>
+            </remarks>
+        </member>
+        <member name="P:Cybele.Core.PropertyChain.ReflectedType">
+            <summary>
+              The type of object from which this <see cref="T:Cybele.Core.PropertyChain"/> can read values.
+            </summary>
+        </member>
+        <member name="P:Cybele.Core.PropertyChain.PropertyType">
+            <summary>
+              The type of values produced by this <see cref="T:Cybele.Core.PropertyChain"/>.
+            </summary>
+        </member>
+        <member name="P:Cybele.Core.PropertyChain.Length">
+            <summary>
+              The length of this <see cref="T:Cybele.Core.PropertyChain"/>.
+            </summary>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+              Construct a new <see cref="T:Cybele.Core.PropertyChain"/> instance from a particular property.
+            </summary>
+            <param name="firstProperty">
+              The property with which to initialize the new <see cref="T:Cybele.Core.PropertyChain"/>. This property may be public or
+              non-public, instance or <see langword="static"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="firstProperty"/> is not readable.
+            </exception>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.#ctor(System.Type,System.String)">
+            <summary>
+              Construct a new <see cref="T:Cybele.Core.PropertyChain"/> instance from a property reflected from a particular
+              <see cref="T:System.Type"/> by name.
+            </summary>
+            <param name="source">
+              The <see cref="T:System.Type"/> that will become the <see cref="P:Cybele.Core.PropertyChain.ReflectedType"/> of the new
+              <see cref="T:Cybele.Core.PropertyChain"/>.
+            </param>
+            <param name="propertyName">
+              The name of the property with which to initialize the new <see cref="T:Cybele.Core.PropertyChain"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="source"/> has no readable property named <paramref name="propertyName"/>.
+            </exception>
+            <remarks>
+              If <paramref name="source"/> inherits a declaration of a property named <paramref name="propertyName"/>
+              and hides it with the <c>new</c> keyword, the hiding property (rather than the hidden property) will be
+              used.
+            </remarks>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.op_Implicit(System.Reflection.PropertyInfo)~Cybele.Core.PropertyChain">
+            <summary>
+              Implicitly convert an instance of a <see cref="T:System.Reflection.PropertyInfo"/> into a new <see cref="T:Cybele.Core.PropertyChain"/>.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo"/>.
+            </param>
+            <seealso cref="M:Cybele.Core.PropertyChain.#ctor(System.Reflection.PropertyInfo)"/>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.Append(System.Reflection.PropertyInfo)">
+            <summary>
+              Create a new <see cref="T:Cybele.Core.PropertyChain"/> by appending a single property to the current chain.
+            </summary>
+            <param name="nextProperty">
+              The property to be appended.
+            </param>
+            <returns>
+              A new <see cref="T:Cybele.Core.PropertyChain"/> equivalent to the current chain plus <paramref name="nextProperty"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="nextProperty"/> is not readable
+                --or--
+              if <paramref name="nextProperty"/> is not applicable to the <see cref="P:Cybele.Core.PropertyChain.PropertyType">type produced by the
+              current chain</see>.
+            </exception>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.Append(System.String)">
+            <summary>
+              Create a new <see cref="T:Cybele.Core.PropertyChain"/> by appending a single property to the current chain by name.
+            </summary>
+            <param name="nextPropertyName">
+              The name of the property to be appended. The property can be public or non-public, instance or 
+              <see langword="static"/>.
+            </param>
+            <returns>
+              A new <see cref="T:Cybele.Core.PropertyChain"/> equivalent to the current chain plus the property on the current chain's
+              <see cref="T:Cybele.Core.PropertyChain"/> named <paramref name="nextPropertyName"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              if the current chain's <see cref="P:Cybele.Core.PropertyChain.PropertyType"/> doest not have a readable property named
+              <paramref name="nextPropertyName"/>
+            </exception>
+            <remarks>
+              If the current chain's <see cref="P:Cybele.Core.PropertyChain.PropertyType"/> inherits a declaration of a property named
+              <paramref name="nextPropertyName"/> and hides it with the <c>new</c> keyword, the hiding property
+              (rather than the hidden property) will be used.
+            </remarks>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.Append(Cybele.Core.PropertyChain)">
+            <summary>
+              Create a new <see cref="T:Cybele.Core.PropertyChain"/> by appending an entire other <see cref="T:Cybele.Core.PropertyChain"/> to the
+              current one.
+            </summary>
+            <param name="nextChain">
+              The <see cref="T:Cybele.Core.PropertyChain"/> to be appended.
+            </param>
+            <returns>
+              A new <see cref="T:Cybele.Core.PropertyChain"/> equivalent to the current chain plus <paramref name="nextChain"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              if the <see cref="P:Cybele.Core.PropertyChain.ReflectedType"/> of <paramref name="nextChain"/> is not exactly the
+              <see cref="P:Cybele.Core.PropertyChain.PropertyType"/> of the current chain or a base class or interface thereof.
+            </exception>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.Prepend(System.Reflection.PropertyInfo)">
+            <summary>
+              Create a new <see cref="T:Cybele.Core.PropertyChain"/> by prepending a single property to the current chain.
+            </summary>
+            <param name="prevProperty">
+              The property to be prepended.
+            </param>
+            <returns>
+              A new <see cref="T:Cybele.Core.PropertyChain"/> equivalent to the current chain with <paramref name="prevProperty"/>
+              as the new starting point.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="prevProperty"/> is not readable
+                --or--
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType"/> of <paramref name="prevProperty"/> is not exactly the
+              <see cref="P:Cybele.Core.PropertyChain.ReflectedType"/> of the current chain or a derivation or implementation thereof.
+            </exception>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.Prepend(Cybele.Core.PropertyChain)">
+            <summary>
+              Create a new <see cref="T:Cybele.Core.PropertyChain"/> by prepending an entire other <see cref="T:Cybele.Core.PropertyChain"/> to the
+              current one.
+            </summary>
+            <param name="prevChain">
+              The <see cref="T:Cybele.Core.PropertyChain"/> to be prepended.
+            </param>
+            <returns>
+              A new <see cref="T:Cybele.Core.PropertyChain"/> equivalent to the current chain with <paramref name="prevChain"/> as the
+              new starting subsequence.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              if the <see cref="P:Cybele.Core.PropertyChain.ReflectedType"/> of the current chain is not exactly the <see cref="P:Cybele.Core.PropertyChain.PropertyType"/>
+              of <paramref name="prevChain"/> or a base class or interface thereof.
+            </exception>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.GetValue(System.Object)">
+            <summary>
+              Get the value of the current <see cref="T:Cybele.Core.PropertyChain"/> from a source object.
+            </summary>
+            <param name="source">
+              The source object.
+            </param>
+            <returns>
+              The value obtained by reading the value of the first property in the current <see cref="T:Cybele.Core.PropertyChain"/>
+              from <paramref name="source"/>, and then reading the value of the second property from the first-read
+              value, so on until the end of the chain, terminating at the first <see langword="null"/> if encountered.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="source"/> is <see langword="null"/>
+            </exception>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="source"/> is not an instance of the current
+              <see cref="T:Cybele.Core.PropertyChain">PropertyChain's</see> <see cref="P:Cybele.Core.PropertyChain.ReflectedType"/>.
+            </exception>"
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.#ctor(System.Collections.Generic.List{System.Reflection.PropertyInfo})">
+            <summary>
+              Construct a new <see cref="T:Cybele.Core.PropertyChain"/> from a list of properties.
+            </summary>
+            <param name="chain">
+              The list of properties from which to construct a new <see cref="T:Cybele.Core.PropertyChain"/>.
+            </param>
+            <pre>
+              <paramref name="chain"/> is not empty
+                --and--
+              <paramref name="chain"/> constitutes a valid chain of properties; that is, the
+              <see cref="P:System.Reflection.PropertyInfo.PropertyType"/> of element <c>N</c> is either exactly the
+              <see cref="P:System.Reflection.MemberInfo.ReflectedType"/> of element <c>N + 1</c> or is a base class or interface thereof.
+            </pre>
+        </member>
+        <member name="M:Cybele.Core.PropertyChain.GetProperty(System.Type,System.String)">
+            <summary>
+              Attempt to get a property from a type by name via reflection.
+            </summary>
+            <param name="source">
+              The <see cref="T:System.Type"/> from which to extract a property.
+            </param>
+            <param name="name">
+              The name of the property to extract.
+            </param>
+            <returns>
+              The readable property (public or non-public, instance or <see langword="static"/>) accessible from
+              <paramref name="source"/> named <paramref name="name"/>. If <paramref name="source"/> hides a property
+              with that name, the hiding property will be returned. If no such property exists, returns a <c>NONE</c>
+              instance.
+            </returns>
+        </member>
         <member name="T:Cybele.Extensions.EnumExtensions">
             <summary>
               A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
