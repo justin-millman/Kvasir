@@ -5690,7 +5690,7 @@
             <summary>
               Creates a new instance of the <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/> interface that produces
               declarations consistent with the rules of this
-              <see cref="!:IBuilderFactory&lt;TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl&gt;"/>.
+              <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>.
             </summary>
             <returns>
               A new <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>.
