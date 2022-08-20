@@ -26,7 +26,7 @@
         /// <summary>
         ///   Creates a new instance of the <see cref="IConstraintDeclBuilder{TDecl}"/> interface that produces
         ///   declarations consistent with the rules of this
-        ///   <see cref="IBuilderFactory{TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/>.
+        ///   <see cref="IBuilderFactory{TTableDecl, TFieldDecl, TKeyDecl, TConstraintDecl, TFKDecl}"/>.
         /// </summary>
         /// <returns>
         ///   A new <see cref="IConstraintDeclBuilder{TDecl}"/>.

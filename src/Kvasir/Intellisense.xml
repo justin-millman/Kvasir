@@ -5095,7 +5095,7 @@
               [deduced] The type of declaration produced by <paramref name="builder"/>.
             </typeparam>
             <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/> to use to create the declaratory SQL expression.
+              The <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/> to use to create the declaration.
             </param>
             <pre>
               <paramref name="builder"/> is not <see langword="null"/>.
@@ -5305,7 +5305,7 @@
               [deduced] The type of declaration produced by <paramref name="builder"/>.
             </typeparam>
             <param name="builder">
-              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder`1"/> to use to create the declaratory SQL expression.
+              The <see cref="T:Kvasir.Transcription.IKeyDeclBuilder`1"/> to use to create the declaration.
             </param>
             <pre>
               <paramref name="builder"/> is not <see langword="null"/>.
