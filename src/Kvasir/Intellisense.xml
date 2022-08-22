@@ -1500,16 +1500,23 @@
         <member name="P:Kvasir.Reconstitution.FromPropertyRepopulator.ExpectedSubject">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.FromPropertyRepopulator.#ctor(System.Reflection.PropertyInfo)">
+        <member name="M:Kvasir.Reconstitution.FromPropertyRepopulator.#ctor(Kvasir.Extraction.IFieldExtractor,System.Reflection.PropertyInfo)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Reconstitution.FromPropertyRepopulator"/>.
             </summary>
+            <param name="extractor">
+              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> describing how to access the object on which the
+              <see cref="T:Kvasir.Relations.IRelation"/> resides.
+            </param>
             <param name="property">
               The <see cref="T:System.Reflection.PropertyInfo"/> describing the property from which to read the <see cref="T:Kvasir.Relations.IRelation"/>
               instance to be populated.
             </param>
             <pre>
               <paramref name="property"/> is a readable instance property
+                --and--
+              <paramref name="property"/> is accessible from the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">type produced by
+              <paramref name="extractor"/></see>.
                 --and--
               the <see cref="P:System.Reflection.PropertyInfo.PropertyType"/> of <paramref name="property"/> is <see cref="T:Kvasir.Relations.IRelation"/> or
               a type that implements the <see cref="T:Kvasir.Relations.IRelation"/> interface.
@@ -1818,10 +1825,13 @@
         <member name="P:Kvasir.Reconstitution.SetPropertyMutationStep.ExpectedSubject">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.SetPropertyMutationStep.#ctor(System.Reflection.PropertyInfo,Kvasir.Reconstitution.IReconstitutor)">
+        <member name="M:Kvasir.Reconstitution.SetPropertyMutationStep.#ctor(Kvasir.Extraction.IFieldExtractor,System.Reflection.PropertyInfo,Kvasir.Reconstitution.IReconstitutor)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Reconstitution.SetPropertyMutationStep"/>.
             </summary>
+            <param name="extractor">
+              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> describing how to access the object whose property to mutate.
+            </param>
             <param name="property">
               The <see cref="T:System.Reflection.PropertyInfo"/> describing the property to which to write.
             </param>
@@ -1830,6 +1840,9 @@
             </param>
             <pre>
               <paramref name="property"/> is a writeable instance property
+                --and--
+              <paramref name="property"/> is accessible from the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">type produced by
+              <paramref name="extractor"/></see>.
                 --and--
               the <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target">target type</see> of <paramref name="valueReconstitutor"/> is
               compatible with the property type of <paramref name="property"/>.
