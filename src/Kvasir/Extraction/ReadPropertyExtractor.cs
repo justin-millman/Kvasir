@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using Cybele.Core;
 using Cybele.Extensions;
 using System;
 using System.Diagnostics;
@@ -19,15 +20,10 @@ namespace Kvasir.Extraction {
         ///   Constructs a new <see cref="ReadPropertyExtractor"/>.
         /// </summary>
         /// <param name="property">
-        ///   The <see cref="PropertyInfo"/> describing the property from which to read.
+        ///   The <see cref="PropertyChain"/> describing the property (or chain or properties) from which to read.
         /// </param>
-        /// <pre>
-        ///   <paramref name="property"/> is a readable instance property.
-        /// </pre>
-        internal ReadPropertyExtractor(PropertyInfo property) {
+        internal ReadPropertyExtractor(PropertyChain property) {
             Guard.Against.Null(property, nameof(property));
-            Debug.Assert(property.CanRead);
-            Debug.Assert(!property.GetGetMethod()!.IsStatic);
             Debug.Assert(property.ReflectedType is not null);
 
             property_ = property;
@@ -46,6 +42,6 @@ namespace Kvasir.Extraction {
         }
 
 
-        private readonly PropertyInfo property_;
+        private readonly PropertyChain property_;
     }
 }

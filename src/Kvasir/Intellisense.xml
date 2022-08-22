@@ -1321,16 +1321,13 @@
         <member name="P:Kvasir.Extraction.ReadPropertyExtractor.FieldType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Extraction.ReadPropertyExtractor.#ctor(System.Reflection.PropertyInfo)">
+        <member name="M:Kvasir.Extraction.ReadPropertyExtractor.#ctor(Cybele.Core.PropertyChain)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Extraction.ReadPropertyExtractor"/>.
             </summary>
             <param name="property">
-              The <see cref="T:System.Reflection.PropertyInfo"/> describing the property from which to read.
+              The <see cref="T:Cybele.Core.PropertyChain"/> describing the property (or chain or properties) from which to read.
             </param>
-            <pre>
-              <paramref name="property"/> is a readable instance property.
-            </pre>
         </member>
         <member name="M:Kvasir.Extraction.ReadPropertyExtractor.Execute(System.Object)">
             <inheritdoc/>
