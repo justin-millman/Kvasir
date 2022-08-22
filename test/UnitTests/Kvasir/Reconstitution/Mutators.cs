@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,7 +16,7 @@ namespace UT.Kvasir.Reconstitution {
             mockArgRecon.Setup(r => r.Target).Returns(typeof(string));
 
             // Act
-            var mutator = new SetPropertyMutationStep(prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon.Object);
 
             // Assert
             mutator.ExpectedSubject.Should().Be(typeof(PODClass));
@@ -29,7 +30,7 @@ namespace UT.Kvasir.Reconstitution {
             mockArgRecon.Setup(r => r.Target).Returns(typeof(string));
             mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg);
             var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon.Object);
             object source = new PODClass();
 
             // Act
@@ -48,7 +49,7 @@ namespace UT.Kvasir.Reconstitution {
             mockArgRecon.Setup(r => r.Target).Returns(typeof(string));
             mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg);
             var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODStruct>(), prop, mockArgRecon.Object);
             object source = new PODStruct();
 
             // Act
@@ -66,7 +67,7 @@ namespace UT.Kvasir.Reconstitution {
             mockArgRecon.Setup(r => r.Target).Returns(typeof(char));
             mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(null);
             var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon.Object);
             var source = new PODClass() { Character = '.' };
 
             // Act

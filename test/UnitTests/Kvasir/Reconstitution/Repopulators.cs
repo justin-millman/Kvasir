@@ -1,5 +1,6 @@
 ﻿using Atropos.Moq;
 using FluentAssertions;
+using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Relations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,9 +15,10 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var type = typeof(Tuple<IReadOnlyRelationSet<int>>);
             var prop = type.GetProperty("Item1")!;
+            var extractor = new IdentityExtractor<Tuple<IReadOnlyRelationSet<int>>>();
 
             // Act
-            var repopulator = new FromPropertyRepopulator(prop);
+            var repopulator = new FromPropertyRepopulator(extractor, prop);
 
             // Assert
             repopulator.ExpectedSubject.Should().Be(type);
@@ -27,7 +29,8 @@ namespace UT.Kvasir.Reconstitution {
             var mockRelation = new Mock<IRelation>();
             var source = new Tuple<IRelation>(mockRelation.Object);
             var entries = new List<string>() { "Seneca Falls", "Richmond", "Hackensack", "Ogden", "Bloomington" };
-            var repopulator = new FromPropertyRepopulator(source.GetType().GetProperty("Item1")!);
+            var extractor = new IdentityExtractor<Tuple<IRelation>>();
+            var repopulator = new FromPropertyRepopulator(extractor, source.GetType().GetProperty("Item1")!);
 
             // Sequence
             var sequence = mockRelation.MakeSequence();
