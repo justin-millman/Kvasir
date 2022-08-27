@@ -132,5 +132,25 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
+
+        [TestMethod] public void ExcludeNamespace_Construct() {
+            // Arrange
+
+            // Act
+            _ = new ExcludeNamespaceFromNameAttribute();
+
+            // Assert
+        }
+
+        [TestMethod] public void ExcludeNamespace_UniqueId() {
+            // Arrange
+            var attr = new ExcludeNamespaceFromNameAttribute();
+
+            // Act
+            var isUnique = ids_.Add(attr.TypeId);
+
+            // Assert
+            isUnique.Should().BeTrue();
+        }
     }
 }

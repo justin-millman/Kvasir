@@ -751,6 +751,46 @@
             </remarks>
             <seealso cref="T:Kvasir.Annotations.NonNullableAttribute"/>
         </member>
+        <member name="T:Kvasir.Annotations.ExcludeNamespaceFromNameAttribute">
+            <summary>
+              An annotation that specifies that the namespace of an Entity should not be included in the corresponding Table
+              name.
+            </summary>
+            <remarks>
+              The Kvasir framework will automatically determine the name of primary backing Tables based on the namespace
+              and name of the POCO. The namespace is included to ensure uniqueness among all Tables, since different C#
+              namespaces can define classes with the same name. The <see cref="T:Kvasir.Annotations.ExcludeNamespaceFromNameAttribute"/> directs
+              Kvasir to ignore the POCO's namespace entirely, making a promise that the POCO's name is globally unique among
+              types being treated by the framework.
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Annotations.PathSeparatorAttribute">
+            <summary>
+              An annotation that specifies how the properties in the path of a POCO property nested in an Aggregate are
+              combined into a single Field name.
+            </summary>
+            <remarks>
+              The Kvasir framework will automatically determine the name of backing Fields for POCO properties defined on
+              Aggregates by concatenating the access path to each property with a specific character. The character used by
+              default is dependent on the specific back-end database provider, pursuant to its syntax rules. The
+              <see cref="T:Kvasir.Annotations.PathSeparatorAttribute"/> directs Kvasir to use a specific character instead. This directive
+              applies to all Fields dervied from the annotated Aggregate property, except for those whose names are
+              explicitly specified by a <see cref="T:Kvasir.Annotations.NameAttribute"/>.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Annotations.PathSeparatorAttribute.Separator">
+            <summary>
+              The separator.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.PathSeparatorAttribute.#ctor(System.Char)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.PathSeparatorAttribute"/>.
+            </summary>
+            <param name="separator">
+              The separator.
+            </param>
+        </member>
         <member name="T:Kvasir.Annotations.PrimaryKeyAttribute">
             <summary>
               An attribute that specifies that the Field backing a particular property is part of the owning Entity's
