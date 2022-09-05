@@ -30,19 +30,22 @@ namespace Kvasir.Reconstitution {
         public static object ByKey(DBData key, IEnumerable<object> entities, DataExtractionPlan extractor) {
             Debug.Assert(entities.All(e => e.GetType().IsInstanceOf(extractor.ExpectedSource)));
 
+            if (cacheDictionary_.TryGetValue((key, extractor.ExpectedSource), out object? result)) {
+                return result!;
+            }
+
             foreach (var entity in entities) {
-                var keyIdx = 0;
-                foreach (var value in extractor.ExecutePiecewise(entity)) {
-                    if (!value.Equals(key[keyIdx++])) {
-                        goto nextEntity;
-                    }
+                if (key.SequenceEqual(extractor.ExecutePiecewise(entity))) {
+                    cacheDictionary_[(key, entity.GetType())] = entity;
+                    return entity;
                 }
-                return entity;
-                nextEntity: continue;
             }
 
             // This code should be unreachable
             throw new ApplicationException($"No entity found to match key: {string.Join(", ", key)}");
         }
+
+
+        private static readonly Dictionary<(DBData, Type), object> cacheDictionary_ = new();
     }
 }
