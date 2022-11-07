@@ -152,5 +152,25 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
+
+        [TestMethod] public void IncludeInModel_Construct() {
+            // Arrange
+
+            // Act
+            _ = new IncludeInModelAttribute();
+
+            // Assert
+        }
+
+        [TestMethod] public void IncludeInModel_UniqueId() {
+            // Arrange
+            var attr = new IncludeInModelAttribute();
+
+            // Act
+            var isUnique = ids_.Add(attr.TypeId);
+
+            // Assert
+            isUnique.Should().BeTrue();
+        }
     }
 }

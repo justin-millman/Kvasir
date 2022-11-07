@@ -439,30 +439,6 @@
               if <paramref name="upperBound"/> is less than <paramref name="lowerBound"/>.
             </exception>
         </member>
-        <member name="T:Kvasir.Annotations.CodeOnlyAttribute">
-            <summary>
-              An annotation that marks a particular property as "code-only."
-            </summary>
-            <remarks>
-              <para>
-                A "code-only" property is one whose value is not stored in the back-end database. The value of such a
-                property is the domain of the application solely; examples include internal state tracking, sensitive user
-                data that is otherwise persisted, or content that is temporally dependent. Because the value of a code-only
-                property never propagates to the database, the property itself does not participate in construction
-                resolution (that is, it must have an implicit default value).
-              </para>
-              <para>
-                A <see cref="T:Kvasir.Annotations.CodeOnlyAttribute"/> that is applied to a property of aggregate type <i>without</i> a path
-                parameterization recursively applies to all nested properties.
-              </para>
-            </remarks>
-        </member>
-        <member name="P:Kvasir.Annotations.CodeOnlyAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
-        </member>
         <member name="T:Kvasir.Annotations.ColumnAttribute">
             <summary>
               An annotation that specifies the column index for the Field backing a particular property.
@@ -694,6 +670,29 @@
               which the annotation actually applies.
             </summary>
         </member>
+        <member name="T:Kvasir.Annotations.CodeOnlyAttribute">
+            <summary>
+              An annotation that marks a particular property as "code-only."
+            </summary>
+            <remarks>
+              <para>
+                A "code-only" property is one whose value is not stored in the back-end database. The value of such a
+                property is the domain of the application solely; examples include internal state tracking, sensitive user
+                data that is otherwise persisted, or content that is temporally dependent. Because the value of a code-only
+                property never propagates to the database, the property itself does not participate in construction
+                resolution (that is, it must have an implicit default value).
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Annotations.CodeOnlyAttribute"/> that is applied to a property of aggregate type <i>without</i> a path
+                parameterization recursively applies to all nested properties.
+              </para>
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Annotations.IncludeInModelAttribute">
+            <summary>
+              An annotation that marks a particular property or class as one that should be included in the data model.
+            </summary>
+        </member>
         <member name="T:Kvasir.Annotations.NameAttribute">
             <summary>
               An annotation that specifies the name of the Field backing a particular property.
@@ -763,33 +762,6 @@
               Kvasir to ignore the POCO's namespace entirely, making a promise that the POCO's name is globally unique among
               types being treated by the framework.
             </remarks>
-        </member>
-        <member name="T:Kvasir.Annotations.PathSeparatorAttribute">
-            <summary>
-              An annotation that specifies how the properties in the path of a POCO property nested in an Aggregate are
-              combined into a single Field name.
-            </summary>
-            <remarks>
-              The Kvasir framework will automatically determine the name of backing Fields for POCO properties defined on
-              Aggregates by concatenating the access path to each property with a specific character. The character used by
-              default is dependent on the specific back-end database provider, pursuant to its syntax rules. The
-              <see cref="T:Kvasir.Annotations.PathSeparatorAttribute"/> directs Kvasir to use a specific character instead. This directive
-              applies to all Fields dervied from the annotated Aggregate property, except for those whose names are
-              explicitly specified by a <see cref="T:Kvasir.Annotations.NameAttribute"/>.
-            </remarks>
-        </member>
-        <member name="P:Kvasir.Annotations.PathSeparatorAttribute.Separator">
-            <summary>
-              The separator.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Annotations.PathSeparatorAttribute.#ctor(System.Char)">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.PathSeparatorAttribute"/>.
-            </summary>
-            <param name="separator">
-              The separator.
-            </param>
         </member>
         <member name="T:Kvasir.Annotations.PrimaryKeyAttribute">
             <summary>
