@@ -18,11 +18,11 @@ namespace Kvasir.Annotations {
     ///   </para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public sealed class CodeOnlyAttribute : Attribute {
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
-        public string Path { internal get; init; } = "";
-    }
+    public sealed class CodeOnlyAttribute : Attribute {}
+
+    /// <summary>
+    ///   An annotation that marks a particular property or class as one that should be included in the data model.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public sealed class IncludeInModelAttribute : Attribute { }
 }

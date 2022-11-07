@@ -11,7 +11,7 @@ namespace Kvasir.Annotations {
     ///   enumeration support. The <see cref="NumericAttribute"/> can be used to override the default storage behavior
     ///   and insist that the storage be a numeric type instead.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
     public sealed class NumericAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to

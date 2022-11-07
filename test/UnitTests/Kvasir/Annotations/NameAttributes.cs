@@ -118,27 +118,5 @@ namespace UT.Kvasir.Annotations {
             // Assert
             act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
         }
-
-        [TestMethod] public void PathSeparator() {
-            // Arrange
-            var value = ':';
-
-            // Act
-            var attr = new PathSeparatorAttribute(value);
-
-            // Assert
-            attr.Separator.Should().Be(value);
-        }
-
-        [TestMethod] public void PathSeparator_UniqueId() {
-            // Arrange
-            var attr = new PathSeparatorAttribute(' ');
-
-            // Act
-            var isUnique = ids_.Add(attr.TypeId);
-
-            // Assert
-            isUnique.Should().BeTrue();
-        }
     }
 }
