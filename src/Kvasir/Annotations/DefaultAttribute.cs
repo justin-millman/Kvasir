@@ -13,7 +13,8 @@ namespace Kvasir.Annotations {
         public string Path { get; init; } = "";
 
         /// <summary>
-        ///   The default value specified by the annotation.
+        ///   The default value specified by the annotation. This value is guaranteed not to be <see langword="null"/>;
+        ///   the sentinel value <see cref="DBNull.Value"/> is used instead.
         /// </summary>
         internal object Value { get; }
 

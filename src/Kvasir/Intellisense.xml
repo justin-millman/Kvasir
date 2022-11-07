@@ -565,7 +565,8 @@
         </member>
         <member name="P:Kvasir.Annotations.DefaultAttribute.Value">
             <summary>
-              The default value specified by the annotation.
+              The default value specified by the annotation. This value is guaranteed not to be <see langword="null"/>;
+              the sentinel value <see cref="F:System.DBNull.Value"/> is used instead.
             </summary>
         </member>
         <member name="M:Kvasir.Annotations.DefaultAttribute.#ctor(System.Object)">
@@ -6107,6 +6108,555 @@
                 --or--
               if <paramref name="sql"/> consists only of whitespace.
             </exception>
+        </member>
+        <member name="T:Kvasir.Translation.Translator">
+            <summary>
+              The component responsible for reflecting over CLR Types and properties to create a data model.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.CandidateKeysContaining(System.Reflection.PropertyInfo)">
+            <summary>
+              Determine the names of the Candidate Keys to which the Field backing a scalar property belongs.
+            </summary>
+            <param name="property">
+              the source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if any of the <c>[Unique]</c> annotations applied to <paramref name="property"/> has a non-empty
+              <see cref="P:Kvasir.Annotations.UniqueAttribute.Path">Path</see>.
+                --or--
+              if the value of any of the <c>[Unique]</c> annotations applied to <paramref name="property"/> is invalid
+              or reserved
+                --or--
+              if two or more of the <c>[Unique]</c> annotations applied to <paramref name="property"/> have the same
+              value
+                --or--
+              if two or more of the <c>[Unique]</c> annotations applied to <paramref name="property"/> are anonymous.
+            </exception>
+            <returns>
+              A finite, possibly empty enumerable of the <see cref="T:Kvasir.Schema.KeyName">key names</see> of the Candidate Keys to
+              which <paramref name="property"/> belong.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.MakeCandidateKeysFrom(System.Collections.Generic.IEnumerable{Kvasir.Translation.Translator.FieldDescriptor},System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <summary>
+              Create the set of <see cref="T:Kvasir.Schema.CandidateKey">CandidateKeys</see> from a Table's constituent Fields.
+            </summary>
+            <param name="descriptors">
+              The <see cref="T:Kvasir.Translation.Translator.FieldDescriptor">FieldDescriptors</see> from which <paramref name="fields"/> were created.
+            </param>
+            <param name="fields">
+              The actual <see cref="T:Kvasir.Schema.IField">Field</see> objects based on <paramref name="descriptors"/>. The <c>Nth</c>
+              Field was created from the <c>Nth</c> FieldDescriptor.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if any two of the Candidate Keys that would be produced consist of the same set of Fields.
+            </exception>
+            <returns>
+              A finite, possibly empty enumerable of the <see cref="T:Kvasir.Schema.CandidateKey">Candidate Keys</see> defined by the
+              <paramref name="descriptors"/>, populated with elements of <paramref name="fields"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.ColumnOf(System.Reflection.PropertyInfo)">
+            <summary>
+              Determine the <c>0</c>-based column index of the first Field corresponding to a property. This function is
+              safe to use for any kind of property.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if the <c>[Column]</c> annotation applied to <paramref name="property"/> has a negative value
+            </exception>
+            <returns>
+              A <c>SOME</c> instance wrapping the <c>0</c>-based column index of the first Field backing
+              <paramref name="property"/> if such a column index is specified; otherwise, a <c>NONE</c> instance.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.ConverterFor(System.Reflection.PropertyInfo)">
+            <summary>
+              Determine the <see cref="T:Cybele.Core.DataConverter"/> with which extrinsic transformations for a Field backing a
+              scalar property are to be performed.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="property"/> is annotated with multiple <c>[DataConverter]</c> attributes
+                --or--
+              if the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a non-empty
+              <see cref="P:Kvasir.Annotations.DataConverterAttribute.Path">Path</see>
+                --or--
+              if the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a non-empty
+              <see cref="P:Kvasir.Annotations.DataConverterAttribute.UserError">user error</see>
+                --or--
+              if the value of the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a
+              <see cref="P:Cybele.Core.DataConverter.SourceType">SourceType</see> that is not the same as the CLR type of
+              <paramref name="property"/>, with nullability stripped
+                --or--
+              if the value of <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a
+              <see cref="P:Cybele.Core.DataConverter.ResultType">ResultType</see> that is not supported.
+            </exception>
+            <returns>
+              The <see cref="T:Cybele.Core.DataConverter"/> to be used for extrinsic transformations for the Field backing
+              <paramref name="property"/>, which may be the
+              <see cref="M:Cybele.Core.DataConverter.Identity(System.Type)">identity conversion</see>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.DefaultValueOf(System.Reflection.PropertyInfo,Kvasir.Schema.IsNullable)">
+            <summary>
+              Get the pre-conversion default value for a Field backing a scalar property.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <param name="nullability">
+              The nullability of the Field backing <paramref name="property"/>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="property"/> is annotated with multiple <c>[Default]</c> attributes
+                --or--
+              if the <c>[Default]</c> annotation applied to <paramref name="property"/> has a non-empty
+              <see cref="P:Kvasir.Annotations.DefaultAttribute.Path">Path</see>
+                --or--
+              if <paramref name="nullability"/> is <see cref="F:Kvasir.Schema.IsNullable.No"/> but the value of the <c>[Default]</c>
+              annotation applied to <paramref name="property"/> is <see langword="null"/>
+                --or--
+              if the value of the <c>[Default]</c> annotation applied to <paramref name="property"/> is an array, even
+              if it is a single-element array whose element is the same type as that of <paramref name="property"/>
+                --or--
+              if the value of the <c>[Default]</c> annotation applied to <paramref name="property"/> is not
+              <see langword="null"/>, not an array, and is also not the of the expected type.
+            </exception>
+            <returns>
+              A <c>SOME</c> instance wrapping the unconverted (i.e. raw) default value for the Field backing
+              <paramref name="property"/> if such a default value is specified; otherwise, a <c>NONE</c> instance.
+              The default value for <see cref="T:System.DateTime"/>- and <see cref="T:System.Guid"/>-type properties will be parsed from
+              the original string.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Translation.Translator.FieldDescriptor">
+            <summary>
+              A descriptor of a single back-end database Field.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.FieldDescriptor.#ctor(System.Type,System.String,Kvasir.Schema.FieldName,System.Type,Optional.Option{System.Int32},Kvasir.Schema.IsNullable,Optional.Option{System.Object},System.Boolean,Cybele.Core.DataConverter,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.KeyName})">
+            <summary>
+              A descriptor of a single back-end database Field.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Translation.Translator.TypeDescriptor">
+            <summary>
+              A descriptor of a single in-source CLR Type, translated into two or more Fields.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.TypeDescriptor.#ctor(System.Type,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.Translator.FieldDescriptor})">
+            <summary>
+              A descriptor of a single in-source CLR Type, translated into two or more Fields.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Translation.Translator.PropertyDescriptor">
+            <summary>
+              A descriptor of a single in-source property of a CLR Type, translated into at least one Field.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.PropertyDescriptor.#ctor(System.Collections.Generic.IReadOnlyList{Kvasir.Translation.Translator.FieldDescriptor})">
+            <summary>
+              A descriptor of a single in-source property of a CLR Type, translated into at least one Field.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.NameOf(System.Reflection.PropertyInfo)">
+            <summary>
+              Determine the name of a Field backing a scalar property, using a combination of the propert's native CLR
+              name and user-provided attributes.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="property"/> is annotated with multiple <c>[Name]</c> attributes
+                --or--
+              if the <c>[Name]</c> annotation applied to <paramref name="property"/> has a non-empty
+              <see cref="P:Kvasir.Annotations.NameAttribute.Path">Path</see>
+                --or--
+              if the value of the <c>[Name]</c> annotation applied to <paramref name="property"/> is invalid
+                --or--
+              if the value of the <c>[Name]</c> annotation applied to <paramref name="property"/> is the native name of
+              the property.
+            </exception>
+            <returns>
+              The <see cref="T:Kvasir.Schema.FieldName">name</see> of the Field backing <paramref name="property"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.NameOf(System.Type)">
+            <summary>
+              Determine the name of the primary Table backing an Entity type.
+            </summary>
+            <param name="entity">
+              The source <see cref="T:System.Type">Entity type</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="entity"/> is annotated with both <c>[Table]</c> or <c>[ExcludeNamespaceFromName]</c>
+                --or--
+              if the value of the <c>[Table]</c> annotation applied to <paramref name="entity"/> is invalid
+                --or--
+              if the value of the <c>[Table]</c> annotation applied to <paramref name="entity"/> is the same as the name
+              of the Table that would have otherwise been ascertained.
+            </exception>
+            <returns>
+              The <see cref="T:Kvasir.Schema.TableName">name</see> of the primary Table backing <paramref name="entity"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.NullabilityOf(System.Reflection.PropertyInfo)">
+            <summary>
+              Determine the nullability imparted by a property, using a combination of the property's native CLR type
+              and user-provided attributes. This function is safe to use for any kind of property.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="property"/> is annotated with both <c>[Nullable]</c> and <c>[NonNullable]</c>
+                --or--
+              if <paramref name="property"/> is an inherently nullable property and it is still annotated with
+              <c>[Nullable]</c>
+                --or--
+              if <paramref name="property"/> is an inherently non-nullable property and it is still annotated with
+              <c>[NonNullable]</c>
+            </exception>
+            <returns>
+              <see cref="F:Kvasir.Schema.IsNullable.Yes"/> if <paramref name="property"/> implies nullability for any corresponding
+              Fields; otherwise, <see cref="F:Kvasir.Schema.IsNullable.No"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.IsInPrimaryKey(System.Reflection.PropertyInfo,Kvasir.Schema.IsNullable)">
+            <summary>
+              Determines if a Field backing a scalar property is explicitly proscribed as being part of the Primary Key
+              of the owning Table.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <param name="nullability">
+              The nullability of the Field backing <paramref name="property"/>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="property"/> is annotated with multiple <c>[PrimaryKey]</c> attributes
+                --or--
+              if the <c>[PrimaryKey]</c> annotation applied to <paramref name="property"/> has a non-empty
+              <see cref="P:Kvasir.Annotations.PrimaryKeyAttribute.Path">Path</see>
+                --or--
+              if <paramref name="nullability"/> is <see cref="F:Kvasir.Schema.IsNullable.Yes"/> but the <c>[PrimaryKey]</c> annotation
+              is present on <paramref name="property"/>.
+            </exception>
+            <returns>
+              <see langword="true"/> if <paramref name="property"/> is annotated with a <c>[PrimaryKey]</c> attribute;
+              otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.CreatePrimaryKeyFor(System.Type,System.Collections.Generic.IEnumerable{Kvasir.Translation.Translator.FieldDescriptor},System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IList{Kvasir.Schema.CandidateKey})">
+            <summary>
+              Deduce the <see cref="T:Kvasir.Schema.PrimaryKey">Primary Key</see> for a the Table backing an Entity Type.
+            </summary>
+            <param name="entity">
+              The source Entity Type.
+            </param>
+            <param name="descriptors">
+              The <see cref="T:Kvasir.Translation.Translator.FieldDescriptor">Field Descriptors</see> for <paramref name="entity"/>.
+            </param>
+            <param name="fields">
+              The actual <see cref="T:Kvasir.Schema.IField">Field</see> objects based on <paramref name="descriptors"/>. The <c>Nth</c>
+              Field was created from the <c>Nth</c> FieldDescriptor.
+            </param>
+            <param name="candidates">
+              The <see cref="T:Kvasir.Schema.CandidateKey">Candidate Keys</see> for <paramref name="entity"/>. If a Candidate Key is
+              deduced as the Primary Key, it will be <i>REMOVED</i> from this list.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="entity"/> is annotated with a <c>[NamedPrimaryKey]</c> whose value is invalid
+                --or--
+              if <paramref name="entity"/> is annotated with a <c>[NamedPrimaryKey]</c> and the deduced Primary Key is a
+              named Candidate Key
+                --or--
+              if the Primary Key of <paramref name="entity"/> cannot be deduced.
+            </exception>
+            <returns>
+              The <see cref="T:Kvasir.Schema.PrimaryKey">Primary Key</see> of the Table backing <paramref name="entity"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.TranslateScalar(System.Reflection.PropertyInfo)">
+            <summary>
+              Translate a scalar property into a <see cref="T:Kvasir.Translation.Translator.FieldDescriptor"/>.
+            </summary>
+            <param name="property">
+              The source <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </param>
+            <returns>
+              The translation of <paramref name="property"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.TranslateEntity(System.Type)">
+            <summary>
+              Translate a single Entity Type.
+            </summary>
+            <param name="clr">
+              The Entity Type.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="clr"/> is not a valid Entity Type
+                --or--
+              if the Translation of <paramref name="clr"/> contains any Tables with exactly 0 or 1 back-end Fields
+                --or--
+              if the name of any Tables in the Translation of <paramref name="clr"/> has a name that is not globally
+              unique
+                --or--
+              if the Translation of <paramref name="clr"/> contains any Table with two or more Field sharing a single
+              name
+                --or--
+              if the Translation of <paramref name="clr"/> contains any Table in which one or more Candidate Keys is a
+              superset (not necessarily proper) of the Table's Primary Key
+                --or--
+              if the Translation of <paramref name="clr"/> contains any Table in which the name of the Primary Key is
+              the same as the name of any of the Table's Candidate Keys.
+            </exception>
+            <returns>
+              The Translation of <paramref name="clr"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.MakeFieldsFrom(System.Collections.Generic.IEnumerable{Kvasir.Translation.Translator.FieldDescriptor})">
+            <summary>
+              Converts one or more <see cref="T:Kvasir.Translation.Translator.FieldDescriptor">FieldDescriptors</see> into their corresponding
+              <see cref="T:Kvasir.Schema.IField">Fields</see>.
+            </summary>
+            <param name="descriptors">
+              The <see cref="T:Kvasir.Translation.Translator.FieldDescriptor">FieldDescriptors</see> describing the schema model.
+            </param>
+            <returns>
+              A finite enumerable of <see cref="T:Kvasir.Schema.IField">Fields</see>, one for each source descriptor in the same order
+              thereof.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.TranslateProperty(System.Reflection.PropertyInfo)">
+            <summary>
+              Translate a single CLR property of a particular.
+            </summary>
+            <param name="property">
+              The <see cref="T:System.Reflection.PropertyInfo">CLR property</see> to translate.
+            </param>
+            <returns>
+              The <see cref="T:Kvasir.Translation.Translator.PropertyDescriptor"/> describing <paramref name="property"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.TranslateType(System.Type)">
+            <summary>
+              Translate a single CLR Type, which may or may not be an Entity Type.
+            </summary>
+            <remarks>
+              Very few assumptions about the semantic of the source Type are made. In particular, this function does not
+              create bona fide schema structures (e.g. Candidate Key, Primary Keys, etc.), nor does it enforce any
+              requirements about Fields (e.g. minimum of two, all unique names, etc.). This makes the function suitable
+              for Translating Entity Types and also for Translating Aggregate Types and Synthetic Types, where the
+              result is one piece of a larger Table whose final form will be impacted by other Translations.
+            </remarks>
+            <param name="clr">
+              The source <see cref="T:System.Type">CLR Type</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if the annotations of the Fields in the Translation of <paramref name="clr"/> leave gaps in the assigned
+              or implied column indices.
+            </exception>
+            <returns>
+              The <see cref="T:Kvasir.Translation.Translator.TypeDescriptor"/> of the back-end schema for <paramref name="clr"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.ModelPropertiesOf(System.Type)">
+            <summary>
+              Generate the set of top-level properties of a CLR Type that are part of its back-end data model.
+            </summary>
+            <param name="clr">
+              The source <see cref="T:System.Type">CLR Type</see>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if any property of <paramref name="clr"/> is annotated as both <c>[IncludeInModel]</c> and
+              <c>[CodeOnly</c>
+                --or--
+              if any property of <paramref name="clr"/> that is read-only, an indexer, or is inherited (from either a
+              base class or an interface) is annotated as either <c>[IncludeInModel]</c> or <c>[CodeOnly]</c>
+                --or--
+              if any public, readable, instance property of <paramref name="clr"/> is annotated as
+              <c>[IncludeInModel]</c>
+                --or--
+              if any property that is either non-public, <see langword="static"/> or an indexer is annotated as
+              <c>[CodeOnly]</c>.
+            </exception>
+            <returns>
+              A finite enumerable of <see cref="T:System.Reflection.PropertyInfo">properties</see> that are part of the back-end data model
+              for <paramref name="clr"/>, either in its Principal Table or as a Relation. The order of the properties is
+              undefined but is guaranteed to be the same on consecutive invocations for the exact same CLR Type.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.RecordFields(System.Collections.Generic.IEnumerable{Kvasir.Translation.Translator.FieldDescriptor},Cybele.Collections.StickyList{Kvasir.Translation.Translator.FieldDescriptor})">
+            <summary>
+              Place the Field Descriptors generated during the Translation of a property into a running list tracking
+              the Fields' ultimate columnar positions.
+            </summary>
+            <param name="descriptors">
+              The <see cref="T:Kvasir.Translation.Translator.FieldDescriptor">FieldDescriptors</see>.
+            </param>
+            <param name="into">
+              The running list, using stickiness to indicate a position required by an annotation.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if any of the element of <paramref name="descriptors"/> has a specified column index that is already
+              occupied in <paramref name="into"/> by a "sticky" item.
+            </exception>
+        </member>
+        <member name="P:Kvasir.Translation.Translator.Item(System.Type)">
+            <summary>
+              Translate a CLR Type.
+            </summary>
+            <param name="clr">
+              The source CLR <see cref="T:System.Type"/>.
+            </param>
+            <returns>
+              [GET] The translation associated with <paramref name="clr"/>, creating it if necessary. Note that if
+              <paramref name="clr"/> has any relation-type properties, additional Entity Types may be translated as
+              well.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.#ctor">
+            <summary>
+              Create a new <see cref="T:Kvasir.Translation.Translator"/> with default settings.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.#ctor(Kvasir.Core.Settings)">
+            <summary>
+              Create a new <see cref="T:Kvasir.Translation.Translator"/> with custom settings.
+            </summary>
+            <param name="settings">
+              The custom <see cref="T:Kvasir.Core.Settings">settings</see>
+            </param>
+            <remarks>
+              Note that the <paramref name="settings"/> are not currently used: they exist as a forward-compatible
+              customization point to provide control over Translation behaviors.
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Translation.Translator.PropertyCategory">
+            <summary>
+              A representation of the categories of property.
+            </summary>
+        </member>
+        <member name="F:Kvasir.Translation.Translator.PropertyCategory.Scalar">
+            A scalar property, corresponding to exactly one backing Field
+        </member>
+        <member name="F:Kvasir.Translation.Translator.PropertyCategory.Enumeration">
+            An enumeration property, corresponding to exactly one backing Field with automatic support for an
+            inclusion <c>CHECK</c> constraint
+        </member>
+        <member name="F:Kvasir.Translation.Translator.PropertyCategory.Aggregate">
+            An aggregate property, corresponding to one or more backing Fields
+        </member>
+        <member name="F:Kvasir.Translation.Translator.PropertyCategory.Reference">
+            A reference property, corresponding to a Foreign Key against another Entity
+        </member>
+        <member name="F:Kvasir.Translation.Translator.PropertyCategory.Relation">
+            A relation property, corresponding to another Table altogether
+        </member>
+        <member name="M:Kvasir.Translation.Translator.CategoryOf(System.Reflection.PropertyInfo)">
+            <summary>
+              Determine the categorization of the Field or Fields backing a property.
+            </summary>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType">property type</see> of <paramref name="property"/> is
+              <see cref="T:System.Object"/>, <see cref="T:System.ValueType"/>, or <see cref="T:System.Enum"/>
+                --or--
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType"> property type</see> of<paramref name= "property" /> is an
+              interface
+                --or--
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType"> property type</see> of<paramref name= "property" /> is a
+              <see cref="T:System.Delegate">delegate</see>
+                --or--
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType"> property type</see> of<paramref name= "property" /> is
+              <c>dynamic</c>
+                --or--
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType"> property type</see> of<paramref name= "property" /> is from
+              an assembly other than that in which the <see cref="T:Kvasir.Translation.Translator"/> was constructed
+                --or--
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType"> property type</see> of<paramref name= "property" /> is
+              a closed generic class (open generics are syntactically invalid, and closed generic structs are allowed)
+                --or--
+              if the <see cref="P:System.Reflection.PropertyInfo.PropertyType"> property type</see> of<paramref name= "property" /> is
+              <see langword="abstract"/>
+            </exception>
+            <returns>
+              The <see cref="T:Kvasir.Translation.Translator.PropertyCategory">category</see> of the Field or Fields backing
+              <paramref name="property"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.CheckEntityType(System.Type)">
+            <summary>
+              Perform error checking to ensure that a particular Type can be an Entity Type.
+            </summary>
+            <param name="entity">
+              The source <see cref="T:System.Type"/>.
+            </param>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="entity"/> is a primitive type
+                --or--
+              if <paramref name="entity"/> is an enumeration type
+                --or--
+              if <paramref name="entity"/> is a struct or record struct type
+                --or--
+              if <paramref name="entity"/> is an interface
+                --or--
+              if <paramref name="entity"/> is an open or closed generic type
+                --or--
+              if <paramref name="entity"/> is an <see langword="abstract"/> type
+            </exception>
+        </member>
+        <member name="T:Kvasir.Translation.PrincipalTableDef">
+            <summary>
+              A representation of the data model for a Principal Table (rather than a Relation Table).
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Table">
+            <summary>
+              The <see cref="T:Kvasir.Schema.ITable">Table</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Translation.PrincipalTableDef"/>.
+            </summary>
+            <param name="table">
+              The <see cref="P:Kvasir.Translation.PrincipalTableDef.Table">Principal Table</see>.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation.Translation">
+            <summary>
+              A translation of a single CLR Type.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.Translation.CLRSource">
+            <summary>
+              The source CLR <see cref="T:System.Type"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.Translation.Principal">
+            <summary>
+              The definition of the principal Table of the <see cref="P:Kvasir.Translation.Translation.CLRSource">source Type</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Translation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Translation.Translation"/>.
+            </summary>
+            <param name="clr">
+              The <see cref="P:Kvasir.Translation.Translation.CLRSource">source CLR Type</see>.
+            </param>
+            <param name="principal">
+              The <see cref="P:Kvasir.Translation.Translation.Principal">principal Table definition</see>.
+            </param>
         </member>
     </members>
 </doc>

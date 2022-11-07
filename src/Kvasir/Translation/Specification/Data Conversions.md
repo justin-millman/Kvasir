@@ -15,9 +15,9 @@ Data Type of the corresponding Fields. It is an error for a property to be annot
 When applied to a Scalar Property, it is an error for the `Path` of a `[DataConverter(T)]` annotation to be anything
 other than the empty string. Futhermore, the `SourceType` of `T` must be exactly the native type of the property;
 implicit type conversions (e.g. widening of integers) are not supported. The CLR Type of the Scalar Property is then
-the `ResultType` of `T`. It is an error for a Scalar Property to be directly annotated with more than one
-`[DataConverter(T)]` attributes; to achieve a complex, multi-step conversion, simply construct a suitable converter type
-`T`.
+the `ResultType` of `T`, but the nullability is unaffected. It is an error for a Scalar Property to be directly
+annotated with more than one `[DataConverter(T)]` attributes; to achieve a complex, multi-step conversion, simply
+construct a suitable converter type `T`.
 
 A Scalar Property that is not annotated with `[DataConverter(T)]` has no Extrinsic Data Conversion: its CLR Type is the
 property's own native type.
