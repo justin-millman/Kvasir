@@ -54,9 +54,15 @@ category are describes in separate documents of the spec, but the categories the
 
 It is an error for a property that is included in the Data Model to have a CLR Type that does not fall into one of these
 categories (e.g. a `delegate`, `System.Enum`, `dynamic`, etc.). Due to other rules regarding generic Entity Types and
-inheritance, it is also the case that the CLR Type of a property included in the Data Model cannot be generic. Nullable
-types are fully supported (both `System.Nullable<T>` instantations and nullable reference types); the category of a
-property with such a CLR Type is that of its non-nullable equivalent.
+inheritance, it is also the case that the CLR Type of a property included in the Data Model cannot be generic reference
+type; closed generic value types (i.e. structs) are legal (and they may be from the C# standard library). Nullable types
+are fully supported (both `System.Nullable<T>` instantations and nullable reference types); the category of a property
+with such a CLR Type is that of its non-nullable equivalent.
+
+Note that a Data Converter cannot be used to include a property in the Data Model if that property's type does not fit
+one of the above five categories. If you wish to store data of an otherwise unsupported type in the back-end database,
+you must provide an façade property that fronts the ineligible property and performs the data conversion automatically
+on `get` operations.
 
 Properties need not be writeable to be included in the Data Model: a property's `set` method can have `public`
 visibility, non-`public` visibility, or be absent altogether. That being said, the presence and/or absence of a `set`

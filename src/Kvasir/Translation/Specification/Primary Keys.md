@@ -12,17 +12,13 @@ Primary Key deduction is performed. Specifically, the following rules are applie
 Field's nullability is resolved:
 
 1. Each property that is annotated as `[PrimaryKey]` corresponds to Fields that are part of the Entity's Primary Key
-1. The single Field whose name is `ID` is the Entity's Primary Key
-1. The single Field whose name is `FooID`, where `Foo` is the name of the Entity Type, is the Entity's Primary Key
-1. The single Candidate Key for the Entity is instead the Entity's Primary Key
+1. The single non-nullable Field whose name is `ID` is the Entity's Primary Key
+1. The single non-nullable Field whose name is `FooID`, where `Foo` is the name of the Entity Type, is the Entity's Primary Key
+1. The single Candidate Key for the Entity consisting of only non-nullable Fields is instead the Entity's Primary Key
 1. The single non-nullable Field is the Entity's Primary Key
 
-It is an error if the Primary Key for an Entity cannot be deduced.
-
-Because the Fields that form an Entity's Primary Key must be non-nullable, the Primary Key deduction can influence the
-nullability of Fields. Any Field whose nullability is _not_ based on an annotation becomes non-nullable if it is part of
-an Entity's Primary Key. It is an error for any Field that forms part of an Entity's Primary Key to be nullable because
-its source property is annotated as `[Nullable]` or because its type is an instantiation of the `Nullable<T>` generic.
+It is an error if the Primary Key for an Entity cannot be deduced. It is also an error for a Field that is nullable
+(either by deduction or by the presence of a `[Nullable]` annotation) to be annotated with `[PrimaryKey]`.
 
 Some back-end database providers allow Primary Keys to be named, since Primary Keys are a type of constraint.
 By default, the name assigned to a Primary Key for an Entity is implementation defined. If an Entity Type is annotated

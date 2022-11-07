@@ -1,0 +1,142 @@
+﻿Actor/Actress
+Address
+Airplane
+Airport
+Allomancy
+Amino Acid
+Animal
+Bank Account
+Batting Order
+Battle
+Battleship
+Bay
+Billiard Ball
+Blood Type
+Bone
+Book
+Bookmark (web browsing)
+Botanical Garden
+Bowl Game
+Bowling Frame
+Carbohydrate
+Cenote
+Character (text)
+Check
+Chemical Element
+Chess Piece
+Circle
+Civilization VI Military Unit
+Coin
+Color
+Comet
+Constitutional Amendment
+Country
+County
+Coupon
+Court Case
+Credit Card
+Crossword Clue
+Currency
+D&D Character
+Database Field
+Date
+Desert
+Doctor (Doctor Who)
+Draft Pick
+Drum
+Earthquake
+Encryption
+Enumeration
+Episode
+Expiration
+Federal Law
+Field Goal
+Fighter Jet
+Flight
+Flower
+Fraction
+Function (programming)
+Gene
+Geologic Epoch
+Git Commit
+Golf Hole
+Greek God
+Haiku
+Hebrew Letter
+Hebrew Prayer
+Highway
+Hogwarts House
+Holiday
+Hurricane
+Inmate
+Integer
+Integer Sequence
+IP Address
+Jedi
+Jigsaw Puzzle
+King of England
+Lake
+Language
+Legume
+Lens
+Liquor
+Log-In Credentials
+MetraRoute
+Month
+Monopoly Property
+Mountain
+Movie
+National Park
+Native American Park
+Norse World
+Opera
+Painting
+Parashah
+Patent
+Pepper
+Phone Number
+Pigment (biology)
+Pizza
+Planeswalker
+Playing Card
+PO Box
+Pokémon
+Poker Hand
+Polyhedron
+Presidential Election
+Quadratic Equation
+Radio Station
+Retail Product
+River
+Rollercoaster
+Roman Emperor
+Royal House
+Saint
+Scrabble Tile
+Sculpture
+Season
+Skee-Ball
+Slack Channel
+SNL Episode
+Song
+Sonnet
+Speedometer
+Stadium
+Star
+Submarine
+Super Bowl
+Surah
+Ticket2Ride Route
+Time Zone
+Timestamp
+Tossup Question
+Tournament
+Umpire
+University
+URL
+Vitamin
+Volcano
+Waterfall
+World Heritage Site
+xkcd Comic
+YouTube Video
