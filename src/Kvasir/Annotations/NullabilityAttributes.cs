@@ -11,7 +11,7 @@ namespace Kvasir.Annotations {
     ///   deduction when that deduction would be incorrect or undesirable.
     /// </remarks>
     /// <seealso cref="NonNullableAttribute"/>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class NullableAttribute : Attribute {}
 
     /// <summary>
@@ -24,6 +24,6 @@ namespace Kvasir.Annotations {
     ///   deduction when that deduction would be incorrect.
     /// </remarks>
     /// <seealso cref="NonNullableAttribute"/>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class NonNullableAttribute : Attribute {}
 }

@@ -17,12 +17,12 @@ namespace Kvasir.Annotations {
     ///     parameterization recursively applies to all nested properties.
     ///   </para>
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class CodeOnlyAttribute : Attribute {}
 
     /// <summary>
     ///   An annotation that marks a particular property or class as one that should be included in the data model.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public sealed class IncludeInModelAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public sealed class IncludeInModelAttribute : Attribute {}
 }

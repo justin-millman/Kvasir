@@ -1,5 +1,4 @@
-﻿using Ardalis.GuardClauses;
-using System;
+﻿using System;
 
 namespace Kvasir.Annotations {
     /// <summary>
@@ -11,7 +10,7 @@ namespace Kvasir.Annotations {
     ///   backing Field will depend on the offset defined by the owning Entity (and, therefore, can be different from
     ///   Entity to Entity).
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class ColumnAttribute : Attribute {
         /// <summary>
         ///   The <c>0</c>-based column index.
@@ -24,11 +23,8 @@ namespace Kvasir.Annotations {
         /// <param name="column">
         ///   The <c>0</c>-based column index.
         /// </param>
-        /// <exception cref="ArgumentException">
-        ///   [on evaluation] if <paramref name="column"/> is less than <c>0</c>.
-        /// </exception>
         public ColumnAttribute(int column) {
-            Column = Guard.Against.Negative(column, nameof(column));
+            Column = column;
         }
     }
 }

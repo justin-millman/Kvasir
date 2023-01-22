@@ -11,7 +11,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular string-type property must
         ///   be non-empty.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsNonEmptyAttribute : LengthIsAtLeastAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNonEmptyAttribute"/> class.
@@ -24,7 +24,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular string-type property must
         ///   be at least a certain length.
         /// </summary>///
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class LengthIsAtLeastAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="LengthIsAtLeastAttribute"/> class.
@@ -32,21 +32,15 @@ namespace Kvasir.Annotations {
             /// <param name="lowerBound">
             ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             /// </param>
-            /// <exception cref="ArgumentException">
-            ///   if <paramref name="lowerBound"/> is not positive.
-            /// </exception>
             public LengthIsAtLeastAttribute(int lowerBound)
-                : base(FieldFunction.LengthOf, ComparisonOperator.GTE, lowerBound) {
-
-                Guard.Against.NegativeOrZero(lowerBound, nameof(lowerBound));
-            }
+                : base(FieldFunction.LengthOf, ComparisonOperator.GTE, lowerBound) {}
         }
 
         /// <summary>
         ///   An annotation that specifies that the value for the Field backing a particular string-type property can
         ///   be at most a certain length.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class LengthIsAtMostAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="LengthIsAtMostAttribute"/> class.
@@ -54,21 +48,15 @@ namespace Kvasir.Annotations {
             /// <param name="upperBound">
             ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             /// </param>
-            /// <exception cref="ArgumentException">
-            ///   if <paramref name="upperBound"/> is not positive.
-            /// </exception>
             public LengthIsAtMostAttribute(int upperBound)
-                : base(FieldFunction.LengthOf, ComparisonOperator.LTE, upperBound) {
-
-                Guard.Against.NegativeOrZero(upperBound, nameof(upperBound));
-            }
+                : base(FieldFunction.LengthOf, ComparisonOperator.LTE, upperBound) {}
         }
 
         /// <summary>
         ///   An annotation that specifies that the value for the Field backing a particular string-type property must
         ///   have a length within a certain range.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class LengthIsBetweenAttribute : CheckAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="LengthIsBetweenAttribute"/> class.
@@ -79,17 +67,8 @@ namespace Kvasir.Annotations {
             /// <param name="upperBound">
             ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             /// </param>
-            /// <exception cref="ArgumentException">
-            ///   if <paramref name="lowerBound"/> is not positive
-            ///     --or--
-            ///   if <paramref name="upperBound"/> is less than <paramref name="lowerBound"/>.
-            /// </exception>
             public LengthIsBetweenAttribute(int lowerBound, int upperBound)
-                : base(typeof(Constraint), lowerBound, upperBound) {
-
-                Guard.Against.NegativeOrZero(lowerBound, nameof(lowerBound));
-                Guard.Against.InvalidInput(upperBound, nameof(upperBound), v => v >= lowerBound);
-            }
+                : base(typeof(Constraint), lowerBound, upperBound) {}
 
 
             private struct Constraint : IConstraintGenerator {

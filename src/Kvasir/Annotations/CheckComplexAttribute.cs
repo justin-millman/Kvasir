@@ -25,12 +25,19 @@ namespace Kvasir.Annotations {
         /// <seealso cref="Check.IsOneOfAttribute"/>
         /// <seealso cref="Check.IsNotOneOfAttribute"/>
         /// <seealso cref="CheckAttribute"/>
-        [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
         public sealed class ComplexAttribute : Attribute {
             /// <summary>
             ///   The names of the Fields to which the <c>CHECK</c> constraint imposed by this attribute apply.
             /// </summary>
             internal IEnumerable<FieldName> FieldNames { get; }
+
+            /// <summary>
+            ///   The error message explaining why a viable <see cref="IConstraintGenerator"/> could not be created from the
+            ///   user input provided to the <see cref="CheckAttribute"/> constructor. (This value will be
+            ///   <see langword="null"/> if no such error occurred.)
+            /// </summary>
+            internal string? UserError => impl_.UserError;
 
             /// <summary>
             ///   Creates a <c>CHECK</c> constraint <see cref="Clause"/> for one or more Fields using the generator
@@ -69,19 +76,6 @@ namespace Kvasir.Annotations {
             ///   The names of the backing Fields (<i>NOT</i> the C# properties) to which the <c>CHECK</c> constraint
             ///   imposed by this annotation applies.
             /// </param>
-            /// <exception cref="ArgumentException">
-            ///   if <paramref name="constraint"/> is not a <see cref="Type"/> that implements the
-            ///   <see cref="IConstraintGenerator"/> interface
-            ///     --or--
-            ///   if <paramref name="fieldNames"/> is empty.
-            /// </exception>
-            /// <exception cref="MissingMethodException">
-            ///   if <paramref name="constraint"/> does not have a default (i.e. no-argument) constructor.
-            /// </exception>
-            /// <exception cref="System.Reflection.TargetInvocationException">
-            ///   if invoking the default (i.e. no-argument) constructor of <paramref name="constraint"/> results in an
-            ///   exception.
-            /// </exception>
             public ComplexAttribute(Type constraint, string[] fieldNames)
                 : this(constraint, fieldNames, Array.Empty<object?>()) {}
 
@@ -99,20 +93,6 @@ namespace Kvasir.Annotations {
             /// <param name="args">
             ///   The parameterization of the <c>CHECK</c> constraint.
             /// </param>
-            /// <exception cref="ArgumentException">
-            ///   if <paramref name="constraint"/> is not a <see cref="Type"/> that implements the
-            ///   <see cref="IConstraintGenerator"/> interface
-            ///     --or--
-            ///   if <paramref name="fieldNames"/> is empty.
-            /// </exception>
-            /// <exception cref="MissingMethodException">
-            ///   if <paramref name="constraint"/> does not have a constructor that can be invoked with
-            ///   <paramref name="args"/>.
-            /// </exception>
-            /// <exception cref="System.Reflection.TargetInvocationException">
-            ///   if invoking the constructor of <paramref name="constraint"/> with <paramref name="args"/> results in
-            ///   an exception.
-            /// </exception>
             public ComplexAttribute(Type constraint, string[] fieldNames, params object?[] args) {
                 Guard.Against.NullOrEmpty(fieldNames, nameof(FieldName));
                 impl_ = new CheckAttribute(constraint, args);

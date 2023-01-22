@@ -19,17 +19,6 @@ namespace UT.Kvasir.Annotations {
             attr.Column.Should().Be(column);
         }
 
-        [TestMethod] public void Column_Negative() {
-            // Arrange
-            var column = -2;
-
-            // Act
-            Action act = () => new ColumnAttribute(column);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
-
         [TestMethod] public void Column_UniqueId() {
             // Arrange
             var attr = new ColumnAttribute(0);
@@ -117,10 +106,13 @@ namespace UT.Kvasir.Annotations {
             var type = typeof(string);
 
             // Act
-            Action act = () => new DataConverterAttribute(type);
+            var attr = new DataConverterAttribute(type);
 
             // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
+            attr.UserError.Should()
+                .Match($"*{type.Name}*").And
+                .Match($"*{nameof(IDataConverter)}*").And
+                .Match("*does not implement*");
         }
 
         [TestMethod] public void DataConverter_NotDefaultConstructible() {
@@ -128,10 +120,26 @@ namespace UT.Kvasir.Annotations {
             var type = typeof(BadConverter);
 
             // Act
-            Action act = () => new DataConverterAttribute(type);
+            var attr = new DataConverterAttribute(type);
 
             // Assert
-            act.Should().ThrowExactly<MissingMethodException>().WithAnyMessage();
+            attr.UserError.Should()
+                .Match($"*{type.Name}*").And
+                .Match("*default*constructor*");
+        }
+
+        [TestMethod] public void DataConverter_ErrorConstructingConverter() {
+            // Arrange
+            var type = typeof(ErrorConverter);
+
+            // Act
+            var attr = new DataConverterAttribute(type);
+
+            // Assert
+            attr.UserError.Should()
+                .Match($"*{type.Name}*").And
+                .Match($"*{ERROR_STRING}*").And
+                .Match("*constructing*");
         }
 
         [TestMethod] public void DataConverter_UniqueId() {
@@ -155,6 +163,12 @@ namespace UT.Kvasir.Annotations {
             public BadConverter(int _) {}
             DataConverter IDataConverter.ConverterImpl => throw new NotImplementedException();
         }
+        private class ErrorConverter : IDataConverter {
+            public ErrorConverter() { throw new ArgumentException(ERROR_STRING); }
+            DataConverter IDataConverter.ConverterImpl => throw new NotImplementedException();
+        }
+
+        private static readonly string ERROR_STRING = "UQYIHUAJSNFPOWEIRHUIBJKNSF";
     }
 }
 

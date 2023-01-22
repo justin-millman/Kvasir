@@ -100,17 +100,6 @@ namespace UT.Kvasir.Annotations {
             isUnique.Should().BeTrue();
         }
 
-        [TestMethod] public void LengthIsAtLeast_NegativeBound() {
-            // Arrange
-            var bound = -83;
-
-            // Act
-            Action act = () => new Check.LengthIsAtLeastAttribute(bound);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
-
         [TestMethod] public void LengthIsAtMost_Direct() {
             // Arrange
             var bound = 1;
@@ -155,28 +144,6 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             isUnique.Should().BeTrue();
-        }
-
-        [TestMethod] public void LengthIsAtMost_NegativeBound() {
-            // Arrange
-            var bound = -83;
-
-            // Act
-            Action act = () => new Check.LengthIsAtMostAttribute(bound);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
-
-        [TestMethod] public void LengthIsAtMost_ZeroBound() {
-            // Arrange
-            var bound = 0;
-
-            // Act
-            Action act = () => new Check.LengthIsAtMostAttribute(bound);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
         }
 
         [TestMethod] public void LengthIsBetween_Direct() {
@@ -237,30 +204,6 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             isUnique.Should().BeTrue();
-        }
-
-        [TestMethod] public void LengthIsBetween_NegativeLowerBound() {
-            // Arrange
-            var lower = -2;
-            var upper = 13;
-
-            // Act
-            Action act = () => new Check.LengthIsBetweenAttribute(lower, upper);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
-
-        [TestMethod] public void LengthIsBetween_UpperLargerThanLower() {
-            // Arrange
-            var lower = 4;
-            var upper = 1;
-
-            // Act
-            Action act = () => new Check.LengthIsBetweenAttribute(lower, upper);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
         }
 
 

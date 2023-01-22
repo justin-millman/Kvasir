@@ -48,6 +48,13 @@
               which the annotation actually applies.
             </summary>
         </member>
+        <member name="P:Kvasir.Annotations.CheckAttribute.UserError">
+            <summary>
+              The error message explaining why a viable <see cref="T:Kvasir.Core.IConstraintGenerator"/> could not be created from the
+              user input provided to the <see cref="T:Kvasir.Annotations.CheckAttribute"/> constructor. (This value will be
+              <see langword="null"/> if no such error occurred.)
+            </summary>
+        </member>
         <member name="M:Kvasir.Annotations.CheckAttribute.MakeConstraint(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter},Kvasir.Core.Settings)">
             <summary>
               Creates a <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> for one or more Fields using the generator type
@@ -80,17 +87,6 @@
               The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
               clause for this annotation.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
-              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface.
-            </exception>
-            <exception cref="T:System.MissingMethodException">
-              if <paramref name="constraint"/> does not have a default (i.e. no-argument) constructor.
-            </exception>
-            <exception cref="T:System.Reflection.TargetInvocationException">
-              if invoking the default (i.e. no-argument) constructor of <paramref name="constraint"/> results in an
-              exception.
-            </exception>
         </member>
         <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(System.Type,System.Object[])">
             <summary>
@@ -103,18 +99,6 @@
             <param name="args">
               The parameterization of the <c>CHECK</c> constraint.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
-              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface.
-            </exception>
-            <exception cref="T:System.MissingMethodException">
-              if <paramref name="constraint"/> does not have a constructor that can be invoked with
-              <paramref name="args"/>.
-            </exception>
-            <exception cref="T:System.Reflection.TargetInvocationException">
-              if invoking the constructor of <paramref name="constraint"/> with <paramref name="args"/> results in an
-              exception.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.Check">
             <summary>
@@ -144,6 +128,13 @@
         <member name="P:Kvasir.Annotations.Check.ComplexAttribute.FieldNames">
             <summary>
               The names of the Fields to which the <c>CHECK</c> constraint imposed by this attribute apply.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComplexAttribute.UserError">
+            <summary>
+              The error message explaining why a viable <see cref="T:Kvasir.Core.IConstraintGenerator"/> could not be created from the
+              user input provided to the <see cref="T:Kvasir.Annotations.CheckAttribute"/> constructor. (This value will be
+              <see langword="null"/> if no such error occurred.)
             </summary>
         </member>
         <member name="M:Kvasir.Annotations.Check.ComplexAttribute.MakeConstraint(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter},Kvasir.Core.Settings)">
@@ -182,19 +173,6 @@
               The names of the backing Fields (<i>NOT</i> the C# properties) to which the <c>CHECK</c> constraint
               imposed by this annotation applies.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
-              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface
-                --or--
-              if <paramref name="fieldNames"/> is empty.
-            </exception>
-            <exception cref="T:System.MissingMethodException">
-              if <paramref name="constraint"/> does not have a default (i.e. no-argument) constructor.
-            </exception>
-            <exception cref="T:System.Reflection.TargetInvocationException">
-              if invoking the default (i.e. no-argument) constructor of <paramref name="constraint"/> results in an
-              exception.
-            </exception>
         </member>
         <member name="M:Kvasir.Annotations.Check.ComplexAttribute.#ctor(System.Type,System.String[],System.Object[])">
             <summary>
@@ -211,20 +189,6 @@
             <param name="args">
               The parameterization of the <c>CHECK</c> constraint.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="constraint"/> is not a <see cref="T:System.Type"/> that implements the
-              <see cref="T:Kvasir.Core.IConstraintGenerator"/> interface
-                --or--
-              if <paramref name="fieldNames"/> is empty.
-            </exception>
-            <exception cref="T:System.MissingMethodException">
-              if <paramref name="constraint"/> does not have a constructor that can be invoked with
-              <paramref name="args"/>.
-            </exception>
-            <exception cref="T:System.Reflection.TargetInvocationException">
-              if invoking the constructor of <paramref name="constraint"/> with <paramref name="args"/> results in
-              an exception.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsNotAttribute">
             <summary>
@@ -311,12 +275,6 @@
               The discrete set of options, of which the value that the Field backing the annotated property must be
               one.
             </param>
-            <exception cref="T:System.ArgumentNullException">
-              if <paramref name="values"/> is <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="values"/> is empty.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsNotOneOfAttribute">
             <summary>
@@ -332,12 +290,6 @@
               The discrete set of options, of which the value that the Field backing the annotated property cannot
               be one.
             </param>
-            <exception cref="T:System.ArgumentNullException">
-              if <paramref name="values"/> is <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="values"/> is empty.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsNonZeroAttribute">
             <summary>
@@ -396,9 +348,6 @@
             <param name="lowerBound">
               The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="lowerBound"/> is not positive.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute">
             <summary>
@@ -413,9 +362,6 @@
             <param name="upperBound">
               The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="upperBound"/> is not positive.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute">
             <summary>
@@ -433,11 +379,6 @@
             <param name="upperBound">
               The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="lowerBound"/> is not positive
-                --or--
-              if <paramref name="upperBound"/> is less than <paramref name="lowerBound"/>.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.ColumnAttribute">
             <summary>
@@ -462,9 +403,6 @@
             <param name="column">
               The <c>0</c>-based column index.
             </param>
-            <exception cref="T:System.ArgumentException">
-              [on evaluation] if <paramref name="column"/> is less than <c>0</c>.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.ConstraintAttribute">
             <summary>
@@ -598,6 +536,13 @@
               The <see cref="P:Kvasir.Annotations.DataConverterAttribute.DataConverter"/> instance specified in the annotation.
             </summary>
         </member>
+        <member name="P:Kvasir.Annotations.DataConverterAttribute.UserError">
+            <summary>
+              The error message explaining why a viable <see cref="P:Kvasir.Annotations.DataConverterAttribute.DataConverter"/> could not be created from the user
+              input provided to the <see cref="T:Kvasir.Annotations.DataConverterAttribute"/> constructor. (This value will be
+              <see langword="null"/> if no such error occurred.)
+            </summary>
+        </member>
         <member name="M:Kvasir.Annotations.DataConverterAttribute.#ctor(System.Type)">
             <summary>
               Constructs a new instance of the <see cref="T:Kvasir.Annotations.DataConverterAttribute"/> class.
@@ -606,20 +551,6 @@
               The <see cref="T:System.Type"/> of the data converter to be used to convert between C# values of the annotated
               property and values of the backing Field.
             </param>
-            <exception cref="T:System.ArgumentNullException">
-              if <paramref name="converter"/> is <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="converter"/> is not a <see cref="T:System.Type"/> that implements the
-              <see cref="T:Kvasir.Core.IDataConverter"/> interface.
-            </exception>
-            <exception cref="T:System.MissingMethodException">
-              if <paramref name="converter"/> does not have a default (i.e. no-argument) constructor.
-            </exception>
-            <exception cref="T:System.Reflection.TargetInvocationException">
-              if invoking the default (i.e. no-argument) constructor of <paramref name="converter"/> results in an
-              exception.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.DefaultAttribute">
             <summary>
@@ -712,7 +643,7 @@
         </member>
         <member name="P:Kvasir.Annotations.NameAttribute.Name">
             <summary>
-              The <see cref="T:Kvasir.Schema.FieldName"/> specified by the annotation.
+              The Field name specified by the annotation.
             </summary>
         </member>
         <member name="M:Kvasir.Annotations.NameAttribute.#ctor(System.String)">
@@ -722,9 +653,6 @@
             <param name="name">
               The name of the Field.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="name"/> is not a valid name for a database Field.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.NullableAttribute">
             <summary>
@@ -800,7 +728,7 @@
         </member>
         <member name="P:Kvasir.Annotations.NamedPrimaryKeyAttribute.Name">
             <summary>
-              The <see cref="T:Kvasir.Schema.KeyName"/> specified by the annotation.
+              The Primary Key name specified by the annotation.
             </summary>
         </member>
         <member name="M:Kvasir.Annotations.NamedPrimaryKeyAttribute.#ctor(System.String)">
@@ -810,9 +738,6 @@
             <param name="name">
               The name of the Primary Key.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="name"/> is not a valid name for a database Primary Key.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.TableAttribute">
             <summary>
@@ -827,7 +752,7 @@
         </member>
         <member name="P:Kvasir.Annotations.TableAttribute.Name">
             <summary>
-              The <see cref="T:Kvasir.Schema.TableName"/> specified by the annotation.
+              The Table name specified by the annotation.
             </summary>
         </member>
         <member name="M:Kvasir.Annotations.TableAttribute.#ctor(System.String)">
@@ -837,9 +762,6 @@
             <param name="name">
               The name of the Table.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="name"/> is not a valid name for a database Table.
-            </exception>
         </member>
         <member name="T:Kvasir.Annotations.UniqueAttribute">
             <summary>
@@ -854,7 +776,7 @@
         </member>
         <member name="P:Kvasir.Annotations.UniqueAttribute.Name">
             <summary>
-              The key name specified by the annotation
+              The Candidate Key name specified by the annotation
             </summary>
         </member>
         <member name="M:Kvasir.Annotations.UniqueAttribute.#ctor">
@@ -869,9 +791,6 @@
             <param name="name">
               The name of the <c>UNIQUE</c> constraint.
             </param>
-            <exception cref="T:System.ArgumentException">
-              if <paramref name="name"/> is not a valid name for a <c>UNIQUE</c> constraint.
-            </exception>
         </member>
         <member name="T:Kvasir.Core.IConstraintGenerator">
             <summary>

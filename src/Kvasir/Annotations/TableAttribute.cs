@@ -1,4 +1,5 @@
-﻿using Kvasir.Schema;
+﻿using Ardalis.GuardClauses;
+using Kvasir.Schema;
 using System;
 
 namespace Kvasir.Annotations {
@@ -11,12 +12,12 @@ namespace Kvasir.Annotations {
     ///   would be incorrect or undesirable.
     /// </remarks>
     /// <seealso cref="FieldName"/>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed class TableAttribute : Attribute {
         /// <summary>
-        ///   The <see cref="TableName"/> specified by the annotation.
+        ///   The Table name specified by the annotation.
         /// </summary>
-        internal TableName Name { get; }
+        internal string Name { get; }
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="TableAttribute"/>.
@@ -24,11 +25,8 @@ namespace Kvasir.Annotations {
         /// <param name="name">
         ///   The name of the Table.
         /// </param>
-        /// <exception cref="ArgumentException">
-        ///   if <paramref name="name"/> is not a valid name for a database Table.
-        /// </exception>
         public TableAttribute(string name) {
-            Name = new TableName(name);
+            Name = Guard.Against.Null(name);
         }
     }
 }
