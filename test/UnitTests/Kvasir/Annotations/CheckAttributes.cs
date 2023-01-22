@@ -12,6 +12,35 @@ using System.Linq;
 namespace UT.Kvasir.Annotations {
     [TestClass, TestCategory("Check Attributes")]
     public class CheckAttributeTests : AnnotationTestBase {
+        [TestMethod] public void Check_TypeNotConstraintGenerator() {
+            // Arrange
+            var constraintType = typeof(int);
+
+            // Act
+            var attr = new CheckAttribute(constraintType);
+
+            // Assert
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match($"*{nameof(IConstraintGenerator)}*").And
+                .Match("*does not implement*");
+        }
+
+        [TestMethod] public void Check_ErrorConstructingGenerator() {
+            // Arrange
+            var constraintType = typeof(ErrorConstraint);
+
+            // Act
+            var attr = new CheckAttribute(constraintType);
+
+            // Assert
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match($"*{ERROR_STRING}*").And
+                .Match("*()*").And
+                .Match("*constructing*");
+        }
+
         [TestMethod] public void Check_NoCtorArgs_Direct() {
             // Arrange
             var clause = new Mock<Clause>().Object;
@@ -24,6 +53,7 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             attr.Path.Should().BeEmpty();
+            attr.UserError.Should().BeNull();
             generator.Verify(g => g.MakeConstraint(singleField_, singleConv_, settings_), Times.Once);
         }
 
@@ -40,17 +70,22 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             attr.Path.Should().Be(path);
+            attr.UserError.Should().BeNull();
             generator.Verify(g => g.MakeConstraint(singleField_, singleConv_, settings_), Times.Once);
         }
 
         [TestMethod] public void Check_NoCtorArgs_MissingConstructor() {
             // Arrange
+            var constraintType = typeof(ComplexConstraint);
 
             // Act
-            Action act = () => new CheckAttribute(typeof(ComplexConstraint));
+            var attr = new CheckAttribute(constraintType);
 
             // Assert
-            act.Should().ThrowExactly<MissingMethodException>().WithAnyMessage();
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match("*()*").And
+                .Match("*construct*");
         }
 
         [TestMethod] public void Check_CtorArgs_Direct() {
@@ -65,6 +100,7 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             attr.Path.Should().BeEmpty();
+            attr.UserError.Should().BeNull();
             generator.Verify(g => g.MakeConstraint(singleField_, singleConv_, settings_), Times.Once);
         }
 
@@ -81,17 +117,23 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             attr.Path.Should().Be(path);
+            attr.UserError.Should().BeNull();
             generator.Verify(g => g.MakeConstraint(singleField_, singleConv_, settings_), Times.Once);
         }
 
         [TestMethod] public void Check_CtorArgs_MissingConstructor() {
             // Arrange
+            var constraintType = typeof(ComplexConstraint);
+            var args = new object[] { 100 };
 
             // Act
-            Action act = () => new CheckAttribute(typeof(SimpleConstraint), 100);
+            var attr = new CheckAttribute(constraintType, args);
 
             // Assert
-            act.Should().ThrowExactly<MissingMethodException>().WithAnyMessage();
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match($"*({string.Join(", ", args)})*").And
+                .Match("*construct*");
         }
 
         [TestMethod] public void Check_UniqueId() {
@@ -103,6 +145,35 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             isUnique.Should().BeTrue();
+        }
+
+        [TestMethod] public void CheckComplex_TypeNotConstraintGenerator() {
+            // Arrange
+            var constraintType = typeof(AnnotationTestBase);
+
+            // Act
+            var attr = new Check.ComplexAttribute(constraintType, new string[] { "F0", "F1" });
+
+            // Assert
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match($"*{nameof(IConstraintGenerator)}*").And
+                .Match("*does not implement*");
+        }
+
+        [TestMethod] public void CheckComplex_ErrorConstructingGenerator() {
+            // Arrange
+            var constraintType = typeof(ErrorConstraint);
+
+            // Act
+            var attr = new Check.ComplexAttribute(constraintType, new string[] { "F0", "F1" });
+
+            // Assert
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match($"*{ERROR_STRING}*").And
+                .Match("*()*").And
+                .Match("*constructing*");
         }
 
         [TestMethod] public void CheckComplex_NoCtorArgs() {
@@ -123,13 +194,17 @@ namespace UT.Kvasir.Annotations {
         
         [TestMethod] public void CheckComplex_NoCtorArgs_MissingConstructor() {
             // Arrange
+            var constraintType = typeof(ComplexConstraint);
             var fields = new string[] { "F0", "F1" };
 
             // Act
-            Action act = () => new Check.ComplexAttribute(typeof(ComplexConstraint), fields);
+            var attr = new Check.ComplexAttribute(constraintType, fields);
 
             // Assert
-            act.Should().ThrowExactly<MissingMethodException>().WithAnyMessage();
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match("*()*").And
+                .Match("*construct*");
         }
 
         [TestMethod] public void CheckComplex_CtorArgs() {
@@ -150,13 +225,18 @@ namespace UT.Kvasir.Annotations {
 
         [TestMethod] public void CheckComplex_CtorArgs_MissingConstructor() {
             // Arrange
+            var constraintType = typeof(SimpleConstraint);
+            var args = new object[] { 100 };
             var fields = new string[] { "F0", "F1" };
 
             // Act
-            Action act = () => new Check.ComplexAttribute(typeof(SimpleConstraint), fields, 100);
+            var attr = new Check.ComplexAttribute(constraintType, fields, args);
 
             // Assert
-            act.Should().ThrowExactly<MissingMethodException>().WithAnyMessage();
+            attr.UserError.Should()
+                .Match($"*{constraintType.Name}*").And
+                .Match($"*({string.Join(", ", args)})*").And
+                .Match("*construct*");
         }
 
         [TestMethod] public void CheckComplex_UniqueId() {
@@ -205,5 +285,13 @@ namespace UT.Kvasir.Annotations {
                 return Mock!.MakeConstraint(fields, converters, settings);
             }
         }
+        private class ErrorConstraint : IConstraintGenerator {
+            public ErrorConstraint() { throw new ArgumentException(ERROR_STRING); }
+            public Clause MakeConstraint(IEnumerable<IField> fields, IEnumerable<DataConverter> converters, Settings settings) {
+                return null!;
+            }
+        }
+
+        private static readonly string ERROR_STRING = "%&!(@)#!@&#&!@(&#!@$!@$)()_!@#*!@&";
     }
 }

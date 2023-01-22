@@ -17,6 +17,6 @@ namespace Kvasir.Annotations {
     ///     all properties of the aggregate. 
     ///   </para>
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class CalculatedAttribute : Attribute {}
 }

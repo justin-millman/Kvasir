@@ -41,17 +41,6 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
-        
-        [TestMethod] public void FieldName_Invalid() {
-            // Arrange
-            var invalid = "";
-
-            // Act
-            Action act = () => new NameAttribute(invalid);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
 
         [TestMethod] public void TableName() {
             // Arrange
@@ -75,17 +64,6 @@ namespace UT.Kvasir.Annotations {
             isUnique.Should().BeTrue();
         }
 
-        [TestMethod] public void TableName_Invalid() {
-            // Arrange
-            var invalid = "";
-
-            // Act
-            Action act = () => new TableAttribute(invalid);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
-
         [TestMethod] public void NamedPrimaryKey() {
             // Arrange
             var value = "Key";
@@ -106,17 +84,6 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             isUnique.Should().BeTrue();
-        }
-
-        [TestMethod] public void NamedPrimaryKey_Invalid() {
-            // Arrange
-            var invalid = "";
-
-            // Act
-            Action act = () => new NamedPrimaryKeyAttribute(invalid);
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
         }
     }
 }

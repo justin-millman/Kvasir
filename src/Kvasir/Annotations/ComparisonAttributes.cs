@@ -8,7 +8,7 @@ namespace Kvasir.Annotations {
         ///   specific value.
         /// </summary>
         /// <seealso cref="NonNullableAttribute"/>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsNotAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNotAttribute"/> class.
@@ -24,7 +24,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular property must be strictly
         ///   greater than a specific value.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsGreaterThanAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsGreaterThanAttribute"/> class.
@@ -40,7 +40,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular property must be strictly
         ///   less than a specific value.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsLessThanAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsLessThanAttribute"/> class.
@@ -56,7 +56,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular property must be greater
         ///   than or equal to a specific value.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsGreaterOrEqualToAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsGreaterOrEqualToAttribute"/> class.
@@ -72,7 +72,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular property must be less
         ///   than or equal to a specific value.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsLessOrEqualToAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsLessOrEqualToAttribute"/> class.

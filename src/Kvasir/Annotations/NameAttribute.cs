@@ -1,4 +1,5 @@
-﻿using Kvasir.Schema;
+﻿using Ardalis.GuardClauses;
+using Kvasir.Schema;
 using System;
 
 namespace Kvasir.Annotations {
@@ -11,7 +12,7 @@ namespace Kvasir.Annotations {
     ///   would be incorrect or undesirable.
     /// </remarks>
     /// <seealso cref="FieldName"/>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public class NameAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
@@ -20,9 +21,9 @@ namespace Kvasir.Annotations {
         public string Path { internal get; init; } = "";
 
         /// <summary>
-        ///   The <see cref="FieldName"/> specified by the annotation.
+        ///   The Field name specified by the annotation.
         /// </summary>
-        internal FieldName Name { get; }
+        internal string Name { get; }
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="NameAttribute"/>.
@@ -30,11 +31,8 @@ namespace Kvasir.Annotations {
         /// <param name="name">
         ///   The name of the Field.
         /// </param>
-        /// <exception cref="ArgumentException">
-        ///   if <paramref name="name"/> is not a valid name for a database Field.
-        /// </exception>
         public NameAttribute(string name) {
-            Name = new FieldName(name);
+            Name = Guard.Against.Null(name);
         }
     }
 }

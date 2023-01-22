@@ -12,6 +12,6 @@ namespace Kvasir.Annotations {
     ///   Kvasir to ignore the POCO's namespace entirely, making a promise that the POCO's name is globally unique among
     ///   types being treated by the framework.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed class ExcludeNamespaceFromNameAttribute : Attribute {}
 }

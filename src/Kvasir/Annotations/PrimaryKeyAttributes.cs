@@ -1,4 +1,5 @@
-﻿using Kvasir.Schema;
+﻿using Ardalis.GuardClauses;
+using Kvasir.Schema;
 using System;
 
 namespace Kvasir.Annotations {
@@ -22,7 +23,7 @@ namespace Kvasir.Annotations {
     ///     <see cref="NamedPrimaryKeyAttribute"/> to the POCO class.
     ///   </para>
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public class PrimaryKeyAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
@@ -36,12 +37,12 @@ namespace Kvasir.Annotations {
     /// </summary>
     /// <seealso cref="PrimaryKeyAttribute"/>
     /// <seealso cref="KeyName"/>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed class NamedPrimaryKeyAttribute : Attribute {
         /// <summary>
-        ///   The <see cref="KeyName"/> specified by the annotation.
+        ///   The Primary Key name specified by the annotation.
         /// </summary>
-        internal KeyName Name { get; }
+        internal string Name { get; }
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="NamedPrimaryKeyAttribute"/>.
@@ -49,11 +50,8 @@ namespace Kvasir.Annotations {
         /// <param name="name">
         ///   The name of the Primary Key.
         /// </param>
-        /// <exception cref="ArgumentException">
-        ///   if <paramref name="name"/> is not a valid name for a database Primary Key.
-        /// </exception>
         public NamedPrimaryKeyAttribute(string name) {
-            Name = new KeyName(name);
+            Name = Guard.Against.Null(name);
         }
     }
 }

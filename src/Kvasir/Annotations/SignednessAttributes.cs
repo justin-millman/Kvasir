@@ -7,7 +7,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular property cannot be
         ///   <c>0</c>.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsNonZeroAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNonZeroAttribute"/> class.
@@ -20,7 +20,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular property must be positive
         ///   (i.e. <c>&gt;= 0</c>).
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsPositiveAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsPositiveAttribute"/> class.
@@ -33,7 +33,7 @@ namespace Kvasir.Annotations {
         ///   An annotation that specifies that the value for the Field backing a particular property must be positive
         ///   (i.e. <c>&lt;= 0</c>).
         /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public class IsNegativeAttribute : ConstraintAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNegativeAttribute"/> class.
