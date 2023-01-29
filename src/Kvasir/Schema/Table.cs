@@ -1,4 +1,4 @@
-﻿using Cybele.Extensions;
+using Cybele.Extensions;
 using Kvasir.Transcription;
 using System;
 using System.Collections.Generic;
@@ -78,9 +78,8 @@ namespace Kvasir.Schema {
         ///   <paramref name="checkConstraints"><c>CHECK</c> constraints</paramref> are to Fields that are present in
         ///   the Table. Additionally, all Fields must have a unique <see cref="IField.Name">name</see>.
         /// </pre>
-        internal Table(TableName name, IEnumerable<IField> fields, PrimaryKey primaryKey,
-            IEnumerable<CandidateKey> candidateKeys, IEnumerable<ForeignKey> foreignKeys,
-            IEnumerable<CheckConstraint> checkConstraints) {
+        internal Table(TableName name, FieldSeq fields, PrimaryKey primaryKey, IEnumerable<CandidateKey> candidateKeys,
+            IEnumerable<ForeignKey> foreignKeys, IEnumerable<CheckConstraint> checkConstraints) {
 
             Debug.Assert(name is not null);
             Debug.Assert(fields is not null);

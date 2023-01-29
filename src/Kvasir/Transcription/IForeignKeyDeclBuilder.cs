@@ -1,5 +1,4 @@
-﻿using Kvasir.Schema;
-using System.Collections.Generic;
+using Kvasir.Schema;
 
 namespace Kvasir.Transcription {
     /// <summary>
@@ -64,7 +63,7 @@ namespace Kvasir.Transcription {
         /// <pre>
         ///   <paramref name="fields"/> is not <see langword="null"/>
         /// </pre>
-        void SetFields(IEnumerable<IField> fields);
+        void SetFields(FieldSeq fields);
 
         /// <summary>
         ///   Produces the full declaration that has been built up by calls into other methods on this
@@ -73,7 +72,7 @@ namespace Kvasir.Transcription {
         /// <pre>
         ///   <see cref="SetReferencedTable(ITable)"/> has been called at least once
         ///     --and--
-        ///   <see cref="SetFields(IEnumerable{IField})"/> has been called at least once.
+        ///   <see cref="SetFields(FieldSeq)"/> has been called at least once.
         /// </pre>
         /// <returns>
         ///   A <typeparamref name="TDecl"/> declaring a single Foreign Key.

@@ -1,4 +1,4 @@
-﻿namespace Kvasir.Schema {
+namespace Kvasir.Schema {
     /// <summary>
     ///   An enumeration representing the logical binary comparison operators.
     /// </summary>

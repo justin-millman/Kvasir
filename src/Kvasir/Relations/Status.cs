@@ -1,4 +1,4 @@
-﻿namespace Kvasir.Relations {
+namespace Kvasir.Relations {
     /// <summary>
     ///   An enumeration indicating the state of an entry in a relational collection relative to the back-end database.
     /// </summary>

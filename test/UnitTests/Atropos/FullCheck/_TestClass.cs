@@ -1,10 +1,10 @@
-﻿#pragma warning disable CS0660    // overrides operator== or operator== but does not override Object.Equals(object?)
+#pragma warning disable CS0660    // overrides operator== or operator== but does not override Object.Equals(object?)
 #pragma warning disable CS0661    // overrides operator== or operator!= but does not override Object.GetHashCode()
 #pragma warning disable CA2231    // Implement the equality operators
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace UT.Atropos {
     public class FullCheckTests {
@@ -479,7 +479,7 @@ namespace UT.Atropos {
             public int ID { private get; init; }
             public Controller Controller { private get; init; }
 
-            public void Dispose() { }
+            public void Dispose() {}
             public readonly bool Equals(Controllable rhs) {
                 return Controller.EvaluateEquality(ID, rhs.ID, false, CallKey.StrongEQ);
             }

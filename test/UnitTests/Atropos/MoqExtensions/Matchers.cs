@@ -1,4 +1,4 @@
-﻿using Atropos.Moq;
+using Atropos.Moq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

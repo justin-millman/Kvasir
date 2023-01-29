@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Schema;
@@ -40,7 +40,7 @@ namespace Kvasir.Extraction {
         ///   by <paramref name="steps"/> (note that this is not necessarily the number of elements in
         ///   <paramref name="steps"/>, as an <see cref="IExtractionStep"/> may produce multiple values).
         /// </pre>
-        internal DataExtractionPlan(IEnumerable<IExtractionStep> steps, IEnumerable<DataConverter> converters) {
+        internal DataExtractionPlan(IEnumerable<IExtractionStep> steps, ConverterSeq converters) {
             Guard.Against.Null(steps, nameof(steps));
             Guard.Against.Null(converters, nameof(converters));
             Debug.Assert(!steps.IsEmpty());
@@ -104,6 +104,6 @@ namespace Kvasir.Extraction {
 
 
         private readonly IEnumerable<IExtractionStep> paramSteps_;
-        private readonly IEnumerable<DataConverter> converters_;
+        private readonly ConverterSeq converters_;
     }
 }

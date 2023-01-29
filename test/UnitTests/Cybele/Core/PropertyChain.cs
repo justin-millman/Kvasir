@@ -1,4 +1,4 @@
-﻿using Cybele.Core;
+using Cybele.Core;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

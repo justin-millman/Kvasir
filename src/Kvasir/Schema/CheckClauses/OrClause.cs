@@ -1,5 +1,4 @@
-﻿using Kvasir.Transcription;
-using System.Collections.Generic;
+using Kvasir.Transcription;
 using System.Diagnostics;
 using System.Linq;
 
@@ -53,7 +52,7 @@ namespace Kvasir.Schema {
         }
 
         /// <inheritdoc/>
-        public sealed override IEnumerable<IField> GetDependentFields() {
+        public sealed override FieldSeq GetDependentFields() {
             return LHS.GetDependentFields().Concat(RHS.GetDependentFields());
         }
 

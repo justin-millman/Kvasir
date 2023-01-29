@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Kvasir.Relations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -18,7 +18,7 @@ namespace UT.Kvasir.Relations {
             set.Count.Should().Be(0);
             set.Comparer.Should().Be(EqualityComparer<int>.Default);
             set.Should().HaveEntryCount(0);
-            (set as IRelation).ConnectionType.Should().Be<int>();
+            set.Should().HaveConnectionType<int>();
         }
 
         [TestMethod] public void ConstructFromElements() {
@@ -56,7 +56,7 @@ namespace UT.Kvasir.Relations {
             set.Count.Should().Be(0);
             set.Comparer.Should().Be(EqualityComparer<DateTime>.Default);
             set.Should().HaveEntryCount(0);
-            (set as IRelation).ConnectionType.Should().Be<DateTime>();
+            set.Should().HaveConnectionType<DateTime>();
         }
 
         [TestMethod] public void ConstructCustomComparer() {
@@ -70,7 +70,7 @@ namespace UT.Kvasir.Relations {
             set.Count.Should().Be(0);
             set.Comparer.Should().Be(comparer);
             set.Should().HaveEntryCount(0);
-            (set as IRelation).ConnectionType.Should().Be<string>();
+            set.Should().HaveConnectionType<string>();
         }
 
         [TestMethod] public void ConstructCustomComparerFromElements() {
@@ -108,7 +108,7 @@ namespace UT.Kvasir.Relations {
             set.Count.Should().Be(0);
             set.Comparer.Should().Be(comparer);
             set.Should().HaveEntryCount(0);
-            (set as IRelation).ConnectionType.Should().Be<string>();
+            set.Should().HaveConnectionType<string>();
         }
 
         [TestMethod] public void CanonicalizeNoneDeleted() {
@@ -211,7 +211,7 @@ namespace UT.Kvasir.Relations {
             (set as IRelation).Canonicalize();
 
             // Act
-            var count = set.RemoveWhere(s => s.ToUpperInvariant().Contains("A"));
+            var count = set.RemoveWhere(s => s.ToUpperInvariant().Contains('A'));
 
             // Assert
             count.Should().Be(6);
@@ -471,7 +471,7 @@ namespace UT.Kvasir.Relations {
             (set as IRelation).Canonicalize();
 
             // Act
-            set.ExceptWith(elements.Where(s => s.Contains("e")));
+            set.ExceptWith(elements.Where(s => s.Contains('e')));
 
             // Assert
             set.Count.Should().Be(2);
@@ -604,7 +604,7 @@ namespace UT.Kvasir.Relations {
             (set as IRelation).Canonicalize();
 
             // Act
-            set.IntersectWith(elements.Where(s => s.Contains("n")));
+            set.IntersectWith(elements.Where(s => s.Contains('n')));
 
             // Assert
             set.Count.Should().Be(2);
@@ -747,7 +747,7 @@ namespace UT.Kvasir.Relations {
             (set as IRelation).Canonicalize();
 
             // Act
-            set.UnionWith(elements.Where(s => s.Contains("a")));
+            set.UnionWith(elements.Where(s => s.Contains('a')));
 
             // Assert
             set.Count.Should().Be(5);
@@ -901,7 +901,7 @@ namespace UT.Kvasir.Relations {
             (set as IRelation).Canonicalize();
 
             // Act
-            set.SymmetricExceptWith(elements.Where(s => s.Contains("r")));
+            set.SymmetricExceptWith(elements.Where(s => s.Contains('r')));
 
             // Assert
             set.Count.Should().Be(2);

@@ -1,4 +1,4 @@
-﻿using Cybele.Extensions;
+using Cybele.Extensions;
 using Kvasir.Transcription;
 using Optional;
 using System.Collections.Generic;
@@ -46,7 +46,7 @@ namespace Kvasir.Schema {
         /// <summary>
         ///   The list of values that are allowed for this <see cref="EnumField"/>.
         /// </summary>
-        public IReadOnlyList<DBValue> Enumerators { get; }
+        public DBData Enumerators { get; }
 
         /// <summary>
         ///   Constructs a new <see cref="EnumField"/>.

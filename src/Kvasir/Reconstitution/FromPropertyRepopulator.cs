@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Kvasir.Extraction;
 using Kvasir.Relations;

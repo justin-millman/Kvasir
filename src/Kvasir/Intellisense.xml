@@ -4989,9 +4989,9 @@
               cannot be modified by the iteration.
             </summary>
             <remarks>
-              The <see cref="T:Kvasir.Schema.ForeignKey"/> class does not implement the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
-              preventing Foreign Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ForeignKey.GetEnumerator"/> method exists to
-              allow iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+              The <see cref="T:Kvasir.Schema.ForeignKey"/> class does not implement the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface, preventing
+              Foreign Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ForeignKey.GetEnumerator"/> method exists to allow
+              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
               expression.
             </remarks>
             <returns>
@@ -5199,10 +5199,9 @@
               modified by the iteration.
             </summary>
             <remarks>
-              The <see cref="T:Kvasir.Schema.IKey"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
-              preventing Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.IKey.GetEnumerator"/> method exists to allow
-              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
-              expression.
+              The <see cref="T:Kvasir.Schema.IKey"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface, preventing Keys
+              from interoperating with LINQ. The <see cref="M:Kvasir.Schema.IKey.GetEnumerator"/> method exists to allow iteration with a
+              <c>foreach</c> loop, which the compiler implicitly converts into an enumerator expression.
             </remarks>
             <returns>
               An enumerator that iterates over the Fields in this Key.
@@ -5352,10 +5351,9 @@
               those Fields cannot be modified by the iteration.
             </summary>
             <remarks>
-              The <see cref="T:Kvasir.Schema.ITable"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
-              preventing Tables from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ITable.GetEnumerator"/> method exists to allow
-              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
-              expression.
+              The <see cref="T:Kvasir.Schema.ITable"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface, preventing
+              Tables from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ITable.GetEnumerator"/> method exists to allow iteration
+              with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator expression.
             </remarks>
             <returns>
               An enumerator that iterates over the Fields in this Table in columnar order.

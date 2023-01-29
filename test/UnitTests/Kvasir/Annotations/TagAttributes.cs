@@ -1,5 +1,5 @@
-﻿using Kvasir.Annotations;
 using FluentAssertions;
+using Kvasir.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UT.Kvasir.Annotations {

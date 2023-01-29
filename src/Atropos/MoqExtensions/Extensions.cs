@@ -1,4 +1,4 @@
-﻿using Moq;
+using Moq;
 
 namespace Atropos.Moq {
     /// <summary>

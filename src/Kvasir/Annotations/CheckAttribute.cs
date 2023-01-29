@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Kvasir.Core;
 using Kvasir.Schema;
@@ -63,7 +63,7 @@ namespace Kvasir.Annotations {
         /// <returns>
         ///   A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
         /// </returns>
-        internal Clause MakeConstraint(FieldList fields, ConverterList converters, Settings settings) {
+        internal Clause MakeConstraint(FieldSeq fields, ConverterSeq converters, Settings settings) {
             Debug.Assert(generator_ is not null);
             Debug.Assert(fields is not null);
             Debug.Assert(converters is not null);

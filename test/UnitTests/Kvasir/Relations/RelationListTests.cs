@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Kvasir.Relations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

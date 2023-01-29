@@ -1,4 +1,4 @@
-﻿namespace Kvasir.Core {
+namespace Kvasir.Core {
     /// <summary>
     ///   The settings to be used by the Kvasir framework in the course of its deductions, translations, and other
     ///   built-in behaviors.

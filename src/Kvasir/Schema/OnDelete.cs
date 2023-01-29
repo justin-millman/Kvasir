@@ -1,4 +1,4 @@
-﻿namespace Kvasir.Schema {
+namespace Kvasir.Schema {
     /// <summary>
     ///   An enumeration representing the various <c>ON DELETE</c> behaviors that can be applied to a Foreign Key.
     /// </summary>

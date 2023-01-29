@@ -1,7 +1,6 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Kvasir.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace UT.Kvasir.Annotations {
     [TestClass, TestCategory("Name-Override Attributes")]

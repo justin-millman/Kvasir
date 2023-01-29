@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Kvasir.Core;
 using Kvasir.Schema;
 using System;
@@ -61,7 +61,7 @@ namespace Kvasir.Annotations {
             /// <returns>
             ///   A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
             /// </returns>
-            internal Clause MakeConstraint(FieldList fields, ConverterList converters, Settings settings) {
+            internal Clause MakeConstraint(FieldSeq fields, ConverterSeq converters, Settings settings) {
                 return impl_.MakeConstraint(fields, converters, settings);
             }
 

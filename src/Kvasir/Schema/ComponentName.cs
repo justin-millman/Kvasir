@@ -1,4 +1,4 @@
-﻿using Cybele.Core;
+using Cybele.Core;
 using System;
 
 namespace Kvasir.Schema {

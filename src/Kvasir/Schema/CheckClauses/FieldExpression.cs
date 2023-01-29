@@ -1,4 +1,4 @@
-﻿using Cybele.Extensions;
+using Cybele.Extensions;
 using Optional;
 using System;
 using System.Diagnostics;

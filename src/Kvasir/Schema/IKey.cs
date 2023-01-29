@@ -1,4 +1,4 @@
-﻿using Kvasir.Transcription;
+using Kvasir.Transcription;
 using Optional;
 using System.Collections.Generic;
 
@@ -37,10 +37,9 @@ namespace Kvasir.Schema {
         ///   modified by the iteration.
         /// </summary>
         /// <remarks>
-        ///   The <see cref="IKey"/> interface does not compose the <see cref="IEnumerable{IField}"/> interface,
-        ///   preventing Keys from interoperating with LINQ. The <see cref="GetEnumerator"/> method exists to allow
-        ///   iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
-        ///   expression.
+        ///   The <see cref="IKey"/> interface does not compose the <see cref="FieldSeq"/> interface, preventing Keys
+        ///   from interoperating with LINQ. The <see cref="GetEnumerator"/> method exists to allow iteration with a
+        ///   <c>foreach</c> loop, which the compiler implicitly converts into an enumerator expression.
         /// </remarks>
         /// <returns>
         ///   An enumerator that iterates over the Fields in this Key.

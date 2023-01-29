@@ -1,6 +1,5 @@
-﻿using Cybele.Core;
+using Cybele.Core;
 using Kvasir.Schema;
-using System.Collections.Generic;
 
 namespace Kvasir.Core {
     /// <summary>
@@ -49,6 +48,6 @@ namespace Kvasir.Core {
         /// <returns>
         ///   A <c>CHECK</c> constraint <see cref="Clause"/> that is configured to constrain <paramref name="fields"/>.
         /// </returns>
-        Clause MakeConstraint(IEnumerable<IField> fields, IEnumerable<DataConverter> converters, Settings settings);
+        Clause MakeConstraint(FieldSeq fields, ConverterSeq converters, Settings settings);
     }
 }

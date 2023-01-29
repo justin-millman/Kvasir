@@ -1,4 +1,4 @@
-﻿using Atropos;
+using Atropos;
 using Cybele.Core;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

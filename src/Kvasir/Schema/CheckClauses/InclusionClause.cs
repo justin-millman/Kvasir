@@ -1,4 +1,4 @@
-﻿using Cybele.Extensions;
+using Cybele.Extensions;
 using Kvasir.Transcription;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -79,7 +79,7 @@ namespace Kvasir.Schema {
         }
 
         /// <inheritdoc/>
-        public sealed override IEnumerable<IField> GetDependentFields() {
+        public sealed override FieldSeq GetDependentFields() {
             yield return LHS.Field;
         }
         

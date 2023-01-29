@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace UT.Kvasir.Annotations {
     public abstract class AnnotationTestBase {
