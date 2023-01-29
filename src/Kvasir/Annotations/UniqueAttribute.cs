@@ -1,5 +1,4 @@
 ﻿using Ardalis.GuardClauses;
-using Kvasir.Schema;
 using System;
 
 namespace Kvasir.Annotations {
@@ -9,23 +8,34 @@ namespace Kvasir.Annotations {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public class UniqueAttribute : Attribute {
         /// <summary>
+        ///   The name prefix reserved for use by Kvasir itself.
+        /// </summary>
+        public static string ANONYMOUS_PREFIX => "@@@";
+
+        /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.
         /// </summary>
         public string Path { get; init; } = "";
 
         /// <summary>
-        ///   The Candidate Key name specified by the annotation
+        ///   The Candidate Key name specified by the annotation.
         /// </summary>
         internal string Name { get; }
+
+        /// <summary>
+        ///   Whether or not a <see cref="Name"/> was provided when the <see cref="UniqueAttribute"/> was constructed.
+        /// </summary>
+        internal bool IsAnonymous { get; }
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="UniqueAttribute"/> class with an implementation-defined name.
         /// </summary>
         public UniqueAttribute() {
             lock (LOCK) {
-                Name = $"UNIQUE_FIELD_{sequence_++}";
+                Name = $"{ANONYMOUS_PREFIX}UNIQUE_FIELD_{sequence_++}";
             }
+            IsAnonymous = true;
         }
 
         /// <summary>
@@ -36,6 +46,7 @@ namespace Kvasir.Annotations {
         /// </param>
         public UniqueAttribute(string name) {
             Name = Guard.Against.Null(name);
+            IsAnonymous = false;
         }
 
 

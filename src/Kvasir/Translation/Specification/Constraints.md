@@ -8,7 +8,8 @@ Primary Key for a Table is necessarily a Candidate Key; additional Candidate Key
 Candidate Key: the Fields of properties annotated as `[Unique]` with the same name argument will be part of a common
 Candidate Key, while the name of a Candidate Key for a `[Unique]` annotation without a name argument will be
 implementation-defined. It is an error for two or more `[Unique]` annotations with the same name to be applied to the
-same property.
+same property. It is also an error for a `[Unique]` attribute to be provided a name beginning with the exact character
+sequence `@@@` - this is reserved for internal use.
 
 It is an error for a `[Unique]` constraint to be placed on a Relation Property, even if a `Path` value is provided.
 
