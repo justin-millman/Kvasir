@@ -927,12 +927,6 @@
               The default settings used by the Kvasir framework.
             </summary>
         </member>
-        <member name="P:Kvasir.Core.Settings.DateTimeStyle">
-            <summary>
-              The style with which <see cref="T:System.DateTime"/> values are represented as strings in property
-              annotations.
-            </summary>
-        </member>
         <member name="T:Kvasir.Core.TransformUserValues">
             <summary>
               A set of internal utilities for converting a value provided by the user through the front-end UI.
