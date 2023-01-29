@@ -12,7 +12,7 @@ namespace Kvasir.Annotations {
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.
         /// </summary>
-        public string Path { internal get; init; } = "";
+        public string Path { get; init; } = "";
 
         /// <summary>
         ///   The Candidate Key name specified by the annotation
