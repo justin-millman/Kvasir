@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Kvasir.Core {
+﻿namespace Kvasir.Core {
     /// <summary>
     ///   The settings to be used by the Kvasir framework in the course of its deductions, translations, and other
     ///   built-in behaviors.
@@ -11,17 +9,9 @@ namespace Kvasir.Core {
         /// </summary>
         public static Settings Default {
             get {
-                return new Settings() {
-                    DateTimeStyle = DateTimeStyles.None
-                };
+                return new Settings() {};
             }
         }
-
-        /// <summary>
-        ///   The style with which <see cref="System.DateTime"/> values are represented as strings in property
-        ///   annotations.
-        /// </summary>
-        public DateTimeStyles DateTimeStyle { get; init; }
 
         /* Because Settings is record type, the following methods are synthesized automatically by the compiler:
          *   > public Settings(Settings rhs)

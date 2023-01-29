@@ -70,7 +70,7 @@ namespace Kvasir.Core {
             }
             else if (field.DataType == DBType.DateTime) {
                 Debug.Assert(val is string);
-                return new DBValue(DateTime.Parse((string)val, null, settings.DateTimeStyle));
+                return new DBValue(DateTime.Parse((string)val, null));
             }
             else {
                 return DBValue.Create(val);

@@ -71,7 +71,7 @@ namespace UT.Kvasir.Core {
 
             // Act
             var transform = Transform(value, field.Object, converter, settings);
-            var expected = DBValue.Create(DateTime.Parse(value, null, settings.DateTimeStyle));
+            var expected = DBValue.Create(DateTime.Parse(value, null));
 
             // Assert
             transform.Should().Be(expected);
@@ -151,7 +151,7 @@ namespace UT.Kvasir.Core {
 
             // Act
             var transform = Transform(values, field.Object, converter, settings);
-            var expected = values.Select(d => DBValue.Create(DateTime.Parse(d, null, settings.DateTimeStyle)));
+            var expected = values.Select(d => DBValue.Create(DateTime.Parse(d, null)));
 
             // Assert
             transform.Should().BeEquivalentTo(expected);
