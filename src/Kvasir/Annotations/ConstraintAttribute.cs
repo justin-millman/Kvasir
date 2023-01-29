@@ -21,7 +21,7 @@ namespace Kvasir.Annotations {
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.
         /// </summary>
-        public string Path { internal get; init; } = "";
+        public string Path { get; init; } = "";
 
         /// <summary>
         ///   Creates a <c>CHECK</c> constraint <see cref="Clause"/> for one or more Fields using the generator type

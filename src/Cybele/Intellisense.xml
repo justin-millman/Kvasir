@@ -699,6 +699,17 @@
               A new bidirectional <see cref="T:Cybele.Core.DataConverter"/> that performs identity conversion.
             </returns>
         </member>
+        <member name="M:Cybele.Core.DataConverter.Identity(System.Type)">
+            <summary>
+              Creates a new <see cref="T:Cybele.Core.DataConverter"/> that represents a bidirectional identity conversion.
+            </summary>
+            <param name="type">
+              The type on which the identity conversion is to operate.
+            </param>
+            <returns>
+              A new bidirectional <see cref="T:Cybele.Core.DataConverter"/> that performs identity conversion.
+            </returns>
+        </member>
         <member name="M:Cybele.Core.DataConverter.#ctor(System.Type,System.Type,System.Converter{System.Object,System.Object},Optional.Option{System.Converter{System.Object,System.Object}})">
             <summary>
               Constructs a new <see cref="T:Cybele.Core.DataConverter"/>.

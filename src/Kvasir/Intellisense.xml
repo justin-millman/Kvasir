@@ -768,6 +768,11 @@
               An annotation that marks the Field backing a particular property as being part of a <c>UNIQUE</c> constraint.
             </summary>
         </member>
+        <member name="P:Kvasir.Annotations.UniqueAttribute.ANONYMOUS_PREFIX">
+            <summary>
+              The name prefix reserved for use by Kvasir itself.
+            </summary>
+        </member>
         <member name="P:Kvasir.Annotations.UniqueAttribute.Path">
             <summary>
               The dot-separated path, relative to the property on which the annotation is placed, to the property to
@@ -776,7 +781,12 @@
         </member>
         <member name="P:Kvasir.Annotations.UniqueAttribute.Name">
             <summary>
-              The Candidate Key name specified by the annotation
+              The Candidate Key name specified by the annotation.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.UniqueAttribute.IsAnonymous">
+            <summary>
+              Whether or not a <see cref="P:Kvasir.Annotations.UniqueAttribute.Name"/> was provided when the <see cref="T:Kvasir.Annotations.UniqueAttribute"/> was constructed.
             </summary>
         </member>
         <member name="M:Kvasir.Annotations.UniqueAttribute.#ctor">

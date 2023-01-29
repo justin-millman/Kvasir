@@ -17,7 +17,7 @@ namespace Kvasir.Annotations {
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.
         /// </summary>
-        public string Path { internal get; init; } = "";
+        public string Path { get; init; } = "";
 
         /// <summary>
         ///   The <see cref="DataConverter"/> instance specified in the annotation.
@@ -34,7 +34,7 @@ namespace Kvasir.Annotations {
         ///   input provided to the <see cref="DataConverterAttribute"/> constructor. (This value will be
         ///   <see langword="null"/> if no such error occurred.)
         /// </summary>
-        internal string? UserError { get; init; }
+        internal string? UserError { get; private init; }
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="DataConverterAttribute"/> class.
