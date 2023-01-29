@@ -187,6 +187,19 @@ namespace Cybele.Core {
         }
 
         /// <summary>
+        ///   Creates a new <see cref="DataConverter"/> that represents a bidirectional identity conversion.
+        /// </summary>
+        /// <param name="type">
+        ///   The type on which the identity conversion is to operate.
+        /// </param>
+        /// <returns>
+        ///   A new bidirectional <see cref="DataConverter"/> that performs identity conversion.
+        /// </returns>
+        public static DataConverter Identity(Type type) {
+            return new DataConverter(type, type, t => t, Option.Some<ConvFn>(t => t));
+        }
+
+        /// <summary>
         ///   Constructs a new <see cref="DataConverter"/>.
         /// </summary>
         /// <param name="sourceType">

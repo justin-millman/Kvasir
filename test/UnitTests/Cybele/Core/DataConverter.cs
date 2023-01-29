@@ -165,10 +165,27 @@ namespace UT.Cybele.Core {
             action.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
         }
 
-        [TestMethod] public void IdentityConversion() {
+        [TestMethod] public void IdentityConversionFromGeneric() {
             // Arrange
             var converter = DataConverter.Identity<double>();
             var source = 88.5;
+
+            // Act
+            var conversion = converter.Convert(source);
+            var reversion = converter.Revert(conversion);
+
+            // Assert
+            converter.SourceType.Should().Be(typeof(double));
+            converter.ResultType.Should().Be(typeof(double));
+            converter.IsBidirectional.Should().BeTrue();
+            conversion.Should().Be(source);
+            reversion.Should().Be(source);
+        }
+
+        [TestMethod] public void IdentityConversionFromArgument() {
+            // Arrange
+            var converter = DataConverter.Identity(typeof(double));
+            var source = -119.0226;
 
             // Act
             var conversion = converter.Convert(source);
