@@ -1,4 +1,4 @@
-﻿using Kvasir.Schema;
+using Kvasir.Schema;
 using System;
 
 namespace Kvasir.Annotations {

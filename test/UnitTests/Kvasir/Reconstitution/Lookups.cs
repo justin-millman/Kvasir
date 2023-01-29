@@ -1,8 +1,8 @@
-﻿using Cybele.Core;
+using Cybele.Core;
+using FluentAssertions;
 using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
-using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;

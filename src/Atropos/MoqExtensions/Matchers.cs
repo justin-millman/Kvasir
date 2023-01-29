@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Moq;
 using System.Collections;
 using System.Collections.Generic;

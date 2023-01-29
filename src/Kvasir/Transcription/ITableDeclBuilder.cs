@@ -1,4 +1,4 @@
-﻿using Kvasir.Schema;
+using Kvasir.Schema;
 
 namespace Kvasir.Transcription {
     /// <summary>

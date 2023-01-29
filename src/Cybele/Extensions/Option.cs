@@ -1,4 +1,4 @@
-﻿using Optional;
+using Optional;
 using System;
 
 namespace Cybele.Extensions {

@@ -1,9 +1,8 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Cybele.Core;
 using Cybele.Extensions;
 using System;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace Kvasir.Extraction {
     /// <summary>

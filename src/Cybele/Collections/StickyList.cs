@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Optional;
 using System;
@@ -396,7 +396,7 @@ namespace Cybele.Collections {
             }
 
             if (!elements_.IsEmpty() && !elements_[^1].HasValue) {
-                throw new ApplicationException($"There cannot be a gap at the end of the StickyList");
+                throw new ApplicationException("There cannot be a gap at the end of the StickyList");
             }
             if (expectedCount != Count) {
                 throw new ApplicationException($"Actual count of {Count} does not match expected {expectedCount}");

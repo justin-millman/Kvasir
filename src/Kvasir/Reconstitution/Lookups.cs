@@ -1,4 +1,4 @@
-﻿using Cybele.Extensions;
+using Cybele.Extensions;
 using Kvasir.Extraction;
 using System;
 using System.Collections.Generic;

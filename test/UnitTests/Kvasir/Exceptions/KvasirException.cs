@@ -1,4 +1,4 @@
-﻿using Kvasir.Exceptions;
+using Kvasir.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UT.Kvasir.Exceptions {

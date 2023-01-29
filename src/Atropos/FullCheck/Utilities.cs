@@ -1,4 +1,4 @@
-﻿using Optional;
+using Optional;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

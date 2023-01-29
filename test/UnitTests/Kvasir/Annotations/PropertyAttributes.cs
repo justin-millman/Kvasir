@@ -1,4 +1,4 @@
-﻿using Cybele.Core;
+using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Annotations;
 using Kvasir.Core;

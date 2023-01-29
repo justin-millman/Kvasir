@@ -1,4 +1,4 @@
-﻿using FluentAssertions.Execution;
+using FluentAssertions.Execution;
 using Kvasir.Relations;
 using System.Collections.Generic;
 using System.Linq;

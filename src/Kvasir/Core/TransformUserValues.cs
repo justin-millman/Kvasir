@@ -1,4 +1,4 @@
-﻿using Cybele.Core;
+using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Schema;
 using System;

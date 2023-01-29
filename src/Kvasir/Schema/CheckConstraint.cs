@@ -1,4 +1,4 @@
-﻿using Kvasir.Transcription;
+using Kvasir.Transcription;
 using Optional;
 using System.Diagnostics;
 

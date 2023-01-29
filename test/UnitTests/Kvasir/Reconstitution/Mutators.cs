@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;

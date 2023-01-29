@@ -1,4 +1,4 @@
-﻿using Cybele.Extensions;
+using Cybele.Extensions;
 using Kvasir.Transcription;
 using Optional;
 using System.Diagnostics;

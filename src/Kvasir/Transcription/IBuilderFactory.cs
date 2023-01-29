@@ -1,4 +1,4 @@
-﻿namespace Kvasir.Transcription {
+namespace Kvasir.Transcription {
     /// <summary>
     ///   The interface for a factory that creates internally consistent declaration builders for generating
     ///   Table-creating declarations.

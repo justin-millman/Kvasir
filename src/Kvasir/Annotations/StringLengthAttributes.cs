@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Kvasir.Core;
 using Kvasir.Schema;
 using System;
@@ -76,7 +76,7 @@ namespace Kvasir.Annotations {
                     lower_ = new DBValue(lowerBound);
                     upper_ = new DBValue(upperBound);
                 }
-                public Clause MakeConstraint(FieldList fields, ConverterList converters, Settings settings) {
+                public Clause MakeConstraint(FieldSeq fields, ConverterSeq converters, Settings settings) {
                     Guard.Against.Null(fields, nameof(fields));
                     Guard.Against.InvalidInput(fields, nameof(fields), f => f.Count() == 1);
                     Debug.Assert(converters is not null);

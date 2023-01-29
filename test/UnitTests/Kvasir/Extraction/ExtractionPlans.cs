@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
 using Cybele.Core;
+using FluentAssertions;
 using Kvasir.Extraction;
 using Kvasir.Relations;
 using Kvasir.Schema;

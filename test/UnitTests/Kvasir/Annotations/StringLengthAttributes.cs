@@ -1,11 +1,10 @@
-﻿using Cybele.Core;
+using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 
 namespace UT.Kvasir.Annotations {
     [TestClass, TestCategory("String Length Attributes")]

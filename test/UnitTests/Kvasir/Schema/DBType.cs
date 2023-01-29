@@ -1,4 +1,4 @@
-﻿using Atropos;
+using Atropos;
 using FluentAssertions;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

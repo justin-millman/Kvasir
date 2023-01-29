@@ -1,4 +1,4 @@
-﻿using Atropos.Moq;
+using Atropos.Moq;
 using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Reconstitution;

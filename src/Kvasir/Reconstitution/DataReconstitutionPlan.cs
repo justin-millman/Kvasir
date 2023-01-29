@@ -1,4 +1,4 @@
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Schema;
@@ -34,7 +34,7 @@ namespace Kvasir.Reconstitution {
         ///     --and--
         ///   each element of <paramref name="reverters"/> is a bidirectional <see cref="DataConverter"/>.
         /// </pre>
-        internal DataReconstitutionPlan(IReconstitutor reconstitutor, IEnumerable<DataConverter> reverters) {
+        internal DataReconstitutionPlan(IReconstitutor reconstitutor, ConverterSeq reverters) {
             Guard.Against.Null(reconstitutor, nameof(reconstitutor));
             Guard.Against.Null(reverters, nameof(reverters));
             Debug.Assert(!reverters.IsEmpty());
@@ -79,6 +79,6 @@ namespace Kvasir.Reconstitution {
 
 
         private readonly IReconstitutor reconstitutor_;
-        private readonly IEnumerable<DataConverter> reverters_;
+        private readonly ConverterSeq reverters_;
     }
 }

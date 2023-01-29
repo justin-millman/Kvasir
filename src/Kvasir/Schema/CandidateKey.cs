@@ -1,4 +1,4 @@
-﻿using Cybele.Extensions;
+using Cybele.Extensions;
 using Kvasir.Transcription;
 using Optional;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace Kvasir.Schema {
         /// <param name="fields">
         ///   The <see cref="Fields">Fields</see> that make up the new <see cref="CandidateKey"/>.
         /// </param>
-        internal CandidateKey(IEnumerable<IField> fields)
+        internal CandidateKey(FieldSeq fields)
             : this(Option.None<KeyName>(), fields) {}
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Kvasir.Schema {
         /// <param name="fields">
         ///   The <see cref="Fields">Fields</see> that make up the new <see cref="CandidateKey"/>.
         /// </param>
-        internal CandidateKey(KeyName name, IEnumerable<IField> fields)
+        internal CandidateKey(KeyName name, FieldSeq fields)
             : this(Option.Some(name), fields) {}
 
         /// <inheritdoc/>
@@ -60,7 +60,7 @@ namespace Kvasir.Schema {
         /// <param name="fields">
         ///   The <see cref="Fields">Fields</see> that make up the new <see cref="CandidateKey"/>.
         /// </param>
-        private CandidateKey(Option<KeyName> name, IEnumerable<IField> fields) {
+        private CandidateKey(Option<KeyName> name, FieldSeq fields) {
             Debug.Assert(!name.Exists(n => n is null));
             Debug.Assert(fields is not null);
             Debug.Assert(!fields.IsEmpty());

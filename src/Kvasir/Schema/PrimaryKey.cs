@@ -1,4 +1,4 @@
-﻿using Kvasir.Transcription;
+using Kvasir.Transcription;
 using Optional;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,7 +21,7 @@ namespace Kvasir.Schema {
         /// <param name="fields">
         ///   The <see cref="Fields">Fields</see> that make up the new <see cref="PrimaryKey"/>.
         /// </param>
-        internal PrimaryKey(IEnumerable<IField> fields) {
+        internal PrimaryKey(FieldSeq fields) {
             impl_ = new CandidateKey(fields);
         }
 
@@ -34,7 +34,7 @@ namespace Kvasir.Schema {
         /// <param name="fields">
         ///   The <see cref="Fields">Fields</see> that make up the new <see cref="PrimaryKey"/>.
         /// </param>
-        internal PrimaryKey(KeyName name, IEnumerable<IField> fields) {
+        internal PrimaryKey(KeyName name, FieldSeq fields) {
             impl_ = new CandidateKey(name, fields);
         }
 

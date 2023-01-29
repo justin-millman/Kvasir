@@ -1,4 +1,4 @@
-﻿using Atropos;
+using Atropos;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

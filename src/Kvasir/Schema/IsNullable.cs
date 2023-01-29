@@ -1,4 +1,4 @@
-﻿namespace Kvasir.Schema {
+namespace Kvasir.Schema {
     /// <summary>
     ///   An enumeration that specifies whether or not <c>NULL</c> is an acceptable value, particularly for a Field.
     /// </summary>

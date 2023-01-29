@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
