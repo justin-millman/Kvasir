@@ -68,10 +68,6 @@ namespace Kvasir.Core {
         /// <inheritdoc/>
         DataConverter IDataConverter.ConverterImpl {
             get {
-                if (!DBType.IsSupported(typeof(TResult))) {
-                    throw new KvasirException($"IDataConverter result type '{typeof(TResult).Name}' is not supported");
-                }
-
                 return DataConverter.Create<TSource, TResult>(s => Convert(s), r => Revert(r));
             }
         }
