@@ -1272,6 +1272,36 @@
                <paramref name="derivedType"/> and <paramref name="ancestorType"/>; otherwise, <see langword="false"/>.
              </returns>
         </member>
+        <member name="T:Cybele.Extensions.MethodExtensions">
+            <summary>
+              A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
+              of the <see cref="T:System.Reflection.MethodInfo"/> class.
+            </summary>
+        </member>
+        <member name="M:Cybele.Extensions.MethodExtensions.IsInherited(System.Reflection.MethodInfo)">
+            <summary>
+              Determines if a method is inherited.
+            </summary>
+            <param name="self">
+              The <see cref="T:System.Reflection.MethodInfo"/> instance on which the extension method is inokved.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="self"/> is a method that overrides a <see langword="virtual"/>
+              function inherited from a base class, or if it is a function whose implementation is inherited from a base
+              class, or if it is an implementation of an interface method; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Cybele.Extensions.MethodExtensions.IsInherited(System.Reflection.ConstructorInfo)">
+            <summary>
+              Returns <see langword="false"/>, as constructors by definition are never inherited.
+            </summary>
+            <paramm name="self">
+              The <see cref="T:System.Reflection.ConstructorInfo"/> instance on which the extension method is invoked.
+            </paramm>
+            <returns>
+              <see langword="false"/>.
+            </returns>
+        </member>
         <member name="T:Cybele.Extensions.Nullability">
             An indication of the nullability of an aspect of a program.
         </member>

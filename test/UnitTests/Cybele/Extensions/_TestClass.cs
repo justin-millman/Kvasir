@@ -117,16 +117,29 @@ namespace UT.Cybele.Extensions {
         [AttributeUsage(AttributeTargets.All, Inherited = true)] protected class InheritedAttribute : Attribute {}
         [AttributeUsage(AttributeTargets.All, Inherited = false)] protected class UninheritedAttribute : Attribute {}
 
-        [Inherited, Uninherited] protected class Base {
+        protected interface IInterface {
+            void ImplicitInterfaceFunction();
+            void ExplicitInterfaceFunction();
+        }
+        [Inherited, Uninherited] protected abstract class Base {
+            public abstract void AbstractFunction();
             [Inherited, Uninherited] public int NonVirtualProperty => 10;
             [Inherited, Uninherited] public virtual int VirtualProperty => 100;
             [Inherited, Uninherited] public void NonVirtualFunction() {}
             [Inherited, Uninherited] public virtual void VirtualFunction() {}
+            public virtual void NotOverriddenVirtualFunction() {}
+            public virtual void ToBeHidden() {}
         }
-        protected class Derived : Base {
+        protected class Derived : Base, IInterface {
+            public override void AbstractFunction() {}
             public override int VirtualProperty => 200;
             public override void VirtualFunction() {}
+            public void ImplicitInterfaceFunction() {}
+            void IInterface.ExplicitInterfaceFunction() {}
+            public new void ToBeHidden() {}
+            public static void Static() {}
         }
+        protected class MoreDerived : Derived {}
 
 
         protected static readonly Random rand = new Random(02291996);
