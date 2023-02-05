@@ -1,10 +1,8 @@
 using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Kvasir.Core;
-using Kvasir.Schema;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Annotations {
@@ -35,44 +33,21 @@ namespace Kvasir.Annotations {
         public string Path { get; init; } = "";
 
         /// <summary>
+        ///   The <see cref="IConstraintGenerator"/> instance specified in the annotation.
+        /// </summary>
+        internal IConstraintGenerator ConstraintGenerator {
+            get {
+                Debug.Assert(generator_ is not null);
+                return generator_;
+            }
+        }
+
+        /// <summary>
         ///   The error message explaining why a viable <see cref="IConstraintGenerator"/> could not be created from the
         ///   user input provided to the <see cref="CheckAttribute"/> constructor. (This value will be
         ///   <see langword="null"/> if no such error occurred.)
         /// </summary>
         internal string? UserError { get; private init; }
-
-        /// <summary>
-        ///   Creates a <c>CHECK</c> constraint <see cref="Clause"/> for one or more Fields using the generator type
-        ///   specified in the annotation.
-        /// </summary>
-        /// <param name="fields">
-        ///   The list of Fields to which the constraint applies.
-        /// </param>
-        /// <param name="converters">
-        ///   The list of data converters that correspond to <paramref name="fields"/>, which are to be used as needed
-        ///   to transform any user-provided input.
-        /// </param>
-        /// <param name="settings">
-        ///   The Kvasir framework settings.
-        /// </param>
-        /// <pre>
-        ///   <paramref name="fields"/> has at least one element
-        ///     --and--
-        ///   <paramref name="converters"/> is the same length as <paramref name="fields"/>
-        /// </pre>
-        /// <returns>
-        ///   A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
-        /// </returns>
-        internal Clause MakeConstraint(FieldSeq fields, ConverterSeq converters, Settings settings) {
-            Debug.Assert(generator_ is not null);
-            Debug.Assert(fields is not null);
-            Debug.Assert(converters is not null);
-            Debug.Assert(settings is not null);
-            Debug.Assert(!fields.IsEmpty());
-            Debug.Assert(fields.Count() == converters.Count());
-
-            return generator_.MakeConstraint(fields, converters, settings);
-        }
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="CheckAttribute"/> class.

@@ -48,36 +48,17 @@
               which the annotation actually applies.
             </summary>
         </member>
+        <member name="P:Kvasir.Annotations.CheckAttribute.ConstraintGenerator">
+            <summary>
+              The <see cref="T:Kvasir.Core.IConstraintGenerator"/> instance specified in the annotation.
+            </summary>
+        </member>
         <member name="P:Kvasir.Annotations.CheckAttribute.UserError">
             <summary>
               The error message explaining why a viable <see cref="T:Kvasir.Core.IConstraintGenerator"/> could not be created from the
               user input provided to the <see cref="T:Kvasir.Annotations.CheckAttribute"/> constructor. (This value will be
               <see langword="null"/> if no such error occurred.)
             </summary>
-        </member>
-        <member name="M:Kvasir.Annotations.CheckAttribute.MakeConstraint(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter},Kvasir.Core.Settings)">
-            <summary>
-              Creates a <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> for one or more Fields using the generator type
-              specified in the annotation.
-            </summary>
-            <param name="fields">
-              The list of Fields to which the constraint applies.
-            </param>
-            <param name="converters">
-              The list of data converters that correspond to <paramref name="fields"/>, which are to be used as needed
-              to transform any user-provided input.
-            </param>
-            <param name="settings">
-              The Kvasir framework settings.
-            </param>
-            <pre>
-              <paramref name="fields"/> has at least one element
-                --and--
-              <paramref name="converters"/> is the same length as <paramref name="fields"/>
-            </pre>
-            <returns>
-              A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
-            </returns>
         </member>
         <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(System.Type)">
             <summary>
@@ -130,36 +111,17 @@
               The names of the Fields to which the <c>CHECK</c> constraint imposed by this attribute apply.
             </summary>
         </member>
+        <member name="P:Kvasir.Annotations.Check.ComplexAttribute.ConstraintGenerator">
+            <summary>
+              The <see cref="T:Kvasir.Core.IConstraintGenerator"/> instance specified in the annotation.
+            </summary>
+        </member>
         <member name="P:Kvasir.Annotations.Check.ComplexAttribute.UserError">
             <summary>
               The error message explaining why a viable <see cref="T:Kvasir.Core.IConstraintGenerator"/> could not be created from the
               user input provided to the <see cref="T:Kvasir.Annotations.CheckAttribute"/> constructor. (This value will be
               <see langword="null"/> if no such error occurred.)
             </summary>
-        </member>
-        <member name="M:Kvasir.Annotations.Check.ComplexAttribute.MakeConstraint(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter},Kvasir.Core.Settings)">
-            <summary>
-              Creates a <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> for one or more Fields using the generator
-              type specified in the annotation.
-            </summary>
-            <param name="fields">
-              The list of Fields to which the constraint applies.
-            </param>
-            <param name="converters">
-              The list of data converters that correspond to <paramref name="fields"/>, which are to be used as
-              needed to transform any user-provided input.
-            </param>
-            <param name="settings">
-              The Kvasir framework settings.
-            </param>
-            <pre>
-              <paramref name="fields"/> has at least one element
-                --and--
-              <paramref name="converters"/> is the same length as <paramref name="fields"/>
-            </pre>
-            <returns>
-              A new <c>CHECK</c> constraint clause that applies to <paramref name="fields"/>.
-            </returns>
         </member>
         <member name="M:Kvasir.Annotations.Check.ComplexAttribute.#ctor(System.Type,System.String[])">
             <summary>
