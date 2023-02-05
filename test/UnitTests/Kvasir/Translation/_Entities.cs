@@ -1335,6 +1335,30 @@ namespace UT.Kvasir.Translation {
                 public ushort DepartureTime { get; set; }
             }
 
+            // Test Scenario: Data Converter Type is not Default Constructible {error}
+            public class Paycheck {
+                [PrimaryKey] public ulong Employee { get; set; }
+                [PrimaryKey] public DateTime Period { get; set; }
+                [DataConverter(typeof(ChangeBase))] public int HoursWorked { get; set; }
+                public double RatePerHour { get; set; }
+                public decimal Net { get; set; }
+                public decimal FederalIncomeTax { get; set; }
+                public decimal StateIncomeTax { get; set; }
+                public decimal SocialSecurity { get; set; }
+                public decimal OtherWithholdings { get; set; }
+                public decimal Gross { get; set; }
+            }
+
+        // Test Scneario: Error Thrown while Constructing Data Converter Type {error}
+        public class Sword {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public decimal Sharpness { get; set; }
+            public float Length { get; set; }
+            public float Weight { get; set; }
+            public int Kills { get; set; }
+            [DataConverter(typeof(AlwaysError))] public short YearForged { get; set; }
+        }
+
             // Test Scenario: Identity Data Converter
             public class FieldGoal {
                 [PrimaryKey, DataConverter(typeof(Identity<DateTime>))] public DateTime When { get; set; }
@@ -1361,5 +1385,14 @@ namespace UT.Kvasir.Translation {
                 public string Selector { get; set; } = "";
                 public string Selection { get; set; } = "";
             }
+
+        /////// --- CHECK Constraints
+        
+            // None of the attributes ([Check] or anything derived from [Constraint]) exposes the values: they hold on
+            // to them and then expose a "create clause" API where the Field is provided. This means that there's
+            // limited opportunity for type-checking, and no opportunity for DateTime/GUID parsing. We'll have to do
+            // something about that. Elsewise, all the [Constraint]-derived attributes are basically the same and
+            // there's little error checking to be done - the exception is StringLength must be applied to a string-type
+            // Field.
     }
 }

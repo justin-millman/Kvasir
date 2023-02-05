@@ -2,18 +2,29 @@ using Kvasir.Schema;
 using System;
 
 namespace Kvasir.Annotations {
+    /// <summary>
+    ///   A standalone type that represents the notion of "zero" without being locked into a specific type.
+    /// </summary>
+    /// <remarks>
+    ///   The signedness annotations are all effectively comparison annotations against a singular anchor point of
+    ///   zero. However, the Translation Layer will require that all anchors match the annotation property's type
+    ///   exactly, which we cannot do at this point: we don't know what that type should be. So we use the Zero sentinel
+    ///   as a signal, and let the Translation Layer handle it appropriately.
+    /// </remarks>
+    internal struct Zero {}
+
     public static partial class Check {
         /// <summary>
         ///   An annotation that specifies that the value for the Field backing a particular property cannot be
         ///   <c>0</c>.
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class IsNonZeroAttribute : ConstraintAttribute {
+        public sealed class IsNonZeroAttribute : ComparisonAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNonZeroAttribute"/> class.
             /// </summary>
             public IsNonZeroAttribute()
-                : base(ComparisonOperator.NE, 0) {}
+                : base(ComparisonOperator.NE, new Zero()) {}
         }
 
         /// <summary>
@@ -21,12 +32,12 @@ namespace Kvasir.Annotations {
         ///   (i.e. <c>&gt;= 0</c>).
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class IsPositiveAttribute : ConstraintAttribute {
+        public sealed class IsPositiveAttribute : ComparisonAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsPositiveAttribute"/> class.
             /// </summary>
             public IsPositiveAttribute()
-                : base(ComparisonOperator.GT, 0) {}
+                : base(ComparisonOperator.GT, new Zero()) {}
         }
 
         /// <summary>
@@ -34,12 +45,12 @@ namespace Kvasir.Annotations {
         ///   (i.e. <c>&lt;= 0</c>).
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class IsNegativeAttribute : ConstraintAttribute {
+        public class IsNegativeAttribute : ComparisonAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNegativeAttribute"/> class.
             /// </summary>
             public IsNegativeAttribute()
-                : base(ComparisonOperator.LT, 0) {}
+                : base(ComparisonOperator.LT, new Zero()) {}
         }
     }
 }

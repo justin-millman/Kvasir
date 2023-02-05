@@ -1,10 +1,7 @@
-using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Annotations;
-using Kvasir.Core;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace UT.Kvasir.Annotations {
     [TestClass, TestCategory("Signedness Attributes")]
@@ -14,15 +11,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsNonZeroAttribute();
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.NE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(0));
+            attr.Operator.Should().Be(ComparisonOperator.NE);
+            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNonZero_Nested() {
@@ -31,15 +24,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsNonZeroAttribute() { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.NE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(0));
+            attr.Operator.Should().Be(ComparisonOperator.NE);
+            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNonZero_UniqueId() {
@@ -58,15 +47,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsPositiveAttribute();
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.GT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(0));
+            attr.Operator.Should().Be(ComparisonOperator.GT);
+            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsPositive_Nested() {
@@ -75,15 +60,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsPositiveAttribute() { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.GT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(0));
+            attr.Operator.Should().Be(ComparisonOperator.GT);
+            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsPositive_UniqueId() {
@@ -102,15 +83,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsNegativeAttribute();
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.LT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(0));
+            attr.Operator.Should().Be(ComparisonOperator.LT);
+            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNegative_Nested() {
@@ -119,15 +96,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsNegativeAttribute() { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.LT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(0));
+            attr.Operator.Should().Be(ComparisonOperator.LT);
+            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNegative_UniqueId() {
@@ -140,15 +113,5 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
-
-
-        static SignednessAttributeTests() {
-            field_ = new Mock<IField>();
-            field_.Setup(f => f.DataType).Returns(DBType.Double);
-        }
-
-        private static readonly Mock<IField> field_;
-        private static readonly Settings settings_ = Settings.Default;
-        private static readonly DataConverter converter_ = DataConverter.Identity<double>();
     }
 }

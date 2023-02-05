@@ -1,10 +1,8 @@
-using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Annotations;
-using Kvasir.Core;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using System;
 
 namespace UT.Kvasir.Annotations {
     [TestClass, TestCategory("Comparison Attributes")]
@@ -15,15 +13,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsNotAttribute(value);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.NE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.NE);
+            attr.Anchor.Should().Be(value);
         }
 
         [TestMethod] public void IsNot_Nested() {
@@ -33,17 +27,26 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsNotAttribute(value) { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.NE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.NE);
+            attr.Anchor.Should().Be(value);
         }
 
+        [TestMethod] public void IsNot_Null() {
+            // Arrange
+            string? value = null;
+
+            // Act
+            var attr = new Check.IsNotAttribute(value!);
+
+            // Assert
+            attr.Path.Should().BeEmpty();
+            attr.Operator.Should().Be(ComparisonOperator.NE);
+            attr.Anchor.Should().Be(DBNull.Value);
+        }
+        
         [TestMethod] public void IsNot_UniqueId() {
             // Arrange
             var attr = new Check.IsNotAttribute("Chula Vista");
@@ -61,15 +64,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsGreaterThanAttribute(value);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.GT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.GT);
+            attr.Anchor.Should().Be(value);
         }
 
         [TestMethod] public void IsGreaterThan_Nested() {
@@ -79,15 +78,24 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsGreaterThanAttribute(value) { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.GT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.GT);
+            attr.Anchor.Should().Be(value);
+        }
+
+        [TestMethod] public void IsGreaterThan_Null() {
+            // Arrange
+            string? value = null;
+
+            // Act
+            var attr = new Check.IsGreaterThanAttribute(value!);
+
+            // Assert
+            attr.Path.Should().BeEmpty();
+            attr.Operator.Should().Be(ComparisonOperator.GT);
+            attr.Anchor.Should().Be(DBNull.Value);
         }
 
         [TestMethod] public void IsGreaterThan_UniqueId() {
@@ -107,15 +115,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsGreaterOrEqualToAttribute(value);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.GTE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.GTE);
+            attr.Anchor.Should().Be(value);
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_Nested() {
@@ -125,15 +129,24 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsGreaterOrEqualToAttribute(value) { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.GTE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.GTE);
+            attr.Anchor.Should().Be(value);
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_Null() {
+            // Arrange
+            string? value = null;
+
+            // Act
+            var attr = new Check.IsGreaterOrEqualToAttribute(value!);
+
+            // Assert
+            attr.Path.Should().BeEmpty();
+            attr.Operator.Should().Be(ComparisonOperator.GTE);
+            attr.Anchor.Should().Be(DBNull.Value);
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_UniqueId() {
@@ -153,15 +166,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsLessThanAttribute(value);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.LT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.LT);
+            attr.Anchor.Should().Be(value);
         }
 
         [TestMethod] public void IsLessThan_Nested() {
@@ -171,15 +180,24 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsLessThanAttribute(value) { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.LT);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.LT);
+            attr.Anchor.Should().Be(value);
+        }
+
+        [TestMethod] public void IsLessThan_Null() {
+            // Arrange
+            string? value = null;
+
+            // Act
+            var attr = new Check.IsLessThanAttribute(value!);
+
+            // Assert
+            attr.Path.Should().BeEmpty();
+            attr.Operator.Should().Be(ComparisonOperator.LT);
+            attr.Anchor.Should().Be(DBNull.Value);
         }
 
         [TestMethod] public void IsLessThan_UniqueId() {
@@ -199,15 +217,11 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsLessOrEqualToAttribute(value);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.LTE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.LTE);
+            attr.Anchor.Should().Be(value);
         }
 
         [TestMethod] public void IsLessOrEqualTo_Nested() {
@@ -217,15 +231,24 @@ namespace UT.Kvasir.Annotations {
 
             // Act
             var attr = new Check.IsLessOrEqualToAttribute(value) { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<ConstantClause>();
-            (clause as ConstantClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as ConstantClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as ConstantClause)!.Operator.Should().Be(ComparisonOperator.LTE);
-            (clause as ConstantClause)!.RHS.Should().Be(DBValue.Create(value));
+            attr.Operator.Should().Be(ComparisonOperator.LTE);
+            attr.Anchor.Should().Be(value);
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_Null() {
+            // Arrange
+            string? value = null;
+
+            // Act
+            var attr = new Check.IsLessOrEqualToAttribute(value!);
+
+            // Assert
+            attr.Path.Should().BeEmpty();
+            attr.Operator.Should().Be(ComparisonOperator.LTE);
+            attr.Anchor.Should().Be(DBNull.Value);
         }
 
         [TestMethod] public void IsLessOrEqualTo_UniqueId() {
@@ -238,15 +261,5 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
-
-
-        static ComparisonAttributeTests() {
-            field_ = new Mock<IField>();
-            field_.Setup(f => f.DataType).Returns(DBType.Text);
-        }
-
-        private static readonly Mock<IField> field_;
-        private static readonly Settings settings_ = Settings.Default;
-        private static readonly DataConverter converter_ = DataConverter.Identity<string>();
     }
 }

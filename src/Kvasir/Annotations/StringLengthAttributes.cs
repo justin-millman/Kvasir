@@ -1,23 +1,56 @@
-using Ardalis.GuardClauses;
-using Kvasir.Core;
-using Kvasir.Schema;
 using System;
-using System.Diagnostics;
-using System.Linq;
 
 namespace Kvasir.Annotations {
     public static partial class Check {
+        ///
+        public abstract class StringLengthAttribute : Attribute {
+            /// <summary>
+            ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
+            ///   which the annotation actually applies.
+            /// </summary>
+            public string Path { get; init; } = "";
+
+            /// <summary>
+            ///   The (inclusive) lower bound on the string length imposed by the annotation. A value that cannot be
+            ///   represented by an <see cref="int"/> indicates that there is no lower bound. Note that this value may
+            ///   be negative, despite a natural boundary at 0.
+            /// </summary>
+            internal long Minimum { get; private init; }
+
+            /// <summary>
+            ///   The (inclusive) upper bound on the string length imposed by the annotation. A value that cannot be
+            ///   represented by an <see cref="int"/> indicates that there is no upper bound. Note that this value may
+            ///   be less than the <see cref="Minimum"/>, despite that being a natural boundary.
+            /// </summary>
+            internal long Maximum { get; private init;}
+
+            /// <summary>
+            ///   Constructs a new <see cref="StringLengthAttribute"/> instance.
+            /// </summary>
+            /// <param name="minimum">
+            ///   The <see cref="Minimum"/> string length.
+            /// </param>
+            /// <param name="maximum">
+            ///   The <see cref="Maximum"/> string length.
+            /// </param>
+            private protected StringLengthAttribute(int? minimum = null, int? maximum = null) {
+                Minimum = minimum ?? long.MinValue;
+                Maximum = maximum ?? long.MaxValue;
+            }
+        }
+
+
         /// <summary>
         ///   An annotation that specifies that the value for the Field backing a particular string-type property must
         ///   be non-empty.
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class IsNonEmptyAttribute : LengthIsAtLeastAttribute {
+        public sealed class IsNonEmptyAttribute : StringLengthAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNonEmptyAttribute"/> class.
             /// </summary>
             public IsNonEmptyAttribute()
-                : base(1) {}
+                : base(minimum: 1) {}
         }
 
         /// <summary>
@@ -25,7 +58,7 @@ namespace Kvasir.Annotations {
         ///   be at least a certain length.
         /// </summary>///
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class LengthIsAtLeastAttribute : ConstraintAttribute {
+        public sealed class LengthIsAtLeastAttribute : StringLengthAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="LengthIsAtLeastAttribute"/> class.
             /// </summary>
@@ -33,7 +66,7 @@ namespace Kvasir.Annotations {
             ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             /// </param>
             public LengthIsAtLeastAttribute(int lowerBound)
-                : base(FieldFunction.LengthOf, ComparisonOperator.GTE, lowerBound) {}
+                : base(minimum: lowerBound) {}
         }
 
         /// <summary>
@@ -41,7 +74,7 @@ namespace Kvasir.Annotations {
         ///   be at most a certain length.
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class LengthIsAtMostAttribute : ConstraintAttribute {
+        public sealed class LengthIsAtMostAttribute : StringLengthAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="LengthIsAtMostAttribute"/> class.
             /// </summary>
@@ -49,7 +82,7 @@ namespace Kvasir.Annotations {
             ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             /// </param>
             public LengthIsAtMostAttribute(int upperBound)
-                : base(FieldFunction.LengthOf, ComparisonOperator.LTE, upperBound) {}
+                : base(maximum: upperBound) {}
         }
 
         /// <summary>
@@ -57,7 +90,7 @@ namespace Kvasir.Annotations {
         ///   have a length within a certain range.
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class LengthIsBetweenAttribute : CheckAttribute {
+        public sealed class LengthIsBetweenAttribute : StringLengthAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="LengthIsBetweenAttribute"/> class.
             /// </summary>
@@ -65,33 +98,10 @@ namespace Kvasir.Annotations {
             ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             /// </param>
             /// <param name="upperBound">
-            ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
+            ///   The length (<i>inclusive</i>) that the Field backing the annotated property must be no longer than.
             /// </param>
             public LengthIsBetweenAttribute(int lowerBound, int upperBound)
-                : base(typeof(Constraint), lowerBound, upperBound) {}
-
-
-            private struct Constraint : IConstraintGenerator {
-                public Constraint(int lowerBound, int upperBound) {
-                    lower_ = new DBValue(lowerBound);
-                    upper_ = new DBValue(upperBound);
-                }
-                public Clause MakeConstraint(FieldSeq fields, ConverterSeq converters, Settings settings) {
-                    Guard.Against.Null(fields, nameof(fields));
-                    Guard.Against.InvalidInput(fields, nameof(fields), f => f.Count() == 1);
-                    Debug.Assert(converters is not null);
-                    Debug.Assert(settings is not null);
-
-                    var expr = new FieldExpression(FieldFunction.LengthOf, fields.First()!);
-                    var lower = new ConstantClause(expr, ComparisonOperator.GTE, lower_);
-                    var upper = new ConstantClause(expr, ComparisonOperator.LTE, upper_);
-                    return lower.And(upper);
-                }
-
-
-                private readonly DBValue lower_;
-                private readonly DBValue upper_;
-            }
+                : base(minimum: lowerBound, maximum: upperBound) {}
         }
     }
 }

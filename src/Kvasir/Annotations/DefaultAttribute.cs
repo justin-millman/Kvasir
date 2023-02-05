@@ -5,7 +5,7 @@ namespace Kvasir.Annotations {
     ///   An annotation that defines the default value for the Field backing a particular property.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class DefaultAttribute : Attribute {
+    public sealed class DefaultAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.

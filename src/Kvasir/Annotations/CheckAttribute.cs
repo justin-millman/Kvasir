@@ -27,7 +27,7 @@ namespace Kvasir.Annotations {
     /// <seealso cref="Check.IsNotOneOfAttribute"/>
     /// <seealso cref="Check.ComplexAttribute"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class CheckAttribute : Attribute {
+    public sealed class CheckAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.

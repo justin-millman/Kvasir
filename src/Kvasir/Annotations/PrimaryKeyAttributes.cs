@@ -24,7 +24,7 @@ namespace Kvasir.Annotations {
     ///   </para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class PrimaryKeyAttribute : Attribute {
+    public sealed class PrimaryKeyAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.

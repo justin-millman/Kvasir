@@ -172,6 +172,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{typeof(int).Name}*");                             // details
         }
 
+        [TestMethod] public void DataConverterIsNotDefaultConstructible_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Paycheck);
+
+            // Act
+            var act = () => translator[source];
+
+            // Assert
+            act.Should().Throw<KvasirException>()
+                .WithMessage($"*{source.Name}*")                                   // source type
+                .WithMessage($"*{nameof(Paycheck.HoursWorked)}*")                  // source property
+                .WithMessage("*[DataConverter]*")                                  // annotation
+                .WithMessage("*not*default*constructor*");                         // rationale
+        }
+
+        [TestMethod] public void DataConverterThrowsOnConstruction_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Sword);
+
+            // Act
+            var act = () => translator[source];
+
+            // Assert
+            act.Should().Throw<KvasirException>()
+                .WithMessage($"*{source.Name}*")                                   // source type
+                .WithMessage($"*{nameof(Sword.YearForged)}*")                      // source property
+                .WithMessage("*[DataConverter]*")                                  // annotation
+                .WithMessage("*constructing*")                                     // rationale
+                .WithMessage("*System Failure!*");                                 // details
+        }
+
         [TestMethod] public void IdentityDataConverter() {
             // Arrange
             var translator = new Translator();
