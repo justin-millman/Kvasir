@@ -12,7 +12,7 @@ namespace Kvasir.Annotations {
     ///   property and values of the backing Field.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class DataConverterAttribute : Attribute {
+    public sealed class DataConverterAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.

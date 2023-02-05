@@ -6,7 +6,7 @@ namespace Kvasir.Annotations {
     ///   An annotation that marks the Field backing a particular property as being part of a <c>UNIQUE</c> constraint.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class UniqueAttribute : Attribute {
+    public sealed class UniqueAttribute : Attribute {
         /// <summary>
         ///   The name prefix reserved for use by Kvasir itself.
         /// </summary>

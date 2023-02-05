@@ -3,6 +3,11 @@ using System;
 
 namespace UT.Kvasir.Translation {
     internal static partial class TestComponents {
+        public class AlwaysError : IDataConverter<short, short> {
+            public AlwaysError() { throw new ApplicationException("System Failure!"); }
+            public short Convert(short source) { return source; }
+            public short Revert(short result) { return result; }
+        }
         public class BoolToInt : IDataConverter<bool, int> {
             public int Convert(bool source) { return source ? 1 : 0; }
             public bool Revert(int result) { return result != 0; }
@@ -10,6 +15,11 @@ namespace UT.Kvasir.Translation {
         public class ByteModulo16 : IDataConverter<byte?, byte?> {
             public byte? Convert(byte? source) { return source is null ? null : (byte)(source % 16); }
             public byte? Revert(byte? result) { return result; }
+        }
+        public class ChangeBase : IDataConverter<int, int> {
+            public ChangeBase(int _) {}
+            public int Convert(int source) { return source; }
+            public int Revert(int result) { return result; }
         }
         public class CharToInt : IDataConverter<char, int> {
             public int Convert(char source) { return source; }

@@ -190,6 +190,46 @@
               The parameterization of the <c>CHECK</c> constraint.
             </param>
         </member>
+        <member name="T:Kvasir.Annotations.Check.ComparisonAttribute">
+            <summary>
+              The base class for all annotations that restrict the value for the Field backing a particular property
+              relative to a single anchor point.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComparisonAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComparisonAttribute.Operator">
+            <summary>
+              The operator of the comparison restriction.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComparisonAttribute.Anchor">
+            <summary>
+              The anchor of the comparison restriction.
+            </summary>
+            <remarks>
+              This value is taken directly from the user, and no compatibility checks are (or, really, can be)
+              performed. This means, for example, that the anchor <i>might</i> be an array of values, even though
+              that is incongruous with the purpose of a <see cref="T:Kvasir.Annotations.Check.ComparisonAttribute"/>. The one exception is that
+              a literal user-provided <see langword="null"/> will be converted into <see cref="T:System.DBNull"/>, though
+              that will also induce an error during Translation.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.ComparisonAttribute.#ctor(Kvasir.Schema.ComparisonOperator,System.Object)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Annotations.Check.ComparisonAttribute"/> instance.
+            </summary>
+            <param name="op">
+              The <see cref="P:Kvasir.Annotations.Check.ComparisonAttribute.Operator"/> for the constraint.
+            </param>
+            <param name="anchor">
+              The <see cref="P:Kvasir.Annotations.Check.ComparisonAttribute.Anchor"/> for the constraint.
+            </param>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsNotAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property cannot have a
@@ -261,20 +301,67 @@
               The value that the Field backing the annotated property must be less than or equal to.
             </param>
         </member>
+        <member name="T:Kvasir.Annotations.Check.InclusionAttribute">
+            <summary>
+              The base class for all annotations that restrict the value for the Field backing a particular property
+              relative to a collection of anchor values.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.InclusionAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.InclusionAttribute.Operator">
+            <summary>
+              The operator of the comparison restriction.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.InclusionAttribute.Anchor">
+            <summary>
+              The collection of anchor values for the comparison restriction.
+            </summary>
+            <remarks>
+              The values are taken directly from the user, and no compatibility checks are (or, really, can be)
+              performed. The one exception is that a literal user-provided <see langword="null"/> will be converted
+              into <see cref="T:System.DBNull"/>, though that will also induce an error during Translation. The collection
+              will not be empty, but it may consist of only a single value.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.InclusionAttribute.#ctor(Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Annotations.Check.ComparisonAttribute"/> instance.
+            </summary>
+            <param name="op">
+              The <see cref="P:Kvasir.Annotations.Check.InclusionAttribute.Operator"/> for the constraint.
+            </param>
+            <param name="anchor">
+              The <see cref="P:Kvasir.Annotations.Check.InclusionAttribute.Anchor"/> for the constraint.
+            </param>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsOneOfAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property must be one of a
               discrete set of options.
             </summary>
         </member>
-        <member name="M:Kvasir.Annotations.Check.IsOneOfAttribute.#ctor(System.Object[])">
+        <member name="M:Kvasir.Annotations.Check.IsOneOfAttribute.#ctor(System.Object,System.Object[])">
             <summary>
               Construct a new instance of the <see cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/> class.
             </summary>
-            <param name="values">
-              The discrete set of options, of which the value that the Field backing the annotated property must be
-              one.
+            <param name="first">
+              The first of the discrete set of options, of which the value that the Field backing the annotated
+              property must be one.
             </param>
+            <param name="rest">
+              The remainder of the discrete set of options, of which the value that the Field backing the annotated
+              property must be one. It is valid for this array to be empty.
+            </param>
+            <remarks>
+              Each element of <paramref name="rest"/> should be the same exact type as <paramref name="first"/>,
+              though this is not checked or enforced until Translation.
+            </remarks>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsNotOneOfAttribute">
             <summary>
@@ -282,14 +369,22 @@
               a discrete set of options
             </summary>
         </member>
-        <member name="M:Kvasir.Annotations.Check.IsNotOneOfAttribute.#ctor(System.Object[])">
+        <member name="M:Kvasir.Annotations.Check.IsNotOneOfAttribute.#ctor(System.Object,System.Object[])">
             <summary>
               Construct a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute"/> class.
             </summary>
-            <param name="values">
-              The discrete set of options, of which the value that the Field backing the annotated property cannot
-              be one.
+            <param name="first">
+              The first of the discrete set of options, of which the value that the Field backing the annotated
+              property cannot be one.
             </param>
+            <param name="rest">
+              The remainder of the discrete set of options, of which the value that the Field backing the annotated
+              property cannot be one. It is valid for this array to be empty.
+            </param>
+            <remarks>
+              Each element of <paramref name="rest"/> should be the same exact type as <paramref name="first"/>,
+              though this is not checked or enforced until Translation.
+            </remarks>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsNonZeroAttribute">
             <summary>
@@ -323,6 +418,40 @@
             <summary>
               Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNegativeAttribute"/> class.
             </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.StringLengthAttribute">
+            
+        </member>
+        <member name="P:Kvasir.Annotations.Check.StringLengthAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.StringLengthAttribute.Minimum">
+            <summary>
+              The (inclusive) lower bound on the string length imposed by the annotation. A value that cannot be
+              represented by an <see cref="T:System.Int32"/> indicates that there is no lower bound. Note that this value may
+              be negative, despite a natural boundary at 0.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.StringLengthAttribute.Maximum">
+            <summary>
+              The (inclusive) upper bound on the string length imposed by the annotation. A value that cannot be
+              represented by an <see cref="T:System.Int32"/> indicates that there is no upper bound. Note that this value may
+              be less than the <see cref="P:Kvasir.Annotations.Check.StringLengthAttribute.Minimum"/>, despite that being a natural boundary.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.StringLengthAttribute.#ctor(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Annotations.Check.StringLengthAttribute"/> instance.
+            </summary>
+            <param name="minimum">
+              The <see cref="P:Kvasir.Annotations.Check.StringLengthAttribute.Minimum"/> string length.
+            </param>
+            <param name="maximum">
+              The <see cref="P:Kvasir.Annotations.Check.StringLengthAttribute.Maximum"/> string length.
+            </param>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsNonEmptyAttribute">
             <summary>
@@ -377,7 +506,7 @@
               The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             </param>
             <param name="upperBound">
-              The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
+              The length (<i>inclusive</i>) that the Field backing the annotated property must be no longer than.
             </param>
         </member>
         <member name="T:Kvasir.Annotations.ColumnAttribute">
@@ -402,121 +531,6 @@
             </summary>
             <param name="column">
               The <c>0</c>-based column index.
-            </param>
-        </member>
-        <member name="T:Kvasir.Annotations.ConstraintAttribute">
-            <summary>
-              An attribute that imposes a simple <c>CHECK</c> constraint (one of the form <c>[field] [op] [value]</c>) on
-              the Field backing a particular property.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Annotations.ConstraintAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Annotations.ConstraintAttribute.MakeConstraint(Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
-            <summary>
-              Creates a <c>CHECK</c> constraint <see cref="T:Kvasir.Schema.Clause"/> for one or more Fields using the generator type
-              specified in the annotation.
-            </summary>
-            <param name="field">
-              The Field to which the constraint applies.
-            </param>
-            <param name="converter">
-              The list of data converter that corresponds to <paramref name="field"/>, which is to be used as needed
-              to transform any user-provided input.
-            </param>
-            <param name="settings">
-              The Kvasir framework settings.
-            </param>
-            <returns>
-              A new <c>CHECK</c> constraint clause that applies to <paramref name="field"/>.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.ComparisonOperator,System.Object)">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes a comparison-based
-              constraint on the Field backing the annotated property.
-            </summary>
-            <param name="op">
-              The comparison operator.
-            </param>
-            <param name="anchor">
-              The anchor value.
-            </param>
-        </member>
-        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{System.Object})">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes an inclusion-based
-              constraint on the Field backing the annotated property.
-            </summary>
-            <param name="op">
-              The inclusion operator.
-            </param>
-            <param name="anchor">
-              The list of allowd or disallowed values.
-            </param>
-        </member>
-        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.ComparisonOperator,System.Object)">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes a comparison-based
-              constraint on the transformation of the Field backing the annotated property.
-            </summary>
-            <param name="func">
-              The transformation function be applied.
-            </param>
-            <param name="op">
-              The comparison operator.
-            </param>
-            <param name="anchor">
-              The anchor value.
-            </param>
-        </member>
-        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Kvasir.Schema.FieldFunction,Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{System.Object})">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes an inclusion-based
-              constraint on the transformation of the Field backing the annotated property.
-            </summary>
-            <param name="func">
-              The transformation function be applied.
-            </param>
-            <param name="op">
-              The comparison operator.
-            </param>
-            <param name="anchor">
-              The list of allowd or disallowed values.
-            </param>
-        </member>
-        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Optional.Option{Kvasir.Schema.FieldFunction},Kvasir.Schema.ComparisonOperator,System.Object)">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes a comparison-based
-              constraint on the Field backing the annotated property.
-            </summary>
-            <param name="func">
-              The optional transformation function be applied.
-            </param>
-            <param name="op">
-              The comparison operator.
-            </param>
-            <param name="anchor">
-              The anchor value.
-            </param>
-        </member>
-        <member name="M:Kvasir.Annotations.ConstraintAttribute.#ctor(Optional.Option{Kvasir.Schema.FieldFunction},Kvasir.Schema.InclusionOperator,System.Collections.Generic.IEnumerable{System.Object})">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.ConstraintAttribute"/> that imposes an inclusion-based
-              constraint on the Field backing the annotated property.
-            </summary>
-            <param name="func">
-              The optional transformation function be applied.
-            </param>
-            <param name="op">
-              The inclusion operator.
-            </param>
-            <param name="anchor">
-              The list of allowd or disallowed values.
             </param>
         </member>
         <member name="T:Kvasir.Annotations.DataConverterAttribute">
@@ -740,6 +754,17 @@
               The name of the Primary Key.
             </param>
         </member>
+        <member name="T:Kvasir.Annotations.Zero">
+            <summary>
+              A standalone type that represents the notion of "zero" without being locked into a specific type.
+            </summary>
+            <remarks>
+              The signedness annotations are all effectively comparison annotations against a singular anchor point of
+              zero. However, the Translation Layer will require that all anchors match the annotation property's type
+              exactly, which we cannot do at this point: we don't know what that type should be. So we use the Zero sentinel
+              as a signal, and let the Translation Layer handle it appropriately.
+            </remarks>
+        </member>
         <member name="T:Kvasir.Annotations.TableAttribute">
             <summary>
               An annotation that specifies the name of the Table backing a particula class.
@@ -927,49 +952,6 @@
             <summary>
               The default settings used by the Kvasir framework.
             </summary>
-        </member>
-        <member name="T:Kvasir.Core.TransformUserValues">
-            <summary>
-              A set of internal utilities for converting a value provided by the user through the front-end UI.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Core.TransformUserValues.Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
-            <summary>
-              Transforms a user-provided value--either a single object or a set thereof--so that it of the correct form
-              for a particular Field.
-            </summary>
-            <remarks>
-              This function is largely responsible for performing the following actions:
-                <list type="bullet">
-                  <item>Converting enumerator values to their string or numeric representations</item>
-                  <item>Converting any other type of value according to a user-specified Data Converter</item>
-                  <item>Parsing a string into a Guid for Guid-typed Fields</item>
-                  <item>Parsing a string into a DateTime for DateTime-typed Fields</item>
-                </list>
-            </remarks>
-            <param name="value">
-              The user-provided value.
-            </param>
-            <param name="field">
-              The Field to which <paramref name="value"/> belongs.
-            </param>
-            <param name="converter">
-              The <see cref="T:Cybele.Core.DataConverter"/> for <paramref name="field"/>.
-            </param>
-            <param name="settings">
-              The Kvasir framework settings.
-            </param>
-            <returns>
-              The result of converting <paramref name="value"/> according to <paramref name="field"/>,
-              <paramref name="converter"/>, and <paramref name="settings"/>. It will either be a single
-              <see cref="T:Kvasir.Schema.DBValue"/> or a set thereof.
-            </returns>
-        </member>
-        <member name="M:Kvasir.Core.TransformUserValues.DoTransform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
-            <see cref="M:Kvasir.Core.TransformUserValues.Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)"/>
-        </member>
-        <member name="M:Kvasir.Core.TransformUserValues.DoTransform(System.Collections.Generic.IEnumerable{System.Object},Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)">
-            <see cref="M:Kvasir.Core.TransformUserValues.Transform(System.Object,Kvasir.Schema.IField,Cybele.Core.DataConverter,Kvasir.Core.Settings)"/>
         </member>
         <member name="T:Kvasir.Exceptions.KvasirException">
             <summary>

@@ -1,10 +1,7 @@
-using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Annotations;
-using Kvasir.Core;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using System;
 using System.Linq;
 
@@ -13,42 +10,34 @@ namespace UT.Kvasir.Annotations {
     public class InclusionAttributeTests : AnnotationTestBase {
         [TestMethod] public void IsOneOf_Direct() {
             // Arrange
-            var values = new string[] { "Texarkana", "Cambridge", "West Lafayette" };
+            var values = new string[] { "Texarkana", "Cambridge", "West Lafayette", "Carlsbad", "Nome" };
 
             // Act
-            var attr = new Check.IsOneOfAttribute(values);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsOneOfAttribute(values[0], values[1], values[2], values[3], values[4]);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.In);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => new DBValue(v)));
+            attr.Operator.Should().Be(InclusionOperator.In);
+            attr.Anchor.Should().BeEquivalentTo(values);
         }
 
         [TestMethod] public void IsOneOf_Nested() {
             // Arrange
-            var values = new string[] { "Hershey", "Beaumont", "Provo", "Providence" };
+            var values = new string[] { "Hershey", "Beaumont", "Provo", "Providence", "Hot Springs" };
             var path = "Nested.Path";
 
             // Act
-            var attr = new Check.IsOneOfAttribute(values) { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsOneOfAttribute(values[0], values[1], values[2], values[3], values[4]) { Path = path };
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.In);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => new DBValue(v)));
+            attr.Operator.Should().Be(InclusionOperator.In);
+            attr.Anchor.Should().BeEquivalentTo(values);
         }
 
         [TestMethod] public void IsOneOf_UniqueId() {
             // Arrange
-            var attr = new Check.IsOneOfAttribute("Concord", "Inglewood");
+            var attr = new Check.IsOneOfAttribute("Concord", "Inglewood", "San Jacinto");
 
             // Act
             var isUnique = ids_.Add(attr.TypeId);
@@ -57,31 +46,17 @@ namespace UT.Kvasir.Annotations {
             isUnique.Should().BeTrue();
         }
 
-        [TestMethod] public void IsOneOf_Empty() {
-            // Arrange
-
-            // Act
-            Action act = () => new Check.IsOneOfAttribute(Array.Empty<object>());
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
-
         [TestMethod] public void IsOneOf_IncludeNull() {
             // Arrange
             var values = new string?[] { null, "Boca Raton", "Jupiter", "Athens" };
 
             // Act
-            var attr = new Check.IsOneOfAttribute(values);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsOneOfAttribute(values[0], values[1], values[2], values[3]);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.In);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => DBValue.Create(v)));
+            attr.Operator.Should().Be(InclusionOperator.In);
+            attr.Anchor.Should().BeEquivalentTo(values.Cast<object?>().Select(v => v ?? DBNull.Value));
         }
 
         [TestMethod] public void IsOneOf_ForceNull() {
@@ -89,16 +64,12 @@ namespace UT.Kvasir.Annotations {
             var values = new string?[] { null };
 
             // Act
-            var attr = new Check.IsOneOfAttribute(values);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsOneOfAttribute(values[0]);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.In);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => DBValue.Create(v)));
+            attr.Operator.Should().Be(InclusionOperator.In);
+            attr.Anchor.Should().BeEquivalentTo(values.Cast<object?>().Select(v => v ?? DBNull.Value));
         }
 
         [TestMethod] public void IsNotOneOf_Direct() {
@@ -106,16 +77,12 @@ namespace UT.Kvasir.Annotations {
             var values = new string[] { "Wichita Falls", "Selma", "Roanoke" };
 
             // Act
-            var attr = new Check.IsNotOneOfAttribute(values);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsNotOneOfAttribute(values[0], values[1], values[2]);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.NotIn);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => new DBValue(v)));
+            attr.Operator.Should().Be(InclusionOperator.NotIn);
+            attr.Anchor.Should().BeEquivalentTo(values);
         }
 
         [TestMethod] public void IsNotOneOf_Nested() {
@@ -124,16 +91,12 @@ namespace UT.Kvasir.Annotations {
             var path = "Nested.Path";
 
             // Act
-            var attr = new Check.IsNotOneOfAttribute(values) { Path = path };
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsNotOneOfAttribute(values[0], values[1], values[2], values[3], values[4]) { Path = path };
 
             // Assert
             attr.Path.Should().Be(path);
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.NotIn);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => new DBValue(v)));
+            attr.Operator.Should().Be(InclusionOperator.NotIn);
+            attr.Anchor.Should().BeEquivalentTo(values);
         }
 
         [TestMethod] public void IsNotOneOf_UniqueId() {
@@ -147,31 +110,17 @@ namespace UT.Kvasir.Annotations {
             isUnique.Should().BeTrue();
         }
 
-        [TestMethod] public void IsNotOneOf_Empty() {
-            // Arrange
-
-            // Act
-            Action act = () => new Check.IsNotOneOfAttribute(Array.Empty<object>());
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>().WithAnyMessage();
-        }
-
         [TestMethod] public void IsNotOneOf_IncludeNull() {
             // Arrange
             var values = new string?[] { "Gilbert", "Modesto", null, "Sandy Springs" };
 
             // Act
-            var attr = new Check.IsNotOneOfAttribute(values);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsNotOneOfAttribute(values[0], values[1], values[2], values[3]);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.NotIn);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => DBValue.Create(v)));
+            attr.Operator.Should().Be(InclusionOperator.NotIn);
+            attr.Anchor.Should().BeEquivalentTo(values.Cast<object?>().Select(v => v ?? DBNull.Value));
         }
 
         [TestMethod] public void IsNotOneOf_DisallowNullOnly() {
@@ -179,26 +128,12 @@ namespace UT.Kvasir.Annotations {
             var values = new string?[] { null };
 
             // Act
-            var attr = new Check.IsNotOneOfAttribute(values);
-            var clause = attr.MakeConstraint(field_.Object, converter_, settings_);
+            var attr = new Check.IsNotOneOfAttribute(values[0]);
 
             // Assert
             attr.Path.Should().BeEmpty();
-            clause.Should().BeOfType<InclusionClause>();
-            (clause as InclusionClause)!.LHS.Function.Should().NotHaveValue();
-            (clause as InclusionClause)!.LHS.Field.Should().Be(field_.Object);
-            (clause as InclusionClause)!.Operator.Should().Be(InclusionOperator.NotIn);
-            (clause as InclusionClause)!.RHS.Should().BeEquivalentTo(values.Select(v => DBValue.Create(v)));
+            attr.Operator.Should().Be(InclusionOperator.NotIn);
+            attr.Anchor.Should().BeEquivalentTo(values.Cast<object?>().Select(v => v ?? DBNull.Value));
         }
-
-
-        static InclusionAttributeTests() {
-            field_ = new Mock<IField>();
-            field_.Setup(f => f.DataType).Returns(DBType.Text);
-        }
-
-        private static readonly Mock<IField> field_;
-        private static readonly Settings settings_ = Settings.Default;
-        private static readonly DataConverter converter_ = DataConverter.Identity<string>();
     }
 }

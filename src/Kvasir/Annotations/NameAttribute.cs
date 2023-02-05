@@ -13,7 +13,7 @@ namespace Kvasir.Annotations {
     /// </remarks>
     /// <seealso cref="FieldName"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class NameAttribute : Attribute {
+    public sealed class NameAttribute : Attribute {
         /// <summary>
         ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
         ///   which the annotation actually applies.
