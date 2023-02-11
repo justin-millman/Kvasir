@@ -113,7 +113,7 @@ namespace UT.Kvasir.Relations {
 
         [TestMethod] public void CanonicalizeNoneDeleted() {
             // Arrange
-            var elements = new string[] { "Nagasaki", "Málaga", "Budapest", "Bangalore", "Sana'a", "Guayaquil" };
+            var elements = new string[] { "Nagasaki", "Zaragoza", "Budapest", "Bangalore", "Sana'a", "Guayaquil" };
             var set = new RelationSet<string>(elements);
 
             // Act

@@ -77,7 +77,7 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.UserError.Should()
                 .Match($"*{constraintType.Name}*").And
-                .Match("*()*").And
+                .Match("*<none>*").And
                 .Match("*construct*");
         }
 
@@ -119,7 +119,7 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.UserError.Should()
                 .Match($"*{constraintType.Name}*").And
-                .Match("*(100, \"Aloha\", 'u')").And
+                .Match("*100, \"Aloha\", 'u'*").And
                 .Match("*construct*");
         }
 
@@ -187,7 +187,7 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.UserError.Should()
                 .Match($"*{constraintType.Name}*").And
-                .Match("*()*").And
+                .Match("*<none>*").And
                 .Match("*construct*");
         }
 
@@ -216,7 +216,7 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.UserError.Should()
                 .Match($"*{constraintType.Name}*").And
-                .Match($"*({string.Join(", ", args)})*").And
+                .Match("*100*").And
                 .Match("*construct*");
         }
 

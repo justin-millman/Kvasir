@@ -43,7 +43,7 @@ namespace Kvasir.Annotations {
             /// <param name="anchor">
             ///   The <see cref="Anchor"/> for the constraint.
             /// </param>
-            private protected InclusionAttribute(InclusionOperator op, IEnumerable<object?> anchor) {
+            private protected InclusionAttribute(InclusionOperator op, IEnumerable<object> anchor) {
                 Debug.Assert(op.IsValid());
                 Debug.Assert(!anchor.IsEmpty());
 
@@ -73,7 +73,7 @@ namespace Kvasir.Annotations {
             ///   Each element of <paramref name="rest"/> should be the same exact type as <paramref name="first"/>,
             ///   though this is not checked or enforced until Translation.
             /// </remarks>
-            public IsOneOfAttribute(object? first, params object?[] rest)
+            public IsOneOfAttribute(object first, params object[] rest)
                 : base(InclusionOperator.In, rest.Prepend(first)) {}
         }
 
@@ -98,7 +98,7 @@ namespace Kvasir.Annotations {
             ///   Each element of <paramref name="rest"/> should be the same exact type as <paramref name="first"/>,
             ///   though this is not checked or enforced until Translation.
             /// </remarks>
-            public IsNotOneOfAttribute(object? first, params object?[] rest)
+            public IsNotOneOfAttribute(object first, params object[] rest)
                 : base(InclusionOperator.NotIn, rest.Prepend(first)) {}
         }
     }

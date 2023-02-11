@@ -101,9 +101,17 @@ namespace Kvasir.Translation {
                 );
             }
 
+            // Invoke the "generators" to create the CHECK clauses now that we have concrete IField instances
+            var converters = descriptor.Fields.Select(f => f.Converter);
+            var checks = descriptor.CHECKs.Select(g => new CheckConstraint(g(fields, converters))).ToList();
+            foreach (var (field, desc) in fields.Zip(descriptor.Fields)) {
+                foreach (var generator in desc.CHECKs) {
+                    checks.Add(new CheckConstraint(generator(field, desc.Converter)));
+                }
+            }
+
             // These are not currently supported at the Translation Layer, but they are present in the Schema Layer
             var foreignKeys = new List<ForeignKey>();
-            var checks = new List<CheckConstraint>();
 
             // No errors detected
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, checks);

@@ -4,8 +4,8 @@ using Kvasir.Annotations;
 using Kvasir.Exceptions;
 using Kvasir.Schema;
 using System;
+using Kvasir.Translation.Extensions;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -36,15 +36,7 @@ namespace Kvasir.Translation {
         ///   <see cref="DataConverter.Identity">identity conversion</see>.
         /// </returns>
         private static DataConverter ConverterFor(PropertyInfo property) {
-            // It is an error for a property to be annotated with multiple [Name] attributes
-            var annotations = property.GetCustomAttributes<DataConverterAttribute>();
-            if (annotations.Count() > 1) {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    "multiple [DataConverter] annotations encountered"
-                );
-            }
-            var annotation = annotations.FirstOrDefault();
+            var annotation = property.Only<DataConverterAttribute>();
 
             // If there is no [DataConverter] annotation, then an identity conversion is used
             if (annotation is null) {
@@ -72,7 +64,7 @@ namespace Kvasir.Translation {
                 throw new KvasirException(
                     $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
                     $"[DataConverter] annotation operates on {converter.SourceType.Name} for " +
-                    $"Field of type {expectedType.Name}"
+                    $"property of type {expectedType.Name}"
                 );
             }
 

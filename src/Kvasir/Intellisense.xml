@@ -6175,7 +6175,7 @@
               A descriptor of a single back-end database Field.
             </summary>
         </member>
-        <member name="M:Kvasir.Translation.Translator.FieldDescriptor.#ctor(System.Type,System.String,Kvasir.Schema.FieldName,System.Type,Optional.Option{System.Int32},Kvasir.Schema.IsNullable,Optional.Option{System.Object},System.Boolean,Cybele.Core.DataConverter,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.KeyName})">
+        <member name="M:Kvasir.Translation.Translator.FieldDescriptor.#ctor(System.Type,System.String,Kvasir.Schema.FieldName,System.Type,Optional.Option{System.Int32},Kvasir.Schema.IsNullable,Optional.Option{System.Object},System.Boolean,Cybele.Core.DataConverter,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.KeyName},System.Collections.Generic.IReadOnlyList{Kvasir.Translation.CheckGen})">
             <summary>
               A descriptor of a single back-end database Field.
             </summary>
@@ -6185,7 +6185,7 @@
               A descriptor of a single in-source CLR Type, translated into two or more Fields.
             </summary>
         </member>
-        <member name="M:Kvasir.Translation.Translator.TypeDescriptor.#ctor(System.Type,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.Translator.FieldDescriptor})">
+        <member name="M:Kvasir.Translation.Translator.TypeDescriptor.#ctor(System.Type,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.Translator.FieldDescriptor},System.Collections.Generic.IReadOnlyList{Kvasir.Translation.ComplexCheckGen})">
             <summary>
               A descriptor of a single in-source CLR Type, translated into two or more Fields.
             </summary>
@@ -6547,6 +6547,121 @@
               if <paramref name="entity"/> is an open or closed generic type
                 --or--
               if <paramref name="entity"/> is an <see langword="abstract"/> type
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation.Extensions.TranslationExtensions.Only``1(System.Reflection.PropertyInfo)">
+            <summary>
+              Extract the single instance of a particular annotation <see cref="T:System.Attribute"/> that has been applied to a
+              <see cref="T:System.Reflection.PropertyInfo"/>.
+            </summary>
+            <typeparam name="TAnnotation">
+              The target annotation type.
+            </typeparam>
+            <param name="self">
+              The <see cref="T:System.Reflection.PropertyInfo"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              The single instance of <typeparamref name="TAnnotation"/> that is applied to <paramref name="self"/>, if
+              such an annotation exists; otherwise, <see langword="null"/>.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="self"/> is annotated with multiple instances of <typeparamref name="TAnnotation"/>.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Translation.Extensions.TranslationExtensions.NumericKind">
+            <summary>A categorization for numeric <see cref="T:Kvasir.Schema.DBType">DBTypes</see>.</summary>
+        </member>
+        <member name="F:Kvasir.Translation.Extensions.TranslationExtensions.NumericKind.Signed">
+            <summary>A signed integer of unspecified size.</summary>
+        </member>
+        <member name="F:Kvasir.Translation.Extensions.TranslationExtensions.NumericKind.Unsigned">
+            <summary>An unsigned integer of unspecified size.</summary>
+        </member>
+        <member name="F:Kvasir.Translation.Extensions.TranslationExtensions.NumericKind.FloatingPoint">
+            <summary>A floating-point number of unspecified precision</summary>
+        </member>
+        <member name="F:Kvasir.Translation.Extensions.TranslationExtensions.NumericKind.None">
+            <summary>A non-numeric type.</summary>
+        </member>
+        <member name="M:Kvasir.Translation.Extensions.TranslationExtensions.NumericStyle(Kvasir.Schema.DBType)">
+            <summary>
+              Checks the <see cref="T:Kvasir.Translation.Extensions.TranslationExtensions.NumericKind">numeric categorization</see> of a particular <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.DBType"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              The <see cref="T:Kvasir.Translation.Extensions.TranslationExtensions.NumericKind"/> of <paramref name="self"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Extensions.TranslationExtensions.Zero(Kvasir.Schema.DBType)">
+            <summary>
+              Produces the value <c>0</c> with a runtime type corresponding to that of a particular
+              <see cref="T:Kvasir.Schema.DBType"/>.
+            </summary>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.DBType"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              <c>0</c>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Extensions.TranslationExtensions.IsOrderable(Kvasir.Schema.DBType)">
+            <summary>
+              Checks if a <see cref="T:Kvasir.Schema.DBType"/> represents a semantic that implements a total order, and can therefore
+              be constrained by a ranged inequality.
+            </summary>
+            <param name="self">
+              The <see cref="T:Kvasir.Schema.DBType"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="self"/> is a <see cref="T:Kvasir.Schema.DBType"/> for a numeric (integer or
+              floating point), text (string or character), or date/time; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Extensions.TranslationExtensions.ParseFor(System.Object,System.Reflection.PropertyInfo,System.Type,Kvasir.Schema.IsNullable,System.String)">
+            <summary>
+              Treat untyped, possibly <see langword="null"/> value as if it were valid value for a Field with a specific
+              set of traits.
+            </summary>
+            <param name="self">
+              The <see cref="T:System.Object"/> on which the extension method is invoked.
+            </param>
+            <param name="property">
+              The <see cref="T:System.Reflection.PropertyInfo">source property</see> of the backing Field. This argument is used only to
+              produce a contextualized error message and does not contribute to type analysis.
+            </param>
+            <param name="into">
+              The <see cref="T:System.Type"/> into which <paramref name="self"/> is to be coerced.
+            </param>
+            <param name="nullability">
+              The nullability of the target Field, which determines whether or not <paramref name="self"/> can validly
+              be <see langword="null"/>.
+            </param>
+            <param name="flavor">
+              A brief description of what the value is for, used in the contextualized error message.
+            </param>
+            <returns>
+              <paramref name="self"/>, having been translated and/or parsed as necessary.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="self"/> is <see langword="null"/> (or <see cref="T:System.DBNull"/>) but
+              <paramref name="nullability"/> is <see cref="F:Kvasir.Schema.IsNullable.No"/>
+                --or--
+              if <paramref name="self"/> is an array, even if its single value would otherwise be valid
+                --or--
+              if <paramref name="into"/> is either <see cref="T:System.DateTime"/> or <see cref="T:System.Guid"/> but
+              <paramref name="self"/> is neither <see langword="null"/> (nor <see cref="T:System.DBNull"/>) nor a string
+                --or--
+              if <paramref name="into"/> is neither <see cref="T:System.DateTime"/> nor <see cref="T:System.Guid"/> and
+              <paramref name="self"/> is neither <see langword="null"/> (nor <see cref="T:System.DBNull"/>) nor an instance of
+              <paramref name="into"/>; note that implicit conversions and numeric promotions are not permitted
+                --or--
+              if <paramref name="into"/> is <see cref="T:System.DateTime"/> and <paramref name="self"/> is a string that cannot
+              be parsed thereas
+                --or--
+              if <paramref name="into"/> is <see cref="T:System.Guid"/> and <paramref name="self"/> is a string that cannot be
+              parsed thereas.
             </exception>
         </member>
         <member name="T:Kvasir.Translation.PrincipalTableDef">

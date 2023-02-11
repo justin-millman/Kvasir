@@ -1,15 +1,34 @@
-﻿Actor/Actress
+Acid
+ACT
+Actor/Actress
 Address
+Aes Sedai
 Airplane
 Airport
+Alarm
+Alkene
 Allomancy
 Amino Acid
 Animal
+Animation (PowerPoint)
+Archbishop
+Aria
+Arthurian Knight
+Astronaut
+Avatar
+Bacterium
+Bagel
+Ballet
 Bank Account
+Baryon
+Baseball Card
+Basketball Player
+Battery
 Batting Order
 Battle
 Battleship
 Bay
+Ben 10 Alien
 Billiard Ball
 Blood Type
 Bone
@@ -18,126 +37,270 @@ Bookmark (web browsing)
 Botanical Garden
 Bowl Game
 Bowling Frame
+Brassiere
+Bridge
+Campfire
+Canal
+Cancer
+Candle
+Cannon
+Canterbury Tale
+Canyon
+Capacitor
 Carbohydrate
+Cave
 Cenote
+Cereal
 Character (text)
 Check
 Chemical Element
 Chess Piece
+Chinese Character
+Chocolate
+Christmas Carol
+Church
+CinemaSins
 Circle
+Circle of Hell
 Civilization VI Military Unit
+Codon
 Coin
 Color
 Comet
+Command (terminal)
+Commercial
+Compiler Warning
 Constitutional Amendment
+Coral Reef
 Country
 County
 Coupon
 Court Case
 Credit Card
 Crossword Clue
+Cryptocurrency
 Currency
 D&D Character
+D&D Spell
+Dam
+Data Structure
 Database Field
 Date
 Desert
+Diamond
+Directory (file system)
+Distribution (probability)
+DLL
 Doctor (Doctor Who)
+Donut
+Dreidel
 Drum
 Earthquake
+Elevator
 Encryption
 Enumeration
 Episode
+ETF
+Eurovision Song Contest
+Excel Range
 Expiration
 Federal Law
 Field Goal
 Fighter Jet
+Final Jeopardy!
+Fjord
+Flashcard
 Flight
 Flower
+Font
+Fountain
 Fraction
+Fraternity
 Function (programming)
+Gaming Console
 Gene
+Genie
 Geologic Epoch
+Geyser
 Git Commit
+Gold Rush
 Golf Hole
+Grammatical Case
 Greek God
+Greek Letter
+Gymnast
 Haiku
+Hash Function
+Healing Potion
 Hebrew Letter
 Hebrew Prayer
+Hieroglyph
 Highway
+Histogram
 Hogwarts House
 Holiday
+Holy Roman Emperor
+Homeric Hymn
+Hospital
+Hotel
+HTTP Error
 Hurricane
+Inator
 Inmate
 Integer
 Integer Sequence
+Integral
 IP Address
+Isthmus
 Jedi
 Jigsaw Puzzle
+Key Signature
+Keystroke
 King of England
+Knock-Knock Joke
+Labor of Heracles
 Lake
+Land Card (MTG)
 Language
+Lease
 Legume
 Lens
+Linux Distribution
 Liquor
 Log-In Credentials
-MetraRoute
-Month
+Lottery Ticket
+Lyric
+Massacre
+Mayor
+Metra Route
+Military Base
+Mint (currency)
 Monopoly Property
+Month
 Mountain
 Movie
+Movie Ticket
+Multiple Choice Question
+Muppet
+Muscle
+Musical
+Mutant (X-Men)
+National Anthem
 National Park
-Native American Park
+Native American Tribe
+Nebula
+Neurotoxin
 Norse World
+Nuclear Power Plant
+Oceanic Trench
+Oil (cooking)
 Opera
 Painting
 Parashah
+Pasta Sauce
 Patent
+Patreon
 Paycheck
+Peace Treaty
+Penalty (NFL)
+Peninsula
 Pepper
 Phone Number
 Pigment (biology)
+Pirate
 Pizza
+Plane of Existence (D&D)
 Planeswalker
 Playing Card
 PO Box
-Pokémon
+Pok�mon
 Poker Hand
+Police Officer
+Polygon
 Polyhedron
+Pope
+Potato
 Presidential Election
+Prison
+Prophet
+Proto-Indo-European Root
+Pterosaur
 Quadratic Equation
+Quatrain
+Racehorse
+Racetrack (auto racing)
 Radio Station
+Representative
+Resistor
 Retail Product
+Ring of Power
 River
 Rollercoaster
 Roman Emperor
 Royal House
 Saint
+Scholarship
 Scrabble Tile
 Sculpture
 Season
+Senator
+Set Card
+Shen Gong Wu
+Shoe
+Sign (ASL)
 Skee-Ball
+Ski Slope
 Slack Channel
+Slot Machine
+Snake
 SNL Episode
+Soccer Team
+Solar Eclipse
 Song
 Sonnet
+Sorority
 Speedometer
+SQL Query
 Stadium
 Star
+Steak
+Step Pyramid
+Stratego Piece
 Submarine
+Subreddit
+Sunscreen
 Super Bowl
 Surah
+Swimming Pool
 Sword
+Tar Pits
+Tarot Card
+Telescope
+Tennis Match
+Terminator
 Ticket2Ride Route
 Time Zone
 Timestamp
+Top 10 List
 Tossup Question
 Tournament
+Transistor
+Tweet
 Umpire
+UN Resolution
 University
+Upanishad
 URL
+Vampire Slayer
 Vitamin
+Voir Dire
 Volcano
+Water Slide
 Waterfall
+Web Browser
+Winter Storm
 World Heritage Site
+Wristwatch
 xkcd Comic
 YouTube Video
+Zoo

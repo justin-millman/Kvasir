@@ -66,8 +66,8 @@ namespace Kvasir.Translation {
                 );
             }
 
-            var checks = new List<Check.ComplexAttribute>();
-            var descriptor = new TypeDescriptor(CLRType: clr, Fields: fields);
+            var checks = ConstraintsOn(clr).ToList();
+            var descriptor = new TypeDescriptor(CLRType: clr, Fields: fields, CHECKs: checks);
             typeCache_.Add(clr, descriptor);
             return descriptor;
         }

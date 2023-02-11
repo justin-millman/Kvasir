@@ -56,7 +56,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void DuplicateNamedCandidateKeys_IsError() {
             // Arrange
             var translator = new Translator();
-            var source = typeof(Check);
+            var source = typeof(BankCheck);
 
             // Act
             var act = () => translator[source];
