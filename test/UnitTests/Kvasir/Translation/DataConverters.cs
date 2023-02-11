@@ -117,7 +117,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                        // source type
                 .WithMessage($"*{nameof(Jedi.MiddleName)}*")            // source property
                 .WithMessage("*[DataConverter]*")                       // annotation
-                .WithMessage($"*Field of type {nameof(String)}*")       // rationale
+                .WithMessage($"*property of type {nameof(String)}*")    // rationale
                 .WithMessage($"*operates on {nameof(Boolean)}*");       // details
         }
 
@@ -134,7 +134,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                                // source type
                 .WithMessage($"*{nameof(ConstitutionalAmendment.Number)}*")     // source property
                 .WithMessage("*[DataConverter]*")                               // annotation
-                .WithMessage($"*Field of type {nameof(Int32)}*")                // rationale
+                .WithMessage($"*property of type {nameof(Int32)}*")             // rationale
                 .WithMessage($"*operates on {nameof(Int64)}*");                 // details
         }
 
@@ -169,7 +169,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{nameof(MetraRoute.Line)}*")                       // source property
                 .WithMessage("*[DataConverter]*")                                  // annotation
                 .WithMessage($"*does not implement*{nameof(IDataConverter)}*")     // rationale
-                .WithMessage($"*{typeof(int).Name}*");                             // details
+                .WithMessage($"*{nameof(Int32)}*");                                // details
         }
 
         [TestMethod] public void DataConverterIsNotDefaultConstructible_IsError() {

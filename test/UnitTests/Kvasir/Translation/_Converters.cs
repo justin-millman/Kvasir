@@ -37,6 +37,10 @@ namespace UT.Kvasir.Translation {
             public T Convert(T source) { return source; }
             public T Revert(T result) { return result; }
         }
+        public class IntToString : IDataConverter<int, string> {
+            public string Convert(int source) { return source.ToString(); }
+            public int Revert(string result) { return int.Parse(result); }
+        }
         public class InvertBoolean : IDataConverter<bool, bool> {
             public bool Convert(bool source) { return !source; }
             public bool Revert(bool result) { return !result; }
@@ -48,6 +52,10 @@ namespace UT.Kvasir.Translation {
         public class RoundDownDouble : IDataConverter<double, int> {
             public int Convert(double source) { return (int)source; }
             public double Revert(int result) { return result + 0.5; }
+        }
+        public class TextToOther<T> : IDataConverter<string, T?> where T : notnull {
+            public T? Convert(string source) { return default; }
+            public string Revert(T? result) { return ""; }
         }
     }
 }

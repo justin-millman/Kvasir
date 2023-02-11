@@ -1,4 +1,4 @@
-﻿using Kvasir.Annotations;
+using Kvasir.Annotations;
 using System;
 
 namespace UT.Kvasir.Translation {
@@ -348,7 +348,7 @@ namespace UT.Kvasir.Translation {
                 public bool IsActive { get; set; }
                 public ushort CrewMembers { get; set; }
                 public ulong Weight { get; set; }
-        }
+            }
 
             // Test Scenario: Non-Readable Property Annotated as [CodeOnly] {error}
             public class CourtCase {
@@ -397,7 +397,7 @@ namespace UT.Kvasir.Translation {
                 [CodeOnly] public int this[int index] { get { return -1; } set {} }
             }
 
-            // Test Scenario: Property Annotated as Both [CodeOnly] and [IncludeInModel] {error}
+            // Test Scenario: Property Annotated with Both [CodeOnly] and [IncludeInModel] {error}
             public class CreditCard {
                 [PrimaryKey] public string Number { get; set; } = "";
                 public DateTime Expiration { get; set; }
@@ -561,7 +561,7 @@ namespace UT.Kvasir.Translation {
                 public ulong ApplicationNumber { get; set; }
             }
 
-            // Test Scenario: Both [Nullable] & [NonNullable] Annotation {error}
+            // Test Scenario: Property Annotated with Both [Nullable] and [NonNullable] {error}
             public class RetailProduct {
                 [PrimaryKey] public Guid ID { get; set; }
                 public string Name { get; set; } = "";
@@ -632,7 +632,7 @@ namespace UT.Kvasir.Translation {
             }
 
         /////// --- Field Naming
-        
+
             // Test Scenario: Fields with Oddly-Shaped Names
             public class Surah {
                 [PrimaryKey] public string _EnglishName { get; set; } = "";
@@ -640,7 +640,7 @@ namespace UT.Kvasir.Translation {
                 public decimal juz_start { get; set; }
                 public decimal juzEnd { get; set; }
             }
-        
+
             // Test Scenario: Rename Field to Brand New Name
             public class River {
                 [PrimaryKey] public string Name { get; set; } = "";
@@ -899,7 +899,7 @@ namespace UT.Kvasir.Translation {
             }
 
         /////// --- Candidate Keys
-        
+
             // Test Scenario: Multiple Unnamed Candidate Keys
             public class Inmate {
                 [PrimaryKey] public Guid PrisonerNumber { get; set; }
@@ -915,7 +915,7 @@ namespace UT.Kvasir.Translation {
                 public DateTime Inception { get; set; }
                 public DateTime NextScheduled { get; set; }
             }
-        
+
             // Test Scenario: Single Field in Multiple Candidate Keys
             public class KingOfEngland {
                 [PrimaryKey] public DateTime ReignStart { get; set; }
@@ -926,7 +926,7 @@ namespace UT.Kvasir.Translation {
             }
 
             // Test Scenario: Duplicate Named Candidate Keys {error}
-            public class Check {
+            public class BankCheck {
                 [PrimaryKey] public Guid CID { get; set; }
                 public string Signatory { get; set; } = "";
                 public decimal Amount { get; set; }
@@ -981,7 +981,7 @@ namespace UT.Kvasir.Translation {
                 public string Line9 { get; set; } = "";
                 public string Line10 { get; set; } = "";
                 public string Line11 { get; set; } = "";
-                public string Line12{ get; set; } = "";
+                public string Line12 { get; set; } = "";
                 public string Line13 { get; set; } = "";
                 public string Line14 { get; set; } = "";
             }
@@ -1156,7 +1156,7 @@ namespace UT.Kvasir.Translation {
                 [Unique("DoctorWho")] public int Regeneration { get; set; }
                 [Unique("DoctorWho")] public string Portrayal { get; set; } = "";
                 public uint EpisodeCount { get; set; }
-                public bool NewWho { get; set; }            
+                public bool NewWho { get; set; }
             }
 
             // Test Scenario: Single Candidate Key Contains a Nullable Field
@@ -1376,12 +1376,1574 @@ namespace UT.Kvasir.Translation {
             }
 
         /////// --- CHECK Constraints
-        
-            // None of the attributes ([Check] or anything derived from [Constraint]) exposes the values: they hold on
-            // to them and then expose a "create clause" API where the Field is provided. This means that there's
-            // limited opportunity for type-checking, and no opportunity for DateTime/GUID parsing. We'll have to do
-            // something about that. Elsewise, all the [Constraint]-derived attributes are basically the same and
-            // there's little error checking to be done - the exception is StringLength must be applied to a string-type
-            // Field.
+
+                    // ~~~~~ Signedness Constraints ~~~~~
+
+            // Test Scenario: [IsPositive] Annotation Applied to Numeric Field
+            public class GreekLetter {
+                [PrimaryKey] public char Majuscule { get; set; }
+                public char Miniscule { get; set; }
+                public char? WordFinal { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsPositive] public int NumericValue { get; set; }
+                public string AncientIPA { get; set; } = "";
+                public string ModernIPA { get; set; } = "";
+            }
+
+            // Test Scenario: [IsPositive] Annotation Applied to Non-Numeric Field {error}
+            public class Gymnast {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public double Height { get; set; }
+                [Check.IsPositive] public DateTime Birthdate { get; set; }
+                public float AvgFloor { get; set; }
+                public float AvgVault { get; set; }
+                public float AvgBeam { get; set; }
+                public float AvgRings { get; set; }
+                public float AvgBars { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsPositive] Annotation on Scalar Property {error}
+            public class Canal {
+                [PrimaryKey] public int CanalID { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsPositive(Path = "---")] public double Length { get; set; }
+                public double MaxBoatLength { get; set; }
+                public double MaxBoatBeam { get; set; }
+                public double MaxBoatDraft { get; set; }
+                public DateTime Opening { get; set; }
+            }
+
+            // Test Scenario: Multiple [IsPositive] Annotations {error}
+            public class BaseballCard {
+                [PrimaryKey] public string Company { get; set; } = "";
+                [PrimaryKey] public string Player { get; set; } = "";
+                [PrimaryKey, Check.IsPositive, Check.IsPositive] public int CardNumber { get; set; }
+                public bool IsMintCondition { get; set; }
+                public ushort NumPrinted { get; set; }
+                public decimal Value { get; set; }
+            }
+
+            // Test Scenario: [IsNegative] Annotation Applied to Signed Numeric Field
+            public class Acid {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Formula { get; set; } = "";
+                [Check.IsNegative] public float pH { get; set; }
+                public int HazardNumber { get; set; }
+            }
+
+            // Test Scenario: [IsNegative] Annotation Applied to Unsigned Numeric Field {error}
+            public class Cereal {
+                [PrimaryKey] public string Brand { get; set; } = "";
+                [PrimaryKey] public string Variety { get; set; } = "";
+                [Check.IsNegative] public ushort CaloriesPerServing { get; set; }
+                public double PotassiumPerServing { get; set; }
+                public double SodiumPerServing { get; set; }
+                public double CarbsPerServing { get; set; }
+                public double ProteinPerServing { get; set; }
+            }
+
+            // Test Scenario: [IsNegative] Annotation Applied to Non-Numeric Field {error}
+            public class KeySignature {
+                [PrimaryKey, Check.IsNegative] public char Note { get; set; }
+                [PrimaryKey] public bool Sharp { get; set; }
+                [PrimaryKey] public bool Flat { get; set; }
+                [PrimaryKey] public bool Natural { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsNegative] Annotation on Scalar Property {error}
+            public class CircleOfHell {
+                [PrimaryKey, Check.IsNegative(Path = "---")] public byte Level { get; set; }
+                public string Title { get; set; } = "";
+                public string PrimeResident { get; set; } = "";
+                public ulong CantoOfIntroduction { get; set; }
+            }
+
+            // Test Scenario: Multiple [IsNegative] Annotations {error}
+            public class Alkene {
+                [PrimaryKey] public string Formula { get; set; } = "";
+                public bool IsCyclic { get; set; }
+                [Check.IsNegative, Check.IsNegative] public double FreezingPoint { get; set; }
+                public double Density { get; set; }
+            }
+
+            // Test Scenario: [IsNonZero] Annotation Applied to Numeric Field
+            public class RegularPolygon {
+                [PrimaryKey] public ushort NumEdges { get; set; }
+                [Check.IsNonZero] public double InternalAngle { get; set; }
+                public bool IsConvex { get; set; }
+            }
+
+            // Test Scenario: [IsNonZero] Annotation Applied to Non-Numeric Field {error}
+            public class Brassiere {
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public ushort Band { get; set; }
+                [Check.IsNonZero] public string CupSize { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> Provided for [IsNonZero] Annotation on Scalar Property {error}
+            public class Cryptocurrency {
+                [PrimaryKey] public string CoinName { get; set; } = "";
+                public float Precision { get; set; }
+                [Check.IsNonZero(Path = "---")] public decimal ExchangeRate { get; set; }
+                public DateTime InitialRelease { get; set; }
+                public ulong AccountHolders { get; set; }
+            }
+
+            // Test Scenario: Multiple [IsNonZero] Annotations {error}
+            public class Shoe {
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public string Brand { get; set; } = "";
+                [Check.IsNonZero, Check.IsNonZero] public float? Mens { get; set; }
+                public float? Womens { get; set; }
+                public bool IsHighHeel { get; set; }
+                public bool IsBoot { get; set; }
+                public bool IsSportsShoe { get; set; }
+            }
+
+            // Test Scenario: Signedness Annotation on Property Data-Converted to Numeric Type
+            public class SwimmingPool {
+                [PrimaryKey] public uint Depth { get; set; }
+                [PrimaryKey] public uint Length { get; set; }
+                [PrimaryKey, DataConverter(typeof(CharToInt)), Check.IsPositive] public char Classification { get; set; }
+                public bool HasDivingBoard { get; set; }
+            }
+
+            // Test Scenario: Signedness Annotation on Property Data-Converted from Numeric Type {error}
+            public class Elevator {
+                [PrimaryKey] public Guid ProductNumber { get; set; }
+                public DateTime LastInspected { get; set; }
+                public float MaxLoad { get; set; }
+                [Check.IsNonZero, DataConverter(typeof(IntToString))] public int NumFloors { get; set; }
+            }
+
+            // Test Scenario: Property Annotated with Both [IsPositive] and [IsNegative] {error}
+            public class Directory {
+                [PrimaryKey] public string? Parent { get; set; } = "";
+                [PrimaryKey] public string Name { get; set; } = "";
+                public uint Owner { get; set; }
+                [Check.IsPositive, Check.IsNegative] public short Mode { get; set; }
+                public ulong SizeMb { get; set; }
+            }
+
+            // Test Scenario: Property Annotated with Both [IsPositive] and [IsNonZero] {error}
+            public class Peninsula {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsPositive, Check.IsNonZero] public long Coastline { get; set; }
+                public ulong Area { get; set; }
+                public string Continent { get; set; } = "";
+                public ulong Population { get; set; }
+            }
+
+            // Test Scenario: Property Annotated with Both [IsNegative] and [IsNonZero] {error}
+            public class HTTPError {
+                [PrimaryKey, Check.IsNegative, Check.IsNonZero] public int ErrorCode { get; set; }
+                public string Title { get; set; } = "";
+                public string Description { get; set; } = "";
+                public bool IsDeprecated { get; set; }
+            }
+
+                    // ~~~~~ Comparison Constraints ~~~~~
+
+            // Test Scenario: [IsGreaterThan] Annotation Applied to Numeric Field
+            public class DNDSpell {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsGreaterThan((ushort)0)] public ushort Range { get; set; }
+                [Check.IsGreaterThan(-1)] public int Level { get; set; }
+                [Check.IsGreaterThan(2.5f)] public float AverageDamage { get; set; }
+                public bool AsBonusAction { get; set; }
+                public bool HasVerbalComponents { get; set; }
+                public bool HasSomaticComponents { get; set; }
+                public bool HasPhysicalComponents { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterThan] Annotation Applied to Textual Field
+            public class MultipleChoiceQuestion {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.IsGreaterThan('@')] public char CorrectAnswer { get; set; }
+                public string QuestionText { get; set; } = "";
+                [Check.IsGreaterThan("A. ")] public string ChoiceA { get; set; } = "";
+                [Check.IsGreaterThan("A. ")] public string ChoiceB { get; set; } = "";
+                [Check.IsGreaterThan("A. ")] public string ChoiceC { get; set; } = "";
+                [Check.IsGreaterThan("A. ")] public string ChoiceD { get; set; } = "";
+            }
+
+            // Test Scenario: [IsGreaterThan] Annotation Applied to DateTime Field
+            public class GoldRush {
+                [PrimaryKey] public string Location { get; set; } = "";
+                [PrimaryKey, Check.IsGreaterThan("1200-03-18")] public DateTime StartDate { get; set; }
+                [PrimaryKey, Check.IsGreaterThan("1176-11-22")] public DateTime EndDate { get; set; }
+                public decimal EstimatedGrossWealth { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterThan] Annotation Applied to Nullable Orderable Field
+            public class Baryon {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public double Spin { get; set; }
+                [Check.IsGreaterThan((short)-5)] public short? Charge { get; set; }
+                public float AngularMomentum { get; set; }
+                public bool PositiveParity { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterThan] Annotation Applied to Non-Ordered Field {error}
+            public class Font {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong YearReleased { get; set; }
+                public decimal XHeight { get; set; }
+                [Check.IsGreaterThan(false)] public bool HasSerifs { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterThan] Anchor is null {error}
+            public class UNResolution {
+                [PrimaryKey] public int Number { get; set; }
+                public string Title { get; set; } = "";
+                [Check.IsGreaterThan(null!)] public ushort? NumSignatories { get; set; }
+                public DateTime Introduced { get; set; }
+                public bool Adopted { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterThan] Anchor is Maximum Possible Value {error}
+            public class Upanishad {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsGreaterThan(sbyte.MaxValue)] public sbyte Index { get; set; }
+                public DateTime WhenAuthored { get; set; }
+                public ulong WordCount { get; set; }
+            }
+
+            // Test Scenario: Invalid and Unconvertible Anchor Provided to [IsGreaterThan] Annotation {error}
+            public class Racehorse {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime Birth { get; set; }
+                public DateTime? Death { get; set; }
+                [Check.IsGreaterThan(true)] public ulong? FirstDerbyWin { get; set; }
+                public ushort Wins { get; set; }
+                public ushort Places { get; set; }
+                public ushort Shows { get; set; }
+                public bool IsStallion { get; set; }
+                public double CareerEarnings { get; set; }
+            }
+
+            // Test Scenario: Invalid but Convertible Anchor Provided to [IsGreaterThan] Annotation {error}
+            public class ChineseCharacter {
+                [PrimaryKey, Check.IsGreaterThan((byte)14)] public char Character { get; set; }
+                public string PinyinTransliteration { get; set; } = "";
+                public string CantoneseTransliteration { get; set; } = "";
+                public string PrimaryDefinition { get; set; } = "";
+            }
+
+            // Test Scenario: Single-Element Array of Correct as Anchor to [IsGreaterThan] Annotation {error}
+            public class Query {
+                [PrimaryKey] public string SELECT { get; set; } = "";
+                [PrimaryKey] public string FROM { get; set; } = "";
+                [PrimaryKey, Check.IsGreaterThan(new[] { "\0" })] public string WHERE { get; set; } = "";
+                [PrimaryKey] public string GROUP_BY { get; set; } = "";
+                [PrimaryKey] public string ORDER_BY { get; set; } = "";
+                [PrimaryKey] public string LIMIT { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> Provided for [IsGreaterThan] Annotation on Scalar Property {error}
+            public class Canyon {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public float CenterLatitude { get; set; }
+                public float CenterLongitude { get; set; }
+                [Check.IsGreaterThan(100.65, Path = "---")] public double Depth { get; set; }
+                public ulong TotalArea { get; set; }
+            }
+
+            // Test Scenario: Multiple [IsGreaterThan] Annotations {error}
+            public class NuclearPowerPlant {
+                [PrimaryKey] public string OfficialName { get; set; } = "";
+                public DateTime Opened { get; set; }
+                public bool IsOnline { get; set; }
+                [Check.IsGreaterThan(-1L), Check.IsGreaterThan(37L)] public long Meltdowns { get; set; }
+                public ushort Reactors { get; set; }
+                public ulong ThermalCapacity { get; set; }
+                public ulong PowerGenerated { get; set; }
+            }
+
+            // Test Scenario: [IsLessThan] Annotation Applied to Numeric Field
+            public class Resistor {
+                [PrimaryKey] public Guid CircuitComponentIdentifier { get; set; }
+                [Check.IsLessThan(27814L)] public long Resistance { get; set; }
+                public bool IsThermistor { get; set; }
+                public bool IsVaristor { get; set; }
+            }
+
+            // Test Scenario: [IsLessThan] Annotation Applied to Textual Field
+            public class Senator {
+                [PrimaryKey] public string FirstName { get; set; } = "";
+                public string? MiddleName { get; set; }
+                [PrimaryKey, Check.IsLessThan("...")] public string LastName { get; set; } = "";
+                public string State { get; set; } = "";
+                public ulong LastElected { get; set; }
+                public string Party { get; set; } = "";
+                public bool IsInLeadership { get; set; }
+            }
+
+            // Test Scenario: [IsLessThan] Annotation Applied to DateTime Field
+            public class Commercial {
+                [PrimaryKey] public ushort Channel { get; set; }
+                [PrimaryKey, Check.IsLessThan("2300-01-01")] public DateTime TimeSlot { get; set; }
+                public byte LengthSeconds { get; set; }
+                public bool ForSuperBowl { get; set; }
+                public string? Company { get; set; } = "";
+            }
+
+            // Test Scenario: [IsLessThan] Annotation Applied to Nullable Orderable Field
+            public class AutoRacetrack {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsLessThan(12000000L)] public long? TrackLength { get; set; }
+                public byte FIAGrade { get; set; }
+                public double TopRecordedSpeed { get; set; }
+                public double LapRecord { get; set; }
+            }
+
+            // Test Scenario: [IsLessThan] Annotation Applied to Non-Ordered Field {error}
+            public class DLL {
+                [PrimaryKey, Check.IsLessThan("db5bf338-7dcd-46b5-85a2-ee3c518b9ed2")] public Guid ID { get; set; }
+                public byte BitSize { get; set; }
+                [PrimaryKey] public string AbsolutePath { get; set; } = "";
+                public ulong MemoryKB { get; set; }
+                public string? Author { get; set; }
+                public float Version { get; set; }
+            }
+
+            // Test Scenario: [IsLessThan] Anchor is null {error}
+            public class Animation {
+                [PrimaryKey] public string File { get; set; } = "";
+                [PrimaryKey] public ushort Slide { get; set; }
+                [PrimaryKey] public string ObjectName { get; set; } = "";
+                [PrimaryKey] public string Trigger { get; set; } = "";
+                [Check.IsLessThan(null!)] public double? Duration { get; set; }
+                public bool IsOnEntry { get; set; }
+                public bool IsOnExit { get; set; }
+                public bool IsEmphasis { get; set; }
+            }
+
+            // Test Scenario: [IsLessThan] Anchor is Minimum Possible Value {error}
+            public class StrategoPiece {
+                [PrimaryKey] public string Title { get; set; } = "";
+                public int CountPerSide { get; set; }
+                [Check.IsLessThan(uint.MinValue)] public uint Value { get; set; }
+                public bool IsFlag { get; set; }
+                public bool IsBomb { get; set; }
+            }
+
+            // Test Scenario: Invalid and Unconvertible Anchor Provided to [IsLessThan] Annotation {error}
+            public class Distribution {
+                [PrimaryKey] public string Title { get; set; } = "";
+                public double Mean { get; set; }
+                public double Median { get; set; }
+                [Check.IsLessThan("Zero")] public double Mode { get; set; }
+                public string PDF { get; set; } = "";
+                public string CDF { get; set; } = "";
+            }
+
+            // Test Scenario: Invalid but Convertible Anchor Provided to [IsLessThan] Annotation {error}
+            public class WebBrowser {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool IsChromiumBased { get; set; }
+                public string LatestRelease { get; set; } = "";
+                [Check.IsLessThan(100)] public float MarketShare { get; set; }
+                public uint HTML5Score { get; set; }
+            }
+
+            // Test Scenario: Single-Element Array of Correct as Anchor to [IsLessThan] Annotation {error}
+            public class GrammaticalCase {
+                [PrimaryKey] public string Case { get; set; } = "";
+                public string Abbreviation { get; set; } = "";
+                public bool PresentInEnglish { get; set; }
+                public bool PresentInLatin { get; set; }
+                [Check.IsLessThan(new[] { 'z' })] public char? Affix { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsLessThan] Annotation on Scalar Property {error}
+            public class Potato {
+                [PrimaryKey] public int GlobaPotatoIdentificationNumber { get; set; }
+                [Check.IsLessThan(1.0f, Path = "---")] public float Weight { get; set; }
+                public string Preparation { get; set; } = "";
+                public string Genus { get; set; } = "";
+                public string Species { get; set; } = "";
+            }
+
+            // Test Scenario: Multiple [IsLessThan] Annotations {error}
+            public class CinemaSins {
+                [PrimaryKey] public string URL { get; set; } = "";
+                public string Movie { get; set; } = "";
+                [Check.IsLessThan(1712312389UL), Check.IsLessThan(18231247121293UL)] public ulong SinCount { get; set; }
+                public string Sentence { get; set; } = "";
+                public bool PatreonExclusive { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterOrEqualTo] Annotation Applied to Numeric Field
+            public class Geyser {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsGreaterOrEqualTo(0L)] public long EruptionHeight { get; set; }
+                [Check.IsGreaterOrEqualTo(0f)] public float Elevation { get; set; }
+                [Check.IsGreaterOrEqualTo(0)] public int EruptionDuration { get; set; }
+                public string? NationalParkHome { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterOrEqualTo] Annotation Applied to Textual Field
+            public class Hotel {
+                [PrimaryKey] public Guid HotelID { get; set; }
+                [Check.IsGreaterOrEqualTo("")] public string HotelName { get; set; } = "";
+                [Check.IsGreaterOrEqualTo('1')] public char Stars { get; set; }
+                public ushort NumFloors { get; set; }
+                public ushort NumRooms { get; set; }
+                public bool ContinentalBreakfast { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterOrEqualTo] Annotation Applied to DateTime Field
+            public class ETF {
+                [PrimaryKey] public string Symbol { get; set; } = "";
+                [Check.IsGreaterOrEqualTo("1377-06-19")] public DateTime FirstPosted { get; set; }
+                public decimal ClosingPrice { get; set; }
+                public string TopConstituent { get; set; } = "";
+                public string OfferingOrganization { get; set; } = "";
+            }
+
+            // Test Scenario: [IsGreaterOrEqualTo] Annotation Applied to Nullable Orderable Field
+            public class Muscle {
+                [PrimaryKey] public uint FMAID { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsGreaterOrEqualTo("~~~")] public string? Nerve { get; set; }
+                public bool IsFlexor { get; set; }
+                public bool IsExtensor { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterOrEqualTo] Annotation Applied to Non-Ordered Field {error}
+            public class Steak {
+                [PrimaryKey] public Guid SteakID { get; set; }
+                public float Temperature { get; set; }
+                public string Cut { get; set; } = "";
+                [Check.IsGreaterOrEqualTo(false)] public bool FromSteakhouse { get; set; }
+                public double Weight { get; set; }
+            }
+
+            // Test Scenario: [IsGreaterOrEqualTo] Anchor is null {error}
+            public class Neurotoxin {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string ChemicalFormula { get; set; } = "";
+                public string? Abbreviation { get; set; }
+                [Check.IsGreaterOrEqualTo(null!)] public double MolarMass { get; set; }
+                public string Inhibits { get; set; } = "";
+            }
+
+            // Test Scenario: [IsGreaterOrEqualTo] Anchor is Minimum Possible Value {error}
+            public class Bacterium {
+                [PrimaryKey] public string Genus { get; set; } = "";
+                [PrimaryKey] public string Species { get; set; } = "";
+                public bool GramPositive { get; set; }
+                [Check.IsGreaterOrEqualTo(ushort.MinValue)] public ushort NumStrains { get; set; }
+                public string Shape { get; set; } = "";
+            }
+
+            // Test Scenario: Invalid and Unconvertible Anchor Provided to [IsGreaterOrEqualTo] Annotation {error}
+            public class LandCard {
+                [PrimaryKey] public Guid CardID { get; set; }
+                public byte WhiteManna { get; set; }
+                public byte GreenManna { get; set; }
+                [Check.IsGreaterOrEqualTo("None")] public byte BlueManna { get; set; }
+                public byte RedManna { get; set; }
+                public byte BlackManna { get; set; }
+                public byte UncoloredManna { get; set; }
+                public bool EntersTapped { get; set; }
+                public string ActivatedAbilities { get; set; } = "";
+            }
+
+            // Test Scenario: Invalid but Convertible Anchor Provided to [IsGreaterOrEqualTo] Annotation {error}
+            public class Keystroke {
+                [PrimaryKey] public byte Key { get; set; }
+                public bool Shift { get; set; }
+                public bool Control { get; set; }
+                public bool Alt { get; set; }
+                public bool Function { get; set; }
+                public string Description { get; set; } = "";
+                [Check.IsGreaterOrEqualTo(290)] public char? ResultingGlyph { get; set; }
+            }
+
+            // Test Scenario: Single-Element Array of Correct as Anchor to [IsGreaterOrEqualTo] Annotation {error}
+            public class Zoo {
+                [PrimaryKey] public string City { get; set; } = "";
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ushort AnimalPopulation { get; set; }
+                [Check.IsGreaterOrEqualTo(new[] { 4.2213f })] public float AverageVisitorsPerDay { get; set; }
+                public bool AZA { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsGreaterOrEqualTo] Annotation on Scalar Property {error}
+            public class Hieroglyph {
+                [PrimaryKey] public ulong UnicodeValue { get; set; }
+                [Check.IsGreaterOrEqualTo("?", Path = "---")] public string Glyph { get; set; } = "";
+                public string Name { get; set; } = "";
+                public bool IsDeterminative { get; set; }
+                public string Semantic { get; set; } = "";
+            }
+
+            // Test Scenario: Multiple [IsGreaterOrEqualTo] Annotations {error}
+            public class SolarEclipse {
+                [PrimaryKey] public DateTime Start { get; set; }
+                [PrimaryKey] public DateTime End { get; set; }
+                public double Magnitude { get; set; }
+                public double Gamma { get; set; }
+                [Check.IsGreaterOrEqualTo(3), Check.IsGreaterOrEqualTo(-5)] public int SarosCycle { get; set; }
+            }
+
+            // Test Scenario: [IsLessOrEqualTo] Annotation Applied to Numeric Field
+            public class Fjord {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsLessOrEqualTo(90f)] public float Latitude { get; set; }
+                [Check.IsLessOrEqualTo(90f)] public float Longitude { get; set; }
+                [Check.IsLessOrEqualTo(100000UL)] public ulong Length { get; set; }
+                [Check.IsLessOrEqualTo((short)6723)] public short Width { get; set; }
+            }
+
+            // Test Scenario: [IsLessOrEqualTo] Annotation Applied to Textual Field
+            public class ExcelRange {
+                [PrimaryKey, Check.IsLessOrEqualTo("XFD")] public string StartColumn { get; set; } = "";
+                public ulong StartRow { get; set; }
+                [PrimaryKey, Check.IsLessOrEqualTo("XFD")] public string EndColumn { get; set; } = "";
+                public ulong EndRow { get; set; }
+            }
+
+            // Test Scenario: [IsLessOrEqualTo] Annotation Applied to DateTime Field
+            public class Representative {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Party { get; set; } = "";
+                public long District { get; set; }
+                public string State { get; set; } = "";
+                [Check.IsLessOrEqualTo("2688-12-02")] public DateTime FirstElected { get; set; }
+            }
+
+            // Test Scenario: [IsLessOrEqualTo] Annotation Applied to Nullable Orderable Field
+            public class Subreddit {
+                [PrimaryKey] public string Identifier { get; set; } = "";
+                public string URL { get; set; } = "";
+                [Check.IsLessOrEqualTo("???")] public string? Moderator { get; set; }
+                public ulong Posts { get; set; }
+                public ulong NetKarma { get; set; }
+                public ulong Subscribers { get; set; }
+            }
+
+            // Test Scenario: [IsLessOrEqualTo] Annotation Applied to Non-Ordered Field {error}
+            public class Sunscreen {
+                [PrimaryKey, Check.IsLessOrEqualTo("7242f5a0-e4b2-4834-9485-ec39e4ab8ca4")] public Guid ID { get; set; }
+                public string Brand { get; set; } = "";
+                public double SPF { get; set; }
+                public bool IsNatural { get; set; }
+            }
+
+            // Test Scenario: [IsLessOrEqualTo] Anchor is null {error}
+            public class VoirDire {
+                [PrimaryKey] public DateTime When { get; set; }
+                public ushort InitialPoolSize { get; set; }
+                public ushort ProsecutionDismissals { get; set; }
+                public ushort DefenseDismissals { get; set; }
+                [Check.IsLessOrEqualTo(null!)] public ushort BatsonChallenges { get; set; }
+            }
+
+            // Test Scenario: [IsLessOrEqualTo] Anchor is Maximum Possible Value {error}
+            public class ShellCommand {
+                [PrimaryKey] public string Command { get; set; } = "";
+                public bool PrintsToStdOut { get; set; }
+                public long NumArguments { get; set; }
+                [Check.IsLessOrEqualTo(long.MaxValue)] public long NumOptions { get; set; }
+                public string HelpText { get; set; } = "";
+                public string ManText { get; set; } = "";
+            }
+
+            // Test Scenario: Invalid and Unconvertible Anchor Provided to [IsLessOrEqualTo] Annotation {error}
+            public class Dreidel {
+                [PrimaryKey] public int IsraeliDreidelIdentificationNumber { get; set; }
+                [Check.IsLessOrEqualTo((byte)153)] public string? SerialCode { get; set; }
+                public bool ShowsShin { get; set; }
+                public float Weight { get; set; }
+                public bool MadeOutOfClay { get; set; }
+            }
+
+            // Test Scenario: Invalid but Convertible Anchor Provided to [IsLessOrEqualTo] Annotation {error}
+            public class ArthurianKnight {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public int RoundTableSeatNumber { get; set; }
+                public bool TouchedExcalibur { get; set; }
+                [Check.IsLessOrEqualTo(4U)] public ulong MalloryMentions { get; set; }
+                public bool AppearsInMerlin { get; set; }
+            }
+
+            // Test Scenario: Single-Element Array of Correct as Anchor to [IsLessOrEqualTo] Annotation {error}
+            public class Mint {
+                [PrimaryKey] public string City { get; set; } = "";
+                [PrimaryKey] public string Currency { get; set; } = "";
+                [Check.IsLessOrEqualTo(new[] { "1845-08-30" })] public DateTime Established { get; set; }
+                public decimal CumulativeValueMinted { get; set; }
+                public char Identifier { get; set; }
+                public bool Operational { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsLessOrEqualTo] Annotation on Scalar Property {error}
+            public class PlaneOfExistence {
+                [PrimaryKey, Check.IsLessOrEqualTo("Nether-Plane", Path = "---")] public string Name { get; set; } = "";
+                public bool IsElemental { get; set; }
+                public bool IsHellPlane { get; set; }
+                public bool IsFaeriePlane { get; set; }
+            }
+
+            // Test Scenario: Multiple [IsLessOrEqualTo] Annotations {error}
+            public class Archbishop {
+                [PrimaryKey] public string FirstName { get; set; } = "";
+                [PrimaryKey] public string? MiddleName { get; set; }
+                [PrimaryKey] public string LastName { get; set; } = "";
+                [Check.IsLessOrEqualTo("124"), Check.IsLessOrEqualTo("Uppsala")] public string City { get; set; } = "";
+                public DateTime Consecrated { get; set; }
+                public DateTime Installed { get; set; }
+            }
+
+            // Test Scenario: [IsNot] Annotation Applied to Numeric Field
+            public class Bridge {
+                [PrimaryKey] public int ID { get; set; }
+                [Check.IsNot(34)] public int Length { get; set; }
+                [Check.IsNot(15UL)] public ulong Height { get; set; }
+                [Check.IsNot(0.23776f)] public float Width { get; set; }
+                public DateTime Built { get; set; }
+                public bool IsOverWater { get; set; }
+            }
+
+            // Test Scenario: [IsNot] Annotation Applied to Textual Field
+            public class Quatrain {
+                [PrimaryKey] public string Title { get; set; } = "";
+                [PrimaryKey] public string Author { get; set; } = "";
+                [Check.IsNot("Elephant")] public string Line1 { get; set; } = "";
+                [Check.IsNot("Giraffe")] public string Line2 { get; set; } = "";
+                [Check.IsNot("Crocodile")] public string Line3 { get; set; } = "";
+                [Check.IsNot("Rhinoceros")] public string Line4 { get; set; } = "";
+            }
+
+            // Test Scenario: [IsNot] Annotation Applied to DateTime Field
+            public class SlotMachine {
+                [PrimaryKey] public Guid MachineNumber { get; set; }
+                public ulong Jackpot { get; set; }
+                public decimal LeverCost { get; set; }
+                [Check.IsNot("4431-01-21")] public DateTime InstalledOn { get; set; }
+                public ulong NumPlays { get; set; }
+            }
+
+            // Test Scenario: [IsNot] Annotation Applied to Boolean Field
+            public class PoliceOfficer {
+                public string FirstName { get; set; } = "";
+                public string LastName { get; set; } = "";
+                [PrimaryKey] public string Department { get; set; } = "";
+                [PrimaryKey] public ushort BadgeNumber { get; set; }
+                [Check.IsNot(false)] public bool IsRetired { get; set; }
+            }
+
+            // Test Scenario: [IsNot] Annotation Applied to Guid Field
+            public class Church {
+                [PrimaryKey, Check.IsNot("a3c3ac24-4cf2-428e-a4db-76b30958cc90")] public Guid ChurchID { get; set; }
+                public string Name { get; set; } = "";
+                public byte NumSpires { get; set; }
+                public double Height { get; set; }
+                public ushort NumBells { get; set; }
+                public DateTime Established { get; set; }
+            }
+
+            // Test Scenario: [IsNot] Annotation Applied to Nullable Field
+            public class Fountain {
+                [PrimaryKey] public string FountainName { get; set; } = "";
+                public ulong Height { get; set; }
+                public ulong Length { get; set; }
+                [Check.IsNot(35.22)] public double Spout { get; set; }
+                public string Masonry { get; set; } = "";
+            }
+
+            // Test Scenario: [IsNot] Anchor is null {error}
+            public class SecurityBug {
+                [PrimaryKey] public string CVEIdentifier { get; set; } = "";
+                [Check.IsNot(null!)] public string LibraryAffected { get; set; } = "";
+                public string VersionPatched { get; set; } = "";
+                public DateTime Discovered { get; set; }
+                public DateTime Patched { get; set; }
+            }
+
+            // Test Scenario: Invalid and Unconvertible Anchor Provided to [IsNot] Annotation {error}
+            public class Candle {
+                [PrimaryKey] public uint ProductID { get; set; }
+                public string? Scent { get; set; }
+                public float Height { get; set; }
+                [Check.IsNot("Wide")] public float Width { get; set; }
+                public double AverageBurnTime { get; set; }
+            }
+
+            // Test Scenario: Invalid but Convertible Anchor Provided to [IsNot] Annotation {error}
+            public class CompilerWarning {
+                [PrimaryKey] public string WarningID { get; set; } = "";
+                public byte Severity { get; set; }
+                [Check.IsNot(1)] public bool DebugOnly { get; set; }
+                public string VersionIntroduced { get; set; } = "";
+                public string WarningText { get; set; } = "";
+                public bool IsSuppressed { get; set; }
+            }
+
+            // Test Scenario: Single-Element Array of Correct as Anchor to [IsNot] Annotation {error}
+            public class Alarm {
+                [PrimaryKey] public Guid ID { get; set; }
+                public byte Hour { get; set; }
+                public byte Minute { get; set; }
+                [Check.IsNot(new[] { false })] public bool Snoozeable { get; set; }
+                public string NotificationSound { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> Provided for [IsNot] Annotation on Scalar Property {error}
+            public class Prison {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong Capacity { get; set; }
+                public ulong Population { get; set; }
+                [Check.IsNot(10u, Path = "---")] public uint SecurityLevel { get; set; }
+                public DateTime Opened { get; set; }
+            }
+
+            // Test Scenario: Multiple [IsNot] Annotations {error}
+            public class Pterosaur {
+                public string Family { get; set; } = "";
+                [PrimaryKey] public string Genus { get; set; } = "";
+                [PrimaryKey] public string Species { get; set; } = "";
+                public double Wingspan { get; set; }
+                [Check.IsNot(0u), Check.IsNot(7894520u)] public uint Specimens { get; set; }
+                public bool Toothed { get; set; }
+            }
+
+            // Test Scenario: Ranged Comparison Annotation Anchor is Invalid for DateTime b/c of Formatting {error}
+            public class Lease {
+                [PrimaryKey] public string Address { get; set; } = "";
+                public uint? Unit { get; set; }
+                [Check.IsGreaterOrEqualTo("1637+04+18")] public DateTime StartDate { get; set; }
+                public DateTime EndDate { get; set; }
+                public decimal MonthlyRent { get; set; }
+                public bool ContainsOptOut { get; set; }
+            }
+
+            // Test Scenario: Ranged Comparison Annotation Anchor is Invalid for DateTime b/c of Range {error}
+            public class LotteryTicket {
+                [PrimaryKey] public Guid Ticket { get; set; }
+                public byte N0 { get; set; }
+                public byte N1 { get; set; }
+                public byte N2 { get; set; }
+                byte N3 { get; set; }
+                public byte N4 { get; set; }
+                public byte N5 { get; set; }
+                [Check.IsNot("2023-02-29")] public DateTime PurchaseTime { get; set; }
+            }
+
+            // Test Scenario: Ranged Comparison Annotation Anchor is Invalid for DateTime b/c of Type {error}
+            public class ACT {
+                [PrimaryKey] public string Taker { get; set; } = "";
+                [PrimaryKey, Check.IsLessThan(100)] public DateTime When { get; set; }
+                public byte Composite { get; set; }
+                public byte Mathematics { get; set; }
+                public byte Science { get; set; }
+                public byte Reading { get; set; }
+                public byte English { get; set; }
+            }
+
+            // Test Scenario: Ranged Comparison Annotation on Data-Converted Property
+            public class RingOfPower {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string? Holder { get; set; }
+                [Check.IsGreaterOrEqualTo(7), DataConverter(typeof(BoolToInt))] public bool Destroyed { get; set; }
+                public DateTime Forged { get; set; }
+                public string CentralStone { get; set; } = "";
+            }
+
+            // Test Scenario: Ranged Comparison Annotation with Valid Anchor for Conversion Target Type {error}
+            public class Genie {
+                [PrimaryKey] public string Identifier { get; set; } = "";
+                [DataConverter(typeof(IntToString)), Check.IsLessThan(144)] public int NumWishes { get; set; }
+                public bool IsFriendly { get; set; }
+                public string PrincipalForm { get; set; } = "";
+            }
+
+                    // ~~~~~ String Length Constraints ~~~~~
+
+            // Test Scenario: [IsNonEmpty] Annotation Applied to String-Type Field
+            public class Chocolate {
+                [PrimaryKey, Check.IsNonEmpty] public string Name { get; set; } = "";
+                public double PercentDark { get; set; }
+                public bool AllNatural { get; set; }
+            }
+
+            // Test Scenario: [IsNonEmpty] Annotation Applied to Nullable String-Type Field
+            public class Scholarship {
+                [PrimaryKey] public Guid IdentificationString { get; set; }
+                public decimal Amount { get; set; }
+                public ulong Submissions { get; set; }
+                [Check.IsNonEmpty] public string? Organization { get; set; }
+                [Check.IsNonEmpty] public string? TargetSchool { get; set; }
+            }
+
+            // Test Scenario: [IsNonEmpty] Annotation Applied to Non-String Field {error}
+            public class MovieTicket {
+                [PrimaryKey] public string Theater { get; set; } = "";
+                [PrimaryKey] public string Film { get; set; } = "";
+                [PrimaryKey] public DateTime Showtime { get; set; }
+                [Check.IsNonEmpty] public char Row { get; set; }
+                public byte SeatNumber { get; set; }
+                public bool OnlineOrder { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsNonEmpty] Annotation on Scalar Property {error}
+            public class ASLSign {
+                [PrimaryKey, Check.IsNonEmpty(Path = "---")] public string Gloss { get; set; } = "";
+                public string Location { get; set; } = "";
+                public string Movement { get; set; } = "";
+                public string HandShape { get; set; } = "";
+                public string PalmOrientation { get; set; } = "";
+            }
+
+            // Test Scenario: Multiple [IsNonEmpty] Annotations {error}
+            public class Top10List {
+                [PrimaryKey] public string Title { get; set; } = "";
+                public string Number1 { get; set; } = "";
+                public string Number2 { get; set; } = "";
+                public string Number3 { get; set; } = "";
+                public string Number4 { get; set; } = "";
+                public string Number5 { get; set; } = "";
+                public string Number6 { get; set; } = "";
+                public string Number7 { get; set; } = "";
+                public string Number8 { get; set; } = "";
+                [Check.IsNonEmpty, Check.IsNonEmpty] public string Number9 { get; set; } = "";
+                public string Number10 { get; set; } = "";
+            }
+
+            // Test Scenario: [LengthIsAtLeast] Annotation Applied to String-Type Field
+            public class NFLPenalty {
+                [PrimaryKey, Check.LengthIsAtLeast(1)] public string Penalty { get; set; } = "";
+                public bool OnOffense { get; set; }
+                public bool OnDefense { get; set; }
+                public bool OnSpecialTeams { get; set; }
+                public byte Yards { get; set; }
+                public bool LossOfDown { get; set; }
+            }
+
+            // Test Scenario: [LengthIsAtLeast] Annotation Applied to Nullable String-Type Field
+            public class Ben10Alien {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.LengthIsAtLeast(7)] public string? AlternateName { get; set; }
+                public string HomePlanet { get; set; } = "";
+                public uint OrderOfAddition { get; set; }
+                public byte Appearances { get; set; }
+                public string FirstEpisode { get; set; } = "";
+            }
+
+            // Test Scenario: [LengthIsAtLeast] Annotation Given Negative Anchor {error}
+            public class LaborOfHeracles {
+                [PrimaryKey] public ushort Order { get; set; }
+                [Check.LengthIsAtLeast(-144)] public string Target { get; set; } = "";
+                public bool WasExtra { get; set; }
+                public bool TargetToBeKilled { get; set; }
+            }
+
+            // Test Scenario: [LengthIsAtLeast] Annotation Given Anchor of 0 {error}
+            public class HolyRomanEmperor {
+                [PrimaryKey] public DateTime ReignBegin { get; set; }
+                [PrimaryKey] public DateTime ReignEnd { get; set; }
+                [Check.LengthIsAtLeast(0)] public string Name { get; set; } = "";
+                public string RoyalHouse { get; set; } = "";
+            }
+
+            // Test Scenario: [LengthIsAtLeast] Annotation Applied to Non-String Field {error}
+            public class HashFunction {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ushort DigestSize { get; set; }
+                [Check.LengthIsAtLeast(7)] public ushort BlockSize { get; set; }
+                public DateTime FirstPublished { get; set; }
+                public float CollisionLikelihood { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [LengthIsAtLeast] Annotation on Scalar Property {error}
+            public class Histogram {
+                [PrimaryKey] public Guid ID { get; set; }
+                public long MinBucket { get; set; }
+                public long MaxBucket { get; set; }
+                public long BucketSize { get; set; }
+                [Check.LengthIsAtLeast(2, Path = "---")] public string BucketUnit { get; set; } = "";
+            }
+
+            // Test Scenario: Multiple [LengthIsAtLeast] Annotations {error}
+            public class Bagel {
+                [PrimaryKey, Check.LengthIsAtLeast(17), Check.LengthIsAtLeast(34)] public string Flavor { get; set; } = "";
+                [PrimaryKey] public bool Toasted { get; set; }
+                [PrimaryKey] public string Schmear { get; set; } = "";
+                public decimal Cost { get; set; }
+            }
+
+            // Test Scenario: [LengthIsAtMost] Annotation Applied to String-Type Field
+            public class Snake {
+                [PrimaryKey, Check.LengthIsAtMost(175)] public string Genus { get; set; } = "";
+                [PrimaryKey, Check.LengthIsAtMost(13512)] public string Species { get; set; } = "";
+                [Check.LengthIsAtMost(25)] public string CommonName { get; set; } = "";
+                public bool IsVenomous { get; set; }
+                public double AverageLength { get; set; }
+                public double AverageWeight { get; set; }
+            }
+
+            // Test Scenario: [LengthIsAtMost] Annotation Applied to Nullable String-Type Field
+            public class WinterStorm {
+                [PrimaryKey] public DateTime When { get; set; }
+                public double Snowfall { get; set; }
+                public int LowTemperature { get; set; }
+                public float MaxWindSpeed { get; set; }
+                [Check.LengthIsAtMost(300)] public string? Name { get; set; }
+            }
+
+            // Test Scenario: [LengthIsAtMost] Annotation Given Negative Anchor {error}
+            public class Fraternity {
+                [PrimaryKey, Check.LengthIsAtMost(-7)] public string Name { get; set; } = "";
+                public DateTime Founded { get; set; }
+                public string Motto { get; set; } = "";
+                public int ActiveChapters { get; set; }
+                public bool IsSocial { get; set; }
+                public bool IsProfessional { get; set; }
+            }
+
+            // Test Scenario: [LengthIsAtMost] Annotation Given Anchor of 0
+            public class KnockKnockJoke {
+                [PrimaryKey, Check.LengthIsAtMost(0)] public string SetUp { get; set; } = "";
+                [PrimaryKey, Check.LengthIsAtMost(0)] public string PunchLine { get; set; } = "";
+            }
+
+            // Test Scenario: [LengthIsAtMost] Annotation Applied to Non-String Field {error}
+            public class Diamond {
+                [PrimaryKey] public Guid SerialNumber { get; set; }
+                public ushort Carats { get; set; }
+                public double Weight { get; set; }
+                public decimal MarketValue { get; set; }
+                [Check.LengthIsAtMost(50)] public bool IsBloodDiamond { get; set; }
+                public string? CurrentMuseum { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [LengthIsAtMost] Annotation on Scalar Property {error}
+            public class Nebula {
+                [PrimaryKey] public uint MessierNumber { get; set; }
+                [Check.LengthIsAtMost(30, Path = "---")] public string Name { get; set; } = "";
+                public double DistanceKLY { get; set; }
+                public double ApparentMagnitude { get; set; }
+                public string? Constellation { get; set; }
+            }
+
+            // Test Scenario: Multiple [LengthIsAtMost] Annotations {error}
+            public class OceanicTrench {
+                [PrimaryKey, Check.LengthIsAtMost(187), Check.LengthIsAtMost(60)] public string Location { get; set; } = "";
+                public ulong Depth { get; set; }
+                public double MaxPressure { get; set; }
+            }
+
+            // Test Scenario: [LengthIsBetween] Annotation Applied to String-Type Field
+            public class Sorority {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime Founded { get; set; }
+                [Check.LengthIsBetween(4, 1713)] public string Motto { get; set; } = "";
+                public int ActiveChapters { get; set; }
+                public bool IsSocial { get; set; }
+                public bool IsProfessional { get; set; }
+            }
+
+            // Test Scenario: [LengthIsBetween] Annotation Applied to Nullable String-Type Field
+            public class Telescope {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.LengthIsBetween(1, int.MaxValue)] public string? Name { get; set; }
+                public double Mass { get; set; }
+                public ulong Power { get; set; }
+                public ushort Length { get; set; }
+                public ushort Width { get; set; }
+            }
+
+            // Test Scenario: [LengthIsBetween] Minimum and Maximum Anchors are Equal
+            public class DNACodon {
+                [PrimaryKey, Check.LengthIsBetween(3, 3)] public string CodonSequence { get; set; } = "";
+                public bool IsStartCodon { get; set; }
+                public bool IsStopCodon { get; set; }
+                public char AminoAcid { get; set; }
+            }
+
+            // Test Scenario: [LengthIsBetween] Annotation Given Negative Minimum Anchor {error}
+            public class ShenGongWu {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool HeldByXiaolinMonks { get; set; }
+                public uint Appearances { get; set; }
+                [Check.LengthIsBetween(-4, 26)] public string InitialEpisode { get; set; } = "";
+                public string Ability { get; set; } = "";
+            }
+
+            // Test Scenario: [LengthIsBetween] Annotation Given Minimum Anchor of 0 {error}
+            public class MilitaryBase {
+                [PrimaryKey] public string BaseName { get; set; } = "";
+                [Check.LengthIsBetween(0, 400)] public string Commander { get; set; } = "";
+                public DateTime Established { get; set; }
+                public ulong Area { get; set; }
+                public bool IsActive { get; set; }
+            }
+
+            // Test Scenario: [LengthIsBetween] Minimum Anchor is Larger than Maximum Anchor {error}
+            public class ChristmasCarol {
+                [PrimaryKey] public string Title { get; set; } = "";
+                public ushort NumWords { get; set; }
+                [Check.LengthIsBetween(28841, 1553)] public string FirstVerse { get; set; } = "";
+                public long YearComposed { get; set; }
+            }
+
+            // Test Scenario: [LengthIsBetween] Annotation Applied to Non-String Field {error}
+            public class Capacitor {
+                [PrimaryKey] public uint ID { get; set; }
+                [Check.LengthIsBetween(4, 9)] public float Capacitance { get; set; }
+                public double PlateArea { get; set; }
+                public double Dielectric { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [LengthIsBetween] Annotation on Scalar Property {error}
+            public class SetCard {
+                [PrimaryKey] public byte Count { get; set; }
+                public string Color { get; set; } = "";
+                [Check.LengthIsBetween(3, 13, Path = "---")] public string Pattern { get; set; } = "";
+            }
+
+            // Test Scenario: Multiple [LengthIsBetween] Annotations {error}
+            public class Aria {
+                [PrimaryKey] public string Title { get; set; } = "";
+                public string SourceOpera { get; set; } = "";
+                public ushort Length { get; set; }
+                public uint WordCount { get; set; }
+                [Check.LengthIsBetween(1, 100), Check.LengthIsBetween(27, 4999)] public string Lyrics { get; set; } = "";
+                public string VocalRange { get; set; } = "";
+            }
+
+            // Test Scenario: String Length Annotation on Property Data-Converted to Text Type
+            public class AesSedai {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool IsAlive { get; set; }
+                public ushort Mentions { get; set; }
+                public float Power { get; set; }
+                [Check.LengthIsBetween(1, 15), DataConverter(typeof(IntToString))] public int? Ajah { get; set; }
+            }
+
+            // Test Scenario: String Length Annotation on Property Data-Converted from Text Type {error}
+            public class Campfire {
+                [PrimaryKey] public Guid GUID { get; set; }
+                public DateTime Started { get; set; }
+                public DateTime? Fizzled { get; set; }
+                public double Temperature { get; set; }
+                [DataConverter(typeof(TextToOther<byte>)), Check.LengthIsAtLeast(4)] public string WoodType { get; set; } = "";
+            }
+
+            // Test Scenario: Property Annotated with Both [IsNonEmpty] and [LengthIsAtLeast] {error}
+            public class StepPyramid {
+                [PrimaryKey] public Guid ID { get; set; }
+                public ulong Steps { get; set; }
+                public bool IsZiggurat { get; set; }
+                [Check.IsNonEmpty, Check.LengthIsAtLeast(5)] public string? KnownAs { get; set; }
+                public ushort? ApproximateAge { get; set; }
+                public double Latitude { get; set; }
+                public double Longitude { get; set; }
+            }
+
+            // Test Scenario: Property Annotated with Both [IsNonEmpty] and [LengthIsBetween] {error}
+            public class Cave {
+                [PrimaryKey] public float Latitude { get; set; }
+                [PrimaryKey] public float Longitude { get; set; }
+                [Check.IsNonEmpty, Check.LengthIsBetween(75412, 12981147)] public string Name { get; set; } = "";
+                public double Length { get; set; }
+                public byte Entrances { get; set; }
+                public double Depth { get; set; }
+            }
+
+            // Test Scenario: Property Annotated with Both [LengthIsAtLeast] and [LengthIsBetween] {error}
+            public class Integral {
+                [PrimaryKey] public string From { get; set; } = "";
+                [PrimaryKey] public string To { get; set; } = "";
+                [PrimaryKey, Check.LengthIsAtLeast(555), Check.LengthIsBetween(3, 22)] public string Expression { get; set; } = "";
+                [PrimaryKey] public string WithRespectTo { get; set; } = "";
+            }
+
+            // Test Scenario: Property Annotated with Both [LengthIsAtMost] and [LengthIsBetween] {error}
+            public class Isthmus {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.LengthIsAtMost(413), Check.LengthIsBetween(22, 1994)] public string Name { get; set; } = "";
+                public ulong Length { get; set; }
+                public bool IsSpannedByCanal { get; set; }
+            }
+
+                    // ~~~~~ Inclusion Constraints ~~~~~
+
+            // Test Scenario: [IsOneOf] Annotation with Multiple Options
+            public class Astronaut {
+                [PrimaryKey] public string AstronautName { get; set; } = "";
+                public short MinutesInSpace { get; set; }
+                [Check.IsOneOf(0u, 1u, 2u, 3u, 4u, 5u)] public uint NumSpacewalks { get; set; }
+                public DateTime Retirement { get; set; }
+                [Check.IsOneOf("Apollo", "Gemini", "Mercury", "Artemis")] public string MaidenProgram { get; set; } = "";
+                [Check.IsOneOf(true, false)] public bool WalkedOnMoon { get; set; }
+            }
+
+            // Test Scenario: [IsOneOf] Annotation with Single Option
+            public class Hospital {
+                [PrimaryKey] public string Address { get; set; } = "";
+                public ulong NumBeds { get; set; }
+                [Check.IsOneOf("2000-01-01")] public DateTime Opened { get; set; }
+                public bool HasTraumaWard { get; set; }
+                public ulong StaffCount { get; set; }
+            }
+
+            // Test Scenario: [IsOneOf] Annotation with Duplicated Option
+            public class HealingPotion {
+                [PrimaryKey] public string Variety { get; set; } = "";
+                public byte Rolls { get; set; }
+                [Check.IsOneOf(4u, 8u, 10u, 12u, 20u, 100u, 8u, 12u, 8u, 4u, 8u)] public uint DieType { get; set; }
+                public sbyte Plus { get; set; }
+                public ulong Uses { get; set; }
+            }
+
+            // Test Scenario: [IsOneOf] Includes Null Option on Nullable Field {error}
+            public class Prophet {
+                [PrimaryKey] public string EnglishName { get; set; } = "";
+                [Check.IsOneOf("Mosheh", "Noach", null!, "Av'raham", "Yizhak")] public string? HebrewName { get; set; }
+                public string? LatinName { get; set; }
+                public string? ArabicName { get; set; }
+                public bool SpeaksToGod { get; set; }
+                public long AgeAtDeath { get; set; }
+            }
+
+            // Test Scenario: [IsOneOf] Includes Null Option on Non-Nullable Field {error}
+            public class CoralReef {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public float Latitude { get; set; }
+                [Check.IsOneOf(0.0f, 30f, 45f, null!, 75f, 90f)] public float Longitude { get; set; }
+                public ulong Length { get; set; }
+                public ulong Area { get; set; }
+                public double SCUBARating { get; set; }
+                public bool IsSaltwater { get; set; }
+            }
+
+            // Test Scenario: [IsOneOf] Annotation with Invalid and Unconvertible Option {error}
+            public class Battery {
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public string Cathode { get; set; } = "";
+                public string Anode { get; set; } = "";
+                [Check.IsOneOf(1, 2, 3, 4, 5, "six", 7, 8, 9)] public int Voltage { get; set; }
+            }
+
+            // Test Scenario: [IsOneOf] Annotation with Invalid but Convertible Option {error}
+            public class TennisMatch {
+                [PrimaryKey] public Guid MatchIdentifier { get; set; }
+                public string Player1 { get; set; } = "";
+                public string Player2 { get; set; } = "";
+                [Check.IsOneOf((byte)0, (byte)15, (byte)30, (byte)40)] public sbyte Player1Score { get; set; }
+                public sbyte Player2Score { get; set; }
+                public string? Tournament { get; set; }
+            }
+
+            // Test Scenario: Single-Element Array of Correct as Anchor to [IsOneOf] Annotation {error}
+            public class Flashcard {
+                [PrimaryKey] public Guid DeckID { get; set; }
+                [PrimaryKey] public int FlaschardNumber { get; set; }
+                public string Front { get; set; } = "";
+                public string Back { get; set; } = "";
+                [Check.IsOneOf(true, new[] { false })] public bool IsLearned { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsOneOf] Annotation on Scalar Property {error}
+            public class HomericHymn {
+                [PrimaryKey] public string To { get; set; } = "";
+                [Check.IsOneOf(1, 5, 25, 50, Path = "---")] public int Lines { get; set; }
+                public string OriginalGreekText { get; set; } = "";
+                public string EnglishTranslation { get; set; } = "";
+            }
+
+            // Test Scenario: Multiple [IsOneOf] Annotations {error}
+            public class Cannon {
+                [PrimaryKey] public Guid GUID { get; set; }
+                public float Weight { get; set; }
+                [Check.IsOneOf(7, 2, 4, 1), Check.IsOneOf(2, 6)] public int Capacity { get; set; }
+                public bool IsAutomatic { get; set; }
+            }
+
+            // Test Scenario: [IsNotOneOf] Annotation with Multiple Options
+            public class NationalAnthem {
+                [PrimaryKey] public string Endonym { get; set; } = "";
+                public string Exonym { get; set; } = "";
+                public string Language { get; set; } = "";
+                public string ForCountry { get; set; } = "";
+                public uint WordCount { get; set; }
+                [Check.IsNotOneOf(1.3f, 1.6f, 1.9f, 2.2f, 2.5f, 2.8f, 3.1f, 3.4f)] public float Length { get; set; }
+            }
+
+            // Test Scenario: [IsNotOneOf] Annotation with Single Option
+            public class GamingConsole {
+                [PrimaryKey] public Guid SerialNumber { get; set; }
+                [Check.IsNotOneOf("Atari 2600")] public string Name { get; set; } = "";
+                public string? AKA { get; set; }
+                [Check.IsNotOneOf("1973-04-30")] public DateTime Launched { get; set; }
+                public DateTime? Retired { get; set; }
+                public ulong UnitsSold { get; set; }
+                public float CPUClockCycle { get; set; }
+            }
+
+            // Test Scenario: [IsNotOneOf] Annotation with Duplicated Option
+            public class Tweet {
+                [PrimaryKey] public Guid TweetID { get; set; }
+                public string Text { get; set; } = "";
+                public uint PosterID { get; set; }
+                [Check.IsNotOneOf('A', 'E', 'I', 'E', 'U', 'A', 'O', 'U', 'I')] public char Grading { get; set; }
+                public ulong Likes { get; set; }
+                public ulong Retweets { get; set; }
+                public ulong Favorites { get; set; }
+            }
+
+            // Test Scenario: [IsNotOneOf] Includes Null Option on Nullable Field {error}
+            public class Ballet {
+                [PrimaryKey] public string BalletName { get; set; } = "";
+                public string Composer { get; set; } = "";
+                public ushort Length { get; set; }
+                public uint NumDancers { get; set; }
+                [Check.IsNotOneOf(null!, 1, 3, 5, 7, 9)] public int? OpusNumber { get; set; }
+            }
+
+            // Test Scenario: [IsNotOneOf] Includes Null Option on Non-Nullable Field {error}
+            public class PIERoot {
+                [PrimaryKey, Check.IsNotOneOf(null!)] public string Root { get; set; } = "";
+                public string Meaning { get; set; } = "";
+                public string? FrenchExample { get; set; }
+                public string? SpanishExample { get; set; }
+                public string? RussianExample { get; set; }
+                public string? GaelicExample { get; set; }
+                public string? GreekExample { get; set; }
+            }
+
+            // Test Scenario: [IsNotOneOf] Annotation with Invalid and Unconvertible Option {error}
+            public class Cancer {
+                [PrimaryKey] public uint DiseaseID { get; set; }
+                public string Name { get; set; } = "";
+                public double MortalityRate { get; set; }
+                [Check.IsNotOneOf("Spleen", "Earlobe", 17.3f, "Elbow")] public string RegionAffected { get; set; } = "";
+                public bool HereditarilyMarked { get; set; }
+            }
+
+            // Test Scenario: [IsNotOneOf] Annotation with Invalid but Convertible Option {error}
+            public class Avatar {
+                [PrimaryKey] public string Namme { get; set; } = "";
+                [Check.IsNotOneOf((byte)8, (byte)111, (byte)217)] public ushort DebutEpisode { get; set; }
+                public string HomeNation { get; set; } = "";
+                public bool MasteredWater { get; set; }
+                public bool MasteredFire { get; set; }
+                public bool MasteredEarth { get; set; }
+                public bool MasteredAir { get; set; }
+                public bool MasteredEnergy { get; set; }
+            }
+
+            // Test Scenario: Single-Element Array of Correct as Anchor to [IsNotOneOf] Annotation {error}
+            public class Wristwatch {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.IsNotOneOf("Rolex", "Cartier", new[] { "Tag Heuer" })] public string Brand { get; set; } = "";
+                public decimal MarketValue { get; set; }
+                public bool IsAdjustable { get; set; }
+                public bool CanStopwatch { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [IsNotOneOf] Annotation on Scalar Property {error}
+            public class Donut {
+                [PrimaryKey] public Guid DonutID { get; set; }
+                [Check.IsNotOneOf("Strawberry", "", "Unknown", Path = "---")] public string Flavor { get; set; } = "";
+                public bool HasSprinkles { get; set; }
+                public bool IsFilled { get; set; }
+                public bool IsGlazed { get; set; }
+                public bool IsDonutHole { get; set; }
+            }
+
+            // Test Scenario: Multiple [IsNotOneOf] Annotations {error}
+            public class Eurovision {
+                [PrimaryKey, Check.IsNotOneOf((ushort)3), Check.IsNotOneOf((ushort)0)] public ushort Year { get; set; }
+                public uint ParticipatingCountries { get; set; }
+                public string WinningCountry { get; set; } = "";
+                public string WinningGroup { get; set; } = "";
+                public string WinningSong { get; set; } = "";
+            }
+
+            // Test Scenario: Inclusion Annotation Anchor is Invalid for DateTime b/c of Formatting {error}
+            public class Inator {
+                public string Name { get; set; } = "";
+                public bool StoppedByPerry { get; set; }
+                [Check.IsNotOneOf("2018-07-03", "1875~06~22", "73-01-15")] public DateTime Debut { get; set; }
+                public string Effects { get; set; } = "";
+            }
+
+            // Test Scenario: Inclusion Annotation Anchor is Invalid for DateTime b/c of Range {error}
+            public class FinalJeopardy {
+                [PrimaryKey, Check.IsOneOf("1299-08-45")] public DateTime AirDate { get; set; }
+                public string Category { get; set; } = "";
+                public string Clue { get; set; } = "";
+                public string Answer { get; set; } = "";
+                public decimal? Player1Wager { get; set; }
+                public decimal? Player2Wager { get; set; }
+                public decimal? Player3Wager { get; set; }
+            }
+
+            // Test Scenario: Inclusion Annotation Anchor is Invalid for DateTime b/c of Type {error}
+            public class Mayor {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [PrimaryKey] public string City { get; set; } = "";
+                [PrimaryKey] public DateTime TermBegin { get; set; }
+                [Check.IsNotOneOf('T')] public DateTime? TermEnd { get; set; }
+                public string DeputyMayor { get; set; } = "";
+            }
+
+            // Test Scenario: Inclusion Annotation on Data-Converted Field
+            public class WaterSlide {
+                [PrimaryKey] public Guid SlideID { get; set; }
+                public ushort Length { get; set; }
+                public float HeightMinimum { get; set; }
+                public double WeightMaximum { get; set; }
+                [DataConverter(typeof(IntToString)), Check.IsOneOf("Straight", "Curly", "Funnel")] public int Type { get; set; }
+                public bool IsTubeSlide { get; set; }
+            }
+
+            // Test Scenario: Inclusion Annotation with Valid Anchor for Conversion Source Type {error}
+            public class SoccerTeam {
+                [PrimaryKey] public string League { get; set; } = "";
+                [PrimaryKey] public string Location { get; set; } = "";
+                [PrimaryKey] public string Nickname { get; set; } = "";
+                public ushort RosterSize { get; set; }
+                [Check.IsNotOneOf(0, -3, 111), DataConverter(typeof(IntToString))] public int WorldCupVictories { get; set; }
+                public string CurrentCoach { get; set; } = "";
+                public string CurrentGoalie { get; set; } = "";
+            }
+
+            // Test Scenario: Property Annotated with Both [IsOneOf] and [IsNotOneOf] {error}
+            public class SkiSlope {
+                [PrimaryKey] public Guid ID { get; set; }
+                public uint Height { get; set; }
+                [Check.IsOneOf("Black Diamond", "Novice"), Check.IsNotOneOf("Unknown")] public string Level { get; set; } = "";
+                public string SkiResort { get; set; } = "";
+                public bool BeginnerFriendly { get; set; }
+            }
+
+                    // ~~~~~ Custom CHECK Constraint ~~~~~
+
+            // Test Scenario: Custom [Check] Annotation with No Constructor Arguments
+            public class VampireSlayer {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public uint Appearances { get; set; }
+                public uint StakesUsed { get; set; }
+                [Check(typeof(CustomCheck))] public ushort Deaths { get; set; }
+                public bool ActivatedByScythe { get; set; }
+            }
+
+            // Test Scenario: Custom [Check] Annotation with Constructor Arguments
+            public class Lyric {
+                [PrimaryKey] public string SongTitle { get; set; } = "";
+                [PrimaryKey] public int LineNumber { get; set; }
+                public string Lyrics { get; set; } = "";
+                [Check(typeof(CustomCheck), 13, false, "ABC", null)] public bool IsSpoken { get; set; }
+                public bool IsChorus { get; set; }
+            }
+
+            // Test Scenario: Custom [Check] Annotation on Data-Converted Property
+            public class DataStructure {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string SearchBigO { get; set; } = "";
+                public string InsertBigO { get; set; } = "";
+                [Check(typeof(CustomCheck)), DataConverter(typeof(TextToOther<sbyte>))] public string RemoveBigO { get; set; } = "";
+                public bool IsOrdered { get; set; }
+                public bool IsAssociative { get; set; }
+                public bool IsContiguous { get; set; }
+            }
+
+            // Test Scenario: Multiple [Check] Annotations on One Property
+            public class TarotCard {
+                [PrimaryKey] public int DeckID { get; set; }
+                [PrimaryKey] public ushort CardNumber { get; set; }
+                [Check(typeof(CustomCheck)), Check(typeof(CustomCheck), -14, '%')] public byte Pips { get; set; }
+                public string Character { get; set; } = "";
+            }
+
+            // Test Scenario: Constraint Generator Type is not a Constraint Generator {error}
+            public class Patreon {
+                [PrimaryKey] public string URL { get; set; } = "";
+                public string Creator { get; set; } = "";
+                public decimal Tier1 { get; set; }
+                public decimal Tier2 { get; set; }
+                [Check(typeof(IWebProtocol))] public decimal Tier3 { get; set; }
+            }
+
+            // Test Scenario: Constraint Generator Type Cannot be Constructed {error}
+            public class Transistor {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Model { get; set; } = "";
+                [Check(typeof(CustomCheck), "Dopant", 4)] public string? Dopant { get; set; }
+                public float Transconductance { get; set; }
+                public int OperatingTemperature { get; set; }
+            }
+
+            // Test Scenario: Error Thrown while Constructing Constraint Generator {error}
+            public class BasketballPlayer {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong Points { get; set; }
+                public float Pct3Pointer { get; set; }
+                [Check(typeof(CustomCheck), false)] public ulong Rebounds { get; set; }
+                public ulong Steals { get; set; }
+                public ulong Assists { get; set; }
+            }
+
+            // Test Scenario: <Path> Provided for [Check] Annotation on Scalar Property {error}
+            public class TarPits {
+                [PrimaryKey] public string TarPitsName { get; set; } = "";
+                public float Area { get; set; }
+                [Check(typeof(CustomCheck), Path = "---")] public string FirstFossil { get; set; } = "";
+                public bool IsNationalArea { get; set; }
+                public double Latitude { get; set; }
+                public double Longitude { get; set; }
+            }
+
+                    // ~~~~~ Complex CHECK Constraint ~~~~~
+
+            // Test Scenario: [Complex] Annotation with No Constructor Arguments
+            [Check.Complex(typeof(CustomCheck), new[] { "FirstLine" })]
+            public class CanterburyTale {
+                [PrimaryKey] public int Index { get; set; }
+                public string Whose { get; set; } = "";
+                public string FirstLine { get; set; } = "";
+                public ulong WordCount { get; set; }
+            }
+
+            // Test Scenario: [Complex] Annotation with Constructor Arguments
+            [Check.Complex(typeof(CustomCheck), new[] { "ConclaveRounds" }, -93, true, 'X')]
+            public class Pope {
+                [PrimaryKey] public string PapalName { get; set; } = "";
+                [PrimaryKey] public uint PapalNumber { get; set; }
+                public DateTime Elected { get; set; }
+                public DateTime? Ceased { get; set; }
+                public uint ConclaveRounds { get; set; }
+                public string FirstEncyclical { get; set; } = "";
+            }
+
+            // Test Scenario: [Complex] Annotation with Multiple Distinct Fields
+            [Check.Complex(typeof(CustomCheck), new[] { "Major", "Minor", "Patch" })]
+            public class LinuxDistribution {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [PrimaryKey] public ulong Major { get; set; }
+                [PrimaryKey] public ulong Minor { get; set; }
+                [PrimaryKey] public ulong Patch { get; set; }
+                public DateTime FirstReleased { get; set; }
+                public string PackageManager { get; set; } = "";
+                public bool IsOpenSource { get; set; }
+            }
+
+            // Test Scenario: [Complex] Annotation with Single Field Multiple Times
+            [Check.Complex(typeof(CustomCheck), new[] {"Name", "Name", "Name", "Name"})]
+            public class Muppet {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime Debut { get; set; }
+                public string Puppeteer { get; set; } = "";
+                public ushort MuppetsShowAppearances { get; set; }
+                public ushort MuppetsFilmAppearances { get; set; }
+            }
+
+            // Test Scenario: [Complex] Annotation over Name-Swapped Fields
+            [Check.Complex(typeof(CustomCheck), new[] { "Cuisine", "ContainsTomatoes" })]
+            public class PastaSauce {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool IsMotherSauce { get; set; }
+                public bool ContainsButter { get; set; }
+                [Name("ContainsTomatoes")] public bool Cuisine { get; set; }
+                public bool ContainsCheese { get; set; }
+                public bool ContainsCream { get; set; }
+                [Name("Cuisine")] public string ContainsTomatoes { get; set; } = "";
+            }
+
+            // Test Scenario: [Complex] Annotation over Data-Converted Field
+            [Check.Complex(typeof(CustomCheck), new[] { "When", "Casualties", "When" })]
+            public class Massacre {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong Casualties { get; set; }
+                public bool WarCrime { get; set; }
+                [DataConverter(typeof(Nullify<DateTime>))] public DateTime When { get; set; }
+            }
+
+            // Test Scenario: Multiple [Complex] Annotations on One Entity Type
+            [Check.Complex(typeof(CustomCheck), new[] { "LengthMinutes" })]
+            [Check.Complex(typeof(CustomCheck), new[] { "SungThrough" })]
+            [Check.Complex(typeof(CustomCheck), new[] { "SungThrough" })]
+            public class Musical {
+                [PrimaryKey] public string Title { get; set; } = "";
+                public bool SungThrough { get; set; }
+                public ushort SongCount { get; set; }
+                public ulong LengthMinutes { get; set; }
+                public ushort TonyAwards { get; set; }
+            }
+
+            // Test Scenario: Constraint Generator Type is not a Constraint Generator {error}
+            [Check.Complex(typeof(AssemblyLoadEventArgs), new[] { "Invisibility", "FirstIssue" })]
+            public class Mutant {
+                [PrimaryKey] public string CodeName { get; set; } = "";
+                public string BirthName { get; set; } = "";
+                public string Description { get; set; } = "";
+                public bool Invisibility { get; set; }
+                public bool Flight { get; set; }
+                public bool Telekinesis { get; set; }
+                public bool ElementalPowers { get; set; }
+                public bool SuperSpeed { get; set; }
+                public DateTime FirstIssue { get; set; }
+                public uint Appearances { get; set; }
+            }
+
+            // Test Scenario: Constraint Generator Type Cannot be Constructed {error}
+            [Check.Complex(typeof(CustomCheck), new[] { "Omega3s", "Omega6s" }, "O", 'I', 'L', '!')]
+            public class CookingOil {
+                [PrimaryKey] public string Type { get; set; } = "";
+                public decimal SmokePoint { get; set; }
+                public double TransFats { get; set; }
+                public double Omega3s { get; set; }
+                public double Omega6s { get; set; }
+            }
+
+            // Test Scenario: Error Thrown while Constructing Constraint Generator {error}
+            [Check.Complex(typeof(CustomCheck), new[] { "Born", "Died" }, true)]
+            public class Pirate {
+                [PrimaryKey] public string PirateName { get; set; } = "";
+                [PrimaryKey] public string LandName { get; set; } = "";
+                public string Flagship { get; set; } = "";
+                public DateTime? Born { get; set; }
+                public DateTime? Died { get; set; }
+                public ulong Plunder { get; set; }
+                public bool IsFictional { get; set; }
+            }
+
+            // Test Scenario: [Complex] Annotation over Zero Fields {error}
+            [Check.Complex(typeof(CustomCheck), new string[] {})]
+            public class Terminator {
+                [PrimaryKey] public string Model { get; set; } = "";
+                [PrimaryKey] public ushort Number { get; set; }
+                public ulong KillCount { get; set; }
+                public string Portrayer { get; set; } = "";
+                public DateTime FirstAppearance { get; set; }
+            }
+
+            // Test Scenario: [Complex] Annotation over Name-Changed Field with Original Name {error}
+            [Check.Complex(typeof(CustomCheck), new string[] { "Width" })]
+            public class Dam {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                public ulong Height { get; set; }
+                [Name("WidhtAtBase")] public ulong Width { get; set; }
+                public ulong Volume { get; set; }
+                public string ImpoundedRiver { get; set; } = "";
+                public bool IsHydroelectric { get; set; }
+            }
+
+            // Test Scenario: [Complex] Annotation over Unrecognized Field Name {error}
+            [Check.Complex(typeof(CustomCheck), new string[] { "Belligerents" })]
+            public class PeaceTreaty {
+                [PrimaryKey] public string TreatyName { get; set; } = "";
+                public DateTime Signed { get; set; }
+                public DateTime Effective { get; set; }
+                public string Text { get; set; } = "";
+                public ushort NumSignatories { get; set; }
+            }
     }
 }

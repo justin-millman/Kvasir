@@ -85,14 +85,14 @@ namespace Kvasir.Annotations {
                 UserError = null;
             }
             catch (MissingMethodException) {
-                var argString = "(" + string.Join(", ", args.Select(a => a.ForDisplay())) + ")";
+                var argString = args.Length == 0 ? "<none>" : string.Join(", ", args.Select(a => a.ForDisplay()));
                 UserError = $"{constraint.FullName!} cannot be constructed from arguments: {argString}";
                 generator_ = null;
             }
             catch (TargetInvocationException ex) {
-                var argString = "(" + string.Join(", ", args.Select(a => a.ForDisplay())) + ")";
+                var argString = args.Length == 0 ? "<none>" : string.Join(", ", args.Select(a => a.ForDisplay()));
                 var reason = ex.InnerException?.Message ?? "<reason unknown>";
-                UserError = $"Error constructing {constraint.FullName!} from arguments {argString}: {reason}";
+                UserError = $"Error constructing {constraint.FullName!} from arguments: {argString} ({reason})";
                 generator_ = null;
             }
         }

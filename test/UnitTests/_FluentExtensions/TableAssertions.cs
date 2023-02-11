@@ -21,6 +21,7 @@ namespace FluentAssertions {
             protected override string Identifier => "Table";
             private readonly HashSet<string> checkedFieldNames_ = new HashSet<string>();
             private readonly HashSet<string> checkedKeyNames_ = new HashSet<string>();
+            private readonly HashSet<CheckConstraint> checkedConstraints_ = new HashSet<CheckConstraint>();
 
             [CustomAssertion]
             public AndConstraint<TableAssertion> HaveName(string name, string because = "",
@@ -35,9 +36,7 @@ namespace FluentAssertions {
             }
 
             [CustomAssertion]
-            private IField HaveField(string name, string because = "",
-                params object[] becauseArgs) {
-
+            private IField HaveField(string name, string because = "", params object[] becauseArgs) {
                 IField? field = Subject.Fields.FirstOrDefault(f => f.Name.ToString() == name);
                 Execute.Assertion
                     .BecauseOf(because, becauseArgs)
@@ -149,9 +148,9 @@ namespace FluentAssertions {
                 Execute.Assertion
                     .BecauseOf("")
                     .ForCondition(missing.IsEmpty() && extra.IsEmpty())
-                    .FailWith($"Expected {{context:Table}} to have Primary Key consisting of Fields [" +
-                              $"{string.Join(", ", expected)}]{{reason}}, but found Fields [" +
-                              $"{string.Join(", ", pkFields)}]");
+                    .FailWith($"Expected {{context:Table}} to have Primary Key consisting of Fields " +
+                              $"[{string.Join(", ", expected)}]{{reason}}, but found Fields " +
+                              $"[{string.Join(", ", pkFields)}]");
 
                 return new KeyAssertion(Subject.PrimaryKey, this, "Primary");
             }
@@ -198,6 +197,151 @@ namespace FluentAssertions {
                     .BecauseOf(because, becauseArgs)
                     .ForCondition(extras.IsEmpty())
                     .FailWith($"{{context:Table}} also has the following Candidate Keys: {string.Join(", ", extras)}");
+            }
+
+            [CustomAssertion]
+            public AndConstraint<TableAssertion> HaveConstraint(string field, ComparisonOperator op, object value,
+                string because = "", params object[] becauseArgs) {
+
+                var repr = $"'{field} {op} {value}'";
+                bool found = false;
+                foreach (var constraint in Subject.CheckConstraints) {
+                    if (constraint.Condition is ConstantClause cc) {
+                        var lhsMatch = (cc.LHS.Function.HasValue, cc.LHS.Field.Name.ToString()) == (false, field);
+                        var opMatch = cc.Operator == op;
+                        var rhsMatch = cc.RHS == DBValue.Create(value);
+
+                        if (lhsMatch && opMatch && rhsMatch) {
+                            found = true;
+                            checkedConstraints_.Add(constraint);
+
+                            Execute.Assertion
+                                .BecauseOf("CHECK constraints cannot currently be named")
+                                .ForCondition(!constraint.Name.HasValue)
+                                .FailWith($"Expected CHECK constraint {repr} to be unnamed, but found name");
+                            break;
+                        }
+                    }
+                }
+
+                Execute.Assertion
+                    .BecauseOf(because, becauseArgs)
+                    .ForCondition(found)
+                    .FailWith($"Expected to find CHECK constraint {repr}, but the {{context:Table}} has no such " +
+                              "constraint");
+
+                return new AndConstraint<TableAssertion>(this);
+            }
+
+            [CustomAssertion]
+            public AndConstraint<TableAssertion> HaveConstraint(string field, InclusionOperator op,
+                IEnumerable<object?> values, string because = "", params object[] becauseArgs) {
+
+                var repr = $"'{field} {op} ({string.Join(", ", values)})'";
+                bool found = false;
+                foreach (var constraint in Subject.CheckConstraints) {
+                    if (constraint.Condition is InclusionClause cc) {
+                        var lhsMatch = (cc.LHS.Function.HasValue, cc.LHS.Field.Name.ToString()) == (false, field);
+                        var opMatch = cc.Operator == op;
+                        var rhsMatch = cc.RHS.ToHashSet().SetEquals(values.Select(v => DBValue.Create(v)).ToHashSet());
+
+                        if (lhsMatch && opMatch && rhsMatch) {
+                            found = true;
+                            checkedConstraints_.Add(constraint);
+
+                            Execute.Assertion
+                                .BecauseOf("CHECK constraints cannot currently be named")
+                                .ForCondition(!constraint.Name.HasValue)
+                                .FailWith($"Expected CHECK constraint {repr} to be unnamed, but  found name");
+                            break;
+                        }
+                    }
+                }
+
+                Execute.Assertion
+                    .BecauseOf(because, becauseArgs)
+                    .ForCondition(found)
+                    .FailWith($"Expected to find CHECK constraint {repr}, but the {{context:Table}} has not such " +
+                              "constraint");
+
+                return new AndConstraint<TableAssertion>(this);
+            }
+
+            [CustomAssertion]
+            public AndConstraint<TableAssertion> HaveConstraint(string field, NullityOperator op, string because = "",
+                params object[] becauseArgs) {
+
+                var repr = $"'{field} {op}'";
+                bool found = false;
+                foreach (var constraint in Subject.CheckConstraints) {
+                    if (constraint.Condition is NullityClause cc) {
+                        var lhsMatch = (cc.LHS.Function.HasValue, cc.LHS.Field.Name.ToString()) == (false, field);
+                        var opMatch = cc.Operator == op;
+
+                        if (lhsMatch && opMatch) {
+                            found = true;
+                            checkedConstraints_.Add(constraint);
+
+                            Execute.Assertion
+                                .BecauseOf("CHECK constraints cannot currently be named")
+                                .ForCondition(!constraint.Name.HasValue)
+                                .FailWith($"Expected CHECK constraint {repr} to be unnamed, but  found name");
+                            break;
+                        }
+                    }
+                }
+
+                Execute.Assertion
+                    .BecauseOf(because, becauseArgs)
+                    .ForCondition(found)
+                    .FailWith($"Expected to find CHECK constraint {repr}, but the {{context:Table}} has no such " +
+                              "constraint");
+
+                return new AndConstraint<TableAssertion>(this);
+            }
+
+            [CustomAssertion]
+            public AndConstraint<TableAssertion> HaveConstraint(FieldFunction func, string field, ComparisonOperator op,
+                int value, string because = "", params object[] becauseArgs) {
+
+                var repr = $"'{func} {field} {op} {value}'";
+                bool found = false;
+                foreach (var constraint in Subject.CheckConstraints) {
+                    if (constraint.Condition is ConstantClause cc) {
+                        var lhsMatch = (cc.LHS.Function.Contains(func), cc.LHS.Field.Name.ToString()) == (true, field);
+                        var opMatch = cc.Operator == op;
+                        var rhsMatch = cc.RHS == DBValue.Create(value);
+
+                        if (lhsMatch && opMatch && rhsMatch) {
+                            found = true;
+                            checkedConstraints_.Add(constraint);
+
+                            Execute.Assertion
+                                .BecauseOf("CHECK constraints cannot currently be named")
+                                .ForCondition(!constraint.Name.HasValue)
+                                .FailWith($"Expected CHECK constraint {repr} to be unnamed, but  found name");
+                            break;
+                        }
+                    }
+                }
+
+                Execute.Assertion
+                    .BecauseOf(because, becauseArgs)
+                    .ForCondition(found)
+                    .FailWith($"Expected to find CHECK constraint {repr}, but the {{context:Table}} has no such " +
+                              "constraint");
+
+                return new AndConstraint<TableAssertion>(this);
+            }
+
+            [CustomAssertion]
+            public void NoOtherConstraints(string because = "", params object[] becauseArgs) {
+                var excess = Subject.CheckConstraints.Count - checkedConstraints_.Count;
+
+                Execute.Assertion
+                    .BecauseOf(because, becauseArgs)
+                    .ForCondition(excess == 0)
+                    .FailWith($"{{context:Table}} has {excess} additional CHECK constraint{(excess == 1 ? "" : "s")}");
             }
         }
 

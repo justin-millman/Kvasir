@@ -2,8 +2,8 @@
 using Kvasir.Annotations;
 using Kvasir.Exceptions;
 using Kvasir.Schema;
+using Kvasir.Translation.Extensions;
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -30,15 +30,7 @@ namespace Kvasir.Translation {
         ///   The <see cref="FieldName">name</see> of the Field backing <paramref name="property"/>.
         /// </returns>
         private static FieldName NameOf(PropertyInfo property) {
-            // It is an error for a property to be annotated with multiple [Name] attributes
-            var annotations = property.GetCustomAttributes<NameAttribute>();
-            if (annotations.Count() > 1) {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    "multiple [Name] annotations encountered"
-                );
-            }
-            var annotation = annotations.FirstOrDefault();
+            var annotation = property.Only<NameAttribute>();
 
             // If there is no [Name] annotation, then the property's native name is used
             if (annotation is null) {

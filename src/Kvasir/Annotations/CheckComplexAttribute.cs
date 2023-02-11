@@ -73,7 +73,6 @@ namespace Kvasir.Annotations {
             ///   The parameterization of the <c>CHECK</c> constraint.
             /// </param>
             public ComplexAttribute(Type constraint, string[] fieldNames, params object?[] args) {
-                Guard.Against.NullOrEmpty(fieldNames, nameof(FieldName));
                 impl_ = new CheckAttribute(constraint, args);
                 FieldNames = fieldNames.Select(n => new FieldName(n));
             }

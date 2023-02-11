@@ -1,10 +1,9 @@
-﻿using Cybele.Extensions;
-using Kvasir.Annotations;
+﻿using Kvasir.Annotations;
 using Kvasir.Exceptions;
 using Kvasir.Schema;
+using Kvasir.Translation.Extensions;
 using Optional;
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -40,15 +39,7 @@ namespace Kvasir.Translation {
         ///   the original string.
         /// </returns>
         private static Option<object?> DefaultValueOf(PropertyInfo property, IsNullable nullability) {
-            // It is an error for a property to be annotated with multiple [Default] attributes
-            var annotations = property.GetCustomAttributes<DefaultAttribute>();
-            if (annotations.Count() > 1) {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    "multiple [Default] annotations encountered"
-                );
-            }
-            var annotation = annotations.FirstOrDefault();
+            var annotation = property.Only<DefaultAttribute>();
 
             // If there is no [Default] annotation, then there is no default value
             if (annotation is null) {
@@ -63,73 +54,8 @@ namespace Kvasir.Translation {
                 );
             }
 
-            // It is an error for the [Default] value of a non-nullable Field to be 'null'
-            if (annotation.Value == DBNull.Value && nullability == IsNullable.No) {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    "[Default] value of 'null' is not valid for a non-nullable Field"
-                );
-            }
-
-            // If the value of the [Default] annotation is 'null', then the rest of the checks are unnecessary
-            if (annotation.Value == DBNull.Value) {
-                return Option.Some<object?>(null);
-            }
-
-            // It is an error for the [Default] value of a Field to be an array
-            if (annotation.Value.GetType().IsArray) {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    "[Default] value cannot be an array"
-                );
-            }
-
-            // It is an error for the [Default] value of a Field to be different than its pre-conversion CLR type; for
-            // Fields whose pre-conversion CLR type is 'DateTime' or 'Guid', the [Default] value must be a 'string'
-            // (that will later be parsed)
-            var argStrWrapper =
-                annotation.Value.GetType() == typeof(string) ? "\"" :
-                annotation.Value.GetType() == typeof(char) ? "'" : "";
-            if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(Guid)) {
-                if (annotation.Value.GetType() != typeof(string)) {
-                    throw new KvasirException(
-                        $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                        $"[Default] value of {argStrWrapper}{annotation.Value}{argStrWrapper} " +
-                        $"(of type {annotation.Value.GetType().Name}) " +
-                        $"is not valid for a Field of type {property.PropertyType.Name} " +
-                        "(a string is required, which will then be parsed)"
-                    );
-                }
-            }
-            else if (!annotation.Value.GetType().IsInstanceOf(property.PropertyType)) {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    $"[Default] value of {argStrWrapper}{annotation.Value}{argStrWrapper} " +
-                    $"(of type {annotation.Value.GetType().Name}) " +
-                    $"is not valid for a Field of type {property.PropertyType.Name}"
-                );
-            }
-
-            // Parse value if necessary
-            if (property.PropertyType == typeof(DateTime)) {
-                if (!DateTime.TryParse((string)annotation.Value, out DateTime result)) {
-                    throw new KvasirException(
-                        $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                        $"could not parse [Default] value \"{annotation.Value}\" into {nameof(DateTime)}"
-                    );
-                }
-                return Option.Some<object?>(result);
-            }
-            if (property.PropertyType == typeof(Guid)) {
-                if (!Guid.TryParse((string)annotation.Value, out Guid result)) {
-                    throw new KvasirException(
-                        $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                        $"could not parse [Default] value \"{annotation.Value}\" into {nameof(Guid)}"
-                    );
-                }
-                return Option.Some<object?>(result);
-            }
-            return Option.Some<object?>(annotation.Value);
+            // All of the error handling for the value is managed by the parsing function
+            return Option.Some(annotation.Value.ParseFor(property, property.PropertyType, nullability, "[Default] value"));
         }
     }
 }

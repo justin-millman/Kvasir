@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 
 namespace Kvasir.Translation {
+    internal delegate Clause CheckGen(IField field, DataConverter converter);
+    internal delegate Clause ComplexCheckGen(FieldSeq fields, ConverterSeq converters);
+
     internal sealed partial class Translator {
         /// <summary>
         ///   A descriptor of a single back-end database Field.
@@ -19,7 +22,8 @@ namespace Kvasir.Translation {
             Option<object?> RawDefault,
             bool IsInPrimaryKey,
             DataConverter Converter,
-            IReadOnlyList<KeyName> KeyMemberships
+            IReadOnlyList<KeyName> KeyMemberships,
+            IReadOnlyList<CheckGen> CHECKs
         );
 
         /// <summary>
@@ -27,7 +31,8 @@ namespace Kvasir.Translation {
         /// </summary>
         private record struct TypeDescriptor(
             Type CLRType,
-            IReadOnlyList<FieldDescriptor> Fields
+            IReadOnlyList<FieldDescriptor> Fields,
+            IReadOnlyList<ComplexCheckGen> CHECKs
         );
 
         /// <summary>

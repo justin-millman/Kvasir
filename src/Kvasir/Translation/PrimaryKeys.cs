@@ -2,6 +2,7 @@
 using Kvasir.Annotations;
 using Kvasir.Exceptions;
 using Kvasir.Schema;
+using Kvasir.Translation.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,15 +35,7 @@ namespace Kvasir.Translation {
         ///   otherwise, <see langword="false"/>.
         /// </returns>
         private static bool IsInPrimaryKey(PropertyInfo property, IsNullable nullability) {
-            // It is an error for a property to be annotated with multiple [PrimaryKey] attributes
-            var annotations = property.GetCustomAttributes<PrimaryKeyAttribute>();
-            if (annotations.Count() > 1) {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    "multiple [PrimaryKey] annotations encountered"
-                );
-            }
-            var annotation = annotations.FirstOrDefault();
+            var annotation = property.Only<PrimaryKeyAttribute>();
 
             // It is an error for the [PrimaryKey] attribute of a scalar property to have a non-empty <Path> value
             if (annotation is not null && annotation.Path != "") {

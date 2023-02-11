@@ -94,7 +94,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                            // source type
                 .WithMessage($"*{nameof(Battleship.Length)}*")              // source property
                 .WithMessage("*[Default]*")                                 // annotation
-                .WithMessage($"*Field of type {nameof(UInt16)}*")           // rationale
+                .WithMessage($"*property of type {nameof(UInt16)}*")        // rationale
                 .WithMessage($"*\"100 feet\" (of type {nameof(String)})*"); // details
         }
 
@@ -111,7 +111,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                            // source type
                 .WithMessage($"*{nameof(County.Population)}*")              // source property
                 .WithMessage("*[Default]*")                                 // annotation
-                .WithMessage($"*Field of type {nameof(UInt64)}*")           // rationale
+                .WithMessage($"*property of type {nameof(UInt64)}*")        // rationale
                 .WithMessage($"*5000000 (of type {nameof(Int32)})*");       // details
         }
 
@@ -178,7 +178,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                            // source type
                 .WithMessage($"*{nameof(RomanEmperor.ReignEnd)}*")          // source property
                 .WithMessage("*[Default]*")                                 // annotation
-                .WithMessage($"*Field of type {nameof(DateTime)}*")         // rationale
+                .WithMessage($"*property of type {nameof(DateTime)}*")      // rationale
                 .WithMessage($"*true (of type {nameof(Boolean)})*")         // details
                 .WithMessage("*a string is required*");                     // explanation
         }
@@ -213,7 +213,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                            // source type
                 .WithMessage($"*{nameof(HogwartsHouse.TermIndex)}*")        // source property
                 .WithMessage("*[Default]*")                                 // annotation
-                .WithMessage($"*Field of type {nameof(Guid)}*")             // rationale
+                .WithMessage($"*property of type {nameof(Guid)}*")          // rationale
                 .WithMessage($"*'^' (of type {nameof(Char)})*")             // details
                 .WithMessage("*a string is required*");                     // explanation
         }
@@ -264,7 +264,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                            // source type
                 .WithMessage($"*{nameof(Coupon.IsBOGO)}*")                  // source property
                 .WithMessage("*[Default]*")                                 // annotation
-                .WithMessage($"*Field of type {nameof(Boolean)}*")          // rationale
+                .WithMessage($"*property of type {nameof(Boolean)}*")       // rationale
                 .WithMessage($"*0 (of type {nameof(Int32)})*");             // details
         }
 

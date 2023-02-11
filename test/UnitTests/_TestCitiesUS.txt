@@ -54,8 +54,8 @@ Buffalo
 Burbank
 Burlington
 Butte
-Cambridge
 Cairo
+Cambridge
 Canton
 Cape Girardeau
 Carbondale
@@ -65,17 +65,17 @@ Carson City
 Casper
 Cedar Falls
 Cedar Rapids
+Champaign
 Chapel Hill
 Charleston
 Charlotte
 Charlotte Amalie
 Charlottesville
-Christiansted
-Champaign
 Chattanooga
 Chesapeake
 Cheyenne
 Chicago
+Christiansted
 Chula Vista
 Cincinnati
 Cleveland
@@ -187,8 +187,8 @@ Ketchikan
 Kettering
 Key West
 Kirkland
-Kokomo
 Knoxville
+Kokomo
 La Crosse
 Lafayette
 Lahaina
@@ -204,8 +204,8 @@ Las Vegas
 Lawrence
 Levittown
 Lexington
-Lincoln
 Lima
+Lincoln
 Little Rock
 Long Beach
 Los Alamos
@@ -221,19 +221,19 @@ Manassas
 Manchester
 Memphis
 Mesa
+Metairie
 Miami
 Milwaukee
 Minneapolis
 Minnetonka
 Miramar
 Missoula
-Metairie
 Mobile
 Modesto
 Montgomery
 Montpelier
-Mount Pleasant
 Morgantown
+Mount Pleasant
 Murfreesboro
 Myrtle Beach
 Nacogdoches
@@ -367,13 +367,13 @@ Urbana
 Valparaiso
 Vicksburg
 Virginia Beach
+Wabaunsee
 Waco
-Walla Walla
 Waimanalo
+Walla Walla
 Washington, D.C.
 Wasilla
 Waterbury
-Wabaunsee
 Waterloo
 Waukesha
 West Covina
