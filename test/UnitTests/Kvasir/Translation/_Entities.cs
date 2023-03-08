@@ -1271,7 +1271,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string HouseName { get; set; } = "";
                 public DateTime Founded { get; set; }
                 [DataConverter(typeof(DeNullify<string>))] public string? CurrentHead { get; set; }
-                public int TotalMonarchs { get; set; }
+                [DataConverter(typeof(DeNullify<int>))] public int? TotalMonarchs { get; set; }
             }
 
             // Test Scenario: Data Converter with Nullable Source on Non-Nullable Field
