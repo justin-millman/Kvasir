@@ -73,6 +73,7 @@ Charlottesville
 Christiansted
 Champaign
 Chattanooga
+Chesapeake
 Cheyenne
 Chicago
 Chula Vista
@@ -106,6 +107,7 @@ Dubuque
 Duluth
 Durham
 East Hartford
+East Providence
 East St. Louis
 Eau Claire
 El Paso

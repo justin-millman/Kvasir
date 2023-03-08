@@ -3,6 +3,7 @@ using Cybele.Extensions;
 using Kvasir.Core;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Annotations {
@@ -84,12 +85,12 @@ namespace Kvasir.Annotations {
                 UserError = null;
             }
             catch (MissingMethodException) {
-                var argString = "(" + string.Join(", ", args) + ")";
+                var argString = "(" + string.Join(", ", args.Select(a => a.ForDisplay())) + ")";
                 UserError = $"{constraint.FullName!} cannot be constructed from arguments: {argString}";
                 generator_ = null;
             }
             catch (TargetInvocationException ex) {
-                var argString = "(" + string.Join(", ", args) + ")";
+                var argString = "(" + string.Join(", ", args.Select(a => a.ForDisplay())) + ")";
                 var reason = ex.InnerException?.Message ?? "<reason unknown>";
                 UserError = $"Error constructing {constraint.FullName!} from arguments {argString}: {reason}";
                 generator_ = null;

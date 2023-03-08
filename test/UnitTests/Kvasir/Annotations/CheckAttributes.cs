@@ -111,7 +111,7 @@ namespace UT.Kvasir.Annotations {
         [TestMethod] public void Check_CtorArgs_MissingConstructor() {
             // Arrange
             var constraintType = typeof(ComplexConstraint);
-            var args = new object[] { 100 };
+            var args = new object[] { 100, "Aloha", 'u' };
 
             // Act
             var attr = new CheckAttribute(constraintType, args);
@@ -119,7 +119,7 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.UserError.Should()
                 .Match($"*{constraintType.Name}*").And
-                .Match($"*({string.Join(", ", args)})*").And
+                .Match("*(100, \"Aloha\", 'u')").And
                 .Match("*construct*");
         }
 
