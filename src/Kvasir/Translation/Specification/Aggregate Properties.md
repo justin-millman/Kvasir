@@ -59,6 +59,6 @@ is also an error for two (or more) Fields in the same Table to have the same col
 
 A nullable Aggregate Property may be annotated with `[Default(null)]` to indicate that the default value for all its
 corresponding Fields should be `null`. This is the only way to define default values for multiple Nested Properties with
-one annotaiton. Separately, Aggregate Properties may be annotated with `[Default(obj) { Path = "Q" }]`, in which case
+one annotation. Separately, Aggregate Properties may be annotated with `[Default(obj) { Path = "Q" }]`, in which case
 the annotation is treated as applying to the Field at path `Q` (as with any other `Path`-bearing annotation on an
 Aggregate Property).

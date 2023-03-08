@@ -16,7 +16,7 @@ namespace Atropos.Moq {
     ///     test occur in a particular order. While the <see href="https://github.com/Moq">Moq</see> library provides
     ///     many powerful facilities for mocking objects and evaluating the ensuing behavior, the library is lacking
     ///     when it comes to evaluating call sequences. <see cref="CallSequence{T}"/> fills this gap, interoperating
-    ///     with the <see cref="Mock{T}"/> hierarchy seamlessly to provide a fluent way to expect a speific order of
+    ///     with the <see cref="Mock{T}"/> hierarchy seamlessly to provide a fluent way to expect a specific order of
     ///     invocations.
     ///   </para>
     ///   <para>
@@ -30,14 +30,14 @@ namespace Atropos.Moq {
     ///   </para>
     ///   <para>
     ///     A <see cref="CallSequence{T}"/> necessarily imposes an immutable strict total order. This means that an
-    ///     expectated call cannot be reordered or removed once added, and that every expected call must occur either
+    ///     expected call cannot be reordered or removed once added, and that every expected call must occur either
     ///     before or after each other expectation. For example, it is not possible to expect that both call <c>A</c>
     ///     and <c>B</c> occur, in any order, before call <c>C</c>. It is, however, possible to expect repeated calls,
     ///     either sequentially (e.g. <c>A</c>, <c>A</c>, <c>B</c>) or non-sequentially  (e.g. <c>A</c>, <c>B</c>,
-    ///     <c>A</c>). There are limitations to repeat call suppport, as detailed below.
+    ///     <c>A</c>). There are limitations to repeat call support, as detailed below.
     ///   </para>
     ///   <para>
-    ///     A <see cref="CallSequence{T}"/> is in one of three states at any given time: unstarted, incomplete, or
+    ///     A <see cref="CallSequence{T}"/> is in one of three states at any given time: not yet started, incomplete, or
     ///     complete. A <see cref="CallSequence{T}"/> can be extended in any state, adding an additional expected call
     ///     to the end; specifically, adding an expected call to an incomplete sequence does not set the expectation of
     ///     the next call. A <see cref="CallSequence{T}"/> is complete when all expected calls have been made; one can
@@ -112,7 +112,7 @@ namespace Atropos.Moq {
 
         /// <summary>
         ///   Adds an expected call to the end of the current call sequence. This can be used to extend a sequence that
-        ///   has not yet been started, a sequence that is in progrss, or a sequence that has already completed. Call
+        ///   has not yet been started, a sequence that is in progress, or a sequence that has already completed. Call
         ///   expectations cannot be reordered or removed once added.
         /// </summary>
         /// <param name="expression">
@@ -135,7 +135,7 @@ namespace Atropos.Moq {
 
         /// <summary>
         ///   Adds an expected call to the end of the current call sequence. This can be used to extend a sequence that
-        ///   has not yet been started, a sequence that is in progrss, or a sequence that has already completed. Call
+        ///   has not yet been started, a sequence that is in progress, or a sequence that has already completed. Call
         ///   expectations cannot be reordered or removed once added.
         /// </summary>
         /// <param name="expression">

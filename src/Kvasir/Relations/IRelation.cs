@@ -27,7 +27,7 @@ namespace Kvasir.Relations {
         ///   <see cref="Canonicalize">canonicalization</see> will be exposed first, followed by all
         ///   <see cref="Status.New">new</see> and <see cref="Status.Saved">saved</see> ones (which may be interspersed
         ///   together). Within the two groupings, the relative order of connections is undefined. No connection will
-        ///   more than once, and implementations are encouraged to ensure that repeated enuerations of the same
+        ///   more than once, and implementations are encouraged to ensure that repeated enumerations of the same
         ///   Relation without intervening changes produce the same sequence of items.
         /// </remarks>
         /// <returns>

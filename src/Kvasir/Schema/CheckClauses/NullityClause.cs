@@ -9,7 +9,7 @@ namespace Kvasir.Schema {
     public sealed record NullityClause : Clause {
         /// <summary>
         ///   The left-hand operand of this <see cref="NullityClause"/>, which is the expression being evaluated for
-        ///   nullity. This is guaranteed to be an direct expression, i.e. one without an evaluatory function.
+        ///   nullity. This is guaranteed to be an direct expression, i.e. one without an evaluation function.
         /// </summary>
         public FieldExpression LHS { get; }
 

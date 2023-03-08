@@ -231,7 +231,7 @@ namespace Cybele.Core {
         ///   The second <see cref="ConceptString{TConcept}"/>.
         /// </param>
         /// <returns>
-        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographially less than <paramref name="rhs"/>;
+        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographically less than <paramref name="rhs"/>;
         ///   otherwise, <see langword="false"/>.
         /// </returns>
         public static bool operator<(ConceptString<TConcept>? lhs, ConceptString<TConcept>? rhs) {
@@ -248,7 +248,7 @@ namespace Cybele.Core {
         ///   The second <see cref="ConceptString{TConcept}"/>.
         /// </param>
         /// <returns>
-        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographially greater than <paramref name="rhs"/>;
+        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographically greater than <paramref name="rhs"/>;
         ///   otherwise, <see langword="false"/>.
         /// </returns>
         public static bool operator>(ConceptString<TConcept>? lhs, ConceptString<TConcept>? rhs) {
@@ -266,7 +266,7 @@ namespace Cybele.Core {
         ///   The second <see cref="ConceptString{TConcept}"/>.
         /// </param>
         /// <returns>
-        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographially less than or equal to
+        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographically less than or equal to
         ///   <paramref name="rhs"/>; otherwise, <see langword="false"/>.
         /// </returns>
         public static bool operator<=(ConceptString<TConcept>? lhs, ConceptString<TConcept>? rhs) {
@@ -284,7 +284,7 @@ namespace Cybele.Core {
         ///   The second <see cref="ConceptString{TConcept}"/>.
         /// </param>
         /// <returns>
-        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographially greater than or equal to
+        ///   <see langword="true"/> if <paramref name="lhs"/> is lexicographically greater than or equal to
         ///   <paramref name="rhs"/>; otherwise, <see langword="false"/>.
         /// </returns>
         public static bool operator>=(ConceptString<TConcept>? lhs, ConceptString<TConcept>? rhs) {

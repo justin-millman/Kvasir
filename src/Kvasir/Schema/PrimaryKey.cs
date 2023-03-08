@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Kvasir.Schema {
     /// <summary>
-    ///   A collection of Fields that uniquely identifies a row in a Table of a relational databas and can be
+    ///   A collection of Fields that uniquely identifies a row in a Table of a relational database and can be
     ///   referenced by Foreign Keys in another Table.
     /// </summary>
     public sealed record PrimaryKey : IKey {

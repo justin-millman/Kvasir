@@ -23,7 +23,7 @@ namespace UT.Kvasir.Schema {
         }
 
         [TestMethod] public void ConstructWithName() {
-            // Arrannge
+            // Arrange
             var fields = fields_;
             var name = new KeyName("CandidateKey");
 

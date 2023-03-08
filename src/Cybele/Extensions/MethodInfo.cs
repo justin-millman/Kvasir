@@ -12,7 +12,7 @@ namespace Cybele.Extensions {
         ///   Determines if a method is inherited.
         /// </summary>
         /// <param name="self">
-        ///   The <see cref="MethodInfo"/> instance on which the extension method is inokved.
+        ///   The <see cref="MethodInfo"/> instance on which the extension method is invoked.
         /// </param>
         /// <returns>
         ///   <see langword="true"/> if <paramref name="self"/> is a method that overrides a <see langword="virtual"/>

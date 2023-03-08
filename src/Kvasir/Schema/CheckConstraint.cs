@@ -50,7 +50,7 @@ namespace Kvasir.Schema {
          */
 
         /// <summary>
-        ///   Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
+        ///   Produces a declaration that, when used as part of a larger Table-creating declaration, defines this
         ///   <c>CHECK</c> constraint as applying to the subject Table.
         /// </summary>
         /// <typeparam name="TDecl">
@@ -92,14 +92,14 @@ namespace Kvasir.Schema {
     }
 
     /// <summary>
-    ///   A strongly typed <see cref="string"/> repreenting the name of a <c>CHECK</c> constraint.
+    ///   A strongly typed <see cref="string"/> representing the name of a <c>CHECK</c> constraint.
     /// </summary>
     public sealed class CheckName : ComponentName<CheckConstraint> {
         /// <summary>
         ///   Constructs a new <see cref="CheckName"/>.
         /// </summary>
         /// <param name="name">
-        ///   The name. Leading and trailing whitspace will be discarded.
+        ///   The name. Leading and trailing whitespace will be discarded.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
         ///   if <paramref name="name"/> is <see langword="null"/>.
@@ -107,7 +107,7 @@ namespace Kvasir.Schema {
         /// <exception cref="System.ArgumentException">
         ///   if <paramref name="name"/> is zero-length
         ///     --or--
-        ///   if <paramref name="name"/> consists only of whitspace.
+        ///   if <paramref name="name"/> consists only of whitespace.
         /// </exception>
         public CheckName(string name)
             : base(name) {}

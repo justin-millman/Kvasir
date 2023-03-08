@@ -29,7 +29,7 @@ namespace Kvasir.Translation {
          *   > public sealed override int GetHashCode()
          *   > public sealed override string ToString()
          *   > public static bool operator==(PrincipalTableDef? lhs, PrincipalTableDef? rhs)
-         *   > public static bool oeprator!=(PrincipalTableDef? lhs, PrincipalTableDef? rhs)
+         *   > public static bool operator!=(PrincipalTableDef? lhs, PrincipalTableDef? rhs)
          */
     }
 }

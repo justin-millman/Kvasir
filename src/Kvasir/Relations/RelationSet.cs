@@ -31,7 +31,7 @@ namespace Kvasir.Relations {
     ///   </para>
     ///   <para>
     ///     Items used in a <see cref="RelationSet{T}"/> should be immutable: structs, <see cref="string"/>, etc. This
-    ///     is because read access is <i>not</i> tracked: when using mutable elements, it is possible for the uer to
+    ///     is because read access is <i>not</i> tracked: when using mutable elements, it is possible for the user to
     ///     access an item (e.g. through <c>TryGetValue</c>) and mutate that element without the collection knowing,
     ///     preventing that change from being reflected in the back-end database. This also means that actions that
     ///     convert the collection into another form will <i>copy</i> the elements, ensuring that the tracking data
@@ -54,7 +54,7 @@ namespace Kvasir.Relations {
         ///   the set.
         /// </summary>
         /// <value>
-        ///   The <see cref="IEqualityComparer{T}"/> object that is used to determine equality for hte values in the
+        ///   The <see cref="IEqualityComparer{T}"/> object that is used to determine equality for the values in the
         ///   set.
         /// </value>
         public IEqualityComparer<T> Comparer => impl_.Comparer;
@@ -89,7 +89,7 @@ namespace Kvasir.Relations {
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="RelationSet{T}"/> class that uses the default equality
-        ///   comparer for the set type, contains elements copied from the specified colletion, and has sufficient
+        ///   comparer for the set type, contains elements copied from the specified collection, and has sufficient
         ///   capacity to accommodate the number of elements copied.
         /// </summary>
         /// <param name="collection">
@@ -136,7 +136,7 @@ namespace Kvasir.Relations {
         }
 
         /// <summary>
-        ///   Initializes a new instance of the <see cref="RelationSet{T}"/> class that uses the specfied equality
+        ///   Initializes a new instance of the <see cref="RelationSet{T}"/> class that uses the specified equality
         ///   comparer for the set type, contains elements copied for the specified collection, and has sufficient
         ///   capacity to accommodate the number of elements copied.
         /// </summary>
@@ -385,7 +385,7 @@ namespace Kvasir.Relations {
 
         /// <summary>
         ///   Sets the capacity of the <see cref="RelationSet{T}"/> object to the actual number of elements it
-        ///   contains, rounded up to a nearby, immplementation-specific value.
+        ///   contains, rounded up to a nearby, implementation-specific value.
         /// </summary>
         [ExcludeFromCodeCoverage]
         public void TrimExcess() {

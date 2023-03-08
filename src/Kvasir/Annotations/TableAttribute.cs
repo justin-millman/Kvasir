@@ -4,7 +4,7 @@ using System;
 
 namespace Kvasir.Annotations {
     /// <summary>
-    ///   An annotation that specifies the name of the Table backing a particula class.
+    ///   An annotation that specifies the name of the Table backing a particular class.
     /// </summary>
     /// <remarks>
     ///   The Kvasir framework will automatically determine the name of backing Tables based on the name of the POCO

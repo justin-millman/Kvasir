@@ -9,7 +9,7 @@ namespace Kvasir.Schema {
     ///   <para>
     ///     A Table is the primary unit of organization in a relational database. Each Table can be thought of as a
     ///     two-dimensional matrix of data, where the columns are Fields and the rows are data entries. A Table is
-    ///     principally defined by its name and the collection of constitutent Fields; additionally, every Table must
+    ///     principally defined by its name and the collection of constituent Fields; additionally, every Table must
     ///     have exactly one Primary Key - a tuple of Fields that must be unique for all member rows. Tables can
     ///     also have Candidate Keys, which are tuples that <i>could</i> be a Primary Key but just aren't.
     ///   </para>
@@ -114,14 +114,14 @@ namespace Kvasir.Schema {
     }
 
     /// <summary>
-    ///   A strongly typed <see cref="string"/> repreenting the name of a Table.
+    ///   A strongly typed <see cref="string"/> representing the name of a Table.
     /// </summary>
     public sealed class TableName : ComponentName<ITable> {
         /// <summary>
         ///   Constructs a new <see cref="TableName"/>.
         /// </summary>
         /// <param name="name">
-        ///   The name. Leading and trailing whitspace will be discarded.
+        ///   The name. Leading and trailing whitespace will be discarded.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
         ///   if <paramref name="name"/> is <see langword="null"/>.
@@ -129,7 +129,7 @@ namespace Kvasir.Schema {
         /// <exception cref="System.ArgumentException">
         ///   if <paramref name="name"/> is zero-length
         ///     --or--
-        ///   if <paramref name="name"/> consists only of whitspace.
+        ///   if <paramref name="name"/> consists only of whitespace.
         /// </exception>
         public TableName(string name)
             : base(name) {}

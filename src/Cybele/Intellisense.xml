@@ -84,7 +84,7 @@
               enumerable.
             </summary>
             <param name="enumerable">
-              The enumerable from which to populate the initial state of the new StickyList. All elemenets will be
+              The enumerable from which to populate the initial state of the new StickyList. All elements will be
               initialized as non-sticky.
             </param>
         </member>
@@ -103,7 +103,7 @@
               comparison purposes and is populated with the non-sticky contents of another enumerable.
             </summary>
             <param name="enumerable">
-              The enumerable from which to populate the initial state of the new StickyList. All elemenets will be
+              The enumerable from which to populate the initial state of the new StickyList. All elements will be
               initialized as non-sticky.
             </param>
             <param name="comparer">
@@ -143,7 +143,7 @@
         </member>
         <member name="M:Cybele.Collections.StickyList`1.Contains(`0)">
             <summary>
-              Checks if an elemment exists in the <see cref="T:Cybele.Collections.StickyList`1"/>.
+              Checks if an element exists in the <see cref="T:Cybele.Collections.StickyList`1"/>.
             </summary>
             <param name="element">
               The probe element.
@@ -162,7 +162,7 @@
             </param>
             <returns>
               The <c>0</c>-based index of the first element in the StickList that compares equal to
-              <paramref name="element"/>, if suh an element exists; otherwise, <c>-1</c>.
+              <paramref name="element"/>, if such an element exists; otherwise, <c>-1</c>.
             </returns>
         </member>
         <member name="M:Cybele.Collections.StickyList`1.Add(`0)">
@@ -459,7 +459,7 @@
               The second <see cref="T:Cybele.Core.ConceptString`1"/>.
             </param>
             <returns>
-              <see langword="true"/> if <paramref name="lhs"/> is lexicographially less than <paramref name="rhs"/>;
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographically less than <paramref name="rhs"/>;
               otherwise, <see langword="false"/>.
             </returns>
         </member>
@@ -474,7 +474,7 @@
               The second <see cref="T:Cybele.Core.ConceptString`1"/>.
             </param>
             <returns>
-              <see langword="true"/> if <paramref name="lhs"/> is lexicographially greater than <paramref name="rhs"/>;
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographically greater than <paramref name="rhs"/>;
               otherwise, <see langword="false"/>.
             </returns>
         </member>
@@ -490,7 +490,7 @@
               The second <see cref="T:Cybele.Core.ConceptString`1"/>.
             </param>
             <returns>
-              <see langword="true"/> if <paramref name="lhs"/> is lexicographially less than or equal to
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographically less than or equal to
               <paramref name="rhs"/>; otherwise, <see langword="false"/>.
             </returns>
         </member>
@@ -506,7 +506,7 @@
               The second <see cref="T:Cybele.Core.ConceptString`1"/>.
             </param>
             <returns>
-              <see langword="true"/> if <paramref name="lhs"/> is lexicographially greater than or equal to
+              <see langword="true"/> if <paramref name="lhs"/> is lexicographically greater than or equal to
               <paramref name="rhs"/>; otherwise, <see langword="false"/>.
             </returns>
         </member>
@@ -653,7 +653,7 @@
               The source object.
             </param>
             <returns>
-              The coversion of <paramref name="source"/> into an instance of <see cref="P:Cybele.Core.DataConverter.ResultType"/>.
+              The conversion of <paramref name="source"/> into an instance of <see cref="P:Cybele.Core.DataConverter.ResultType"/>.
             </returns>
             <exception cref="T:System.ArgumentException">
               if <paramref name="source"/> is neither an instance of <see cref="P:Cybele.Core.DataConverter.SourceType"/> nor a derived class or an
@@ -742,9 +742,9 @@
                 behavior of performing a property access of the form <c>A?.B?.C?.D</c>.
               </para>
               <para>
-                The "links" in a <see cref="T:Cybele.Core.PropertyChain"/> are fully covariant: if the value produed by "link" <c>N</c> is
-                of the type <c>T</c>, then the subsequent "link" <c>N + 1</c> can expect a source object of <c>T</c> or any
-                base class or interface of <c>T</c>. The read operations see through <see langword="virtual"/> and
+                The "links" in a <see cref="T:Cybele.Core.PropertyChain"/> are fully covariant: if the value produced by "link" <c>N</c>
+                is of the type <c>T</c>, then the subsequent "link" <c>N + 1</c> can expect a source object of <c>T</c> or
+                any base class or interface of <c>T</c>. The read operations see through <see langword="virtual"/> and
                 <see langword="abstract"/> functions, resolving to the most derived definition regardless of the source
                 object. The same is true for explicit interface implementations, provided that the "link" expects the type
                 of the interface: the result is the equivalent of <c>A?.B?.(C as SomeInterface)?.D</c>.
@@ -1283,7 +1283,7 @@
               Determines if a method is inherited.
             </summary>
             <param name="self">
-              The <see cref="T:System.Reflection.MethodInfo"/> instance on which the extension method is inokved.
+              The <see cref="T:System.Reflection.MethodInfo"/> instance on which the extension method is invoked.
             </param>
             <returns>
               <see langword="true"/> if <paramref name="self"/> is a method that overrides a <see langword="virtual"/>
@@ -1318,7 +1318,7 @@
         <member name="T:Cybele.Extensions.NullabilityExtensions">
             <summary>
               A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that provide insight to the
-              nullabilitiy of various aspects of a program.
+              nullability of various aspects of a program.
             </summary>
             <remarks>
               <para>
@@ -1355,7 +1355,7 @@
                 arise when the generic is unconstrained or constrained in such a way so as to allow both nullable and
                 non-nullable types as <c>T</c>. Unfortunately, the reflection APIs offered by the C# standard library do
                 not provide complete access to all forms of constraint, leading to an inability to properly identify these
-                ambiguities. Specificall, the following scenarios should produce <see cref="F:Cybele.Extensions.Nullability.Ambiguous"/> but
+                ambiguities. Specifically, the following scenarios should produce <see cref="F:Cybele.Extensions.Nullability.Ambiguous"/> but
                 currently do not:
                     <list type="bullet">
                         <item><description>
@@ -1433,7 +1433,7 @@
             </param>
             <param name="context">
               The context of the aspect being evaluated. For most aspects, this should be the <see cref="T:System.Type"/> in
-              whih the aspect is being declared. For method parameters and return types, this should be the method
+              which the aspect is being declared. For method parameters and return types, this should be the method
               itself.
             </param>
             <param name="attributes">

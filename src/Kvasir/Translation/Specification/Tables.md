@@ -12,7 +12,7 @@ the name of the Entity Type. It is an error for an Entity Type to be annotated w
 `[ExcludeNamespaceFromName]`.
 
 If all the Entity Types in an application's object model are in the same namespace, and none of the Entity Types are
-annotated wth `[Table(T)]`, then the common namespace will be _removed_ from the name of the Primary Table.
+annotated with `[Table(T)]`, then the common namespace will be _removed_ from the name of the Primary Table.
 
 ## Relation Tables
 

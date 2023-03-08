@@ -55,14 +55,14 @@ namespace Kvasir.Schema {
         /// </summary>
         /// <remarks>
         ///   A Field is not required to have a default value, and the default value may be <see cref="DBValue.NULL"/>
-        ///   if the Field is <see cref="Nullability">nullable</see>. A <c>SOME</c> instance indicates the presene of a
+        ///   if the Field is <see cref="Nullability">nullable</see>. A <c>SOME</c> instance indicates the presence of a
         ///   default value, with that value being wrapped by the <see cref="Option{DBValue}"/>. Conversely, a
         ///   <c>NONE</c> instance indicates the absence of a default value.
         /// </remarks>
         Option<DBValue> DefaultValue { get; }
 
         /// <summary>
-        ///   Produces a declaration that, when used as part of a larget Table-creating declaration, defines this
+        ///   Produces a declaration that, when used as part of a larger Table-creating declaration, defines this
         ///   Field as a member of the subject Table.
         /// </summary>
         /// <typeparam name="TDecl">
@@ -81,14 +81,14 @@ namespace Kvasir.Schema {
     }
 
     /// <summary>
-    ///   A strongly typed <see cref="string"/> repreenting the name of a Field.
+    ///   A strongly typed <see cref="string"/> representing the name of a Field.
     /// </summary>
     public sealed class FieldName : ComponentName<IField> {
         /// <summary>
         ///   Constructs a new <see cref="FieldName"/>.
         /// </summary>
         /// <param name="name">
-        ///   The name. Leading and trailing whitspace will be discarded.
+        ///   The name. Leading and trailing whitespace will be discarded.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
         ///   if <paramref name="name"/> is <see langword="null"/>.
@@ -96,7 +96,7 @@ namespace Kvasir.Schema {
         /// <exception cref="System.ArgumentException">
         ///   if <paramref name="name"/> is zero-length
         ///     --or--
-        ///   if <paramref name="name"/> consists only of whitspace.
+        ///   if <paramref name="name"/> consists only of whitespace.
         /// </exception>
         public FieldName(string name)
             : base(name) {}

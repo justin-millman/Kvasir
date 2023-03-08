@@ -20,9 +20,9 @@ namespace Cybele.Core {
     ///     behavior of performing a property access of the form <c>A?.B?.C?.D</c>.
     ///   </para>
     ///   <para>
-    ///     The "links" in a <see cref="PropertyChain"/> are fully covariant: if the value produed by "link" <c>N</c> is
-    ///     of the type <c>T</c>, then the subsequent "link" <c>N + 1</c> can expect a source object of <c>T</c> or any
-    ///     base class or interface of <c>T</c>. The read operations see through <see langword="virtual"/> and
+    ///     The "links" in a <see cref="PropertyChain"/> are fully covariant: if the value produced by "link" <c>N</c>
+    ///     is of the type <c>T</c>, then the subsequent "link" <c>N + 1</c> can expect a source object of <c>T</c> or
+    ///     any base class or interface of <c>T</c>. The read operations see through <see langword="virtual"/> and
     ///     <see langword="abstract"/> functions, resolving to the most derived definition regardless of the source
     ///     object. The same is true for explicit interface implementations, provided that the "link" expects the type
     ///     of the interface: the result is the equivalent of <c>A?.B?.(C as SomeInterface)?.D</c>.
@@ -245,7 +245,7 @@ namespace Cybele.Core {
                 throw new ArgumentException(BAD_PROPERTY_MSG, nameof(prevProperty));
             }
             else if (!prevProperty.PropertyType.IsInstanceOf(ReflectedType)) {
-                var msg = $"Cannot prepend property that produces an instance of {prevProperty.PropertyType.Name} " +
+                var msg = $"Cannot perpend property that produces an instance of {prevProperty.PropertyType.Name} " +
                     $"to chain that expects an instance of {ReflectedType.Name}";
                 throw new ArgumentException(msg, nameof(prevProperty));
             }
@@ -367,8 +367,8 @@ namespace Cybele.Core {
             // source type inherits a property and then hides it with the "new" keyword. However, we want to support
             // this by finding the hiding property. We can't key on the DeclaringType up front, because that would
             // wrongly filter out inherited properties, so we have to first winnow the set of all properties down to
-            // those matching the specified name and then check our three cases: none found (retur null), exactly one
-            // found (return it), or multile found (return the one declared by our source). Note that we could also do
+            // those matching the specified name and then check our three cases: none found (return null), exactly one
+            // found (return it), or multiple found (return the one declared by our source). Note that we could also do
             // a "try" of GetProperty followed by a "catch" on the AmbiguousMatchException that does a GetProperties,
             // but using exceptions for control flow is bad practice.
             PropertyInfo? lookupProperty() {

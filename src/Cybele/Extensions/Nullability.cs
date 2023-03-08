@@ -20,7 +20,7 @@ namespace Cybele.Extensions {
 
     /// <summary>
     ///   A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that provide insight to the
-    ///   nullabilitiy of various aspects of a program.
+    ///   nullability of various aspects of a program.
     /// </summary>
     /// <remarks>
     ///   <para>
@@ -57,7 +57,7 @@ namespace Cybele.Extensions {
     ///     arise when the generic is unconstrained or constrained in such a way so as to allow both nullable and
     ///     non-nullable types as <c>T</c>. Unfortunately, the reflection APIs offered by the C# standard library do
     ///     not provide complete access to all forms of constraint, leading to an inability to properly identify these
-    ///     ambiguities. Specificall, the following scenarios should produce <see cref="Nullability.Ambiguous"/> but
+    ///     ambiguities. Specifically, the following scenarios should produce <see cref="Nullability.Ambiguous"/> but
     ///     currently do not:
     ///         <list type="bullet">
     ///             <item><description>
@@ -142,7 +142,7 @@ namespace Cybele.Extensions {
         /// </param>
         /// <param name="context">
         ///   The context of the aspect being evaluated. For most aspects, this should be the <see cref="Type"/> in
-        ///   whih the aspect is being declared. For method parameters and return types, this should be the method
+        ///   which the aspect is being declared. For method parameters and return types, this should be the method
         ///   itself.
         /// </param>
         /// <param name="attributes">
@@ -160,7 +160,7 @@ namespace Cybele.Extensions {
             byte ANNOTATED = 2;
 
             // If the type in question is a value type (primitive, enum, struct, etc.) or a generic type on which a
-            // struct or enum constraint is applied, then we can determine the nullability of the tpe without doing
+            // struct or enum constraint is applied, then we can determine the nullability of the type without doing
             // heavy reflection
             if (type.IsValueType) {
                 if (Nullable.GetUnderlyingType(type) is null) {

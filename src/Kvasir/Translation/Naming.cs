@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
         /// <summary>
-        ///   Determine the name of a Field backing a scalar property, using a combination of the propert's native CLR
+        ///   Determine the name of a Field backing a scalar property, using a combination of the property's native CLR
         ///   name and user-provided attributes.
         /// </summary>
         /// <param name="property">
@@ -103,9 +103,9 @@ namespace Kvasir.Translation {
                 );
             }
 
-            // If there is no [Table] annotation, the the type's native namespace-qualified name is used; the namespace
-            // is dropped if an [ExcludeNamespaceFromName] annotation is present (though nestedness identifiers will
-            // still be present)
+            // If there is no [Table] annotation, the type's native namespace-qualified name is used; the namespace is
+            // dropped if an [ExcludeNamespaceFromName] annotation is present (though nestedness identifiers will still
+            // be present)
             if (annotation is null) {
                 return new TableName((excludeNamespace ? entity.Name : entity.FullName!) + "Table");
             }

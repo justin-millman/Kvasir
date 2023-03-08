@@ -22,7 +22,7 @@ namespace Kvasir.Schema {
     ///     belongs. However, some extrinsic restrictions are modeled directly by the Schema Layer of Kvasir.
     ///   </para>
     ///   <para>
-    ///     The <see cref="EnumField"/> class models a Field to which is applied an extrinsic enueration restriction.
+    ///     The <see cref="EnumField"/> class models a Field to which is applied an extrinsic enumeration restriction.
     ///     Such a Field is necessarily treated as a string by users, but the allowed values are discrete rather than
     ///     infinite. Some back-end RDBMS providers (such as MySQL) actually offer an optimized storage mechanism for
     ///     such Fields, where the data is <i>stored</i> as an integer but <i>read and written</i> as a string. Similar
@@ -71,7 +71,7 @@ namespace Kvasir.Schema {
         ///   <see cref="DBValue.NULL"/> if the <paramref name="nullability"/> of the Field is
         ///   <see cref="IsNullable.Yes"/>. Finally, there must be at least one
         ///   <paramref name="enumerators">allowed value</paramref>, and all such values must be something other than
-        ///   <see cref="DBValue.NULL"/> while maintaining compatability with the <see cref="DBType.Enumeration"/> data
+        ///   <see cref="DBValue.NULL"/> while maintaining compatibility with the <see cref="DBType.Enumeration"/> data
         ///   type.
         /// </pre>
         internal EnumField(FieldName name, IsNullable nullability, Option<DBValue> defaultValue,

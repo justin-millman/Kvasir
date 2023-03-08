@@ -8,7 +8,7 @@ namespace Kvasir.Schema {
     /// <remarks>
     ///   <para>
     ///     The <see cref="DBValue"/> struct is intended to provide an abstraction over the generalized CLR
-    ///     <see cref="object"/> for use in contexts where compile-time type informaton is not available. The
+    ///     <see cref="object"/> for use in contexts where compile-time type information is not available. The
     ///     advantage in using a <see cref="DBValue"/> over raw a <see cref="object"/> is that the former is guaranteed
     ///     to only ever hold an object that can actually be stored in a back-end RDBMS, whereas the latter could
     ///     feasibly hold anything. Additionally, a <see cref="DBValue"/> never actually wraps a <see langword="null"/>
@@ -17,7 +17,7 @@ namespace Kvasir.Schema {
     ///   <para>
     ///     The strong typing afforded by a CLR <see cref="Enum">enum</see> is lost when the enumerator values are
     ///     stored in a back-end relational database. Some providers afford value checking, either through an explicit
-    ///     <c>enum</c> data typ or via <c>CHECK</c> constraints; however, even in these cases, the actual storage is
+    ///     <c>enum</c> data type or via <c>CHECK</c> constraints; however, even in these cases, the actual storage is
     ///     generally either an integer or a string. For this reason, a <see cref="DBValue"/> cannot wrap a CLR
     ///     enumerator: is the client's responsibility to convert the CLR enumerator into the corresponding database
     ///     object, be it an integer or another supported type.
@@ -234,7 +234,7 @@ namespace Kvasir.Schema {
 
         /// <summary>
         ///   Determines if the current <see cref="DBValue"/> would be valid for a Field with a specific data type,
-        ///   considering only the data type and not hte actual value.
+        ///   considering only the data type and not the actual value.
         /// </summary>
         /// <param name="type">
         ///   The target <see cref="DBType"/>.

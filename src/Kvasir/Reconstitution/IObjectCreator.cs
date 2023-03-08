@@ -2,7 +2,7 @@ using System;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
-    ///   The interface that defines how a CLR object is created from a list of values extraced from a back-end
+    ///   The interface that defines how a CLR object is created from a list of values extracted from a back-end
     ///   relational database
     /// </summary>
     /// <remarks>

@@ -40,7 +40,7 @@ namespace Kvasir.Translation {
          *   > public sealed override int GetHashCode()
          *   > public sealed override string ToString()
          *   > public static bool operator==(Translation? lhs, Translation? rhs)
-         *   > public static bool oeprator!=(Translation? lhs, Translation? rhs)
+         *   > public static bool operator!=(Translation? lhs, Translation? rhs)
          */
     }
 }
