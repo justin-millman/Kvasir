@@ -14,12 +14,6 @@ namespace Kvasir.Annotations {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public sealed class DataConverterAttribute : Attribute {
         /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
-        public string Path { get; init; } = "";
-
-        /// <summary>
         ///   The <see cref="DataConverter"/> instance specified in the annotation.
         /// </summary>
         internal DataConverter DataConverter {

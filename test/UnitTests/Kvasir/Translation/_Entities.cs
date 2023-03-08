@@ -1349,15 +1349,15 @@ namespace UT.Kvasir.Translation {
                 public decimal Gross { get; set; }
             }
 
-        // Test Scneario: Error Thrown while Constructing Data Converter Type {error}
-        public class Sword {
-            [PrimaryKey] public string Name { get; set; } = "";
-            public decimal Sharpness { get; set; }
-            public float Length { get; set; }
-            public float Weight { get; set; }
-            public int Kills { get; set; }
-            [DataConverter(typeof(AlwaysError))] public short YearForged { get; set; }
-        }
+            // Test Scneario: Error Thrown while Constructing Data Converter Type {error}
+            public class Sword {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public decimal Sharpness { get; set; }
+                public float Length { get; set; }
+                public float Weight { get; set; }
+                public int Kills { get; set; }
+                [DataConverter(typeof(AlwaysError))] public short YearForged { get; set; }
+            }
 
             // Test Scenario: Identity Data Converter
             public class FieldGoal {
@@ -1373,17 +1373,6 @@ namespace UT.Kvasir.Translation {
                 public short Round { get; set; }
                 [DataConverter(typeof(ByteModulo16)), DataConverter(typeof(Identity<byte>))] public byte FirstThrowPins { get; set; }
                 public byte? SecondThrowPins { get; set; }
-            }
-
-            // Test Scenario: <Path> Provided for [DataConverter] on Scalar Property {error}
-            public class DraftPick {
-                [PrimaryKey] public string League { get; set; } = "";
-                [PrimaryKey] public ushort Year { get; set; }
-                [PrimaryKey] public byte Round { get; set; }
-                [PrimaryKey] public byte PickNumber { get; set; }
-                [DataConverter(typeof(Identity<uint>), Path = "---")] public uint Overall { get; set; }
-                public string Selector { get; set; } = "";
-                public string Selection { get; set; } = "";
             }
 
         /////// --- CHECK Constraints
