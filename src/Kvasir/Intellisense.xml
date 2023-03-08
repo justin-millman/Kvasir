@@ -501,12 +501,6 @@
               property and values of the backing Field.
             </summary>
         </member>
-        <member name="P:Kvasir.Annotations.DataConverterAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
-        </member>
         <member name="P:Kvasir.Annotations.DataConverterAttribute.DataConverter">
             <summary>
               The <see cref="P:Kvasir.Annotations.DataConverterAttribute.DataConverter"/> instance specified in the annotation.
@@ -6127,9 +6121,6 @@
             </param>
             <exception cref="T:Kvasir.Exceptions.KvasirException">
               if <paramref name="property"/> is annotated with multiple <c>[DataConverter]</c> attributes
-                --or--
-              if the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a non-empty
-              <see cref="P:Kvasir.Annotations.DataConverterAttribute.Path">Path</see>
                 --or--
               if the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a non-empty
               <see cref="P:Kvasir.Annotations.DataConverterAttribute.UserError">user error</see>

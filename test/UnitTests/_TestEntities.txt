@@ -42,7 +42,6 @@ Database Field
 Date
 Desert
 Doctor (Doctor Who)
-Draft Pick
 Drum
 Earthquake
 Encryption

@@ -237,22 +237,5 @@ namespace UT.Kvasir.Translation {
                 .WithMessage("*[DataConverter]*")                           // annotation
                 .WithMessage("*multiple*");                                 // rationale
         }
-
-        [TestMethod] public void PathOnDataConverterAnnotationForScalar_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(DraftPick);
-
-            // Act
-            var act = () => translator[source];
-
-            // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                        // source type
-                .WithMessage($"*{nameof(DraftPick.Overall)}*")          // source property
-                .WithMessage("*[DataConverter]*")                       // annotation
-                .WithMessage("*path*does not exist*")                   // rationale
-                .WithMessage("*\"---\"*");                              // details
-        }
     }
 }

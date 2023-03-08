@@ -85,20 +85,6 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             attr.DataConverter.Should().BeOfType<DataConverter>();
-            attr.Path.Should().BeEmpty();
-        }
-
-        [TestMethod] public void DataConverter_Nested() {
-            // Arrange
-            var type = typeof(GoodConverter);
-            var path = "Nested.Path";
-
-            // Act
-            var attr = new DataConverterAttribute(type) { Path = path };
-
-            // Assert
-            attr.DataConverter.Should().BeOfType<DataConverter>();
-            attr.Path.Should().Be(path);
         }
 
         [TestMethod] public void DataConverter_WrongInterface() {

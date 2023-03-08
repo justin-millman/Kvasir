@@ -20,9 +20,6 @@ namespace Kvasir.Translation {
         ///   if <paramref name="property"/> is annotated with multiple <c>[DataConverter]</c> attributes
         ///     --or--
         ///   if the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a non-empty
-        ///   <see cref="DataConverterAttribute.Path">Path</see>
-        ///     --or--
-        ///   if the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a non-empty
         ///   <see cref="DataConverterAttribute.UserError">user error</see>
         ///     --or--
         ///   if the value of the <c>[DataConverter]</c> annotation applied to <paramref name="property"/> has a
@@ -51,14 +48,6 @@ namespace Kvasir.Translation {
             // If there is no [DataConverter] annotation, then an identity conversion is used
             if (annotation is null) {
                 return DataConverter.Identity(property.PropertyType);
-            }
-
-            // It is an error for the [DataConverter] attribute of a scalar property to have a non-empty <Path> value
-            if (annotation.Path != "") {
-                throw new KvasirException(
-                    $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
-                    $"path \"{annotation.Path}\" of [DataConverter] annotation does not exist"
-                );
             }
 
             // It is an error for the [DataConverter] attribute of a scalar property to have a populated <UserError>
