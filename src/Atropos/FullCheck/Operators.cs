@@ -15,7 +15,7 @@ namespace Atropos {
         ///   [explicit] The <see cref="Type"/> on which to look up the binary operator.
         /// </typeparam>
         /// <param name="op">
-        ///   The binary operator functino to look up.
+        ///   The binary operator function to look up.
         /// </param>
         /// <param name="fallback">
         ///   The fallback result, in the event that <typeparamref name="T"/> does not support binary operator

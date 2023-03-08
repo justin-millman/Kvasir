@@ -133,7 +133,7 @@ namespace Atropos {
         }
 
         /// <summary>
-        ///   Evaluates the ordering relation between two instancs of a type using the full ordering API of that type.
+        ///   Evaluates the ordering relation between two instances of a type using the full ordering API of that type.
         /// </summary>
         /// <typeparam name="T">
         ///   [deduced] The type of the arguments.

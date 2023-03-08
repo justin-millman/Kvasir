@@ -118,7 +118,7 @@ namespace Cybele.Core {
         ///   The source object.
         /// </param>
         /// <returns>
-        ///   The coversion of <paramref name="source"/> into an instance of <see cref="ResultType"/>.
+        ///   The conversion of <paramref name="source"/> into an instance of <see cref="ResultType"/>.
         /// </returns>
         /// <exception cref="ArgumentException">
         ///   if <paramref name="source"/> is neither an instance of <see cref="SourceType"/> nor a derived class or an

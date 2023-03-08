@@ -12,7 +12,7 @@ namespace Kvasir.Relations {
         /// <summary>The relation connection needs to be deleted from the back-end database.</summary>
         Deleted,
 
-        /// <summary>The relation connection has been modified relative to the entry in the back-end datbase.</summary>
+        /// <summary>The relation connection has been modified relative to the entry in the back-end database.</summary>
         /// <remarks>This status is generally useful only for ordered collections, to indicate a reordering.</remarks>
         Modified
     }

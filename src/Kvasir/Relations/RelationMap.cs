@@ -9,13 +9,13 @@ using System.Text;
 
 namespace Kvasir.Relations {
     /// <summary>
-    ///   A collection that trakcs the state of its key-value mappings for interaction with a back-end database.
+    ///   A collection that tracks the state of its key-value mappings for interaction with a back-end database.
     /// </summary>
     /// <remarks>
     ///   <para>
     ///     A <see cref="RelationMap{TKey, TValue}"/> implements the same interfaces as and behaves identically to a
     ///     standard <see cref="Dictionary{TKey, TValue}"/> collection. Operations that mutate the collection are used
-    ///     to track changes that can then be reflected in a back-end database, while view- or read-only operationsh
+    ///     to track changes that can then be reflected in a back-end database, while view- or read-only operations
     ///     have no additional side effects. Converting a <see cref="RelationMap{TKey, TValue}"/> into another
     ///     collection, such as through a member API or LINQ, drops the change tracking capabilities.
     ///   </para>
@@ -39,7 +39,7 @@ namespace Kvasir.Relations {
     ///   </para>
     ///   <para>
     ///     Items used for the value in a <see cref="RelationMap{TKey, TValue}"/> should be immutable: structs,
-    ///     <see cref="string"/>, etc. This is because read access is <i>not</i> tracked: when usiing mutable values,
+    ///     <see cref="string"/>, etc. This is because read access is <i>not</i> tracked: when using mutable values,
     ///     it is possible for the user to access an item (e.g. through <c>operator[]</c>) and mutate that value
     ///     without the collection knowing, preventing the change from being reflected in the back-end database. This
     ///     also means that actions that convert the collection into another form will <i>copy</i> the elements,
@@ -193,7 +193,7 @@ namespace Kvasir.Relations {
         ///   <see cref="RelationMap{TKey, TValue}"/>.
         /// </param>
         /// <param name="comparer">
-        ///   The <see cref="IEqualityComparer{T}"/> implementation to ue when comparing keys, or
+        ///   The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys, or
         ///   <see langword="null"/> to use the default <see cref="EqualityComparer{T}"/> for the type of the key.
         /// </param>
         /// <exception cref="ArgumentException">
@@ -391,7 +391,7 @@ namespace Kvasir.Relations {
         }
 
         /// <summary>
-        ///   Gets the alue associated with the specified key.
+        ///   Gets the value associated with the specified key.
         /// </summary>
         /// <param name="key">
         ///   The key of the value to get.

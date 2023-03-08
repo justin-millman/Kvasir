@@ -43,7 +43,7 @@ Kvasir will not apply any reductions, nor will it identify tautologically unsati
 
 The arguments to the five comparison annotations must be exactly the CLR Type of the property before its Extrinsic
 Data Conversion is performed; implicit type conversions (e.g. widening of integers) are not supported. The only
-exceptions to this rule are for Scalar Properties whoe pre-conversion CLR Type is either `System.DateTime` or
+exceptions to this rule are for Scalar Properties whose pre-conversion CLR Type is either `System.DateTime` or
 `System.Guid`: because values of these types cannot be provided directly to a C# attribute, a `string` is expected
 (converted into the appropriate type based on the Translation Settings).
 
@@ -56,7 +56,7 @@ enumeration. It is an error for more than one of either annotation, or for both,
 
 The arguments to the two inclusion/exclusion annotations must be exactly the CLR Type of the property before its
 Extrinsic Data Conversion is performed; implicit type conversions (e.g. widening of integers) are not supported. The
-only exceptions to this rule are for Scalar Properties whoe pre-conversion CLR Type is either `System.DateTime` or
+only exceptions to this rule are for Scalar Properties whose pre-conversion CLR Type is either `System.DateTime` or
 `System.Guid`: because values of these types cannot be provided directly to a C# attribute, a `string` is expected
 (converted into the appropriate type based on the Translation Settings).
 

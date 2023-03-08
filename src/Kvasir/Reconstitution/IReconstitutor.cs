@@ -12,7 +12,7 @@ namespace Kvasir.Reconstitution {
         Type Target { get; }
 
         /// <summary>
-        ///   Execute this <see cref="IReconstitutor"/> to create a brand new CLR object from a "row" of datbase
+        ///   Execute this <see cref="IReconstitutor"/> to create a brand new CLR object from a "row" of database
         ///   values.
         /// </summary>
         /// <param name="rawValues">

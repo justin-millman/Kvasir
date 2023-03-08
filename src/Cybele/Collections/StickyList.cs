@@ -97,7 +97,7 @@ namespace Cybele.Collections {
         ///   enumerable.
         /// </summary>
         /// <param name="enumerable">
-        ///   The enumerable from which to populate the initial state of the new StickyList. All elemenets will be
+        ///   The enumerable from which to populate the initial state of the new StickyList. All elements will be
         ///   initialized as non-sticky.
         /// </param>
         public StickyList(IEnumerable<T> enumerable)
@@ -118,7 +118,7 @@ namespace Cybele.Collections {
         ///   comparison purposes and is populated with the non-sticky contents of another enumerable.
         /// </summary>
         /// <param name="enumerable">
-        ///   The enumerable from which to populate the initial state of the new StickyList. All elemenets will be
+        ///   The enumerable from which to populate the initial state of the new StickyList. All elements will be
         ///   initialized as non-sticky.
         /// </param>
         /// <param name="comparer">
@@ -171,7 +171,7 @@ namespace Cybele.Collections {
         }
 
         /// <summary>
-        ///   Checks if an elemment exists in the <see cref="StickyList{T}"/>.
+        ///   Checks if an element exists in the <see cref="StickyList{T}"/>.
         /// </summary>
         /// <param name="element">
         ///   The probe element.
@@ -192,7 +192,7 @@ namespace Cybele.Collections {
         /// </param>
         /// <returns>
         ///   The <c>0</c>-based index of the first element in the StickList that compares equal to
-        ///   <paramref name="element"/>, if suh an element exists; otherwise, <c>-1</c>.
+        ///   <paramref name="element"/>, if such an element exists; otherwise, <c>-1</c>.
         /// </returns>
         public int IndexOf(T element) {
             for (var idx = 0; idx < elements_.Count; ++idx) {

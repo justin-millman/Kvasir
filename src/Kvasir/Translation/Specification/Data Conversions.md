@@ -13,7 +13,7 @@ Data Type of the corresponding Fields. It is an error for a property to be annot
 ### For Scalar Properties
 
 When applied to a Scalar Property, it is an error for the `Path` of a `[DataConverter(T)]` annotation to be anything
-other than the empty string. Futhermore, the `SourceType` of `T` must be exactly the native type of the property;
+other than the empty string. Furthermore, the `SourceType` of `T` must be exactly the native type of the property;
 implicit type conversions (e.g. widening of integers) are not supported. The CLR Type of the Scalar Property is then
 the `ResultType` of `T`, but the nullability is unaffected. It is an error for a Scalar Property to be directly
 annotated with more than one `[DataConverter(T)]` attributes; to achieve a complex, multi-step conversion, simply
@@ -73,7 +73,7 @@ Nested Property accessed via the annotation's `Path`. It is an error for no such
 be an empty string or for the `Path` to resolve to a property that is excluded from the Data Model. It is also an error
 if the target Nested Property is already annotated with its own `[DataConverter(T)]` attribute.
 
-If the Neted Property obtained via `Path` is an Enumeration Property, the application of the `[DataConverter(T)]` taken
+If the Nested Property obtained via `Path` is an Enumeration Property, the application of the `[DataConverter(T)]` taken
 from the Aggregate Property is applied before any automatic Extrinsic Data Conversion is synthesized.
 
 ## Intrinsic Data Conversions

@@ -42,7 +42,7 @@ namespace Kvasir.Transcription {
         void And();
 
         /// <summary>
-        ///   Placs an <c>OR</c> operator into the <c>CHECK</c>-style constraint being defined by the current builder's
+        ///   Places an <c>OR</c> operator into the <c>CHECK</c>-style constraint being defined by the current builder's
         ///   declaration.
         /// </summary>
         void Or();

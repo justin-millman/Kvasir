@@ -2,7 +2,7 @@ using System;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
-    ///   The interface that defines how an existing CLR object is modified based on a list of values extraced from a
+    ///   The interface that defines how an existing CLR object is modified based on a list of values extracted from a
     ///   back-end relational database
     /// </summary>
     /// <remarks>
@@ -10,7 +10,7 @@ namespace Kvasir.Reconstitution {
     ///     The process of creating a CLR object from a "row" of database values is a two-step process. In the first
     ///     step, the object is <i>created</i>; that is, some valid CLR object is brought into existence according to
     ///     the APIs exposed by the target type. In the second step, that object is modified so that its state reflects
-    ///     the full slate of values in the "row." This two-step dance allows for the use of, for exaple, read-only
+    ///     the full slate of values in the "row." This two-step dance allows for the use of, for example, read-only
     ///     properties in conjunction with constructors, which is a more natural object model for most users (as
     ///     compared to requiring that all properties be writeable).
     ///   </para>

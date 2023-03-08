@@ -33,7 +33,7 @@ namespace Atropos {
         }
 
         /// <summary>
-        ///   Symmetrially evaluates the <c>IEquatable&lt;T&gt;.Equals(T?)</c> method for two arguments if the type of
+        ///   Symmetrically evaluates the <c>IEquatable&lt;T&gt;.Equals(T?)</c> method for two arguments if the type of
         ///   those arguments implements the <see cref="IEquatable{T}"/> interface.
         /// </summary>
         /// <typeparam name="T">

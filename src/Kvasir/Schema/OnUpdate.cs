@@ -7,7 +7,7 @@ namespace Kvasir.Schema {
     ///   of values) in one Table references a row in another. <c>UPDATE</c> operations can therefore disrupt the
     ///   validity of Foreign Keys, as the row(s) being updated can feasibly be one referenced by a Foreign Key in
     ///   another Table. When this happens, the behavior is controlled by the <c>ON UPDATE</c> behavior of the Foreign
-    ///   Key that referenes the to-be-updated row(s). If multiple Foreign Keys reference the targeted row(s) with
+    ///   Key that references the to-be-updated row(s). If multiple Foreign Keys reference the targeted row(s) with
     ///   different <c>ON UPDATE</c> behavior, the result depends on the back-end RDBMS provider being used.
     /// </remarks>
     public enum OnUpdate : byte {
@@ -34,9 +34,9 @@ namespace Kvasir.Schema {
         SetNull,
 
         /// <summary>
-        ///   When a rwo that is referenced by a row in another Table via a Foreign Key is updated, set the valus of
+        ///   When a row that is referenced by a row in another Table via a Foreign Key is updated, set the values of
         ///   any referencing Fields to their default value. For obvious reasons, this behavior can only be applied to
-        ///   a Foreign Key where all the constituent Fields have explicitly specified defalut values.
+        ///   a Foreign Key where all the constituent Fields have explicitly specified default values.
         /// </summary>
         SetDefault,
 
@@ -44,7 +44,7 @@ namespace Kvasir.Schema {
         ///   Take no action when a row being updated is referenced by a row in another Table via a Foreign Key. This
         ///   behavior can lead to data integrity issues, as the referencing row no longer refers to an extant target.
         ///   This is the weakest behavior. Some back-end RDBMS providers will raise errors or exceptions when such
-        ///   data integrity violations arse.
+        ///   data integrity violations arise.
         /// </summary>
         NoAction,
     }

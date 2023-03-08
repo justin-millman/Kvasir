@@ -17,7 +17,7 @@ Entity Type:
 A CLR Type that has non-`public` visibility but meets the other criteria may be added to the Data Model by applying the
 `[IncludeInModel]` annotation to the type's definition. However, applying this attribute to any other type (e.g. an
 `abstract` type, a generic type, a `struct`, etc.) will produce an error. Entity Types may be `partial` and may also be
-`sealed`. An Entity Type may have an inheritance hierarchy, though it is generally discouarged, as it may not result in
+`sealed`. An Entity Type may have an inheritance hierarchy, though it is generally discouraged, as it may not result in
 Fields being identified as expected.
 
 A CLR Type that meets the above criteria but is _not_ annotated with `[IncludeInModel]` may still be included in the
@@ -56,7 +56,7 @@ It is an error for a property that is included in the Data Model to have a CLR T
 categories (e.g. a `delegate`, `System.Enum`, `dynamic`, etc.). Due to other rules regarding generic Entity Types and
 inheritance, it is also the case that the CLR Type of a property included in the Data Model cannot be generic reference
 type; closed generic value types (i.e. structs) are legal (and they may be from the C# standard library). Nullable types
-are fully supported (both `System.Nullable<T>` instantations and nullable reference types); the category of a property
+are fully supported (both `System.Nullable<T>` instantiations and nullable reference types); the category of a property
 with such a CLR Type is that of its non-nullable equivalent.
 
 Note that a Data Converter cannot be used to include a property in the Data Model if that property's type does not fit
@@ -69,7 +69,7 @@ visibility, non-`public` visibility, or be absent altogether. That being said, t
 method may have an impact on the Reconstitution of Entity Types.
 
 Note that a property's CLR Type for the purpose of Field categorization is not always the actual `PropertyType` of the
-corresponding `System.Reflection.PropertyInfo`: the presencce of extrinsic data conversions may result in a different
+corresponding `System.Reflection.PropertyInfo`: the presence of extrinsic data conversions may result in a different
 identification.
 
 ## Data Types

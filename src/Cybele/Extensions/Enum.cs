@@ -53,7 +53,7 @@ namespace Cybele.Extensions {
                 isFlagsMemoizer_[enumType] = isFlags;
             }
 
-            // If the enum type is a regular enum, as opposd to a flags enum, then the validity check should behave the
+            // If the enum type is a regular enum, as opposed to a flags enum, then the validity check should behave the
             // same as Enum.IsDefined. We also use the standard library helper when the input enumerator value is 0,
             // because relying on the ensuing bitwise arithmetic would produce a false positive if a zero-flags
             // combination were not explicitly defined for a flags enum.
@@ -100,7 +100,7 @@ namespace Cybele.Extensions {
         /// </returns>
         private static long AsInt64<TEnum>(this TEnum self) where TEnum : Enum {
             // Signed and unsigned bytes, shorts, and ints can be converted to a signed long without risk for data
-            // loss: the range of unsigned long covers all possible values of these data tyeps. Unsigned longs cannot
+            // loss: the range of unsigned long covers all possible values of these data types. Unsigned longs cannot
             // be safely converted into signed longs, however, due to the potential for overflow. We use the Convert
             // utility class to actually change the enumerator into the integer value.
             var bytes = self.GetTypeCode() == TypeCode.UInt64 ?

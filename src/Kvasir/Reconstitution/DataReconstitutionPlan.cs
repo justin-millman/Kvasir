@@ -10,7 +10,7 @@ using System.Linq;
 namespace Kvasir.Reconstitution {
     /// <summary>
     ///   A description of the way in which data for a particular CLR object type is to be extracted from a back-end
-    ///   database, transformd, and reimaginged as an instance.
+    ///   database, transformed, and re-imagined as an instance.
     /// </summary>
     public sealed class DataReconstitutionPlan {
         /// <summary>

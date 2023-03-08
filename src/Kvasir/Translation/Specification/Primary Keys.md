@@ -1,6 +1,6 @@
 ﻿# Primary Keys
 
-Each Entity has a **Primary Key**, a collection of one or more Fields that uniquely identifie an instance of the Entity.
+Each Entity has a **Primary Key**, a collection of one or more Fields that uniquely identifies an instance of the Entity.
 Primary Keys are referenced by Foreign Keys (e.g. for Reference Properties) and may be used as indices in the back-end
 database. The Fields that participate in a Primary Key can be of any Data Type, though they must be non-nullable.
 

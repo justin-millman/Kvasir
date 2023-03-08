@@ -41,7 +41,7 @@ namespace Kvasir.Relations {
     ///   <para>
     ///     A <see cref="RelationList{T}"/> technically permits duplicate elements, though it is strongly advised that
     ///     users treat the collection as more of an ordered set, as the back-end relational database table will
-    ///     not permit duplicates. For example, it is possile for the collection to expose a single item in multiple
+    ///     not permit duplicates. For example, it is possible for the collection to expose a single item in multiple
     ///     seemingly incompatible states (e.g. <c>SAVED</c> and <c>DELETED</c>). Though different search APIs enable
     ///     the use of custom comparators, the internal comparison logic always uses the default comparison.
     ///   </para>
@@ -180,7 +180,7 @@ namespace Kvasir.Relations {
         /// </returns>
         /// <exception cref="InvalidOperationException">
         ///   if the default comparer <see cref="Comparer{T}.Default"/> cannot find an implementation of the
-        ///   <see cref="IComparable{T}"/> generic interface or the <see cref="IComparable"/> interfae for type
+        ///   <see cref="IComparable{T}"/> generic interface or the <see cref="IComparable"/> interface for type
         ///   <typeparamref name="T"/>.
         /// </exception>
         [ExcludeFromCodeCoverage]
@@ -217,7 +217,7 @@ namespace Kvasir.Relations {
 
         /// <summary>
         ///   Searches a range of elements in the sorted <see cref="RelationList{T}"/> for an element using the
-        ///   specified comparer and returns the zero-based index of the elemment.
+        ///   specified comparer and returns the zero-based index of the element.
         /// </summary>
         /// <param name="index">
         ///   The zero-based starting index of the range to search.
@@ -233,7 +233,7 @@ namespace Kvasir.Relations {
         ///   to use the default comparer <see cref="Comparer{T}.Default"/>.
         /// </param>
         /// <returns>
-        ///   The zero-based inex of <paramref name="item"/> in the sorted <see cref="RelationList{T}"/>, if
+        ///   The zero-based index of <paramref name="item"/> in the sorted <see cref="RelationList{T}"/>, if
         ///   <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement of the
         ///   index of the next element that is larger than <paramref name="item"/> or, if there is no larger element,
         ///   the bitwise complement of <see cref="Count"/>.
@@ -513,7 +513,7 @@ namespace Kvasir.Relations {
         }
 
         /// <summary>
-        ///   Searches for an element that matchs the conditions defined by the specified predicate, and returns the
+        ///   Searches for an element that matches the conditions defined by the specified predicate, and returns the
         ///   zero-based index of the last occurrence within the range of elements in the <see cref="RelationList{T}"/>
         ///   that extends from the first element to the specified index.
         /// </summary>
@@ -641,7 +641,7 @@ namespace Kvasir.Relations {
         ///   reference types.
         /// </param>
         /// <param name="index">
-        ///   The zero-based starting index of the sarch. <c>0</c> (zero) is valid in an empty list.
+        ///   The zero-based starting index of the search. <c>0</c> (zero) is valid in an empty list.
         /// </param>
         /// <returns>
         ///   The zero-based index of the first occurrence of <paramref name="item"/> within the range of elements in
@@ -663,7 +663,7 @@ namespace Kvasir.Relations {
         /// </summary>
         /// <param name="item">
         ///   The object to locate in the <see cref="RelationList{T}"/>. The value can be <see langword="null"/> for
-        ///   reference tpes.
+        ///   reference types.
         /// </param>
         /// <param name="index">
         ///   The zero-based starting index of the search. <c>0</c> (zero) is valid in an empty list.
@@ -672,7 +672,7 @@ namespace Kvasir.Relations {
         ///   The number of elements in the section to search.
         /// </param>
         /// <returns>
-        ///   The zero-based index of teh first occurrence of <paramref name="item"/> within the range of elements in
+        ///   The zero-based index of the first occurrence of <paramref name="item"/> within the range of elements in
         ///   the <see cref="RelationList{T}"/> that starts at <paramref name="index"/> and contains
         ///   <paramref name="count"/> number of elements, if found; otherwise, <c>-1</c>.
         /// </returns>
@@ -700,11 +700,11 @@ namespace Kvasir.Relations {
         ///   Inserts the elements of a collection into the <see cref="RelationList{T}"/> at the specified index.
         /// </summary>
         /// <param name="index">
-        ///   The zero-based index at which the new elements sould be inserted.
+        ///   The zero-based index at which the new elements should be inserted.
         /// </param>
         /// <param name="collection">
         ///   The collection whose elements should be inserted into the <see cref="RelationList{T}"/>. The collection
-        ///   itself cannot be <see langword="null"/>, but it cacn contain elements that are <see langword="null"/> if
+        ///   itself cannot be <see langword="null"/>, but it can contain elements that are <see langword="null"/> if
         ///   type <typeparamref name="T"/> is a reference type.
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -721,7 +721,7 @@ namespace Kvasir.Relations {
         }
 
         /// <summary>
-        ///   Searchs for the specified object and returns the zero-based index of the last occurrence within the
+        ///   Searches for the specified object and returns the zero-based index of the last occurrence within the
         ///   entire <see cref="RelationList{T}"/>.
         /// </summary>
         /// <param name="item">
@@ -810,7 +810,7 @@ namespace Kvasir.Relations {
         ///   Removes all the elements that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">
-        ///   The <see cref="Predicate{T}"/> delegate that dfines the conditions of the elements to remove.
+        ///   The <see cref="Predicate{T}"/> delegate that defines the conditions of the elements to remove.
         /// </param>
         /// <returns>
         ///   The number of elements removed from the <see cref="RelationList{T}"/>.
@@ -1030,14 +1030,14 @@ namespace Kvasir.Relations {
 
         /// <summary>
         ///   Determines whether every element in the <see cref="RelationList{T}"/> matches the conditions defined by
-        ///   the speified predicate.
+        ///   the specified predicate.
         /// </summary>
         /// <param name="match">
         ///   The <see cref="Predicate{T}"/> delegate that defines the conditions to check against the elements.
         /// </param>
         /// <returns>
         ///   <see langword="true"/> if every element in the <see cref="RelationList{T}"/> matches the conditions
-        ///   defined by the specified predicate; otherise, <see langword="false"/>. If the list contains no elements,
+        ///   defined by the specified predicate; otherwise, <see langword="false"/>. If the list contains no elements,
         ///   the return value is <see langword="true"/>.
         /// </returns>
         [ExcludeFromCodeCoverage]

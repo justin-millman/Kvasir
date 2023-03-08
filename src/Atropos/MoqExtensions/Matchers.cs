@@ -13,7 +13,7 @@ namespace Atropos.Moq {
         ///   <see cref="IEnumerable"/> with the same sequence of elements as another.
         /// </summary>
         /// <typeparam name="T">
-        ///   The conrete type of <see cref="IEnumerable"/> to be operated on by the Matcher.
+        ///   The concrete type of <see cref="IEnumerable"/> to be operated on by the Matcher.
         /// </typeparam>
         /// <param name="expected">
         ///   The sequence of elements.
@@ -33,7 +33,7 @@ namespace Atropos.Moq {
         ///   <see cref="IEnumerable"/> with the same sequence of elements as another as defined by a custom comparer.
         /// </summary>
         /// <typeparam name="T">
-        ///   The conrete type of <see cref="IEnumerable"/> to be operated on by the Matcher.
+        ///   The concrete type of <see cref="IEnumerable"/> to be operated on by the Matcher.
         /// </typeparam>
         /// <param name="expected">
         ///   The sequence of elements.

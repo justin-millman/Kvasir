@@ -33,7 +33,7 @@ namespace Kvasir.Annotations {
     }
 
     /// <summary>
-    ///   An attribute that specifie the name of the Primary Key of the Table backing a particular class.
+    ///   An attribute that specifies the name of the Primary Key of the Table backing a particular class.
     /// </summary>
     /// <seealso cref="PrimaryKeyAttribute"/>
     /// <seealso cref="KeyName"/>

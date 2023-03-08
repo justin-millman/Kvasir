@@ -822,7 +822,7 @@ namespace UT.Kvasir.Translation {
                 public string ClueText { get; set; } = "";
             }
 
-            // Test Scenario: Valid Default Value for Data-Coverted Target Type, Not Original Type {error}
+            // Test Scenario: Valid Default Value for Data-Converted Target Type, Not Original Type {error}
             public class Coupon {
                 [PrimaryKey] public Guid Barcode { get; set; }
                 public string? Code { get; set; }
@@ -1349,7 +1349,7 @@ namespace UT.Kvasir.Translation {
                 public decimal Gross { get; set; }
             }
 
-            // Test Scneario: Error Thrown while Constructing Data Converter Type {error}
+            // Test Scenario: Error Thrown while Constructing Data Converter Type {error}
             public class Sword {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public decimal Sharpness { get; set; }

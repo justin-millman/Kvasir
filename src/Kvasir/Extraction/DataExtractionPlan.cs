@@ -36,7 +36,7 @@ namespace Kvasir.Extraction {
         ///   Each element of <paramref name="steps"/> expects the same type of
         ///   <see cref="IExtractionStep.ExpectedSource">source object</see>
         ///     --and--
-        ///   The number of elements in <paramref name="converters"/> matche the number of values, in total, produced
+        ///   The number of elements in <paramref name="converters"/> matches the number of values, in total, produced
         ///   by <paramref name="steps"/> (note that this is not necessarily the number of elements in
         ///   <paramref name="steps"/>, as an <see cref="IExtractionStep"/> may produce multiple values).
         /// </pre>
@@ -82,7 +82,7 @@ namespace Kvasir.Extraction {
         ///   instance thereof.
         /// </pre>
         /// <returns>
-        ///   A lazily-evaluted, immutable, non-indexable ordered sequence of <see cref="DBValue">database values</see>
+        ///   A lazily-evaluated, immutable, non-indexable ordered sequence of <see cref="DBValue">database values</see>
         ///   extracted from <paramref name="source"/>.
         /// </returns>
         public IEnumerable<DBValue> ExecutePiecewise(object source) {

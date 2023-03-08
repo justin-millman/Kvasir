@@ -10,7 +10,7 @@ namespace Kvasir.Schema {
     ///   <para>
     ///     The <see cref="DBType"/> is strictly a semantic specification, incorporating nothing about the actual
     ///     mechanism by which the type is represented in a back-end database. Different RDBMS providers realize
-    ///     semantic types differently; for exaple, SQL Server does not distinguish between signed and unsigned
+    ///     semantic types differently; for example, SQL Server does not distinguish between signed and unsigned
     ///     integers whereas MySQL does. <see cref="DBType"/> is intended to partition the data type space along these
     ///     universal semantic fault lines, leaving the actual storage mechanics up to the back-end provider being
     ///     used.
@@ -24,7 +24,7 @@ namespace Kvasir.Schema {
     ///   </para>
     ///   <para>
     ///     The various semantic type categories are represented as distinct <see cref="DBType"/> instances exposed as
-    ///     <see langword="static"/> psudo-enumerators: it is not possible to create custom <see cref="DBType"/>
+    ///     <see langword="static"/> pseudo-enumerators: it is not possible to create custom <see cref="DBType"/>
     ///     instances.
     ///   </para>
     /// </remarks>
@@ -60,7 +60,7 @@ namespace Kvasir.Schema {
         public static DBType Int64 { get; }
 
         /// <summary>
-        ///   The <see cref="DBValue"/> representing an <c>8</c>-bit unsignd integer.
+        ///   The <see cref="DBValue"/> representing an <c>8</c>-bit unsigned integer.
         /// </summary>
         public static DBType UInt8 { get; }
 
@@ -120,7 +120,7 @@ namespace Kvasir.Schema {
         public static DBType Enumeration { get; }
 
         /// <summary>
-        ///   Determins if a CLR <see cref="Type"/> is supported by Kvasir.
+        ///   Determines if a CLR <see cref="Type"/> is supported by Kvasir.
         /// </summary>
         /// <param name="clrType">
         ///   The CLR <see cref="Type"/> for which to check for support.

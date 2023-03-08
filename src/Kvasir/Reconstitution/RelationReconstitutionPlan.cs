@@ -8,7 +8,7 @@ using System.Linq;
 namespace Kvasir.Reconstitution {
     /// <summary>
     ///   A description of the way in which data for a particular Relation is to be extracted from a back-end database,
-    ///   transformed, and reimagined as the elements of some CLR collection.
+    ///   transformed, and re-imagined as the elements of some CLR collection.
     /// </summary>
     public sealed class RelationReconstitutionPlan {
         /// <summary>

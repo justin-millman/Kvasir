@@ -62,7 +62,7 @@ namespace Kvasir.Transcription {
         void SetAllowedValues(IEnumerable<DBValue> values);
 
         /// <summary>
-        ///   Produce the full declaration that has ben built up by calls into other methods on this
+        ///   Produce the full declaration that has been built up by calls into other methods on this
         ///   <see cref="IFieldDeclBuilder{TDecl}"/>.
         /// </summary>
         /// <pre>

@@ -41,7 +41,7 @@ namespace Kvasir.Core {
         ///   The source object.
         /// </param>
         /// <returns>
-        ///   The coversion of <paramref name="source"/> into an instance of <typeparamref name="TResult"/>.
+        ///   The conversion of <paramref name="source"/> into an instance of <typeparamref name="TResult"/>.
         /// </returns>
         TResult Convert(TSource source);
 

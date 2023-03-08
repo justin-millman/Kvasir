@@ -10,7 +10,7 @@ namespace Kvasir.Transcription {
         ///   Constructs a new <see cref="SqlSnippet"/>.
         /// </summary>
         /// <param name="sql">
-        ///   The contents of the new <see cref="SqlSnippet"/>. Leading and trailing whitspace are discarded.
+        ///   The contents of the new <see cref="SqlSnippet"/>. Leading and trailing whitespace are discarded.
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///   if <paramref name="sql"/> is <see langword="null"/>.
