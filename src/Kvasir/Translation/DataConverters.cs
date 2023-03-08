@@ -3,6 +3,7 @@ using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Exceptions;
 using Kvasir.Schema;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -66,11 +67,12 @@ namespace Kvasir.Translation {
             // It is an error for the <SourceType> of the value of a [DataConverter] annotation to be different than the
             // property's CLR type, modulo nullability for primitives and structs; by using IsInstanceOf, we are able
             // to support the desirable argument variance
-            if (!property.PropertyType.IsInstanceOf(converter.SourceType)) {
+            var expectedType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+            if (!expectedType.IsInstanceOf(converter.SourceType)) {
                 throw new KvasirException(
                     $"Error translating property {property.Name} of type {property.ReflectedType!.Name}: " +
                     $"[DataConverter] annotation operates on {converter.SourceType.Name} for " +
-                    $"Field of type {property.PropertyType.Name}"
+                    $"Field of type {expectedType.Name}"
                 );
             }
 

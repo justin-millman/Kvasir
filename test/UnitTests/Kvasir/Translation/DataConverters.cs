@@ -62,7 +62,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("HouseName", DBType.Text, IsNullable.No).And
                 .HaveField("Founded", DBType.DateTime, IsNullable.No).And
                 .HaveField("CurrentHead", DBType.Text, IsNullable.Yes).And
-                .HaveField("TotalMonarchs", DBType.Int32, IsNullable.No).And
+                .HaveField("TotalMonarchs", DBType.Int32, IsNullable.Yes).And
                 .NoOtherFields();
         }
 
@@ -134,8 +134,8 @@ namespace UT.Kvasir.Translation {
                 .WithMessage($"*{source.Name}*")                                // source type
                 .WithMessage($"*{nameof(ConstitutionalAmendment.Number)}*")     // source property
                 .WithMessage("*[DataConverter]*")                               // annotation
-                .WithMessage($"*Field of type {typeof(int).Name}*")             // rationale
-                .WithMessage($"*operates on {typeof(long).Name}*");             // details
+                .WithMessage($"*Field of type {nameof(Int32)}*")                // rationale
+                .WithMessage($"*operates on {nameof(Int64)}*");                 // details
         }
 
         [TestMethod] public void DataConverterResultTypeNotSupported_IsError() {
