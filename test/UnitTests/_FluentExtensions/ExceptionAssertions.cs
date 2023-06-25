@@ -9,5 +9,11 @@ namespace FluentAssertions {
 
             return self.WithMessage("*");
         }
+
+        public static ExceptionAssertions<TEx> WithMessageContaining<TEx>(this ExceptionAssertions<TEx> self, string msg)
+            where TEx : Exception {
+
+            return self.WithMessage($"*{msg}*");
+        }
     }
 }

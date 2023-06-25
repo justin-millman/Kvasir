@@ -15,7 +15,6 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.Path.Should().BeEmpty();
             attr.Operator.Should().Be(ComparisonOperator.NE);
-            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNonZero_Nested() {
@@ -28,7 +27,6 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.Path.Should().Be(path);
             attr.Operator.Should().Be(ComparisonOperator.NE);
-            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNonZero_UniqueId() {
@@ -51,7 +49,6 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.Path.Should().BeEmpty();
             attr.Operator.Should().Be(ComparisonOperator.GT);
-            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsPositive_Nested() {
@@ -64,7 +61,6 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.Path.Should().Be(path);
             attr.Operator.Should().Be(ComparisonOperator.GT);
-            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsPositive_UniqueId() {
@@ -87,7 +83,6 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.Path.Should().BeEmpty();
             attr.Operator.Should().Be(ComparisonOperator.LT);
-            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNegative_Nested() {
@@ -100,7 +95,6 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.Path.Should().Be(path);
             attr.Operator.Should().Be(ComparisonOperator.LT);
-            attr.Anchor.Should().Be(new Zero());
         }
 
         [TestMethod] public void IsNegative_UniqueId() {

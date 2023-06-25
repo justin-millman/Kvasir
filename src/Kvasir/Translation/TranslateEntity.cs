@@ -1,142 +1,357 @@
 ﻿using Cybele.Extensions;
+using Kvasir.Annotations;
 using Kvasir.Exceptions;
 using Kvasir.Schema;
+using Optional;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
         /// <summary>
-        ///   Translate a single Entity Type.
+        ///   Translate an Entity Type.
         /// </summary>
-        /// <param name="clr">
+        /// <param name="entity">
         ///   The Entity Type.
         /// </param>
-        /// <exception cref="KvasirException">
-        ///   if <paramref name="clr"/> is not a valid Entity Type
-        ///     --or--
-        ///   if the Translation of <paramref name="clr"/> contains any Tables with exactly 0 or 1 back-end Fields
-        ///     --or--
-        ///   if the name of any Tables in the Translation of <paramref name="clr"/> has a name that is not globally
-        ///   unique
-        ///     --or--
-        ///   if the Translation of <paramref name="clr"/> contains any Table with two or more Field sharing a single
-        ///   name
-        ///     --or--
-        ///   if the Translation of <paramref name="clr"/> contains any Table in which one or more Candidate Keys is a
-        ///   superset (not necessarily proper) of the Table's Primary Key
-        ///     --or--
-        ///   if the Translation of <paramref name="clr"/> contains any Table in which the name of the Primary Key is
-        ///   the same as the name of any of the Table's Candidate Keys.
-        /// </exception>
         /// <returns>
-        ///   The Translation of <paramref name="clr"/>.
+        ///   The <see cref="Translation"/> of <paramref name="entity"/>.
         /// </returns>
-        private Translation TranslateEntity(Type clr) {
-            // If we've already translated the Type once, then simply return the memoized TypeDescriptor; the upstream
-            // caller may modify the result based on property-level annotations
-            if (entityCache_.TryGetValue(clr, out Translation? result)) {
+        /// <exception cref="KvasirException">
+        ///   if <paramref name="entity"/> cannot be translated for any reason.
+        /// </exception>
+        private Translation TranslateEntity(Type entity) {
+            Debug.Assert(entity is not null);
+
+            // If the type has already been translated, return the memoized (and already error-checked) result
+            if (entityCache_.TryGetValue(entity, out var result)) {
                 return result;
             }
 
-            // Make sure that the Type can actually be used as an Entity Type
-            CheckEntityType(clr);
+            // It is an error for a prospective Entity type to be invalid
+            EntityTypeCheck(entity).MatchSome(s => throw Error.UserError(entity, $"{s} cannot be an Entity type"));
 
-            // Get the TypeDescriptor for the Type; this will perform all of the property-level error checking and put
-            // the FieldDescriptors in the correct order
-            var descriptor = TranslateType(clr);
+            // Get translation of the Entity type; this is the translation without Entity-specific features, such as
+            // primary key deduction, key collapse, and constraint flattening
+            var typeTranslation = TranslateType(entity);
 
-            // It is an error for an Entity to have fewer than two Fields
-            if (descriptor.Fields.Count < 2) {
-                throw new KvasirException(
-                    $"{clr.Name} cannot be an Entity Type: " +
-                    $"at least 2 Fields are required (only {descriptor.Fields.Count} Fields found)"
-                );
-            }
-
-            // It is an error for the name of a Table match that of another Table
-            var tableName = NameOf(clr);
+            // It is an error for the name of an Entity's Principal Table to be the same as that of another Table
+            var tableName = GetTableName(entity);
             if (!tableNames_.Add(tableName)) {
-                throw new KvasirException(
-                    $"Error translating Entity Type {clr.Name}: " +
-                    $"Primary Table name \"{tableName}\" is already in use"
-                );
+                var msg = $"Table name \"{tableName}\" is already in use";
+                throw Error.UserError(entity, msg);
             }
 
-            // It is an error for a Table to contain two or more Fields with the same name
-            var fields = new List<IField>(MakeFieldsFrom(descriptor.Fields)).ToList();
-            var fieldNames = new HashSet<FieldName>();
-            foreach (var field in fields) {
-                if (!fieldNames.Add(field.Name)) {
-                    throw new KvasirException(
-                        $"Error translating Entity Type {clr.Name}: duplicate Field name \"{field.Name}\" encountered"
-                    );
+            // Create the individual Fields and all the constraints for the Entity; we need the actual Fields first,
+            // because the constraint Clauses operate in terms of Fields
+            var fields = new List<IField>();
+            var constraints = new List<CheckConstraint>();
+            var converters = typeTranslation.Fields.Values.Select(d => d.Converter);
+            foreach (var descriptor in typeTranslation.Fields.Values) {
+                var flattened = FlattenConstraints(descriptor);
+                var field = MakeField(flattened);
+
+                // It is an error for an Entity to have two or more Fields with the same name
+                if (fields.Any(f => f.Name == field.Name)) {
+                    var msg = $"two or more Fields with name \"{field.Name}\"";
+                    throw Error.UserError(entity, msg);
                 }
+
+                fields.Add(field);
+                constraints.AddRange(MakeConstraints(flattened, fields[^1]));
+            }
+            foreach (var custom in typeTranslation.CHECKs) {
+                constraints.Add(new CheckConstraint(custom(fields, converters)));
             }
 
-            // Create the Candidate Keys, then deduce the Primary Key
-            var candidateKeys = MakeCandidateKeysFrom(descriptor.Fields, fields).ToList();
-            var primaryKey = CreatePrimaryKeyFor(clr, descriptor.Fields, fields, candidateKeys);
-
-            // It is an error for the Primary Key of a Table to be a superset of any of the Table's Candidate Keys
-            var pkSet = new HashSet<FieldName>(primaryKey.Fields.Select(f => f.Name));
-            foreach (var candidate in candidateKeys) {
-                var ckSet = new HashSet<FieldName>(candidate.Fields.Select(f => f.Name));
-                if (ckSet.IsSupersetOf(pkSet)) {
-                    throw new KvasirException(
-                        $"Error translating Entity Type {clr.Name}: " +
-                        $"Candidate Key \"{candidate.Name.Unwrap()}\" ({string.Join(", ", ckSet)}) " +
-                        $"is a superset of the Primary Key ({string.Join(", ", pkSet)})"
-                    );
-                }
+            // It is an error for an Entity to have fewer than 2 Fields
+            if (fields.Count < 2) {
+                throw Error.UserError(entity, $"at least 2 Fields required ({fields.Count} found)");
             }
 
-            // It is an error for the name of the Primary Key of a Table to be the same as the name of any of the
-            // Table's Candidate Keys
-            if (primaryKey.Name.HasValue && candidateKeys.Any(ck => ck.Name == primaryKey.Name)) {
-                throw new KvasirException(
-                    $"Error translating Entity Type {clr.Name}: " +
-                    $"[NamedPrimaryKey] \"{primaryKey.Name.Unwrap()}\" clashes with name of unrelated Candidate Key"
-                );
-            }
+            // Compute the Primary Key and all Candidate Keys. This includes performing Primary Key deduction (and
+            // corresponding error checking), collapsing Candidate Keys to account for subset/superset relations, and
+            // eliminating Candidate Keys that are redundant with the Primary Key.
+            (var primaryKey, var candidateKeys) = ComputeKeys(entity, fields, typeTranslation.Fields.Values);
 
-            // Invoke the "generators" to create the CHECK clauses now that we have concrete IField instances
-            var converters = descriptor.Fields.Select(f => f.Converter);
-            var checks = descriptor.CHECKs.Select(g => new CheckConstraint(g(fields, converters))).ToList();
-            foreach (var (field, desc) in fields.Zip(descriptor.Fields)) {
-                foreach (var generator in desc.CHECKs) {
-                    checks.Add(new CheckConstraint(generator(field, desc.Converter)));
-                }
-            }
+            // Foreign Keys are part of the Schema Layer, but they are not yet supported by the Translation Layer
+            var foreignKeys = Enumerable.Empty<ForeignKey>();
 
-            // These are not currently supported at the Translation Layer, but they are present in the Schema Layer
-            var foreignKeys = new List<ForeignKey>();
-
-            // No errors detected
-            var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, checks);
-            var def = new PrincipalTableDef(table);
-            var translation = new Translation(clr, def);
-            entityCache_.Add(clr, translation);
-            return translation;
+            // Construct the final Translation
+            var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
+            var principal = new PrincipalTableDef(table, null!, null!);
+            var entityTranslation = new Translation(entity, principal, Enumerable.Empty<RelationTableDef>());
+            entityCache_.Add(entity, entityTranslation);
+            return entityTranslation;
         }
 
         /// <summary>
-        ///   Converts one or more <see cref="FieldDescriptor">FieldDescriptors</see> into their corresponding
-        ///   <see cref="IField">Fields</see>.
+        ///   Check if a particular CLR <see cref="Type"/> can serve as the source of an Entity translation.
         /// </summary>
-        /// <param name="descriptors">
-        ///   The <see cref="FieldDescriptor">FieldDescriptors</see> describing the schema model.
+        /// <param name="type">
+        ///   The <see cref="Type"/>.
         /// </param>
         /// <returns>
-        ///   A finite enumerable of <see cref="IField">Fields</see>, one for each source descriptor in the same order
-        ///   thereof.
+        ///   A <c>NONE</c> instance if <paramref name="type"/> is a valid Entity type; otherwise a <c>SOME</c> instance
+        ///   carrying an explanation as to why it is not.
         /// </returns>
-        private static FieldSeq MakeFieldsFrom(IEnumerable<FieldDescriptor> descriptors) {
-            foreach (var descriptor in descriptors) {
-                var dbType = DBType.Lookup(descriptor.Converter.ResultType);
-                var defaultValue = descriptor.RawDefault.Map(obj => DBValue.Create(descriptor.Converter.Convert(obj)));
-                yield return new BasicField(descriptor.Name, dbType, descriptor.Nullability, defaultValue);
+        private static Option<string> EntityTypeCheck(Type type) {
+            Debug.Assert(type is not null);
+
+            // An Entity type cannot be an enumeration
+            if (type.IsEnum) {
+                return Option.Some("an enumeration");
+            }
+
+            // An Entity type cannot be a struct or a record struct
+            if (type.IsValueType) {
+                return Option.Some("a struct or a record struct");
+            }
+
+            // An Entity type cannot be a delegate
+            if (type.IsInstanceOf(typeof(Delegate))) {
+                return Option.Some("a delegate");
+            }
+
+            // An Entity type cannot be an interface
+            if (type.IsInterface) {
+                return Option.Some("an interface");
+            }
+
+            // An Entity type cannot be an open generic
+            if (type.IsGenericTypeDefinition) {
+                return Option.Some("an open generic");
+            }
+
+            // An Entity type cannot be a closed generic
+            if (type.IsGenericType) {
+                return Option.Some("a closed generic");
+            }
+
+            // An Entity type cannot be abstract
+            if (type.IsAbstract) {
+                return Option.Some("an abstract class or an abstract record class");
+            }
+
+            // Valid Entity type
+            return Option.None<string>();
+        }
+
+        /// <summary>
+        ///   Determine the name of the Principal Table for an Entity Type.
+        /// </summary>
+        /// <param name="entity">
+        ///   The Entity Type.
+        /// </param>
+        /// <returns>
+        ///   The name of the Principal Table for <paramref name="entity"/>.
+        /// </returns>
+        /// <exception cref="KvasirException">
+        ///   if the name of the Principal Table specified for <paramref name="entity"/> via annotations is invalid.
+        /// </exception>
+        private static TableName GetTableName(Type entity) {
+            Debug.Assert(entity is not null);
+
+            var annotation = entity.GetCustomAttribute<TableAttribute>();
+            var excludeNS = entity.HasAttribute<ExcludeNamespaceFromNameAttribute>();
+
+            // It is an error for the value specified by a [Table] attribute to be invalid; currently, the only concrete
+            // restriction is that the value is neither null nor the empty string
+            if (annotation is not null && (annotation.Name is null || annotation.Name == "")) {
+                throw Error.InvalidName(entity, annotation, annotation.Name);
+            }
+
+            // No errors encountered
+            if (annotation is null) {
+                return new TableName((excludeNS ? entity.Name : entity.FullName) + "Table");
+            }
+            else if (!excludeNS) {
+                return new TableName(annotation.Name);
+            }
+            else {
+                // [ExcludeNamespaceFromName] also includes the removal of outer class identifiers
+                var name = annotation.Name.Replace(entity.Namespace ?? "", "");
+                name = name[0] == '.' ? name[1..] : name;
+                name = name[(name.IndexOf('+') + 1)..];
+                return new TableName(name);
+            }
+        }
+
+        /// <summary>
+        ///   Condense all of the non-arbitrary constraints applied to a Field such that the minimum set of constraints
+        ///   is present.
+        /// </summary>
+        /// <remarks>
+        ///   If the Field has a <see cref="Check.IsOneOfAttribute"><c>[Check.IsOneOf]</c></see> annotation applied,
+        ///   then all other constraints are redundant, except that the allowed values are reduced to those that pass
+        ///   the other constraints. Otherwise, if the Field has a
+        ///   <see cref="Check.IsNotOneOfAttribute"><c>[Check.IsNotOneOf]</c></see> annotation, any disallowed value
+        ///   that does not pass the other constraints is removed. Furthermore, if the lower and upper bounds create a
+        ///   range of size <c>1</c>, that single value is treated as an "allowed value."
+        /// </remarks>
+        /// <param name="descriptor">
+        ///   The source <see cref="FieldDescriptor"/>.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="FieldDescriptor"/> that is identical to <paramref name="descriptor"/> in all aspects,
+        ///   except that the <see cref="FieldDescriptor.Constraints">constraints</see> have been flattened.
+        /// </returns>
+        private static FieldDescriptor FlattenConstraints(FieldDescriptor descriptor) {
+            var orig = descriptor.Constraints;
+
+            // If there is only one value in the minimum/maximum range, that one value becomes an "allowed value." Any
+            // other allowed values will be removed in the subsequent check for not passing the range constraint, which
+            // will then be cleared out because of the presence of allowed values. Eventually, this will turn into a
+            // single EQ constraint.
+            if (orig.LowerBound.Exists(bl => orig.UpperBound.Exists(bu => bl.Value.Equals(bu.Value)))) {
+                var allowed = new HashSet<object>(orig.AllowedValues) { orig.LowerBound.Unwrap().Value };
+                orig = orig with { AllowedValues = allowed };
+            }
+
+            // If there is a constraint limiting the values to a discrete subset, then we have to check which ones pass
+            // all the other constraints, discarding those that do not. Then, we can clear out all the other
+            // constraints, as [IsOneOf] is the most restrictive.
+            if (!orig.AllowedValues.IsEmpty()) {
+                var stillValid = orig.AllowedValues
+                    .Where(v => !orig.DisallowedValues.Contains(v))
+                    .Where(v => IsWithinInterval(v, orig.LowerBound, orig.UpperBound))
+                    .Where(v => v is not string s || IsWithinInterval(s.Length, orig.MinimumLength, orig.MaximumLength));
+
+                Debug.Assert(!stillValid.IsEmpty());
+                return descriptor with {
+                    Constraints = new ConstraintBucket(
+                        RelativeToZero: Option.None<ComparisonOperator>(),
+                        LowerBound: Option.None<Bound>(),
+                        UpperBound: Option.None<Bound>(),
+                        MinimumLength: Option.None<Bound>(),
+                        MaximumLength: Option.None<Bound>(),
+                        AllowedValues: stillValid.ToHashSet(),
+                        DisallowedValues: new HashSet<object>(),
+                        CHECKs: orig.CHECKs
+                    )
+                };
+            }
+
+            // If there are any disallowed values, we have to remove those that don't pass the other constraints
+            if (!orig.DisallowedValues.IsEmpty()) {
+                var remaining = orig.DisallowedValues
+                    .Where(v => IsWithinInterval(v, orig.LowerBound, orig.UpperBound))
+                    .Where(v => v is not string s || IsWithinInterval(s.Length, orig.MinimumLength, orig.MaximumLength));
+
+                return descriptor with { Constraints = orig with { DisallowedValues = remaining.ToHashSet() } };
+            }
+
+            // No flattening to do
+            return descriptor;
+        }
+
+        /// <summary>
+        ///   Create a <see cref="IField">Field</see> from a <see cref="FieldDescriptor"/>.
+        /// </summary>
+        /// <param name="descriptor">
+        ///   The <see cref="FieldDescriptor"/> describing the prospective <see cref="IField">Field</see>.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="IField">Field</see> based on <paramref name="descriptor"/>.
+        /// </returns>
+        private static IField MakeField(FieldDescriptor descriptor) {
+            // NOTE: This will have to be modified slightly when we start supporting translation of enumeration-type
+            // Fields, as those have to be turned into EnumFields instead of BasicFields
+            return new BasicField(
+                name: new FieldName(descriptor.Name),
+                dataType: DBType.Lookup(descriptor.Converter.ResultType),
+                nullability: descriptor.Nullability,
+                defaultValue: descriptor.Default.Map(v => DBValue.Create(v))
+            );
+        }
+
+        /// <summary>
+        ///   Create the <see cref="CheckConstraint"><c>CHECK</c> constraints</see> for a
+        ///   <see cref="IField">Field</see>.
+        /// </summary>
+        /// <param name="descriptor">
+        ///   The <see cref="FieldDescriptor"/> describing the constraints.
+        /// </param>
+        /// <param name="field">
+        ///   The <see cref="IField">Field</see> to which the <c>CHEKC</c> constraints apply.
+        /// </param>
+        /// <returns>
+        ///   A (possibly empty) collection of <c>CHECK</c> constraints that apply to <paramref name="field"/>.
+        /// </returns>
+        private static IEnumerable<CheckConstraint> MakeConstraints(FieldDescriptor descriptor, IField field) {
+            Debug.Assert(field is not null);
+            var constraints = descriptor.Constraints;
+
+            // Ranged Comparison Constraints
+            if (constraints.LowerBound.HasValue) {
+                var bound = constraints.LowerBound.Unwrap();
+                var op = bound.IsInclusive ? ComparisonOperator.GTE : ComparisonOperator.GT;
+                var clause = new ConstantClause(new FieldExpression(field), op, DBValue.Create(bound.Value));
+                yield return new CheckConstraint(clause);
+            }
+            if (constraints.UpperBound.HasValue) {
+                var bound = constraints.UpperBound.Unwrap();
+                var op = bound.IsInclusive ? ComparisonOperator.LTE : ComparisonOperator.LT;
+                var clause = new ConstantClause(new FieldExpression(field), op, DBValue.Create(bound.Value));
+                yield return new CheckConstraint(clause);
+            }
+
+            // String Length Constraints
+            if (constraints.MinimumLength.Exists(min => constraints.MaximumLength.Exists(max => min == max))) {
+                var bound = constraints.MinimumLength.Unwrap();
+                var expr = new FieldExpression(FieldFunction.LengthOf, field);
+                var clause = new ConstantClause(expr, ComparisonOperator.EQ, DBValue.Create(bound.Value));
+                yield return new CheckConstraint(clause);
+            }
+            else {
+                if (constraints.MinimumLength.HasValue) {
+                    var bound = constraints.MinimumLength.Unwrap();
+                    var expr = new FieldExpression(FieldFunction.LengthOf, field);
+                    var clause = new ConstantClause(expr, ComparisonOperator.GTE, DBValue.Create(bound.Value));
+                    yield return new CheckConstraint(clause);
+                }
+                if (constraints.MaximumLength.HasValue) {
+                    var bound = constraints.MaximumLength.Unwrap();
+                    var expr = new FieldExpression(FieldFunction.LengthOf, field);
+                    var clause = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(bound.Value));
+                    yield return new CheckConstraint(clause);
+                }
+            }
+
+            // A single allowed value becomes an EQ constraint
+            if (!constraints.AllowedValues.IsEmpty()) {
+                if (constraints.AllowedValues.Count == 1) {
+                    var value = DBValue.Create(constraints.AllowedValues.First());
+                    var clause = new ConstantClause(new FieldExpression(field), ComparisonOperator.EQ, value);
+                    yield return new CheckConstraint(clause);
+                }
+                else {
+                    var values = constraints.AllowedValues.Select(v => DBValue.Create(v));
+                    var clause = new InclusionClause(new FieldExpression(field), InclusionOperator.In, values);
+                    yield return new CheckConstraint(clause);
+                }
+            }
+
+            // A single disallowed value becomes an NE constraint
+            if (!constraints.DisallowedValues.IsEmpty()) {
+                if (constraints.DisallowedValues.Count == 1) {
+                    var value = DBValue.Create(constraints.DisallowedValues.First());
+                    var clause = new ConstantClause(new FieldExpression(field), ComparisonOperator.NE, value);
+                    yield return new CheckConstraint(clause);
+                }
+                else {
+                    var values = constraints.DisallowedValues.Select(v => DBValue.Create(v));
+                    var clause = new InclusionClause(new FieldExpression(field), InclusionOperator.NotIn, values);
+                    yield return new CheckConstraint(clause);
+                }
+            }
+
+            // Custom constraints
+            foreach (var custom in constraints.CHECKs) {
+                yield return new CheckConstraint(custom(field, descriptor.Converter));
             }
         }
     }

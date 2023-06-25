@@ -92,7 +92,7 @@ namespace Kvasir.Annotations {
             catch (TargetInvocationException ex) {
                 var argString = args.Length == 0 ? "<none>" : string.Join(", ", args.Select(a => a.ForDisplay()));
                 var reason = ex.InnerException?.Message ?? "<reason unknown>";
-                UserError = $"Error constructing {constraint.FullName!} from arguments: {argString} ({reason})";
+                UserError = $"error constructing {constraint.FullName!} from arguments: {argString} ({reason})";
                 generator_ = null;
             }
         }

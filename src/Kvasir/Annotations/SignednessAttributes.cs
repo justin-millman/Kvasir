@@ -1,30 +1,49 @@
+using Cybele.Extensions;
 using Kvasir.Schema;
 using System;
+using System.Diagnostics;
 
 namespace Kvasir.Annotations {
-    /// <summary>
-    ///   A standalone type that represents the notion of "zero" without being locked into a specific type.
-    /// </summary>
-    /// <remarks>
-    ///   The signedness annotations are all effectively comparison annotations against a singular anchor point of
-    ///   zero. However, the Translation Layer will require that all anchors match the annotation property's type
-    ///   exactly, which we cannot do at this point: we don't know what that type should be. So we use the Zero sentinel
-    ///   as a signal, and let the Translation Layer handle it appropriately.
-    /// </remarks>
-    internal struct Zero {}
-
     public static partial class Check {
+        /// <summary>
+        ///   The base class for all annotations that restrict the value for the Field backing a particular numeric-type
+        ///   property relative to zero.
+        /// </summary>
+        public abstract class SignednessAttribute : Attribute {
+            /// <summary>
+            ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
+            ///   which the annotation actually applies.
+            /// </summary>
+            public string Path { get; init; } = "";
+
+            /// <summary>
+            ///   The operator of the comparison restriction.
+            /// </summary>
+            internal ComparisonOperator Operator { get; private init; }
+
+            /// <summary>
+            ///   Constructs a new <see cref="SignednessAttribute"/> instance.
+            /// </summary>
+            /// <param name="op">
+            ///   The <see cref="ComparisonAttribute.Operator"/> for the constraint.
+            /// </param>
+            private protected SignednessAttribute(ComparisonOperator op) {
+                Debug.Assert(op.IsValid());
+                Operator = op;
+            }
+        }
+
         /// <summary>
         ///   An annotation that specifies that the value for the Field backing a particular property cannot be
         ///   <c>0</c>.
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public sealed class IsNonZeroAttribute : ComparisonAttribute {
+        public sealed class IsNonZeroAttribute : SignednessAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNonZeroAttribute"/> class.
             /// </summary>
             public IsNonZeroAttribute()
-                : base(ComparisonOperator.NE, new Zero()) {}
+                : base(ComparisonOperator.NE) {}
         }
 
         /// <summary>
@@ -32,12 +51,12 @@ namespace Kvasir.Annotations {
         ///   (i.e. <c>&gt;= 0</c>).
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public sealed class IsPositiveAttribute : ComparisonAttribute {
+        public sealed class IsPositiveAttribute : SignednessAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsPositiveAttribute"/> class.
             /// </summary>
             public IsPositiveAttribute()
-                : base(ComparisonOperator.GT, new Zero()) {}
+                : base(ComparisonOperator.GT) {}
         }
 
         /// <summary>
@@ -45,12 +64,12 @@ namespace Kvasir.Annotations {
         ///   (i.e. <c>&lt;= 0</c>).
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-        public class IsNegativeAttribute : ComparisonAttribute {
+        public class IsNegativeAttribute : SignednessAttribute {
             /// <summary>
             ///   Constructs a new instance of the <see cref="IsNegativeAttribute"/> class.
             /// </summary>
             public IsNegativeAttribute()
-                : base(ComparisonOperator.LT, new Zero()) {}
+                : base(ComparisonOperator.LT) {}
         }
     }
 }
