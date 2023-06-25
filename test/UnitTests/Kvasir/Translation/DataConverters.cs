@@ -1,17 +1,18 @@
 ﻿using FluentAssertions;
 using Kvasir.Core;
 using Kvasir.Exceptions;
-using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-using static UT.Kvasir.Translation.TestComponents;
+using static UT.Kvasir.Translation.DataConverters;
+using static UT.Kvasir.Translation.TestConverters;
 
 namespace UT.Kvasir.Translation {
-    [TestClass, TestCategory("Data Converters")]
+    [TestClass, TestCategory("DataConverters")]
     public class DataConverterTests {
-        [TestMethod] public void DataCoverterDoesNotChangeDataType() {
+
+        [TestMethod] public void NoChangeToFieldsType_Redundant() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Cenote);
@@ -21,15 +22,15 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField("Name", DBType.Text, IsNullable.No).And
-                .HaveField("MaxDepth", DBType.Single, IsNullable.No).And
-                .HaveField("IsKarst", DBType.Boolean, IsNullable.No).And
-                .HaveField("Latitude", DBType.Decimal, IsNullable.No).And
-                .HaveField("Longitude", DBType.Decimal, IsNullable.No).And
-                .NoOtherFields();
+                .HaveField(nameof(Cenote.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Cenote.MaxDepth)).OfTypeSingle().BeingNonNullable().And
+                .HaveField(nameof(Cenote.IsKarst)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField(nameof(Cenote.Latitude)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField(nameof(Cenote.Longitude)).OfTypeDecimal().BeingNonNullable().And
+                .HaveNoOtherFields();
         }
-
-        [TestMethod] public void DataConverterChangesDataType() {
+        
+        [TestMethod] public void ChangeToFieldsType() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Comet);
@@ -39,17 +40,17 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField("AstronomicalIdentifier", DBType.Guid, IsNullable.No).And
-                .HaveField("Aphelion", DBType.Double, IsNullable.No).And
-                .HaveField("Perihelion", DBType.Int32, IsNullable.No).And
-                .HaveField("Eccentricity", DBType.Int32, IsNullable.No).And
-                .HaveField("MassKg", DBType.UInt64, IsNullable.No).And
-                .HaveField("Albedo", DBType.Double, IsNullable.No).And
-                .HaveField("OrbitalPeriod", DBType.Single, IsNullable.No).And
-                .NoOtherFields();
+                .HaveField(nameof(Comet.AstronomicalIdentifier)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Comet.Aphelion)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Comet.Perihelion)).OfTypeInt64().BeingNonNullable().And
+                .HaveField(nameof(Comet.Eccentricity)).OfTypeInt64().BeingNonNullable().And
+                .HaveField(nameof(Comet.MassKg)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField(nameof(Comet.Albedo)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Comet.OrbitalPeriod)).OfTypeSingle().BeingNonNullable().And
+                .HaveNoOtherFields();
         }
 
-        [TestMethod] public void DataConverterResultTypeIsNonNullableWhileSourceIsNullable() {
+        [TestMethod] public void ConverterOnNullablePropertyHasNonNullableTargetType() {
             // Arrange
             var translator = new Translator();
             var source = typeof(RoyalHouse);
@@ -59,14 +60,14 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField("HouseName", DBType.Text, IsNullable.No).And
-                .HaveField("Founded", DBType.DateTime, IsNullable.No).And
-                .HaveField("CurrentHead", DBType.Text, IsNullable.Yes).And
-                .HaveField("TotalMonarchs", DBType.Int32, IsNullable.Yes).And
-                .NoOtherFields();
+                .HaveField(nameof(RoyalHouse.HouseName)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(RoyalHouse.Founded)).OfTypeDateTime().BeingNonNullable().And
+                .HaveField(nameof(RoyalHouse.CurrentHead)).OfTypeText().BeingNullable().And
+                .HaveField(nameof(RoyalHouse.TotalMonarchs)).OfTypeInt32().BeingNullable().And
+                .HaveNoOtherFields();
         }
 
-        [TestMethod] public void DataCoverterResultTypeIsNullableWhileSourceIsNonNullable() {
+        [TestMethod] public void ConverterOnNonNullablePropertyHasNullableTargetType() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Planeswalker);
@@ -76,166 +77,118 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField("Name", DBType.Text, IsNullable.No).And
-                .HaveField("MannaCost", DBType.Int8, IsNullable.No).And
-                .HaveField("InitialLoyalty", DBType.Int8, IsNullable.No).And
-                .HaveField("Ability1", DBType.Text, IsNullable.No).And
-                .HaveField("Ability2", DBType.Text, IsNullable.No).And
-                .HaveField("Ability3", DBType.Text, IsNullable.No).And
-                .NoOtherFields();
+                .HaveField(nameof(Planeswalker.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Planeswalker.MannaCost)).OfTypeInt8().BeingNonNullable().And
+                .HaveField(nameof(Planeswalker.InitialLoyalty)).OfTypeInt8().BeingNonNullable().And
+                .HaveField(nameof(Planeswalker.Ability1)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Planeswalker.Ability2)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Planeswalker.Ability3)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Planeswalker.SerialNumber)).OfTypeUInt32().BeingNonNullable().And
+                .HaveNoOtherFields();
         }
 
-        [TestMethod] public void DataCoverterSourceTypeIsNullableOnNonNullableField() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(GolfHole);
-
-            // Act
-            var translation = translator[source];
-
-            // Assert
-            translation.Principal.Table.Should()
-                .HaveField("CourseID", DBType.Int32, IsNullable.No).And
-                .HaveField("HoleNumber", DBType.UInt8, IsNullable.No).And
-                .HaveField("Par", DBType.UInt8, IsNullable.No).And
-                .HaveField("DistanceToFlag", DBType.UInt16, IsNullable.No).And
-                .HaveField("NumSandTraps", DBType.UInt8, IsNullable.No).And
-                .HaveField("ContainsWaterHazard", DBType.Boolean, IsNullable.No).And
-                .NoOtherFields();
-        }
-
-        [TestMethod] public void DataCoverterSourceTypeUnrelatedToFieldType_IsError() {
+        [TestMethod] public void PropertyTypeIsInconvertibleToSourceType_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Jedi);
 
             // Act
-            var act = () => translator[source];
+            var translate = () => translator[source];
 
             // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                        // source type
-                .WithMessage($"*{nameof(Jedi.MiddleName)}*")            // source property
-                .WithMessage("*[DataConverter]*")                       // annotation
-                .WithMessage($"*property of type {nameof(String)}*")    // rationale
-                .WithMessage($"*operates on {nameof(Boolean)}*");       // details
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Jedi.MiddleName))                     // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining(nameof(Boolean))                             // details / explanation
+                .WithMessageContaining(nameof(String));                             // details / explanation
         }
 
-        [TestMethod] public void DataConverterSourceTypeCovertibleWithFieldType_IsError() {
+        [TestMethod] public void PropertyTypeIsConvertibleToSourceType_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(ConstitutionalAmendment);
 
             // Act
-            var act = () => translator[source];
+            var translate = () => translator[source];
 
             // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                                // source type
-                .WithMessage($"*{nameof(ConstitutionalAmendment.Number)}*")     // source property
-                .WithMessage("*[DataConverter]*")                               // annotation
-                .WithMessage($"*property of type {nameof(Int32)}*")             // rationale
-                .WithMessage($"*operates on {nameof(Int64)}*");                 // details
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ConstitutionalAmendment.Number))      // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining(nameof(Int64))                               // details / explanation
+                .WithMessageContaining(nameof(Int32));                              // details / explanation
         }
 
-        [TestMethod] public void DataConverterResultTypeNotSupported_IsError() {
+        [TestMethod] public void TargetTypeIsNotSupported_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(SNLEpisode);
 
             // Act
-            var act = () => translator[source];
+            var translate = () => translator[source];
 
             // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                        // source type
-                .WithMessage($"*{nameof(SNLEpisode.AirDate)}*")         // source property
-                .WithMessage("*[DataConverter]*")                       // annotation
-                .WithMessage("*result type*is not supported*")          // rationale
-                .WithMessage($"*{nameof(ArgumentException)}*");         // details
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SNLEpisode.AirDate))                  // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining("type*is not supported")                     // details / explanation
+                .WithMessageContaining(nameof(Exception));                          // details / explanation
         }
 
-        [TestMethod] public void DataConverterIsNotDataConverter_IsError() {
+        [TestMethod] public void DataConverterTypeDoesNotImplementInterface_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(MetraRoute);
 
             // Act
-            var act = () => translator[source];
-            
+            var translate = () => translator[source];
+
             // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                                   // source type
-                .WithMessage($"*{nameof(MetraRoute.Line)}*")                       // source property
-                .WithMessage("*[DataConverter]*")                                  // annotation
-                .WithMessage($"*does not implement*{nameof(IDataConverter)}*")     // rationale
-                .WithMessage($"*{nameof(Int32)}*");                                // details
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MetraRoute.Line))                     // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining("does not implement")                        // details / explanation
+                .WithMessageContaining(nameof(Int32))                               // details / explanation
+                .WithMessageContaining(nameof(IDataConverter));                     // details / explanation
         }
 
-        [TestMethod] public void DataConverterIsNotDefaultConstructible_IsError() {
+        [TestMethod] public void DataConverterTypeCannotBeDefaultConstructed_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Paycheck);
 
             // Act
-            var act = () => translator[source];
+            var translate = () => translator[source];
 
             // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                                   // source type
-                .WithMessage($"*{nameof(Paycheck.HoursWorked)}*")                  // source property
-                .WithMessage("*[DataConverter]*")                                  // annotation
-                .WithMessage("*not*default*constructor*");                         // rationale
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Paycheck.HoursWorked))                // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining("does not have a default*constructor")       // details / explanation
+                .WithMessageContaining(nameof(ChangeBase));                         // details / explanation
         }
 
-        [TestMethod] public void DataConverterThrowsOnConstruction_IsError() {
+        [TestMethod] public void DataConverterTypeThrowsOnConstruction_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Sword);
 
             // Act
-            var act = () => translator[source];
+            var translate = () => translator[source];
 
             // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                                   // source type
-                .WithMessage($"*{nameof(Sword.YearForged)}*")                      // source property
-                .WithMessage("*[DataConverter]*")                                  // annotation
-                .WithMessage("*constructing*")                                     // rationale
-                .WithMessage("*System Failure!*");                                 // details
-        }
-
-        [TestMethod] public void IdentityDataConverter() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(FieldGoal);
-
-            // Act
-            var translation = translator[source];
-
-            // Assert
-            translation.Principal.Table.Should()
-                .HaveField("When", DBType.DateTime, IsNullable.No).And
-                .HaveField("Made", DBType.Boolean, IsNullable.No).And
-                .HaveField("Doinks", DBType.Int32, IsNullable.No).And
-                .HaveField("Kicker", DBType.Text, IsNullable.No).And
-                .NoOtherFields();
-        }
-
-        [TestMethod] public void MultipleDataConverters_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(BowlingFrame);
-
-            // Act
-            var act = () => translator[source];
-
-            // Assert
-            act.Should().Throw<KvasirException>()
-                .WithMessage($"*{source.Name}*")                            // source type
-                .WithMessage($"*{nameof(BowlingFrame.FirstThrowPins)}*")    // source property
-                .WithMessage("*[DataConverter]*")                           // annotation
-                .WithMessage("*multiple*");                                 // rationale
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Sword.YearForged))                    // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining("error constructing")                        // details / explanation
+                .WithMessageContaining(nameof(Unconstructible<short>))              // details / explanation
+                .WithMessageContaining(CANNOT_CONSTRUCT_MSG);                       // details / explanation
         }
     }
 }

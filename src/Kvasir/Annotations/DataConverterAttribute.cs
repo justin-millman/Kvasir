@@ -11,7 +11,7 @@ namespace Kvasir.Annotations {
     ///   An annotation that defines the data converter to be used to convert between C# values for a particular
     ///   property and values of the backing Field.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class DataConverterAttribute : Attribute {
         /// <summary>
         ///   The <see cref="DataConverter"/> instance specified in the annotation.
@@ -56,7 +56,7 @@ namespace Kvasir.Annotations {
             }
             catch (TargetInvocationException ex) {
                 var reason = ex.InnerException?.Message ?? "<reason unknown>";
-                UserError = $"Error constructing {converter.FullName!}: {reason}";
+                UserError = $"error constructing {converter.FullName!}: {reason}";
                 converter_ = null;
             }
         }

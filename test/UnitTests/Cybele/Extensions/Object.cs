@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace UT.Cybele.Extensions {
     [TestClass, TestCategory("Object: ForDisplay")]
@@ -8,6 +9,14 @@ namespace UT.Cybele.Extensions {
         [TestMethod] public void DisplayNull() {
             // Act
             var nullDisplay = ((object?)null).ForDisplay();
+
+            // Assert
+            nullDisplay.Should().Be("'null'");
+        }
+
+        [TestMethod] public void DisplayDBNull() {
+            // Act
+            var nullDisplay = DBNull.Value.ForDisplay();
 
             // Assert
             nullDisplay.Should().Be("'null'");
@@ -59,7 +68,7 @@ namespace UT.Cybele.Extensions {
             displayUInt64.Should().Be(uint64.ToString());
         }
 
-        [TestMethod] public void DisplayFloatingPoint() {
+        [TestMethod] public void DisplayNonIntegralFloatingPoint() {
             // Arrange
             var decimalNumber = (decimal)-0.99813;
             var doubleNumber = 84402.77123;
@@ -76,6 +85,23 @@ namespace UT.Cybele.Extensions {
             floatDisplay.Should().Be(floatNumber.ToString());
         }
 
+        [TestMethod] public void DisplayIntegralFloatingPoint() {
+            // Arrange
+            var decimalNumber = (decimal)18.0;
+            var doubleNumber = -671824.0;
+            var floatNumber = -99991.0f;
+
+            // Act
+            var decimalDisplay = decimalNumber.ForDisplay();
+            var doubleDisplay = doubleNumber.ForDisplay();
+            var floatDisplay = floatNumber.ForDisplay();
+
+            // Assert
+            decimalDisplay.Should().Be(decimalNumber.ToString() + ".0");
+            doubleDisplay.Should().Be(doubleNumber.ToString() + ".0");
+            floatDisplay.Should().Be(floatNumber.ToString() + ".0");
+        }
+
         [TestMethod] public void DisplayCharacter() {
             // Arrange
             var character = '&';
@@ -85,6 +111,17 @@ namespace UT.Cybele.Extensions {
 
             // Assert
             characterDisplay.Should().Be($"'{character}'");
+        }
+
+        [TestMethod] public void DisplayEnumerator() {
+            // Arrange
+            var enumerator = TestTimeout.Infinite;
+
+            // Act
+            var characterDisplay = enumerator.ForDisplay();
+
+            // Assert
+            characterDisplay.Should().Be($"{nameof(TestTimeout)}.{enumerator}");
         }
 
         [TestMethod] public void DisplayEmptyString() {

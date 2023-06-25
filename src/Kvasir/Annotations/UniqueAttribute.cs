@@ -1,4 +1,3 @@
-using Ardalis.GuardClauses;
 using System;
 
 namespace Kvasir.Annotations {
@@ -45,7 +44,7 @@ namespace Kvasir.Annotations {
         ///   The name of the <c>UNIQUE</c> constraint.
         /// </param>
         public UniqueAttribute(string name) {
-            Name = Guard.Against.Null(name);
+            Name = name;
             IsAnonymous = false;
         }
 

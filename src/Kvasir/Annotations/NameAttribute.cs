@@ -1,4 +1,3 @@
-using Ardalis.GuardClauses;
 using Kvasir.Schema;
 using System;
 
@@ -32,7 +31,7 @@ namespace Kvasir.Annotations {
         ///   The name of the Field.
         /// </param>
         public NameAttribute(string name) {
-            Name = Guard.Against.Null(name);
+            Name = name;
         }
     }
 }

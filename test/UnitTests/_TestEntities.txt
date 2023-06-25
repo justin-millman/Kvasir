@@ -1,26 +1,43 @@
+Achaean Naval Contingent
 Acid
 ACT
 Actor/Actress
 Address
 Aes Sedai
+Airline
 Airplane
 Airport
 Alarm
 Alkene
 Allomancy
+Alphabet
+Ambassador
+American Idol
 Amino Acid
+Amusement Park
 Animal
 Animation (PowerPoint)
+Apocalypse
+Aquarium
+Aqueduct
+Archangel
 Archbishop
 Aria
 Arthurian Knight
+Artiodactyl
 Astronaut
+Atmospheric Layer
+Attribute (C#)
+Auction Lot
 Avatar
+Azeotrope
+Aztec God
 Bacterium
 Bagel
 Ballet
 Bank Account
 Baryon
+Baseball Bat
 Baseball Card
 Basketball Player
 Battery
@@ -28,17 +45,36 @@ Batting Order
 Battle
 Battleship
 Bay
+Beach
+Belt
 Ben 10 Alien
+Bestiary
 Billiard Ball
+Binary Test
+Bingo Card
+Biography
+Biological Cycle
+Birth Control
+Blender
 Blood Type
 Bone
 Book
 Bookmark (web browsing)
+Borate
 Botanical Garden
 Bowl Game
 Bowling Frame
+Boxer
 Brassiere
 Bridge
+Burrito
+Button (UI)
+C++ Header File
+Cabinet Department
+Calendar
+Caliphate
+Camera
+Camerlengo
 Campfire
 Canal
 Cancer
@@ -48,28 +84,41 @@ Canterbury Tale
 Canyon
 Capacitor
 Carbohydrate
+Carousel
 Cave
+Celtic God
 Cenote
+Census
 Cereal
 Character (text)
 Check
 Chemical Element
 Chess Piece
+Chewing Gum
 Chinese Character
 Chocolate
+Christian Denomination
 Christmas Carol
 Church
+Cider Mill
 CinemaSins
 Circle
 Circle of Hell
 Civilization VI Military Unit
+Climate
+Clock Tower
+Clue(do) Game
+Coat of Arms
 Codon
 Coin
 Color
 Comet
+ComicCon
 Command (terminal)
 Commercial
 Compiler Warning
+Concentration Camp
+Concert
 Constitutional Amendment
 Coral Reef
 Country
@@ -78,10 +127,12 @@ Coupon
 Court Case
 Credit Card
 Crossword Clue
+Cruise
 Cryptocurrency
 Currency
 D&D Character
 D&D Spell
+Dalai Lama
 Dam
 Data Structure
 Database Field
@@ -90,70 +141,103 @@ Desert
 Diamond
 Directory (file system)
 Distribution (probability)
+District Attorney
 DLL
 Doctor (Doctor Who)
+Documentary
+Domino
 Donut
+Dragon
+Draft Pick
 Dreidel
 Drum
+E-Mail
 Earthquake
 Elevator
 Encryption
+Encyclopedia
 Enumeration
 Episode
 ETF
 Eurovision Song Contest
 Excel Range
 Expiration
+Fairy Tale
 Federal Law
 Field Goal
 Fighter Jet
+Final Four
 Final Jeopardy!
+Firearm
 Fjord
 Flashcard
 Flight
 Flower
 Font
+Food Chain
+Fortune Cookie
 Fountain
+Fractal
 Fraction
 Fraternity
 Function (programming)
 Gaming Console
+Garage Sale
+Gas Station
 Gene
+Generation
 Genie
+Geocache
 Geologic Epoch
 Geyser
 Git Commit
+Git Hook
 Gold Rush
 Golf Hole
 Grammatical Case
 Greek God
 Greek Letter
+Guillotine
+Guitar
 Gymnast
 Haiku
 Hash Function
-Healing Potion
+Headphones
+Healing Potion (D&D)
 Hebrew Letter
 Hebrew Prayer
 Hieroglyph
 Highway
+Hindu God
 Histogram
+Hoedown (WLIIA)
 Hogwarts House
 Holiday
 Holy Roman Emperor
 Homeric Hymn
+Hormone
 Hospital
+Hot Spring
 Hotel
+Hourglass
+House Committee
+HTML Element
 HTTP Error
 Hurricane
+Igloo
 Inator
 Inmate
+Insurance Policy
 Integer
 Integer Sequence
 Integral
 IP Address
+ISO Standard
 Isthmus
 Jedi
 Jigsaw Puzzle
+Kanji
+Kentucky Derby
 Key Signature
 Keystroke
 King of England
@@ -165,54 +249,89 @@ Language
 Lease
 Legume
 Lens
+License Plate
 Linux Distribution
+Lipstick
 Liquor
+Locale (computing)
+Localization
+Lock (computing)
 Log-In Credentials
+Longbow
 Lottery Ticket
 Lyric
+Magazine
+Marathon
+Mark-Up Symbol
+Masked Singer
 Massacre
 Mayor
+Medal of Honor
+Medical Specialty
+Meme
 Metra Route
 Military Base
+Milkshake
 Mint (currency)
 Monopoly Property
 Month
+Mosque
 Mountain
 Movie
 Movie Ticket
 Multiple Choice Question
+Mummy
 Muppet
 Muscle
+Mushroom
+Museum
 Musical
 Mutant (X-Men)
 National Anthem
 National Park
 Native American Tribe
+Nazca Line
 Nebula
 Neurotoxin
+Nobel Prize
+Norse God
 Norse World
 Nuclear Power Plant
+NuGet Package
+Obelisk
+Obi
 Oceanic Trench
 Oil (cooking)
+Oil Spill
+Olympiad
 Opera
 Painting
 Parashah
+Parking Garage
+Passport
 Pasta Sauce
 Patent
 Patreon
 Paycheck
 Peace Treaty
+Peanut Butter
 Penalty (NFL)
 Peninsula
+PEP
 Pepper
+Phobia
 Phone Number
+Pie
 Pigment (biology)
+Ping
 Pirate
 Pizza
 Plane of Existence (D&D)
 Planeswalker
+Platonic Dialogue
 Playing Card
 PO Box
+Podcast
 Pokémon
 Poker Hand
 Police Officer
@@ -220,38 +339,59 @@ Polygon
 Polyhedron
 Pope
 Potato
+Prescription
 Presidential Election
+Printer
 Prison
+Process (computing)
 Prophet
 Proto-Indo-European Root
 Pterosaur
+Pulley
 Quadratic Equation
 Quatrain
 Racehorse
 Racetrack (auto racing)
 Radio Station
+Rainforest
+Random Number Generator
+Repository
 Representative
 Resistor
+Rest Stop
 Retail Product
 Ring of Power
 River
 Rollercoaster
 Roman Emperor
 Royal House
+Rube Goldberg Machine
+Rune
+Russian Tsar
 Saint
 Scholarship
+Scooby-Doo Movie
 Scrabble Tile
+Screwdriver
+SCUBA Dive
 Sculpture
 Season
 Senator
 Set Card
+Shard of Adonalsium
+Shark Tank Pitch
 Shen Gong Wu
 Shoe
+Shogunate
 Sign (ASL)
 Skee-Ball
 Ski Slope
+Skittles
+Skyscraper
 Slack Channel
+Slave Revolt
 Slot Machine
+Smurf
 Snake
 SNL Episode
 Soccer Team
@@ -260,8 +400,11 @@ Song
 Sonnet
 Sorority
 Speedometer
+Sporcle Quiz
+Surfing Maneuver
 SQL Query
 Stadium
+Stamp
 Star
 Steak
 Step Pyramid
@@ -270,37 +413,62 @@ Submarine
 Subreddit
 Sunscreen
 Super Bowl
+SuperPAC
 Surah
+Survivor
 Swimming Pool
 Sword
+Talk Show
 Tar Pits
 Tarot Card
+Tectonic Plate
 Telescope
+Tendon
 Tennis Match
+Therapist
 Terminator
+Thesis
+Tic-Tac-Toe Game
 Ticket2Ride Route
 Time Zone
 Timestamp
+Toothpaste
 Top 10 List
 Tossup Question
 Tournament
+Transformer (robot)
 Transistor
+Treasury Bond
+Trilogy
+Tsunami
+Tuxedo
 Tweet
 Umpire
 UN Resolution
+Union
 University
 Upanishad
 URL
+UUID
 Vampire Slayer
 Vitamin
+Voicemail
 Voir Dire
 Volcano
+Vulgarity
+W2 Tax Form
+Water Bottle
 Water Slide
 Waterfall
 Web Browser
+Wikipedia Page
+Wildfire
 Winter Storm
+Witch Hunt
+World Cup
 World Heritage Site
 Wristwatch
 xkcd Comic
 YouTube Video
+Yu-Gi-Oh Monster
 Zoo

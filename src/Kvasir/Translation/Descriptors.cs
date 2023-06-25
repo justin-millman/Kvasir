@@ -1,45 +1,43 @@
-﻿using Cybele.Core;
+﻿global using FieldsListing = System.Collections.Generic.IReadOnlyDictionary<string, Kvasir.Translation.FieldDescriptor>;
+
+using Cybele.Core;
 using Kvasir.Schema;
 using Optional;
-using System;
 using System.Collections.Generic;
+
+// Descriptors are the intermediate stages of Translation. The purpose of Descriptors is to reflect the information
+// known up to a point, with the expectation being that future logic may update or extend the initial translation. The
+// attributes of each Descriptor is in CLR terms rather than Schema terms to simplify processing during Translation; the
+// various attributes will be converted into Schema terms at the stage's conclusion.
 
 namespace Kvasir.Translation {
     internal delegate Clause CheckGen(IField field, DataConverter converter);
     internal delegate Clause ComplexCheckGen(FieldSeq fields, ConverterSeq converters);
 
-    internal sealed partial class Translator {
-        /// <summary>
-        ///   A descriptor of a single back-end database Field.
-        /// </summary>
-        private record struct FieldDescriptor(
-            Type SourceType,
-            string AccessPath,
-            FieldName Name,
-            Type CLRType,
-            Option<int> Column,
-            IsNullable Nullability,
-            Option<object?> RawDefault,
-            bool IsInPrimaryKey,
-            DataConverter Converter,
-            IReadOnlyList<KeyName> KeyMemberships,
-            IReadOnlyList<CheckGen> CHECKs
-        );
+    internal readonly record struct ConstraintBucket(
+        Option<ComparisonOperator> RelativeToZero,
+        Option<Bound> LowerBound,
+        Option<Bound> UpperBound,
+        Option<Bound> MinimumLength,
+        Option<Bound> MaximumLength,
+        IReadOnlySet<object> AllowedValues,
+        IReadOnlySet<object> DisallowedValues,
+        IReadOnlyList<CheckGen> CHECKs
+    );
 
-        /// <summary>
-        ///   A descriptor of a single in-source CLR Type, translated into two or more Fields.
-        /// </summary>
-        private record struct TypeDescriptor(
-            Type CLRType,
-            IReadOnlyList<FieldDescriptor> Fields,
-            IReadOnlyList<ComplexCheckGen> CHECKs
-        );
+    internal readonly record struct FieldDescriptor(
+        string Name,
+        IsNullable Nullability,
+        Option<int> Column,
+        DataConverter Converter,
+        Option<object?> Default,
+        bool InPrimaryKey,
+        IReadOnlySet<string> CandidateKeyMemberships,
+        ConstraintBucket Constraints
+    );
 
-        /// <summary>
-        ///   A descriptor of a single in-source property of a CLR Type, translated into at least one Field.
-        /// </summary>
-        private record struct PropertyDescriptor(
-            IReadOnlyList<FieldDescriptor> Fields
-        );
-    }
+    internal readonly record struct TypeDescriptor(
+        FieldsListing Fields,
+        IReadOnlyList<ComplexCheckGen> CHECKs
+    );
 }

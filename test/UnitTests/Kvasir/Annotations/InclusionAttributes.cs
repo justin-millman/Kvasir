@@ -51,7 +51,7 @@ namespace UT.Kvasir.Annotations {
             var values = new string?[] { null, "Boca Raton", "Jupiter", "Athens" };
 
             // Act
-            var attr = new Check.IsOneOfAttribute(values[0], values[1], values[2], values[3]);
+            var attr = new Check.IsOneOfAttribute(values[0]!, values[1]!, values[2]!, values[3]!);
 
             // Assert
             attr.Path.Should().BeEmpty();
@@ -64,7 +64,7 @@ namespace UT.Kvasir.Annotations {
             var values = new string?[] { null };
 
             // Act
-            var attr = new Check.IsOneOfAttribute(values[0]);
+            var attr = new Check.IsOneOfAttribute(values[0]!);
 
             // Assert
             attr.Path.Should().BeEmpty();
@@ -115,7 +115,7 @@ namespace UT.Kvasir.Annotations {
             var values = new string?[] { "Gilbert", "Modesto", null, "Sandy Springs" };
 
             // Act
-            var attr = new Check.IsNotOneOfAttribute(values[0], values[1], values[2], values[3]);
+            var attr = new Check.IsNotOneOfAttribute(values[0]!, values[1]!, values[2]!, values[3]!);
 
             // Assert
             attr.Path.Should().BeEmpty();
@@ -128,7 +128,7 @@ namespace UT.Kvasir.Annotations {
             var values = new string?[] { null };
 
             // Act
-            var attr = new Check.IsNotOneOfAttribute(values[0]);
+            var attr = new Check.IsNotOneOfAttribute(values[0]!);
 
             // Assert
             attr.Path.Should().BeEmpty();
