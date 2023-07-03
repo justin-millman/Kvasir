@@ -42,7 +42,7 @@ namespace Cybele.Extensions {
         ///   the declaration of <typeparamref name="TEnum"/> or is a bitwise combination of such values.
         /// </returns>
         public static bool IsValid<TEnum>(this TEnum self) where TEnum : Enum {
-            var enumType = typeof(TEnum);
+            var enumType = self.GetType();
             var underlyingCode = self.GetTypeCode();
             var numeric = self.AsInt64();
 

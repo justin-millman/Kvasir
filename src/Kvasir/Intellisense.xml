@@ -597,6 +597,24 @@
               which the annotation actually applies.
             </summary>
         </member>
+        <member name="T:Kvasir.Annotations.AsStringAttribute">
+            <summary>
+              An annotation that specifies that the type of the Field backing a particular property should correspond to the
+              built-in string representation of the property's own type, which must be an <see cref="T:System.Enum"/>.
+            </summary>
+            <remarks>
+              The default storage scheme for Enumeration-type Fields depends on the capabilities of the back-end database,
+              but decays to <c>string</c> (with <c>CHECK</c> constraints as possible) in the absence of any explicit
+              enumeration support. the <see cref="T:Kvasir.Annotations.AsStringAttribute"/> can be used to override the default storage behavior
+              and insist that the storage be a string type even if enumeration support is available.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Annotations.AsStringAttribute.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
         <member name="T:Kvasir.Annotations.CodeOnlyAttribute">
             <summary>
               An annotation that marks a particular property as "code-only."
@@ -6310,7 +6328,7 @@
               The <see cref="T:Kvasir.Translation.FieldDescriptor"/> describing the constraints.
             </param>
             <param name="field">
-              The <see cref="T:Kvasir.Schema.IField">Field</see> to which the <c>CHEKC</c> constraints apply.
+              The <see cref="T:Kvasir.Schema.IField">Field</see> to which the <c>CHECK</c> constraints apply.
             </param>
             <returns>
               A (possibly empty) collection of <c>CHECK</c> constraints that apply to <paramref name="field"/>.

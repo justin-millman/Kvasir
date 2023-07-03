@@ -1,5 +1,6 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Core;
 using Kvasir.Schema;
 using Optional;
 using System;
@@ -122,41 +123,93 @@ namespace Kvasir.Translation {
         private static void ProcessConverters(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
-            var annotation = property.GetCustomAttribute<DataConverterAttribute>();
+            Debug.Assert(state.Count == 1 && state.ContainsKey(""));        // will need to be a proper check later
 
-            if (annotation is not null) {
-                var context = new PropertyTranslationContext(property, "");
+            var dpAnnotation = property.GetCustomAttribute<DataConverterAttribute>();
+            var numeric = property.HasAttribute<NumericAttribute>();
+            var asString = property.HasAttribute<AsStringAttribute>();
 
-                // Right now, this is just a Debug.Assert because we only support translation of scalars, but this will
-                // have to turn into a proper error check
-                Debug.Assert(state.Count == 1 && state.ContainsKey(""));
+            var context = new PropertyTranslationContext(property, "");
+            var expectedType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
-                // It is an error for a [DataConverter] annotation to have a populated <UserError>
-                if (annotation.UserError is not null) {
-                    throw Error.UserError(context, annotation, annotation.UserError);
+            if (dpAnnotation is not null) {
+                // It is an error for a property to be annotated with both [DataProvider] and [Numeric]
+                if (numeric) {
+                    throw Error.MutuallyExclusive(context, dpAnnotation, new NumericAttribute());
                 }
 
-                var converter = annotation.DataConverter;
+                // It is an error for a property to be annotated with both [DataProvider] and [AsString]
+                if (asString) {
+                    throw Error.MutuallyExclusive(context, dpAnnotation, new AsStringAttribute());
+                }
+
+                // It is an error for a [DataConverter] annotation to have a populated <UserError>
+                if (dpAnnotation.UserError is not null) {
+                    throw Error.UserError(context, dpAnnotation, dpAnnotation.UserError);
+                }
+
+                var converter = dpAnnotation.DataConverter;
                 Debug.Assert(converter.IsBidirectional);
 
                 // It is an error for the <SourceType> of a [DataConverter] annotation to be different than the
                 // annotated property's CLR type, modulo nullability on primitives and structs
-                var expectedType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 if (!expectedType.IsInstanceOf(converter.SourceType)) {
                     var expected = $"converter with source type {property.PropertyType.Name}";
                     var actual = $"converter with source type {converter.SourceType.Name}";
-                    throw Error.UserError(context, annotation, $"expected {expected}, but got {actual}");
+                    throw Error.UserError(context, dpAnnotation, $"expected {expected}, but got {actual}");
                 }
 
                 // It is an error for the <ResultType> of a [DataConverter] annotation to be unsupported
                 if (!DBType.IsSupported(converter.ResultType)) {
                     var msg = $"converter result type {converter.ResultType.Name} is not supported";
-                    throw Error.UserError(context, annotation, msg);
+                    throw Error.UserError(context, dpAnnotation, msg);
                 }
 
                 // No errors encountered
                 state[""] = state[""] with { Converter = converter };
             }
+            else if (numeric) {
+                // It is an error for a property whose type is not an enumeration to be annotated with [Numeric]
+                if (!expectedType.IsEnum) {
+                    var msg = $"expected Field of enumeration type, but got {expectedType.Name}";
+                    throw Error.UserError(context, new NumericAttribute(), msg);
+                }
+
+                // It is an error for a property to be annotated with both [Numeric] and [AsString]
+                if (asString) {
+                    throw Error.MutuallyExclusive(context, new NumericAttribute(), new AsStringAttribute());
+                }
+
+                state[""] = state[""] with { Converter = new EnumToNumericConverter(expectedType).ConverterImpl };
+            }
+            else if (asString) {
+                // It is an error for a property whose type is not an enumeration to be annotated with [AsString]
+                if (!expectedType.IsEnum) {
+                    var msg = $"expected Field of enumeration type, but got {expectedType.Name}";
+                    throw Error.UserError(context, new AsStringAttribute(), msg);
+                }
+
+                state[""] = state[""] with { Converter = new EnumToStringConverter(expectedType).ConverterImpl };
+            }
+
+            // Fields whose pre-conversion CLR type is an enumeration have an implicitly restricted domain, which
+            // therefore means that they have an implicitly restricted image. The valid enumerators of that type are fed
+            // through the Field's converter (which may be the identity converter) to produce the final set of viable
+            // values. These values may be augmented or filtered by [Check.IsOneOf] and [Check.IsNotOneOf] constraints
+            // later. If the converter's result type is not itself an enumeration, or if the back-end database provider
+            // does not actually support enumerations, the restricted image will be realized as a CHECK constraint.
+            var updated = new HashSet<object>();
+            foreach (var enumerator in state[""].Constraints.RestrictedImage) {
+                try {
+                    updated.Add(state[""].Converter.Convert(enumerator)!);
+                }
+                catch (Exception ex) {
+                    Debug.Assert(dpAnnotation is not null);
+                    var msg = $"error converting {enumerator.ForDisplay()}: {ex.Message}";
+                    throw Error.UserError(context, dpAnnotation, msg);
+                }
+            }
+            state[""] = state[""] with { Constraints = state[""].Constraints with { RestrictedImage = updated } };
         }
 
         private static void ProcessDefaults(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {

@@ -172,5 +172,29 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
+
+        [TestMethod] public void AsString_Construct() {
+            // Arrange
+            var path = "Nested.Path";
+
+            // Act
+            var direct = new AsStringAttribute();
+            var nested = new AsStringAttribute() { Path = path };
+
+            // Assert
+            direct.Path.Should().BeEmpty();
+            nested.Path.Should().Be(path);
+        }
+
+        [TestMethod] public void AsString_UniqueId() {
+            // Arrange
+            var attr = new AsStringAttribute();
+
+            // Act
+            var isUnique = ids_.Add(attr.TypeId);
+
+            // Assert
+            isUnique.Should().BeTrue();
+        }
     }
 }

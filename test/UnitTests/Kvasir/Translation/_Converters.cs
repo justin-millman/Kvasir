@@ -1,5 +1,6 @@
 ﻿using Kvasir.Core;
 using System;
+using System.Collections.Generic;
 
 namespace UT.Kvasir.Translation {
     internal static class TestConverters {
@@ -15,6 +16,26 @@ namespace UT.Kvasir.Translation {
         public class Invert : IDataConverter<bool, bool> {
             public bool Convert(bool source) { return !source; }
             public bool Revert(bool result) { return !result; }
+        }
+        public class MakeDate<T> : IDataConverter<T, DateTime> where T : notnull {
+            public MakeDate() {
+                conversions_ = new Dictionary<T, DateTime>();
+                reversions_ = new Dictionary<DateTime, T>();
+                lastDate_ = new DateTime(2000, 1, 1);
+            }
+            public DateTime Convert(T source) {
+                conversions_.TryAdd(source, lastDate_);
+                lastDate_ = lastDate_.AddDays(1);
+                return conversions_[source];
+            }
+            public T Revert(DateTime result) {
+                return reversions_[result];
+            }
+
+
+            public DateTime lastDate_;
+            public readonly Dictionary<T, DateTime> conversions_;
+            public readonly Dictionary<DateTime, T> reversions_;
         }
         public class Nullify<T> : IDataConverter<T, T?> where T : notnull {
             public T? Convert(T source) { return source; }
@@ -41,8 +62,13 @@ namespace UT.Kvasir.Translation {
             public T Convert(T source) { return source; }
             public T Revert(T result) { return result; }
         }
+        public class Unconvertible<T> : IDataConverter<T, T> {
+            public T Convert(T source) { throw new InvalidOperationException(CANNOT_CONVERT_MSG); }
+            public T Revert(T result) { return result; }
+        }
 
 
         public static readonly string CANNOT_CONSTRUCT_MSG = "This converter type is not constructible";
+        public static readonly string CANNOT_CONVERT_MSG = "This value cannot be converted";
     }
 }

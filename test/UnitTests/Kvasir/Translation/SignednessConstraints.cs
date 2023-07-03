@@ -116,6 +116,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void IsPositive_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Mythbusting);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Mythbusting.Rating))                  // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
+                .WithMessageContaining("numeric")                                   // details / explanation
+                .WithMessageContaining(nameof(Mythbusting.Resolution));             // details / explanation
+        }
+
         [TestMethod] public void IsPositive_FieldWithNumericDataConversionTarget() {
             // Arrange
             var translator = new Translator();
@@ -337,6 +355,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void IsNegative_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SerialKiller);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SerialKiller.CurrentStatus))          // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
+                .WithMessageContaining("numeric")                                   // details / explanation
+                .WithMessageContaining(nameof(SerialKiller.Status));                // details / explanation
+        }
+
         [TestMethod] public void IsNegative_FieldWithNumericDataConversionTarget() {
             // Arrange
             var translator = new Translator();
@@ -539,6 +575,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
                 .WithMessageContaining("numeric")                                   // details / explanation
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(IPO);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(IPO.PostingMethod))                   // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
+                .WithMessageContaining("numeric")                                   // details / explanation
+                .WithMessageContaining(nameof(IPO.Method));                         // details / explanation
         }
 
         [TestMethod] public void IsNonZero_FieldWithNumericDataConversionTarget() {

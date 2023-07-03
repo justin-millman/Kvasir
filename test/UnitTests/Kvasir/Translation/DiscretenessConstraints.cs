@@ -114,6 +114,27 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsOneOf_EnumerationField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Tooth);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Tooth.ToothID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Tooth.Origin)).OfTypeEnumeration(
+                    Tooth.Source.Animal, Tooth.Source.Human
+                ).BeingNonNullable().And
+                .HaveField(nameof(Tooth.Type)).OfTypeEnumeration(
+                    Tooth.ToothType.Incisor, Tooth.ToothType.Bicuspid, Tooth.ToothType.Canine, Tooth.ToothType.Molar
+                ).BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsOneOf_NullableFields() {
             // Arrange
             var translator = new Translator();
@@ -183,6 +204,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
                 .WithMessageContaining($"0 of type {nameof(Byte)}")                 // details / explanation
                 .WithMessageContaining(nameof(SByte));                              // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_InvalidEnumerator_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SpeedLimit);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SpeedLimit.TypeOfStreet))             // error location
+                .WithMessageContaining("user-provided value*is invalid")            // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("StreetType.40000")                          // details / explanation
+                .WithMessageContaining("enumerator is invalid");                    // details / explanation
         }
 
         [TestMethod] public void IsOneOf_ArrayValue_IsError() {
@@ -403,6 +442,29 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsOneOf_SingleEnumeratorAllowed() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Treehouse);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Treehouse.ID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Treehouse.MadeBy)).OfTypeEnumeration(
+                    Treehouse.Manufacturing.Professional
+                ).BeingNonNullable().And
+                .HaveField(nameof(Treehouse.Elevation)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Treehouse.Height)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Treehouse.Length)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Treehouse.Width)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Treehouse.PrimaryWood)).OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsOneOf_PathIsNull_IsError() {
             // Arrange
             var translator = new Translator();
@@ -560,6 +622,27 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsNotOneOf_EnumerationField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(RorschachInkBlot);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(RorschachInkBlot.BlotNumber)).OfTypeInt32().BeingNonNullable().And
+                .HaveField(nameof(RorschachInkBlot.MostCommonAnswer)).OfTypeEnumeration(
+                    RorschachInkBlot.Object.Skin, RorschachInkBlot.Object.Bat, RorschachInkBlot.Object.Humans,
+                    RorschachInkBlot.Object.Butterfly
+                ).BeingNonNullable().And
+                .HaveField(nameof(RorschachInkBlot.Commentary)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(RorschachInkBlot.ImageURL)).OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsNotOneOf_NullableFields() {
             // Arrange
             var translator = new Translator();
@@ -629,6 +712,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
                 .WithMessageContaining($"8 of type {nameof(Byte)}")                 // details / explanation
                 .WithMessageContaining(nameof(UInt16));                             // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_InvalidEnumerator_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Emotion);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Emotion.Connotation))                 // error location
+                .WithMessageContaining("user-provided value*is invalid")            // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("EmotionType.-3")                            // details / explanation
+                .WithMessageContaining("enumerator is invalid");                    // details / explanation
         }
 
         [TestMethod] public void IsNotOneOf_ArrayValue_IsError() {
@@ -846,6 +947,22 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Transformer.IsAutobot))               // error location
                 .WithMessageContaining("both true and false explicitly disallowed") // category
+                .WithMessageContaining("one or more [Check.xxx] constraints");      // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_AllEnumeratorsDisallowed_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ProgrammingLanguage);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ProgrammingLanguage.Type))            // error location
+                .WithMessageContaining("each of the allowed values*is disallowed")  // details / explanation
                 .WithMessageContaining("one or more [Check.xxx] constraints");      // details / explanation
         }
 

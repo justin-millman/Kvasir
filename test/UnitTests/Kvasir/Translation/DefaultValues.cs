@@ -83,6 +83,41 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void NonNullValidEnumerationDefault() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Oceanid);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Oceanid.Name)).WithNoDefault().And
+                .HaveField(nameof(Oceanid.Greek)).WithNoDefault().And
+                .HaveField(nameof(Oceanid.MentionedIn)).WithDefault(Oceanid.Source.Hesiod | Oceanid.Source.Hyginus).And
+                .HaveField(nameof(Oceanid.NumChildren)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NonNullInvalidEnumerationDefault_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HallOfFame);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(HallOfFame.Categorization))           // error location
+                .WithMessageContaining("user-provided value*is invalid")            // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("Category.185")                              // details / explanation
+                .WithMessageContaining("enumerator is invalid");                    // details / explanation
+        }
+
         [TestMethod] public void NullDefaultsOnNullableScalars() {
             // Arrange
             var translator = new Translator();
@@ -98,6 +133,24 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(Pepper.CommonName)).WithDefault(null).And
                 .HaveField(nameof(Pepper.FirstCultivated)).WithDefault(null).And
                 .HaveField(nameof(Pepper.ScovilleRating)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NullDefaultOnNullableEnumeration() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cryptid);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Cryptid.Name)).WithNoDefault().And
+                .HaveField(nameof(Cryptid.AllegedSightings)).WithNoDefault().And
+                .HaveField(nameof(Cryptid.HomeContinent)).WithDefault(null).And
+                .HaveField(nameof(Cryptid.FeatureSet)).WithDefault(null).And
+                .HaveField(nameof(Cryptid.ProvenHoax)).WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -152,6 +205,44 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Default]")                                 // details / explanation
                 .WithMessageContaining($"5000000 of type {nameof(Int32)}")          // details / explanation
                 .WithMessageContaining(nameof(UInt64));                             // details / explanation
+        }
+
+        [TestMethod] public void EnumerationDefaultOnNumericChangedField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MasterClass);
+            var enumTypename = nameof(MasterClass.Domain);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MasterClass.Category))                // error location
+                .WithMessageContaining("user-provided value*is invalid")            // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining($"Domain.Politics of type {enumTypename}")   // details / explanation
+                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+        }
+
+        [TestMethod] public void EnumerationDefaultOnStringChangedField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Orphanage);
+            var enumTypename = nameof(Orphanage.Kind);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Orphanage.Type))                      // error location
+                .WithMessageContaining("user-provided value*is invalid")            // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining($"Kind.Private of type {enumTypename}")      // details / explanation
+                .WithMessageContaining(nameof(String));                             // details / explanation
         }
 
         [TestMethod] public void ArrayDefaultValue_IsError() {
@@ -304,6 +395,42 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(badGuid)                                     // details / explanation
                 .WithMessageContaining("could not parse")                           // details / explanation
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
+        }
+
+        [TestMethod] public void EnumerationDefaultIsInvalidEnumerator_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MoonOfJupiter);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MoonOfJupiter.MoonGroup))             // error location
+                .WithMessageContaining("user-provided value*is invalid")            // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("Group.87123")                               // details / explanation
+                .WithMessageContaining("enumerator is invalid");                    // details / explanation
+        }
+
+        [TestMethod] public void EnumerationDefaultIsInvalidCombination_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Newspaper);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Newspaper.Contents))                  // error location
+                .WithMessageContaining("user-provided value*is invalid")            // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("Section.15")                                // details / explanation
+                .WithMessageContaining("enumerator is invalid");                    // details / explanation
         }
 
         [TestMethod] public void DefaultMatchesDataConversionSourceType_IsError() {

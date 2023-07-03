@@ -113,6 +113,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void IsGreaterThan_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Orisha);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Orisha.BelongsTo))                    // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(Orisha.Culture));                     // details / explanation
+        }
+
         [TestMethod] public void IsGreaterThan_NullableTotallyOrderedFields() {
             // Arrange
             var translator = new Translator();
@@ -507,6 +525,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
                 .WithMessageContaining("totally ordered")                           // details / explanation
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
+        }
+
+        [TestMethod] public void IsLessThan_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SolicitorGeneral);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SolicitorGeneral.Affiliation))        // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(SolicitorGeneral.PoliticalParty));    // details / explanation
         }
 
         [TestMethod] public void IsLessThan_NullableTotallyOrderedFields() {
@@ -905,6 +941,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void IsGreaterOrEqualTo_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CivCityState);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(CivCityState.Type))                   // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(CivCityState.Category));              // details / explanation
+        }
+
         [TestMethod] public void IsGreaterOrEqualTo_NullableTotallyOrderedFields() {
             // Arrange
             var translator = new Translator();
@@ -1297,6 +1351,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void IsLessOrEqualTo_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ConcertTour);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ConcertTour.ArtistType))              // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(ConcertTour.Type));                   // details / explanation
+        }
+
         [TestMethod] public void IsLessOrEqualTo_NullableTotallyOrderedFields() {
             // Arrange
             var translator = new Translator();
@@ -1680,6 +1752,31 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint(nameof(Church.ChurchID), ComparisonOperator.NE, new Guid("a3c3ac24-4cf2-428e-a4db-76b30958cc90")).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNot_EnumerationField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MarianApparition);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(MarianApparition.When)).OfTypeDateTime().BeingNonNullable().And
+                .HaveField(nameof(MarianApparition.Location)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(MarianApparition.Witnesses)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(MarianApparition.MarianTitle)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(MarianApparition.Recognition)).OfTypeEnumeration(
+                    MarianApparition.Status.Accepted,
+                    MarianApparition.Status.Alleged,
+                    MarianApparition.Status.Confirmed,
+                    MarianApparition.Status.Documented,
+                    MarianApparition.Status.Recognized
+                ).BeingNonNullable().And
+                .HaveNoOtherFields().And
                 .HaveNoOtherConstraints();
         }
 
