@@ -81,6 +81,11 @@ namespace Kvasir.Translation {
                 return Option.None<object?, string>($"expected value of type '{into.Name}'");
             }
 
+            // It is an error for an annotation value to be an invalid enumerator
+            if (into.IsEnum && !((Enum)self).IsValid()) {
+                return Option.None<object?, string>($"enumerator is invalid");
+            }
+
             // Perform actual parsing, if necessary
             if (into == typeof(DateTime)) {
                 if (!DateTime.TryParse((string)self, out DateTime result)) {

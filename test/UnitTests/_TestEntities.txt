@@ -27,6 +27,7 @@ Arthurian Knight
 Artiodactyl
 Astronaut
 Atmospheric Layer
+Atoll
 Attribute (C#)
 Auction Lot
 Avatar
@@ -40,6 +41,7 @@ Baryon
 Baseball Bat
 Baseball Card
 Basketball Player
+Batman Villain
 Battery
 Batting Order
 Battle
@@ -57,6 +59,7 @@ Biological Cycle
 Birth Control
 Blender
 Blood Type
+Bond Girl
 Bone
 Book
 Bookmark (web browsing)
@@ -85,8 +88,11 @@ Canyon
 Capacitor
 Carbohydrate
 Carousel
+Casino
 Cave
+Cave Painting
 Celtic God
+Cemetery
 Cenote
 Census
 Cereal
@@ -104,6 +110,7 @@ Cider Mill
 CinemaSins
 Circle
 Circle of Hell
+Civilization VI City State
 Civilization VI Military Unit
 Climate
 Clock Tower
@@ -119,6 +126,7 @@ Commercial
 Compiler Warning
 Concentration Camp
 Concert
+Concert Tour
 Constitutional Amendment
 Coral Reef
 Country
@@ -128,10 +136,12 @@ Court Case
 Credit Card
 Crossword Clue
 Cruise
+Cryptid
 Cryptocurrency
 Currency
 D&D Character
 D&D Spell
+D&D Weapon
 Dalai Lama
 Dam
 Data Structure
@@ -147,13 +157,15 @@ Doctor (Doctor Who)
 Documentary
 Domino
 Donut
-Dragon
 Draft Pick
+Dragon
 Dreidel
 Drum
 E-Mail
 Earthquake
+Ecumenical Council
 Elevator
+Emotion
 Encryption
 Encyclopedia
 Enumeration
@@ -162,6 +174,8 @@ ETF
 Eurovision Song Contest
 Excel Range
 Expiration
+Eyeglasses
+Facebook Post
 Fairy Tale
 Federal Law
 Field Goal
@@ -201,6 +215,7 @@ Guillotine
 Guitar
 Gymnast
 Haiku
+Hall of Fame
 Hash Function
 Headphones
 Healing Potion (D&D)
@@ -214,6 +229,7 @@ Hoedown (WLIIA)
 Hogwarts House
 Holiday
 Holy Roman Emperor
+Home Run Derby
 Homeric Hymn
 Hormone
 Hospital
@@ -225,6 +241,7 @@ HTML Element
 HTTP Error
 Hurricane
 Igloo
+Immaculate Grid
 Inator
 Inmate
 Insurance Policy
@@ -232,6 +249,7 @@ Integer
 Integer Sequence
 Integral
 IP Address
+IPO
 ISO Standard
 Isthmus
 Jedi
@@ -250,6 +268,7 @@ Lease
 Legume
 Lens
 License Plate
+Ligament
 Linux Distribution
 Lipstick
 Liquor
@@ -262,19 +281,23 @@ Lottery Ticket
 Lyric
 Magazine
 Marathon
+Marian Apparition
 Mark-Up Symbol
 Masked Singer
 Massacre
+MasterClass
 Mayor
 Medal of Honor
 Medical Specialty
 Meme
 Metra Route
+Mezuzah
 Military Base
 Milkshake
 Mint (currency)
 Monopoly Property
 Month
+Moon of Jupiter
 Mosque
 Mountain
 Movie
@@ -283,16 +306,18 @@ Multiple Choice Question
 Mummy
 Muppet
 Muscle
-Mushroom
 Museum
+Mushroom
 Musical
 Mutant (X-Men)
+Mythbusting
 National Anthem
 National Park
 Native American Tribe
 Nazca Line
 Nebula
 Neurotoxin
+Newspaper
 Nobel Prize
 Norse God
 Norse World
@@ -301,10 +326,13 @@ NuGet Package
 Obelisk
 Obi
 Oceanic Trench
+Oceanid
 Oil (cooking)
 Oil Spill
 Olympiad
 Opera
+Orisha
+Orphanage
 Painting
 Parashah
 Parking Garage
@@ -323,6 +351,7 @@ Phobia
 Phone Number
 Pie
 Pigment (biology)
+Pillow
 Ping
 Pirate
 Pizza
@@ -344,11 +373,13 @@ Presidential Election
 Printer
 Prison
 Process (computing)
+Programming Langauge
 Prophet
 Proto-Indo-European Root
 Pterosaur
 Pulley
 Quadratic Equation
+Quarterback
 Quatrain
 Racehorse
 Racetrack (auto racing)
@@ -364,11 +395,13 @@ Ring of Power
 River
 Rollercoaster
 Roman Emperor
+Rorschach Ink Blot
 Royal House
 Rube Goldberg Machine
 Rune
 Russian Tsar
 Saint
+Satellite
 Scholarship
 Scooby-Doo Movie
 Scrabble Tile
@@ -376,6 +409,7 @@ Screwdriver
 SCUBA Dive
 Sculpture
 Season
+Secret Hitler Game
 Senator
 Set Card
 Shard of Adonalsium
@@ -396,12 +430,14 @@ Snake
 SNL Episode
 Soccer Team
 Solar Eclipse
+Solicitor General
 Song
 Sonnet
 Sorority
+Soup
+Speed Limit
 Speedometer
 Sporcle Quiz
-Surfing Maneuver
 SQL Query
 Stadium
 Stamp
@@ -415,9 +451,11 @@ Sunscreen
 Super Bowl
 SuperPAC
 Surah
+Surfing Maneuver
 Survivor
 Swimming Pool
 Sword
+Symphony
 Talk Show
 Tar Pits
 Tarot Card
@@ -425,13 +463,14 @@ Tectonic Plate
 Telescope
 Tendon
 Tennis Match
-Therapist
 Terminator
+Therapist
 Thesis
 Tic-Tac-Toe Game
 Ticket2Ride Route
 Time Zone
 Timestamp
+Tooth
 Toothpaste
 Top 10 List
 Tossup Question
@@ -439,6 +478,8 @@ Tournament
 Transformer (robot)
 Transistor
 Treasury Bond
+Tree House
+Triangle
 Trilogy
 Tsunami
 Tuxedo
@@ -451,6 +492,7 @@ Upanishad
 URL
 UUID
 Vampire Slayer
+Vigenère Cipher
 Vitamin
 Voicemail
 Voir Dire
@@ -465,10 +507,12 @@ Wikipedia Page
 Wildfire
 Winter Storm
 Witch Hunt
+Word Search
 World Cup
 World Heritage Site
 Wristwatch
 xkcd Comic
 YouTube Video
 Yu-Gi-Oh Monster
+Zodiac Sign
 Zoo

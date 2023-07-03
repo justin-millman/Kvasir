@@ -160,6 +160,18 @@ namespace UT.Kvasir.Translation {
             [CodeOnly] public IArmor? Armor { get; set; }
             [CodeOnly] public CustomBackground<DNDCharacter>? Background { get; set; }
         }
+
+        // Test Scenario: Enumerations (✓recognized✓)
+        public enum WeaponType { Simple, Martial, Improvised };
+        [Flags] public enum WeaponProperty { Ranged = 1, TwoHanded = 2, Finesse = 4, Silvered = 8 };
+        public class DNDWeapon {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public ushort AttackBonus { get; set; }
+            public ushort AverageDamage { get; set; }
+            public WeaponType Type { get; set; }
+            public WeaponProperty Properties { get; set; }
+            public DayOfWeek? MostEffectiveOn { get; set; }
+        }
     }
 
     internal static class EntityShapes {
@@ -809,13 +821,47 @@ namespace UT.Kvasir.Translation {
             public byte FeastDay { get; set; }
         }
 
-        // Test Scenario: `null` Default for Nullable Field (✓valid✓)
+        // Test Scenario: Non-`null` Valid Enumeration Default (✓valid✓)
+        public class Oceanid {
+            [Flags] public enum Source { Hesiod = 1, HomericHymn = 2, Apollodorus = 4, Hyginus = 8 };
+
+            public string Name { get; set; } = "";
+            [PrimaryKey] public string Greek { get; set; } = "";
+            [Default(Source.Hesiod | Source.Hyginus)] public Source MentionedIn { get; set; }
+            public int NumChildren { get; set; }
+        }
+
+        // Test Scenario: Non-`null` Invalid Enumeration Default (✗invalid✗)
+        public class HallOfFame {
+            public enum Category { Sports, Entertainment, Journalism }
+
+            [PrimaryKey] public string For { get; set; } = "";
+            public uint Enshrinees { get; set; }
+            [Default((Category)185)] public Category Categorization { get; set; }
+            public float Latitude { get; set; }
+            public float Longitude { get; set; }
+            public DateTime Opened { get; set; }
+        }
+
+        // Test Scenario: `null` Default for Nullable Scalar Field (✓valid✓)
         public class Pepper {
             [PrimaryKey] public string Genus { get; set; } = "";
             [PrimaryKey] public string Species { get; set; } = "";
             [Default(null)] public string? CommonName { get; set; }
             [Default(null)] public DateTime? FirstCultivated { get; set; }
             public ulong ScovilleRating { get; set; }
+        }
+
+        // Test Scenario: `null` Default for Nullable Enumeration Filed (✓valid✓)
+        public class Cryptid {
+            public enum Continent { NorthAmerica, SouthAmerica, Asia, Europe, Africa, Oceania, Antarctica };
+            [Flags] public enum Features { Flying = 1, Carnivorous = 2, Humanoid = 4, Aquatic = 8, FireProof = 16, Hematophagous = 32 };
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public uint AllegedSightings { get; set; }
+            [Default(null)] public Continent? HomeContinent { get; set; }
+            [Default(null)] public Features? FeatureSet { get; set; }
+            public bool ProvenHoax { get; set; }
         }
 
         // Test Scenario: `null` Default for Non-Nullable Field (✗invalid✗)
@@ -843,6 +889,33 @@ namespace UT.Kvasir.Translation {
             [Default(5000000)] public ulong Population { get; set; }
             public ulong Area { get; set; }
             public DateTime Incorporation { get; set; }
+        }
+
+        // Test Scenario: Enumeration Default on [Numeric] Field (✗invalid✗)
+        public class MasterClass {
+            public enum Domain : ushort { Sports, Acting, Marketing, Business, Politics, Art, Writing, Comedy, Cooking }
+
+            [PrimaryKey] public Guid ClassID { get; set; }
+            public string Title { get; set; } = "";
+            public string Teacher { get; set; } = "";
+            [Default(Domain.Politics), Numeric] public Domain Category { get; set; }
+            public uint Sessions { get; set; }
+            public uint Minutes { get; set; }
+            public decimal Price { get; set; }
+            public string URL { get; set; } = "";
+        }
+
+        // Test Scenario: Enumeration Default on [AsString] Field (✗invalid✗)
+        public class Orphanage {
+            public enum Kind { Public, Private, Medical }
+
+            [PrimaryKey] public float Latitude { get; set; }
+            [PrimaryKey] public float Longitude { get; set; }
+            public string Name { get; set; } = "";
+            [Default(Kind.Private), AsString] public Kind Type { get; set; }
+            public ushort Occupants { get; set; }
+            public double AdoptionRate { get; set; }
+            public string Headmistress { get; set; } = "";
         }
 
         // Test Scenario: Single-Element Array Default (✗invalid✗)
@@ -909,6 +982,30 @@ namespace UT.Kvasir.Translation {
             public string Identifier { get; set; } = "";
             public long HumanEntrez { get; set; }
             public string UCSCLocation { get; set; } = "";
+        }
+
+        // Test Scenario: Enumeration Default is not Named Enumerator (✗invalid✗)
+        public class MoonOfJupiter {
+            public enum Group { Galilean, Themisto, Himalia, Carpo, Valetudo, Ananke, Carme, Pasiphae };
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateTime Discovered { get; set; }
+            [Default((Group)87123)] public Group MoonGroup { get; set; }
+            public long Volume { get; set; }
+            public float SurfaceGravity { get; set; }
+            public double ApparentMagnitude { get; set; }
+        }
+
+        // Test Scenario: Flag Enumeration Default is not Valid Combination (✗invalid✗)
+        public class Newspaper {
+            public enum Section { Sports, Politics, Comics, Cultures, FilmReviews, Obituaries, Weather, Classifieds }
+
+            public string City { get; set; } = "";
+            [PrimaryKey] public string Title { get; set; } = "";
+            public bool PublishedDaily { get; set; }
+            [Default((Section)15)] public Section Contents { get; set; }
+            public string Jan1Headline { get; set; } = "";
+            public long Circulation { get; set; }
         }
 
         // Test Scenario: Default of Source Type on Data-Converted Property (✗invalid✗)
@@ -1430,6 +1527,51 @@ namespace UT.Kvasir.Translation {
             public float OrbitalPeriod { get; set; }
         }
 
+        // Test Scenario: Custom Data Conversion for Enumeration Field (✓applied✓)
+        public class HomeRunDerby {
+            public enum Variety { Bracketed, SingleElimination, SingleRound, GroupProgression }
+
+            [PrimaryKey] public uint Year { get; set; }
+            public string Victor { get; set; } = "";
+            public ushort TotalHomers { get; set; }
+            public ushort LongestHomer { get; set; }
+            public decimal CharityMoney { get; set; }
+            [DataConverter(typeof(MakeDate<Variety>))] public Variety Structure { get; set; }
+        }
+
+        // Test Scenario: [Numeric] Data Conversion for Enumeration Field (✓applied✓)
+        public class Quarterback {
+            public enum Throws : sbyte { Left, Right }
+            public enum Round : short { R1 = 14, R2 = 188, R3 = 2, R4 = -16, R5 = 19054, R6 = -333, R7 = 0, Undrafted = 8 }
+            public enum Style : int { PocketPasser, Mobile, Gunslinger, BackUp }
+            [Flags] public enum Accolade : long { ProBowl = 1, AllPro = 2, OPOY = 4, MVP = 8, HallOfFame = 16 }
+            public enum PlayerStatus : byte { Retired, Active, Injured, PracticeSquad, FreeAgent }
+            public enum YesNo : ushort { Yes, No }
+            public enum PlayoffRound : uint { Never = 0, WildCard = 1827412, Champ = 44, SuperBowl = 949012, Lombardy = 55 }
+            [Flags] public enum League : ulong { NFL = 128, XFL = 2, CFL = 64 }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [Numeric] public Throws ThrowingArm { get; set; }
+            [Numeric] public Round DraftRound { get; set; }
+            [Numeric] public Style QBStyle { get; set; }
+            [Numeric] public Accolade CareerAchievements { get; set; }
+            [Numeric] public PlayerStatus Status { get; set; }
+            [Numeric] public YesNo HasBeenTraded { get; set; }
+            [Numeric] public PlayoffRound FurthestPlayoffAdvancement { get; set; }
+            [Numeric] public League Leagues { get; set; }
+        }
+
+        // Test Scenario: [AsString] Data Conversion for Enumeration Field (✓applied✓)
+        public class EcumenicalCouncil {
+            public enum Recognition { CatholicChurch, EasternOrthodoxChurch, Unrecognized }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateTime Opening { get; set; }
+            public DateTime Closing { get; set; }
+            [AsString] public Recognition RecognizedBy { get; set; }
+            public uint Attendance { get; set; }
+        }
+
         // Test Scenario: Data Conversion Source Type is Non-Nullable on Nullable Field (✓applied✓)
         public class RoyalHouse {
             [PrimaryKey] public string HouseName { get; set; } = "";
@@ -1513,6 +1655,157 @@ namespace UT.Kvasir.Translation {
             public int Kills { get; set; }
             [DataConverter(typeof(Unconstructible<short>))] public short YearForged { get; set; }
         }
+
+        // Test Scenario: Data Converter Throws upon Execution (✗propagated✗)
+        public class Ligament {
+            public enum Type { Articular, Pretioneal, FetalRemnant }
+
+            [PrimaryKey] public string MeSH { get; set; } = "";
+            public string Name { get; set; } = "";
+            [DataConverter(typeof(Unconvertible<Type>))] public Type Classification { get; set; }
+            public float Length { get; set; }
+            public string From { get; set; } = "";
+            public string To { get; set; } = "";
+        }
+
+        // Test Scenario: [Numeric] Applied to Boolean Field (✗impermissible✗)
+        public class Pillow {
+            [PrimaryKey] public Guid ID { get; set; }
+            public float Length { get; set; }
+            public float Width { get; set; }
+            [Numeric] public bool IsThrowPillow { get; set; }
+            public bool IsChilled { get; set; }
+        }
+
+        // Test Scenario: [Numeric] Applied to Textual Field (✗impermissible✗)
+        public class VigenereCipher {
+            [PrimaryKey, Numeric] public string Key { get; set; } = "";
+            public bool IsCracked { get; set; }
+        }
+
+        // Test Scenario: [Numeric] Applied to Numeric Field (✗impermissible✗)
+        public class Satellite {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public double Weight { get; set; }
+            public ushort MissionDuration { get; set; }
+            public DateTime Launch { get; set; }
+            [Numeric] public ulong OrbitsCompleted { get; set; }
+        }
+
+        // Test Scenario: [Numeric] Applied to DateTime Field (✗impermissible✗)
+        public class Symphony {
+            [PrimaryKey] public string Composer { get; set; } = "";
+            [PrimaryKey] public uint OpusNumber { get; set; }
+            public ushort Length { get; set; }
+            public string Key { get; set; } = "";
+            [Numeric] public DateTime PremiereDate { get; set; }
+        }
+
+        // Test Scenario: [Numeric] Applied to Guid Field (✗impermissible✗)
+        public class WordSearch {
+            [PrimaryKey, Numeric] public Guid PuzzleID { get; set; }
+            public uint LettersWide { get; set; }
+            public uint LettersTall { get; set; }
+            public ulong NumWords { get; set; }
+            public bool DiagonalsAllowed { get; set; }
+            public bool BackwardsAllowed { get; set; }
+            public string Title { get; set; } = "";
+        }
+
+        // Test Scenario: [AsString] Applied to Boolean Field (✗impermissible✗)
+        public class BondGirl {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string Actress { get; set; } = "";
+            public string Debut { get; set; } = "";
+            public ushort Appearances { get; set; }
+            [AsString] public bool SleptWithBond { get; set; }
+        }
+
+        // Test Scenario: [AsString] Applied to Textual Field (✗impermissible✗)
+        public class BatmanVillain {
+            public string Name { get; set; } = "";
+            [PrimaryKey] public string AlterEgo { get; set; } = "";
+            public bool IsAlive { get; set; }
+            public ulong NumAppearances { get; set; }
+            public DateTime Debut { get; set; }
+            public bool InCahootsWithJoker { get; set; }
+            [AsString] public char Grade { get; set; }
+        }
+
+        // Test Scenario: [AsString] Applied to Numeric Field (✗impermissible✗)
+        public class Cemetery {
+            [PrimaryKey] public double Longitude { get; set; }
+            [PrimaryKey, AsString] public double Latitude { get; set; }
+            public ulong Area { get; set; }
+            public int Capacity { get; set; }
+            public bool IsNational { get; set; }
+            public uint NumMausoleums { get; set; }
+        }
+
+        // Test Scenario: [AsString] Applied to DateTime Field (✗impermissible✗)
+        public class ImmaculateGrid {
+            [PrimaryKey, AsString] public DateTime Date { get; set; }
+            public string V1 { get; set; } = "";
+            public string V2 { get; set; } = "";
+            public string V3 { get; set; } = "";
+            public string H1 { get; set; } = "";
+            public string H2 { get; set; } = "";
+            public string H3 { get; set; } = "";
+            public double ImmaculatePercentage { get; set; }
+        }
+
+        // Test Scenario: [AsString] Applied to Guid Field (✗impermissible✗)
+        public class Eyeglasses {
+            [PrimaryKey, AsString] public Guid GlassesID { get; set; }
+            public string Prescription { get; set; } = "";
+            public bool IsMonocle { get; set; }
+            public bool ForReadingOnly { get; set; }
+            public float LensArea { get; set; }
+        }
+
+        // Test Scenario: Property Marked with [DataConverter] and [Numeric] (✗conflicting✗)
+        public class SecretHitlerGame {
+            public enum Role { Liberal, Fascist, Hitler }
+
+            [PrimaryKey] public Guid GameID { get; set; }
+            public Role Player1 { get; set; }
+            public Role Player2 { get; set; }
+            public Role Player3 { get; set; }
+            public Role Player4 { get; set; }
+            public Role Player5 { get; set; }
+            public Role? Player6 { get; set; }
+            [DataConverter(typeof(ToString<Role>)), Numeric] public Role? Player7 { get; set; }
+            public byte LiberalPolicies { get; set; }
+            public byte FascistPolicies { get; set; }
+            public bool HitlerElectedChancellor { get; set; }
+            public bool HitlerKilled { get; set; }
+        }
+
+        // Test Scenario: Property Marked with [DataConverter] and [AsString] (✗conflicting✗)
+        public class Mezuzah {
+            public enum Material { Gold, Silver, Steel, Plastic, Clay, Wood }
+
+            [PrimaryKey] public Guid MezuzahID { get; set; }
+            public double Weight { get; set; }
+            public double Length { get; set; }
+            public decimal? RetailPrice { get; set; }
+            [DataConverter(typeof(ToInt<Material>)), AsString] public Material MadeOf { get; set; }
+            public bool CurrentlyAffixed { get; set; }
+        }
+
+        // Test Scenario: Property Marked with [Numeric] and [AsString] (✗conflicting✗)
+        public class Atoll {
+            public enum Sea { Arctic, Indian, Pacific, Atlantic }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [Numeric, AsString] public Sea Ocean { get; set; }
+            public uint NumIslands { get; set; }
+            public ulong Area { get; set; }
+            public ulong Population { get; set; }
+            public float Latitude { get; set; }
+            public float Longitude { get; set; }
+            public bool CoralReefs { get; set; }
+        }
     }
 
     internal static class SignednessConstraints {
@@ -1578,6 +1871,17 @@ namespace UT.Kvasir.Translation {
                 public ushort Runtime { get; set; }
                 public DateTime ReleaseDate { get; set; }
                 public bool NeverBeforeSeenFootage { get; set; }
+            }
+
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class Mythbusting {
+                public enum Resolution { Busted, Plausible, Confirmed }
+
+                [PrimaryKey] public uint Season { get; set; }
+                [PrimaryKey] public uint Episode { get; set; }
+                [PrimaryKey] public uint MythNumber { get; set; }
+                public string MythDescription { get; set; } = "";
+                [Check.IsPositive] public Resolution Rating { get; set; }
             }
 
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
@@ -1718,6 +2022,17 @@ namespace UT.Kvasir.Translation {
                 public decimal DependentBenefits { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class SerialKiller {
+                public enum Status { AtLarge, Incarerated, Apprehended, InTrial }
+
+                [PrimaryKey] public string AlterEgo { get; set; } = "";
+                public string? Identity { get; set; }
+                [Check.IsNegative] public Status CurrentStatus { get; set; }
+                public uint KnownVictims { get; set; }
+                public bool FBIMostWanted { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
             public class Boxer {
                 [PrimaryKey] public string FirstName { get; set; } = "";
@@ -1829,6 +2144,19 @@ namespace UT.Kvasir.Translation {
                 public float TopologicalDimension { get; set; }
                 public float HausdorffDimension { get; set; }
                 public bool CanTesselate { get; set; }
+            }
+
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class IPO {
+                public enum Method { BestEfforts, FirmCommittment, AllOrNone, BoughtDeal }
+
+                [PrimaryKey] public string Company { get; set; } = "";
+                public string Symbol { get; set; } = "";
+                public string Exchange { get; set; } = "";
+                [Check.IsNonZero] public Method PostingMethod { get; set; }
+                public ulong Shares { get; set; }
+                public decimal OpeningPrice { get; set; }
+                public decimal ClosingPrice { get; set; }
             }
 
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
@@ -1948,6 +2276,16 @@ namespace UT.Kvasir.Translation {
                 public ulong AntennaHeight { get; set; }
                 public DateTime Completed { get; set; }
                 public byte Elevators { get; set; }
+            }
+
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class Orisha {
+                [Flags] public enum Culture { Yoruba = 1, Santeria = 2, Oyotunji = 4, Candomble = 8 }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsGreaterThan(Culture.Santeria)] public Culture BelongsTo { get; set; }
+                public string Domain { get; set; } = "";
+                public uint WikipediaWords { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -2189,6 +2527,17 @@ namespace UT.Kvasir.Translation {
                 public float Version { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class SolicitorGeneral {
+                public enum PoliticalParty { Democrat, Republican, Green, Socialist, Independent }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string AppointedBy { get; set; } = "";
+                [Check.IsLessThan(PoliticalParty.Green)] public PoliticalParty? Affiliation { get; set; }
+                public uint CasesArgued { get; set; }
+                public DateTime FirstSCOTUS { get; set; }
+            }
+
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
             public class AutoRacetrack {
                 [PrimaryKey] public string Name { get; set; } = "";
@@ -2404,6 +2753,17 @@ namespace UT.Kvasir.Translation {
                 public string Background { get; set; } = "";
                 public string Foreground { get; set; } = "";
                 public string Tressure { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class CivCityState {
+                public enum Category { Cultural, Scientific, Economic, Militaristic, Industrial, Religious }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsGreaterOrEqualTo(Category.Cultural)] public Category Type { get; set; }
+                public ulong RealWorldPopulation { get; set; }
+                public string Introduced { get; set; } = "";
+                public string SuzerainBonus { get; set; } = "";
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -2628,6 +2988,21 @@ namespace UT.Kvasir.Translation {
                 public bool IsNatural { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class ConcertTour {
+                public enum Type { Solo, Band, Reunion, Jukebox }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Artist { get; set; } = "";
+                [Check.IsLessOrEqualTo(Type.Jukebox)] public Type ArtistType { get; set; }
+                public string StartCity { get; set; } = "";
+                public string EndCity { get; set; } = "";
+                public uint NumShows { get; set; }
+                public DateTime StartDate { get; set; }
+                public DateTime EndDate { get; set; }
+                public decimal Gross { get; set; }
+            }
+
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
             public class Subreddit {
                 [PrimaryKey] public string Identifier { get; set; } = "";
@@ -2848,6 +3223,17 @@ namespace UT.Kvasir.Translation {
                 public double Height { get; set; }
                 public ushort NumBells { get; set; }
                 public DateTime Established { get; set; }
+            }
+
+            // Test Scenario: Applied to Enumeration Field (✓constrained✓)
+            public class MarianApparition {
+                public enum Status { Alleged, Confirmed, Accepted, Recognized, Documented, Ignored }
+
+                [PrimaryKey] public DateTime When { get; set; }
+                [PrimaryKey] public string Location { get; set; } = "";
+                public string Witnesses { get; set; } = "";
+                public string MarianTitle { get; set; } = "";
+                [Check.IsNot(Status.Ignored)] public Status Recognition { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
@@ -3628,6 +4014,16 @@ namespace UT.Kvasir.Translation {
                 public decimal TotalCost { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✓limiting✓)
+            public class Tooth {
+                public enum Source { Human, Animal, Synthetic }
+                public enum ToothType { Incisor, Molar, Canine, Bicuspid }
+
+                [PrimaryKey] public Guid ToothID { get; set; }
+                [Check.IsOneOf(Source.Human, Source.Animal)] public Source Origin { get; set; }
+                [Check.IsOneOf(ToothType.Incisor, ToothType.Molar, ToothType.Canine, ToothType.Bicuspid)] public ToothType Type { get; set; }
+            }
+
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
             public class Wildfire {
                 [PrimaryKey] public Guid WildfireID { get; set; }
@@ -3662,6 +4058,18 @@ namespace UT.Kvasir.Translation {
                 [Check.IsOneOf((byte)0, (byte)15, (byte)30, (byte)40)] public sbyte Player1Score { get; set; }
                 public sbyte Player2Score { get; set; }
                 public string? Tournament { get; set; }
+            }
+
+            // Test Scenario: Invalid Enumerator Allowed Value (✗invalid✗)
+            public class SpeedLimit {
+                public enum StreetType { Residential, Highway, Public, Unincorporated, Personal }
+
+                [PrimaryKey] public string StreetName { get; set; } = "";
+                [Check.IsOneOf(StreetType.Highway, StreetType.Public, (StreetType)40000)] public StreetType TypeOfStreet { get; set; }
+                [PrimaryKey] public float StartDistance { get; set; }
+                [PrimaryKey] public float EndDistance { get; set; }
+                public ushort MaximumSpeed { get; set; }
+                public ushort MinimumSpeed { get; set; }
             }
 
             // Test Scenario: Single-Element Array Allowed Value (✗invalid✗)
@@ -3780,6 +4188,19 @@ namespace UT.Kvasir.Translation {
                 public bool IsAutomatic { get; set; }
             }
 
+            // Test Scenario: Only One Enumerator Permitted (✓valid✓)
+            public class Treehouse {
+                [Flags] public enum Manufacturing { Amateur, Professional, Kit, Factory }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.IsOneOf(Manufacturing.Professional)] public Manufacturing MadeBy { get; set; }
+                public double Elevation { get; set; }
+                public double Height { get; set; }
+                public double Length { get; set; }
+                public double Width { get; set; }
+                public string PrimaryWood { get; set; } = "";
+            }
+
             // Test Scenario: <Path> is `null` (✗illegal✗)
             public class Dragon {
                 [PrimaryKey] public Guid DragonID { get; set; }
@@ -3869,6 +4290,16 @@ namespace UT.Kvasir.Translation {
                 public bool OnSpotify { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✓limiting✓)
+            public class RorschachInkBlot {
+                public enum Object { Bat, Butterfly, Humans, Skin, Lobster, Other }
+
+                [PrimaryKey] public int BlotNumber { get; set; }
+                [Check.IsNotOneOf(Object.Other, Object.Lobster)] public Object MostCommonAnswer { get; set; }
+                public string Commentary { get; set; } = "";
+                public string ImageURL { get; set; } = "";
+            }
+
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
             public class PIERoot {
                 [PrimaryKey] public string Root { get; set; } = "";
@@ -3910,6 +4341,16 @@ namespace UT.Kvasir.Translation {
                 public bool MasteredEarth { get; set; }
                 public bool MasteredAir { get; set; }
                 public bool MasteredEnergy { get; set; }
+            }
+
+            // Test Scenario: Invalid Enumerator Disallowed Value (✗invalid✗)
+            public class Emotion {
+                public enum EmotionType { Positive, Negative, Neutral }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string? Color { get; set; }
+                [Check.IsNotOneOf((EmotionType)(-3))] public EmotionType Connotation { get; set; }
+                public bool DeadlySin { get; set; }
             }
 
             // Test Scenario: Single-Element Array Disallowed Value (✗invalid✗)
@@ -4024,6 +4465,18 @@ namespace UT.Kvasir.Translation {
                 public uint TelevisionApperances { get; set; }
                 public uint MovieAppearances { get; set; }
                 [Check.IsNotOneOf(true, false)] public bool IsAutobot { get; set; }
+            }
+
+            // Test Scenario: All Enumerators Disallowed (✗unsatisfiable✗)
+            public class ProgrammingLanguage {
+                public enum Style { ObjectOriented, Functional, Logical, Assembly }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsNotOneOf(Style.ObjectOriented, Style.Functional, Style.Logical, Style.Assembly)] public Style Type { get; set; }
+                public uint NumKeywords { get; set; }
+                public double StackOverflowShare { get; set; }
+                public string LatestStandard { get; set; } = "";
+                public bool IsCompiled { get; set; }
             }
 
             // Test Scenario: Scalar Property Constrained Multiple Times (✓union✓)
@@ -4636,6 +5089,80 @@ namespace UT.Kvasir.Translation {
             public bool ClothingRequired { get; set; }
             public bool IsWhiteSand { get; set; }
             public bool IsSurfSpot { get; set; }
+        }
+
+        // Test Scenario: [Numeric] + <Signedness> (✓former, evaluated against latter✓)
+        public class Soup {
+            public enum Kind { Standard = 14, Bisque = -2, Chowder = 177, Stew = 90 }
+            public enum YesNo { Yes = 1, No = -1, Maybe = 0 }
+            public enum Protein { Chicken = -8124, Beef = -4, Venison = -99, Rabbit = 185, Seafood = 26667 }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [Numeric, Check.IsPositive] public Kind Variety { get; set; }
+            [Numeric, Check.IsNonZero] public YesNo HasNoodles { get; set; }
+            [Numeric, Check.IsNegative] public Protein BrothProtein { get; set; }
+            public uint CaloriesPerServing { get; set; }
+            public bool ServedHot { get; set; }
+        }
+
+        // Test Scenario: [Numeric] + <Comparisons> (✓former, evaluated against latter✓)
+        public class CavePainting {
+            public enum PaintMaterial { Chalk, Blood, NaturalDye, Graphite, GemDust, Etching }
+
+            [PrimaryKey] public string Cave { get; set; } = "";
+            [PrimaryKey] public uint CatalogNumber { get; set; }
+            [Check.IsGreaterThan(2), Check.IsLessOrEqualTo(4), Numeric] public PaintMaterial Material { get; set; }
+            public double Area { get; set; }
+            public DateTime Discovered { get; set; }
+            public ulong Age { get; set; }
+            public string Description { get; set; } = "";
+        }
+
+        // Test Scenario: [Numeric] + <Discreteness> (✓former, evaluated against latter✓)
+        public class Triangle {
+            [Flags] public enum Variety { Equilateral = 1, Right = 2, Isosceles = 4, Scalene = 8, RightIsosceles = Right | Isosceles, RightScalene = Right | Scalene }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public double X1 { get; set; }
+            public double Y1 { get; set; }
+            public double X2 { get; set; }
+            public double Y2 { get; set; }
+            public double X3 { get; set; }
+            public double Y3 { get; set; }
+            [Check.IsOneOf(0, 1, 2, 4, 8, 6, 10, 17, 186, 222), Numeric] public Variety Kind { get; set; }
+        }
+
+        // Test Scenario: [AsString] + <Comparisons> (✓former, evaluated against latter✓)
+        public class Casino {
+            public enum Game { Blackjack, Poker, Craps, Roulette, Slots, Baccarat, Pachinko, Bingo, SportsBetting }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string? Proprietor { get; set; }
+            public decimal CashOnHand { get; set; }
+            public double FloorArea { get; set; }
+            [Check.IsGreaterOrEqualTo("Cards"), Check.IsLessThan("Safety"), AsString] public Game TopMoneyMaker { get; set; }
+        }
+
+        // Test Scenario: [AsString] + <Lengths> (✓former, evaluated against latter✓)
+        public class FacebookPost {
+            public enum Viz { Public, Private, FriendsOnly, FriendsOfFriends, Subscribers }
+
+            [PrimaryKey] public Guid PostID { get; set; }
+            public ulong PosterID { get; set; }
+            public string Content { get; set; } = "";
+            public uint Likes { get; set; }
+            public uint Comments { get; set; }
+            [Check.LengthIsBetween(7, 15), AsString] public Viz Visibility { get; set; }
+        }
+
+        // Test Scenario: [AsString] + <Discreteness> (✓former, evaluated against latter✓)
+        public class ZodiacSign {
+            public enum Season : short { Winter, Spring, Summer, Autumn }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [Check.IsNotOneOf("Winter", "Spring", "Fall", "Year-Round"), AsString] public Season SignSeason { get; set; }
+            public char ZodiacSymbol { get; set; }
+            public string HinduSolarEquivalent { get; set; } = "";
         }
     }
 }

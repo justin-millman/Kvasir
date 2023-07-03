@@ -58,7 +58,8 @@ namespace Kvasir.Translation {
                 none: s => throw Error.UnsupportedType(context, s, false),
                 some: c => c switch {
                     PropertyCategory.Scalar => ApplyAnnotations(property, ScalarBaseTranslation(property)),
-                    _ => throw new NotSupportedException("Only scalar properties are supported at this time")
+                    PropertyCategory.Enumeration => ApplyAnnotations(property, EnumBaseTranslation(property)),
+                    _ => throw new NotSupportedException("Only scalar and enumeration properties are supported at this time")
                 }
             );
         }
@@ -79,62 +80,63 @@ namespace Kvasir.Translation {
         /// </returns>
         private Option<PropertyCategory, string> CategoryOf(PropertyInfo property) {
             Debug.Assert(property is not null);
+            var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
             // It is an error for a property's CLR type to be `object` or `dynamic`
-            if (property.PropertyType == typeof(object)) {
+            if (propertyType == typeof(object)) {
                 var msg = $"{nameof(Object)} (or possibly dynamic)";
                 return Option.None<PropertyCategory, string>(msg);
             }
 
             // It is an error for a property's CLR type to be `System.ValueType` or `System.Enum`
-            if (property.PropertyType == typeof(ValueType) || property.PropertyType == typeof(Enum)) {
+            if (propertyType == typeof(ValueType) || propertyType == typeof(Enum)) {
                 var msg = "a universal base class";
                 return Option.None<PropertyCategory, string>(msg);
             }
 
             // It is an error for a property's CLR type to come from an external assembly; the only exceptions are the
             // types from the C# standard library that are supported as Scalars
-            if (!DBType.IsSupported(property.PropertyType) && property.PropertyType.Assembly != sourceAssembly_) {
-                var externalAssembly = property.PropertyType.Assembly.FullName!;
+            if (!DBType.IsSupported(propertyType) && propertyType.Assembly != sourceAssembly_) {
+                var externalAssembly = propertyType.Assembly.FullName!;
                 var msg = $"from an external assembly \"{externalAssembly}\"; expected \"{sourceAssembly_.FullName!}\"";
                 return Option.None<PropertyCategory, string>(msg);
             }
 
             // It is an error for a property's CLR type to be an Interface
-            if (property.PropertyType.IsInterface) {
+            if (propertyType.IsInterface) {
                 var msg = "an interface";
                 return Option.None<PropertyCategory, string>(msg);
             }
 
             // It is an error for a property's CLR type to be a Delegate
-            if (property.PropertyType.IsInstanceOf(typeof(Delegate))) {
+            if (propertyType.IsInstanceOf(typeof(Delegate))) {
                 var msg = "a delegate";
                 return Option.None<PropertyCategory, string>(msg);
             }
 
             // It is an error for a property's CLR type to be abstract
-            if (property.PropertyType.IsAbstract) {
+            if (propertyType.IsAbstract) {
                 var msg = "an abstract class or an abstract record class";
                 return Option.None<PropertyCategory, string>(msg);
             }
 
             // It is an error for a property's CLR type to be a closed generic class
-            if (property.PropertyType.IsClass && property.PropertyType.IsGenericType) {
+            if (propertyType.IsClass && propertyType.IsGenericType) {
                 var msg = "a generic class or a generic record class";
                 return Option.None<PropertyCategory, string>(msg);
             }
 
             // No errors detected
-            if (property.PropertyType.IsEnum) {
+            if (propertyType.IsEnum) {
                 return Option.Some<PropertyCategory, string>(PropertyCategory.Enumeration);
             }
-            else if (DBType.IsSupported(property.PropertyType)) {
+            else if (DBType.IsSupported(propertyType)) {
                 return Option.Some<PropertyCategory, string>(PropertyCategory.Scalar);
             }
-            else if (property.PropertyType.IsInstanceOf(typeof(IRelation))) {
+            else if (propertyType.IsInstanceOf(typeof(IRelation))) {
                 return Option.Some<PropertyCategory, string>(PropertyCategory.Relation);
             }
-            else if (property.PropertyType.IsClass) {
+            else if (propertyType.IsClass) {
                 var context = new PropertyTranslationContext(property, "");
                 EntityTypeCheck(property.PropertyType).MatchSome(s => throw Error.UnsupportedType(context, s, false));
                 return Option.Some<PropertyCategory, string>(PropertyCategory.Reference);

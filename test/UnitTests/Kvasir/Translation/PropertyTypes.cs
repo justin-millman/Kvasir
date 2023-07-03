@@ -252,5 +252,52 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(DNDCharacter.Wisdom)).OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
+
+        [TestMethod] public void Enumerations() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DNDWeapon);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(DNDWeapon.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(DNDWeapon.AttackBonus)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField(nameof(DNDWeapon.AverageDamage)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField(nameof(DNDWeapon.Type)).OfTypeEnumeration(
+                    WeaponType.Simple,
+                    WeaponType.Martial,
+                    WeaponType.Improvised
+                ).BeingNonNullable().And
+                .HaveField(nameof(DNDWeapon.Properties)).OfTypeEnumeration(
+                    WeaponProperty.Finesse,
+                    WeaponProperty.Silvered,
+                    WeaponProperty.Ranged,
+                    WeaponProperty.TwoHanded,
+                    WeaponProperty.Finesse | WeaponProperty.Silvered,
+                    WeaponProperty.Finesse | WeaponProperty.Ranged,
+                    WeaponProperty.Finesse | WeaponProperty.TwoHanded,
+                    WeaponProperty.Silvered | WeaponProperty.Ranged,
+                    WeaponProperty.Silvered | WeaponProperty.TwoHanded,
+                    WeaponProperty.Ranged | WeaponProperty.TwoHanded,
+                    WeaponProperty.Finesse | WeaponProperty.Silvered | WeaponProperty.Ranged,
+                    WeaponProperty.Finesse | WeaponProperty.Silvered | WeaponProperty.TwoHanded,
+                    WeaponProperty.Silvered | WeaponProperty.Ranged | WeaponProperty.TwoHanded,
+                    WeaponProperty.Ranged | WeaponProperty.TwoHanded | WeaponProperty.Finesse,
+                    WeaponProperty.Finesse | WeaponProperty.Silvered | WeaponProperty.Ranged | WeaponProperty.TwoHanded
+                ).BeingNonNullable().And
+                .HaveField(nameof(DNDWeapon.MostEffectiveOn)).OfTypeEnumeration(
+                    DayOfWeek.Sunday,
+                    DayOfWeek.Monday,
+                    DayOfWeek.Tuesday,
+                    DayOfWeek.Wednesday,
+                    DayOfWeek.Thursday,
+                    DayOfWeek.Friday,
+                    DayOfWeek.Saturday
+                ).BeingNullable().And
+                .HaveNoOtherFields();
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace Kvasir.Translation {
         Option<Bound> MaximumLength,
         IReadOnlySet<object> AllowedValues,
         IReadOnlySet<object> DisallowedValues,
+        IReadOnlySet<object> RestrictedImage,
         IReadOnlyList<CheckGen> CHECKs
     );
 

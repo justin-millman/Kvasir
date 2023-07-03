@@ -196,6 +196,21 @@ namespace FluentAssertions {
             public FieldAssertion OfTypeUInt32() { return OfType(DBType.UInt32); }
             public FieldAssertion OfTypeUInt64() { return OfType(DBType.UInt64); }
 
+            [CustomAssertion] public FieldAssertion OfTypeEnumeration<TEnum>(params TEnum[] enumerators) where TEnum : Enum {
+                var _ = OfType(DBType.Enumeration);
+                var enums = enumerators.Select(e => DBValue.Create(e.ToString()!.Replace(", ", "|")));
+
+                Execute.Assertion
+                    .ForCondition(Subject is EnumField)
+                    .FailWith($"Expected {{context:Field}} to be an EnumField, but found a BasicField");
+                Execute.Assertion
+                    .ForCondition((Subject as EnumField)!.Enumerators.ToHashSet().SetEquals(enums))
+                    .FailWith($"Expected {{context:Field}} to allow enumerators [{string.Join(", ", enums)}], " +
+                              $"but found [{string.Join(", ", (Subject as EnumField)!.Enumerators)}]");
+
+                return this;
+            }
+
             public FieldAssertion WithDefault(object? defaultValue) { return HavingDefault(defaultValue ?? DBNull.Value); }
             public FieldAssertion WithNoDefault() { return HavingDefault(null); }
 
@@ -223,6 +238,9 @@ namespace FluentAssertions {
                 return this;
             }
             [CustomAssertion] private FieldAssertion HavingDefault(object? value) {
+                if (value is not null && value.GetType().IsEnum) {
+                    value = value.ToString()!.Replace(", ", "|");
+                }
                 var expected = value is null ? "no default" : $"default value of {value.ForDisplay()}";
 
                 Subject.DefaultValue.Match(

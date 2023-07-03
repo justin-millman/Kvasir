@@ -2,8 +2,10 @@
 using Cybele.Extensions;
 using Kvasir.Schema;
 using Optional;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 // A "base translation" is one that does not account for any annotations. The role of a "base translation" is to
@@ -19,6 +21,7 @@ namespace Kvasir.Translation {
         private static FieldsListing ScalarBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(DBType.IsSupported(property.PropertyType));
+            Debug.Assert(DBType.Lookup(property.PropertyType) != DBType.Enumeration);
 
             var descriptor = new FieldDescriptor(
                 Name: property.Name,
@@ -36,6 +39,36 @@ namespace Kvasir.Translation {
                     MaximumLength: Option.None<Bound>(),
                     AllowedValues: new HashSet<object>(),
                     DisallowedValues: new HashSet<object>(),
+                    RestrictedImage: new HashSet<object>(),
+                    CHECKs: new List<CheckGen>()
+                )
+            );
+
+            return new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+        }
+
+        private static FieldsListing EnumBaseTranslation(PropertyInfo property) {
+            Debug.Assert(property is not null);
+            Debug.Assert(DBType.Lookup(property.PropertyType) == DBType.Enumeration);
+            var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+            var descriptor = new FieldDescriptor(
+                Name: property.Name,
+                Nullability: property.GetNullability() == Nullability.NonNullable ? IsNullable.No : IsNullable.Yes,
+                Column: Option.None<int>(),
+                Converter: DataConverter.Identity(property.PropertyType),
+                Default: Option.None<object?>(),
+                InPrimaryKey: false,
+                CandidateKeyMemberships: new HashSet<string>(),
+                Constraints: new ConstraintBucket(
+                    RelativeToZero: Option.None<ComparisonOperator>(),
+                    LowerBound: Option.None<Bound>(),
+                    UpperBound: Option.None<Bound>(),
+                    MinimumLength: Option.None<Bound>(),
+                    MaximumLength: Option.None<Bound>(),
+                    AllowedValues: new HashSet<object>(),
+                    DisallowedValues: new HashSet<object>(),
+                    RestrictedImage: type.ValidValues().Cast<object>().ToHashSet(),
                     CHECKs: new List<CheckGen>()
                 )
             );

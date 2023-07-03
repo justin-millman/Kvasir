@@ -587,5 +587,107 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("each of the allowed values*is disallowed")  // details / explanation
                 .WithMessageContaining("{ 75 }");                                   // details / explanation
         }
+
+        [TestMethod] public void NumericConversionWithSignedness() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Soup);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(nameof(Soup.Variety), InclusionOperator.In,
+                    14, 177, 90
+                ).And
+                .HaveConstraint(nameof(Soup.HasNoodles), InclusionOperator.In,
+                    1, -1
+                ).And
+                .HaveConstraint(nameof(Soup.BrothProtein), InclusionOperator.In,
+                    -8124, -4, -99
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void NumericConversionWithComparisons() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CavePainting);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(nameof(CavePainting.Material), InclusionOperator.In,
+                    3, 4
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void NumericConversionWithDiscreteness() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Triangle);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(nameof(Triangle.Kind), InclusionOperator.In,
+                    1, 2, 4, 8, 6, 10
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void AsStringConversionWithComparisons() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Casino);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(nameof(Casino.TopMoneyMaker), InclusionOperator.In,
+                    "Poker", "Craps", "Roulette", "Pachinko"
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void AsStringConversionWithLengths() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(FacebookPost);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(nameof(FacebookPost.Visibility), InclusionOperator.In,
+                    "Private", "FriendsOnly", "Subscribers"
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void AsStringConversionWithDiscreteness() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ZodiacSign);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(nameof(ZodiacSign.SignSeason), InclusionOperator.In,
+                    "Summer", "Autumn"
+                ).And
+                .HaveNoOtherConstraints();
+        }
     }
 }

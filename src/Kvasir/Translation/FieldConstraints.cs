@@ -386,10 +386,14 @@ namespace Kvasir.Translation {
                 }
 
                 // It is an error for all of the allowed values to be disallowed by other constraints
-                var hadInclusions = !constraints.AllowedValues.IsEmpty();
                 var inclusions = new HashSet<object>();
-                foreach (var inclusion in constraints.AllowedValues) {
+                var effective = constraints.AllowedValues.IsEmpty() ? constraints.RestrictedImage : constraints.AllowedValues;
+                var hadInclusions = !effective.IsEmpty();
+                foreach (var inclusion in effective) {
                     if (constraints.DisallowedValues.Contains(inclusion)) {
+                        continue;
+                    }
+                    if (!constraints.RestrictedImage.IsEmpty() && !constraints.RestrictedImage.Contains(inclusion)) {
                         continue;
                     }
 
@@ -405,7 +409,7 @@ namespace Kvasir.Translation {
                     }
                 }
                 if (hadInclusions && inclusions.IsEmpty()) {
-                    var allowed = constraints.AllowedValues.ToArray().ForDisplay();
+                    var allowed = effective.ToArray().ForDisplay();
                     var msg = $"each of the allowed values {allowed} is disallowed by another constraint";
                     throw Error.ConstraintsInConflict(context, msg);
                 }

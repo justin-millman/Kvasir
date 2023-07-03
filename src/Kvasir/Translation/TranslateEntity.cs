@@ -1,5 +1,6 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Core;
 using Kvasir.Exceptions;
 using Kvasir.Schema;
 using Optional;
@@ -214,11 +215,14 @@ namespace Kvasir.Translation {
             // If there is a constraint limiting the values to a discrete subset, then we have to check which ones pass
             // all the other constraints, discarding those that do not. Then, we can clear out all the other
             // constraints, as [IsOneOf] is the most restrictive.
-            if (!orig.AllowedValues.IsEmpty()) {
-                var stillValid = orig.AllowedValues
+            if (!orig.AllowedValues.IsEmpty() || !orig.RestrictedImage.IsEmpty()) {
+                var effective = orig.AllowedValues.IsEmpty() ? orig.RestrictedImage : orig.AllowedValues;
+
+                var stillValid = effective
                     .Where(v => !orig.DisallowedValues.Contains(v))
                     .Where(v => IsWithinInterval(v, orig.LowerBound, orig.UpperBound))
-                    .Where(v => v is not string s || IsWithinInterval(s.Length, orig.MinimumLength, orig.MaximumLength));
+                    .Where(v => v is not string s || IsWithinInterval(s.Length, orig.MinimumLength, orig.MaximumLength))
+                    .Where(v => orig.RestrictedImage.IsEmpty() || orig.RestrictedImage.Contains(v));
 
                 Debug.Assert(!stillValid.IsEmpty());
                 return descriptor with {
@@ -230,6 +234,7 @@ namespace Kvasir.Translation {
                         MaximumLength: Option.None<Bound>(),
                         AllowedValues: stillValid.ToHashSet(),
                         DisallowedValues: new HashSet<object>(),
+                        RestrictedImage: new HashSet<object>(),
                         CHECKs: orig.CHECKs
                     )
                 };
@@ -258,14 +263,26 @@ namespace Kvasir.Translation {
         ///   A <see cref="IField">Field</see> based on <paramref name="descriptor"/>.
         /// </returns>
         private static IField MakeField(FieldDescriptor descriptor) {
-            // NOTE: This will have to be modified slightly when we start supporting translation of enumeration-type
-            // Fields, as those have to be turned into EnumFields instead of BasicFields
-            return new BasicField(
-                name: new FieldName(descriptor.Name),
-                dataType: DBType.Lookup(descriptor.Converter.ResultType),
-                nullability: descriptor.Nullability,
-                defaultValue: descriptor.Default.Map(v => DBValue.Create(v))
-            );
+            if (DBType.Lookup(descriptor.Converter.ResultType) != DBType.Enumeration) {
+                return new BasicField(
+                    name: new FieldName(descriptor.Name),
+                    dataType: DBType.Lookup(descriptor.Converter.ResultType),
+                    nullability: descriptor.Nullability,
+                    defaultValue: descriptor.Default.Map(v => DBValue.Create(v))
+                );
+            }
+            else {
+                var enumType = Nullable.GetUnderlyingType(descriptor.Converter.ResultType) ?? descriptor.Converter.ResultType;
+                var converter = new EnumToStringConverter(enumType);
+                Func<object?, DBValue> convFn = v => DBValue.Create(converter.ConverterImpl.Convert(v));
+
+                return new EnumField(
+                    name: new FieldName(descriptor.Name),
+                    nullability: descriptor.Nullability,
+                    defaultValue: descriptor.Default.Map(convFn),
+                    enumerators: descriptor.Constraints.AllowedValues.Select(convFn)
+                );
+            }
         }
 
         /// <summary>
@@ -276,7 +293,7 @@ namespace Kvasir.Translation {
         ///   The <see cref="FieldDescriptor"/> describing the constraints.
         /// </param>
         /// <param name="field">
-        ///   The <see cref="IField">Field</see> to which the <c>CHEKC</c> constraints apply.
+        ///   The <see cref="IField">Field</see> to which the <c>CHECK</c> constraints apply.
         /// </param>
         /// <returns>
         ///   A (possibly empty) collection of <c>CHECK</c> constraints that apply to <paramref name="field"/>.
@@ -322,7 +339,7 @@ namespace Kvasir.Translation {
             }
 
             // A single allowed value becomes an EQ constraint
-            if (!constraints.AllowedValues.IsEmpty()) {
+            if (field.DataType != DBType.Enumeration && !constraints.AllowedValues.IsEmpty()) {
                 if (constraints.AllowedValues.Count == 1) {
                     var value = DBValue.Create(constraints.AllowedValues.First());
                     var clause = new ConstantClause(new FieldExpression(field), ComparisonOperator.EQ, value);
@@ -336,7 +353,7 @@ namespace Kvasir.Translation {
             }
 
             // A single disallowed value becomes an NE constraint
-            if (!constraints.DisallowedValues.IsEmpty()) {
+            if (field.DataType != DBType.Enumeration && !constraints.DisallowedValues.IsEmpty()) {
                 if (constraints.DisallowedValues.Count == 1) {
                     var value = DBValue.Create(constraints.DisallowedValues.First());
                     var clause = new ConstantClause(new FieldExpression(field), ComparisonOperator.NE, value);
