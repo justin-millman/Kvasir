@@ -1007,6 +1007,22 @@
               the declaration of <typeparamref name="TEnum"/> or is a bitwise combination of such values.
             </returns>
         </member>
+        <member name="M:Cybele.Extensions.EnumExtensions.ValidValues(System.Type)">
+            <summary>
+              Produces an array of "valid" enumerators for an <see cref="T:System.Enum">enumeration type</see>
+            </summary>
+            <seealso cref="M:Cybele.Extensions.EnumExtensions.IsValid``1(``0)"/>
+            <param name="self">
+              The <see cref="T:System.Type"/> on which the extension method is invoked.
+            </param>
+            <returns>
+              An array of all the "valid" enumerators of <paramref name="self"/>, in no particular order. For a precise
+              definition of what it means for an enumerator to be valid, see <see cref="M:Cybele.Extensions.EnumExtensions.IsValid``1(``0)"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="self"/> is not an <see cref="T:System.Enum">enumeration type</see>.
+            </exception>
+        </member>
         <member name="M:Cybele.Extensions.EnumExtensions.#cctor">
             <summary>
               Initializes the <see langword="static"/> state of the <see cref="T:Cybele.Extensions.EnumExtensions"/> class.

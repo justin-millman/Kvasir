@@ -2,6 +2,7 @@ using System;
 
 namespace UT.Cybele.Extensions {
     public class ExtensionTests {
+        protected enum Empty {}
         [Flags] protected enum Color : byte {
             Black = 0,
             Red = 1 << 1,
