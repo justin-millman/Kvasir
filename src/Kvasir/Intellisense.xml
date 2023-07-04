@@ -798,6 +798,85 @@
               The name of the <c>UNIQUE</c> constraint.
             </param>
         </member>
+        <member name="T:Kvasir.Core.EnumToNumericConverter">
+            <summary>
+              A built-in <see cref="T:Kvasir.Core.IDataConverter"/> that bidirectionally converts between enumerations and their
+              underlying numeric value.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Core.EnumToNumericConverter.ConverterImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Core.EnumToNumericConverter.#cctor">
+            <summary>
+              Initialize the static state of the <see cref="T:Kvasir.Core.EnumToNumericConverter"/> class.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Core.EnumToNumericConverter.#ctor(System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Core.EnumToNumericConverter"/>.
+            </summary>
+            <param name="enumType">
+              The type of the enumeration to convert.
+            </param>
+        </member>
+        <member name="M:Kvasir.Core.EnumToNumericConverter.MakeImpl``2">
+            <summary>
+              Creates a <see cref="T:Cybele.Core.DataConverter"/> that bidirectionally converts between a specific enumeration type
+              and its underlying numeric type.
+            </summary>
+            <typeparam name="TEnum">
+              The enumeration type.
+            </typeparam>
+            <typeparam name="TNumeric">
+              The underlying numeric type of <typeparamref name="TEnum"/>.
+            </typeparam>
+            <returns>
+              A <see cref="T:Cybele.Core.DataConverter"/> that converts instances of <typeparamref name="TEnum"/> into the equivalent
+              <typeparamref name="TNumeric"/>, and vice-versa.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Core.EnumToStringConverter">
+            <summary>
+              A built-in <see cref="T:Kvasir.Core.IDataConverter"/> that bidirectionally converts between enumerations and their string
+              representation.
+            </summary>
+            <remarks>
+              The string representation of an enumeration is usually the result of invoking <c>ToString()</c> on the
+              enumeration. For unnamed combinations of <see cref="T:System.FlagsAttribute">flag enumerators</see>, the string
+              representation is the <c>ToString()</c> result with the "comma-space" delimiter replaced by a vertical bar
+              (<c>|</c>).
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Core.EnumToStringConverter.ConverterImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Core.EnumToStringConverter.#cctor">
+            <summary>
+              Initialize the static state of the <see cref="T:Kvasir.Core.EnumToStringConverter"/> class.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Core.EnumToStringConverter.#ctor(System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Core.EnumToStringConverter"/>.
+            </summary>
+            <param name="enumType">
+              The type of the enumeration to convert.
+            </param>
+        </member>
+        <member name="M:Kvasir.Core.EnumToStringConverter.MakeImpl``1">
+            <summary>
+              Creates a <see cref="T:Cybele.Core.DataConverter"/> that bidirectionally converts between a specific enumeration type
+              and its Kvasir-defined string representation.
+            </summary>
+            <typeparam name="TEnum">
+              The enumeration type.
+            </typeparam>
+            <returns>
+              A <see cref="T:Cybele.Core.DataConverter"/> that converts instances of <typeparamref name="TEnum"/> into the equivalent
+              <see cref="T:System.String"/>, and vice-versa.
+            </returns>
+        </member>
         <member name="T:Kvasir.Core.IConstraintGenerator">
             <summary>
               The interface for tying a user-defined <c>CHECK</c> constraint to one or more Fields.
