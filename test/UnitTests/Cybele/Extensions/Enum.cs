@@ -174,4 +174,83 @@ namespace UT.Cybele.Extensions {
             invalidNationalityValidity.Should().BeFalse();
         }
     }
+
+    [TestClass, TestCategory("Enum: ValidValues")]
+    public sealed class Enum_ValidValues : ExtensionTests {
+        [TestMethod] public void NonEnumeration_IsError() {
+            // Arrange
+            var type = typeof(Type);
+
+            // Act
+            var action = () => type.ValidValues();
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentException>().WithMessage("*enumeration*");
+        }
+
+        [TestMethod] public void NoEnumeratorsDefined() {
+            // Arrange
+            var type = typeof(Empty);
+
+            // Act
+            var values = type.ValidValues();
+
+            // Assert
+            values.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonFlagEnumeration() {
+            // Arrange
+            var type = typeof(Month);
+
+            // Act
+            var values = type.ValidValues();
+
+            // Assert
+            values.Should().HaveCount(12);
+            values.Should().Contain(Month.January);
+            values.Should().Contain(Month.February);
+            values.Should().Contain(Month.March);
+            values.Should().Contain(Month.April);
+            values.Should().Contain(Month.May);
+            values.Should().Contain(Month.June);
+            values.Should().Contain(Month.July);
+            values.Should().Contain(Month.August);
+            values.Should().Contain(Month.September);
+            values.Should().Contain(Month.October);
+            values.Should().Contain(Month.November);
+            values.Should().Contain(Month.December);
+        }
+
+        [TestMethod] public void FlagEnumerationConsecutive() {
+            // Arrange
+            var type = typeof(Color);
+
+            // Act
+            var values = type.ValidValues();
+
+            // Assert
+            values.Should().HaveCount(8);
+            values.Should().Contain(Color.Black);
+            values.Should().Contain(Color.Red);
+            values.Should().Contain(Color.Blue);
+            values.Should().Contain(Color.Yellow);
+            values.Should().Contain(Color.White);
+            values.Should().Contain(Color.Blue | Color.Yellow);
+            values.Should().Contain(Color.Blue | Color.Red);
+            values.Should().Contain(Color.Yellow | Color.Red);
+        }
+
+        [TestMethod] public void FlagEnumerationNonConsecutiveNoZero() {
+            // Arrange
+            var type = typeof(BaseballPosition);
+
+            // Act
+            var values = type.ValidValues();
+
+            // Assert
+            values.Should().HaveCount(4095);                        // 2^12 - 1 (12 enumerators, but no 0)
+            values.Should().NotContain((BaseballPosition)0L);
+        }
+    }
 }

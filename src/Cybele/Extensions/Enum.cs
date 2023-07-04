@@ -76,12 +76,87 @@ namespace Cybele.Extensions {
         }
 
         /// <summary>
+        ///   Produces an array of "valid" enumerators for an <see cref="Enum">enumeration type</see>
+        /// </summary>
+        /// <seealso cref="IsValid{TEnum}(TEnum)"/>
+        /// <param name="self">
+        ///   The <see cref="Type"/> on which the extension method is invoked.
+        /// </param>
+        /// <returns>
+        ///   An array of all the "valid" enumerators of <paramref name="self"/>, in no particular order. For a precise
+        ///   definition of what it means for an enumerator to be valid, see <see cref="IsValid{TEnum}(TEnum)"/>.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///   if <paramref name="self"/> is not an <see cref="Enum">enumeration type</see>.
+        /// </exception>
+        public static Enum[] ValidValues(this Type self) {
+            if (!self.IsEnum) {
+                throw new ArgumentException("type must be an enumeration type", nameof(self));
+            }
+
+            // There's a lot of reflection and intense computation going on in this function, so we'll try to reuse the
+            // results of a previous evaluation if possible.
+            if (valuesMemoizer_.TryGetValue(self, out Enum[]? result)) {
+                return result!;
+            }
+
+            // Checking for the presence of the FlagsAttribute requires reflection, so we memoize the result to reduce
+            // the cost of repeated validity checks of enumerators for the same enum type
+            if (!isFlagsMemoizer_.TryGetValue(self, out bool isFlags)) {
+                isFlags = self.HasAttribute<FlagsAttribute>();
+                isFlagsMemoizer_[self] = isFlags;
+            }
+
+            // If the enum type is a regular enum, as opposed to a flags enum, then we can just return the result of the
+            // standard library's Enum.GetValues() function, as there is no combinatorics involved
+            if (!isFlags) {
+                return Enum.GetValues(self).Cast<Enum>().ToArray();
+            }
+
+            var flags = Enum.GetValues(self)                    // get named enumerators
+                .Cast<Enum>()                                   // convert them to Enum
+                .Select(e => e.AsInt64())                       // convert them into longs
+                .Where(e => e != 0 && (e & (e - 1)) == 0)       // keep only non-zero powers of two (flags)
+                .ToList();                                      // enumerate into list
+
+            // This is a combination-generating algorithm that runs in O(N^2) time. First, we figure out how many
+            // combinations are possible: this is the size of the power set of the set of flags. Then, we use each
+            // combination's index as a binary representation of which flags are turned on, iteratively building up the
+            // combination via bitwise-or.
+            var results = new HashSet<Enum>();
+            var combinations = 1L << flags.Count;
+            for (var counter = 1; counter <= combinations; ++counter) {
+                var combo = 0L;
+                for (int pos = 0; pos < flags.Count; ++pos) {
+                    var mask = 1L << pos;
+                    if ((counter & mask) != 0) {
+                        combo |= flags[pos];
+                    }
+                }
+                results.Add((Enum)Enum.ToObject(self, Convert.ChangeType(combo, Enum.GetUnderlyingType(self))));
+            }
+
+            // Because the power set always contains the empty set, the above algorithm will always produce a value of
+            // 0 as one of the combinations. However, not all enumerations define a named constant enumerator with value
+            // 0, so we have to check for its absence and remove it from the results appropriately.
+            var zero = Convert.ChangeType(0, Enum.GetUnderlyingType(self));
+            if (!Enum.IsDefined(self, zero)) {
+                results.Remove((Enum)Enum.ToObject(self, zero));
+            }
+
+            // Memoize the results
+            valuesMemoizer_[self] = results.ToArray();
+            return valuesMemoizer_[self];
+        }
+
+        /// <summary>
         ///   Initializes the <see langword="static"/> state of the <see cref="EnumExtensions"/> class.
         /// </summary>
         static EnumExtensions() {
-            // We use ConcurrentDictionary here so that the IsValid check is thread-safe
+            // We use ConcurrentDictionary here so that the IsValid check and the ValidValues lookup are thread-safe
             isFlagsMemoizer_ = new ConcurrentDictionary<Type, bool>();
             bitsMemoizer_ = new ConcurrentDictionary<Type, long>();
+            valuesMemoizer_ = new ConcurrentDictionary<Type, Enum[]>();
         }
 
         /// <summary>
@@ -113,5 +188,6 @@ namespace Cybele.Extensions {
 
         private static readonly IDictionary<Type, bool> isFlagsMemoizer_;
         private static readonly IDictionary<Type, long> bitsMemoizer_;
+        private static readonly IDictionary<Type, Enum[]> valuesMemoizer_;
     }
 }
