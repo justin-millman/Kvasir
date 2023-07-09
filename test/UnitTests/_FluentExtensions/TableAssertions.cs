@@ -57,9 +57,6 @@ namespace FluentAssertions {
                 return new KeyAssertion(Subject.PrimaryKey, this).WithName(keyName);
             }
 
-            public CandidateKeysAssertion HaveCandidateKey() {
-                return new CandidateKeysAssertion(Subject.CandidateKeys, checkedKeys_, this);
-            }
             public KeyAssertion HaveCandidateKey(string keyName) {
                 return new CandidateKeysAssertion(Subject.CandidateKeys, checkedKeys_, this).WithName(keyName);
             }
@@ -220,15 +217,12 @@ namespace FluentAssertions {
                     .FailWith($"Expected {{context:Field}} to be at column index #{column}, bound found column #{column_}");
                 return this;
             }
-            public FieldAssertion AtSomeColumn() {
-                return this;
-            }
 
 
             [CustomAssertion] private FieldAssertion WithNullability(bool expectNullable) {
                 Execute.Assertion
                     .ForCondition((Subject.Nullability == IsNullable.Yes) == expectNullable)
-                    .FailWith($"Expected {{context::Field}} to be {(expectNullable ? "nullable" : "non-nullable")}");
+                    .FailWith($"Expected {{context:Field}} to be {(expectNullable ? "nullable" : "non-nullable")}");
                 return this;
             }
             [CustomAssertion] private FieldAssertion OfType(DBType expected) {

@@ -53,13 +53,15 @@ namespace Kvasir.Translation {
         private FieldsListing TranslateProperty(PropertyInfo property) {
             Debug.Assert(property is not null);
 
-            var context = new PropertyTranslationContext(property, "");
             return CategoryOf(property).Match(
-                none: s => throw Error.UnsupportedType(context, s, false),
+                none: s => throw Error.UnsupportedType(new PropertyTranslationContext(property, ""), s, false),
                 some: c => c switch {
                     PropertyCategory.Scalar => ApplyAnnotations(property, ScalarBaseTranslation(property)),
                     PropertyCategory.Enumeration => ApplyAnnotations(property, EnumBaseTranslation(property)),
-                    _ => throw new NotSupportedException("Only scalar and enumeration properties are supported at this time")
+                    PropertyCategory.Aggregate => ApplyAnnotations(property, AggregateBaseTranslation(property)),
+                    PropertyCategory.Reference => throw new NotSupportedException("reference properties not yet supported"),
+                    PropertyCategory.Relation => throw new NotSupportedException("relation properties not yet supported"),
+                    _ => throw new ApplicationException("switch statement exhausted")
                 }
             );
         }

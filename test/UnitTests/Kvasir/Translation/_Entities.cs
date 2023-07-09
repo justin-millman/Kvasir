@@ -172,6 +172,55 @@ namespace UT.Kvasir.Translation {
             public WeaponProperty Properties { get; set; }
             public DayOfWeek? MostEffectiveOn { get; set; }
         }
+
+        // Test Scenario: Non-Nullable Aggregates (✓recognized✓)
+        public class ChineseDynasty {
+            public struct Person {
+                public string Name { get; set; }
+                public short ReignBegin { get; set; }
+                public short ReignEnd { get; set; }
+                public string? Death { get; set; }
+            }
+            public record struct City(string Name);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public Person Founder { get; set; }
+            public ulong MaxExtent { get; set; }
+            public short Established { get; set; }
+            public short Fell { get; set; }
+            public ulong Population { get; set; }
+            public City Capital { get; set; }
+        }
+
+        // Test Scenario: Nullable Aggregates (✓recognized✓)
+        public class BarbecueSauce {
+            public record struct Nutrition(uint Calories, double Fat, double Sugar, double Carbohydrates);
+            public enum Kind { Sweet, Spicy, Tangy, Chocolatey }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Brand { get; set; } = "";
+            public Nutrition? PerServing { get; set; }
+            public bool KetchupBased { get; set; }
+            public Kind Style { get; set; }
+        }
+
+        // Test Scenario: Aggregates Nested Within Aggregates (✓recognized✓)
+        public class DNDMonster {
+            public record struct Sight(ushort Distance, bool Darkness, bool Trueness);
+            public record struct Senses(byte PassivePerception, Sight Sight);
+            public record struct SavingThrow(byte STR, byte CON, byte CHA, byte WIS, byte INT, byte DEX);
+            public record struct Abilities(byte STR, byte CON, byte CHA, byte WIS, byte INT, byte DEX, SavingThrow Saves);
+            public enum BodySize { Tiny, Small, Medium, Large, Huge, Gargantuan }
+
+            [PrimaryKey] public string Species { get; set; } = "";
+            public Abilities? Stats { get; set; }
+            public BodySize Size { get; set; }
+            public Senses PhysicalSenses { get; set; }
+            public ushort CR { get; set; }
+            public uint AC { get; set; }
+            public uint HP { get; set; }
+            public byte LegendaryActions { get; set; }
+        }
     }
 
     internal static class EntityShapes {
@@ -272,6 +321,19 @@ namespace UT.Kvasir.Translation {
         // Test Scenario: One Identified Field (✗minimum 2 required✗)
         public class Integer {
             [PrimaryKey] public int Value { get; set; }
+        }
+
+        // Test Scenario: Aggregate With No Fields (✗minimum 1 required✗)
+        public class TotemPole {
+            public struct Festival {}
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public float Latitude { get; set; }
+            public float Longitude { get; set; }
+            public string Culture { get; set; } = "";
+            public uint Height { get; set; }
+            public DateTime CarvingFinished { get; set; }
+            public Festival? Dedication { get; set; }
         }
 
         // Test Scenario: Non-Public Properties (✓excluded✓)
@@ -575,12 +637,39 @@ namespace UT.Kvasir.Translation {
             [Nullable] public ushort Nanosecond { get; set; }
         }
 
+        // Test Scenario: Non-Nullable Aggregate Property Marked as [Nullable] (✓cascades as nullable✓)
+        public class Bankruptcy {
+            public struct Org {
+                public string Name { get; set; }
+                public DateTime Founded { get; set; }
+                public string? TickerSymbol { get; set; }
+            }
+
+            [PrimaryKey] public Guid Filing { get; set; }
+            [Nullable] public Org Company { get; set; }
+            public byte Chapter { get; set; }
+            public decimal TotalDebt { get; set; }
+            public ulong NumCreditors { get; set; }
+        }
+
         // Test Scenario: Nullable Scalar Property Marked as [NonNullable] (✓becomes non-nullable✓)
         public class Bone {
             [PrimaryKey] public uint TA2 { get; set; }
             [NonNullable] public string? Name { get; set; }
             public string? LatinName { get; set; } = "";
             public string MeSH { get; set; } = "";
+        }
+
+        // Test Scenario: Nullable Aggregate Property Marked as [NonNullable] (✓becomes non-nullable)
+        public class Orchestra {
+            public record struct Strings(uint? Violins, uint Violas, uint Cellos, uint Basses);
+            public record struct Woodwinds(uint Flutes, uint Oboes, uint Clarinets, uint? Saxophones, uint Bassoons);
+            public record struct Brass(uint FrenchHorns, uint? Trumpets, uint Trombones, uint Tubas);
+            public record struct Instruments(Strings Strings, Woodwinds? Woodwinds, Brass? Brass);
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Name { get; set; } = "";
+            [NonNullable] public Instruments? Composition { get; set; }
         }
 
         // Test Scenario: Nullable Scalar Property Marked as [Nullable] (✓redundant✓)
@@ -609,6 +698,29 @@ namespace UT.Kvasir.Translation {
             [Nullable, NonNullable] public decimal SalePrice { get; set; }
             public ulong StockCount { get; set; }
             public uint CategoryID { get; set; }
+        }
+
+        // Test Scenario: Aggregate Property with Only Nullable Fields is Nullable (✗ambiguous✗)
+        public class Waffle {
+            public record struct AddOns(string? Chocolate, string? Fruit, string? Syrup, string? Nuts);
+            public enum Shape { Circular, Square, Rectangular, Novelty };
+
+            [PrimaryKey] public Guid WaffleID { get; set; }
+            public AddOns? Toppings { get; set; }
+            public Shape Design { get; set; }
+            public bool BelgianStyle { get; set; }
+            public bool GlutenFree { get; set; }
+        }
+
+        // Test Scenario: Aggregate Property with Only Nullable Fields is Marked as [Nullable] (✗ambiguous✗)
+        public class iPhone {
+            public record struct SemVer(int? Major, int? Minor, int? Patch, string? PreRelease, long? Build);
+
+            [PrimaryKey] public Guid ProductID { get; set; }
+            public SemVer Version { get; set; }
+            [Nullable] public SemVer iOSVersion { get; set; }
+            public bool HeadphoneJack { get; set; }
+            public double AverageBatteryLife { get; set; }
         }
     }
 
@@ -696,13 +808,77 @@ namespace UT.Kvasir.Translation {
             public decimal juzEnd { get; set; }
         }
 
-        // Test Scenario: Change Field Name to New Value (✓renamed✓)
+        // Test Scenario: Change Scalar Field Name to New Value (✓renamed✓)
         public class River {
             [PrimaryKey] public string Name { get; set; } = "";
             [Name("SourceElevation")] public ushort Ahuiehknaafuyur { get; set; }
             [Name("Length")] public ushort OEperaehrugyUIWJKuygajk { get; set; }
             public decimal MouthLatitude { get; set; }
             public decimal MouthLongitude { get; set; }
+        }
+
+        // Test Scenario: Change Aggregate Field Name (✓renamed✓)
+        public class BorderCrossing {
+            public record struct Coordinate(float Latitude, float Longitude);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [Name("Degrees")] public Coordinate Location { get; set; }
+            public string CountryA { get; set; } = "";
+            public string CountryB { get; set; } = "";
+            public ulong Length { get; set; }
+            public ulong YearlyCrossings { get; set; }
+            public bool IsDriveable { get; set; }
+        }
+
+        // Test Scenario: Change Nested Field Name to New Value (✓renamed✓)
+        public class Ziggurat {
+            public record struct Civilization(string Name, string Location);
+
+            [PrimaryKey] public Guid ZigguratID { get; set; }
+            public ulong Height { get; set; }
+            public ushort NumTerraces { get; set; }
+            public uint NumSteps { get; set; }
+            [Name("CivWho", Path = "Name"), Name("CivWhere", Path = "Location")] public Civilization BuiltBy { get; set; }
+        }
+
+        // Test Scenario: Change Nested Aggregate Name (✓renamed✓)
+        public class DogShow {
+            public record struct Creature(string Genus, string Species, string Common);
+            public record struct Dog(string Name, Creature Species);
+
+            [PrimaryKey] public ushort Year { get; set; }
+            [PrimaryKey] public string Sponsor { get; set; } = "";
+            public ulong Participants { get; set; }
+            [Name("Breed", Path = "Species")] public Dog BestInShow { get; set; }
+        }
+
+        // Test Scenario: Complex Series of Name Changes with Nested Aggregates (✓renamed✓)
+        public class Cliff {
+            public struct Coordinate {
+                [Name("LAT")] public float Latitude { get; set; }
+                [Name("LONG")] public float Longitude { get; set; }
+            }
+            public struct Polity {
+                public string Name { get; set; }
+                public string? SubLocale { get; set; }
+                [Name("LATITUDE", Path = "Latitude"), Name("GridIntersection")] public Coordinate Coordinate { get; set; }
+            }
+            public struct Location {
+                [Name("CityName", Path = "Name")] public Polity City { get; set; }
+                public Polity? Polity { get; set; }
+                public string Country { get; set; }
+            }
+            public struct Site {
+                [Name("GeoCity", Path = "City"), Name("PolitySubLocale", Path = "Polity.SubLocale")] public Location Location { get; set; }
+                public ushort NumEntrances { get; set; }
+            }
+
+            [PrimaryKey] public Guid CliffID { get; set; }
+            [Name("PolityName", Path = "Location.Polity.Name"), Name("GeoPolity", Path = "Location.Polity")] public Site Place { get; set; }
+            public ulong Height { get; set; }
+            public double SheerAngle { get; set; }
+            public bool IsUNESCO { get; set; }
+            public string PrimaryStone { get; set; } = "";
         }
 
         // Test Scenario: Swap Names of Fields (✓renamed✓)
@@ -723,7 +899,7 @@ namespace UT.Kvasir.Translation {
             public ushort? WritersPermitted { get; set; }
         }
 
-        // Test Scenario: Change To Field Names to Same Value (✗duplication✗)
+        // Test Scenario: Change Two Field Names to Same Value (✗duplication✗)
         public class Ticket2RideRoute {
             [PrimaryKey, Name("Destination")] public string City1 { get; set; } = "";
             [PrimaryKey, Name("Destination")] public string City2 { get; set; } = "";
@@ -735,6 +911,33 @@ namespace UT.Kvasir.Translation {
             public string Bank { get; set; } = "";
             [PrimaryKey] public string AccountNumber { get; set; } = "";
             [Name("Route"), Name("RoutingNumber")] public ulong RoutingNumber { get; set; }
+        }
+
+        // Test Scenario: Aggregate [Name] Change on Field that Already Has [Name] Change (✓renamed✓)
+        public class HashMap {
+            public struct CppType {
+                public string Typename { get; set; }
+                [Name("IsPointer")] public bool Pointer { get; set; }
+                [Name("IsConst")] public bool Const { get; set; }
+                [Name("IsReference")] public bool Reference { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public ulong MemoryAddress { get; set; }
+            public bool ResolveViaChaining { get; set; }
+            [Name("ConstQualified", Path = "Const")] public CppType KeyType { get; set; }
+            [Name("Ref", Path = "Reference")] public CppType ValueType { get; set; }
+        }
+
+        // Test Scenario: Nested Property with Multiple [Name] Changes (✗cardinality✗)
+        public class Helicopter {
+            public record struct Date(int Year, int Month, int Day);
+
+            [PrimaryKey] public Guid HelicopterID { get; set; }
+            public byte NumBlades { get; set; }
+            public string Manufacturer { get; set; } = "";
+            public string Model { get; set; } = "";
+            [Name("Y", Path = "Year"), Name("YEAR", Path = "Year")] public Date Debut { get; set; }
         }
 
         // Test Scenario: Name is Unchanged via [Name] (✓redundant✓)
@@ -779,6 +982,18 @@ namespace UT.Kvasir.Translation {
             public double Carbohydrates { get; set; }
             public double Fat { get; set; }
             public double Protein { get; set; }
+        }
+
+        // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+        public class Madonna {
+            public record struct Person(string First, char? MiddleInitial, string? Last);
+
+            [PrimaryKey] public Guid PaintingID { get; set; }
+            [Name("Middle", Path = "---")] public Person Painter { get; set; }
+            public DateTime Created { get; set; }
+            public bool JesusDepicted { get; set; }
+            public ushort Height { get; set; }
+            public ushort Width { get; set; }
         }
     }
 
@@ -852,7 +1067,7 @@ namespace UT.Kvasir.Translation {
             public ulong ScovilleRating { get; set; }
         }
 
-        // Test Scenario: `null` Default for Nullable Enumeration Filed (✓valid✓)
+        // Test Scenario: `null` Default for Nullable Enumeration Field (✓valid✓)
         public class Cryptid {
             public enum Continent { NorthAmerica, SouthAmerica, Asia, Europe, Africa, Oceania, Antarctica };
             [Flags] public enum Features { Flying = 1, Carnivorous = 2, Humanoid = 4, Aquatic = 8, FireProof = 16, Hematophagous = 32 };
@@ -862,6 +1077,39 @@ namespace UT.Kvasir.Translation {
             [Default(null)] public Continent? HomeContinent { get; set; }
             [Default(null)] public Features? FeatureSet { get; set; }
             public bool ProvenHoax { get; set; }
+        }
+
+        // Test Scenario: Default on Nested Field (✓valid✓)
+        public class Salsa {
+            public struct Pepper {
+                public string Name { get; set; }
+                public uint ScovilleRating { get; set; }
+            }
+
+            [PrimaryKey] public string SalsaName { get; set; } = "";
+            [Default(10000U, Path = "ScovilleRating")] public Pepper PrimaryPepper { get; set; }
+            public bool Verde { get; set; }
+            public sbyte ClovesGarlic { get; set; }
+        }
+
+        // Test Scenario: Default on Nested Field that Already Has a Default (✓overrides✓)
+        public class Bicycle {
+            public struct Alloy {
+                public string Metal1 { get; set; }
+                [Default(null)] public string? Metal2 { get; set; }
+            }
+            public struct Wheel {
+                public double Diameter { get; set; }
+                public byte NumSpokes { get; set; }
+                public Alloy Material { get; set; }
+            }
+
+            [PrimaryKey] public Guid BikeID { get; set; }
+            [Default("Titanium", Path = "Material.Metal2")] public Wheel FrontWheel { get; set; }
+            [Default("Copper", Path = "Material.Metal2")] public Wheel BackWheel { get; set; }
+            public Wheel? SpareWheel { get; set; }
+            public ushort Gears { get; set; }
+            public float TopSpeed { get; set; }
         }
 
         // Test Scenario: `null` Default for Non-Nullable Field (✗invalid✗)
@@ -916,6 +1164,19 @@ namespace UT.Kvasir.Translation {
             public ushort Occupants { get; set; }
             public double AdoptionRate { get; set; }
             public string Headmistress { get; set; } = "";
+        }
+
+        // Test Scenario: Applied to Nested Aggregate (✗invalid✗)
+        public class StuffedAnimal {
+            public record struct Face(bool HasEyes, int NumButtons, bool IsSmiling);
+            public record struct Construction(string Material, Face Face, bool VisibleTag, string Internals);
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Animal { get; set; } = "";
+            public string? Name { get; set; }
+            public bool BuildABear { get; set; }
+            [Default(136L, Path = "Stuffing")] public Construction Description { get; set; }
+            public double Weight { get; set; }
         }
 
         // Test Scenario: Single-Element Array Default (✗invalid✗)
@@ -1054,6 +1315,32 @@ namespace UT.Kvasir.Translation {
             public string GoverningBody { get; set; } = "";
             public ulong Area { get; set; }
         }
+
+        // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+        public class TourDeFrance {
+            public record struct Person(string FirstName, string LastName);
+
+            [PrimaryKey] public short Year { get; set; }
+            public string StartingCity { get; set; } = "";
+            public string EndingCity { get; set; } = "";
+            public long NumCyclists { get; set; }
+            [Default("X.", Path = "---")] public Person Victor { get; set; }
+        }
+
+        // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+        public class InfinityStone {
+            public record struct Color(byte R, byte G, byte B);
+            public struct Descriptor {
+                [Default(100)] public Color Color { get; set; }
+                public ushort Weight { get; set; }
+                public uint Luminescence { get; set; }
+            }
+
+            [PrimaryKey] public string Domain { get; set; } = "";
+            public Descriptor Description { get; set; }
+            public string FirstFilmAppearance { get; set; } = "";
+            public string FirstComicsAppearance { get; set; } = "";
+        }
     }
 
     internal static class ColumnOrdering {
@@ -1069,11 +1356,29 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Book { get; set; } = "";
             [PrimaryKey] public ushort StartChapter { get; set; }
             [PrimaryKey] public ushort StartVerse { get; set; }
-            [Column(2)] public ushort EndChapter { get; set; }
-            [Column(3)] public ushort EndVerse { get; set; }
+            [Column(4)] public ushort EndChapter { get; set; }
+            [Column(2)] public ushort EndVerse { get; set; }
         }
 
-        // Test Scenario: Two Fields Ordered to Same Index (✗duplication✗)
+        // Test Scenario: Aggregate Fields are Manually Ordered (✓ordered✓)
+        public class Armada {
+            public enum Class { Battleship, AircraftCarrier, PassengerGalley, Dreadnaught, Submarine, Other }
+            public record struct Boat {
+                [Column(2)] public string Name { get; set; }
+                public Class Class { get; set; }
+                public ushort Munitions { get; set; }
+            }
+
+            [PrimaryKey] public uint ID { get; set; }
+            public string Commander { get; set; } = "";
+            public string Sponsor { get; set; } = "";
+            [Column(3)] public Boat Flagship { get; set; }
+            [Column(7)] public Boat? Secondary { get; set; }
+            public Boat? Tertiary { get; set; }
+            public double VictoryPercentage { get; set; }
+        }
+
+        // Test Scenario: Two Scalar Fields Ordered to Same Index (✗duplication✗)
         public class Pizza {
             [PrimaryKey] public Guid ID { get; set; }
             public float Diamater { get; set; }
@@ -1086,11 +1391,41 @@ namespace UT.Kvasir.Translation {
             public string? Veggie3 { get; set; }
         }
 
-        // Test Scenario: Manual Ordering Leaves Gaps (✗non-consecutive✗)
+        // Test Scenario: Two Nested Fields Ordered to Same Index (✗duplication✗)
+        public class Coup {
+            public record struct Person(string FirstName, string? MiddleName, string LastName);
+
+            [PrimaryKey] public DateTime Date { get; set; }
+            [PrimaryKey] public string State { get; set; } = "";
+            [Column(3)] public Person Overthrower { get; set; }
+            [Column(1)] public Person Overthrowee { get; set; }
+        }
+
+        // Test Scenario: Scalar and Nested Fields Ordered to Same Index (✗duplication✗)
+        public class Bread {
+            public enum LeaveningMethod { Unleavened, Yeast, BakingSoda, Microbes }
+            public record struct Ingredients(uint Flour, uint Water, uint Sugar, uint Eggs);
+
+            [PrimaryKey] public Guid BreadID { get; set; }
+            [Column(4)] public LeaveningMethod Leavening { get; set; }
+            [Column(2)] public Ingredients Recipe { get; set; }
+            public string Style { get; set; } = "";
+        }
+
+        // Test Scenario: Ordering of Scalars Leaves Gaps (✗non-consecutive✗)
         public class PhoneNumber {
             [PrimaryKey, Column(1)] public byte CountryCode { get; set; }
             [PrimaryKey] public ushort AreaCode { get; set; }
             [PrimaryKey, Column(14)] public ushort Number { get; set; }
+        }
+
+        // Test Scenario: Ordering of Aggregates Leaves Gaps (✗non-consecutive✗)
+        public class Verb {
+            public record struct Conjugation(string FS, string FP, string SS, string SP, string TS, string TP);
+            public record struct Misc(string Participle, string Adjectival, string Gerund);
+
+            [PrimaryKey, Column(3)] public string Infinitive { get; set; } = "";
+            [Column(18)] public string Language { get; set; } = "";
         }
 
         // Test Scenario: Field Manually Ordered to Negative Index (✗invalid✗)
@@ -1119,6 +1454,42 @@ namespace UT.Kvasir.Translation {
             public string Name { get; set; } = "";
             public ushort NumDays { get; set; }
             public bool IsLeapMonth { get; set; }
+        }
+
+        // Test Scenario: Aggregate Property Marked as [PrimaryKey] (✓identified✓)
+        public class SpaceShuttle {
+            public record struct Spec(string SerialNumber, ulong Weight, Guid ID);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateTime FirstFlight { get; set; }
+            public DateTime? LastFlight { get; set; }
+            [PrimaryKey] public Spec Specification { get; set; }
+        }
+
+        // Test Scenario: Nested Scalar Property Marked as [PrimaryKey] (✓identified✓)
+        public class Tepui {
+            public enum Direction { North, South, East, West }
+            public record struct Coordinate(float Latitude, Direction LatDir, float Longitude, Direction LongDir);
+
+            [PrimaryKey(Path = "Latitude"), PrimaryKey(Path = "Longitude")] public Coordinate Location { get; set; }
+            public ushort Height { get; set; }
+            public bool HasWaterfall { get; set; }
+            public ulong SurfaceArea { get; set; }
+        }
+
+        // Test Scenario: Nested Aggregate Property Marked as [PrimaryKey] (✓identified✓)
+        public class ChoppedBasket {
+            public enum FoodCategory { Protein, Dairy, Grain, Sweet, Condiment, Fruit, Vegetable, Miscellaneous }
+            public enum CompetitionRound { Appetizer, Entree, Dessert }
+            public record struct FoodName(string English, string Alternative);
+            public record struct Ingredient(FoodName Name, FoodCategory Category);
+
+            [PrimaryKey] public DateTime AirDate { get; set; }
+            [PrimaryKey] public CompetitionRound Round { get; set; }
+            [PrimaryKey(Path = "Name")] public Ingredient Ingredient1 { get; set; }
+            [PrimaryKey(Path = "Name")] public Ingredient Ingredient2 { get; set; }
+            [PrimaryKey(Path = "Name")] public Ingredient Ingredient3 { get; set; }
+            [PrimaryKey(Path = "Name")] public Ingredient Ingredient4 { get; set; }
         }
 
         // Test Scenario: All Properties Marked as [PrimaryKey] (✓identified✓)
@@ -1281,11 +1652,51 @@ namespace UT.Kvasir.Translation {
             public float AveragePassengers { get; set; }
         }
 
-        // Test Scenario: Nullable Field is Marked as [PrimaryKey] (✗illegal✗)
+        // Test Scenario: Nullable Scalar Field is Marked as [PrimaryKey] (✗illegal✗)
         public class NorseWorld {
             [PrimaryKey] public string OldNorse { get; set; } = "";
             public string English { get; set; } = "";
             [PrimaryKey] public int? EddaMentions { get; set; }
+        }
+
+        // Test Scenario: Nullable Aggregate Field is Marked as [PrimaryKey] (✗illegal✗)
+        public class MedievalCastle {
+            public record struct Drawbridge(bool Manpowered, long Weight, ushort Length);
+
+            [PrimaryKey] public Guid CastleID { get; set; }
+            public ushort Towers { get; set; }
+            public ulong Area { get; set; }
+            public ulong WallHeight { get; set; }
+            [PrimaryKey] public Drawbridge? DrawBridge { get; set; }
+        }
+
+        // Test Scenario: Aggregate with Nullable Nested Field is Marked as [PrimaryKey] (✗illegal✗)
+        public class Wizard {
+            public enum School { Abjuration, Conjuration, Divination, Enchantment, Evocation, Illusion, Necromancy, Transmutation }
+            public record struct Schooling(School? School, ushort? Years);
+            public record struct Qualifications(Schooling Schooling);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public ushort Level { get; set; }
+            public uint Age { get; set; }
+            public string Council { get; set; } = "";
+            [PrimaryKey] public Qualifications Background { get; set; }
+            public ulong KnownSpells { get; set; }
+            public string DeathCurse { get; set; } = "";
+        }
+
+        // Test Scenario: Field in Aggregate is Marked as [PrimaryKey] (✗illegal✗)
+        public class LunarCrater {
+            public struct Coordinate {
+                public float Latitude { get; set; }
+                [PrimaryKey] public float Longitude { get; set; }
+            }
+
+            [PrimaryKey] public Guid CraterID { get; set; }
+            public string Name { get; set; } = "";
+            public Coordinate Location { get; set; }
+            public double Depth { get; set; }
+            public double Diameter { get; set; }
         }
 
         // Test Scenario: Primary Key Cannot Be Deduced (✗illegal✗)
@@ -1315,10 +1726,20 @@ namespace UT.Kvasir.Translation {
             public ulong LengthMiles { get; set; }
             public float AverageSpeedLimit { get; set; }
         }
+
+        // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+        public class ConfidenceInterval {
+            public record struct MarginOfError(ushort PlusOrMinus);
+
+            public double Percentage { get; set; }
+            public double LowerBound { get; set; }
+            public double UpperBound { get; set; }
+            [PrimaryKey(Path = "---")] public MarginOfError PlusMinus { get; set; }
+        }
     }
 
     internal static class PrimaryKeyNaming {
-        // Test Scenario: Named Primary Key (✓named✓)
+        // Test Scenario: Named Primary Key on Entity Type (✓named✓)
         [NamedPrimaryKey("LetterPK")]
         public class HebrewLetter {
             [PrimaryKey] public char Letter { get; set; }
@@ -1435,6 +1856,86 @@ namespace UT.Kvasir.Translation {
             public ulong TotalArea { get; set; }
         }
 
+        // Test Scenario: Aggregate Field in Candidate Key with No Other Fields (✓recognized✓)
+        public class Ointment {
+            public enum BaseType { Absorption, Emulsifying, Hydrocarbon, Vegetable, WaterSoluble };
+            public record struct WaterOil(double PcntWater, double PcntOil);
+
+            [PrimaryKey] public Guid OintmentID { get; set; }
+            public string ApplyTo { get; set; } = "";
+            public string MedicationName { get; set; } = "";
+            public BaseType Base { get; set; }
+            [Unique] public WaterOil Composition { get; set; }
+        }
+
+        // Test Scenario: Aggregate Field in Candidate Key with Other Fields (✓recognized✓)
+        public class Shipwreck {
+            public record struct Coordinate(float Latitude, float Longitude);
+
+            [PrimaryKey] public Guid ShipwreckTag { get; set; }
+            [Unique("Identity")] public string Ship { get; set; } = "";
+            [Unique("Identity")] public Coordinate Location { get; set; }
+            [Unique] public Coordinate FurthestExtent { get; set; }
+            public DateTime Sinking { get; set; }
+            public ulong Area { get; set; }
+            public ulong Depth { get; set; }
+            public bool IsHeritageSite { get; set; }
+        }
+
+        // Test Scenario: Nested Scalar Fields in Candidate Key (✓recognized✓)
+        public class SpiderMan {
+            public record struct Person(string FirstName, string? MiddleName, string LastName);
+
+            [PrimaryKey] public Guid SpiderManID { get; set; }
+            public uint FirstEditionAppearance { get; set; }
+            [Unique("AlterEgo", Path = "FirstName"), Unique("AlterEgo", Path = "LastName")] public Person AlterEgo { get; set; }
+            [Unique("Portrayal", Path = "FirstName"), Unique("Portrayal", Path = "MiddleName"), Unique("Portrayal", Path = "LastName")] public Person? Portrayal { get; set; }
+            public ushort Height { get; set; }
+            public bool IsMale { get; set; }
+            public string SpiderName { get; set; } = "";
+        }
+
+        // Test Scenario: Nested Aggregate Fields in Candidate Key (✓recognized✓)
+        public class Neurotransmitter {
+            public enum Category { AminoAcid, Monoamine, Peptide, Purine, Other }
+            public record struct Naming(string Name, string Abbreviation);
+            public record struct Entry(Naming Name, Category Categorization);
+
+            [PrimaryKey] public Guid NeurotransmitterID { get; set; }
+            [Unique(Path = "Name")] public Entry Definition { get; set; }
+        }
+
+        // Test Scenario: Field in Aggregate Placed in Candidate Key (✓recognized✓)
+        public class ZoomMeeting {
+            public struct Credentialization {
+                [Unique] public Guid MeetingID { get; set; }
+                [Unique("JoinKey")] public string MeetingNumber { get; set; }
+                [Unique("JoinKey")] public uint PassCode { get; set; }
+            }
+
+            [PrimaryKey] public DateTime MeetingTime { get; set; }
+            [PrimaryKey] public string Account { get; set; } = "";
+            public Credentialization Credentials { get; set; }
+            public ushort MeetingLength { get; set; }
+            public ushort NumParticipants { get; set; }
+        }
+
+        // Test Scenario: Scalar Fields in Same Candidate Key as Nested Fields (✓recognized✓)
+        public class Sabermetric {
+            public enum Phase { Offensive, Defensive, Pitching, Baserunning, Managing }
+            public struct Formulation {
+                [Unique("Lookup")] public string Formula { get; set; }
+                public double? Minimum { get; set; }
+                public double? Maximum { get; set; }
+            }
+
+            [PrimaryKey] public string StatisticName { get; set; } = "";
+            public bool FromBillJames { get; set; }
+            public DateTime FirstPublished { get; set; }
+            [Unique("Lookup")] public Phase GamePhase { get; set; }
+            public Formulation Formula { get; set; }
+        }
+
         // Test Scenario: Candidate Key Named null (✗illegal✗)
         public class PlatonicDialogue {
             [PrimaryKey] public string Title { get; set; } = "";
@@ -1504,6 +2005,17 @@ namespace UT.Kvasir.Translation {
             public string Line13 { get; set; } = "";
             public string Line14 { get; set; } = "";
         }
+
+        // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+        public class EgyptianGod {
+            public record struct EgyptianName(string English, string? Hieroglyphics);
+
+            [PrimaryKey] public int DeityID { get; set; }
+            public uint BookOfTheDeadMentions { get; set; }
+            [Unique(Path = "---")] public EgyptianName Name { get; set; }
+            public string? PrimaryCultCity { get; set; }
+            public string Domain { get; set; } = "";
+        }
     }
 
     internal static class DataConverters {
@@ -1570,6 +2082,18 @@ namespace UT.Kvasir.Translation {
             public DateTime Closing { get; set; }
             [AsString] public Recognition RecognizedBy { get; set; }
             public uint Attendance { get; set; }
+        }
+
+        // Test Scenario: [DataConverter] Applied to Aggregate Field (✗impermissible✗)
+        public class Joust {
+            public record struct Person(string Name, ushort Height, ushort Weight);
+
+            [PrimaryKey] public Guid JoustID { get; set; }
+            public string Tourney { get; set; } = "";
+            public Person KnightA { get; set; }
+            [DataConverter(typeof(ToInt<Person>))] public Person KnightB { get; set; }
+            public double Odds { get; set; }
+            public bool Fatal { get; set; }
         }
 
         // Test Scenario: Data Conversion Source Type is Non-Nullable on Nullable Field (✓applied✓)
@@ -1712,6 +2236,32 @@ namespace UT.Kvasir.Translation {
             public string Title { get; set; } = "";
         }
 
+        // Test Scenario: [Numeric] Applied to Aggregate Field (✗impermissible✗)
+        public class GolfCourse {
+            public record struct Hole(byte Par, ulong Distance, bool WaterHazards, bool SandTraps);
+
+            [PrimaryKey] public string CourseName { get; set; } = "";
+            public bool CountryClubCourse { get; set; }
+            public Hole Hole1 { get; set; }
+            public Hole Hole2 { get; set; }
+            public Hole Hole3 { get; set; }
+            public Hole Hole4 { get; set; }
+            public Hole Hole5 { get; set; }
+            public Hole Hole6 { get; set; }
+            public Hole Hole7 { get; set; }
+            public Hole Hole8 { get; set; }
+            public Hole Hole9 { get; set; }
+            public Hole Hole10 { get; set; }
+            public Hole Hole11 { get; set; }
+            public Hole Hole12 { get; set; }
+            public Hole Hole13 { get; set; }
+            [Numeric] public Hole Hole14 { get; set; }
+            public Hole Hole15 { get; set; }
+            public Hole Hole16 { get; set; }
+            public Hole Hole17 { get; set; }
+            public Hole Hole18 { get; set; }
+        }
+
         // Test Scenario: [AsString] Applied to Boolean Field (✗impermissible✗)
         public class BondGirl {
             [PrimaryKey] public string Name { get; set; } = "";
@@ -1761,6 +2311,16 @@ namespace UT.Kvasir.Translation {
             public bool IsMonocle { get; set; }
             public bool ForReadingOnly { get; set; }
             public float LensArea { get; set; }
+        }
+
+        // Test Scenario: [AsString] Applied to Aggregate Field (✗impermissible✗)
+        public class Windmill {
+            public record struct EnergyOutput(double Joules, double KilowattHours);
+
+            [PrimaryKey] public float Latitude { get; set; }
+            [PrimaryKey] public float Longitude { get; set; }
+            public uint Height { get; set; }
+            [AsString] public EnergyOutput EnergyGenerated { get; set; }
         }
 
         // Test Scenario: Property Marked with [DataConverter] and [Numeric] (✗conflicting✗)
@@ -1884,6 +2444,50 @@ namespace UT.Kvasir.Translation {
                 [Check.IsPositive] public Resolution Rating { get; set; }
             }
 
+            // Test Scenario: Applied to Nested Numeric Scalar (✓constrained✓)
+            public class IceAge {
+                public struct Timespan {
+                    public short Length { get; set; }
+                    [Check.IsPositive] public short SubLength { get; set; }
+                    string Unit { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsPositive(Path = "Length")] public Timespan Ago { get; set; }
+                public double AverageTemperature { get; set; }
+                public float ChangeInAxialTilt { get; set; }
+                public bool Global { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-Numeric Scalar (✗impermissible✗)
+            public class GoldenRaspberry {
+                public record struct Nominee(string Name, string Movie);
+
+                [PrimaryKey] public ushort Year { get; set; }
+                public string Category { get; set; } = "";
+                public Nominee Winner { get; set; }
+                [Check.IsPositive(Path = "Movie")] public Nominee? RunnerUp { get; set; }
+                public bool AlsoOscarNominated { get; set; }
+                public double VoteShare { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class SudokuPuzzle {
+                public record struct Row(sbyte Left, sbyte Center, sbyte Right);
+                public record struct Square(Row Top, Row Center, Row Bottom);
+
+                [PrimaryKey] public Guid PuzzleID { get; set; }
+                public Square UpperLeft { get; set; }
+                public Square UpperCenter { get; set; }
+                public Square UpperRight { get; set; }
+                public Square MiddleLeft { get; set; }
+                public Square MiddleCenter { get; set; }
+                public Square MiddleRight { get; set; }
+                [Check.IsPositive(Path = "Bottom")] public Square LowerLeft { get; set; }
+                public Square LowerCenter { get; set; }
+                public Square LowerRight { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
             public class SwimmingPool {
                 [PrimaryKey] public uint Depth { get; set; }
@@ -1930,6 +2534,30 @@ namespace UT.Kvasir.Translation {
                 public double MaxBoatBeam { get; set; }
                 public double MaxBoatDraft { get; set; }
                 public DateTime Opening { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class SharkWeek {
+                public record struct ProductionInfo(int Season, int StartEpisode, int EndEpisode);
+
+                [PrimaryKey] public Guid SweepstakesID { get; set; }
+                [Check.IsPositive(Path = "---")] public ProductionInfo Info { get; set; }
+                public string Host { get; set; } = "";
+                public ushort NumSharkAppearances { get; set; }
+                public double NielsenRating { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Philosopher {
+                public enum Philosophy { Metaphysics, Logic, Ethics, Aesthetics, Epistemology, Theology, Realism, Cosmology }
+                public record struct Naming(string FirstName, string LastName);
+
+                [PrimaryKey] public Guid PhilosopherID { get; set; }
+                public Philosophy School { get; set; }
+                [Check.IsPositive] public Naming Name { get; set; }
+                public DateTime DateOfBirth { get; set; }
+                public DateTime? DateOfDeath { get; set; }
+                public ushort Publications { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -2024,13 +2652,49 @@ namespace UT.Kvasir.Translation {
 
             // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
             public class SerialKiller {
-                public enum Status { AtLarge, Incarerated, Apprehended, InTrial }
+                public enum Status { AtLarge, Incarcerated, Apprehended, InTrial }
 
                 [PrimaryKey] public string AlterEgo { get; set; } = "";
                 public string? Identity { get; set; }
                 [Check.IsNegative] public Status CurrentStatus { get; set; }
                 public uint KnownVictims { get; set; }
                 public bool FBIMostWanted { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Signed Numeric Scalar (✓constrained✓)
+            public class Flood {
+                public record struct Date(sbyte Day, sbyte Month, ushort Year);
+
+                [PrimaryKey] public Guid FloodID { get; set; }
+                [Check.IsNegative(Path = "Month")] public Date Occurrence { get; set; }
+                public ushort Casualties { get; set; }
+                public ulong WaterVolume { get; set; }
+                public string FloodingSource { get; set; } = "";
+                public decimal Damage { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-Signed-Numeric Scalar (✗impermissible✗)
+            public class TrolleyProblem {
+                public record struct Option(string Label, double PcntChoice, int PotentialVictims);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Option NoPull { get; set; }
+                [Check.IsNegative(Path = "Label")] public Option Pull { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class Pharaoh {
+                public record struct EgyptianKingdom(string Name, bool GoldenAge);
+                public record struct EgyptianDynasty(byte Index, EgyptianKingdom Kingdom);
+
+                [PrimaryKey] public string RegnalName { get; set; } = "";
+                [PrimaryKey] public uint? RegnalNumber { get; set; }
+                public DateTime ReignBegin { get; set; }
+                public DateTime ReignEnd { get; set; }
+                [Check.IsNegative(Path = "Kingdom")] public EgyptianDynasty Dynasty { get; set; }
+                public string GreatRoyalWife { get; set; } = "";
+                public ushort TotalWives { get; set; }
+                public string? BurialPyramid { get; set; }
             }
 
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
@@ -2079,6 +2743,40 @@ namespace UT.Kvasir.Translation {
                 public string Title { get; set; } = "";
                 public string PrimeResident { get; set; } = "";
                 public ulong CantoOfIntroduction { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class VolleyballMatch {
+                public enum Style { Beach, Indoor }
+                public record struct Set(ushort HomeTeamScore, ushort AwayTeamScore);
+
+                [PrimaryKey] public string HomeTeam { get; set; } = "";
+                [PrimaryKey] public string AwayTeam { get; set; } = "";
+                [PrimaryKey] public DateTime Scheduled { get; set; }
+                public Style VolleyballType { get; set; }
+                public Set FirstSet { get; set; }
+                public Set SecondSet { get; set; }
+                public Set? ThirdSet { get; set; }
+                [Check.IsNegative(Path = "---")] public Set? FourthSet { get; set; }
+                public Set? FifthSet { get; set; }
+                public ushort TotalKills { get; set; }
+                public ushort TotalDigs { get; set; }
+                public ushort TotalBlocks { get; set; }
+                public ushort TotalAces { get; set; }
+                public bool Olympics { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Yacht {
+                public enum Kind { Sailing, Super, ClassicalDutch, Competitive, Military }
+                public record struct ShipSails(ushort Count, string Material, string Shape);
+
+                [PrimaryKey] public Guid YachtID { get; set; }
+                public Kind YachtType { get; set; }
+                public string BoatName { get; set; } = "";
+                public ushort PassengerLimit { get; set; }
+                public decimal Cost { get; set; }
+                [Check.IsNegative] public ShipSails Sails { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -2159,6 +2857,51 @@ namespace UT.Kvasir.Translation {
                 public decimal ClosingPrice { get; set; }
             }
 
+            // Test Scenario: Applied to Nested Numeric Scalar (✓constrained✓)
+            public class Essay {
+                public record struct Sentence(string Text, int WordCount);
+                public record struct Paragraph(Sentence S1, Sentence S2, Sentence S3, Sentence S4, Sentence S5);
+
+                [PrimaryKey] public string Title { get; set; } = "";
+                [PrimaryKey] public string Author { get; set; } = "";
+                public string ThesisStatement { get; set; } = "";
+                [Check.IsNonZero(Path = "S5.WordCount"), Check.IsNonZero(Path = "S3.WordCount")] public Paragraph P1 { get; set; }
+                public Paragraph P2 { get; set; }
+                [Check.IsNonZero(Path = "S2.WordCount")] public Paragraph P3 { get; set; }
+                public Paragraph P4 { get; set; }
+                [Check.IsNonZero(Path = "S1.WordCount"), Check.IsNonZero(Path = "S4.WordCount")] public Paragraph P5 { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-Numeric Scalar (✗impermissible✗)
+            public class IDE {
+                public record struct SemVer(uint Major, uint Minor, uint Patch, string? PreRelease, string? Metadata, DateTime Released);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsNonZero(Path = "Released")] public SemVer Version { get; set; }
+                public string URL { get; set; } = "";
+                public ulong Downloads { get; set; }
+                public bool SupportsCPP { get; set; }
+                public bool SupportsCS { get; set; }
+                public bool SupportsJS { get; set; }
+                public bool SupportsPython { get; set; }
+                public bool SupportsRust { get; set; }
+                public bool SupportsJava { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class PregnancyTest {
+                public enum Status { Positive, Negative, Inconclusive }
+                public enum Mechanism { Urinary, Blood, Visual, Hormonal }
+                public record struct MedicalName(string Generic, string Brand);
+                public record struct Listing(Guid ID, MedicalName Name, Mechanism Mechanism);
+
+                [PrimaryKey] public DateTime ExactMeasurementTime { get; set; }
+                [Check.IsNonZero(Path = "Name")] public Listing Product { get; set; }
+                public DateTime Taken { get; set; }
+                public string Taker { get; set; } = "";
+                public Status Result { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
             public class Airline {
                 [PrimaryKey] public string Name { get; set; } = "";
@@ -2204,6 +2947,33 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNonZero(Path = "---")] public decimal ExchangeRate { get; set; }
                 public DateTime InitialRelease { get; set; }
                 public ulong AccountHolders { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Encomienda {
+                public record struct Coordinate(float Latitude, float Longitude);
+
+                [Check.IsNonZero(Path = "---")] public Coordinate Location { get; set; }
+                [PrimaryKey] public string Holder { get; set; } = "";
+                [PrimaryKey] public uint Index { get; set; }
+                public DateTime Established { get; set; }
+                public ushort Workers { get; set; }
+                public double PercentMoorish { get; set; }
+                public double PercentSpanish { get; set; }
+                public double PercentJewish { get; set; }
+                public double PercentNative { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Smoothie {
+                public record struct SmoothieBase(double AmountIce, double AmountYogurt, double AmountOJ, double AmountCream);
+
+                [PrimaryKey] public string Identifier { get; set; } = "";
+                public uint Calories { get; set; }
+                [Check.IsNonZero] public SmoothieBase Base { get; set; }
+                public string Fruits { get; set; } = "";
+                public string Supplements { get; set; } = "";
+                public bool HasChocolate { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -2286,6 +3056,47 @@ namespace UT.Kvasir.Translation {
                 [Check.IsGreaterThan(Culture.Santeria)] public Culture BelongsTo { get; set; }
                 public string Domain { get; set; } = "";
                 public uint WikipediaWords { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Orderable Scalar (✓constrained✓)
+            public class Opioid {
+                public record struct ChemicalFormula(int C, int H, int N, int O);
+                public record struct Entry(ChemicalFormula Formula, string DrugBank);
+
+                [PrimaryKey] public string CAS { get; set; } = "";
+                [Check.IsGreaterThan("XP14U339D", Path = "DrugBank"), Check.IsGreaterThan(2, Path = "Formula.O")] public Entry Definition { get; set; }
+                public double Mortality { get; set; }
+                public double MolarMass { get; set; }
+                public bool IsIllegalInUS { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-Orderable Scalar (✗impermissible✗)
+            public class Wordle {
+                public enum Result { Unknown, Correct, Incorrect, WrongLocation }
+                public record struct Letter(char Value, Result Hint);
+                public record struct Guess(Letter L1, Letter L2, Letter L3, Letter L4, Letter L5);
+
+                [PrimaryKey] public string IP { get; set; } = "";
+                [PrimaryKey] public DateTime Date { get; set; }
+                public string Answer { get; set; } = "";
+                public Guess Guess1 { get; set; }
+                public Guess? Guess2 { get; set; }
+                [Check.IsGreaterThan(Result.Unknown, Path = "L4.Hint")] public Guess? Guess3 { get; set; }
+                public Guess? Guess4 { get; set; }
+                public Guess? Guess5 { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class FlashMob {
+                public record struct Person(string FirstName, string LastName);
+                public record struct Crowd(Person Leader, ulong Size);
+
+                [PrimaryKey] public Guid FlashMobUUID { get; set; }
+                public string Song { get; set; } = "";
+                public DateTime StartTimestamp { get; set; }
+                public DateTime EndTimestamp { get; set; }
+                public string Location { get; set; } = "";
+                [Check.IsGreaterThan('<', Path = "Leader")] public Crowd Participants { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -2456,6 +3267,30 @@ namespace UT.Kvasir.Translation {
                 public ulong TotalArea { get; set; }
             }
 
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Conlang {
+                public record struct LanguageCodes(string? ISO6393, string? Glottolog, string? IETF);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Endonym { get; set; } = "";
+                public string Conlanger { get; set; } = "";
+                public ushort NumConsonants { get; set; }
+                public ushort NumVowels { get; set; }
+                [Check.IsGreaterThan("Astapori Valyrian", Path = "---")] public LanguageCodes Codes { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class LaborStrike {
+                public record struct Parties(string Union, string Management, string? Negotiators);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public DateTime StrikeStart { get; set; }
+                public DateTime StrikeEnd { get; set; }
+                public decimal LostRevenue { get; set; }
+                [Check.IsGreaterThan("2023")] public Parties Members { get; set; }
+                public bool ResolvedInFavorOfLabor { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class DraftPick {
                 [PrimaryKey] public string League { get; set; } = "";
@@ -2536,6 +3371,45 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessThan(PoliticalParty.Green)] public PoliticalParty? Affiliation { get; set; }
                 public uint CasesArgued { get; set; }
                 public DateTime FirstSCOTUS { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Orderable Scalar (✓constrained✓)
+            public class Raptor {
+                public record struct Taxonomy(string Kingdom, string Phylum, string Clas, string Order, string Family, string Genus, string Species);
+                public struct Bios {
+                    public double Weight { get; set; }
+                    [Check.IsLessThan((ushort)489)] public ushort Wingspan { get; set; }
+                    public long TopSpeed { get; set; }
+                }
+
+                [PrimaryKey] public string CommonName { get; set; } = "";
+                [Check.IsLessThan("Zynovia", Path = "Family")] public Taxonomy Scientific { get; set; }
+                [Check.IsLessThan(174.991, Path = "Weight"), Check.IsLessThan(long.MaxValue, Path = "TopSpeed")] public Bios Measurements { get; set; }
+                public byte Talons { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-Orderable Scalar (✗impermissible✗)
+            public class Feruchemy {
+                public enum Matrix { Physical, Cognitive, Hybrid, Spiritual }
+                public record struct Effect(Matrix Kind, string WhenStoring, string WhenTapping);
+
+                [PrimaryKey] public char Symbol { get; set; }
+                public string Metal { get; set; } = "";
+                public string FeruchemistTerm { get; set; } = "";
+                [Check.IsLessThan(Matrix.Spiritual, Path = "Kind")] public Effect Effects { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class Firefighter {
+                public record struct Polity(string City, string State, string Country);
+                public record struct Crew(Polity ServiceArea, uint EngineNumber);
+
+                [PrimaryKey] public ulong TranscontinentalFirefightersNumber { get; set; }
+                public string Name { get; set; } = "";
+                public string Rank { get; set; } = "";
+                public uint FiresFought { get; set; }
+                [Check.IsLessThan("Fahrenheit 451", Path = "ServiceArea")] public Crew Firehouse { get; set; }
+                public bool WorkedSept11 { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -2689,6 +3563,31 @@ namespace UT.Kvasir.Translation {
                 public string Species { get; set; } = "";
             }
 
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class SurgicalMask {
+                public enum Hue { White, Black, Red, Green, Yellow, Blue, Orange, Purple, Pink, Gray }
+                public record struct ProductInfo(Guid AmazonID, ulong BarCode);
+
+                [PrimaryKey] public ulong Auto { get; set; }
+                [Check.IsLessThan((sbyte)-111, Path = "---")] public ProductInfo ID { get; set; }
+                public string Type { get; set; } = "";
+                public Hue Color { get; set; }
+                public double MinimumEfficiency { get; set; }
+                public bool CovidApproved { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class SecretSociety {
+                public record struct Activity(string Description, ushort Length, bool InTheNude);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong? WorldwideMembership { get; set; }
+                public DateTime? Founded { get; set; }
+                public bool? Active { get; set; }
+                public bool IsStillSecret { get; set; }
+                [Check.IsLessThan(false)] public Activity Initiation { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class ParkingGarage {
                 [PrimaryKey] public Guid GarageID { get; set; }
@@ -2764,6 +3663,48 @@ namespace UT.Kvasir.Translation {
                 public ulong RealWorldPopulation { get; set; }
                 public string Introduced { get; set; } = "";
                 public string SuzerainBonus { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Nested Orderable Scalar (✓constrained✓)
+            public class FamilyTree {
+                public enum Gender { Male, Female, NonBinary, GenderFluid, Other }
+                public enum Direction { TopDown, BottomUp, LeftToRight, RightToLeft, Radial }
+                public record struct Person(string FirstName, string LastName, Gender Gender, DateTime DOB);
+
+                [PrimaryKey] public Guid GenealogicalID { get; set; }
+                public Direction Orientation { get; set; }
+                [Check.IsGreaterOrEqualTo("Tony", Path = "FirstName"), Check.IsGreaterOrEqualTo("1255-09-18", Path = "DOB")] public Person Focal { get; set; }
+                public uint AncestralGenerations { get; set; }
+                public uint DescendantGenerations { get; set; }
+                public uint TotalIndividuals { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-Orderable Scalar (✗impermissible✗)
+            public class Readymade {
+                public record struct Entry(uint CopyrightNumber, bool IsFormallyRegistered);
+
+                [PrimaryKey] public Guid ArtworkID { get; set; }
+                public string Title { get; set; } = "";
+                public bool ByMarcelDuchamp { get; set; }
+                [Check.IsGreaterOrEqualTo(true, Path = "IsFormallyRegistered")] public Entry Registration { get; set; }
+                public string PrimaryObject { get; set; } = "";
+                public decimal Valuation { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class FitnessCenter {
+                public enum Dir { Nort, South, East, West }
+                public record struct Street(Dir? Direction, string Name, string StreetType);
+                public record struct BuildingAddress(uint Number, Street Street, string Polity, ulong ZipCode);
+
+                [PrimaryKey] public Guid DeedID { get; set; }
+                [Check.IsGreaterOrEqualTo('0', Path = "Street")] public BuildingAddress Address { get; set; }
+                public decimal MembershipCost { get; set; }
+                public ulong MembershipCount { get; set; }
+                public int NumTreadmills { get; set; }
+                public int NumWeightMachines { get; set; }
+                public int NumDumbbells { get; set; }
+                public bool HasPool { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -2925,6 +3866,34 @@ namespace UT.Kvasir.Translation {
                 public string Semantic { get; set; } = "";
             }
 
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Pagoda {
+                public enum Religion { Buddhism, Taoism, Lay }
+                public record struct Coordinate(float Latitude, float Longitude);
+
+                [PrimaryKey] public Guid PagodaID { get; set; }
+                [Check.IsGreaterOrEqualTo(57.133f, Path = "---")] public Coordinate Location { get; set; }
+                public Religion Tradition { get; set; }
+                public ushort NumEaves { get; set; }
+                public bool IsActive { get; set; }
+                public ulong Height { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Motorcycle {
+                public enum Type { Standard, Cruiser, Touring, Sport, OffRoad, Scooter, Moped }
+                public record struct Wheel(double Diameter, string Material, ushort NumSpokes);
+
+                [PrimaryKey] public string LicensePlate { get; set; } = "";
+                public string Brand { get; set; } = "";
+                public Type Kind { get; set; }
+                public double Horsepower { get; set; }
+                [Check.IsGreaterOrEqualTo("1588-07-07")] public Wheel Wheels { get; set; }
+                public decimal MarketValue { get; set; }
+                public ushort TopSpeed { get; set; }
+                public bool HasKickstand { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Camera {
                 [PrimaryKey] public string Model { get; set; } = "";
@@ -3001,6 +3970,44 @@ namespace UT.Kvasir.Translation {
                 public DateTime StartDate { get; set; }
                 public DateTime EndDate { get; set; }
                 public decimal Gross { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Orderable Scalar (✓constrained✓)
+            public class Hominin {
+                public record struct BinomialNomenclature(string Genus, string Species);
+
+                [Check.IsLessOrEqualTo("Zubeia", Path = "Genus"), Check.IsLessOrEqualTo("Zynectico", Path = "Genus")] public BinomialNomenclature Species { get; set; }
+                [PrimaryKey] public string CommonName { get; set; } = "";
+                public DateTime Discovered { get; set; }
+                public double CranialVolume { get; set; }
+                public double AverageHeight { get; set; }
+                public float PercentExtantDNA { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-Orderable Scalar (✗impermissible✗)
+            public class AmazonService {
+                public enum SubscriptionType { Free, Monthly, Yearly, PerUse, PerHour, Discretionary }
+                public record struct Subscription(bool RequiresSubscription, SubscriptionType Type, decimal AverageCost);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string URL { get; set; } = "";
+                public bool PoweredByAI { get; set; }
+                [Check.IsLessOrEqualTo(SubscriptionType.PerUse, Path = "Type")] public Subscription Plan { get; set; }
+                public ulong MonthlyUsers { get; set; }
+                public DateTime Launched { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class Shampoo {
+                [Flags] public enum Use { AsShampoo = 1, AsBodyWash = 2, AsConditioner = 4 }
+                public record struct AgeRange(uint MinAge, uint MaxAge);
+                public record struct Instruction(double StorageTemp, AgeRange Ages, string IfIngested);
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public Use Usage { get; set; }
+                public string? Scent { get; set; }
+                public bool ForWomen { get; set; }
+                [Check.IsLessOrEqualTo((byte)100, Path = "Ages")] public Instruction Directions { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -3156,6 +4163,26 @@ namespace UT.Kvasir.Translation {
                 public bool IsFaeriePlane { get; set; }
             }
 
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Mausoleum {
+                public record struct Coordinate(float Latitude, float Longitude);
+                public record struct Dimension(double Height, double Width, double Length);
+
+                [PrimaryKey] public string Owner { get; set; } = "";
+                public byte NumInterred { get; set; }
+                public string Cemetery { get; set; } = "";
+                [Check.IsLessOrEqualTo(53.2f, Path = "---")] public Coordinate Location { get; set; }
+                public Dimension Measurements { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Pseudonym {
+                public record struct Name(string Nom, char Separator);
+
+                [PrimaryKey] public Name Moniker { get; set; }
+                [Check.IsLessOrEqualTo(']')] public Name For { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class BowlingFrame {
                 [PrimaryKey] public Guid FrameID { get; set; }
@@ -3234,6 +4261,31 @@ namespace UT.Kvasir.Translation {
                 public string Witnesses { get; set; } = "";
                 public string MarianTitle { get; set; } = "";
                 [Check.IsNot(Status.Ignored)] public Status Recognition { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Scalar (✓constrained✓)
+            public class SeventhInningStretch {
+                public record struct MatchUp(string HomeTeam, string AwayTeam, DateTime Date);
+
+                [PrimaryKey] public string BaseballReferenceGameURL { get; set; } = "";
+                [Check.IsNot("Savannah Bananas", Path = "AwayTeam"), Check.IsNot("2001-09-11", Path = "Date")] public MatchUp Game { get; set; }
+                public string Singer { get; set; } = "";
+                public string RootRootRootFor { get; set; } = "";
+                public ushort Duration { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class SportsBet {
+                public record struct OneDollar(decimal Return);
+                public record struct Ratio(bool IsFavored, ulong Number, OneDollar OneDollarPayout);
+
+                [PrimaryKey] public Guid SlipNumber { get; set; }
+                public string Bettor { get; set; } = "";
+                public string Competition { get; set; } = "";
+                public string ExpectedOutcome { get; set; } = "";
+                [Check.IsNot(77.44514303f, Path = "OneDollarPayout")] public Ratio Odds { get; set; }
+                public bool PlacedOnline { get; set; }
+                public bool IsPropBet { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
@@ -3377,7 +4429,7 @@ namespace UT.Kvasir.Translation {
                 public byte N0 { get; set; }
                 public byte N1 { get; set; }
                 public byte N2 { get; set; }
-                byte N3 { get; set; }
+                public byte N3 { get; set; }
                 public byte N4 { get; set; }
                 public byte N5 { get; set; }
                 [Check.IsNot("2024-02-29", Path = null!)] public DateTime PurchaseTime { get; set; }
@@ -3390,6 +4442,34 @@ namespace UT.Kvasir.Translation {
                 public ulong Population { get; set; }
                 [Check.IsNot(10u, Path = "---")] public uint SecurityLevel { get; set; }
                 public DateTime Opened { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Restaurant {
+                [Flags] public enum Culture { American = 1, Chinese = 2, Japanese = 4, Italian = 8, Indian = 16, German = 32, Thai = 64, Korean = 128, Irish = 256, English = 512, Spanish = 1024, Other = 2048 }
+                public record struct SaladBarOptions(decimal Price, int MaxReturns, bool AsAppetizer);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool IsChain { get; set; }
+                public bool IsFastFood { get; set; }
+                public uint NumMenuItems { get; set; }
+                [Check.IsNot(true, Path = "---")] public SaladBarOptions? SaladBar { get; set; }
+                public bool ServesAlcohol { get; set; }
+                public Culture Cuisine { get; set; }
+                public decimal Revenue2023 { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Balk {
+                [Flags] public enum Base { None = 0, First = 1, Second = 2, Third = 4 }
+                public enum Reason { NoStop, DroppedBall, StartedMotion, FakedToFirst, TookSignsOffRubber }
+                public record struct Player(string FirstName, string LastName, byte JerseyNumber);
+
+                [PrimaryKey] public Guid BaseballReferencePlayID { get; set; }
+                [Check.IsNot("Pablo Sanchez")] public Player Pitcher { get; set; }
+                public Base InitialBaserunners { get; set; }
+                public Base ResultingBaserunners { get; set; }
+                public Reason Call { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -3470,6 +4550,53 @@ namespace UT.Kvasir.Translation {
                 public float MolarMass { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class Mustache {
+                public enum Kind : short { Handlebar, FuManchu, Hitler, Horseshoe, French, Pencil }
+
+                [PrimaryKey] public Guid MustacheID { get; set; }
+                public int Age { get; set; }
+                [Check.IsNonEmpty] public Kind Style { get; set; }
+                public double HairVolume { get; set; }
+                public bool Goatee { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested String Scalar (✓constrained✓)
+            public class BarGraph {
+                public record struct Info(string XAxisLabel, string XAxisUnit, string YAxisLabel, string YAxisUnit);
+
+                [PrimaryKey] public string Title { get; set; } = "";
+                [Check.IsNonEmpty(Path = "XAxisLabel"), Check.IsNonEmpty(Path = "YAxisLabel")] public Info Legend { get; set; }
+                public double MaxValue { get; set; }
+                public bool IsStackd { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-String Scalar (✗impermissible✗)
+            public class BackyardBaseballPlayer {
+                public record struct Stats(byte Batting, byte Running, byte Pitching, byte Fielding);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [PrimaryKey] public ushort Edition { get; set; }
+                [Check.IsNonEmpty(Path = "Pitching")] public Stats Statistics { get; set; }
+                public string Nickname { get; set; } = "";
+                public bool IsFictional { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class OilField {
+                public record struct Coordinate(float Latitude, float Longitude);
+                public record struct Place(Coordinate Coordinate, string City, string? Subnational, string Country);
+                public record struct Location(string? Title, Place Place);
+
+                [PrimaryKey] public Guid OilFieldIdentifier { get; set; }
+                public ulong Area { get; set; }
+                public ulong AnnualVolume { get; set; }
+                public decimal Revenue { get; set; }
+                public DateTime FirstTapped { get; set; }
+                [Check.IsNonEmpty(Path = "Place.Coordinate")] public Location Where { get; set; }
+                public bool IsNationalized { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class Hourglass {
                 [PrimaryKey] public Guid ID { get; set; }
@@ -3517,6 +4644,29 @@ namespace UT.Kvasir.Translation {
                 public string Movement { get; set; } = "";
                 public string HandShape { get; set; } = "";
                 public string PalmOrientation { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Sutra {
+                public enum Group { Buddhism, Hinduism, Jainism, Other }
+                public record struct From(string Veda, bool QuotesOnly);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ushort WordCount { get; set; }
+                public DateTime? Written { get; set; }
+                public Group Religion { get; set; }
+                [Check.IsNonEmpty(Path = "---")] public From Source { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Kaiju {
+                public record struct Measurements(ushort Height, uint Weight, byte NumAppendages);
+                public enum Side { Enemy, Ally, Mixed }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsNonEmpty] public Measurements Size { get; set; }
+                public Side RelationToGodzilla { get; set; }
+                public uint FilmAppearances { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -3594,6 +4744,55 @@ namespace UT.Kvasir.Translation {
                 public float AverageAnnualRainfall { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class Cybersite {
+                public enum Season { S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14 }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.LengthIsAtLeast(17)] public Season FirstSeasonAppeared { get; set; }
+                public bool ControlledByHacker { get; set; }
+                public string SkwakopediaEntry { get; set; } = "";
+                public uint NumEpisodes { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested String Scalar (✓constrained✓)
+            public class Dubbing {
+                public record struct VoiceOverArtist(string FirstName, char MiddleInitial, string LastName);
+
+                [PrimaryKey] public Guid UUID { get; set; }
+                public string Work { get; set; } = "";
+                public string Character { get; set; } = "";
+                [Check.LengthIsAtLeast(6, Path = "FirstName"), Check.LengthIsAtLeast(2, Path = "LastName")] public VoiceOverArtist Dubber { get; set; }
+                public string OriginalLanguage { get; set; } = "";
+                public string DubbedLanguage { get; set; } = "";
+                public bool IsAnime { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-String Scalar (✗impermissible✗)
+            public class BaseballMogul {
+                public record struct SemVer(ushort Major, ushort Minor, ushort Patch, DateTime Release);
+
+                [PrimaryKey] public Guid VideoGameID { get; set; }
+                public ushort SeasonYear { get; set; }
+                [Check.LengthIsAtLeast(44, Path = "Patch")] public SemVer Version { get; set; }
+                public string Changelog { get; set; } = "";
+                public ulong TotalPlayers { get; set; }
+                public bool UsesPitchFxData { get; set; }
+                public double SimulationSpeed { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class MagicSystem {
+                public record struct Law(string Fulfillment);
+                public record struct Laws(Law First, Law Second, Law Third, Law? Zeroth);
+                public enum Strength { Hard, Soft, Semisoft }
+
+                [PrimaryKey] public string SourceMaterial { get; set; } = "";
+                [PrimaryKey] public string Magic { get; set; } = "";
+                public Strength HardOrSoft { get; set; }
+                [Check.LengthIsAtLeast(1898400, Path = "Zeroth")] public Laws SandersonsLaws { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class Ambassador {
                 [PrimaryKey] public string Who { get; set; } = "";
@@ -3650,6 +4849,34 @@ namespace UT.Kvasir.Translation {
                 public long MaxBucket { get; set; }
                 public long BucketSize { get; set; }
                 [Check.LengthIsAtLeast(2, Path = "---")] public string BucketUnit { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Cactus {
+                [Flags] public enum Desert { Sahara, Kalahari, Mojave, Gobi, Negev, Namib, Atacama, Sonoran, Arabian }
+                public record struct Taxonomy(string Genus, string Species);
+
+                [Check.LengthIsAtLeast(5, Path = "---")] public Taxonomy ScientificName { get; set; }
+                [PrimaryKey] public string CommonName { get; set; }
+                public Desert NativeHabitat { get; set; }
+                public double AverageHeight { get; set; }
+                public uint Lifespan { get; set; }
+                public bool Prickly { get; set; }
+                public uint WaterRetention { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class SederPlate {
+                public record struct Slot(string OccupiedBy);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Slot Charoset { get; set; }
+                public Slot Beitzah { get; set; }
+                public Slot Maror { get; set; }
+                public Slot Zroa { get; set; }
+                [Check.LengthIsAtLeast(100)] public Slot Karpas { get; set; }
+                public Slot Matzah { get; set; }
+                public Slot? Tapuz { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -3728,6 +4955,57 @@ namespace UT.Kvasir.Translation {
                 public bool IsPreCompiled { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class ComputerVirus {
+                public enum Type { Keylogger, Ransomware, Spyware, Exploitation, Other }
+
+                [PrimaryKey] public string VirusName { get; set; } = "";
+                public DateTime Created { get; set; }
+                public string Creator { get; set; } = "";
+                public decimal Damage { get; set; }
+                [Check.LengthIsAtMost(50)] public Type Classification { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested String Scalar (✓constrained✓)
+            public class MafiaFamily {
+                public struct Person {
+                    public string FirstName { get; set; }
+                    [Check.LengthIsAtMost(71)] public string? MiddleName { get; set; }
+                }
+
+                [PrimaryKey] public string FamilyName { get; set; } = "";
+                public string Mafia { get; set; } = "";
+                [Check.LengthIsAtMost(26, Path = "FirstName")] public Person Capo { get; set; }
+                public ushort LivingMembers { get; set; }
+                public decimal NetWorth { get; set; }
+                public ulong NumMurders { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-String Scalar (✗impermissible✗)
+            public class Kayak {
+                public record struct Seat(float Depth, double Radius);
+
+                [PrimaryKey] public Guid KayakID { get; set; }
+                public double Length { get; set; }
+                public string WoodComposition { get; set; } = "";
+                [Check.LengthIsAtMost(1897, Path = "Radius")] public Seat KayakSeat { get; set; }
+                public bool OlympicQuality { get; set; }
+                public bool IsAlsoCanoe { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class MaddenNFL {
+                public enum Position { QB, RB, WR, TE, OT, OG, C, FB, K, P, KR, PR, ST, DE, DT, NT, OLB, ILB, FS, SS, CB, NB }
+                public record struct Person(string FirstName, string LastName);
+                public record struct Player(Person Name, Position Position, string Team);
+
+                [PrimaryKey] public ushort Year { get; set; }
+                public DateTime Released { get; set; }
+                [Check.LengthIsAtMost(31, Path = "Name")] public Player CoverPlayer { get; set; }
+                public decimal TotalSales { get; set; }
+                public double Rating { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class OilSpill {
                 [PrimaryKey] public Guid ID { get; set; }
@@ -3786,6 +5064,36 @@ namespace UT.Kvasir.Translation {
                 public double DistanceKLY { get; set; }
                 public double ApparentMagnitude { get; set; }
                 public string? Constellation { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class ImaginaryFriend {
+                [Flags] public enum Color { Red, Orange, Yellow, Green, Blue, Purple, White, Black, Gray, Pink }
+                [Flags] public enum Thing { Claws, Horns, OneEye, Spots, Superpowers }
+                public record struct Description(Color Color, double Height, double Weight, Thing Abilities);
+
+                [PrimaryKey] public uint ID { get; set; }
+                public string Name { get; set; } = "";
+                public string Child { get; set; } = "";
+                public bool OnFostersHome { get; set; }
+                [Check.LengthIsAtMost(6, Path = "---")] public Description Features { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Newscast {
+                public record struct Person(string FirstName, string LastName);
+                public record struct Segment(Person Newscaster, string StoryTitle);
+
+                [PrimaryKey] public string Station { get; set; } = "";
+                [PrimaryKey] public DateTime AirTime { get; set; }
+                public Segment ABLock { get; set; }
+                public Segment BBlock { get; set; }
+                public Segment CBlock { get; set; }
+                public Segment DBlock { get; set; }
+                [Check.LengthIsAtMost(83)] public Segment? Sports { get; set; }
+                public Segment? Weather { get; set; }
+                public Segment? Traffic { get; set; }
+                public Segment? LocalInterest { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -3865,6 +5173,52 @@ namespace UT.Kvasir.Translation {
                 public string? ManxVersion { get; set; }
             }
 
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class Kinesis {
+                public enum Group { Elemental, Physical, Psychic, Ethereal, Other }
+
+                [PrimaryKey] public string XxxKinesis { get; set; } = "";
+                public string Manipulable { get; set; } = "";
+                [Check.LengthIsBetween(1, 10)] public Group Kind { get; set; }
+                public uint Practitioners { get; set; }
+                public string? XMan { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested String Scalar (✓constrained✓)
+            public class LiteraryTrope {
+                public record struct Usage(string Work, string Author);
+
+                [PrimaryKey] public int ID { get; set; }
+                public string Name { get; set; } = "";
+                public string TVTropesURL { get; set; } = "";
+                [Check.LengthIsBetween(1, 20, Path = "Work"), Check.LengthIsBetween(35, 100, Path = "Author")] public Usage FirstAppearance { get; set; }
+                public ulong Appearances { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Non-String Scalar (✗impermissible✗)
+            public class OvernightCamp {
+                public record struct Program(uint Sessions, ushort WeeksPerSession, ulong MaxCampers, byte NumFieldTrips);
+
+                [PrimaryKey] public Guid CampID { get; set; }
+                public string CampName { get; set; } = "";
+                [Check.LengthIsBetween(0, 5, Path = "Sessions")] public Program Schedule { get; set; }
+                public ulong Attendance { get; set; }
+                public bool JewishAffiliated { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class Dentist {
+                public enum Specialty { Cleaning, OralSurgery, Orthodontics, CavityFillings, Other }
+                public record struct Degree(ushort Year, string University);
+                public record struct Degrees(Degree Bachelors, Degree? Masters, Degree Doctorate);
+
+                [PrimaryKey] public Guid MedicalBoardNumber { get; set; }
+                public string Name { get; set; } = "";
+                public string? Practice { get; set; }
+                public Specialty Focus { get; set; }
+                [Check.LengthIsBetween(7, 18, Path = "Doctorate")] public Degrees Qualifications { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class AesSedai {
                 [PrimaryKey] public string Name { get; set; } = "";
@@ -3940,6 +5294,26 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public byte Count { get; set; }
                 public string Color { get; set; } = "";
                 [Check.LengthIsBetween(3, 13, Path = "---")] public string Pattern { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class InternetCraze {
+                public enum Service { Facebook, Instagram, TikTok, Twitter, Snapchat, Pinterest, Tumblr, Reddit }
+                public record struct Warning(char Grade, uint Deaths, double RiskFactor);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string? URL { get; set; }
+                public Service SocialMediaPlatform { get; set; }
+                [Check.LengthIsBetween(1000, 10000, Path = "---")] public Warning Dangers { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class MesopotamianGod {
+                public record struct Naming(string Babylonian, string Sumerian, string Akkadian);
+
+                [PrimaryKey] public Guid DeityIdentifier { get; set; }
+                [Check.LengthIsBetween(5, 32)] public Naming Names { get; set; }
+                public bool InEpicOfGilgamesh { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -4022,6 +5396,44 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ToothID { get; set; }
                 [Check.IsOneOf(Source.Human, Source.Animal)] public Source Origin { get; set; }
                 [Check.IsOneOf(ToothType.Incisor, ToothType.Molar, ToothType.Canine, ToothType.Bicuspid)] public ToothType Type { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Scalar (✓constrained✓)
+            public class Earring {
+                public enum Kind { ClipOn, Stud, Latch }
+                public struct Composition {
+                    [Check.IsOneOf("Fiberglass", "Leather")] public string Material { get; set; }
+                    public bool IsMetal { get; set; }
+                }
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public bool IsHoop { get; set; }
+                public decimal MarketValue { get; set; }
+                [Check.IsOneOf("Gold", "Silver", "Plastic", "Titanium", "Wood", Path = "Material")] public Composition MadeOf { get; set; }
+                public ushort Weight { get; set; }
+                public Kind Style { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class PhoneticAlphabet {
+                public record struct ABC(string A, string B, string C);
+                public record struct DEF(string D, string E, string F);
+                public record struct GHIJK(string G, string H, string I, string J, string K);
+                public record struct LMNOPQRS(string L, string M, string N, string O, string P, string Q, string R, string S);
+                public record struct TU(string T, string U);
+                public record struct VWXY(string V, string W, string X, string Y);
+                public record struct LetterZ(string Z);
+                public record struct ABCDEFGHIJK(ABC ABC, DEF DEF, GHIJK GHIJK);
+                public record struct TUVWXY(TU TU, VWXY VWXY);
+                public record struct ABCDEFGHIJKLMNOPQRS(ABCDEFGHIJK ABCDEFGHIJK, LMNOPQRS LMNOPQRS);
+                public struct All {
+                    [Check.IsOneOf("Grand", "Golf", "Give", "Gordon", "Gate", Path = "ABCDEFGHIJK.GHIJK")] public ABCDEFGHIJKLMNOPQRS ABCDEFGHIJKLMNOPQRS { get; set; }
+                    public TUVWXY TUVWXY { get; set; }
+                    public LetterZ Z {get;set;}
+                }
+
+                [PrimaryKey] public string Creator { get; set; } = "";
+                public All Alphabet { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
@@ -4190,7 +5602,7 @@ namespace UT.Kvasir.Translation {
 
             // Test Scenario: Only One Enumerator Permitted (✓valid✓)
             public class Treehouse {
-                [Flags] public enum Manufacturing { Amateur, Professional, Kit, Factory }
+                [Flags] public enum Manufacturing { Amateur = 1, Professional = 2, Kit = 4, Factory = 8 }
 
                 [PrimaryKey] public Guid ID { get; set; }
                 [Check.IsOneOf(Manufacturing.Professional)] public Manufacturing MadeBy { get; set; }
@@ -4218,6 +5630,31 @@ namespace UT.Kvasir.Translation {
                 [Check.IsOneOf(1, 5, 25, 50, Path = "---")] public int Lines { get; set; }
                 public string OriginalGreekText { get; set; } = "";
                 public string EnglishTranslation { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class MarbleLeague {
+                public record struct Team(string Nickname, string Abbreviation, ushort Established);
+
+                [PrimaryKey] public ushort Year { get; set; }
+                public Team Host { get; set; }
+                [Check.IsOneOf("CHO", "IND", "LIM", "ROJ", Path = "---")] public Team Victor { get; set; }
+                public uint NumEvents { get; set; }
+                public DateTime Opening { get; set; }
+                public DateTime Closing { get; set; }
+                public ulong InjuredMarbles { get; set; }
+                public ushort LeagueRecordRun { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Artery {
+                public record struct Naming(string English, string Latin);
+
+                [PrimaryKey] public string MeSH { get; set; } = "";
+                [Check.IsOneOf("Pulmonary", "Aorta", "Femoral")] public Naming Name { get; set; }
+                public ushort Length { get; set; }
+                public double BloodFlow { get; set; }
+                public string Source { get; set; } = "";
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -4298,6 +5735,33 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNotOneOf(Object.Other, Object.Lobster)] public Object MostCommonAnswer { get; set; }
                 public string Commentary { get; set; } = "";
                 public string ImageURL { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Nested Scalar (✓constrained✓)
+            public class Condiment {
+                [Flags] public enum Taste { Sweet = 1, Sour = 2, Salty = 4, Umami = 16, Bitter = 32 }
+                public record struct Label(sbyte Calories, sbyte Protein, sbyte Sugar, sbyte Carbohydrates);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Color { get; set; } = "";
+                public Taste Flavor { get; set; }
+                [Check.IsNotOneOf((sbyte)7, (sbyte)12, (sbyte)105, Path = "Sugar")] public Label Nutrition { get; set; }
+                public bool AllowedOnChicagoDog { get; set; }
+                public bool HeinzProduct { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class Tattoo {
+                public enum TattooKind { Permanent, Temporary, Henna, Childrens }
+                public record struct Color(byte R, byte G, byte B);
+                public record struct InkDefinition(Color Color, double Quantity);
+
+                [PrimaryKey] public string Subject { get; set; } = "";
+                [PrimaryKey] public string Location { get; set; } = "";
+                public string Shape { get; set; } = "";
+                [Check.IsNotOneOf(true, false, Path = "Color")] public InkDefinition Ink { get; set; }
+                public string Artist { get; set; } = "";
+                public TattooKind Kind { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
@@ -4508,6 +5972,39 @@ namespace UT.Kvasir.Translation {
                 public bool IsDonutHole { get; set; }
             }
 
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Necktie {
+                [Flags] public enum Color { Red = 1, Orange = 2, Yellow = 4, Green = 8, Blue = 16, Purple = 32, Pink = 64, Black = 128, White = 256, Gold = 512, Silver = 1024 }
+                public record struct Dimension(double Length, uint Width);
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public decimal Cost { get; set; }
+                public Color Colors { get; set; }
+                [Check.IsNotOneOf(10924.5152, Path = "---")] public Dimension Measurements { get; set; }
+                public bool IsClipOn { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Scattergories {
+                public struct Page {
+                    public uint Number { get; set; }
+                    public string Category1 { get; set; }
+                    public string Category2 { get; set; }
+                    public string Category3 { get; set; }
+                    public string Category4 { get; set; }
+                    public string Category5 { get; set; }
+                    public string Category6 { get; set; }
+                    public string Category7 { get; set; }
+                    public string Category8 { get; set; }
+                    public string Category9 { get; set; }
+                    public string Category10 { get; set; }
+                }
+
+                [PrimaryKey] public Guid GameID { get; set; }
+                public char Letter { get; set; }
+                [Check.IsNotOneOf('u', '=', 'F')] public Page Round { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Pie {
                 [PrimaryKey] public int ID { get; set; }
@@ -4537,6 +6034,37 @@ namespace UT.Kvasir.Translation {
             public string Lyrics { get; set; } = "";
             [Check(typeof(CustomCheck), 13, false, "ABC", null)] public bool IsSpoken { get; set; }
             public bool IsChorus { get; set; }
+        }
+
+        // Test Scenario: Applied to Nested Scalar (✓constrained✓)
+        public class Asteroid {
+            public struct OrbitalDescription {
+                public double Aphelion { get; set; }
+                public double Perihelion { get; set; }
+                [Check(typeof(CustomCheck))] public float Eccentricity { get; set; }
+            }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [Check(typeof(CustomCheck), Path = "Aphelion")] public OrbitalDescription Orbit { get; set; }
+            public DateTime Discovered { get; set; }
+            public double Length { get; set; }
+            public double Width { get; set; }
+            public double Height { get; set; }
+            public double Weight { get; set; }
+        }
+
+        // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+        public class Vineyard {
+            public enum WineColor { Red, White, Rose }
+            public record struct Vintage(string Name, ushort Year, double PercentAlcohol, WineColor Color);
+            public record struct Bottling(Vintage Vintage, double Volume, bool Corked);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string Owner { get; set; } = "";
+            public ulong Acreage { get; set; }
+            [Check(typeof(CustomCheck), Path = "Vintage")] public Bottling SignatureWine { get; set; }
+            public decimal AnnualRevenue { get; set; }
+            public string Country { get; set; } = "";
         }
 
         // Test Scenario: Scalar Property Constrained Multiple Times (✓both applied✓)
@@ -4612,6 +6140,31 @@ namespace UT.Kvasir.Translation {
             public bool IsNationalArea { get; set; }
             public double Latitude { get; set; }
             public double Longitude { get; set; }
+        }
+
+        // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+        public class StarCrossedLovers {
+            [Flags] public enum Feud { Familial, Religious, Class, SportsFandom, Culinary, Corporate, Political }
+            public record struct Name(string FirstName, char MiddleInitial, string LastName);
+
+            public Name Lover1 { get; set; }
+            [Check(typeof(CustomCheck), Path = "---")] public Name Lover2 { get; set; }
+            [PrimaryKey] public string SourceMaterial { get; set; } = "";
+            public Feud SeparationReason { get; set; }
+        }
+
+        // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+        public class Zombie {
+            public enum Kind { Disease, Necromancy, Curse }
+            public record struct Necrotization(double Percentage);
+
+            [PrimaryKey] public Guid ZombieID { get; set; }
+            public string? AliveName { get; set; }
+            public Kind ZombieType { get; set; }
+            public Necrotization Head { get; set; }
+            public Necrotization Torso { get; set; }
+            [Check(typeof(CustomCheck))] public Necrotization Legs { get; set; }
+            public Necrotization Arms { get; set; }
         }
     }
 

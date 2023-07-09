@@ -68,6 +68,59 @@ namespace UT.Kvasir.Translation {
             ), Times.Exactly(1));
         }
 
+        [TestMethod] public void Check_AppliedToNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Asteroid);
+
+            // Act
+            var translation = translator[source];
+            var table = translation.Principal.Table;
+
+            // Assert
+            table.CheckConstraints.Should().HaveCount(2);
+            table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
+            table.CheckConstraints[1].Condition.Should().BeSameAs(CustomCheck.Clause);
+            table.CheckConstraints[0].Name.Should().NotHaveValue();
+            table.CheckConstraints[1].Name.Should().NotHaveValue();
+            CustomCheck.LastCtorArgs.Should().BeEmpty();
+            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
+                Arg.IsSameSequence<IEnumerable<IField>>(
+                    new IField[] {
+                        table[new FieldName("Orbit.Aphelion")]
+                    }
+                ),
+                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Settings.Default
+            ), Times.Exactly(1));
+            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
+                Arg.IsSameSequence<IEnumerable<IField>>(
+                    new IField[] {
+                        table[new FieldName("Orbit.Eccentricity")]
+                    }
+                ),
+                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Settings.Default
+            ), Times.Exactly(1));
+        }
+
+        [TestMethod] public void Check_AppliedToNestedAggregate() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Vineyard);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Vineyard.SignatureWine))              // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"Vintage\"");                              // details / explanation
+        }
+
         [TestMethod] public void Check_ScalarConstrainedMultipleTimes() {
             // Arrange
             var translator = new Translator();
@@ -220,6 +273,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Check]")                                   // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void Check_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(StarCrossedLovers);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(StarCrossedLovers.Lover2))            // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void Check_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Zombie);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Zombie.Legs))                         // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check]");                                  // details / explanation
         }
     }
 

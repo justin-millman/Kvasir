@@ -28,6 +28,26 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void NonNullableAggregateMarkedNullable() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Bankruptcy);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Bankruptcy.Filing)).OfTypeGuid().BeingNonNullable().And
+                .HaveField("Company.Name").OfTypeText().BeingNullable().And
+                .HaveField("Company.Founded").OfTypeDateTime().BeingNullable().And
+                .HaveField("Company.TickerSymbol").OfTypeText().BeingNullable().And
+                .HaveField(nameof(Bankruptcy.Chapter)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField(nameof(Bankruptcy.TotalDebt)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField(nameof(Bankruptcy.NumCreditors)).OfTypeUInt64().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void NullableScalarsMarkedNonNullable() {
             // Arrange
             var translator = new Translator();
@@ -42,6 +62,34 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(Bone.Name)).OfTypeText().BeingNonNullable().And
                 .HaveField(nameof(Bone.LatinName)).OfTypeText().BeingNullable().And
                 .HaveField(nameof(Bone.MeSH)).OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NullableAggregateMarkedNonNullable() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Orchestra);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Orchestra.ID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Orchestra.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("Composition.Strings.Violins").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Strings.Violas").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Composition.Strings.Cellos").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Composition.Strings.Basses").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Composition.Woodwinds.Flutes").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Woodwinds.Oboes").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Woodwinds.Clarinets").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Woodwinds.Saxophones").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Woodwinds.Bassoons").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Brass.FrenchHorns").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Brass.Trumpets").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Brass.Trombones").OfTypeUInt32().BeingNullable().And
+                .HaveField("Composition.Brass.Tubas").OfTypeUInt32().BeingNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -95,6 +143,36 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("mutually exclusive")                        // category
                 .WithMessageContaining("[Nullable]")                                // details / explanation
                 .WithMessageContaining("[NonNullable]");                            // details / explanation
+        }
+
+        [TestMethod] public void NativelyNullableAggregateContainsOnlyNullableFields_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Waffle);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Waffle.Toppings))                     // error location
+                .WithMessageContaining("nullability of Aggregate is ambiguous");    // category
+        }
+
+        [TestMethod] public void AnnotatedNullableAggregateContainsOnlyNullableFields_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(iPhone);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(iPhone.iOSVersion))                   // error location
+                .WithMessageContaining("nullability of Aggregate is ambiguous");    // category
         }
     }
 }

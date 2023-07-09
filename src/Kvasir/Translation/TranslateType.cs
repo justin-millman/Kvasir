@@ -1,5 +1,4 @@
-﻿using Cybele.Collections;
-using Cybele.Core;
+﻿using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Exceptions;
@@ -49,42 +48,27 @@ namespace Kvasir.Translation {
                 return result;
             }
 
-            // The StickyList will take care of "floating" the entries that have no explicit column index specified
-            var columns = new StickyList<(string, FieldDescriptor)>();
+            // Generate the "sequences" of Fields, which must appear consecutively in the final column assignment.
+            var sequences = new List<IReadOnlyList<FieldDescriptor>>();
             foreach (var property in ConstituentPropertiesOf(clr)) {
-                foreach ((var path, var propertyDescriptor) in TranslateProperty(property)) {
+                var members = new List<FieldDescriptor>();
+                foreach ((var path, var propertyDecriptor) in TranslateProperty(property)) {
                     // We have to build up a new path to reflect the property's access mechanics from the
                     // perspective of the type being translated. At a minimum, we need to do this because we may
                     // have multiple scalars with the empty-string path, and they would overwrite each other in the
                     // running dictionary.
                     var nestedPath = path == "" ? property.Name : $"{property.Name}{PATH_SEPARATOR}{path}";
-
-                    if (!propertyDescriptor.AbsoluteColumn.HasValue) {
-                        columns.Add((nestedPath, propertyDescriptor with { AccessPath = nestedPath }));
-                        continue;
-                    }
-
-                    var index = propertyDescriptor.AbsoluteColumn.Unwrap();
-                    Debug.Assert(index >= 0);
-
-                    // It is an error for two or more Fields to be explicitly assigned to the same column index
-                    if (index <= columns.LargestIndex && columns.IsOccupied(index) && columns.IsSticky(index)) {
-                        var paths = $"\"{nestedPath}\" and \"{columns[index].Item1}\"";
-                        var msg = $"two Fields pinned to column index {index} (paths {paths})";
-                        throw Error.UserError(clr, msg);
-                    }
-
-                    // No error encountered
-                    columns.Insert(index, (nestedPath, propertyDescriptor with { AccessPath = nestedPath }));
+                    members.Add(propertyDecriptor with { AccessPath = nestedPath });
                 }
+                sequences.Add(members.OrderBy(fd => fd.RelativeColumn).ToList());
             }
 
-            // It is an error for a type (Entity, Aggregate, etc.) to have gaps in its column-sorted Fields
-            if (columns.HasGaps) {
-                var gaps = Enumerable.Range(0, columns.LargestIndex).Where(idx => !columns.IsOccupied(idx));
-                var msg = $"gaps at column index(es) {string.Join(", ", gaps)}";
-                throw Error.UserError(clr, msg);
-            }
+            // Solve the columns. This can fail for two reasons: two or more Fields are required to occupy the same
+            // column index, or it's not possible to assign all of the Fields to columns without creating gaps while
+            // keeping Aggregate groups sequential.
+            var ordering = SolveColumns(sequences);
+            ordering.MatchNone(reason => throw Error.UserError(clr, reason));
+            var columns = ordering.WithoutException().Unwrap();
 
             // We can't expose a StickyList to the upstream caller, because we might be processing an Aggregate that
             // will be further annotated. Instead, we must present the canonical mapping of paths to FieldDescriptors.
@@ -92,11 +76,13 @@ namespace Kvasir.Translation {
             // cannot be applied to a specific nested path. This LINQ query decomposes the StickyList back into a
             // dictionary with new FieldDescriptors containing the appropriate relative column index.
             var fields = columns
-                .Select((entry, column) => (entry.Item1, entry.Item2 with {
-                    AbsoluteColumn = Option.None<int>(),
-                    RelativeColumn = column
-                }))
-                .ToDictionary(entry => entry.Item1, pair => pair.Item2);
+                .Select((desc, column) => desc with { AbsoluteColumn = Option.None<int>(), RelativeColumn = column })
+                .ToDictionary(desc => desc.AccessPath, desc => desc);
+
+            // It is an error for an Aggregate type to have fewer than 1 Field
+            if (clr.IsValueType && fields.Count == 0) {
+                throw Error.UserError(clr, $"at least 1 Field required ({fields.Count} found)");
+            }
 
             // Translate all of the [Check.Complex] constraints, which may result in further errors
             var checks = ComplexConstraintsOf(clr).ToList();

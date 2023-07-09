@@ -154,6 +154,52 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void FirstDefaultOnNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Salsa);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Salsa.SalsaName)).WithNoDefault().And
+                .HaveField("PrimaryPepper.Name").WithNoDefault().And
+                .HaveField("PrimaryPepper.ScovilleRating").WithDefault(10000U).And
+                .HaveField(nameof(Salsa.Verde)).WithNoDefault().And
+                .HaveField(nameof(Salsa.ClovesGarlic)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void SubsequentDefaultOnNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Bicycle);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Bicycle.BikeID)).WithNoDefault().And
+                .HaveField("FrontWheel.Diameter").WithNoDefault().And
+                .HaveField("FrontWheel.NumSpokes").WithNoDefault().And
+                .HaveField("FrontWheel.Material.Metal1").WithNoDefault().And
+                .HaveField("FrontWheel.Material.Metal2").WithDefault("Titanium").And
+                .HaveField("BackWheel.Diameter").WithNoDefault().And
+                .HaveField("BackWheel.NumSpokes").WithNoDefault().And
+                .HaveField("BackWheel.Material.Metal1").WithNoDefault().And
+                .HaveField("BackWheel.Material.Metal2").WithDefault("Copper").And
+                .HaveField("SpareWheel.Diameter").WithNoDefault().And
+                .HaveField("SpareWheel.NumSpokes").WithNoDefault().And
+                .HaveField("SpareWheel.Material.Metal1").WithNoDefault().And
+                .HaveField("SpareWheel.Material.Metal2").WithDefault(null).And
+                .HaveField(nameof(Bicycle.Gears)).WithNoDefault().And
+                .HaveField(nameof(Bicycle.TopSpeed)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void NullDefaultOnNonNullableScalar_IsError() {
             // Arrange
             var translator = new Translator();
@@ -243,6 +289,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Default]")                                 // details / explanation
                 .WithMessageContaining($"Kind.Private of type {enumTypename}")      // details / explanation
                 .WithMessageContaining(nameof(String));                             // details / explanation
+        }
+
+        [TestMethod] public void DefaultOnNetedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(StuffedAnimal);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(StuffedAnimal.Description))           // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"Stuffing\"");                             // details / explanation
         }
 
         [TestMethod] public void ArrayDefaultValue_IsError() {
@@ -517,6 +580,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Default]")                                 // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(TourDeFrance);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(TourDeFrance.Victor))                 // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(InfinityStone);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(nameof(InfinityStone.Descriptor))            // source type
+                .WithMessageContaining(nameof(InfinityStone.Descriptor.Color))      // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Default]");                                // details / explanation
         }
     }
 }

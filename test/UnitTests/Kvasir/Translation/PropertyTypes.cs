@@ -299,5 +299,95 @@ namespace UT.Kvasir.Translation {
                 ).BeingNullable().And
                 .HaveNoOtherFields();
         }
+
+        [TestMethod] public void NonNullableAggregates() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ChineseDynasty);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(ChineseDynasty.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("Founder.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Founder.ReignBegin").OfTypeInt16().BeingNonNullable().And
+                .HaveField("Founder.ReignEnd").OfTypeInt16().BeingNonNullable().And
+                .HaveField("Founder.Death").OfTypeText().BeingNullable().And
+                .HaveField(nameof(ChineseDynasty.MaxExtent)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField(nameof(ChineseDynasty.Established)).OfTypeInt16().BeingNonNullable().And
+                .HaveField(nameof(ChineseDynasty.Fell)).OfTypeInt16().BeingNonNullable().And
+                .HaveField(nameof(ChineseDynasty.Population)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Capital.Name").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NullableAggregates() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BarbecueSauce);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(BarbecueSauce.ID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(BarbecueSauce.Brand)).OfTypeText().BeingNonNullable().And
+                .HaveField("PerServing.Calories").OfTypeUInt32().BeingNullable().And
+                .HaveField("PerServing.Fat").OfTypeDouble().BeingNullable().And
+                .HaveField("PerServing.Sugar").OfTypeDouble().BeingNullable().And
+                .HaveField("PerServing.Carbohydrates").OfTypeDouble().BeingNullable().And
+                .HaveField(nameof(BarbecueSauce.KetchupBased)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField(nameof(BarbecueSauce.Style)).OfTypeEnumeration(
+                    BarbecueSauce.Kind.Sweet, BarbecueSauce.Kind.Spicy,
+                    BarbecueSauce.Kind.Tangy, BarbecueSauce.Kind.Chocolatey
+                ).BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NestedAggregates() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DNDMonster);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(DNDMonster.Species)).OfTypeText().BeingNonNullable().And
+                .HaveField("Stats.STR").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.DEX").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.CON").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.INT").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.WIS").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.CHA").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.Saves.STR").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.Saves.DEX").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.Saves.CON").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.Saves.INT").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.Saves.WIS").OfTypeUInt8().BeingNullable().And
+                .HaveField("Stats.Saves.CHA").OfTypeUInt8().BeingNullable().And
+                .HaveField(nameof(DNDMonster.Size)).OfTypeEnumeration(
+                    DNDMonster.BodySize.Tiny,
+                    DNDMonster.BodySize.Small,
+                    DNDMonster.BodySize.Medium,
+                    DNDMonster.BodySize.Large,
+                    DNDMonster.BodySize.Huge,
+                    DNDMonster.BodySize.Gargantuan
+                ).BeingNonNullable().And
+                .HaveField("PhysicalSenses.PassivePerception").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("PhysicalSenses.Sight.Distance").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("PhysicalSenses.Sight.Darkness").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("PhysicalSenses.Sight.Trueness").OfTypeBoolean().BeingNonNullable().And
+                .HaveField(nameof(DNDMonster.CR)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField(nameof(DNDMonster.AC)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField(nameof(DNDMonster.HP)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField(nameof(DNDMonster.LegendaryActions)).OfTypeUInt8().BeingNonNullable().And
+                .HaveNoOtherFields();
+
+        }
     }
 }

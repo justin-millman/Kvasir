@@ -135,6 +135,39 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsOneOf_NestedScalarField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Earring);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("MadeOf.Material", InclusionOperator.In,
+                    "Gold", "Silver", "Plastic", "Titanium", "Wood", "Fiberglass", "Leather"
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsOneOf_NestedAggregateProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PhoneticAlphabet);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(nameof(PhoneticAlphabet.All))                            // source type
+                .WithMessageContaining(nameof(PhoneticAlphabet.All.ABCDEFGHIJKLMNOPQRS))        // error location
+                .WithMessageContaining("refers to a non-scalar")                                // category
+                .WithMessageContaining("[Check.IsOneOf]")                                       // details / explanation
+                .WithMessageContaining("\"ABCDEFGHIJK.GHIJK\"");                                // details / explanation
+        }
+
         [TestMethod] public void IsOneOf_NullableFields() {
             // Arrange
             var translator = new Translator();
@@ -498,6 +531,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"---\"");                                  // details / explanation
         }
 
+        [TestMethod] public void IsOneOf_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MarbleLeague);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MarbleLeague.Victor))                 // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Artery);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Artery.Name))                         // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
+        }
+
         [TestMethod] public void IsOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator();
@@ -641,6 +707,39 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(RorschachInkBlot.ImageURL)).OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNotOneOf_NestedScalarField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Condiment);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Nutrition.Sugar", InclusionOperator.NotIn,
+                    (sbyte)7, (sbyte)12, (sbyte)105
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNotOneOf_NestedAggregateProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Tattoo);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Tattoo.Ink))                          // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"Color\"");                                // details / explanation
         }
 
         [TestMethod] public void IsNotOneOf_NullableFields() {
@@ -1013,6 +1112,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Necktie);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Necktie.Measurements))                // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Scattergories);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Scattergories.Round))                 // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
         }
 
         [TestMethod] public void IsNotOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {

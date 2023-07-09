@@ -90,7 +90,7 @@ namespace Kvasir.Translation {
                 return MakeError(ctxt, annotations, "path is required when placed on non-scalar");
             }
             else {
-                return MakeError(ctxt, annotations, $"path \"{ctxt.Path}\" does not exist");
+                return MakeError(ctxt, annotations, $"path \"{ctxt.Path}\" does not exist (or refers to a non-scalar)");
             }
         }
 
@@ -344,6 +344,16 @@ namespace Kvasir.Translation {
 
             var annotations = new Type[] { typeof(ConstraintsSentinel) };
             var msg = $"default value {defaultValue.ForDisplay()} does not satisfy constraints ({reason})";
+            return MakeError(ctxt, annotations, msg);
+        }
+
+        /// [TODO]
+        public static KvasirException AmbiguousNullability(Ctxt ctxt) {
+            Debug.Assert(ctxt.Property is not null);
+            Debug.Assert(ctxt.Path == "");
+            
+            var annotations = new Type[] { typeof(NullableAttribute) };
+            var msg = "nullability of Aggregate is ambiguous because all nested Fields are already nullable";
             return MakeError(ctxt, annotations, msg);
         }
 

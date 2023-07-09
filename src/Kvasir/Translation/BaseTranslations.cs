@@ -84,5 +84,21 @@ namespace Kvasir.Translation {
 
             return new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
         }
+
+        private FieldsListing AggregateBaseTranslation(PropertyInfo property) {
+            Debug.Assert(property is not null);
+            Debug.Assert(!DBType.IsSupported(property.PropertyType) && property.PropertyType.IsValueType);
+
+            var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+            var typeTranslation = TranslateType(type);
+
+            var result = new Dictionary<string, FieldDescriptor>();
+            foreach (var (path, descriptor) in typeTranslation.Fields) {
+                result[path] = descriptor with {
+                    Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList()
+                };
+            }
+            return result;
+        }
     }
 }

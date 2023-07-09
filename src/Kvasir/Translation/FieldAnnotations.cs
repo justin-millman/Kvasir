@@ -6,6 +6,7 @@ using Optional;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 // This code takes a "base translation" - which is intentionally agnostic of the source property's category - and
@@ -50,11 +51,6 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
-                // It is an error for a [Name] attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
-                    throw Error.InvalidPath(context, annotation);
-                }
-
                 // It is an error for the value specified by a [Name] attribute to be invalid; currently, the only
                 // concrete restriction is that the value is neither null nor the empty string
                 if (annotation.Name is null || annotation.Name == "") {
@@ -62,13 +58,52 @@ namespace Kvasir.Translation {
                 }
 
                 // It is an error for multiple [Name] attributes on a single property to apply to the same Path, though
-                // it is legal if a [Name] attribute on an outer aggregate to override that of an inner aggregate
+                // it is legal for a [Name] attribute at an outer scope to override that of one applied at an inner
+                // scope
                 if (!processed.Add(annotation.Path)) {
                     throw Error.DuplicateAnnotation(context, annotation);
                 }
 
-                // No errors encountered
-                state[annotation.Path] = target with { Name = new List<string>() { annotation.Name } };
+                // If the Path on a [Name] attribute refers to a concrete Field (it would be a scalar or an enumeration)
+                // then the Field's name in total is replaced by the annotation value
+                if (state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                    state[annotation.Path] = target with { Name = new List<string>() { annotation.Name } };
+                    continue;
+                }
+
+                // It is an error for a [Name] attribute to have a non-existent Path
+                var matches = GetMatches(state, annotation.Path).ToList();
+                if (matches.IsEmpty()) {
+                    throw Error.InvalidPath(context, annotation);
+                }
+
+                // If there is no scalar/enumeration Field at the given Path, we assume it will resolve to a compound
+                // property (such as an Aggregate). We identify all Fields sourced from that compound by looking for
+                // those whose path is prefixed with the provided Path. Any Field whose name has fewer "parts" than the
+                // Path had a blanket renaming (as above) applied up-scope, so nothing is done. Otherwise, only the
+                // "part" matched by the prefix gets replaced.
+                foreach ((var path, var descriptor) in matches) {
+                    if (annotation.Path == "") {
+                        // This check guards against overwriting the renaming of a Field that has already been renamed
+                        // through a previous full-path-supplied annotation
+                        if (descriptor.Name[0] == property.Name) {
+                            state[path] = state[path] with {
+                                Name = new List<string>(descriptor.Name) { [0] = annotation.Name }
+                            };
+                        }
+                    }
+                    else {
+                        // Note: The -1 here is because the Name already has the property appended (as the default
+                        //   naming convention for an Aggregate), but we want to discount that when considering if a
+                        //   name change is applicable
+                        var pathParts = annotation.Path.Split(PATH_SEPARATOR);
+                        if (descriptor.Name.Count - 1 > pathParts.Length) {
+                            state[path] = state[path] with {
+                                Name = new List<string>(descriptor.Name) { [pathParts.Length] = annotation.Name }
+                            };
+                        }
+                    }
+                }
             }
         }
 
@@ -86,13 +121,22 @@ namespace Kvasir.Translation {
                 throw Error.MutuallyExclusive(context, new NullableAttribute(), new NonNullableAttribute());
             }
 
+            // If the property is annotated as being nullable, or if there are no annotations and the property's type
+            // is natively nullable, then nullability is imparted. This is done by making all of the Fields nullable;
+            // for scalars and aggregates, there will be only one. Because the default for scalars and and aggregates is
+            // non-nullable, they will never fail the ambiguity check.
             if (nullable || (!nonNullable && nativeNullability == Nullability.Nullable)) {
-                // Note: There is some non-trivial work to do here when dealing with non-scalars. For example, a
-                // Reference property cannot take a [NonNullable] annotation, and an Aggregate property cannot take a
-                // [Nullable] annotation if all of its constituent Fields are already nullable. We will deal with those
-                // nuances when we implement translation for those property categories.
+                var noAmbiguity = false;
                 foreach ((var path, var descriptor) in state) {
+                    noAmbiguity |= descriptor.Nullability == IsNullable.No;
                     state[path] = descriptor with { Nullability = IsNullable.Yes };
+                }
+
+                // It is an error for a compound property, such as an Aggregate, to be nullable if all its constituent
+                // nested Fields are already nullable; this creates an ambiguity as to the meaning of all-null
+                if (!noAmbiguity) {
+                    var context = new PropertyTranslationContext(property, "");
+                    throw Error.AmbiguousNullability(context);
                 }
             }
         }
@@ -121,7 +165,6 @@ namespace Kvasir.Translation {
         private static void ProcessConverters(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
-            Debug.Assert(state.Count == 1 && state.ContainsKey(""));        // will need to be a proper check later
 
             var dpAnnotation = property.GetCustomAttribute<DataConverterAttribute>();
             var numeric = property.HasAttribute<NumericAttribute>();
@@ -129,8 +172,16 @@ namespace Kvasir.Translation {
 
             var context = new PropertyTranslationContext(property, "");
             var expectedType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+            var isScalarOrEnumeration = state.ContainsKey("");
+            Debug.Assert(!isScalarOrEnumeration || state.Count == 1);
 
             if (dpAnnotation is not null) {
+                // It is an error for a non-Scalar/non-Enumeration property to be annotated with [DataProvider]
+                if (!isScalarOrEnumeration) {
+                    var msg = $"{expectedType.Name} is neither a scalar nor an enumeration";
+                    throw Error.UserError(context, dpAnnotation, msg);
+                }
+
                 // It is an error for a property to be annotated with both [DataProvider] and [Numeric]
                 if (numeric) {
                     throw Error.MutuallyExclusive(context, dpAnnotation, new NumericAttribute());
@@ -196,18 +247,20 @@ namespace Kvasir.Translation {
             // values. These values may be augmented or filtered by [Check.IsOneOf] and [Check.IsNotOneOf] constraints
             // later. If the converter's result type is not itself an enumeration, or if the back-end database provider
             // does not actually support enumerations, the restricted image will be realized as a CHECK constraint.
-            var updated = new HashSet<object>();
-            foreach (var enumerator in state[""].Constraints.RestrictedImage) {
-                try {
-                    updated.Add(state[""].Converter.Convert(enumerator)!);
+            if (isScalarOrEnumeration) {
+                var updated = new HashSet<object>();
+                foreach (var enumerator in state[""].Constraints.RestrictedImage) {
+                    try {
+                        updated.Add(state[""].Converter.Convert(enumerator)!);
+                    }
+                    catch (Exception ex) {
+                        Debug.Assert(dpAnnotation is not null);
+                        var msg = $"error converting {enumerator.ForDisplay()}: {ex.Message}";
+                        throw Error.UserError(context, dpAnnotation, msg);
+                    }
                 }
-                catch (Exception ex) {
-                    Debug.Assert(dpAnnotation is not null);
-                    var msg = $"error converting {enumerator.ForDisplay()}: {ex.Message}";
-                    throw Error.UserError(context, dpAnnotation, msg);
-                }
+                state[""] = state[""] with { Constraints = state[""].Constraints with { RestrictedImage = updated } };
             }
-            state[""] = state[""] with { Constraints = state[""].Constraints with { RestrictedImage = updated } };
         }
 
         private static void ProcessDefaults(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
@@ -249,6 +302,27 @@ namespace Kvasir.Translation {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
 
+            void MarkInPrimaryKey(string path) {
+                var target = state[path];
+                var annotation = new PrimaryKeyAttribute();
+                var context = new PropertyTranslationContext(property, path);
+
+                // It is an error for a [PrimaryKey] attribute to be applied to a nullable Field
+                if (target.Nullability == IsNullable.Yes) {
+                    var msg = "a nullable Field cannot be part of an Entity's primary key";
+                    throw Error.UserError(context, annotation, msg);
+                }
+
+                // It is an error for a [PrimaryKey] attribute to be placed directly on a nested Field
+                if (!property.ReflectedType!.IsClass) {
+                    var msg = "a nested Field cannot be directly annotated";
+                    throw Error.UserError(context, annotation, msg);
+                }
+
+                // No errors encountered
+                state[path] = state[path] with { InPrimaryKey = true };
+            }
+
             foreach (var annotation in property.GetCustomAttributes<PrimaryKeyAttribute>()) {
                 var context = new PropertyTranslationContext(property, annotation.Path);
 
@@ -257,19 +331,24 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
-                // It is an error for a [PrimaryKey] attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
-                    throw Error.InvalidPath(context, annotation);
+                // If the Path on a [PrimaryKey] attribute refers to a concrete Field (it would be a scalar or an
+                // enumeration) then the Field is simply placed into the Primary Key
+                if (state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                    MarkInPrimaryKey(annotation.Path);
                 }
+                else {
+                    // It is an error for a [PrimaryKey] attribute to have a non-existent Path
+                    var matches = GetMatches(state, annotation.Path).ToList();
+                    if (matches.IsEmpty()) {
+                        throw Error.InvalidPath(context, annotation);
+                    }
 
-                // It is an error for a [PrimaryKey] attribute to be applied to a nullable Field
-                if (target.Nullability == IsNullable.Yes) {
-                    var msg = "a nullable Field cannot be part of an Entity's primary key";
-                    throw Error.UserError(context, annotation, msg);
+                    // If the Path on a [PrimaryKey] attribute refers to a grouping of Fields (e.g. an aggregate), then
+                    // all of the nested Fields are placed into the Primary Key
+                    foreach ((var path, var _) in matches) {
+                        MarkInPrimaryKey(path);
+                    }
                 }
-
-                // No errors encountered
-                state[annotation.Path] = state[annotation.Path] with { InPrimaryKey = true };
             }
         }
 
@@ -277,16 +356,17 @@ namespace Kvasir.Translation {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
 
+            void PlaceInCandidateKey(string path, string keyName) {
+                state[path] = state[path] with {
+                    CandidateKeyMemberships = new HashSet<string>(state[path].CandidateKeyMemberships) { keyName }
+                };
+            }
+
             foreach (var annotation in property.GetCustomAttributes<UniqueAttribute>()) {
                 var context = new PropertyTranslationContext(property, annotation.Path);
 
                 // It is an error for a [Unique] attribute to have a null Path
                 if (annotation.Path is null) {
-                    throw Error.InvalidPath(context, annotation);
-                }
-
-                // It is an error for a [Unique] attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     throw Error.InvalidPath(context, annotation);
                 }
 
@@ -301,10 +381,32 @@ namespace Kvasir.Translation {
                     throw Error.InvalidName(context, annotation, annotation.Name, msg);
                 }
 
-                // No errors encountered
-                state[annotation.Path] = target with {
-                    CandidateKeyMemberships = new HashSet<string>(target.CandidateKeyMemberships) { annotation.Name }
-                };
+                // If the Path on a [Unique] attribute refers to a concrete Field (it would be a scalar or an
+                // enumeration) then the Field is simply placed into the appropriate Candidate Key
+                if (state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                    PlaceInCandidateKey(annotation.Path, annotation.Name);
+                }
+                else {
+                    // It is an error for a [Unique] attribute to have a non-existent Path
+                    var matches = GetMatches(state, annotation.Path).ToList();
+                    if (matches.IsEmpty()) {
+                        throw Error.InvalidPath(context, annotation);
+                    }
+
+                    // If the Path on a [Unique] attribute refers to a grouping of Fields (e.g. an aggregate), then all
+                    // of the nested Fields are placed into the appropriate Candidate Key
+                    foreach ((var path, var _) in matches) {
+                        PlaceInCandidateKey(path, annotation.Name);
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<(string, FieldDescriptor)> GetMatches(FieldsListing state, string targetPath) {
+            foreach ((var path, var descriptor) in state) {
+                if (targetPath == "" || path.StartsWith(targetPath + NAME_SEPARATOR)) {
+                    yield return (path, descriptor);
+                }
             }
         }
     }

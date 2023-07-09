@@ -146,6 +146,23 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void ConverterOnAggregateField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Joust);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Joust.KnightB))                       // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining(nameof(Joust.Person))                        // details / explanation
+                .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
+        }
+
         [TestMethod] public void ConverterOnNullablePropertyHasNonNullableTargetType() {
             // Arrange
             var translator = new Translator();
@@ -390,6 +407,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("enumeration");                              // details / explanation
         }
 
+        [TestMethod] public void NumericConverterOnAggregateField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(GolfCourse);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(GolfCourse.Hole14))                   // error location
+                .WithMessageContaining("[Numeric]")                                 // details / explanation
+                .WithMessageContaining(nameof(GolfCourse.Hole))                     // details / explanation
+                .WithMessageContaining("enumeration");                              // details / explanation
+        }
+
         [TestMethod] public void AsStringConverterOnBooleanField_IsError() {
             // Arrange
             var translator = new Translator();
@@ -472,6 +506,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Eyeglasses.GlassesID))                // error location
                 .WithMessageContaining("[AsString]")                                // details / explanation
                 .WithMessageContaining(nameof(Guid))                                // details / explanation
+                .WithMessageContaining("enumeration");                              // details / explanation
+        }
+
+        [TestMethod] public void AsStringConverterOnAggregateField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Windmill);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Windmill.EnergyGenerated))            // error location
+                .WithMessageContaining("[AsString]")                                // details / explanation
+                .WithMessageContaining(nameof(Windmill.EnergyOutput))               // details / explanation
                 .WithMessageContaining("enumeration");                              // details / explanation
         }
 

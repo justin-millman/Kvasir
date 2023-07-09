@@ -6831,6 +6831,9 @@
               A <see cref="T:Kvasir.Exceptions.KvasirException"/> with a contextualized error message.
             </returns>
         </member>
+        <member name="M:Kvasir.Translation.Error.AmbiguousNullability(Kvasir.Translation.PropertyTranslationContext)">
+            [TODO]
+        </member>
         <member name="M:Kvasir.Translation.Error.UserError(Kvasir.Translation.PropertyTranslationContext,System.Attribute,System.String)">
             <summary>
               Create a <see cref="T:Kvasir.Exceptions.KvasirException"/> describing an arbitrary property-scope error.

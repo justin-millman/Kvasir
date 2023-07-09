@@ -131,6 +131,57 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Orisha.Culture));                     // details / explanation
         }
 
+        [TestMethod] public void IsGreaterThan_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Opioid);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Definition.DrugBank", ComparisonOperator.GT, "XP14U339D").And
+                .HaveConstraint("Definition.Formula.O", ComparisonOperator.GT, 2).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsGreaterThan_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Wordle);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Wordle.Guess3))                       // error location
+                .WithMessageContaining("\"L4.Hint\"")                               // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(Wordle.Result));                      // details / explanation
+        }
+
+        [TestMethod] public void IsGreaterThan_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(FlashMob);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(FlashMob.Participants))               // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
+                .WithMessageContaining("\"Leader\"");                               // details / explanation
+        }
+
         [TestMethod] public void IsGreaterThan_NullableTotallyOrderedFields() {
             // Arrange
             var translator = new Translator();
@@ -411,6 +462,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"---\"");                                  // details / explanation
         }
 
+        [TestMethod] public void IsGreaterThan_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Conlang);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Conlang.Codes))                       // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsGreaterThan_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LaborStrike);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(LaborStrike.Members))                 // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsGreaterThan]");                    // details / explanation
+        }
+
         [TestMethod] public void IsGreaterThan_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator();
@@ -543,6 +627,59 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
                 .WithMessageContaining("totally ordered")                           // details / explanation
                 .WithMessageContaining(nameof(SolicitorGeneral.PoliticalParty));    // details / explanation
+        }
+
+        [TestMethod] public void IsLessThan_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Raptor);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Scientific.Family", ComparisonOperator.LT, "Zynovia").And
+                .HaveConstraint("Measurements.Weight", ComparisonOperator.LT, 174.991).And
+                .HaveConstraint("Measurements.TopSpeed", ComparisonOperator.LT, long.MaxValue).And
+                .HaveConstraint("Measurements.Wingspan", ComparisonOperator.LT, (ushort)489).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsLessThan_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Feruchemy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Feruchemy.Effects))                   // error location
+                .WithMessageContaining("\"Kind\"")                                  // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(Feruchemy.Matrix));                   // details / explanation
+        }
+
+        [TestMethod] public void IsLessThan_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Firefighter);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Firefighter.Firehouse))               // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
+                .WithMessageContaining("\"ServiceArea\"");                          // details / explanation
         }
 
         [TestMethod] public void IsLessThan_NullableTotallyOrderedFields() {
@@ -825,6 +962,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"---\"");                                  // details / explanation
         }
 
+        [TestMethod] public void IsLessThan_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SurgicalMask);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SurgicalMask.ID))                     // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsLessThan_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SecretSociety);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SecretSociety.Initiation))            // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsLessThan]");                       // details / explanation
+        }
+
         [TestMethod] public void IsLessThan_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator();
@@ -957,6 +1127,57 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
                 .WithMessageContaining("totally ordered")                           // details / explanation
                 .WithMessageContaining(nameof(CivCityState.Category));              // details / explanation
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(FamilyTree);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Focal.FirstName", ComparisonOperator.GTE, "Tony").And
+                .HaveConstraint("Focal.DOB", ComparisonOperator.GTE, new DateTime(1255, 9, 18)).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Readymade);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Readymade.Registration))              // error location
+                .WithMessageContaining("\"IsFormallyRegistered\"")                  // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(FitnessCenter);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(FitnessCenter.Address))               // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
+                .WithMessageContaining("\"Street\"");                               // details / explanation
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NullableTotallyOrderedFields() {
@@ -1234,6 +1455,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"---\"");                                  // details / explanation
         }
 
+        [TestMethod] public void IsGreaterOrEqualTo_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Pagoda);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Pagoda.Location))                     // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Motorcycle);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Motorcycle.Wheels))                   // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsGreaterOrEqualTo]");               // details / explanation
+        }
+
         [TestMethod] public void IsGreaterOrEqualTo_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator();
@@ -1367,6 +1621,56 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
                 .WithMessageContaining("totally ordered")                           // details / explanation
                 .WithMessageContaining(nameof(ConcertTour.Type));                   // details / explanation
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Hominin);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Species.Genus", ComparisonOperator.LTE, "Zubeia").And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(AmazonService);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(AmazonService.Plan))                  // error location
+                .WithMessageContaining("\"Type\"")                                  // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
+                .WithMessageContaining("totally ordered")                           // details / explanation
+                .WithMessageContaining(nameof(AmazonService.SubscriptionType));     // details / explanation
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Shampoo);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Shampoo.Directions))                  // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
+                .WithMessageContaining("\"Ages\"");                                 // details / explanation
         }
 
         [TestMethod] public void IsLessOrEqualTo_NullableTotallyOrderedFields() {
@@ -1644,6 +1948,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"---\"");                                  // details / explanation
         }
 
+        [TestMethod] public void IsLessOrEqualTo_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Mausoleum);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Mausoleum.Location))                  // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Pseudonym);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Pseudonym.For))                       // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsLessOrEqualTo]");                  // details / explanation
+        }
+
         [TestMethod] public void IsLessOrEqualTo_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator();
@@ -1778,6 +2115,38 @@ namespace UT.Kvasir.Translation {
                 ).BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNot_NestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SeventhInningStretch);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Game.AwayTeam", ComparisonOperator.NE, "Savannah Bananas").And
+                .HaveConstraint("Game.Date", ComparisonOperator.NE, new DateTime(2001, 9, 11)).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNot_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SportsBet);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SportsBet.Odds))                      // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
+                .WithMessageContaining("\"OneDollarPayout\"");                      // details / explanation
         }
 
         [TestMethod] public void IsNot_NullableTotallyOrderedFields() {
@@ -2057,6 +2426,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Check.IsNot]")                             // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNot_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Restaurant);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Restaurant.SaladBar))                 // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNot_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Balk);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Balk.Pitcher))                        // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsNot]");                            // details / explanation
         }
 
         [TestMethod] public void IsNot_DefaultValueDoesNotSatisfyConstraint_IsError() {

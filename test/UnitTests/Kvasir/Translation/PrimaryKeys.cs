@@ -38,6 +38,64 @@ namespace UT.Kvasir.Translation {
                 );
         }
 
+        [TestMethod] public void AggregateMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SpaceShuttle);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    nameof(SpaceShuttle.Name),
+                    "Specification.SerialNumber",
+                    "Specification.Weight",
+                    "Specification.ID"
+                );
+        }
+
+        [TestMethod] public void NestedScalarMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Tepui);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "Location.Latitude",
+                    "Location.Longitude"
+                );
+        }
+
+        [TestMethod] public void NestedAggregateMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ChoppedBasket);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    nameof(ChoppedBasket.AirDate),
+                    nameof(ChoppedBasket.Round),
+                    "Ingredient1.Name.English",
+                    "Ingredient1.Name.Alternative",
+                    "Ingredient2.Name.English",
+                    "Ingredient2.Name.Alternative",
+                    "Ingredient3.Name.English",
+                    "Ingredient3.Name.Alternative",
+                    "Ingredient4.Name.English",
+                    "Ingredient4.Name.Alternative"
+                );
+        }
+
         [TestMethod] public void AllScalarsMarkedPrimaryKey() {
             // Arrange
             var translator = new Translator();
@@ -284,6 +342,55 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("nullable Field");                           // details / explanation
         }
 
+        [TestMethod] public void NullableAggregateMarkedPrimaryKey_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MedievalCastle);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MedievalCastle.Drawbridge))           // error location
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("nullable Field");                           // details / explanation
+        }
+
+        [TestMethod] public void AggregateWithNullablePropertyMarkedPrimaryKey_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Wizard);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Wizard.Background))                   // error location
+                .WithMessageContaining("Schooling.School")                          // error sub-location
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("nullable Field");                           // details / explanation
+        }
+
+        [TestMethod] public void PropertyInAggregateMarkedPrimaryKey_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LunarCrater);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(nameof(LunarCrater.Coordinate))              // source type
+                .WithMessageContaining(nameof(LunarCrater.Coordinate.Longitude))    // error location
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("nested Field");                             // details / explanation
+        }
+
         [TestMethod] public void CannotDeducePrimaryKey_IsError() {
             // Arrange
             var translator = new Translator();
@@ -326,6 +433,23 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Highway.Number))                      // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ConfidenceInterval);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ConfidenceInterval.PlusMinus))        // error location
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[PrimaryKey]")                              // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
