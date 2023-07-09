@@ -8,10 +8,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		CHANGELOG.md = CHANGELOG.md
+		GlobalSuppressions.cs = GlobalSuppressions.cs
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
-		.github\workflows\windows.yml = .github\workflows\windows.yml
 		.github\workflows\ubuntu.yml = .github\workflows\ubuntu.yml
+		.github\workflows\windows.yml = .github\workflows\windows.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kvasir", "src\Kvasir\Kvasir.csproj", "{D9AA0340-6BFA-4F53-B933-AC3F8364F0F6}"

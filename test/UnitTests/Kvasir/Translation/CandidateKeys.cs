@@ -4,7 +4,6 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.CandidateKeys;
-
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Candidate Keys")]
     public class CandidateKeyTests {
@@ -106,6 +105,119 @@ namespace UT.Kvasir.Translation {
                 .HaveCandidateKey("Size").OfFields(
                     nameof(Desert.Length),
                     nameof(Desert.Width)
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void AggregateInCandidateKeyAlone() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Ointment);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveAnonymousCandidateKey().OfFields(
+                    "Composition.PcntWater",
+                    "Composition.PcntOil"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void AggregateInCandidateKeyWithOtherFields() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Shipwreck);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveCandidateKey("Identity").OfFields(
+                    nameof(Shipwreck.Ship),
+                    "Location.Latitude",
+                    "Location.Longitude"
+                ).And
+                .HaveAnonymousCandidateKey().OfFields(
+                    "FurthestExtent.Latitude",
+                    "FurthestExtent.Longitude"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void NestedScalarsInCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SpiderMan);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveCandidateKey("AlterEgo").OfFields(
+                    "AlterEgo.FirstName",
+                    "AlterEgo.LastName"
+                ).And
+                .HaveCandidateKey("Portrayal").OfFields(
+                    "Portrayal.FirstName",
+                    "Portrayal.MiddleName",
+                    "Portrayal.LastName"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void NestedAggregatesInCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Neurotransmitter);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveAnonymousCandidateKey().OfFields(
+                    "Definition.Name.Name",
+                    "Definition.Name.Abbreviation"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void AggregateFieldsNativelyInCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ZoomMeeting);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveAnonymousCandidateKey().OfFields("Credentials.MeetingID").And
+                .HaveCandidateKey("JoinKey").OfFields(
+                    "Credentials.MeetingNumber",
+                    "Credentials.PassCode"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void ScalarAndNestedFieldsInSameCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Sabermetric);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveCandidateKey("Lookup").OfFields(
+                    nameof(Sabermetric.GamePhase),
+                    "Formula.Formula"
                 ).And
                 .HaveNoOtherCandidateKeys();
         }
@@ -213,6 +325,23 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Sonnet.Line1))                        // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Unique]")                                  // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(EgyptianGod);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(EgyptianGod.Name))                    // error location
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Unique]")                                  // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation

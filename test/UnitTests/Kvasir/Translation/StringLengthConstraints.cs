@@ -132,6 +132,75 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void IsNonEmpty_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Mustache);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Mustache.Style))                      // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(Mustache.Kind));                      // details / explanation
+        }
+
+        [TestMethod] public void IsNonEmpty_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BarGraph);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Legend.XAxisLabel", ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "Legend.YAxisLabel", ComparisonOperator.GTE, 1).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNonError_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BackyardBaseballPlayer);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(BackyardBaseballPlayer.Statistics))   // error location
+                .WithMessageContaining("\"Pitching\"")                              // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsNonEmpty")                         // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(Byte));                               // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(OilField);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(OilField.Where))                      // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
+                .WithMessageContaining("\"Place.Coordinate\"");                     // details / explanation
+        }
+
         [TestMethod] public void IsNonEmpty_FieldWithStringDataConversionTarget() {
             // Arrange
             var translator = new Translator();
@@ -209,6 +278,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNonEmpty_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Sutra);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Sutra.Source))                        // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNonEmpty_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Kaiju);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Kaiju.Size))                          // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsNonEmpty]");                       // details / explanation
         }
 
         [TestMethod] public void IsNonEmpty_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -351,6 +453,75 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void LengthIsAtLeast_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cybersite);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Cybersite.FirstSeasonAppeared))       // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(Cybersite.Season));                   // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Dubbing);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Dubber.FirstName", ComparisonOperator.GTE, 6).And
+                .HaveConstraint(FieldFunction.LengthOf, "Dubber.LastName", ComparisonOperator.GTE, 2).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BaseballMogul);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(BaseballMogul.Version))               // error location
+                .WithMessageContaining("\"Patch\"")                                 // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MagicSystem);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MagicSystem.SandersonsLaws))          // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
+                .WithMessageContaining("\"Zeroth\"");                               // details / explanation
+        }
+
         [TestMethod] public void LengthIsAtLeast_FieldWithStringDataConversionTarget() {
             // Arrange
             var translator = new Translator();
@@ -459,6 +630,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cactus);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Cactus.ScientificName))               // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SederPlate);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SederPlate.Karpas))                   // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.LengthIsAtLeast]");                  // details / explanation
         }
 
         [TestMethod] public void LengthIsAtLeast_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -603,6 +807,75 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
         }
 
+        [TestMethod] public void LengthIsAtMost_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ComputerVirus);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ComputerVirus.Classification))        // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(ComputerVirus.Type));                 // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtMost_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MafiaFamily);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Capo.FirstName", ComparisonOperator.LTE, 26).And
+                .HaveConstraint(FieldFunction.LengthOf, "Capo.MiddleName", ComparisonOperator.LTE, 71).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtMost_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Kayak);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Kayak.KayakSeat))                     // error location
+                .WithMessageContaining("\"Radius\"")                                // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(Double));                             // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtMost_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MaddenNFL);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MaddenNFL.CoverPlayer))               // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
+                .WithMessageContaining("\"Name\"");                                 // details / explanation
+        }
+
         [TestMethod] public void LengthIsAtMost_FieldWithStringDataConversionTarget() {
             // Arrange
             var translator = new Translator();
@@ -712,6 +985,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtMost_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ImaginaryFriend);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ImaginaryFriend.Features))            // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtMost_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Newscast);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Newscast.Sports))                     // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.LengthIsAtMost]");                   // details / explanation
         }
 
         [TestMethod] public void LengthIsAtMost_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -854,6 +1160,77 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
                 .WithMessageContaining(nameof(String))                              // details / explanation
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
+        }
+
+        [TestMethod] public void LengthIsBetween_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Kinesis);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Kinesis.Kind))                        // error location
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(Kinesis.Group));                      // details / explanation
+        }
+
+        [TestMethod] public void LengthIsBetween_NestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LiteraryTrope);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "FirstAppearance.Work", ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "FirstAppearance.Work", ComparisonOperator.LTE, 20).And
+                .HaveConstraint(FieldFunction.LengthOf, "FirstAppearance.Author", ComparisonOperator.GTE, 35).And
+                .HaveConstraint(FieldFunction.LengthOf, "FirstAppearance.Author", ComparisonOperator.LTE, 100).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsBetween_NestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(OvernightCamp);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(OvernightCamp.Schedule))              // error location
+                .WithMessageContaining("\"Sessions\"")                              // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
+                .WithMessageContaining(nameof(String))                              // details / explanation
+                .WithMessageContaining(nameof(UInt32));                             // details / explanation
+        }
+
+        [TestMethod] public void LengthIsBetween_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Dentist);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Dentist.Qualifications))              // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
+                .WithMessageContaining("\"Doctorate\"");                            // details / explanation
         }
 
         [TestMethod] public void LengthIsBetween_FieldWithStringDataConversionTarget() {
@@ -1000,6 +1377,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void LengthIsBetween_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(InternetCraze);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(InternetCraze.Dangers))               // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void LengthIsBetween_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MesopotamianGod);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(MesopotamianGod.Names))               // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.LengthIsBetween]");                  // details / explanation
         }
 
         [TestMethod] public void LengthIsBetween_DefaultValueDoesNotSatisfyConstraint_IsError() {

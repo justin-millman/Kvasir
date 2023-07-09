@@ -1,3 +1,5 @@
+# This document lists the Entity concepts that have been used in unit tests for Kvasir Translation.
+
 Achaean Naval Contingent
 Acid
 ACT
@@ -11,6 +13,7 @@ Alarm
 Alkene
 Allomancy
 Alphabet
+Amazon Service
 Ambassador
 American Idol
 Amino Acid
@@ -23,8 +26,10 @@ Aqueduct
 Archangel
 Archbishop
 Aria
+Armada
 Arthurian Knight
 Artiodactyl
+Asteroid
 Astronaut
 Atmospheric Layer
 Atoll
@@ -33,13 +38,19 @@ Auction Lot
 Avatar
 Azeotrope
 Aztec God
+Backyard Baseball Player
 Bacterium
 Bagel
+Balk
 Ballet
 Bank Account
+Bankruptcy
+Bar Graph
+Barbecue Sauce
 Baryon
 Baseball Bat
 Baseball Card
+Baseball Mogul
 Basketball Player
 Batman Villain
 Battery
@@ -51,6 +62,7 @@ Beach
 Belt
 Ben 10 Alien
 Bestiary
+Bicycle
 Billiard Ball
 Binary Test
 Bingo Card
@@ -64,16 +76,19 @@ Bone
 Book
 Bookmark (web browsing)
 Borate
+Border Crossing
 Botanical Garden
 Bowl Game
 Bowling Frame
 Boxer
 Brassiere
+Bread
 Bridge
 Burrito
 Button (UI)
 C++ Header File
 Cabinet Department
+Cactus
 Calendar
 Caliphate
 Camera
@@ -89,6 +104,7 @@ Capacitor
 Carbohydrate
 Carousel
 Casino
+Castle
 Cave
 Cave Painting
 Celtic God
@@ -102,7 +118,9 @@ Chemical Element
 Chess Piece
 Chewing Gum
 Chinese Character
+Chinese Dynasty
 Chocolate
+Chopped Basket
 Christian Denomination
 Christmas Carol
 Church
@@ -112,6 +130,7 @@ Circle
 Circle of Hell
 Civilization VI City State
 Civilization VI Military Unit
+Cliff
 Climate
 Clock Tower
 Clue(do) Game
@@ -124,13 +143,18 @@ ComicCon
 Command (terminal)
 Commercial
 Compiler Warning
+Computer Virus
 Concentration Camp
 Concert
 Concert Tour
+Condiment
+Confidence Interval
+Conlang
 Constitutional Amendment
 Coral Reef
 Country
 County
+Coup d'État
 Coupon
 Court Case
 Credit Card
@@ -139,7 +163,9 @@ Cruise
 Cryptid
 Cryptocurrency
 Currency
+Cybersite
 D&D Character
+D&D Monster
 D&D Spell
 D&D Weapon
 Dalai Lama
@@ -147,6 +173,7 @@ Dam
 Data Structure
 Database Field
 Date
+Dentist
 Desert
 Diamond
 Directory (file system)
@@ -155,21 +182,27 @@ District Attorney
 DLL
 Doctor (Doctor Who)
 Documentary
+Dog Show
 Domino
 Donut
 Draft Pick
 Dragon
 Dreidel
 Drum
+Dubbing
 E-Mail
+Earring
 Earthquake
 Ecumenical Council
+Egyptian God
 Elevator
 Emotion
+Encomienda
 Encryption
 Encyclopedia
 Enumeration
 Episode
+Essay
 ETF
 Eurovision Song Contest
 Excel Range
@@ -177,15 +210,21 @@ Expiration
 Eyeglasses
 Facebook Post
 Fairy Tale
+Family Tree
 Federal Law
+Feruchemy
 Field Goal
 Fighter Jet
 Final Four
 Final Jeopardy!
 Firearm
+Firefighter
+Fitness Center
 Fjord
+Flash Mob
 Flashcard
 Flight
+Flood
 Flower
 Font
 Food Chain
@@ -207,6 +246,8 @@ Geyser
 Git Commit
 Git Hook
 Gold Rush
+Golden Raspberry
+Golf Course
 Golf Hole
 Grammatical Case
 Greek God
@@ -217,10 +258,12 @@ Gymnast
 Haiku
 Hall of Fame
 Hash Function
+Hash Map
 Headphones
 Healing Potion (D&D)
 Hebrew Letter
 Hebrew Prayer
+Helicopter
 Hieroglyph
 Highway
 Hindu God
@@ -231,6 +274,7 @@ Holiday
 Holy Roman Emperor
 Home Run Derby
 Homeric Hymn
+Hominin
 Hormone
 Hospital
 Hot Spring
@@ -240,24 +284,34 @@ House Committee
 HTML Element
 HTTP Error
 Hurricane
+Ice Age
+IDE
 Igloo
+Imaginary Friend
 Immaculate Grid
 Inator
+Infinity Stone
 Inmate
 Insurance Policy
 Integer
 Integer Sequence
 Integral
+Internet Craze
 IP Address
+iPhone
 IPO
 ISO Standard
 Isthmus
 Jedi
 Jigsaw Puzzle
+Joust
+Kaiju
 Kanji
+Kayak
 Kentucky Derby
 Key Signature
 Keystroke
+Kinesis
 King of England
 Knock-Knock Joke
 Labor of Heracles
@@ -272,24 +326,33 @@ Ligament
 Linux Distribution
 Lipstick
 Liquor
+Literary Trope
 Locale (computing)
 Localization
 Lock (computing)
 Log-In Credentials
 Longbow
 Lottery Ticket
+Lunar Crater
 Lyric
+Madden NFL
+Madonna (painting)
+Mafia Family
 Magazine
+Magic System
 Marathon
+Marble League
 Marian Apparition
 Mark-Up Symbol
 Masked Singer
 Massacre
 MasterClass
+Mausoleum
 Mayor
 Medal of Honor
 Medical Specialty
 Meme
+Mesopotamian God
 Metra Route
 Mezuzah
 Military Base
@@ -299,6 +362,7 @@ Monopoly Property
 Month
 Moon of Jupiter
 Mosque
+Motorcycle
 Mountain
 Movie
 Movie Ticket
@@ -309,6 +373,7 @@ Muscle
 Museum
 Mushroom
 Musical
+Mustache
 Mutant (X-Men)
 Mythbusting
 National Anthem
@@ -316,7 +381,10 @@ National Park
 Native American Tribe
 Nazca Line
 Nebula
+Necktie
 Neurotoxin
+Neurotransmitter
+Newscast
 Newspaper
 Nobel Prize
 Norse God
@@ -328,11 +396,17 @@ Obi
 Oceanic Trench
 Oceanid
 Oil (cooking)
+Oil Field
 Oil Spill
+Ointment
 Olympiad
 Opera
+Opioid
+Orchestra
 Orisha
 Orphanage
+Overnight Camp
+Pagoda
 Painting
 Parashah
 Parking Garage
@@ -347,8 +421,11 @@ Penalty (NFL)
 Peninsula
 PEP
 Pepper
+Pharaoh
+Philosopher
 Phobia
 Phone Number
+Phonetic Alphabet
 Pie
 Pigment (biology)
 Pillow
@@ -368,6 +445,7 @@ Polygon
 Polyhedron
 Pope
 Potato
+Pregnancy Test
 Prescription
 Presidential Election
 Printer
@@ -376,6 +454,7 @@ Process (computing)
 Programming Langauge
 Prophet
 Proto-Indo-European Root
+Pseudonym
 Pterosaur
 Pulley
 Quadratic Equation
@@ -386,10 +465,13 @@ Racetrack (auto racing)
 Radio Station
 Rainforest
 Random Number Generator
+Raptor
+Readymade
 Repository
 Representative
 Resistor
 Rest Stop
+Restaurant
 Retail Product
 Ring of Power
 River
@@ -400,8 +482,11 @@ Royal House
 Rube Goldberg Machine
 Rune
 Russian Tsar
+Sabermetric
 Saint
+Salsa
 Satellite
+Scattergories Round
 Scholarship
 Scooby-Doo Movie
 Scrabble Tile
@@ -410,11 +495,17 @@ SCUBA Dive
 Sculpture
 Season
 Secret Hitler Game
+Secret Society
+Seder Plate
 Senator
 Set Card
+Seventh Inning Stretch
+Shampoo
 Shard of Adonalsium
 Shark Tank Pitch
+Shark Week
 Shen Gong Wu
+Shipwreck
 Shoe
 Shogunate
 Sign (ASL)
@@ -425,6 +516,7 @@ Skyscraper
 Slack Channel
 Slave Revolt
 Slot Machine
+Smoothie
 Smurf
 Snake
 SNL Episode
@@ -435,34 +527,45 @@ Song
 Sonnet
 Sorority
 Soup
+Space Shuttle
 Speed Limit
 Speedometer
+Spider-Man
 Sporcle Quiz
+Sports Bet
 SQL Query
 Stadium
 Stamp
 Star
+Star-Crossed Lovers
 Steak
 Step Pyramid
 Stratego Piece
+Strike (labor)
+Stuffed Animal
 Submarine
 Subreddit
+Sudoku Puzzle
 Sunscreen
 Super Bowl
 SuperPAC
 Surah
 Surfing Maneuver
+Surgical Mask
 Survivor
+Sutra
 Swimming Pool
 Sword
 Symphony
 Talk Show
 Tar Pits
 Tarot Card
+Tattoo
 Tectonic Plate
 Telescope
 Tendon
 Tennis Match
+Tepui
 Terminator
 Therapist
 Thesis
@@ -474,6 +577,8 @@ Tooth
 Toothpaste
 Top 10 List
 Tossup Question
+Totem Pole
+Tour de France
 Tournament
 Transformer (robot)
 Transistor
@@ -481,6 +586,7 @@ Treasury Bond
 Tree House
 Triangle
 Trilogy
+Trolley Problem
 Tsunami
 Tuxedo
 Tweet
@@ -492,27 +598,38 @@ Upanishad
 URL
 UUID
 Vampire Slayer
+Verb
 Vigenère Cipher
+Vineyard
 Vitamin
 Voicemail
 Voir Dire
 Volcano
+Volleyball Match
 Vulgarity
 W2 Tax Form
+Waffle
 Water Bottle
 Water Slide
 Waterfall
 Web Browser
 Wikipedia Page
 Wildfire
+Windmill
 Winter Storm
 Witch Hunt
+Wizard
 Word Search
+Wordle
 World Cup
 World Heritage Site
 Wristwatch
 xkcd Comic
+Yacht
 YouTube Video
 Yu-Gi-Oh Monster
+Ziggurat
 Zodiac Sign
+Zombie
 Zoo
+Zoom Meeting

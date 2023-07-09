@@ -83,7 +83,7 @@ namespace Kvasir.Translation {
 
             // It is an error for an annotation value to be an invalid enumerator
             if (into.IsEnum && !((Enum)self).IsValid()) {
-                return Option.None<object?, string>($"enumerator is invalid");
+                return Option.None<object?, string>("enumerator is invalid");
             }
 
             // Perform actual parsing, if necessary

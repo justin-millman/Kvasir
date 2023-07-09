@@ -25,7 +25,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void FieldNameChangedToBrandNewIdentifier() {
+        [TestMethod] public void ScalarFieldNameChangedToBrandNewIdentifier() {
             // Arrange
             var translator = new Translator();
             var source = typeof(FieldNaming.River);
@@ -40,6 +40,94 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Length").OfTypeUInt16().BeingNonNullable().And
                 .HaveField(nameof(River.MouthLatitude)).OfTypeDecimal().BeingNonNullable().And
                 .HaveField(nameof(River.MouthLongitude)).OfTypeDecimal().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void AggregateFieldNameChanged() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BorderCrossing);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(BorderCrossing.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("Degrees.Latitude").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Degrees.Longitude").OfTypeSingle().BeingNonNullable().And
+                .HaveField(nameof(BorderCrossing.CountryA)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(BorderCrossing.CountryB)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(BorderCrossing.Length)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField(nameof(BorderCrossing.YearlyCrossings)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField(nameof(BorderCrossing.IsDriveable)).OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NestedFieldNameChangedToBrandNewIdentifier() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Ziggurat);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Ziggurat.ZigguratID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Ziggurat.Height)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField(nameof(Ziggurat.NumTerraces)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField(nameof(Ziggurat.NumSteps)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField("CivWho").OfTypeText().BeingNonNullable().And
+                .HaveField("CivWhere").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ChangeNameOfNestedAggregate() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DogShow);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(DogShow.Year)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField(nameof(DogShow.Sponsor)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(DogShow.Participants)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("BestInShow.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("BestInShow.Breed.Genus").OfTypeText().BeingNonNullable().And
+                .HaveField("BestInShow.Breed.Species").OfTypeText().BeingNonNullable().And
+                .HaveField("BestInShow.Breed.Common").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ComplexNameChangesWithAggregates() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cliff);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Cliff.CliffID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Cliff.Height)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField(nameof(Cliff.SheerAngle)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Cliff.IsUNESCO)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField(nameof(Cliff.PrimaryStone)).OfTypeText().BeingNonNullable().And
+                .HaveField("Place.Location.CityName").OfTypeText().BeingNonNullable().And
+                .HaveField("Place.Location.GeoCity.SubLocale").OfTypeText().BeingNullable().And
+                .HaveField("Place.Location.GeoCity.LATITUDE").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Place.Location.GeoCity.GridIntersection.LONG").OfTypeSingle().BeingNonNullable().And
+                .HaveField("PolityName").OfTypeText().BeingNullable().And
+                .HaveField("Place.PolitySubLocale").OfTypeText().BeingNullable().And
+                .HaveField("Place.Location.GeoPolity.LATITUDE").OfTypeSingle().BeingNullable().And
+                .HaveField("Place.Location.GeoPolity.GridIntersection.LONG").OfTypeSingle().BeingNullable().And
+                .HaveField("Place.Location.Country").OfTypeText().BeingNonNullable().And
+                .HaveField("Place.NumEntrances").OfTypeUInt16().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -104,6 +192,47 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(BankAccount.RoutingNumber))           // error location
+                .WithMessageContaining("duplicated")                                // category
+                .WithMessageContaining("[Name]");                                   // details / explanation
+        }
+
+        [TestMethod] public void NameChangeOnAggregateOverridesOriginalNameChange() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HashMap);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(HashMap.ID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(HashMap.MemoryAddress)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField(nameof(HashMap.ResolveViaChaining)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("KeyType.Typename").OfTypeText().BeingNonNullable().And
+                .HaveField("KeyType.IsPointer").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("ConstQualified").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("KeyType.IsReference").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("ValueType.Typename").OfTypeText().BeingNonNullable().And
+                .HaveField("ValueType.IsPointer").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("ValueType.IsConst").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Ref").OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void MultipleNameChangesOnNestedProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Helicopter);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("Debut")                                     // error location
+                .WithMessageContaining("\"Year\"")                                  // error sub-location
                 .WithMessageContaining("duplicated")                                // category
                 .WithMessageContaining("[Name]");                                   // details / explanation
         }
@@ -185,7 +314,24 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Legume.Energy))                       // error location
-                .WithMessageContaining("does not exist")                            // category
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Name]")                                    // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Madonna);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Madonna.Painter))                     // error location
+                .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Name]")                                    // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
         }

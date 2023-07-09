@@ -38,6 +38,21 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("1 found");                                  // details / explanation
         }
 
+        [TestMethod] public void AggregateHasZeroFields_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(TotemPole);
+
+            // Act
+            var translation = () => translator[source];
+
+            // Assert
+            translation.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(nameof(TotemPole.Festival))                  // source type
+                .WithMessageContaining("at least 1 Field")                          // details / explanation
+                .WithMessageContaining("0 found");                                  // details / explanation
+        }
+
         [TestMethod] public void NonPublicPropertiesAreExcluded() {
             // Arrange
             var translator = new Translator();

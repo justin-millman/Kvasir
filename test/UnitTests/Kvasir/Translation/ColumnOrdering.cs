@@ -34,15 +34,41 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Parashah.Book)).AtSomeColumn().And
-                .HaveField(nameof(Parashah.StartChapter)).AtSomeColumn().And
-                .HaveField(nameof(Parashah.StartVerse)).AtSomeColumn().And
-                .HaveField(nameof(Parashah.EndChapter)).AtColumn(2).And
-                .HaveField(nameof(Parashah.EndVerse)).AtColumn(3).And
+                .HaveField(nameof(Parashah.Book)).AtColumn(0).And
+                .HaveField(nameof(Parashah.StartChapter)).AtColumn(1).And
+                .HaveField(nameof(Parashah.StartVerse)).AtColumn(3).And
+                .HaveField(nameof(Parashah.EndChapter)).AtColumn(4).And
+                .HaveField(nameof(Parashah.EndVerse)).AtColumn(2).And
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void TwoFieldsOrderedToSameIndex_IsError() {
+        [TestMethod] public void AggregateFieldsOrdered() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Armada);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Armada.ID)).AtColumn(1).And
+                .HaveField(nameof(Armada.Commander)).AtColumn(0).And
+                .HaveField(nameof(Armada.Sponsor)).AtColumn(2).And
+                .HaveField("Flagship.Name").AtColumn(5).And
+                .HaveField("Flagship.Class").AtColumn(3).And
+                .HaveField("Flagship.Munitions").AtColumn(4).And
+                .HaveField("Secondary.Name").AtColumn(9).And
+                .HaveField("Secondary.Class").AtColumn(7).And
+                .HaveField("Secondary.Munitions").AtColumn(8).And
+                .HaveField("Tertiary.Name").AtColumn(12).And
+                .HaveField("Tertiary.Class").AtColumn(10).And
+                .HaveField("Tertiary.Munitions").AtColumn(11).And
+                .HaveField(nameof(Armada.VictoryPercentage)).AtColumn(6).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void TwoScalarFieldsOrderedToSameIndex_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Pizza);
@@ -58,7 +84,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("7");                                        // details / explanation
         }
 
-        [TestMethod] public void ColumnOrderingLeavesGaps_IsError() {
+        [TestMethod] public void TwoNestedFieldsOrderedToSameIndex_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Coup);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("two Fields pinned to column index")         // category
+                .WithMessageContaining("3");                                        // details / explanation
+        }
+
+        [TestMethod] public void ScalarAndNestedFieldOrderedToSameIndex_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Bread);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("two Fields pinned to column index")         // category
+                .WithMessageContaining("4");                                        // details / explanation
+        }
+
+        [TestMethod] public void ColumnOrderingOfScalarsLeavesGaps_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(PhoneNumber);
@@ -70,8 +128,24 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("gaps at column index(es)")                  // category
-                .WithMessageContaining("2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13");   // details / explanation
+                .WithMessageContaining("unable to assign Fields to columns")        // category
+                .WithMessageContaining("gaps");                                     // details / explanation
+        }
+
+        [TestMethod] public void ColumnOrderingOfAggregatesLeavesGaps_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Verb);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("unable to assign Fields to columns")        // category
+                .WithMessageContaining("gaps");                                     // details / explanation
         }
 
         [TestMethod] public void NegativeColumnIndex_IsError() {
