@@ -57,10 +57,10 @@ namespace Kvasir.Translation {
                     // perspective of the type being translated. At a minimum, we need to do this because we may
                     // have multiple scalars with the empty-string path, and they would overwrite each other in the
                     // running dictionary.
-                    var nestedPath = path == "" ? property.Name : $"{property.Name}.{path}";
+                    var nestedPath = path == "" ? property.Name : $"{property.Name}{PATH_SEPARATOR}{path}";
 
                     if (!propertyDescriptor.AbsoluteColumn.HasValue) {
-                        columns.Add((nestedPath, propertyDescriptor));
+                        columns.Add((nestedPath, propertyDescriptor with { AccessPath = nestedPath }));
                         continue;
                     }
 
@@ -75,7 +75,7 @@ namespace Kvasir.Translation {
                     }
 
                     // No error encountered
-                    columns.Insert(index, (nestedPath, propertyDescriptor));
+                    columns.Insert(index, (nestedPath, propertyDescriptor with { AccessPath = nestedPath }));
                 }
             }
 
