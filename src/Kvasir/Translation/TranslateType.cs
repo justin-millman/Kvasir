@@ -59,12 +59,12 @@ namespace Kvasir.Translation {
                     // running dictionary.
                     var nestedPath = path == "" ? property.Name : $"{property.Name}.{path}";
 
-                    if (!propertyDescriptor.Column.HasValue) {
+                    if (!propertyDescriptor.AbsoluteColumn.HasValue) {
                         columns.Add((nestedPath, propertyDescriptor));
                         continue;
                     }
 
-                    var index = propertyDescriptor.Column.Unwrap();
+                    var index = propertyDescriptor.AbsoluteColumn.Unwrap();
                     Debug.Assert(index >= 0);
 
                     // It is an error for two or more Fields to be explicitly assigned to the same column index
@@ -90,9 +90,12 @@ namespace Kvasir.Translation {
             // will be further annotated. Instead, we must present the canonical mapping of paths to FieldDescriptors.
             // Once a type has been translated, every Field has a column, which is fine because the [Column] annotation
             // cannot be applied to a specific nested path. This LINQ query decomposes the StickyList back into a
-            // dictionary with new FieldDescriptors containing the appropriate column index.
+            // dictionary with new FieldDescriptors containing the appropriate relative column index.
             var fields = columns
-                .Select((entry, col) => (entry.Item1, entry.Item2 with { Column = Option.Some(col) }))
+                .Select((entry, column) => (entry.Item1, entry.Item2 with {
+                    AbsoluteColumn = Option.None<int>(),
+                    RelativeColumn = column
+                }))
                 .ToDictionary(entry => entry.Item1, pair => pair.Item2);
 
             // Translate all of the [Check.Complex] constraints, which may result in further errors

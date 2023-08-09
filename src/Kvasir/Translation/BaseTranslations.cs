@@ -26,7 +26,8 @@ namespace Kvasir.Translation {
             var descriptor = new FieldDescriptor(
                 Name: Enumerable.Repeat(property.Name, 1).ToList(),
                 Nullability: property.GetNullability() == Nullability.NonNullable ? IsNullable.No : IsNullable.Yes,
-                Column: Option.None<int>(),
+                AbsoluteColumn: Option.None<int>(),
+                RelativeColumn: 0,
                 Converter: DataConverter.Identity(property.PropertyType),
                 Default: Option.None<object?>(),
                 InPrimaryKey: false,
@@ -55,7 +56,8 @@ namespace Kvasir.Translation {
             var descriptor = new FieldDescriptor(
                 Name: Enumerable.Repeat(property.Name, 1).ToList(),
                 Nullability: property.GetNullability() == Nullability.NonNullable ? IsNullable.No : IsNullable.Yes,
-                Column: Option.None<int>(),
+                AbsoluteColumn: Option.None<int>(),
+                RelativeColumn: 0,
                 Converter: DataConverter.Identity(property.PropertyType),
                 Default: Option.None<object?>(),
                 InPrimaryKey: false,
