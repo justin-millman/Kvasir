@@ -265,7 +265,7 @@ namespace Kvasir.Translation {
         private static IField MakeField(FieldDescriptor descriptor) {
             if (DBType.Lookup(descriptor.Converter.ResultType) != DBType.Enumeration) {
                 return new BasicField(
-                    name: new FieldName(descriptor.Name),
+                    name: new FieldName(string.Join(NAME_SEPARATOR, descriptor.Name)),
                     dataType: DBType.Lookup(descriptor.Converter.ResultType),
                     nullability: descriptor.Nullability,
                     defaultValue: descriptor.Default.Map(v => DBValue.Create(v))
@@ -277,7 +277,7 @@ namespace Kvasir.Translation {
                 Func<object?, DBValue> convFn = v => DBValue.Create(converter.ConverterImpl.Convert(v));
 
                 return new EnumField(
-                    name: new FieldName(descriptor.Name),
+                    name: new FieldName(string.Join(NAME_SEPARATOR, descriptor.Name)),
                     nullability: descriptor.Nullability,
                     defaultValue: descriptor.Default.Map(convFn),
                     enumerators: descriptor.Constraints.AllowedValues.Select(convFn)

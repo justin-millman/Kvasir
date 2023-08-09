@@ -68,7 +68,7 @@ namespace Kvasir.Translation {
                 }
 
                 // No errors encountered
-                state[annotation.Path] = target with { Name = annotation.Name };
+                state[annotation.Path] = target with { Name = new List<string>() { annotation.Name } };
             }
         }
 
