@@ -50,8 +50,9 @@ namespace Kvasir.Translation {
             // because the constraint Clauses operate in terms of Fields
             var fields = new List<IField>();
             var constraints = new List<CheckConstraint>();
-            var converters = typeTranslation.Fields.Values.Select(d => d.Converter);
-            foreach (var descriptor in typeTranslation.Fields.Values) {
+            var orderedColumns = typeTranslation.Fields.Values.OrderBy(fd => fd.RelativeColumn);
+            var converters = orderedColumns.Select(d => d.Converter);
+            foreach (var descriptor in orderedColumns) {
                 var flattened = FlattenConstraints(descriptor);
                 var field = MakeField(flattened);
 
