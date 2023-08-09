@@ -13,6 +13,11 @@ using System.Reflection;
 // about what kind of property the Fields came from. In the absence of any annotations whatsoever, the "base
 // translation" will be 100% accurate.
 //
+// The one exception to the above statement is nullability. The default nullability of a Field does not account for any
+// annotations, obviously, but _also_ does not account for the native nullability of the source property. This is
+// because of the particular way that nullability of an Aggregate property affects the nullability of the nested Fields.
+// In essence, Kvasir treats the nullability marker of a type (i.e. the ?) as a kind of annotation.
+//
 // The code for dealing with most annotations can be found in the FieldAnnotations.cs file. The code for dealing with
 // constraint annotations in particular can be found in the FieldConstraints.cs file.
 
@@ -25,7 +30,7 @@ namespace Kvasir.Translation {
 
             var descriptor = new FieldDescriptor(
                 Name: Enumerable.Repeat(property.Name, 1).ToList(),
-                Nullability: property.GetNullability() == Nullability.NonNullable ? IsNullable.No : IsNullable.Yes,
+                Nullability: IsNullable.No,
                 AbsoluteColumn: Option.None<int>(),
                 RelativeColumn: 0,
                 Converter: DataConverter.Identity(property.PropertyType),
@@ -55,7 +60,7 @@ namespace Kvasir.Translation {
 
             var descriptor = new FieldDescriptor(
                 Name: Enumerable.Repeat(property.Name, 1).ToList(),
-                Nullability: property.GetNullability() == Nullability.NonNullable ? IsNullable.No : IsNullable.Yes,
+                Nullability: IsNullable.No,
                 AbsoluteColumn: Option.None<int>(),
                 RelativeColumn: 0,
                 Converter: DataConverter.Identity(property.PropertyType),
