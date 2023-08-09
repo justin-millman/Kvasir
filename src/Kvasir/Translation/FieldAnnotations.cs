@@ -111,10 +111,7 @@ namespace Kvasir.Translation {
 
                 foreach ((var path, var descriptor) in state) {
                     state[path] = descriptor with {
-                        Column = descriptor.Column.Match(
-                            some: c => Option.Some(c + annotation.Column),
-                            none: () => Option.Some(annotation.Column)
-                        )
+                        AbsoluteColumn = Option.Some(descriptor.RelativeColumn + annotation.Column)
                     };
                 }
             }
