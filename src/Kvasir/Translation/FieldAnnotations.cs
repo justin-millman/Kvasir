@@ -76,22 +76,23 @@ namespace Kvasir.Translation {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
 
+            var nativeNullability = property.GetNullability();
             var nullable = property.HasAttribute<NullableAttribute>();
             var nonNullable = property.HasAttribute<NonNullableAttribute>();
 
-            if (nullable || nonNullable) {
-                // It is an error for a property to be annotated as both [Nullable] and [NonNullable]
-                if (nullable && nonNullable) {
-                    var context = new PropertyTranslationContext(property, "");
-                    throw Error.MutuallyExclusive(context, new NullableAttribute(), new NonNullableAttribute());
-                }
+            // It is an error for a property to be annotated as both [Nullable] and [NonNullable]
+            if (nullable && nonNullable) {
+                var context = new PropertyTranslationContext(property, "");
+                throw Error.MutuallyExclusive(context, new NullableAttribute(), new NonNullableAttribute());
+            }
 
+            if (nullable || (!nonNullable && nativeNullability == Nullability.Nullable)) {
                 // Note: There is some non-trivial work to do here when dealing with non-scalars. For example, a
                 // Reference property cannot take a [NonNullable] annotation, and an Aggregate property cannot take a
                 // [Nullable] annotation if all of its constituent Fields are already nullable. We will deal with those
                 // nuances when we implement translation for those property categories.
                 foreach ((var path, var descriptor) in state) {
-                    state[path] = descriptor with { Nullability = nullable ? IsNullable.Yes : IsNullable.No };
+                    state[path] = descriptor with { Nullability = IsNullable.Yes };
                 }
             }
         }
