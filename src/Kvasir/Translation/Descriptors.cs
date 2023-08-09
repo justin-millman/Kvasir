@@ -27,7 +27,7 @@ namespace Kvasir.Translation {
     );
 
     internal readonly record struct FieldDescriptor(
-        string Name,
+        IReadOnlyList<string> Name,
         IsNullable Nullability,
         Option<int> Column,
         DataConverter Converter,

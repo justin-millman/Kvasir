@@ -63,5 +63,6 @@ namespace Kvasir.Translation {
         private readonly Dictionary<Type, TypeDescriptor> typeCache_;
         private readonly Dictionary<Type, Translation> entityCache_;
         private readonly HashSet<TableName> tableNames_;
+        private const char NAME_SEPARATOR = '.';
     }
 }
