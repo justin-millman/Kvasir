@@ -163,6 +163,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
         }
 
+        [TestMethod] public void ConverterOnReferenceField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Decathlon);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Decathlon.Winner))                    // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining(nameof(Decathlon.Athlete))                   // details / explanation
+                .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
+        }
+
         [TestMethod] public void ConverterOnNullablePropertyHasNonNullableTargetType() {
             // Arrange
             var translator = new Translator();
@@ -424,6 +441,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("enumeration");                              // details / explanation
         }
 
+        [TestMethod] public void NumericConverterOnReferenceField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SlamBallMatch);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SlamBallMatch.Defeated))              // error location
+                .WithMessageContaining("[Numeric]")                                 // details / explanation
+                .WithMessageContaining(nameof(SlamBallMatch.SlamBallTeam))          // details / explanation
+                .WithMessageContaining("enumeration");                              // details / explanation
+        }
+
         [TestMethod] public void AsStringConverterOnBooleanField_IsError() {
             // Arrange
             var translator = new Translator();
@@ -523,6 +557,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Windmill.EnergyGenerated))            // error location
                 .WithMessageContaining("[AsString]")                                // details / explanation
                 .WithMessageContaining(nameof(Windmill.EnergyOutput))               // details / explanation
+                .WithMessageContaining("enumeration");                              // details / explanation
+        }
+
+        [TestMethod] public void AsStringConverterOnReferenceField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Chakra);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Chakra.AssociatedYogini))             // error location
+                .WithMessageContaining("[AsString]")                                // details / explanation
+                .WithMessageContaining(nameof(Chakra.Yogini))                       // details / explanation
                 .WithMessageContaining("enumeration");                              // details / explanation
         }
 

@@ -50,9 +50,9 @@ namespace Kvasir.Translation {
             // because the constraint Clauses operate in terms of Fields
             var fields = new List<IField>();
             var constraints = new List<CheckConstraint>();
-            var orderedColumns = typeTranslation.Fields.Values.OrderBy(fd => fd.RelativeColumn);
-            var converters = orderedColumns.Select(d => d.Converter);
-            foreach (var descriptor in orderedColumns) {
+            var orderedDescriptors = typeTranslation.Fields.Values.OrderBy(fd => fd.RelativeColumn);
+            var converters = orderedDescriptors.Select(d => d.Converter);
+            foreach (var descriptor in orderedDescriptors) {
                 var flattened = FlattenConstraints(descriptor);
                 var field = MakeField(flattened);
 
@@ -79,10 +79,18 @@ namespace Kvasir.Translation {
             // eliminating Candidate Keys that are redundant with the Primary Key.
             (var primaryKey, var candidateKeys) = ComputeKeys(entity, fields, typeTranslation.Fields.Values);
 
-            // Foreign Keys are part of the Schema Layer, but they are not yet supported by the Translation Layer
-            var foreignKeys = Enumerable.Empty<ForeignKey>();
+            // After computing the Primary Key, we need to reverse-engineer the individual field listings that
+            // correspond to the Primary Key Fields. This is specifically for being able to translate References to the
+            // current Entity later, where we need the source descriptors rather than the final Fields.
+            var pkListing = primaryKey.Fields
+                .Select(f => f.Name.ToString())
+                .Select(n => typeTranslation.Fields
+                    .First(kvp => n == string.Join(NAME_SEPARATOR, kvp.Value.Name)))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            primaryKeyCache_[entity] = pkListing;
 
             // Construct the final Translation
+            var foreignKeys = MakeForeignKeys(fields, orderedDescriptors);
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
             var principal = new PrincipalTableDef(table, null!, null!);
             var entityTranslation = new Translation(entity, principal, Enumerable.Empty<RelationTableDef>());

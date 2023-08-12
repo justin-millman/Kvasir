@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Kvasir.Exceptions;
+using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -48,6 +49,30 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void NonNullableReferenceMarkedNullable() {
+            // Arrange
+            var source = typeof(Jukebox);
+            var translator = new Translator();
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Jukebox.ProductID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Jukebox.NumSongs)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField("MostPlayed.Title").OfTypeText().BeingNullable().And
+                .HaveField("MostPlayed.Singer").OfTypeText().BeingNullable().And
+                .HaveField(nameof(Jukebox.CostPerPlay)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField(nameof(Jukebox.IsDigital)).OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("MostPlayed.Singer", "MostPlayed.Title")
+                    .Against(translator[typeof(Jukebox.Song)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
         [TestMethod] public void NullableScalarsMarkedNonNullable() {
             // Arrange
             var translator = new Translator();
@@ -91,6 +116,33 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Composition.Brass.Trombones").OfTypeUInt32().BeingNullable().And
                 .HaveField("Composition.Brass.Tubas").OfTypeUInt32().BeingNullable().And
                 .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NullableReferenceMarkedNonNullable() {
+            // Arrange
+            var source = typeof(Bodhisattva);
+            var translator = new Translator();
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Bodhisattva.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Bodhisattva.Buddhism)).OfTypeEnumeration(
+                    Bodhisattva.Denomination.Nikaya,
+                    Bodhisattva.Denomination.Theravada,
+                    Bodhisattva.Denomination.Mahayana
+                ).BeingNonNullable().And
+                .HaveField("LastBhumi.English").OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Bodhisattva.DateOfBirth)).OfTypeDateTime().BeingNonNullable().And
+                .HaveField(nameof(Bodhisattva.DateOfDeath)).OfTypeDateTime().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("LastBhumi.English")
+                    .Against(translator[typeof(Bodhisattva.Bhumi)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
         }
 
         [TestMethod] public void NullableScalarsMarkedAsNullable_Redundant() {

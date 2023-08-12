@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-
 using Ctxt = Kvasir.Translation.PropertyTranslationContext;
 
 namespace Kvasir.Translation {
@@ -347,7 +346,16 @@ namespace Kvasir.Translation {
             return MakeError(ctxt, annotations, msg);
         }
 
-        /// [TODO]
+        /// <summary>
+        ///   Create a <see cref="KvasirException"/> describing an ambiguous nullability deduction and/or specification.
+        /// </summary>
+        /// <param name = "ctxt" >
+        ///   The <see cref="Ctxt">context</see> in which it was identified that the nullability of one or more Fields
+        ///   is ambiguous.This should generally be the context of the translation of the outer Aggregate or Reference.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="KvasirException"/> with a contextualized error message.
+        /// </returns>
         public static KvasirException AmbiguousNullability(Ctxt ctxt) {
             Debug.Assert(ctxt.Property is not null);
             Debug.Assert(ctxt.Path == "");

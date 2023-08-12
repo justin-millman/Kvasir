@@ -56,7 +56,7 @@ namespace UT.Kvasir.Translation {
                 );
         }
 
-        [TestMethod] public void NestedScalarMarkedPrimaryKey() {
+        [TestMethod] public void AggregateNestedScalarMarkedPrimaryKey() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Tepui);
@@ -93,6 +93,53 @@ namespace UT.Kvasir.Translation {
                     "Ingredient3.Name.Alternative",
                     "Ingredient4.Name.English",
                     "Ingredient4.Name.Alternative"
+                );
+        }
+
+        [TestMethod] public void ReferenceMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Etiology);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "Source.Name",
+                    "Source.Abbreviation"
+                );
+        }
+
+        [TestMethod] public void ReferenceNestedScalarMarkedPrimaryKey() {
+            // Arrange
+            var tranlator = new Translator();
+            var source = typeof(PoirotMystery);
+
+            // Act
+            var translation = tranlator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields("ISBN.ValuePart1");
+        }
+
+        [TestMethod] public void NestedReferenceMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Prophecy);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    nameof(Prophecy.ProphecyID),
+                    "Subjects.P1.FirstName",
+                    "Subjects.P1.MiddleInitial",
+                    "Subjects.P1.LastName"
                 );
         }
 
@@ -453,6 +500,57 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[PrimaryKey]")                              // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PhoneBooth);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(PhoneBooth.Manufacturer))             // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ScientificExperiment);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ScientificExperiment.ControlGroup))   // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("\"Animate\"");                              // details / explanation
+        }
+
+        [TestMethod] public void PathOnReferenceRefersToPartiallyExposedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cryochamber);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Cryochamber.MinTemperature))          // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("\"Temp\"");                                 // details / explanation
         }
     }
 

@@ -5,7 +5,6 @@ using Kvasir.Schema;
 using Optional;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -59,8 +58,9 @@ namespace Kvasir.Translation {
                     PropertyCategory.Scalar => ApplyAnnotations(property, ScalarBaseTranslation(property)),
                     PropertyCategory.Enumeration => ApplyAnnotations(property, EnumBaseTranslation(property)),
                     PropertyCategory.Aggregate => ApplyAnnotations(property, AggregateBaseTranslation(property)),
-                    PropertyCategory.Reference => throw new NotSupportedException("reference properties not yet supported"),
+                    PropertyCategory.Reference => ApplyAnnotations(property, ReferenceBaseTranslation(property)),
                     PropertyCategory.Relation => throw new NotSupportedException("relation properties not yet supported"),
+
                     _ => throw new ApplicationException("switch statement exhausted")
                 }
             );

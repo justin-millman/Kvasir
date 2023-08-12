@@ -17,7 +17,14 @@ namespace FluentAssertions {
         public class TableAssertion : Primitives.ObjectAssertions {
             public new ITable Subject { get; }
             public TableAssertion(ITable subject)
-                : base(subject) { Subject = subject; checkedFields_ = new(); checkedKeys_ = new(); checkedConstraints_ = new(); }
+                : base(subject)
+            {
+                Subject = subject;
+                checkedFields_ = new();
+                checkedKeys_ = new();
+                checkedConstraints_ = new();
+                checkedForeignKeys_ = new();
+            }
             protected override string Identifier => "Table";
 
             [CustomAssertion] public And HaveName(string name) {
@@ -68,7 +75,7 @@ namespace FluentAssertions {
                 Execute.Assertion
                     .ForCondition(missing == "")
                     .FailWith($"{{context:Table}} have additional Candidate Keys: {missing}");
-                return new AndConstraint<TableAssertion>(this);
+                return new And(this);
             }
 
             [CustomAssertion] public And HaveConstraint(string field, ComparisonOperator op, object anchor) {
@@ -159,10 +166,23 @@ namespace FluentAssertions {
                 return new And(this);
             }
 
+            public ForeignKeyAssertion HaveForeignKey(string firstField, params string[] restFields) {
+                return new ForeignKeysAssertion(Subject.ForeignKeys, checkedForeignKeys_, this).OfFields(firstField, restFields);
+            }
+            [CustomAssertion] public And HaveNoOtherForeignKeys() {
+                var extras = Subject.ForeignKeys.Count - checkedForeignKeys_.Count;
+                Execute.Assertion
+                    .ForCondition(extras == 0)
+                    .FailWith($"{{context:Table}} has {extras} additional Foreign Key{(extras == 1 ? "" : "s")}");
+
+                return new And(this);
+            }
+
 
             private readonly HashSet<FieldName> checkedFields_;
             private readonly HashSet<KeyName> checkedKeys_;
             private readonly HashSet<CheckConstraint> checkedConstraints_;
+            private readonly HashSet<ForeignKey> checkedForeignKeys_;
         }
 
         public class FieldAssertion : Primitives.ObjectAssertions {
@@ -361,6 +381,74 @@ namespace FluentAssertions {
 
             private readonly TableAssertion parent_;
             private readonly HashSet<KeyName> tracker_;
+        }
+
+        public class ForeignKeyAssertion : Primitives.ObjectAssertions {
+            public new ForeignKey Subject { get; }
+            public ForeignKeyAssertion(ForeignKey subject, TableAssertion parent)
+                : base(subject) { Subject = subject; parent_ = parent; }
+            protected override string Identifier => "Foreign Key";
+
+            public TableAssertion And => parent_;
+
+            [CustomAssertion] public ForeignKeyAssertion Against(ITable reference) {
+                Execute.Assertion
+                    .ForCondition(ReferenceEquals(Subject.ReferencedTable, reference))
+                    .FailWith($"Expected {Identifier} of {{context:Table}} to reference Table '{reference.Name}', " +
+                              $"but found reference against '{Subject.ReferencedTable.Name}' instead");
+
+                return this;
+            }
+            [CustomAssertion] public ForeignKeyAssertion WithOnDeleteBehavior(OnDelete behavior) {
+                Execute.Assertion
+                    .ForCondition(Subject.OnDelete == behavior)
+                    .FailWith($"Expected {Identifier} of {{context:Table}} to have on-delete behavior {behavior}, " +
+                              $"but the actual behavior is {Subject.OnDelete}");
+
+                return this;
+            }
+            [CustomAssertion] public ForeignKeyAssertion WithOnUpdateBehavior(OnUpdate behavior) {
+                Execute.Assertion
+                    .ForCondition(Subject.OnUpdate == behavior)
+                    .FailWith($"Expected {Identifier} of {{context:Table}} to have on-update behavior {behavior}, " +
+                              $"but the actual behavior is {Subject.OnUpdate}");
+
+                return this;
+            }
+
+
+            private readonly TableAssertion parent_;
+        }
+
+        public class ForeignKeysAssertion : Primitives.ObjectAssertions {
+            public new IEnumerable<ForeignKey> Subject { get; }
+            public ForeignKeysAssertion(IEnumerable<ForeignKey> subject, HashSet<ForeignKey> tracker, TableAssertion parent)
+                : base(parent) { Subject = subject; parent_ = parent; tracker_ = tracker; }
+            protected override string Identifier => "Foreign Keys";
+
+            public TableAssertion And => parent_;
+
+            [CustomAssertion] public ForeignKeyAssertion OfFields(string firstField, params string[] restFields) {
+                var expected = restFields.Prepend(firstField);
+                foreach (var foreign in Subject) {
+                    var actual = foreign.ReferencingFields.Select(f => f.Name.ToString());
+                    if (actual.SequenceEqual(expected)) {
+                        tracker_.Add(foreign);
+                        return new ForeignKeyAssertion(foreign, parent_);
+                    }
+                }
+
+                Execute.Assertion
+                    .ForCondition(false)
+                    .FailWith("Expected {context:Table} to have Foreign Key with Fields " +
+                              $"[{string.Join(", ", restFields.Prepend(firstField))}], but no such Foreign Key found");
+
+                throw new ApplicationException("UNREACHABLE CODE!");
+            }
+
+
+            private readonly TableAssertion parent_;
+            private readonly HashSet<ForeignKey> tracker_;
         }
     }
 }
