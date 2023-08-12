@@ -48,6 +48,13 @@ namespace Kvasir.Translation {
                 return result;
             }
 
+            // If translation of the type is already in progress, then we've detected an impermissible cycle
+            if (inProgress_.Contains(clr)) {
+                var path = string.Join(" → ", inProgress_.Reverse().Select(t => t.Name)) + $" → {clr.Name}";
+                throw Error.UserError(clr, $"reference cycle detected ({path})");
+            }
+            inProgress_.Push(clr);
+
             // Generate the "sequences" of Fields, which must appear consecutively in the final column assignment.
             var sequences = new List<IReadOnlyList<FieldDescriptor>>();
             foreach (var property in ConstituentPropertiesOf(clr)) {
@@ -90,6 +97,8 @@ namespace Kvasir.Translation {
             // No errors encountered
             var descriptor = new TypeDescriptor(fields, checks);
             typeCache_.Add(clr, descriptor);
+            Debug.Assert(inProgress_.Peek() == clr);
+            inProgress_.Pop();
             return descriptor;
         }
 

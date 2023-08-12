@@ -64,7 +64,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void NestedFieldNameChangedToBrandNewIdentifier() {
+        [TestMethod] public void AggregateNestedFieldNameChangedToBrandNewIdentifier() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Ziggurat);
@@ -128,6 +128,76 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Place.Location.GeoPolity.GridIntersection.LONG").OfTypeSingle().BeingNullable().And
                 .HaveField("Place.Location.Country").OfTypeText().BeingNonNullable().And
                 .HaveField("Place.NumEntrances").OfTypeUInt16().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ReferenceFieldNameChanged() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Ballerina);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Ballerina.SSN)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField(nameof(Ballerina.FirstName)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Ballerina.LastName)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Ballerina.Height)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Ballerina.ShoeSize)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField("DebutBallet.BalletID").OfTypeGuid().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ReferenceNestedFieldNameChangedToBrandNewIdentifier() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DMZ);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(DMZ.DMZName)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(DMZ.Length)).OfTypeDouble().BeingNonNullable().And
+                .HaveField("Value").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Definition.Lat_or_Long").OfTypeEnumeration(
+                    DMZ.LineType.Latitude, DMZ.LineType.Longitude
+                ).BeingNonNullable().And
+                .HaveField("Definition.Dir").OfTypeEnumeration(
+                    DMZ.Direction.North, DMZ.Direction.South, DMZ.Direction.East, DMZ.Direction.West
+                ).BeingNonNullable().And
+                .HaveField(nameof(DMZ.OverseenBy)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(DMZ.Established)).OfTypeDateTime().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ChangeNameOfNestedReference() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Carnival);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Carnival.CarnivalID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Carnival.CarnivalName)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Carnival.City)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Carnival.IsTravelling)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("CarnivalStaff.HeadCarny.ID").OfTypeInt32().BeingNonNullable().And
+                .HaveField("CarnivalStaff.HeadCarny.Title").OfTypeText().BeingNonNullable().And
+                .HaveField("CarnivalStaff.Zookeeper.ID").OfTypeInt32().BeingNonNullable().And
+                .HaveField("CarnivalStaff.Zookeeper.Title").OfTypeText().BeingNonNullable().And
+                .HaveField("CarnivalStaff.SanitationLord.ID").OfTypeInt32().BeingNonNullable().And
+                .HaveField("CarnivalStaff.SanitationLord.Title").OfTypeText().BeingNonNullable().And
+                .HaveField("CarnivalStaff.Spokesperson.ID").OfTypeInt32().BeingNonNullable().And
+                .HaveField("CarnivalStaff.Spokesperson.Title").OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Carnival.PopcornCost)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField(nameof(Carnival.NumTents)).OfTypeUInt16().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -334,6 +404,57 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Name]")                                    // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CapitolBuilding);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(CapitolBuilding.Architect))           // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Name]")                                    // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Rabbi);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Rabbi.CurrentTemple))                 // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Name]")                                    // details / explanation
+                .WithMessageContaining("\"Denomination\"");                         // details / explanation
+        }
+
+        [TestMethod] public void PathOnReferenceRefersToPartiallyExposedAggregate() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CarAccident);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(CarAccident.AccidentReportID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(CarAccident.Casualties)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Instigator.Reg.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Other.Registration.ID").OfTypeGuid().BeingNullable().And
+                .HaveNoOtherFields();
         }
     }
 }

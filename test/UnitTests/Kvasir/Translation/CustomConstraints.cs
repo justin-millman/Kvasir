@@ -68,7 +68,7 @@ namespace UT.Kvasir.Translation {
             );
         }
 
-        [TestMethod] public void Check_AppliedToNestedScalar() {
+        [TestMethod] public void Check_AppliedToAggregateNestedScalar() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Asteroid);
@@ -121,6 +121,48 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"Vintage\"");                              // details / explanation
         }
 
+        [TestMethod] public void Check_AppliedToReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Stock);
+
+            // Act
+            var translation = translator[source];
+            var table = translation.Principal.Table;
+
+            // Assert
+            table.CheckConstraints.Should().HaveCount(1);
+            table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
+            table.CheckConstraints[0].Name.Should().NotHaveValue();
+            CustomCheck.LastCtorArgs.Should().BeEmpty();
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
+                    new IField[] {
+                        table[new FieldName("Sydney.Exchange.ExchangeID")]
+                    }
+                ),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Settings.Default
+            );
+        }
+
+        [TestMethod] public void Check_AppliedToNestedReference() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Werewolf);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Werewolf.Lycan))                      // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"Source\"");                               // details / explanation
+        }
+
         [TestMethod] public void Check_ScalarConstrainedMultipleTimes() {
             // Arrange
             var translator = new Translator();
@@ -163,6 +205,29 @@ namespace UT.Kvasir.Translation {
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(DataStructure.RemoveBigO))]
+                    }
+                ),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Settings.Default
+            );
+        }
+
+        [TestMethod] public void Check_NameChangedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(AronKodesh);
+
+            // Act
+            var translation = translator[source];
+            var table = translation.Principal.Table;
+
+            table.CheckConstraints.Should().HaveCount(1);
+            table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
+            table.CheckConstraints[0].Name.Should().NotHaveValue();
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
+                    new IField[] {
+                        table[new FieldName("HeightOf")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -304,6 +369,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Zombie.Legs))                         // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check]");                                  // details / explanation
+        }
+
+        [TestMethod] public void Check_NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Piano);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Piano.Manufacturer))                  // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void Check_NonPrimaryKeyFieldPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Exorcism);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Exorcism.Target))                     // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"Incipience\"");                           // details / explanation
+        }
+
+        [TestMethod] public void Check_NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Pond);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Pond.Location))                       // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Check]");                                  // details / explanation
         }

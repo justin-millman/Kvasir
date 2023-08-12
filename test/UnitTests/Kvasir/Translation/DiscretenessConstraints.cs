@@ -135,7 +135,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsOneOf_NestedScalarField() {
+        [TestMethod] public void IsOneOf_AggregateNestedScalarField() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Earring);
@@ -166,6 +166,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                                // category
                 .WithMessageContaining("[Check.IsOneOf]")                                       // details / explanation
                 .WithMessageContaining("\"ABCDEFGHIJK.GHIJK\"");                                // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_ReferenceNestedScalarField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(FerrisWheel);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Designer.FirstName", InclusionOperator.In,
+                    "Alexander", "Randall", "Corrine"
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsOneOf_NestedReferenceProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Pulsar);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                  // source type
+                .WithMessageContaining(nameof(Pulsar.OBS))                          // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("\"Observatory\"");                          // details / explanation
         }
 
         [TestMethod] public void IsOneOf_NullableFields() {
@@ -564,6 +597,56 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
         }
 
+        [TestMethod] public void IsOneOf_NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Safari);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Safari.Elephants))                    // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Adverb);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Adverb.WordSuffix))                   // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("\"PartOfSpeech\"");                         // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Swamp);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Swamp.PredominantTree))               // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
+        }
+
         [TestMethod] public void IsOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator();
@@ -709,7 +792,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsNotOneOf_NestedScalarField() {
+        [TestMethod] public void IsNotOneOf_AggregateNestedScalarField() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Condiment);
@@ -740,6 +823,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
                 .WithMessageContaining("\"Color\"");                                // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_ReferenceNestedScalarField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Lifeguard);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("FirstJob.PoolNumber", InclusionOperator.NotIn,
+                    7U, 17U, 27U, 37U
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNotOneOf_NestedReferenceProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(NurseyRhyme);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(NurseyRhyme.MainCharacter))           // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"Character\"");                            // details / explanation
         }
 
         [TestMethod] public void IsNotOneOf_NullableFields() {
@@ -1143,6 +1259,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Scattergories.Round))                 // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Pencil);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Pencil.Lead))                         // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Mitzvah);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Mitzvah.Commandment))                 // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"Hebrew\"");                               // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Eunuch);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Eunuch.Castrator))                    // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
         }

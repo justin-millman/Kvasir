@@ -154,7 +154,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void FirstDefaultOnNestedField() {
+        [TestMethod] public void FirstDefaultOnAggregateNestedField() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Salsa);
@@ -172,7 +172,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void SubsequentDefaultOnNestedField() {
+        [TestMethod] public void SubsequentDefaultOnAggregateNestedField() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Bicycle);
@@ -197,6 +197,66 @@ namespace UT.Kvasir.Translation {
                 .HaveField("SpareWheel.Material.Metal2").WithDefault(null).And
                 .HaveField(nameof(Bicycle.Gears)).WithNoDefault().And
                 .HaveField(nameof(Bicycle.TopSpeed)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void DefaultOnReferenceNestedFieldNotPropagated() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Arch);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Arch.ArchID)).WithNoDefault().And
+                .HaveField(nameof(Arch.Material)).WithNoDefault().And
+                .HaveField(nameof(Arch.Height)).WithNoDefault().And
+                .HaveField(nameof(Arch.Diameter)).WithNoDefault().And
+                .HaveField("Location.Latitude").WithNoDefault().And
+                .HaveField("Location.Longitude").WithNoDefault().And
+                .HaveField(nameof(Arch.KeystoneID)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void FirstDefaultOnReferenceNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Kite);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Kite.KiteID)).WithNoDefault().And
+                .HaveField("KiteString.BallSource").WithNoDefault().And
+                .HaveField("KiteString.CutNumber").WithDefault((ushort)31).And
+                .HaveField(nameof(Kite.MajorAxis)).WithNoDefault().And
+                .HaveField(nameof(Kite.MinorAxis)).WithNoDefault().And
+                .HaveField(nameof(Kite.Material)).WithNoDefault().And
+                .HaveField(nameof(Kite.TopSpeed)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void SubsequentDefaultOnReferenceNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(EscapeRoom);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(EscapeRoom.RoomID)).WithNoDefault().And
+                .HaveField(nameof(EscapeRoom.TimeLimit)).WithNoDefault().And
+                .HaveField(nameof(EscapeRoom.BestTime)).WithNoDefault().And
+                .HaveField("FirstPuzzle.Description").WithNoDefault().And
+                .HaveField("FirstPuzzle.PuzzleType").WithDefault(EscapeRoom.Style.Linguistic).And
+                .HaveField("FinalPuzzle.Description").WithNoDefault().And
+                .HaveField("FinalPuzzle.PuzzleType").WithDefault(EscapeRoom.Style.Logical).And
                 .HaveNoOtherFields();
         }
 
@@ -306,6 +366,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Default]")                                 // details / explanation
                 .WithMessageContaining("\"Stuffing\"");                             // details / explanation
+        }
+
+        [TestMethod] public void DefaultOnNestedReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PoetLaureate);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(PoetLaureate.Of))                     // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"Entity\"");                               // details / explanation
         }
 
         [TestMethod] public void ArrayDefaultValue_IsError() {
@@ -611,6 +688,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(nameof(InfinityStone.Descriptor))            // source type
                 .WithMessageContaining(nameof(InfinityStone.Descriptor.Color))      // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Default]");                                // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Hepatitis);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Hepatitis.Treatment))                 // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Calculator);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Calculator.MakeModel))                // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"IsInCirculation\"");                      // details / explanation
+        }
+
+        [TestMethod] public void NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PopTart);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(PopTart.FrostingColor))               // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Default]");                                // details / explanation
         }

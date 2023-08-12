@@ -5,7 +5,9 @@ Acid
 ACT
 Actor/Actress
 Address
+Adverb
 Aes Sedai
+AirBNB
 Airline
 Airplane
 Airport
@@ -20,13 +22,19 @@ Amino Acid
 Amusement Park
 Animal
 Animation (PowerPoint)
+Antibiotic
 Apocalypse
+Apostle
 Aquarium
 Aqueduct
+Aquifer
+Arch
 Archangel
 Archbishop
 Aria
 Armada
+Aron Kodesh
+Arrondissement
 Arthurian Knight
 Artiodactyl
 Asteroid
@@ -38,15 +46,18 @@ Auction Lot
 Avatar
 Azeotrope
 Aztec God
+Bachelorette
 Backyard Baseball Player
 Bacterium
 Bagel
 Balk
+Ballerina
 Ballet
 Bank Account
 Bankruptcy
 Bar Graph
 Barbecue Sauce
+Barbie
 Baryon
 Baseball Bat
 Baseball Card
@@ -70,7 +81,9 @@ Biography
 Biological Cycle
 Birth Control
 Blender
+Blood Drive
 Blood Type
+Bodhisattva
 Bond Girl
 Bone
 Book
@@ -78,17 +91,22 @@ Bookmark (web browsing)
 Borate
 Border Crossing
 Botanical Garden
+Bounty Hunter
 Bowl Game
 Bowling Frame
 Boxer
 Brassiere
 Bread
 Bridge
+Bug Spray
 Burrito
+Butterfly
 Button (UI)
 C++ Header File
 Cabinet Department
 Cactus
+Caesarean Section
+Calculator
 Calendar
 Caliphate
 Camera
@@ -97,12 +115,17 @@ Campfire
 Canal
 Cancer
 Candle
+Candy Bar
 Cannon
 Canterbury Tale
 Canyon
 Capacitor
+Capitol Building
+Car Accident
 Carbohydrate
+Carnival
 Carousel
+Cartel
 Casino
 Castle
 Cave
@@ -112,6 +135,7 @@ Cemetery
 Cenote
 Census
 Cereal
+Chakra
 Character (text)
 Check
 Chemical Element
@@ -121,8 +145,10 @@ Chinese Character
 Chinese Dynasty
 Chocolate
 Chopped Basket
+Chopsticks
 Christian Denomination
 Christmas Carol
+Chromosome
 Church
 Cider Mill
 CinemaSins
@@ -150,6 +176,8 @@ Concert Tour
 Condiment
 Confidence Interval
 Conlang
+Constellation
+Constitution
 Constitutional Amendment
 Coral Reef
 Country
@@ -160,6 +188,8 @@ Court Case
 Credit Card
 Crossword Clue
 Cruise
+Crusade
+Cryochamber
 Cryptid
 Cryptocurrency
 Currency
@@ -173,6 +203,8 @@ Dam
 Data Structure
 Database Field
 Date
+Decathlon
+Denarian
 Dentist
 Desert
 Diamond
@@ -180,6 +212,7 @@ Directory (file system)
 Distribution (probability)
 District Attorney
 DLL
+DMZ
 Doctor (Doctor Who)
 Documentary
 Dog Show
@@ -188,13 +221,16 @@ Donut
 Draft Pick
 Dragon
 Dreidel
+Druid (D&D)
 Drum
 Dubbing
 E-Mail
 Earring
 Earthquake
 Ecumenical Council
+Edible Arrangement
 Egyptian God
+Egyptian Pyramid
 Elevator
 Emotion
 Encomienda
@@ -202,16 +238,24 @@ Encryption
 Encyclopedia
 Enumeration
 Episode
+Escape Room
 Essay
 ETF
+Etiology
+Eunuch
 Eurovision Song Contest
 Excel Range
+Exorcism
+Experiment
 Expiration
 Eyeglasses
 Facebook Post
+Fact Check
 Fairy Tale
 Family Tree
 Federal Law
+Ferris Wheel
+Ferry
 Feruchemy
 Field Goal
 Fighter Jet
@@ -219,7 +263,9 @@ Final Four
 Final Jeopardy!
 Firearm
 Firefighter
+Fishing Rod
 Fitness Center
+Fitted Sheet
 Fjord
 Flash Mob
 Flashcard
@@ -228,21 +274,25 @@ Flood
 Flower
 Font
 Food Chain
+Food Pantry
 Fortune Cookie
 Fountain
 Fractal
 Fraction
 Fraternity
 Function (programming)
+Galaxy
 Gaming Console
 Garage Sale
 Gas Station
+Gatorade
 Gene
 Generation
 Genie
 Geocache
 Geologic Epoch
 Geyser
+Ghost (Danny Phantom)
 Git Commit
 Git Hook
 Gold Rush
@@ -250,6 +300,7 @@ Golden Raspberry
 Golf Course
 Golf Hole
 Grammatical Case
+Great Old One
 Greek God
 Greek Letter
 Guillotine
@@ -257,13 +308,18 @@ Guitar
 Gymnast
 Haiku
 Hall of Fame
+Happy Hour
 Hash Function
 Hash Map
+Hawaiian God
 Headphones
 Healing Potion (D&D)
+Heat Wave
 Hebrew Letter
 Hebrew Prayer
 Helicopter
+Hepatitis
+Hercule Poirot Mystery
 Hieroglyph
 Highway
 Hindu God
@@ -275,6 +331,7 @@ Holy Roman Emperor
 Home Run Derby
 Homeric Hymn
 Hominin
+Honest Trailer
 Hormone
 Hospital
 Hot Spring
@@ -285,26 +342,32 @@ HTML Element
 HTTP Error
 Hurricane
 Ice Age
+Ice Cream Sundae
 IDE
 Igloo
 Imaginary Friend
 Immaculate Grid
 Inator
 Infinity Stone
+Influenza
 Inmate
+Installation Wizard
 Insurance Policy
 Integer
 Integer Sequence
 Integral
+Intern
 Internet Craze
 IP Address
 iPhone
 IPO
 ISO Standard
 Isthmus
+Japanese Emperor
 Jedi
 Jigsaw Puzzle
 Joust
+Jukebox
 Kaiju
 Kanji
 Kayak
@@ -313,19 +376,28 @@ Key Signature
 Keystroke
 Kinesis
 King of England
+Kite
+Knife
 Knock-Knock Joke
 Labor of Heracles
 Lake
+Lamp
 Land Card (MTG)
 Language
+Law Firm
 Lease
 Legume
 Lens
+Leprechaun
 License Plate
+Lifeguard
 Ligament
+Limerick
+Linker
 Linux Distribution
 Lipstick
 Liquor
+Liquor Store
 Literary Trope
 Locale (computing)
 Localization
@@ -333,6 +405,7 @@ Lock (computing)
 Log-In Credentials
 Longbow
 Lottery Ticket
+Luau
 Lunar Crater
 Lyric
 Madden NFL
@@ -345,6 +418,7 @@ Marble League
 Marian Apparition
 Mark-Up Symbol
 Masked Singer
+Mass Extinction
 Massacre
 MasterClass
 Mausoleum
@@ -358,6 +432,8 @@ Mezuzah
 Military Base
 Milkshake
 Mint (currency)
+Mirror
+Mitzvah
 Monopoly Property
 Month
 Moon of Jupiter
@@ -377,6 +453,7 @@ Mustache
 Mutant (X-Men)
 Mythbusting
 National Anthem
+National Monument
 National Park
 Native American Tribe
 Nazca Line
@@ -386,13 +463,16 @@ Neurotoxin
 Neurotransmitter
 Newscast
 Newspaper
+Niqqud
 Nobel Prize
 Norse God
 Norse World
 Nuclear Power Plant
 NuGet Package
+Nursery Rhyme
 Obelisk
 Obi
+Ocean Current
 Oceanic Trench
 Oceanid
 Oil (cooking)
@@ -400,14 +480,18 @@ Oil Field
 Oil Spill
 Ointment
 Olympiad
+Onomatopoeia
 Opera
 Opioid
 Orchestra
+Orgasm
+Origami
 Orisha
 Orphanage
 Overnight Camp
 Pagoda
 Painting
+Pajamas
 Parashah
 Parking Garage
 Passport
@@ -417,15 +501,21 @@ Patreon
 Paycheck
 Peace Treaty
 Peanut Butter
+Peerage
 Penalty (NFL)
+Pencil
 Peninsula
 PEP
 Pepper
 Pharaoh
+Pharmacy
+Phase Diagram
 Philosopher
 Phobia
+Phone Booth
 Phone Number
 Phonetic Alphabet
+Piano
 Pie
 Pigment (biology)
 Pillow
@@ -434,15 +524,21 @@ Pirate
 Pizza
 Plane of Existence (D&D)
 Planeswalker
+Planetarium
 Platonic Dialogue
 Playing Card
+Playlist
 PO Box
 Podcast
+Poet Laurete
 Pokémon
 Poker Hand
 Police Officer
 Polygon
 Polyhedron
+Pond
+Pop Tart
+Popcorn
 Pope
 Potato
 Pregnancy Test
@@ -451,22 +547,28 @@ Presidential Election
 Printer
 Prison
 Process (computing)
-Programming Langauge
+Programming Language
+Prophecy
 Prophet
 Proto-Indo-European Root
 Pseudonym
 Pterosaur
+Pub Crawl
 Pulley
+Pulsar
 Quadratic Equation
 Quarterback
 Quatrain
+Rabbi
 Racehorse
 Racetrack (auto racing)
 Radio Station
 Rainforest
 Random Number Generator
+Ransomware
 Raptor
 Readymade
+Refugee Camp
 Repository
 Representative
 Resistor
@@ -476,19 +578,23 @@ Retail Product
 Ring of Power
 River
 Rollercoaster
+Roman Baths
 Roman Emperor
 Rorschach Ink Blot
 Royal House
 Rube Goldberg Machine
 Rune
+Runway
 Russian Tsar
 Sabermetric
+Safari
 Saint
 Salsa
 Satellite
 Scattergories Round
 Scholarship
 Scooby-Doo Movie
+Scorpion
 Scrabble Tile
 Screwdriver
 SCUBA Dive
@@ -498,6 +604,7 @@ Secret Hitler Game
 Secret Society
 Seder Plate
 Senator
+Serial Killer
 Set Card
 Seventh Inning Stretch
 Shampoo
@@ -505,6 +612,7 @@ Shard of Adonalsium
 Shark Tank Pitch
 Shark Week
 Shen Gong Wu
+Sherpa
 Shipwreck
 Shoe
 Shogunate
@@ -514,8 +622,10 @@ Ski Slope
 Skittles
 Skyscraper
 Slack Channel
+SlamBall Match
 Slave Revolt
 Slot Machine
+Slumber Party
 Smoothie
 Smurf
 Snake
@@ -533,19 +643,25 @@ Speedometer
 Spider-Man
 Sporcle Quiz
 Sports Bet
+Sprachbund
 SQL Query
 Stadium
 Stamp
+Stanley Cup
 Star
 Star-Crossed Lovers
+State of the Union
 Steak
 Step Pyramid
+Stock
 Stratego Piece
 Strike (labor)
 Stuffed Animal
 Submarine
 Subreddit
 Sudoku Puzzle
+Sumo Wrestler
+Sundial
 Sunscreen
 Super Bowl
 SuperPAC
@@ -554,6 +670,7 @@ Surfing Maneuver
 Surgical Mask
 Survivor
 Sutra
+Swamp
 Swimming Pool
 Sword
 Symphony
@@ -562,6 +679,7 @@ Tar Pits
 Tarot Card
 Tattoo
 Tectonic Plate
+TED Talk
 Telescope
 Tendon
 Tennis Match
@@ -573,6 +691,7 @@ Tic-Tac-Toe Game
 Ticket2Ride Route
 Time Zone
 Timestamp
+Tongue Twister
 Tooth
 Toothpaste
 Top 10 List
@@ -586,6 +705,8 @@ Treasury Bond
 Tree House
 Triangle
 Trilogy
+Triptych
+Trivial Pursuit
 Trolley Problem
 Tsunami
 Tuxedo
@@ -597,6 +718,7 @@ University
 Upanishad
 URL
 UUID
+Vacuum Cleaner
 Vampire Slayer
 Verb
 Vigenère Cipher
@@ -611,11 +733,15 @@ W2 Tax Form
 Waffle
 Water Bottle
 Water Slide
+Waterbending Discipline
 Waterfall
 Web Browser
+Weekend Update
+Werewolf
 Wikipedia Page
 Wildfire
 Windmill
+WinForm
 Winter Storm
 Witch Hunt
 Wizard
@@ -626,6 +752,7 @@ World Heritage Site
 Wristwatch
 xkcd Comic
 Yacht
+Yoga Position
 YouTube Video
 Yu-Gi-Oh Monster
 Ziggurat
@@ -633,3 +760,4 @@ Zodiac Sign
 Zombie
 Zoo
 Zoom Meeting
+Zoombini

@@ -14,6 +14,9 @@ using DescriptorSeq = System.Collections.Generic.IEnumerable<Kvasir.Translation.
 // leveraging information already extracted (e.g. properties annotated with [PrimaryKey]) where appropriate. Any
 // Candidate Key that is a superset of the Primary Key is redundant, but Candidate Keys that are subsets of the Primary
 // Key are not.
+//
+// There is also a function for handling Foreign Keys; while this likely could have been implemented as a large LINQ
+// statement, the standalone method with explicit loops is far more readable and easier to debug.
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
@@ -139,6 +142,33 @@ namespace Kvasir.Translation {
 
             // It is an error for an Entity to have no Primary Key
             throw Error.UserError(entity, "could not deduce Primary Key");
+        }
+
+        private IEnumerable<ForeignKey> MakeForeignKeys(FieldSeq fields, DescriptorSeq descriptors) {
+            Debug.Assert(fields is not null && !fields.IsEmpty());
+            Debug.Assert(descriptors is not null && !descriptors.IsEmpty());
+            Debug.Assert(fields.Count() == descriptors.Count());
+
+            var iter = descriptors.Zip(fields).Where(pair => pair.First.ForeignReference.HasValue).GetEnumerator();
+            var keys = new List<ForeignKey>();
+            while (iter.MoveNext()) {
+                var refType = iter.Current.First.ForeignReference.Unwrap();
+                var members = new List<IField>();
+                var refTable = entityCache_[refType].Principal.Table;
+                var size = refTable.PrimaryKey.Fields.Count;
+
+                for (int i = 0; i < size; ++i) {
+                    // We want to advance the iterator at the end of each pass through the loop _except_ the last pass,
+                    // because the outer while loop will _also_ advance the iterator and we don't want to advance the
+                    // iterator multiple times. So we move the advancement to the beginning, but we skip the first pass.
+                    if (!members.IsEmpty()) {
+                        iter.MoveNext();
+                    }
+                    members.Add(iter.Current.Second);
+                }
+                keys.Add(new ForeignKey(refTable, members, OnDelete.Cascade, OnUpdate.Cascade));
+            }
+            return keys;
         }
     }
 }

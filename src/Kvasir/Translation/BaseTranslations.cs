@@ -38,6 +38,7 @@ namespace Kvasir.Translation {
                 Default: Option.None<object?>(),
                 InPrimaryKey: false,
                 CandidateKeyMemberships: new HashSet<string>(),
+                ForeignReference: Option.None<Type>(),
                 Constraints: new ConstraintBucket(
                     RelativeToZero: Option.None<ComparisonOperator>(),
                     LowerBound: Option.None<Bound>(),
@@ -69,6 +70,7 @@ namespace Kvasir.Translation {
                 Default: Option.None<object?>(),
                 InPrimaryKey: false,
                 CandidateKeyMemberships: new HashSet<string>(),
+                ForeignReference: Option.None<Type>(),
                 Constraints: new ConstraintBucket(
                     RelativeToZero: Option.None<ComparisonOperator>(),
                     LowerBound: Option.None<Bound>(),
@@ -96,6 +98,29 @@ namespace Kvasir.Translation {
             foreach (var (path, descriptor) in typeTranslation.Fields) {
                 result[path] = descriptor with {
                     Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList()
+                };
+            }
+            return result;
+        }
+
+        private FieldsListing ReferenceBaseTranslation(PropertyInfo property) {
+            Debug.Assert(property is not null);
+            Debug.Assert(!DBType.IsSupported(property.PropertyType) && property.PropertyType.IsClass);
+
+            var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+            var _ = TranslateEntity(type);
+            var refKey = primaryKeyCache_[type].OrderBy(kvp => kvp.Value.RelativeColumn);
+
+            var result = new Dictionary<string, FieldDescriptor>();
+            foreach ((int idx, var (path, descriptor)) in refKey.Select((kvp, idx) => (idx, kvp))) {
+                result[path] = descriptor with {
+                    Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList(),
+                    AbsoluteColumn = Option.None<int>(),
+                    RelativeColumn = idx,
+                    Default = Option.None<object?>(),
+                    InPrimaryKey = false,
+                    CandidateKeyMemberships = new HashSet<string>(),
+                    ForeignReference = Option.Some(type)
                 };
             }
             return result;

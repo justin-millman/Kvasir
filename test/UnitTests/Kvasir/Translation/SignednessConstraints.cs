@@ -134,7 +134,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Mythbusting.Resolution));             // details / explanation
         }
 
-        [TestMethod] public void IsPositive_NestedApplicableScalar() {
+        [TestMethod] public void IsPositive_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator();
             var source = typeof(IceAge);
@@ -149,7 +149,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsPositive_NestedInapplicableScalar_IsError() {
+        [TestMethod] public void IsPositive_AggregateNestedInapplicableScalar_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(GoldenRaspberry);
@@ -183,6 +183,56 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
                 .WithMessageContaining("\"Bottom\"");                               // details / explanation
+        }
+
+        [TestMethod] public void IsPositive_ReferenceNestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Runway);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Host.ID", ComparisonOperator.GT, 0U).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsPositive_ReferenceNestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CaesareanSection);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(CaesareanSection.Doctor ))            // error location
+                .WithMessageContaining("\"LastName\"")                              // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
+                .WithMessageContaining("numeric")                                   // details / explanation
+                .WithMessageContaining(nameof(String));                             // details / explanation
+        }
+
+        [TestMethod] public void IsPositive_NestedReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Lamp);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Lamp.Power))                          // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
+                .WithMessageContaining("\"Unit\"");                                 // details / explanation
         }
 
         [TestMethod] public void IsPositive_FieldWithNumericDataConversionTarget() {
@@ -293,6 +343,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Philosopher.Name))                    // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsPositive]");                       // details / explanation
+        }
+
+        [TestMethod] public void IsPositive_NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HappyHour);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(HappyHour.Location))                  // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsPositive_NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Aquifer);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Aquifer.DiscoveringGeologist))        // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
+                .WithMessageContaining("\"Qualifications\"");                       // details / explanation
+        }
+
+        [TestMethod] public void IsPositive_NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(FactCheck);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(FactCheck.Fact))                      // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Check.IsPositive]");                       // details / explanation
         }
@@ -457,7 +557,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(SerialKiller.Status));                // details / explanation
         }
 
-        [TestMethod] public void IsNegative_NestedApplicableScalar() {
+        [TestMethod] public void IsNegative_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Flood);
@@ -471,7 +571,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsNegative_NestedInapplicableScalar_IsError() {
+        [TestMethod] public void IsNegative_AggregateNestedInapplicableScalar_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(TrolleyProblem);
@@ -505,6 +605,56 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
                 .WithMessageContaining("\"Kingdom\"");                              // details / explanation
+        }
+
+        [TestMethod] public void IsNegative_ReferenceNestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HawaiianGod);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("MaoriEquivalent.DeityID", ComparisonOperator.LT, (short)0).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNegative_ReferenceNestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(OceanCurrent);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(OceanCurrent.WhichOcean))             // error location
+                .WithMessageContaining("\"Name\"")                                  // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
+                .WithMessageContaining("numeric")                                   // details / explanation
+                .WithMessageContaining(nameof(String));                             // details / explanation
+        }
+
+        [TestMethod] public void IsNegative_NestedReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(AirBNB);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(AirBNB.HouseAddress))                 // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
+                .WithMessageContaining("\"State\"");                                // details / explanation
         }
 
         [TestMethod] public void IsNegative_FieldWithNumericDataConversionTarget() {
@@ -615,6 +765,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Yacht.Sails))                         // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsNegative]");                       // details / explanation
+        }
+
+        [TestMethod] public void IsNegative_NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Pharmacy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Pharmacy.HeadPharmacist))             // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNegative_NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Popcorn);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Popcorn.Topping))                     // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
+                .WithMessageContaining("\"Calories\"");                             // details / explanation
+        }
+
+        [TestMethod] public void IsNegative_NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(WinForm);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(WinForm.SubmitButton))                // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Check.IsNegative]");                       // details / explanation
         }
@@ -762,7 +962,7 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(IPO.Method));                         // details / explanation
         }
 
-        [TestMethod] public void IsNonZero_NestedApplicableScalar() {
+        [TestMethod] public void IsNonZero_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Essay);
@@ -780,7 +980,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsNonZero_NestedInapplicableScalar_IsError() {
+        [TestMethod] public void IsNonZero_AggregateNestedInapplicableScalar_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(IDE);
@@ -814,6 +1014,56 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
                 .WithMessageContaining("\"Name\"");                                 // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_ReferenceNestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(EgyptianPyramid);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Entombed.RegnalNumber", ComparisonOperator.NE, (byte)0).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNonZero_ReferenceNestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Pajamas);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Pajamas.Retailer))                    // error location
+                .WithMessageContaining("\"ID\"")                                    // nested path
+                .WithMessageContaining("constraint is inapplicable")                // category
+                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
+                .WithMessageContaining("numeric")                                   // details / explanation
+                .WithMessageContaining(nameof(Guid));                               // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_NestedReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Galaxy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Galaxy.Discovery))                    // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
+                .WithMessageContaining("\"Astronomer\"");                           // details / explanation
         }
 
         [TestMethod] public void IsNonZero_FieldWithNumericDataConversionTarget() {
@@ -924,6 +1174,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Smoothie.Base))                       // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsNonZero]");                        // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Antibiotic);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Antibiotic.Formula))                  // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Chopsticks);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Chopsticks.Chopstick2))               // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
+                .WithMessageContaining("\"Weight\"");                               // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(TongueTwister);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(TongueTwister.Word11))                // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Check.IsNonZero]");                        // details / explanation
         }

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Kvasir.Exceptions;
+using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Optional;
@@ -35,7 +36,8 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(Smorgasbord.UInt)).OfTypeUInt32().BeingNonNullable().And
                 .HaveField(nameof(Smorgasbord.ULong)).OfTypeUInt64().BeingNonNullable().And
                 .HaveField(nameof(Smorgasbord.UShort)).OfTypeUInt16().BeingNonNullable().And
-                .HaveNoOtherFields();
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
         }
 
         [TestMethod] public void NullableScalars() {
@@ -64,7 +66,8 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(Plethora.ULong)).OfTypeUInt64().BeingNullable().And
                 .HaveField(nameof(Plethora.UShort)).OfTypeUInt16().BeingNullable().And
                 .HaveField(nameof(Plethora.PrimaryKey)).OfTypeInt32().BeingNonNullable().And
-                .HaveNoOtherFields();
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
         }
 
         [TestMethod] public void PropertyTypeIsDelegate_IsError() {
@@ -297,7 +300,8 @@ namespace UT.Kvasir.Translation {
                     DayOfWeek.Friday,
                     DayOfWeek.Saturday
                 ).BeingNullable().And
-                .HaveNoOtherFields();
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
         }
 
         [TestMethod] public void NonNullableAggregates() {
@@ -320,7 +324,8 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(ChineseDynasty.Fell)).OfTypeInt16().BeingNonNullable().And
                 .HaveField(nameof(ChineseDynasty.Population)).OfTypeUInt64().BeingNonNullable().And
                 .HaveField("Capital.Name").OfTypeText().BeingNonNullable().And
-                .HaveNoOtherFields();
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
         }
 
         [TestMethod] public void NullableAggregates() {
@@ -344,7 +349,8 @@ namespace UT.Kvasir.Translation {
                     BarbecueSauce.Kind.Sweet, BarbecueSauce.Kind.Spicy,
                     BarbecueSauce.Kind.Tangy, BarbecueSauce.Kind.Chocolatey
                 ).BeingNonNullable().And
-                .HaveNoOtherFields();
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
         }
 
         [TestMethod] public void NestedAggregates() {
@@ -386,8 +392,147 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(DNDMonster.AC)).OfTypeUInt32().BeingNonNullable().And
                 .HaveField(nameof(DNDMonster.HP)).OfTypeUInt32().BeingNonNullable().And
                 .HaveField(nameof(DNDMonster.LegendaryActions)).OfTypeUInt8().BeingNonNullable().And
-                .HaveNoOtherFields();
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+        }
 
+        [TestMethod] public void NonNullableReferences() {
+            // Arrange
+            var source = typeof(Scorpion);
+            var translator = new Translator();
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Scorpion.CommonName)).OfTypeText().BeingNonNullable().And
+                .HaveField("Genus.Genus").OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Scorpion.Species)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Scorpion.StingIndex)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Scorpion.AverageLength)).OfTypeSingle().BeingNonNullable().And
+                .HaveField(nameof(Scorpion.AverageWeight)).OfTypeSingle().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Genus.Genus")
+                    .Against(translator[typeof(Scorpion.TaxonomicGenus)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void NullableReferences() {
+            // Arrange
+            var source = typeof(Ferry);
+            var translator = new Translator();
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Ferry.RegistrationNumber)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Ferry.PassengerCapacity)).OfTypeUInt64().BeingNullable().And
+                .HaveField(nameof(Ferry.Type)).OfTypeEnumeration(
+                    Ferry.Kind.Passenger,
+                    Ferry.Kind.Cargo,
+                    Ferry.Kind.State,
+                    Ferry.Kind.Passenger | Ferry.Kind.Cargo,
+                    Ferry.Kind.Passenger | Ferry.Kind.State,
+                    Ferry.Kind.Cargo | Ferry.Kind.State,
+                    Ferry.Kind.Passenger | Ferry.Kind.Cargo | Ferry.Kind.State
+                ).BeingNonNullable().And
+                .HaveField("Embarcation.PortID").OfTypeGuid().BeingNullable().And
+                .HaveField("Embarcation.PortName").OfTypeText().BeingNullable().And
+                .HaveField("Destination.PortID").OfTypeGuid().BeingNullable().And
+                .HaveField("Destination.PortName").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Embarcation.PortID", "Embarcation.PortName")
+                    .Against(translator[typeof(Ferry.Port)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Destination.PortID", "Destination.PortName")
+                    .Against(translator[typeof(Ferry.Port)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void ReferencesNestedWithinAggregates() {
+            // Arrange
+            var source = typeof(WeekendUpdate);
+            var translator = new Translator();
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(WeekendUpdate.ID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField("Airing.Month").OfTypeEnumeration(
+                    WeekendUpdate.Date.MonthOfYear.JAN, WeekendUpdate.Date.MonthOfYear.FEB,
+                    WeekendUpdate.Date.MonthOfYear.MAR, WeekendUpdate.Date.MonthOfYear.APR,
+                    WeekendUpdate.Date.MonthOfYear.MAY, WeekendUpdate.Date.MonthOfYear.JUN,
+                    WeekendUpdate.Date.MonthOfYear.JUL, WeekendUpdate.Date.MonthOfYear.AUG,
+                    WeekendUpdate.Date.MonthOfYear.SEP, WeekendUpdate.Date.MonthOfYear.OCT,
+                    WeekendUpdate.Date.MonthOfYear.NOV, WeekendUpdate.Date.MonthOfYear.DEC
+                ).BeingNonNullable().And
+                .HaveField("Airing.Day").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Airing.Year").OfTypeInt16().BeingNonNullable().And
+                .HaveField("Anchor.FirstName").OfTypeText().BeingNonNullable().And
+                .HaveField("Anchor.LastName").OfTypeText().BeingNonNullable().And
+                .HaveField("FirstSegment.Name").OfTypeText().BeingNullable().And
+                .HaveField("FirstSegment.Portrayal.FirstName").OfTypeText().BeingNullable().And
+                .HaveField("FirstSegment.Portrayal.LastName").OfTypeText().BeingNullable().And
+                .HaveField("SecondSegment.Name").OfTypeText().BeingNullable().And
+                .HaveField("SecondSegment.Portrayal.FirstName").OfTypeText().BeingNullable().And
+                .HaveField("SecondSegment.Portrayal.LastName").OfTypeText().BeingNullable().And
+                .HaveField(nameof(WeekendUpdate.NumJokes)).OfTypeInt8().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Airing.Day", "Airing.Month", "Airing.Year")
+                    .Against(translator[typeof(WeekendUpdate.Date)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Anchor.FirstName", "Anchor.LastName")
+                    .Against(translator[typeof(WeekendUpdate.Actor)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("FirstSegment.Portrayal.FirstName", "FirstSegment.Portrayal.LastName")
+                    .Against(translator[typeof(WeekendUpdate.Actor)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("SecondSegment.Portrayal.FirstName", "SecondSegment.Portrayal.LastName")
+                    .Against(translator[typeof(WeekendUpdate.Actor)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void ReferencesNestedWithinReferences() {
+            // Arrange
+            var source = typeof(DannyPhantomGhost);
+            var translator = new Translator();
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(DannyPhantomGhost.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(DannyPhantomGhost.Powers)).OfTypeEnumeration(
+                    DannyPhantomGhost.Ability.Intangibiblity,
+                    DannyPhantomGhost.Ability.Blast,
+                    DannyPhantomGhost.Ability.Overshadowing,
+                    DannyPhantomGhost.Ability.Duplication,
+                    DannyPhantomGhost.Ability.Telekinesis
+                ).BeingNonNullable().And
+                .HaveField(nameof(DannyPhantomGhost.Appearances)).OfTypeInt32().BeingNonNullable().And
+                .HaveField("Debut.Overall").OfTypeInt16().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Debut.Overall")
+                    .Against(translator[typeof(DannyPhantomGhost.Episode)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
         }
     }
 }

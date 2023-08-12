@@ -52,16 +52,20 @@ namespace Kvasir.Translation {
 
             settings_ = settings;
             sourceAssembly_ = Assembly.GetCallingAssembly();
+            inProgress_ = new Stack<Type>();
             typeCache_ = new Dictionary<Type, TypeDescriptor>();
             entityCache_ = new Dictionary<Type, Translation>();
+            primaryKeyCache_ = new Dictionary<Type, FieldsListing>();
             tableNames_ = new HashSet<TableName>();
         }
 
 
         private readonly Settings settings_;
         private readonly Assembly sourceAssembly_;
+        private readonly Stack<Type> inProgress_;
         private readonly Dictionary<Type, TypeDescriptor> typeCache_;
         private readonly Dictionary<Type, Translation> entityCache_;
+        private readonly Dictionary<Type, FieldsListing> primaryKeyCache_;
         private readonly HashSet<TableName> tableNames_;
         private const char NAME_SEPARATOR = '.';
         private const char PATH_SEPARATOR = '.';

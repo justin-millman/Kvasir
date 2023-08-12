@@ -148,7 +148,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherCandidateKeys();
         }
 
-        [TestMethod] public void NestedScalarsInCandidateKey() {
+        [TestMethod] public void AggregateNestedScalarsInCandidateKey() {
             // Arrange
             var translator = new Translator();
             var source = typeof(SpiderMan);
@@ -202,6 +202,70 @@ namespace UT.Kvasir.Translation {
                     "Credentials.MeetingNumber",
                     "Credentials.PassCode"
                 ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void ReferenceInCandidateKeyAlone() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Luau);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveAnonymousCandidateKey().OfFields(
+                    "SucklingPig.BatchID",
+                    "SucklingPig.LotNumber"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void ReferenceInCandidateKeyWithOtherFields() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(GreatOldOne);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveCandidateKey("Identity").OfFields(
+                    nameof(GreatOldOne.PantheonNumber),
+                    "PrimaryEpithet.Name"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void ReferenceNestedScalarsInCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(JapaneseEmperor);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveCandidateKey("Eras").OfFields(
+                    "EndEra.EnglishEraName",
+                    "StartEra.JapaneseEraName"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void ReferenceFieldsNativelyInCandidateKeyNotPropagated() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HonestTrailer);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -345,6 +409,57 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[Unique]")                                  // details / explanation
                 .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Bachelorette);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Bachelorette.FinalRose))              // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Unique]")                                  // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Sherpa);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Sherpa.MainMountain))                 // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Unique]")                                  // details / explanation
+                .WithMessageContaining("\"TotalAscents\"");                         // details / explanation
+        }
+
+        [TestMethod] public void PathOnReferenceRefersToPartiallyExposedAggregate() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LawFirm);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveAnonymousCandidateKey().OfFields(
+                    "Partners.FoundingPartner.LawSchool",
+                    "Partners.FoundingPartner.License.BarNumber"
+                ).And
+                .HaveNoOtherCandidateKeys();
         }
     }
 }

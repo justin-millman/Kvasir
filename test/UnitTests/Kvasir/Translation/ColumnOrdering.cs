@@ -68,6 +68,48 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void ReferenceFieldsOrdered() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(EdibleArrangement);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(EdibleArrangement.ID)).AtColumn(3).And
+                .HaveField(nameof(EdibleArrangement.Price)).AtColumn(8).And
+                .HaveField(nameof(EdibleArrangement.Strawberries)).AtColumn(9).And
+                .HaveField(nameof(EdibleArrangement.Bananas)).AtColumn(0).And
+                .HaveField(nameof(EdibleArrangement.Grapes)).AtColumn(2).And
+                .HaveField(nameof(EdibleArrangement.Cantaloupe)).AtColumn(1).And
+                .HaveField(nameof(EdibleArrangement.OtherFruit)).AtColumn(4).And
+                .HaveField("Vessel.FactoryID").AtColumn(6).And
+                .HaveField("Vessel.Brand").AtColumn(7).And
+                .HaveField("Vessel.Item").AtColumn(5).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ReferencePrimaryKeysAreNonSequential() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MassExtinction);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(MassExtinction.Index)).AtColumn(4).And
+                .HaveField("ExitBoundary.Name").AtColumn(2).And
+                .HaveField("ExitBoundary.MYA").AtColumn(3).And
+                .HaveField("EntryBoundary.Name").AtColumn(0).And
+                .HaveField("EntryBoundary.MYA").AtColumn(1).And
+                .HaveField(nameof(MassExtinction.Severity)).AtColumn(5).And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void TwoScalarFieldsOrderedToSameIndex_IsError() {
             // Arrange
             var translator = new Translator();
@@ -136,6 +178,22 @@ namespace UT.Kvasir.Translation {
             // Arrange
             var translator = new Translator();
             var source = typeof(Verb);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("unable to assign Fields to columns")        // category
+                .WithMessageContaining("gaps");                                     // details / explanation
+        }
+
+        [TestMethod] public void ColumnOrderingOfReferencesLeavesGaps_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Origami);
 
             // Act
             var translate = () => translator[source];
