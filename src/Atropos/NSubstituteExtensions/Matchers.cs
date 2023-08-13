@@ -1,13 +1,13 @@
 using Ardalis.GuardClauses;
-using Moq;
+using NSubstitute;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Atropos.Moq {
+namespace Atropos.NSubstitute {
     /// <summary>
-    ///   A collection of custom Matchers that can be used to verify calls against a <see cref="Mock{T}"/>.
+    ///   A collection of custom Matchers that can be used to verify calls against a <see cref="Substitute"/>.
     /// </summary>
-    public static class Arg {
+    public static class NArg {
         /// <summary>
         ///   Produces a Matcher that returns <see langword="true"/> when the actual argument is an
         ///   <see cref="IEnumerable"/> with the same sequence of elements as another.
@@ -53,7 +53,7 @@ namespace Atropos.Moq {
             Guard.Against.Null(expected, nameof(expected));
             Guard.Against.Null(comparer, nameof(comparer));
 
-            return Match.Create<T>(actual => {
+            var SequenceEqual = (IEnumerable actual) => {
                 var e1 = actual.GetEnumerator();
                 var e2 = expected.GetEnumerator();
 
@@ -63,7 +63,8 @@ namespace Atropos.Moq {
                     }
                 }
                 return !e2.MoveNext();
-            });
+            };
+            return global::NSubstitute.Arg.Is<T>(actual => SequenceEqual(actual));
         }
     }
 }

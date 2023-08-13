@@ -1,10 +1,9 @@
-using Atropos.Moq;
 using FluentAssertions;
 using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Relations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 
@@ -26,26 +25,24 @@ namespace UT.Kvasir.Reconstitution {
 
         [TestMethod] public void Execute() {
             // Arrange
-            var mockRelation = new Mock<IRelation>();
-            var source = new Tuple<IRelation>(mockRelation.Object);
+            var mockRelation = Substitute.For<IRelation>();
+            var source = new Tuple<IRelation>(mockRelation);
             var entries = new List<string>() { "Seneca Falls", "Richmond", "Hackensack", "Ogden", "Bloomington" };
             var extractor = new IdentityExtractor<Tuple<IRelation>>();
             var repopulator = new FromPropertyRepopulator(extractor, source.GetType().GetProperty("Item1")!);
-
-            // Sequence
-            var sequence = mockRelation.MakeSequence();
-            sequence.Add(r => r.Repopulate(entries[0]));
-            sequence.Add(r => r.Repopulate(entries[1]));
-            sequence.Add(r => r.Repopulate(entries[2]));
-            sequence.Add(r => r.Repopulate(entries[3]));
-            sequence.Add(r => r.Repopulate(entries[4]));
 
             // Act
             repopulator.Execute(source, entries);
 
             // Assert
-            sequence.VerifyCompleted();
-            mockRelation.VerifyNoOtherCalls();
+            Received.InOrder(() => {
+                mockRelation.Repopulate(entries[0]);
+                mockRelation.Repopulate(entries[1]);
+                mockRelation.Repopulate(entries[2]);
+                mockRelation.Repopulate(entries[3]);
+                mockRelation.Repopulate(entries[4]);
+            });
+            mockRelation.ReceivedCalls().Should().HaveCount(5);
         }
     }
 }

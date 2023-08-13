@@ -4857,7 +4857,7 @@ namespace UT.Kvasir.Translation {
                 public record struct Taxonomy(string Genus, string Species);
 
                 [Check.LengthIsAtLeast(5, Path = "---")] public Taxonomy ScientificName { get; set; }
-                [PrimaryKey] public string CommonName { get; set; }
+                [PrimaryKey] public string CommonName { get; set; } = "";
                 public Desert NativeHabitat { get; set; }
                 public double AverageHeight { get; set; }
                 public uint Lifespan { get; set; }

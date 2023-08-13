@@ -1,4 +1,4 @@
-﻿using Atropos.Moq;
+﻿using Atropos.NSubstitute;
 using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Core;
@@ -6,7 +6,7 @@ using Kvasir.Exceptions;
 using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,15 +32,15 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
             CustomCheck.LastCtorArgs.Should().BeEmpty();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(VampireSlayer.Deaths))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void Check_ConstructedFromArguments() {
@@ -57,15 +57,15 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
             CustomCheck.LastCtorArgs.Should().BeEquivalentTo(new object?[] { 13, false, "ABC", null });
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(Lyric.IsSpoken))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void Check_AppliedToNestedScalar() {
@@ -84,24 +84,24 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints[0].Name.Should().NotHaveValue();
             table.CheckConstraints[1].Name.Should().NotHaveValue();
             CustomCheck.LastCtorArgs.Should().BeEmpty();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName("Orbit.Aphelion")]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            );
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName("Orbit.Eccentricity")]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void Check_AppliedToNestedAggregate() {
@@ -136,15 +136,15 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints[1].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
             table.CheckConstraints[1].Name.Should().NotHaveValue();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(2).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(TarotCard.Pips))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(2));
+            );
         }
 
         [TestMethod] public void Check_DataConvertedField() {
@@ -159,15 +159,15 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints.Should().HaveCount(1);
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(DataStructure.RemoveBigO))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void Check_ConstraintGeneratorDoesNotImplementInterface_IsError() {
@@ -325,15 +325,15 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
             CustomCheck.LastCtorArgs.Should().BeEmpty();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(CanterburyTale.FirstLine))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void ComplexCheck_ConstructedFromArguments() {
@@ -351,15 +351,15 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
             CustomCheck.LastCtorArgs.Should().BeEquivalentTo(new object?[] { -93, true, 'X' });
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(Pope.ConclaveRounds))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void ComplexCheck_NoFields_IsError() {
@@ -390,17 +390,17 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints.Should().HaveCount(1);
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(LinuxDistribution.Major))],
                         table[new FieldName(nameof(LinuxDistribution.Minor))],
                         table[new FieldName(nameof(LinuxDistribution.Patch))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 3),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 3),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void ComplexCheck_SingleFieldMultipleTimesInOneConstraint() {
@@ -416,8 +416,8 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints.Should().HaveCount(1);
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(Muppet.Name))],
                         table[new FieldName(nameof(Muppet.Name))],
@@ -425,9 +425,9 @@ namespace UT.Kvasir.Translation {
                         table[new FieldName(nameof(Muppet.Name))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 4),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 4),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void ComplexCheck_NameSwappedFields() {
@@ -443,16 +443,16 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints.Should().HaveCount(1);
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName("Cuisine")],
                         table[new FieldName("ContainsTomatoes")]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 2),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 2),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void ComplexCheck_OriginalNameOfSwappedField_IsError() {
@@ -500,17 +500,17 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints.Should().HaveCount(1);
             table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[0].Name.Should().NotHaveValue();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(Massacre.When))],
                         table[new FieldName(nameof(Massacre.Casualties))],
                         table[new FieldName(nameof(Massacre.When))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 3),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 3),
                 Settings.Default
-            ), Times.Exactly(1));
+            );
         }
 
         [TestMethod] public void ComplexCheck_RepeatedConstraint() {
@@ -530,24 +530,24 @@ namespace UT.Kvasir.Translation {
             table.CheckConstraints[1].Name.Should().NotHaveValue();
             table.CheckConstraints[2].Condition.Should().BeSameAs(CustomCheck.Clause);
             table.CheckConstraints[2].Name.Should().NotHaveValue();
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(Musical.LengthMinutes))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(1));
-            CustomCheck.Generator.Verify(icg => icg.MakeConstraint(
-                Arg.IsSameSequence<IEnumerable<IField>>(
+            );
+            CustomCheck.Generator.Received(2).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
                         table[new FieldName(nameof(Musical.SungThrough))]
                     }
                 ),
-                It.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
-            ), Times.Exactly(2));
+            );
         }
 
         [TestMethod] public void ComplexCheck_ConstraintGeneratorDoesNotImplementInterface_IsError() {

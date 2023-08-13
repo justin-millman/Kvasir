@@ -2,7 +2,7 @@ using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 
@@ -50,31 +50,33 @@ namespace UT.Kvasir.Schema {
             var table = table_;
             var snippet = snippet_;
 
-            var mockFactory = new Mock<IBuilderFactory<SqlSnippet, SqlSnippet, SqlSnippet, SqlSnippet, SqlSnippet>>();
-            mockFactory.DefaultValue = DefaultValue.Mock;
-
-            var mockConstraintBuilder = Mock.Get(mockFactory.Object.NewConstraintDeclBuilder());
-            mockConstraintBuilder.Setup(builder => builder.Build()).Returns(snippet);
-            var mockFieldBuilder = Mock.Get(mockFactory.Object.NewFieldDeclBuilder());
-            mockFieldBuilder.Setup(builder => builder.Build()).Returns(snippet);
-            var mockForeignKeyDeclBuilder = Mock.Get(mockFactory.Object.NewForeignKeyDeclBuilder());
-            mockForeignKeyDeclBuilder.Setup(builder => builder.Build()).Returns(snippet);
-            var mockKeyDeclBuilder = Mock.Get(mockFactory.Object.NewKeyDeclBuilder());
-            mockKeyDeclBuilder.Setup(builder => builder.Build()).Returns(snippet);
-            var mockTableBuilder = Mock.Get(mockFactory.Object.NewTableDeclBuilder());
+            
+            var mockConstraintDeclBuilder = Substitute.For<IConstraintDeclBuilder<SqlSnippet>>();
+            mockConstraintDeclBuilder.Build().Returns(snippet);
+            var mockFieldDeclBuilder = Substitute.For<IFieldDeclBuilder<SqlSnippet>>();
+            mockFieldDeclBuilder.Build().Returns(snippet);
+            var mockForeignKeyDeclBuilder = Substitute.For<IForeignKeyDeclBuilder<SqlSnippet>>();
+            mockForeignKeyDeclBuilder.Build().Returns(snippet);
+            var mockKeyDeclBuilder = Substitute.For<IKeyDeclBuilder<SqlSnippet>>();
+            mockKeyDeclBuilder.Build().Returns(snippet);
+            var mockFactory = Substitute.For<IBuilderFactory<SqlSnippet, SqlSnippet, SqlSnippet, SqlSnippet, SqlSnippet>>();
+            mockFactory.NewConstraintDeclBuilder().Returns(mockConstraintDeclBuilder);
+            mockFactory.NewFieldDeclBuilder().Returns(mockFieldDeclBuilder);
+            mockFactory.NewForeignKeyDeclBuilder().Returns(mockForeignKeyDeclBuilder);
+            mockFactory.NewKeyDeclBuilder().Returns(mockKeyDeclBuilder);
+            //mockFactory.NewTableDeclBuilder().Returns(Substitute.For());
 
             // Act
-            (table as ITable).GenerateDeclaration(mockFactory.Object);
+            (table as ITable).GenerateDeclaration(mockFactory);
 
             // Assert
-            mockTableBuilder.Verify(builder => builder.SetName(table.Name));
-            mockTableBuilder.Verify(builder => builder.SetPrimaryKeyDeclaration(snippet), Times.Once);
-            mockTableBuilder.Verify(builder => builder.AddCandidateKeyDeclaration(snippet), Times.Once);
-            mockTableBuilder.Verify(builder => builder.AddCheckConstraintDeclaration(snippet), Times.Once);
-            mockTableBuilder.Verify(builder => builder.AddFieldDeclaration(snippet), Times.Exactly(3));
-            mockTableBuilder.Verify(builder => builder.AddForeignKeyDeclaration(snippet), Times.Once);
-            mockTableBuilder.Verify(builder => builder.Build());
-            mockTableBuilder.VerifyNoOtherCalls();
+            mockFactory.NewTableDeclBuilder().Received().SetName(table.Name);
+            mockFactory.NewTableDeclBuilder().Received(1).SetPrimaryKeyDeclaration(snippet);
+            mockFactory.NewTableDeclBuilder().Received(1).AddCandidateKeyDeclaration(snippet);
+            mockFactory.NewTableDeclBuilder().Received(1).AddCheckConstraintDeclaration(snippet);
+            mockFactory.NewTableDeclBuilder().Received(3).AddFieldDeclaration(snippet);
+            mockFactory.NewTableDeclBuilder().Received(1).AddForeignKeyDeclaration(snippet);
+            mockFactory.NewTableDeclBuilder().Received().Build();
         }
 
         [TestMethod] public void Iteration() {
@@ -93,32 +95,32 @@ namespace UT.Kvasir.Schema {
         static TableTests() {
             snippet_ = new SqlSnippet("SQL");
 
-            var mockField0 = new Mock<IField>();
-            mockField0.Setup(field => field.Name).Returns(new FieldName("A"));
-            mockField0.Setup(field => field.Nullability).Returns(IsNullable.No);
-            mockField0.Setup(field => field.DataType).Returns(DBType.Int32);
-            mockField0.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder<SqlSnippet>>())).Returns(snippet_);
-            var mockField1 = new Mock<IField>();
-            mockField1.Setup(field => field.Name).Returns(new FieldName("B"));
-            mockField1.Setup(field => field.Nullability).Returns(IsNullable.No);
-            mockField1.Setup(field => field.DataType).Returns(DBType.Guid);
-            mockField1.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder<SqlSnippet>>())).Returns(snippet_);
-            var mockField2 = new Mock<IField>();
-            mockField2.Setup(field => field.Name).Returns(new FieldName("C"));
-            mockField2.Setup(field => field.Nullability).Returns(IsNullable.No);
-            mockField2.Setup(field => field.DataType).Returns(DBType.Enumeration);
-            mockField2.Setup(field => field.GenerateDeclaration(It.IsAny<IFieldDeclBuilder<SqlSnippet>>())).Returns(snippet_);
+            var mockField0 = Substitute.For<IField>();
+            mockField0.Name.Returns(new FieldName("A"));
+            mockField0.Nullability.Returns(IsNullable.No);
+            mockField0.DataType.Returns(DBType.Int32);
+            mockField0.GenerateDeclaration(Arg.Any<IFieldDeclBuilder<SqlSnippet>>()).Returns(snippet_);
+            var mockField1 = Substitute.For<IField>();
+            mockField1.Name.Returns(new FieldName("B"));
+            mockField1.Nullability.Returns(IsNullable.No);
+            mockField1.DataType.Returns(DBType.Guid);
+            mockField1.GenerateDeclaration(Arg.Any<IFieldDeclBuilder<SqlSnippet>>()).Returns(snippet_);
+            var mockField2 = Substitute.For<IField>();
+            mockField2.Name.Returns(new FieldName("C"));
+            mockField2.Nullability.Returns(IsNullable.No);
+            mockField2.DataType.Returns(DBType.Enumeration);
+            mockField2.GenerateDeclaration(Arg.Any<IFieldDeclBuilder<SqlSnippet>>()).Returns(snippet_);
 
-            var pkey = new PrimaryKey(new IField[] { mockField0.Object });
-            var ckey = new CandidateKey(new IField[] { mockField1.Object });
-            var check = new CheckConstraint(new Mock<Clause>().Object);
+            var pkey = new PrimaryKey(new IField[] { mockField0 });
+            var ckey = new CandidateKey(new IField[] { mockField1 });
+            var check = new CheckConstraint(Substitute.For<Clause>());
 
-            var mockReferenceTable = new Mock<ITable>();
-            mockReferenceTable.Setup(table => table.PrimaryKey).Returns(pkey);
-            var fkey = new ForeignKey(mockReferenceTable.Object, pkey.Fields, OnDelete.SetNull, OnUpdate.NoAction);
+            var mockReferenceTable = Substitute.For<ITable>();
+            mockReferenceTable.PrimaryKey.Returns(pkey);
+            var fkey = new ForeignKey(mockReferenceTable, pkey.Fields, OnDelete.SetNull, OnUpdate.NoAction);
 
             table_ = new Table(new TableName("TABLE"),
-                new IField[] { mockField1.Object, mockField2.Object, mockField0.Object }, pkey,
+                new IField[] { mockField1, mockField2, mockField0 }, pkey,
                 new CandidateKey[] { ckey }, new ForeignKey[] { fkey }, new CheckConstraint[] { check });
         }
         

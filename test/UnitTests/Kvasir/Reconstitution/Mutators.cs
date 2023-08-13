@@ -3,7 +3,7 @@ using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System.Collections.Generic;
 
 namespace UT.Kvasir.Reconstitution {
@@ -12,11 +12,11 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void Construct() {
             // Arrange
             var prop = typeof(PODClass).GetProperty(nameof(PODClass.String))!;
-            var mockArgRecon = new Mock<IReconstitutor>();
-            mockArgRecon.Setup(r => r.Target).Returns(typeof(string));
+            var mockArgRecon = Substitute.For<IReconstitutor>();
+            mockArgRecon.Target.Returns(typeof(string));
 
             // Act
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
 
             // Assert
             mutator.ExpectedSubject.Should().Be(typeof(PODClass));
@@ -26,11 +26,11 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var prop = typeof(PODClass).GetProperty(nameof(PODClass.String))!;
             var arg = "Santa Clara";
-            var mockArgRecon = new Mock<IReconstitutor>();
-            mockArgRecon.Setup(r => r.Target).Returns(typeof(string));
-            mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg);
+            var mockArgRecon = Substitute.For<IReconstitutor>();
+            mockArgRecon.Target.Returns(typeof(string));
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
             var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
             object source = new PODClass();
 
             // Act
@@ -45,11 +45,11 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var prop = typeof(PODStruct).GetProperty(nameof(PODStruct.String))!;
             var arg = "Valparaiso";
-            var mockArgRecon = new Mock<IReconstitutor>();
-            mockArgRecon.Setup(r => r.Target).Returns(typeof(string));
-            mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg);
+            var mockArgRecon = Substitute.For<IReconstitutor>();
+            mockArgRecon.Target.Returns(typeof(string));
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
             var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODStruct>(), prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODStruct>(), prop, mockArgRecon);
             object source = new PODStruct();
 
             // Act
@@ -63,11 +63,11 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ExecuteWithNullValue() {
             // Arrange
             var prop = typeof(PODClass).GetProperty(nameof(PODClass.Character))!;
-            var mockArgRecon = new Mock<IReconstitutor>();
-            mockArgRecon.Setup(r => r.Target).Returns(typeof(char));
-            mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(null);
+            var mockArgRecon = Substitute.For<IReconstitutor>();
+            mockArgRecon.Target.Returns(typeof(char));
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
             var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon.Object);
+            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
             var source = new PODClass() { Character = '.' };
 
             // Act

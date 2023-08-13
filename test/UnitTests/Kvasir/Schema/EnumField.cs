@@ -1,9 +1,9 @@
-using Atropos.Moq;
+using Atropos.NSubstitute;
 using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using Optional;
 using System.Collections.Generic;
 
@@ -33,19 +33,19 @@ namespace UT.Kvasir.Schema {
             var name = new FieldName("Status");
             var nullability = IsNullable.No;
             var enums = new DBValue[] { DBValue.Create("Independent"), DBValue.Create("Colony") };
-            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IFieldDeclBuilder<SqlSnippet>>();
             var field = new EnumField(name, nullability, Option.None<DBValue>(), enums);
 
             // Act
-            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetName(name));
-            mockBuilder.Verify(builder => builder.SetDataType(DBType.Enumeration));
-            mockBuilder.Verify(builder => builder.SetNullability(nullability));
-            mockBuilder.Verify(builder => builder.SetAllowedValues(Arg.IsSameSequence<IEnumerable<DBValue>>(enums)));
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetName(name);
+            mockBuilder.Received().SetDataType(DBType.Enumeration);
+            mockBuilder.Received().SetNullability(nullability);
+            mockBuilder.Received().SetAllowedValues(NArg.IsSameSequence<IEnumerable<DBValue>>(enums));
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(5);
         }
 
         [TestMethod] public void GenerateDeclarationWithDefault() {
@@ -54,20 +54,20 @@ namespace UT.Kvasir.Schema {
             var nullability = IsNullable.No;
             var enums = new DBValue[] { DBValue.Create("Monarchy"), DBValue.Create("Democracy") };
             var defaultValue = enums[1];
-            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IFieldDeclBuilder<SqlSnippet>>();
             var field = new EnumField(name, nullability, Option.Some(defaultValue), enums);
 
             // Act
-            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetName(name));
-            mockBuilder.Verify(builder => builder.SetDataType(DBType.Enumeration));
-            mockBuilder.Verify(builder => builder.SetNullability(nullability));
-            mockBuilder.Verify(builder => builder.SetDefaultValue(defaultValue));
-            mockBuilder.Verify(builder => builder.SetAllowedValues(Arg.IsSameSequence<IEnumerable<DBValue>>(enums)));
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetName(name);
+            mockBuilder.Received().SetDataType(DBType.Enumeration);
+            mockBuilder.Received().SetNullability(nullability);
+            mockBuilder.Received().SetDefaultValue(defaultValue);
+            mockBuilder.Received().SetAllowedValues(NArg.IsSameSequence<IEnumerable<DBValue>>(enums));
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(6);
         }
     }
 }

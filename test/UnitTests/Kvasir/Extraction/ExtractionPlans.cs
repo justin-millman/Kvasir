@@ -4,7 +4,7 @@ using Kvasir.Extraction;
 using Kvasir.Relations;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +14,13 @@ namespace UT.Kvasir.Extraction {
     public class DataExtractionPlanTests {
         [TestMethod] public void Construct() {
             // Arrange
-            var mockExtractor = new Mock<IExtractionStep>();
-            mockExtractor.Setup(e => e.ExpectedSource).Returns(typeof(string));
-            mockExtractor.Setup(e => e.Execute(It.IsAny<string>())).Returns(Array.Empty<DBValue>());
+            var mockExtractor = Substitute.For<IExtractionStep>();
+            mockExtractor.ExpectedSource.Returns(typeof(string));
+            mockExtractor.Execute(Arg.Any<string>()).Returns(Array.Empty<DBValue>());
             var converter = DataConverter.Identity<int>();
 
             // Act
-            var extractors = new IExtractionStep[] { mockExtractor.Object };
+            var extractors = new IExtractionStep[] { mockExtractor };
             var converters = new DataConverter[] { converter };
             var plan = new DataExtractionPlan(extractors, converters);
 
@@ -33,21 +33,21 @@ namespace UT.Kvasir.Extraction {
             var year = DBValue.Create(2012);
             var month = DBValue.Create(12);
             var day = DBValue.Create(31);
-            var ymd = new Mock<IExtractionStep>();
-            ymd.Setup(e => e.ExpectedSource).Returns(typeof(DateTime));
-            ymd.Setup(e => e.Execute(It.IsAny<DateTime>())).Returns(new DBValue[] { year, month, day });
+            var ymd = Substitute.For<IExtractionStep>();
+            ymd.ExpectedSource.Returns(typeof(DateTime));
+            ymd.Execute(Arg.Any<DateTime>()).Returns(new DBValue[] { year, month, day });
 
             var hour = DBValue.Create(23);
             var minute = DBValue.Create(59);
             var second = DBValue.Create(59);
-            var hms = new Mock<IExtractionStep>();
-            hms.Setup(e => e.ExpectedSource).Returns(typeof(DateTime));
-            hms.Setup(e => e.Execute(It.IsAny<DateTime>())).Returns(new DBValue[] { hour, minute, second });
+            var hms = Substitute.For<IExtractionStep>();
+            hms.ExpectedSource.Returns(typeof(DateTime));
+            hms.Execute(Arg.Any<DateTime>()).Returns(new DBValue[] { hour, minute, second });
 
             var offsetCnv = DataConverter.Create<int, int>(i => i - 1);
             var identityCnv = DataConverter.Identity<int>();
 
-            var extractors = new IExtractionStep[] { ymd.Object, hms.Object };
+            var extractors = new IExtractionStep[] { ymd, hms };
             var converters = Enumerable.Repeat(offsetCnv, 3).Concat(Enumerable.Repeat(identityCnv, 3));
             var plan = new DataExtractionPlan(extractors, converters);
             var source = DateTime.Now;
@@ -63,8 +63,8 @@ namespace UT.Kvasir.Extraction {
             values[3].Should().Be(hour);
             values[4].Should().Be(minute);
             values[5].Should().Be(second);
-            ymd.Verify(e => e.Execute(source));
-            hms.Verify(e => e.Execute(source));
+            ymd.Received().Execute(source);
+            hms.Received().Execute(source);
         }
     }
 
@@ -73,19 +73,19 @@ namespace UT.Kvasir.Extraction {
         [TestMethod] public void Construct() {
             // Arrange
             var tupleType = typeof(Tuple<RelationList<double>>);
-            var mockExtractor = new Mock<IFieldExtractor>();
-            mockExtractor.Setup(e => e.ExpectedSource).Returns(tupleType);
-            mockExtractor.Setup(e => e.FieldType).Returns(typeof(RelationList<double>));
+            var mockExtractor = Substitute.For<IFieldExtractor>();
+            mockExtractor.ExpectedSource.Returns(tupleType);
+            mockExtractor.FieldType.Returns(typeof(RelationList<double>));
 
-            var mockStep = new Mock<IExtractionStep>();
-            mockStep.Setup(s => s.ExpectedSource).Returns(typeof(RelationList<double>));
+            var mockStep = Substitute.For<IExtractionStep>();
+            mockStep.ExpectedSource.Returns(typeof(RelationList<double>));
 
-            var steps = new IExtractionStep[] { mockStep.Object };
+            var steps = new IExtractionStep[] { mockStep };
             var converters = new DataConverter[] { DataConverter.Identity<double>() };
             var entityPlan = new DataExtractionPlan(steps, converters);
 
             // Act
-            var relationPlan = new RelationExtractionPlan(mockExtractor.Object, entityPlan);
+            var relationPlan = new RelationExtractionPlan(mockExtractor, entityPlan);
 
             // Assert
             relationPlan.ExpectedSource.Should().Be(tupleType);
@@ -105,21 +105,21 @@ namespace UT.Kvasir.Extraction {
                 ("Medellín", Status.Saved)
             };
 
-            var mockRelation = new Mock<IRelation>();
-            mockRelation.Setup(r => r.GetEnumerator()).Returns(data.GetEnumerator());
+            var mockRelation = Substitute.For<IRelation>();
+            mockRelation.GetEnumerator().Returns(data.GetEnumerator());
 
             var type = typeof(Tuple<RelationSet<string>>);
-            var mockExtractor = new Mock<IFieldExtractor>();
-            mockExtractor.Setup(e => e.ExpectedSource).Returns(type);
-            mockExtractor.Setup(e => e.FieldType).Returns(typeof(RelationSet<string>));
-            mockExtractor.Setup(e => e.Execute(It.IsAny<object>())).Returns(mockRelation.Object);
+            var mockExtractor = Substitute.For<IFieldExtractor>();
+            mockExtractor.ExpectedSource.Returns(type);
+            mockExtractor.FieldType.Returns(typeof(RelationSet<string>));
+            mockExtractor.Execute(Arg.Any<object>()).Returns(mockRelation);
 
             var step = new IdentityExtractor<string>();
             var steps = new IExtractionStep[] { new PrimitiveExtractionStep(step) };
             var converters = new DataConverter[] { DataConverter.Identity<string>() };
             var entityPlan = new DataExtractionPlan(steps, converters);
 
-            var relationPlan = new RelationExtractionPlan(mockExtractor.Object, entityPlan);
+            var relationPlan = new RelationExtractionPlan(mockExtractor, entityPlan);
 
             // Act
             var results = relationPlan.Execute(new Tuple<RelationSet<string>>(null!));
