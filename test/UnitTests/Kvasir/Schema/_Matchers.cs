@@ -1,12 +1,12 @@
 using Kvasir.Schema;
-using Moq;
+using NSubstitute;
 using System;
 using System.Linq;
 
 namespace UT.Kvasir.Schema {
     internal static partial class Mocks {
         public static ConstantClause Matcher(this ConstantClause self) {
-            return Match.Create<ConstantClause>(cc =>
+            return Arg.Is<ConstantClause>(cc =>
                 ReferenceEquals(cc.LHS.Field, self.LHS.Field) &&
                 cc.LHS.Function == self.LHS.Function &&
                 cc.Operator == self.Operator &&
@@ -14,7 +14,7 @@ namespace UT.Kvasir.Schema {
             );
         }
         public static CrossFieldClause Matcher(this CrossFieldClause self) {
-            return Match.Create<CrossFieldClause>(cfc =>
+            return Arg.Is<CrossFieldClause>(cfc =>
                 ReferenceEquals(cfc.LHS.Field, self.LHS.Field) &&
                 cfc.LHS.Function == self.LHS.Function &&
                 cfc.Operator == self.Operator &&
@@ -23,7 +23,7 @@ namespace UT.Kvasir.Schema {
             );
         }
         public static InclusionClause Matcher(this InclusionClause self) {
-            return Match.Create<InclusionClause>(ic =>
+            return Arg.Is<InclusionClause>(ic =>
                 ReferenceEquals(ic.LHS.Field, self.LHS.Field) &&
                 ic.LHS.Field == self.LHS.Field &&
                 ic.Operator == self.Operator &&
@@ -31,7 +31,7 @@ namespace UT.Kvasir.Schema {
             );
         }
         public static NullityClause Matcher(this NullityClause self) {
-            return Match.Create<NullityClause>(nc =>
+            return Arg.Is<NullityClause>(nc =>
                 ReferenceEquals(nc.LHS.Field, self.LHS.Field) &&
                 !nc.LHS.Function.HasValue &&
                 nc.Operator == self.Operator

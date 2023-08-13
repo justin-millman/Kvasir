@@ -4,7 +4,7 @@ using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 
@@ -82,11 +82,11 @@ namespace UT.Kvasir.Reconstitution {
             var target = data[^1];
             var key = new List<DBValue>() { DBValue.Create(target), DBValue.Create("!!!") };
             var step0 = new PrimitiveExtractionStep(new IdentityExtractor<string>());
-            var mockStep = new Mock<IExtractionStep>();
-            mockStep.Setup(e => e.ExpectedSource).Returns(typeof(string));
-            mockStep.Setup(e => e.Execute(It.Is<string>(s => s == target))).Returns(new List<DBValue>() { key[1] });
-            mockStep.Setup(e => e.Execute(It.Is<string>(s => s != target))).Throws<NotSupportedException>();
-            var step1 = mockStep.Object;
+            var mockStep = Substitute.For<IExtractionStep>();
+            mockStep.ExpectedSource.Returns(typeof(string));
+            mockStep.Execute(target).Returns(new List<DBValue>() { key[1] });
+            mockStep.Execute(Arg.Is<string>(s => s != target)).Returns(_ => { throw new NotSupportedException(); });
+            var step1 = mockStep;
             var plan = new DataExtractionPlan(new IExtractionStep[] { step0, step1 }, new DataConverter[] { conv, conv });
 
             // Act

@@ -2,7 +2,7 @@ using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using Optional;
 
 namespace UT.Kvasir.Schema {
@@ -31,17 +31,17 @@ namespace UT.Kvasir.Schema {
             var dbType = DBType.Text;
             var nullability = IsNullable.No;
             var field = new BasicField(name, dbType, nullability, Option.None<DBValue>());
-            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IFieldDeclBuilder<SqlSnippet>>();
 
             // Act
-            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetName(name));
-            mockBuilder.Verify(builder => builder.SetDataType(dbType));
-            mockBuilder.Verify(builder => builder.SetNullability(nullability));
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetName(name);
+            mockBuilder.Received().SetDataType(dbType);
+            mockBuilder.Received().SetNullability(nullability);
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(4);
         }
 
         [TestMethod] public void GenerateDeclarationWithDefault() {
@@ -51,18 +51,18 @@ namespace UT.Kvasir.Schema {
             var nullability = IsNullable.Yes;
             var defaultValue = DBValue.Create(2500000u);
             var field = new BasicField(name, dbType, nullability, Option.Some(defaultValue));
-            var mockBuilder = new Mock<IFieldDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IFieldDeclBuilder<SqlSnippet>>();
 
             // Act
-            _ = (field as IField).GenerateDeclaration(mockBuilder.Object);
+            _ = (field as IField).GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetName(name));
-            mockBuilder.Verify(builder => builder.SetDataType(dbType));
-            mockBuilder.Verify(builder => builder.SetNullability(nullability));
-            mockBuilder.Verify(builder => builder.SetDefaultValue(defaultValue));
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetName(name);
+            mockBuilder.Received().SetDataType(dbType);
+            mockBuilder.Received().SetNullability(nullability);
+            mockBuilder.Received().SetDefaultValue(defaultValue);
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(5);
         }
     }
 }

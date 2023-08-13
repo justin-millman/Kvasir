@@ -1,9 +1,9 @@
-using Atropos.Moq;
+using Atropos.NSubstitute;
 using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using Optional;
 using System.Collections.Generic;
 
@@ -39,16 +39,16 @@ namespace UT.Kvasir.Schema {
             // Arrange
             var fields = fields_;
             var key = new PrimaryKey(fields);
-            var mockBuilder = new Mock<IKeyDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IKeyDeclBuilder<SqlSnippet>>();
 
             // Act
-            (key as IKey).GenerateDeclaration(mockBuilder.Object);
+            (key as IKey).GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetFields(Arg.IsSameSequence<IEnumerable<IField>>(fields)));
-            mockBuilder.Verify(builder => builder.SetAsPrimaryKey());
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetFields(NArg.IsSameSequence<IEnumerable<IField>>(fields));
+            mockBuilder.Received().SetAsPrimaryKey();
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(3);
         }
 
         [TestMethod] public void GenerateDeclarationWithName() {
@@ -56,17 +56,17 @@ namespace UT.Kvasir.Schema {
             var fields = fields_;
             var name = new KeyName("KeyName");
             var key = new PrimaryKey(name, fields);
-            var mockBuilder = new Mock<IKeyDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IKeyDeclBuilder<SqlSnippet>>();
 
             // Act
-            (key as IKey).GenerateDeclaration(mockBuilder.Object);
+            (key as IKey).GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetName(name));
-            mockBuilder.Verify(builder => builder.SetFields(Arg.IsSameSequence<IEnumerable<IField>>(fields)));
-            mockBuilder.Verify(builder => builder.SetAsPrimaryKey());
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetName(name);
+            mockBuilder.Received().SetFields(NArg.IsSameSequence<IEnumerable<IField>>(fields));
+            mockBuilder.Received().SetAsPrimaryKey();
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(4);
         }
 
         [TestMethod] public void Iteration() {

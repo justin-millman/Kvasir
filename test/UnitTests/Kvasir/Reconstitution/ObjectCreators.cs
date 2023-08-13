@@ -4,7 +4,7 @@ using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 
@@ -54,11 +54,11 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void Construct() {
             // Arrange
             var ctor = typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) })!;
-            var mockArgRecon = new Mock<IReconstitutor>();
-            mockArgRecon.SetupSequence(r => r.Target).Returns(typeof(char)).Returns(typeof(int));
+            var mockArgRecon = Substitute.For<IReconstitutor>();
+            mockArgRecon.Target.Returns(typeof(char), typeof(int));
 
             // Act
-            var creator = new ByConstructorCreator(ctor, new IReconstitutor[] { mockArgRecon.Object }, false);
+            var creator = new ByConstructorCreator(ctor, new IReconstitutor[] { mockArgRecon }, false);
 
             // Assert
             creator.Target.Should().Be(typeof(string));
@@ -68,11 +68,11 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var ctor = typeof(TestCategoryAttribute).GetConstructor(new Type[] { typeof(string) })!;
             var arg = "Fort Lauderdale";
-            var mockArgRecon = new Mock<IReconstitutor>();
-            mockArgRecon.Setup(r => r.Target).Returns(typeof(string));
-            mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg);
+            var mockArgRecon = Substitute.For<IReconstitutor>();
+            mockArgRecon.Target.Returns(typeof(string));
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
             var data = new DBValue[] { DBValue.NULL, DBValue.Create(35L) };
-            var creator = new ByConstructorCreator(ctor, new IReconstitutor[] { mockArgRecon.Object }, false);
+            var creator = new ByConstructorCreator(ctor, new IReconstitutor[] { mockArgRecon }, false);
 
             // Act
             var value = creator.Execute(data);
@@ -88,13 +88,13 @@ namespace UT.Kvasir.Reconstitution {
             var ctor = typeof(System.Range).GetConstructor(new Type[] { typeof(Index), typeof(Index) })!;
             var arg0 = new Index(95);
             var arg1 = new Index(2074);
-            var mockArgRecon0 = new Mock<IReconstitutor>();
-            mockArgRecon0.Setup(r => r.Target).Returns(typeof(Index));
-            mockArgRecon0.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg0);
-            var mockArgRecon1 = new Mock<IReconstitutor>();
-            mockArgRecon1.Setup(r => r.Target).Returns(typeof(Index));
-            mockArgRecon1.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg1);
-            var recons = new IReconstitutor[] { mockArgRecon0.Object, mockArgRecon1.Object };
+            var mockArgRecon0 = Substitute.For<IReconstitutor>();
+            mockArgRecon0.Target.Returns(typeof(Index));
+            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg0);
+            var mockArgRecon1 = Substitute.For<IReconstitutor>();
+            mockArgRecon1.Target.Returns(typeof(Index));
+            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg1);
+            var recons = new IReconstitutor[] { mockArgRecon0, mockArgRecon1 };
             var data = new DBValue[] { DBValue.Create('|'), DBValue.Create('>'), DBValue.Create("Eugene") };
             var creator = new ByConstructorCreator(ctor, recons, false);
 
@@ -109,13 +109,13 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ProduceRequiredObjectFromAllNulls() {
             // Arrange
             var ctor = typeof(ArgumentException).GetConstructor(new Type[] { typeof(string), typeof(Exception) })!;
-            var mockArgRecon0 = new Mock<IReconstitutor>();
-            mockArgRecon0.Setup(r => r.Target).Returns(typeof(string));
-            mockArgRecon0.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(null);
-            var mockArgRecon1 = new Mock<IReconstitutor>();
-            mockArgRecon1.Setup(r => r.Target).Returns(typeof(Exception));
-            mockArgRecon1.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(null);
-            var recons = new IReconstitutor[] { mockArgRecon0.Object, mockArgRecon1.Object };
+            var mockArgRecon0 = Substitute.For<IReconstitutor>();
+            mockArgRecon0.Target.Returns(typeof(string));
+            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            var mockArgRecon1 = Substitute.For<IReconstitutor>();
+            mockArgRecon1.Target.Returns(typeof(Exception));
+            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            var recons = new IReconstitutor[] { mockArgRecon0, mockArgRecon1 };
             var data = new DBValue[] { DBValue.Create('%') };
             var creator = new ByConstructorCreator(ctor, recons, false);
 
@@ -130,10 +130,10 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ProduceOptionalObjectFromAllNulls() {
             // Arrange
             var ctor = typeof(DateTime).GetConstructor(new Type[] { typeof(int), typeof(int), typeof(int) })!;
-            var mockArgRecon = new Mock<IReconstitutor>();
-            mockArgRecon.Setup(r => r.Target).Returns(typeof(int));
-            mockArgRecon.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(null);
-            var recons = new IReconstitutor[] { mockArgRecon.Object, mockArgRecon.Object, mockArgRecon.Object };
+            var mockArgRecon = Substitute.For<IReconstitutor>();
+            mockArgRecon.Target.Returns(typeof(int));
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            var recons = new IReconstitutor[] { mockArgRecon, mockArgRecon, mockArgRecon };
             var data = new DBValue[] { DBValue.NULL, DBValue.NULL, DBValue.NULL };
             var creator = new ByConstructorCreator(ctor, recons, true);
 
@@ -149,20 +149,20 @@ namespace UT.Kvasir.Reconstitution {
             var ctor = typeof(KeyValuePair<int, string?>).GetConstructor(new Type[] { typeof(int), typeof(string) })!;
             var arg0 = 381;
             string? arg1 = null;
-            var mockArgRecon0 = new Mock<IReconstitutor>();
-            mockArgRecon0.Setup(r => r.Target).Returns(typeof(int));
-            mockArgRecon0.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg0);
-            var mockArgRecon1 = new Mock<IReconstitutor>();
-            mockArgRecon1.Setup(r => r.Target).Returns(typeof(string));
-            mockArgRecon1.Setup(r => r.ReconstituteFrom(It.IsAny<IReadOnlyList<DBValue>>())).Returns(arg1);
-            var recons = new IReconstitutor[] { mockArgRecon0.Object, mockArgRecon1.Object };
+            var mockArgRecon0 = Substitute.For<IReconstitutor>();
+            mockArgRecon0.Target.Returns(typeof(int));
+            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg0);
+            var mockArgRecon1 = Substitute.For<IReconstitutor>();
+            mockArgRecon1.Target.Returns(typeof(string));
+            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg1);
+            var recons = new IReconstitutor[] { mockArgRecon0, mockArgRecon1 };
             var data = new DBValue[] { DBValue.NULL, DBValue.NULL, DBValue.Create('=') };
             var optCreator = new ByConstructorCreator(ctor, recons, true);
             var reqCreator = new ByConstructorCreator(ctor, recons, false);
 
             // Act
             var optValue = optCreator.Execute(data);
-            var reqValue = optCreator.Execute(data);
+            var reqValue = reqCreator.Execute(data);
 
             // Assert
             var expected = new KeyValuePair<int, string?>(arg0, arg1);

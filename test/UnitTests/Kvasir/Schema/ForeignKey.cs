@@ -1,9 +1,9 @@
-using Atropos.Moq;
+using Atropos.NSubstitute;
 using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
 using System.Collections.Generic;
 
 namespace UT.Kvasir.Schema {
@@ -53,18 +53,18 @@ namespace UT.Kvasir.Schema {
             var onDelete = OnDelete.SetDefault;
             var onUpdate = OnUpdate.Cascade;
             var fkey = new ForeignKey(reference, fields, onDelete, onUpdate);
-            var mockBuilder = new Mock<IForeignKeyDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IForeignKeyDeclBuilder<SqlSnippet>>();
 
             // Act
-            fkey.GenerateDeclaration(mockBuilder.Object);
+            fkey.GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetOnDeleteBehavior(onDelete));
-            mockBuilder.Verify(builder => builder.SetOnUpdateBehavior(onUpdate));
-            mockBuilder.Verify(builder => builder.SetReferencedTable(reference));
-            mockBuilder.Verify(builder => builder.SetFields(Arg.IsSameSequence<IEnumerable<IField>>(fields)));
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetOnDeleteBehavior(onDelete);
+            mockBuilder.Received().SetOnUpdateBehavior(onUpdate);
+            mockBuilder.Received().SetReferencedTable(reference);
+            mockBuilder.Received().SetFields(NArg.IsSameSequence<IEnumerable<IField>>(fields));
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(5);
         }
 
         [TestMethod] public void GenerateDeclarationWithName() {
@@ -75,19 +75,19 @@ namespace UT.Kvasir.Schema {
             var onDelete = OnDelete.SetDefault;
             var onUpdate = OnUpdate.Cascade;
             var fkey = new ForeignKey(name, reference, fields, onDelete, onUpdate);
-            var mockBuilder = new Mock<IForeignKeyDeclBuilder<SqlSnippet>>();
+            var mockBuilder = Substitute.For<IForeignKeyDeclBuilder<SqlSnippet>>();
 
             // Act
-            fkey.GenerateDeclaration(mockBuilder.Object);
+            fkey.GenerateDeclaration(mockBuilder);
 
             // Assert
-            mockBuilder.Verify(builder => builder.SetName(name));
-            mockBuilder.Verify(builder => builder.SetOnDeleteBehavior(onDelete));
-            mockBuilder.Verify(builder => builder.SetOnUpdateBehavior(onUpdate));
-            mockBuilder.Verify(builder => builder.SetReferencedTable(reference));
-            mockBuilder.Verify(builder => builder.SetFields(Arg.IsSameSequence<IEnumerable<IField>>(fields)));
-            mockBuilder.Verify(builder => builder.Build());
-            mockBuilder.VerifyNoOtherCalls();
+            mockBuilder.Received().SetName(name);
+            mockBuilder.Received().SetOnDeleteBehavior(onDelete);
+            mockBuilder.Received().SetOnUpdateBehavior(onUpdate);
+            mockBuilder.Received().SetReferencedTable(reference);
+            mockBuilder.Received().SetFields(NArg.IsSameSequence<IEnumerable<IField>>(fields));
+            mockBuilder.Received().Build();
+            mockBuilder.ReceivedCalls().Should().HaveCount(6);
         }
 
         [TestMethod] public void Iteration() {
@@ -106,20 +106,20 @@ namespace UT.Kvasir.Schema {
 
 
         static ForeignKeyTests() {
-            var mockKeyField0 = new Mock<IField>();
-            mockKeyField0.Setup(field => field.Nullability).Returns(IsNullable.No);
-            mockKeyField0.Setup(field => field.DataType).Returns(DBType.Int32);
-            var mockKeyField1 = new Mock<IField>();
-            mockKeyField1.Setup(field => field.Nullability).Returns(IsNullable.No);
-            mockKeyField1.Setup(field => field.DataType).Returns(DBType.Text);
+            var mockKeyField0 = Substitute.For<IField>();
+            mockKeyField0.Nullability.Returns(IsNullable.No);
+            mockKeyField0.DataType.Returns(DBType.Int32);
+            var mockKeyField1 = Substitute.For<IField>();
+            mockKeyField1.Nullability.Returns(IsNullable.No);
+            mockKeyField1.DataType.Returns(DBType.Text);
 
-            fields_ = new List<IField>() { mockKeyField0.Object, mockKeyField1.Object };
+            fields_ = new List<IField>() { mockKeyField0, mockKeyField1 };
 
             var pk = new PrimaryKey(fields_);
-            var mockTable = new Mock<ITable>();
-            mockTable.Setup(table => table.PrimaryKey).Returns(pk);
+            var mockTable = Substitute.For<ITable>();
+            mockTable.PrimaryKey.Returns(pk);
 
-            referenceTable_ = mockTable.Object;
+            referenceTable_ = mockTable;
         }
 
         private static readonly ITable referenceTable_;
