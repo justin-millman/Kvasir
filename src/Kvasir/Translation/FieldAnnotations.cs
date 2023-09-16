@@ -111,7 +111,7 @@ namespace Kvasir.Translation {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
 
-            var nativeNullability = property.GetNullability();
+            var nativeNullability = new NullabilityInfoContext().Create(property).ReadState;
             var nullable = property.HasAttribute<NullableAttribute>();
             var nonNullable = property.HasAttribute<NonNullableAttribute>();
 
@@ -125,7 +125,7 @@ namespace Kvasir.Translation {
             // is natively nullable, then nullability is imparted. This is done by making all of the Fields nullable;
             // for scalars and aggregates, there will be only one. Because the default for scalars and and aggregates is
             // non-nullable, they will never fail the ambiguity check.
-            if (nullable || (!nonNullable && nativeNullability == Nullability.Nullable)) {
+            if (nullable || (!nonNullable && nativeNullability == NullabilityState.Nullable)) {
                 var noAmbiguity = false;
                 foreach ((var path, var descriptor) in state) {
                     noAmbiguity |= descriptor.Nullability == IsNullable.No;
