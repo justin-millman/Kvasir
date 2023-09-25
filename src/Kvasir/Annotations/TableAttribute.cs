@@ -26,7 +26,7 @@ namespace Kvasir.Annotations {
         ///   The name of the Table.
         /// </param>
         public TableAttribute(string name) {
-            Name = Guard.Against.Null(name);
+            Name = Guard.Against.Null(name, nameof(name));
         }
     }
 }
