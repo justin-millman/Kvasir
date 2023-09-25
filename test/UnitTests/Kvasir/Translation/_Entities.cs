@@ -2057,6 +2057,15 @@ namespace UT.Kvasir.Translation {
             public string? Name { get; set; }
         }
 
+        // Test Scenario: All Fields are Non-Nullable and No Other Deductions Performed (✓identified✓)
+        public class HotAirBalloon {
+            public string Manufacturer { get; set; } = "";
+            public ulong MaxHeight { get; set; }
+            public float MaxAirTemperature { get; set; }
+            public byte PassengerCapacity { get; set; }
+            public double Radius { get; set; }
+        }
+
         // Test Scenario: Nullable Field Named `ID` + Non-Nullable Field Named `<EntityType>ID` (✓identified✓)
         public class Rollercoaster {
             public Guid? ID { get; set; }

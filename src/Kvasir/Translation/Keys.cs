@@ -27,12 +27,19 @@ namespace Kvasir.Translation {
             Debug.Assert(fields.Count() == descriptors.Count());
 
             // First, map-reduce the Candidate Key membership listings into a dictionary
+            var allFieldsCK = false;
             var candidateMapping = new Dictionary<string, HashSet<IField>>();
             foreach ((var field, var descriptor) in fields.Zip(descriptors)) {
                 foreach (var key in descriptor.CandidateKeyMemberships) {
                     candidateMapping.TryAdd(key, new HashSet<IField>());
                     candidateMapping[key].Add(field);
+                    allFieldsCK |= (candidateMapping[key].Count == fields.Count());
                 }
+            }
+
+            // Add the implicit Candidate Key of "all Fields comprising the Entity"
+            if (!allFieldsCK) {
+                candidateMapping[$"{UniqueAttribute.ANONYMOUS_PREFIX}_all_fields"] = fields.ToHashSet();
             }
 
             // Remove any Candidate Keys that are proper supersets of some other Candidate Key; if two Candidate Keys

@@ -317,6 +317,25 @@ namespace UT.Kvasir.Translation {
                 .HavePrimaryKey().OfFields(nameof(GeologicEpoch.StartingMYA));
         }
 
+        [TestMethod] public void AllNonNullableFieldsDefaultDeduction() {
+            // Arrange
+            var source = typeof(HotAirBalloon);
+            var translator = new Translator();
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    nameof(HotAirBalloon.Manufacturer),
+                    nameof(HotAirBalloon.MaxHeight),
+                    nameof(HotAirBalloon.MaxAirTemperature),
+                    nameof(HotAirBalloon.PassengerCapacity),
+                    nameof(HotAirBalloon.Radius)
+                );
+        }
+
         [TestMethod] public void NullableFieldNamedIDSkipped() {
             // Arrange
             var translator = new Translator();
