@@ -416,7 +416,7 @@ namespace Kvasir.Relations {
         // ******************************** EXPLICIT INTERFACE IMPLS ********************************
 
         /// <inheritdoc/>
-        Type IRelation.ConnectionType => typeof(KeyValuePair<TKey, TValue>);
+        static Type IRelation.ConnectionType => typeof(KeyValuePair<TKey, TValue>);
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
