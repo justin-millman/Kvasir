@@ -18,7 +18,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: 6.0.302
+          dotnet-version: 7.0.401
       - name: Restore Dependencies
         run: dotnet restore
       - name: Build Project(s)

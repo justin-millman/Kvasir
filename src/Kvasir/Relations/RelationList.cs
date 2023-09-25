@@ -1048,7 +1048,7 @@ namespace Kvasir.Relations {
         // ******************************** EXPLICIT INTERFACE IMPLS ********************************
 
         /// <inheritdoc/>
-        Type IRelation.ConnectionType => typeof(T);
+        static Type IRelation.ConnectionType => typeof(T);
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]

@@ -1,7 +1,9 @@
 using FluentAssertions.Execution;
 using Kvasir.Relations;
 using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Reflection;
 
 namespace FluentAssertions {
     internal static partial class AssertionExtensions {
@@ -48,9 +50,14 @@ namespace FluentAssertions {
             public AndConstraint<RelationAssertion> HaveConnectionType<T>(string because = "",
                 params object[] becauseArgs) {
 
+                var flags = BindingFlags.Static | BindingFlags.NonPublic;
+                var name = nameof(IRelation.ConnectionType);
+                var reader = Subject.GetType().GetProperties(flags).First(p => p.Name.Contains(name))!.GetMethod!;
+                var connectionType = (Type)reader.Invoke(null, new object?[] {})!;
+
                 Execute.Assertion
                     .BecauseOf(because, becauseArgs)
-                    .ForCondition(Subject.ConnectionType == typeof(T))
+                    .ForCondition(connectionType == typeof(T))
                     .FailWith($"Expected {{context:relation}} to have connection type of {typeof(T).Name}{{reason}}");
 
                 return new AndConstraint<RelationAssertion>(this);
