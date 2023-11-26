@@ -2,9 +2,11 @@
 using Kvasir.Exceptions;
 using Kvasir.Relations;
 using Kvasir.Schema;
+using Kvasir.Translation.Synthetic;
 using Optional;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -49,7 +51,7 @@ namespace Kvasir.Translation {
         ///   if <paramref name="property"/> cannot be translated (e.g. its CLR type is not supported, it has an invalid
         ///   annotation, etc.).
         /// </exception>
-        private FieldsListing TranslateProperty(PropertyInfo property) {
+        private TranslationState TranslateProperty(PropertyInfo property) {
             Debug.Assert(property is not null);
 
             return CategoryOf(property).Match(
@@ -59,7 +61,7 @@ namespace Kvasir.Translation {
                     PropertyCategory.Enumeration => ApplyAnnotations(property, EnumBaseTranslation(property)),
                     PropertyCategory.Aggregate => ApplyAnnotations(property, AggregateBaseTranslation(property)),
                     PropertyCategory.Reference => ApplyAnnotations(property, ReferenceBaseTranslation(property)),
-                    PropertyCategory.Relation => throw new NotSupportedException("relation properties not yet supported"),
+                    PropertyCategory.Relation => ApplyAnnotations(property, RelationBaseTranslation(property)),
 
                     _ => throw new ApplicationException("switch statement exhausted")
                 }
@@ -96,8 +98,24 @@ namespace Kvasir.Translation {
                 return Option.None<PropertyCategory, string>(msg);
             }
 
+            // Implementations of the Kvasir.Relations.IRelation interface that aren't the interface itself are valid.
+            // This check must come before the "external assembly," "interface," and "closed generic" checks.
+            if (propertyType.IsInstanceOf(typeof(IRelation))) {
+                if (propertyType == typeof(IRelation)) {
+                    var msg = "the IRelation interface";
+                    return Option.None<PropertyCategory, string>(msg);
+                }
+
+                var mostRecent = inProgress_.First(t => t.IsClass);
+                if (mostRecent.GetType() == typeof(SyntheticType)) {
+                    var msg = $"nested within {mostRecent.Name}";
+                    return Option.None<PropertyCategory, string>(msg);
+                }
+                return Option.Some<PropertyCategory, string>(PropertyCategory.Relation);
+            }
+
             // It is an error for a property's CLR type to come from an external assembly; the only exceptions are the
-            // types from the C# standard library that are supported as Scalars
+            // types from the C# standard library that are supported as Scalars or Enumerations
             if (!DBType.IsSupported(propertyType) && propertyType.Assembly != sourceAssembly_) {
                 var externalAssembly = propertyType.Assembly.FullName!;
                 var msg = $"from an external assembly \"{externalAssembly}\"; expected \"{sourceAssembly_.FullName!}\"";
@@ -128,15 +146,12 @@ namespace Kvasir.Translation {
                 return Option.None<PropertyCategory, string>(msg);
             }
 
-            // No errors detected
+            // No errors detected (Relation-type properties already detected)
             if (propertyType.IsEnum) {
                 return Option.Some<PropertyCategory, string>(PropertyCategory.Enumeration);
             }
             else if (DBType.IsSupported(propertyType)) {
                 return Option.Some<PropertyCategory, string>(PropertyCategory.Scalar);
-            }
-            else if (propertyType.IsInstanceOf(typeof(IRelation))) {
-                return Option.Some<PropertyCategory, string>(PropertyCategory.Relation);
             }
             else if (propertyType.IsClass) {
                 var context = new PropertyTranslationContext(property, "");

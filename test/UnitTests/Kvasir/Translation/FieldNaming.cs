@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Kvasir.Exceptions;
+using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -28,7 +29,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void ScalarFieldNameChangedToBrandNewIdentifier() {
             // Arrange
             var translator = new Translator();
-            var source = typeof(FieldNaming.River);
+            var source = typeof(River);
 
             // Act
             var translation = translator[source];
@@ -201,6 +202,94 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void ChangeRelatonFieldName_AffectsRelationTable() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(KidneyStone);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+KidneyStone.MaterialsTableTable").And
+                .HaveField("KidneyStone.KidneyStoneID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("KidneyStone.KidneyStoneID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void RelationNestedFieldNameChangedToBrandNewIdentifier() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SwissCanton);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(3);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+SwissCanton.CouncilorsTable").And
+                .HaveField("CantonID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Councilor").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("CantonID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[1].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+SwissCanton.NamesTable").And
+                .HaveField("Canton.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Key").OfTypeText().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Canton.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[2].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+SwissCanton.ReligionsTable").And
+                .HaveField("SwissCanton.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Religion").OfTypeText().BeingNonNullable().And
+                .HaveField("%PCNT").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("SwissCanton.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void ChangeNameOfNestedRelation_AffectsRelationTable() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Gulag);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+Gulag.GulagOverseersTable").And
+                .HaveField("Gulag.GulagID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Gulag.GulagID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
         [TestMethod] public void FieldsSwapNames() {
             // Arrange
             var translator = new Translator();
@@ -290,6 +379,31 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void NameChangeOnRelationOverridesOriginalNameChange() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ArchaeologicalSite);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveField("ArchaeologicalSite.SiteID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.Description").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.Latitude").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Item.Longitude").OfTypeSingle().BeingNonNullable().And
+                .HaveField("TotalArea").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("ArchaeologicalSite.SiteID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
         [TestMethod] public void MultipleNameChangesOnNestedProperty_IsError() {
             // Arrange
             var translator = new Translator();
@@ -324,7 +438,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void NewNameIsNull() {
+        [TestMethod] public void NewNameIsNull_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Longbow);
@@ -455,6 +569,40 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Instigator.Reg.ID").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Other.Registration.ID").OfTypeGuid().BeingNullable().And
                 .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NonExistentPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ProcessRegister);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ProcessRegister.Architectures))       // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Name]")                                    // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonAnchorPrimaryKeyPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Yeshiva);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Yeshiva.Students))                    // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Name]")                                    // details / explanation
+                .WithMessageContaining("\"City\"");                                 // details / explanation
         }
     }
 }

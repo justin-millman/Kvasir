@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Kvasir.Core;
 using Kvasir.Exceptions;
+using Kvasir.Relations;
 using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -177,6 +178,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Decathlon.Winner))                    // error location
                 .WithMessageContaining("[DataConverter]")                           // details / explanation
                 .WithMessageContaining(nameof(Decathlon.Athlete))                   // details / explanation
+                .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
+        }
+
+        [TestMethod] public void ConverterOnRelationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Bank);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Bank.Accounts))                       // error location
+                .WithMessageContaining("[DataConverter]")                           // details / explanation
+                .WithMessageContaining(nameof(RelationMap<ulong, decimal>))         // details / explanation
                 .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
         }
 
@@ -458,6 +476,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("enumeration");                              // details / explanation
         }
 
+        [TestMethod] public void NumericConverterOnRelationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Wadi);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Wadi.MineralDeposits))                // error location
+                .WithMessageContaining("[Numeric]")                                 // details / explanation
+                .WithMessageContaining(nameof(RelationSet<string>))                 // details / explanation
+                .WithMessageContaining("enumeration");                              // details / explanation
+        }
+
         [TestMethod] public void AsStringConverterOnBooleanField_IsError() {
             // Arrange
             var translator = new Translator();
@@ -574,6 +609,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Chakra.AssociatedYogini))             // error location
                 .WithMessageContaining("[AsString]")                                // details / explanation
                 .WithMessageContaining(nameof(Chakra.Yogini))                       // details / explanation
+                .WithMessageContaining("enumeration");                              // details / explanation
+        }
+
+        [TestMethod] public void AsStringConverterOnRelationField_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cryptogram);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Cryptogram.Solution))                 // error location
+                .WithMessageContaining("[AsString]")                                // details / explanation
+                .WithMessageContaining(nameof(RelationMap<char, char>))             // details / explanation
                 .WithMessageContaining("enumeration");                              // details / explanation
         }
 

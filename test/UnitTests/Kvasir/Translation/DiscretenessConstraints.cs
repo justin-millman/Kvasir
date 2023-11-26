@@ -194,11 +194,44 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                  // source type
+                .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Pulsar.OBS))                          // error location
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
                 .WithMessageContaining("\"Observatory\"");                          // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_RelationNestedScalarField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Dinosaur);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveConstraint("Item", InclusionOperator.In, "Americas", "Eurasia", "Middle East", "Africa",
+                    "Australia", "Pacific Islands", "Arctic", "Antarctica", "Oceans"
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsOneOf_NestedRelationProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cheerleader);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Cheerleader.PrimaryCheer))            // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("\"Moves\"");                                // details / explanation
         }
 
         [TestMethod] public void IsOneOf_NullableFields() {
@@ -647,6 +680,56 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
         }
 
+        [TestMethod] public void IsOneOf_NonExistentPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PawnShop);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(PawnShop.Inventory))                  // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_NonAnchorPrimaryKeyPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DrinkingFountain);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(DrinkingFountain.Inspections))        // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
+                .WithMessageContaining("\"WaterPressure\"");                        // details / explanation
+        }
+
+        [TestMethod] public void IsOneOf_NoPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Hairstyle);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Hairstyle.Certifications))            // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
+        }
+
         [TestMethod] public void IsOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator();
@@ -856,6 +939,39 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
                 .WithMessageContaining("\"Character\"");                            // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_RelationNestedScalarField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Infomercial);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveConstraint("Value", InclusionOperator.NotIn,
+                    new DateTime(2022, 3, 17), new DateTime(1965, 11, 14), new DateTime(1333, 1, 2)
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNotOneOf_NestedRelationProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PersonOfTheYear);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(PersonOfTheYear.TIME))                // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"Editions\"");                             // details / explanation
         }
 
         [TestMethod] public void IsNotOneOf_NullableFields() {
@@ -1309,6 +1425,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Eunuch.Castrator))                    // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NonExistentPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PhoneBook);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(PhoneBook.PhoneNumbers))              // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NonAnchorPrimaryKeyPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Bakugan);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Bakugan.AbilityCards))                // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
+                .WithMessageContaining("\"BakuganName\"");                          // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_NoPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(QRCode);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(QRCode.Vertical))                     // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
         }

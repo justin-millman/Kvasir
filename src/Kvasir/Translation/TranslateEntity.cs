@@ -19,17 +19,25 @@ namespace Kvasir.Translation {
         ///   The Entity Type.
         /// </param>
         /// <returns>
-        ///   The <see cref="Translation"/> of <paramref name="entity"/>.
+        ///   The <see cref="PrincipalTableDef"/> of <paramref name="entity"/>.
         /// </returns>
         /// <exception cref="KvasirException">
         ///   if <paramref name="entity"/> cannot be translated for any reason.
         /// </exception>
-        private Translation TranslateEntity(Type entity) {
+        private PrincipalTableDef TranslateEntity(Type entity) {
             Debug.Assert(entity is not null);
 
-            // If the type has already been translated, return the memoized (and already error-checked) result
+            // If the type has already been translated, return the memoized (and already error-checked) result; that
+            // result might be in an intermediate translation
             if (entityCache_.TryGetValue(entity, out var result)) {
-                return result;
+                return result.Principal;
+            }
+            else {
+                var matches = intermediates_.Where(intermediate => intermediate.CLR == entity).ToArray();
+                if (!matches.IsEmpty()) {
+                    Debug.Assert(matches.Length == 1);
+                    return matches[0].Principal;
+                }
             }
 
             // It is an error for a prospective Entity type to be invalid
@@ -89,13 +97,15 @@ namespace Kvasir.Translation {
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             primaryKeyCache_[entity] = pkListing;
 
-            // Construct the final Translation
+            // Build up the Principal Table Definition, to store while Relation translation is deferred
             var foreignKeys = MakeForeignKeys(fields, orderedDescriptors);
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
             var principal = new PrincipalTableDef(table, null!, null!);
-            var entityTranslation = new Translation(entity, principal, Enumerable.Empty<RelationTableDef>());
-            entityCache_.Add(entity, entityTranslation);
-            return entityTranslation;
+            var relations = typeTranslation.Relations.Values.ToList();
+
+            // Update necessary caches, then return
+            intermediates_.Add(new IntermediateTranslation(CLR: entity, Principal: principal, Relations: relations));
+            return principal;
         }
 
         /// <summary>

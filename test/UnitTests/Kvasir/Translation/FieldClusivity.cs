@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Kvasir.Exceptions;
+using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -143,6 +144,18 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(QuadraticEquation.LinearCoefficient)).OfTypeInt64().BeingNonNullable().And
                 .HaveField(nameof(QuadraticEquation.Constant)).OfTypeInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void CodeOnly_RelationProperty() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LazarusPit);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Count.Should().Be(0);
         }
 
         [TestMethod] public void FirstDefinedVirtualPropertyIsIncluded() {

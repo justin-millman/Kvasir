@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Kvasir.Exceptions;
+using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -51,6 +52,152 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining("reference cycle detected")                  // category
                 .WithMessageContaining(cycle);                                      // details / explanation
+        }
+
+        [TestMethod] public void RelationReferenceCycle_DirectElement() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SoftwarePackage);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(3);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.ReferenceCycles+SoftwarePackage.BuildDependenciesTable").And
+                .HaveField("SoftwarePackage.PackageManager").OfTypeText().BeingNonNullable().And
+                .HaveField("SoftwarePackage.Hash").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.PackageManager").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.Hash").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("SoftwarePackage.Hash", "SoftwarePackage.PackageManager")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Item.Hash", "Item.PackageManager")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[1].Table.Should()
+                .HaveName("UT.Kvasir.Translation.ReferenceCycles+SoftwarePackage.FlagsTable").And
+                .HaveField("SoftwarePackage.PackageManager").OfTypeText().BeingNonNullable().And
+                .HaveField("SoftwarePackage.Hash").OfTypeText().BeingNonNullable().And
+                .HaveField("Key").OfTypeText().BeingNonNullable().And
+                .HaveField("Value").OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("SoftwarePackage.Hash", "SoftwarePackage.PackageManager")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[2].Table.Should()
+                .HaveName("UT.Kvasir.Translation.ReferenceCycles+SoftwarePackage.RunDependenciesTable").And
+                .HaveField("SoftwarePackage.PackageManager").OfTypeText().BeingNonNullable().And
+                .HaveField("SoftwarePackage.Hash").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.PackageManager").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.Hash").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("SoftwarePackage.Hash", "SoftwarePackage.PackageManager")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Item.Hash", "Item.PackageManager")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void RelationReferenceCycle_AggregateElement() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Indictment);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.ReferenceCycles+Indictment.ChargesTable").And
+                .HaveField("Indictment.IndictmentNumber").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Indictment.Defendant").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.Classification").OfTypeEnumeration(
+                    Indictment.Category.Infraction,
+                    Indictment.Category.Misdemeanor,
+                    Indictment.Category.Felony
+                ).BeingNonNullable().And
+                .HaveField("Item.Statute").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.Counts").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Item.CarriedBy.IndictmentNumber").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Item.CarriedBy.Defendant").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Indictment.Defendant", "Indictment.IndictmentNumber")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Item.CarriedBy.Defendant", "Item.CarriedBy.IndictmentNumber")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void RelationReferenceCycle_ReferenceElement() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(StackFrame);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.ReferenceCycles+StackFrame.BreakpointsTable").And
+                .HaveField("StackFrame.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item.FileName").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.LineNumber").OfTypeUInt32().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("StackFrame.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Item.FileName", "Item.LineNumber")
+                    .Against(translator[typeof(StackFrame.Breakpoint)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void SystemReferenceCycle_ReferenceRelation() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Filibuster);
+
+            // Act
+            var outerTranslation = translator[source];
+            var innerTranslation = translator[typeof(Filibuster.Politician)];
+
+            // Assert
+            outerTranslation.Relations.Should().BeEmpty();
+            innerTranslation.Relations.Should().HaveCount(1);
+            innerTranslation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.ReferenceCycles+Filibuster+Politician.FilibustersBrokenTable").And
+                .HaveField("Politician.FullName").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.FilibusterID").OfTypeGuid().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Politician.FullName")
+                    .Against(innerTranslation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Item.FilibusterID")
+                    .Against(outerTranslation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
         }
     }
 }

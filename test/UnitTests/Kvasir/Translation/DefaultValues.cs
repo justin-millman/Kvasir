@@ -154,6 +154,27 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void DefaultOnAggregateNestedFieldPropagated() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Sermon);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Sermon.Clergy)).WithNoDefault().And
+                .HaveField(nameof(Sermon.DeliveredAt)).WithNoDefault().And
+                .HaveField(nameof(Sermon.Title)).WithNoDefault().And
+                .HaveField(nameof(Sermon.Text)).WithNoDefault().And
+                .HaveField("HouseOfWorship.Name").WithNoDefault().And
+                .HaveField("HouseOfWorship.Address").WithNoDefault().And
+                .HaveField("HouseOfWorship.CongregationSize").WithDefault(1756102UL).And
+                .HaveField(nameof(Sermon.ForHoliday)).WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void FirstDefaultOnAggregateNestedField() {
             // Arrange
             var translator = new Translator();
@@ -257,6 +278,64 @@ namespace UT.Kvasir.Translation {
                 .HaveField("FirstPuzzle.PuzzleType").WithDefault(EscapeRoom.Style.Linguistic).And
                 .HaveField("FinalPuzzle.Description").WithNoDefault().And
                 .HaveField("FinalPuzzle.PuzzleType").WithDefault(EscapeRoom.Style.Logical).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void DefaultOnRelationNestedFieldMaybePropagated() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DockerContainer);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveField("DockerContainer.Image").WithNoDefault().And
+                .HaveField("DockerContainer.PID").WithNoDefault().And
+                .HaveField("Key.Path").WithNoDefault().And
+                .HaveField("Key.Permissions").WithDefault((ushort)777).And
+                .HaveField("Key.IsSymlink").WithNoDefault().And
+                .HaveField("Key.Created").WithNoDefault().And
+                .HaveField("Key.Modified").WithNoDefault().And
+                .HaveField("Value").WithNoDefault().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void FirstDefaultOnRelationNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Kami);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveField("Kami.Name").WithNoDefault().And
+                .HaveField("Item").WithDefault("n/a").And
+                .HaveNoOtherFields();
+            translation.Relations[1].Table.Should()
+                .HaveField("Kami.Name").WithDefault("Susano'o").And
+                .HaveField("Key").WithNoDefault().And
+                .HaveField("Value").WithDefault((short)19).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void SubsequentDefaultOnRelationNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Tamagotchi);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveField("Tamagotchi.ID").WithNoDefault().And
+                .HaveField("Item.ID").WithNoDefault().And
+                .HaveField("Item.Name").WithNoDefault().And
+                .HaveField("Item.Cost").WithDefault((decimal)3.75).And
                 .HaveNoOtherFields();
         }
 
@@ -383,6 +462,23 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Default]")                                 // details / explanation
                 .WithMessageContaining("\"Entity\"");                               // details / explanation
+        }
+
+        [TestMethod] public void DefaultOnNestedRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(TimeTraveler);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(TimeTraveler.TimeMachine))            // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"Owners\"");                               // details / explanation
         }
 
         [TestMethod] public void ArrayDefaultValue_IsError() {
@@ -738,6 +834,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(PopTart.FrostingColor))               // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Default]");                                // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ArcadeGame);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ArcadeGame.HighScores))               // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonAnchorPrimaryKeyPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Monad);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Monad.Traits))                        // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Default]")                                 // details / explanation
+                .WithMessageContaining("\"ModelsOption\"");                         // details / explanation
+        }
+
+        [TestMethod] public void NoPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LaundryDetergent);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(LaundryDetergent.Ingredients))        // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Default]");                                // details / explanation
         }

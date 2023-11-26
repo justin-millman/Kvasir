@@ -256,7 +256,37 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherCandidateKeys();
         }
 
-        [TestMethod] public void ReferenceFieldsNativelyInCandidateKeyNotPropagated() {
+        [TestMethod] public void NestedReferencesInCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Kibbutz);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveCandidateKey("KBTZ").OfFields(
+                    nameof(Kibbutz.EnglishName),
+                    "Where.District.Name"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void PrimaryKeyReferenceFieldsNativelyInCandidateKeyNotPropagated() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DiscworldGuild);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherCandidateKeys();
+        }
+        
+        [TestMethod] public void NonPrimaryKeyReferenceFieldsNativelyInCandidateKeyNotPropagated() {
             // Arrange
             var translator = new Translator();
             var source = typeof(HonestTrailer);
@@ -266,6 +296,76 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void RelationNestedScalarsInCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BigBlockOfCheeseDay);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveCandidateKey("X").OfFields(
+                    "BigBlockOfCheeseDay.Episode",
+                    "Key.Organization"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void NestedRelationsInCandidateKey_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(RentalCar);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(RentalCar.Report))                    // error location
+                .WithMessageContaining("Renters")                                   // error sub-location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Unique]");                                 // details / explanation
+        }
+
+        [TestMethod] public void RelationFieldsNativelyInCandidateKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Intifada);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveAnonymousCandidateKey().OfFields(
+                    "Item.CountryName"
+                ).And
+                .HaveCandidateKey("Code").OfFields(
+                    "Item.CountryCode"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void AnchorPlusMapKeyIsCandidateKey_Redundant() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(VoodooDoll);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveCandidateKey("Unique").OfFields(
+                    "VoodooDoll.VoodooID",
+                    "Key"
+                ).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -460,6 +560,56 @@ namespace UT.Kvasir.Translation {
                     "Partners.FoundingPartner.License.BarNumber"
                 ).And
                 .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void NonExistentPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Antihistamine);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Antihistamine.MedicalIdentifiers))    // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Unique]")                                  // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonAnchorPrimaryKeyPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Oasis);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Oasis.TreeSpecies))                   // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Unique]")                                  // details / explanation
+                .WithMessageContaining("\"Water\"");                                // details / explanation
+        }
+
+        [TestMethod] public void NoPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LimboCompetition);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(LimboCompetition.Heights))            // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Unique]");                                 // details / explanation
         }
     }
 }

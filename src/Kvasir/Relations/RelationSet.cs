@@ -451,7 +451,7 @@ namespace Kvasir.Relations {
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         IEnumerator<T> IEnumerable<T>.GetEnumerator() {
-            throw new NotImplementedException();
+            return impl_.GetEnumerator();
         }
 
         /// <inheritdoc/>

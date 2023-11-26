@@ -51,8 +51,8 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NonNullableReferenceMarkedNullable() {
             // Arrange
-            var source = typeof(Jukebox);
             var translator = new Translator();
+            var source = typeof(Jukebox);
 
             // Act
             var translation = translator[source];
@@ -120,8 +120,8 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NullableReferenceMarkedNonNullable() {
             // Arrange
-            var source = typeof(Bodhisattva);
             var translator = new Translator();
+            var source = typeof(Bodhisattva);
 
             // Act
             var translation = translator[source];
@@ -225,6 +225,112 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(iPhone.iOSVersion))                   // error location
                 .WithMessageContaining("nullability of Aggregate is ambiguous");    // category
+        }
+
+        [TestMethod] public void RelationWithNullableElements() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PostOffice);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("PostOffice.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[1].Table.Should()
+                .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item.Number").OfTypeText().BeingNullable().And
+                .HaveField("Item.State").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("PostOffice.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[2].Table.Should()
+                .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Key").OfTypeInt16().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("PostOffice.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[3].Table.Should()
+                .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Key").OfTypeDateTime().BeingNullable().And
+                .HaveField("Value.StampID").OfTypeGuid().BeingNullable().And
+                .HaveField("Value.Price").OfTypeDecimal().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("PostOffice.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void RelationElementNullableAggregateContainsOnlyNullableFields_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Parabola);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("Item")                                      // error location
+                .WithMessageContaining("nullability of Aggregate is ambiguous");    // category
+        }
+
+        [TestMethod] public void RelationMarkedNonNullable_Redundant() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Squintern);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveField("Squintern.FirstName").OfTypeText().BeingNonNullable().And
+                .HaveField("Squintern.LastName").OfTypeText().BeingNonNullable().And
+                .HaveField("Item.Season").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Item.Number").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Item.Title").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Squintern.FirstName", "Squintern.LastName")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void RelationMarkedNullable_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Axiom);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Axiom.DerivedTheories))               // error location
+                .WithMessageContaining("[Nullable]")                                // details / explanation
+                .WithMessageContaining("Relation");                                 // details / explanation
         }
     }
 }
