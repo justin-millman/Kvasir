@@ -59,7 +59,7 @@ namespace Kvasir.Translation {
             var sequences = new List<IReadOnlyList<FieldDescriptor>>();
             foreach (var property in ConstituentPropertiesOf(clr)) {
                 var members = new List<FieldDescriptor>();
-                foreach ((var path, var propertyDecriptor) in TranslateProperty(property)) {
+                foreach ((var path, var propertyDecriptor) in TranslateProperty(property).Fields) {
                     // We have to build up a new path to reflect the property's access mechanics from the
                     // perspective of the type being translated. At a minimum, we need to do this because we may
                     // have multiple scalars with the empty-string path, and they would overwrite each other in the
@@ -95,7 +95,7 @@ namespace Kvasir.Translation {
             var checks = ComplexConstraintsOf(clr).ToList();
 
             // No errors encountered
-            var descriptor = new TypeDescriptor(fields, checks);
+            var descriptor = new TypeDescriptor(fields, checks, new List<object>());
             typeCache_.Add(clr, descriptor);
             Debug.Assert(inProgress_.Peek() == clr);
             inProgress_.Pop();

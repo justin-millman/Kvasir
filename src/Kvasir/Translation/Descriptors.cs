@@ -1,6 +1,4 @@
-﻿global using FieldsListing = System.Collections.Generic.IReadOnlyDictionary<string, Kvasir.Translation.FieldDescriptor>;
-
-using Cybele.Core;
+﻿using Cybele.Core;
 using Kvasir.Schema;
 using Optional;
 using System;
@@ -42,8 +40,14 @@ namespace Kvasir.Translation {
         ConstraintBucket Constraints
     );
 
+    internal readonly record struct PropertyCatalog(
+        IReadOnlyDictionary<string, FieldDescriptor> Fields,
+        IReadOnlyDictionary<string, object> Relations
+    );
+
     internal readonly record struct TypeDescriptor(
-        FieldsListing Fields,
-        IReadOnlyList<ComplexCheckGen> CHECKs
+        IReadOnlyDictionary<string, FieldDescriptor> Fields,
+        IReadOnlyList<ComplexCheckGen> CHECKs,
+        IReadOnlyList<object> Relations
     );
 }

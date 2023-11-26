@@ -356,7 +356,7 @@ namespace Kvasir.Translation {
             }
         }
 
-        private static void ResolveConflictingConstraints(PropertyInfo property, FieldsListing state) {
+        private static void ResolveConflictingConstraints(PropertyInfo property, IReadOnlyDictionary<string, FieldDescriptor> state) {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
 
@@ -431,7 +431,7 @@ namespace Kvasir.Translation {
             }
         }
 
-        private static void EnsureViableDefaults(PropertyInfo property, FieldsListing state) {
+        private static void EnsureViableDefaults(PropertyInfo property, IReadOnlyDictionary<string, FieldDescriptor> state) {
             Debug.Assert(property is not null);
             Debug.Assert(state is not null);
 

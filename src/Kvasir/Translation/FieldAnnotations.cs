@@ -20,22 +20,21 @@ using System.Reflection;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
-        private FieldsListing ApplyAnnotations(PropertyInfo property, FieldsListing baseTranslation) {
+        private PropertyCatalog ApplyAnnotations(PropertyInfo property, PropertyCatalog baseTranslation) {
             Debug.Assert(property is not null);
-            Debug.Assert(baseTranslation is not null);
-            Debug.Assert(!baseTranslation.IsEmpty());
+            Debug.Assert(!baseTranslation.Fields.IsEmpty());
 
-            var result = new Dictionary<string, FieldDescriptor>(baseTranslation);
-            ProcessNames(property, result);
-            ProcessNullability(property, result);
-            ProcessColumn(property, result);
-            ProcessConverters(property, result);
-            ProcessDefaults(property, result);              // must come after Nullability and Data Converters
-            ProcessPrimaryKeyOptIns(property, result);      // must come after Nullability
-            ProcessCandidateKeys(property, result);
-            ProcessConstraints(property, result);           // must come after Data Converters
+            var newFieldListing = new Dictionary<string, FieldDescriptor>(baseTranslation.Fields);
+            ProcessNames(property, newFieldListing);
+            ProcessNullability(property, newFieldListing);
+            ProcessColumn(property, newFieldListing);
+            ProcessConverters(property, newFieldListing);
+            ProcessDefaults(property, newFieldListing);              // must come after Nullability and Data Converters
+            ProcessPrimaryKeyOptIns(property, newFieldListing);      // must come after Nullability
+            ProcessCandidateKeys(property, newFieldListing);
+            ProcessConstraints(property, newFieldListing);           // must come after Data Converters
 
-            return result;
+            return new PropertyCatalog(newFieldListing, baseTranslation.Relations);
         }
 
         private static void ProcessNames(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
@@ -402,7 +401,9 @@ namespace Kvasir.Translation {
             }
         }
 
-        private static IEnumerable<(string, FieldDescriptor)> GetMatches(FieldsListing state, string targetPath) {
+        private static IEnumerable<(string, FieldDescriptor)> GetMatches(
+            IReadOnlyDictionary<string, FieldDescriptor> state, string targetPath) {
+            
             foreach ((var path, var descriptor) in state) {
                 if (targetPath == "" || path.StartsWith(targetPath + NAME_SEPARATOR)) {
                     yield return (path, descriptor);

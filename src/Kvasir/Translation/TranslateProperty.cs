@@ -49,7 +49,7 @@ namespace Kvasir.Translation {
         ///   if <paramref name="property"/> cannot be translated (e.g. its CLR type is not supported, it has an invalid
         ///   annotation, etc.).
         /// </exception>
-        private FieldsListing TranslateProperty(PropertyInfo property) {
+        private PropertyCatalog TranslateProperty(PropertyInfo property) {
             Debug.Assert(property is not null);
 
             return CategoryOf(property).Match(

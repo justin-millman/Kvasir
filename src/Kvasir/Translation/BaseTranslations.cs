@@ -23,7 +23,7 @@ using System.Reflection;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
-        private static FieldsListing ScalarBaseTranslation(PropertyInfo property) {
+        private static PropertyCatalog ScalarBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(DBType.IsSupported(property.PropertyType));
             Debug.Assert(DBType.Lookup(property.PropertyType) != DBType.Enumeration);
@@ -52,10 +52,11 @@ namespace Kvasir.Translation {
                 )
             );
 
-            return new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            var fieldListing = new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            return new PropertyCatalog(fieldListing, new Dictionary<string, object>());
         }
 
-        private static FieldsListing EnumBaseTranslation(PropertyInfo property) {
+        private static PropertyCatalog EnumBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(DBType.Lookup(property.PropertyType) == DBType.Enumeration);
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
@@ -84,26 +85,27 @@ namespace Kvasir.Translation {
                 )
             );
 
-            return new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            var fieldListing = new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            return new PropertyCatalog(fieldListing, new Dictionary<string, object>());
         }
 
-        private FieldsListing AggregateBaseTranslation(PropertyInfo property) {
+        private PropertyCatalog AggregateBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(!DBType.IsSupported(property.PropertyType) && property.PropertyType.IsValueType);
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             var typeTranslation = TranslateType(type);
 
-            var result = new Dictionary<string, FieldDescriptor>();
+            var newFieldListing = new Dictionary<string, FieldDescriptor>();
             foreach (var (path, descriptor) in typeTranslation.Fields) {
-                result[path] = descriptor with {
+                newFieldListing[path] = descriptor with {
                     Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList()
                 };
             }
-            return result;
+            return new PropertyCatalog(newFieldListing, new Dictionary<string, object>());
         }
 
-        private FieldsListing ReferenceBaseTranslation(PropertyInfo property) {
+        private PropertyCatalog ReferenceBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(!DBType.IsSupported(property.PropertyType) && property.PropertyType.IsClass);
 
@@ -111,9 +113,9 @@ namespace Kvasir.Translation {
             var _ = TranslateEntity(type);
             var refKey = primaryKeyCache_[type].OrderBy(kvp => kvp.Value.RelativeColumn);
 
-            var result = new Dictionary<string, FieldDescriptor>();
+            var newFieldListing = new Dictionary<string, FieldDescriptor>();
             foreach ((int idx, var (path, descriptor)) in refKey.Select((kvp, idx) => (idx, kvp))) {
-                result[path] = descriptor with {
+                newFieldListing[path] = descriptor with {
                     Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList(),
                     AbsoluteColumn = Option.None<int>(),
                     RelativeColumn = idx,
@@ -123,7 +125,7 @@ namespace Kvasir.Translation {
                     ForeignReference = Option.Some(type)
                 };
             }
-            return result;
+            return new PropertyCatalog(newFieldListing, new Dictionary<string, object>());
         }
     }
 }
