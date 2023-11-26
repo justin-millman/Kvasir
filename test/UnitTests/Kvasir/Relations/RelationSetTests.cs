@@ -19,6 +19,7 @@ namespace UT.Kvasir.Relations {
             set.Comparer.Should().Be(EqualityComparer<int>.Default);
             set.Should().HaveEntryCount(0);
             set.Should().HaveConnectionType<int>();
+            (set as IReadOnlyRelationSet<int>).Should().HaveConnectionType<int>();
         }
 
         [TestMethod] public void ConstructFromElements() {

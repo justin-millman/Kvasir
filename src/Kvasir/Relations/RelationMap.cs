@@ -59,7 +59,7 @@ namespace Kvasir.Relations {
     public sealed class RelationMap<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>>, IDictionary,
         IDictionary<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>,
         IReadOnlyCollection<KeyValuePair<TKey, TValue>>, IReadOnlyDictionary<TKey, TValue>,
-        IReadOnlyRelationMap<TKey, TValue>, IRelation where TKey : notnull where TValue : notnull {
+        IReadOnlyRelationMap<TKey, TValue>, IRelation where TKey : notnull  {
 
         // *************************************** PROPERTIES ***************************************
 
@@ -618,5 +618,9 @@ namespace Kvasir.Relations {
     ///   The type of the value of the collection's key-value pairs.
     /// </typeparam>
     public interface IReadOnlyRelationMap<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>, IRelation
-        where TKey : notnull where TValue : notnull {}
+        where TKey : notnull {
+
+        /// <inheritdoc/>
+        static Type IRelation.ConnectionType => typeof(KeyValuePair<TKey, TValue>);
+    }
 }
