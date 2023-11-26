@@ -143,6 +143,40 @@ namespace UT.Kvasir.Translation {
                 );
         }
 
+        [TestMethod] public void RelationNestedScalarMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(GrandPrix);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "GrandPrix.Year",
+                    "GrandPrix.Country",
+                    "Key.CarNumber"
+                );
+        }
+
+        [TestMethod] public void NestedRelationMarkedPrimaryKey_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Psalm);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Psalm.Text))                          // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("Verses")                                    // error sub-location
+                .WithMessageContaining("[PrimaryKey]");                             // details / explanation
+        }
+
         [TestMethod] public void AllScalarsMarkedPrimaryKey() {
             // Arrange
             var translator = new Translator();
@@ -277,6 +311,22 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherCandidateKeys();
         }
 
+        [TestMethod] public void MultipleCandidateKeysOneSubsetOfAllOthers() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Escalator);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey("ID").OfFields(
+                    nameof(Escalator.EscalatorIdentifier)
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
         [TestMethod] public void SingleCandidateKeyDeducedForOtherReasons() {
             // Arrange
             var translator = new Translator();
@@ -319,8 +369,8 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void AllNonNullableFieldsDefaultDeduction() {
             // Arrange
-            var source = typeof(HotAirBalloon);
             var translator = new Translator();
+            var source = typeof(HotAirBalloon);
 
             // Act
             var translation = translator[source];
@@ -334,6 +384,77 @@ namespace UT.Kvasir.Translation {
                     nameof(HotAirBalloon.PassengerCapacity),
                     nameof(HotAirBalloon.Radius)
                 );
+        }
+
+        [TestMethod] public void DefaultPrimaryKeyForListSetRelations() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Brothel);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "Brothel.Address",
+                    "Item"
+                );
+            translation.Relations[1].Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "Brothel.Address",
+                    "Item.Description",
+                    "Item.CostPerHour"
+                );
+        }
+
+        [TestMethod] public void DefaultPrimaryKeyForMapRelation() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cult);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "Cult.Title",
+                    "Key"
+                );
+        }
+
+        [TestMethod] public void RelationWithSingleViableCandidateKeyIncludingAnchor() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ChromeExtension);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HavePrimaryKey("Key").OfFields(
+                    "ChromeExtension.ExtensionID",
+                    "Item.Reviewer"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void RelationWithSingleViableCandidateKeyExcludingAnchor() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Zipline);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "Item"
+                ).And
+                .HaveNoOtherCandidateKeys();
         }
 
         [TestMethod] public void NullableFieldNamedIDSkipped() {
@@ -441,6 +562,22 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("nullable Field");                           // details / explanation
         }
 
+        [TestMethod] public void NullableReferenceMarkedPrimaryKey_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Avocado);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Avocado.CountryOfOrigin))             // error location
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("nullable Field");                           // details / explanation
+        }
+
         [TestMethod] public void PropertyInAggregateMarkedPrimaryKey_IsError() {
             // Arrange
             var translator = new Translator();
@@ -457,10 +594,38 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("nested Field");                             // details / explanation
         }
 
-        [TestMethod] public void CannotDeducePrimaryKey_IsError() {
+        [TestMethod] public void CannotDeducePrincipalPrimaryKey_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(FederalLaw);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("could not deduce Primary Key");             // category
+        }
+
+        [TestMethod] public void CannotDeduceRelationPrimaryKeyWithoutCandidateKeys_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Lagerstatte);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("could not deduce Primary Key");             // category
+        }
+
+        [TestMethod] public void CannotDeduceRelationPrimaryKeyWithCandidateKeys_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Blockbuster);
 
             // Act
             var translate = () => translator[source];
@@ -570,6 +735,56 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("path*does not exist")                       // category
                 .WithMessageContaining("[PrimaryKey]")                              // details / explanation
                 .WithMessageContaining("\"Temp\"");                                 // details / explanation
+        }
+
+        [TestMethod] public void NonExistentPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Missile);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Missile.Manufacturers))               // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void NonAnchorPrimaryKeyPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(TreasureMap);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(TreasureMap.SuggestedPath))           // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
+                .WithMessageContaining("\"X\"");                                    // details / explanation
+        }
+
+        [TestMethod] public void IsGreaterThan_NoPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Hologram);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Hologram.Copyrights))                 // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[PrimaryKey]");                             // details / explanation
         }
     }
 

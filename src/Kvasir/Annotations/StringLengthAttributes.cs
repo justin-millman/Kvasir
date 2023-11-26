@@ -82,7 +82,7 @@ namespace Kvasir.Annotations {
         /// <summary>
         ///   An annotation that specifies that the value for the Field backing a particular string-type property must
         ///   be at least a certain length.
-        /// </summary>///
+        /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
         public sealed class LengthIsAtLeastAttribute : StringLengthAttribute {
             /// <summary>

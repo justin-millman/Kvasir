@@ -161,10 +161,15 @@ namespace Kvasir.Translation {
             while (iter.MoveNext()) {
                 var refType = iter.Current.First.ForeignReference.Unwrap();
                 var members = new List<IField>();
-                var refTable = entityCache_[refType].Principal.Table;
-                var size = refTable.PrimaryKey.Fields.Count;
 
-                for (int i = 0; i < size; ++i) {
+                // When creating a Foreign Key, we may not have fully completed the Translation of the target Entity
+                // type (if it has any Relations). In that case, we'll find the Primary Table Definition in the list of
+                // intermediate translations rather than in the Entity Cache.
+                var refDef = entityCache_.TryGetValue(refType, out Translation? finished) ?
+                    finished.Principal :
+                    intermediates_.First(intermediate => intermediate.CLR == refType).Principal;
+
+                for (int i = 0; i < refDef.Table.PrimaryKey.Fields.Count; ++i) {
                     // We want to advance the iterator at the end of each pass through the loop _except_ the last pass,
                     // because the outer while loop will _also_ advance the iterator and we don't want to advance the
                     // iterator multiple times. So we move the advancement to the beginning, but we skip the first pass.
@@ -173,7 +178,7 @@ namespace Kvasir.Translation {
                     }
                     members.Add(iter.Current.Second);
                 }
-                keys.Add(new ForeignKey(refTable, members, OnDelete.Cascade, OnUpdate.Cascade));
+                keys.Add(new ForeignKey(refDef.Table, members, OnDelete.Cascade, OnUpdate.Cascade));
             }
             return keys;
         }

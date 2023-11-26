@@ -4,6 +4,7 @@ Achaean Naval Contingent
 Acid
 ACT
 Actor/Actress
+Ad Blocker
 Address
 Adverb
 Aes Sedai
@@ -14,21 +15,28 @@ Airport
 Alarm
 Alkene
 Allomancy
+Almanac
 Alphabet
 Amazon Service
 Ambassador
+Amber Alert
 American Idol
 Amino Acid
 Amusement Park
 Animal
 Animation (PowerPoint)
+Antari
 Antibiotic
+Antihistamine
+Antipope
 Apocalypse
 Apostle
 Aquarium
 Aqueduct
 Aquifer
+Arcade Game
 Arch
+Archaeological Site
 Archangel
 Archbishop
 Aria
@@ -36,6 +44,7 @@ Armada
 Aron Kodesh
 Arrondissement
 Arthurian Knight
+Artificial Intelligence
 Artiodactyl
 Asteroid
 Astronaut
@@ -43,17 +52,25 @@ Atmospheric Layer
 Atoll
 Attribute (C#)
 Auction Lot
+Auto-da-Fé
 Avatar
+Avocado
+Axiom
 Azeotrope
 Aztec God
+Bachelor Party
 Bachelorette
 Backyard Baseball Player
 Bacterium
 Bagel
+Bakugan
 Balk
 Ballerina
 Ballet
+Balsamic Vinegar
+Bank
 Bank Account
+Bank Robber
 Bankruptcy
 Bar Graph
 Barbecue Sauce
@@ -74,13 +91,20 @@ Belt
 Ben 10 Alien
 Bestiary
 Bicycle
+Big Block of Cheese Day
 Billiard Ball
 Binary Test
 Bingo Card
 Biography
 Biological Cycle
 Birth Control
+Black Hole
+Black Op
+Blackjack Hand
+Blacksmith
 Blender
+Blockade
+Blockbuster Store
 Blood Drive
 Blood Type
 Bodhisattva
@@ -95,14 +119,18 @@ Bounty Hunter
 Bowl Game
 Bowling Frame
 Boxer
+Boy Band
+Boycott
 Brassiere
 Bread
 Bridge
+Brothel
 Bug Spray
 Burrito
 Butterfly
 Button (UI)
 C++ Header File
+Cabaret
 Cabinet Department
 Cactus
 Caesarean Section
@@ -112,21 +140,28 @@ Caliphate
 Camera
 Camerlengo
 Campfire
+Canadian Province
 Canal
 Cancer
 Candle
 Candy Bar
 Cannon
 Canterbury Tale
+Canton of Switzerland
 Canyon
 Capacitor
 Capitol Building
 Car Accident
 Carbohydrate
+Cardinal (clergy)
+Care Bear
+Caricature
 Carnival
 Carousel
+Carpool Karaoke
 Cartel
 Casino
+Casserole
 Castle
 Cave
 Cave Painting
@@ -138,6 +173,7 @@ Cereal
 Chakra
 Character (text)
 Check
+Cheerleader
 Chemical Element
 Chess Piece
 Chewing Gum
@@ -148,23 +184,33 @@ Chopped Basket
 Chopsticks
 Christian Denomination
 Christmas Carol
+Chrome Extension
 Chromosome
 Church
 Cider Mill
+Cigar
 CinemaSins
 Circle
+Circle Dance
 Circle of Hell
 Civilization VI City State
+Civilization VI District
 Civilization VI Military Unit
 Cliff
 Climate
 Clock Tower
+Clown
 Clue(do) Game
+CMake Target
+Coal Mine
 Coat of Arms
+Cocoa Farm
 Codon
 Coin
 Color
+Comedian
 Comet
+Comic Book
 ComicCon
 Command (terminal)
 Commercial
@@ -176,6 +222,7 @@ Concert Tour
 Condiment
 Confidence Interval
 Conlang
+Connecting Wall
 Constellation
 Constitution
 Constitutional Amendment
@@ -192,6 +239,8 @@ Crusade
 Cryochamber
 Cryptid
 Cryptocurrency
+Cryptogram
+Cult
 Currency
 Cybersite
 D&D Character
@@ -203,16 +252,22 @@ Dam
 Data Structure
 Database Field
 Date
+Dating App
+Debit Card
 Decathlon
+Delicatessen
 Denarian
 Dentist
 Desert
 Diamond
+Dinosaur
 Directory (file system)
+Discworld Guild
 Distribution (probability)
 District Attorney
 DLL
 DMZ
+Docker Container
 Doctor (Doctor Who)
 Documentary
 Dog Show
@@ -220,10 +275,14 @@ Domino
 Donut
 Draft Pick
 Dragon
+Dream
 Dreidel
+Drinking Fountain
 Druid (D&D)
 Drum
 Dubbing
+Duo Push
+Dwarf
 E-Mail
 Earring
 Earthquake
@@ -231,13 +290,17 @@ Ecumenical Council
 Edible Arrangement
 Egyptian God
 Egyptian Pyramid
+Eigenvector
 Elevator
+Emoji
 Emotion
 Encomienda
 Encryption
 Encyclopedia
+Engagement Ring
 Enumeration
 Episode
+Escalator
 Escape Room
 Essay
 ETF
@@ -251,6 +314,7 @@ Expiration
 Eyeglasses
 Facebook Post
 Fact Check
+Fairy Godparent
 Fairy Tale
 Family Tree
 Federal Law
@@ -259,6 +323,7 @@ Ferry
 Feruchemy
 Field Goal
 Fighter Jet
+Filibuster
 Final Four
 Final Jeopardy!
 Firearm
@@ -275,6 +340,7 @@ Flower
 Font
 Food Chain
 Food Pantry
+Forecast
 Fortune Cookie
 Fountain
 Fractal
@@ -284,8 +350,10 @@ Function (programming)
 Galaxy
 Gaming Console
 Garage Sale
+Garbage Truck
 Gas Station
 Gatorade
+Gelateria
 Gene
 Generation
 Genie
@@ -297,27 +365,35 @@ Git Commit
 Git Hook
 Gold Rush
 Golden Raspberry
+Golem
 Golf Course
 Golf Hole
+Government Shutdown
 Grammatical Case
+Grand Prix
 Great Old One
 Greek God
 Greek Letter
 Guillotine
 Guitar
+Gulag
 Gymnast
 Haiku
+Hairstyle
 Hall of Fame
+Hall Pass
 Happy Hour
 Hash Function
 Hash Map
 Hawaiian God
 Headphones
 Healing Potion (D&D)
+Heart Attack
 Heat Wave
 Hebrew Letter
 Hebrew Prayer
 Helicopter
+Hemalurgy
 Hepatitis
 Hercule Poirot Mystery
 Hieroglyph
@@ -327,15 +403,18 @@ Histogram
 Hoedown (WLIIA)
 Hogwarts House
 Holiday
+Hologram
 Holy Roman Emperor
 Home Run Derby
 Homeric Hymn
 Hominin
 Honest Trailer
+Horcrux
 Hormone
 Hospital
 Hot Air Balloon
 Hot Spring
+Hot Tub
 Hotel
 Hourglass
 House Committee
@@ -348,10 +427,15 @@ IDE
 Igloo
 Imaginary Friend
 Immaculate Grid
+Immortal (Highlander)
+Impractical Joke
 Inator
+Indictment
 Infinity Stone
 Influenza
+Infomercial
 Inmate
+Inquisition
 Installation Wizard
 Insurance Policy
 Integer
@@ -359,6 +443,8 @@ Integer Sequence
 Integral
 Intern
 Internet Craze
+Interview
+Intifada
 IP Address
 iPhone
 IPO
@@ -370,22 +456,33 @@ Jigsaw Puzzle
 Joust
 Jukebox
 Kaiju
+Kami
 Kanji
 Kayak
 Kentucky Derby
 Key Signature
 Keystroke
+Kibbutz
+Kid Next Door
+Kidney Stone
 Kinesis
 King of England
 Kite
 Knife
 Knock-Knock Joke
+Kosher Agency
 Labor of Heracles
+Lagerstätte
 Lake
 Lamp
 Land Card (MTG)
+Land Mine
 Language
+Laundry Detergent
 Law Firm
+Lawn Gnome
+Lawn Mower
+Lazarus Pit
 Lease
 Legume
 Lens
@@ -393,6 +490,7 @@ Leprechaun
 License Plate
 Lifeguard
 Ligament
+Limbo Competition
 Limerick
 Linker
 Linux Distribution
@@ -408,16 +506,21 @@ Longbow
 Lottery Ticket
 Luau
 Lunar Crater
+Lunar Eclipse
 Lyric
 Madden NFL
 Madonna (painting)
 Mafia Family
 Magazine
 Magic System
+Mall Santa
 Marathon
 Marble League
+Margarita
 Marian Apparition
+Marijuana Strain
 Mark-Up Symbol
+Mars Rover
 Masked Singer
 Mass Extinction
 Massacre
@@ -427,14 +530,18 @@ Mayor
 Medal of Honor
 Medical Specialty
 Meme
+Memory Buffer
 Mesopotamian God
 Metra Route
 Mezuzah
 Military Base
 Milkshake
+Mime
 Mint (currency)
 Mirror
+Missile
 Mitzvah
+Monad
 Monopoly Property
 Month
 Moon of Jupiter
@@ -471,6 +578,8 @@ Norse World
 Nuclear Power Plant
 NuGet Package
 Nursery Rhyme
+Nymph
+Oasis
 Obelisk
 Obi
 Ocean Current
@@ -490,15 +599,20 @@ Origami
 Orisha
 Orphanage
 Overnight Camp
+PACER Test
+Package (software)
 Pagoda
 Painting
 Pajamas
+Panegyric
+Parabola
 Parashah
 Parking Garage
 Passport
 Pasta Sauce
 Patent
 Patreon
+Pawn Shop
 Paycheck
 Peace Treaty
 Peanut Butter
@@ -508,11 +622,14 @@ Pencil
 Peninsula
 PEP
 Pepper
+Perfume
+Person of the Year (Time)
 Pharaoh
 Pharmacy
 Phase Diagram
 Philosopher
 Phobia
+Phone Boook
 Phone Booth
 Phone Number
 Phonetic Alphabet
@@ -535,28 +652,35 @@ Poet Laurete
 Pokémon
 Poker Hand
 Police Officer
+Poll
 Polygon
 Polyhedron
 Pond
 Pop Tart
 Popcorn
 Pope
+Post Office
 Potato
 Pregnancy Test
 Prescription
 Presidential Election
 Printer
 Prison
+Prisoner Exchange
 Process (computing)
 Programming Language
 Prophecy
 Prophet
 Proto-Indo-European Root
+Psalm
 Pseudonym
 Pterosaur
 Pub Crawl
+Pulitzer Prize
 Pulley
 Pulsar
+Puppet Show
+QR Code
 Quadratic Equation
 Quarterback
 Quatrain
@@ -570,6 +694,8 @@ Ransomware
 Raptor
 Readymade
 Refugee Camp
+Register (computing)
+Rental Car
 Repository
 Representative
 Resistor
@@ -578,9 +704,12 @@ Restaurant
 Retail Product
 Ring of Power
 River
+Riverwalk
+Rodent
 Rollercoaster
 Roman Baths
 Roman Emperor
+Roman Festival
 Rorschach Ink Blot
 Royal House
 Rube Goldberg Machine
@@ -597,6 +726,7 @@ Scholarship
 Scooby-Doo Movie
 Scorpion
 Scrabble Tile
+Screenwriter
 Screwdriver
 SCUBA Dive
 Sculpture
@@ -606,6 +736,7 @@ Secret Society
 Seder Plate
 Senator
 Serial Killer
+Sermon
 Set Card
 Seventh Inning Stretch
 Shampoo
@@ -616,17 +747,20 @@ Shen Gong Wu
 Sherpa
 Shipwreck
 Shoe
+Shofar
 Shogunate
 Sign (ASL)
 Skee-Ball
 Ski Slope
 Skittles
+Skydiver
 Skyscraper
 Slack Channel
 SlamBall Match
 Slave Revolt
 Slot Machine
 Slumber Party
+Smoke Detector
 Smoothie
 Smurf
 Snake
@@ -645,7 +779,10 @@ Spider-Man
 Sporcle Quiz
 Sports Bet
 Sprachbund
+Spring (mechanics)
 SQL Query
+Squintern
+Stack Frame
 Stadium
 Stamp
 Stanley Cup
@@ -661,6 +798,7 @@ Stuffed Animal
 Submarine
 Subreddit
 Sudoku Puzzle
+Sukkah
 Sumo Wrestler
 Sundial
 Sunscreen
@@ -674,8 +812,12 @@ Sutra
 Swamp
 Swimming Pool
 Sword
+Syllabary
 Symphony
+Synagogue
 Talk Show
+Tamagotchi
+Tapestry
 Tar Pits
 Tarot Card
 Tattoo
@@ -686,14 +828,19 @@ Tendon
 Tennis Match
 Tepui
 Terminator
+Terrorist Organization
 Therapist
 Thesis
+Thumb War
 Tic-Tac-Toe Game
 Ticket2Ride Route
+TikTok
+Time Traveler
 Time Zone
 Timestamp
 Tongue Twister
 Tooth
+Toothbrush
 Toothpaste
 Top 10 List
 Tossup Question
@@ -702,24 +849,30 @@ Tour de France
 Tournament
 Transformer (robot)
 Transistor
+Treasure Map
 Treasury Bond
-Tree House
+Treehouse
+Treehouse of Horror
 Triangle
 Trilogy
+Triplets
 Triptych
 Trivial Pursuit
 Trolley Problem
 Tsunami
 Tuxedo
 Tweet
+Typewriter
 Umpire
 UN Resolution
+UN Secretary General
 Union
 University
 Upanishad
 URL
 UUID
 Vacuum Cleaner
+Valet
 Vampire Slayer
 Verb
 Vigenère Cipher
@@ -729,8 +882,12 @@ Voicemail
 Voir Dire
 Volcano
 Volleyball Match
+Voodoo Doll
+Vowel
+VPN
 Vulgarity
 W2 Tax Form
+Wadi
 Waffle
 Water Bottle
 Water Slide
@@ -739,6 +896,7 @@ Waterfall
 Web Browser
 Weekend Update
 Werewolf
+Where's Waldo?
 Wikipedia Page
 Wildfire
 Windmill
@@ -750,13 +908,17 @@ Word Search
 Wordle
 World Cup
 World Heritage Site
+Wormhole
 Wristwatch
 xkcd Comic
 Yacht
+Yahtzee Game
+Yeshiva
 Yoga Position
 YouTube Video
 Yu-Gi-Oh Monster
 Ziggurat
+Zipline
 Zodiac Sign
 Zombie
 Zoo

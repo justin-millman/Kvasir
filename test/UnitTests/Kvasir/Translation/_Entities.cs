@@ -1,5 +1,7 @@
 ﻿using Kvasir.Annotations;
+using Kvasir.Relations;
 using System;
+using System.Collections.Generic;
 
 using static UT.Kvasir.Translation.TestConstraints;
 using static UT.Kvasir.Translation.TestConverters;
@@ -95,7 +97,7 @@ namespace UT.Kvasir.Translation {
             public ValueType CommentCount { get; set; } = 0;
         }
 
-        // Test Scenario: Type from the C# Standard Library (✗not permitted✗)
+        // Test Scenario: Non-Collection Class Type from the C# Standard Library (✗not permitted✗)
         public class Coin {
             [PrimaryKey] public byte Value { get; set; }
             public float Diameter { get; set; }
@@ -103,7 +105,26 @@ namespace UT.Kvasir.Translation {
             public Exception CounterfeitResult { get; set; } = new ApplicationException("COUNTERFEIT!");
         }
 
-        // Test Scenario: Type from a Third-Party NuGet Package (✗not permitted✗)
+        // Test Scenario Collection Type from the C# Standard Library (✗not permitted✗)
+        public class Eigenvector {
+            [PrimaryKey] public Guid ID { get; set; }
+            public float Eigenvalue { get; set; }
+            public List<float> Vector { get; set; } = new();
+        }
+
+        // Test Scenario: Struct Type from the C# Standard Library (✓recognized✓)
+        public class Emoji {
+            [Flags] public enum Platform { iOS = 1, Android = 2, Slack = 4, Facebook = 8 }
+
+            [PrimaryKey] public ulong UnicodeNumber { get; set; }
+            public (string Category, string Name) Identity { get; set; }
+            public string Developer { get; set; } = "";
+            public ulong Usages { get; set; }
+            public DateTime Released { get; set; }
+            public Platform Platforms { get; set; }
+        }
+
+        // Test Scenario: Class Type from a Third-Party NuGet Package (✗not permitted✗)
         public class UUID {
             [PrimaryKey] public string Value { get; set; } = "";
             [PrimaryKey] public byte Version { get; set; }
@@ -162,9 +183,10 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Enumerations (✓recognized✓)
-        public enum WeaponType { Simple, Martial, Improvised };
-        [Flags] public enum WeaponProperty { Ranged = 1, TwoHanded = 2, Finesse = 4, Silvered = 8 };
         public class DNDWeapon {
+            public enum WeaponType { Simple, Martial, Improvised };
+            [Flags] public enum WeaponProperty { Ranged = 1, TwoHanded = 2, Finesse = 4, Silvered = 8 };
+
             [PrimaryKey] public string Name { get; set; } = "";
             public ushort AttackBonus { get; set; }
             public ushort AverageDamage { get; set; }
@@ -297,6 +319,113 @@ namespace UT.Kvasir.Translation {
             public Ability Powers { get; set; }
             public int Appearances { get; set; }
             public Episode Debut { get; set; } = new();
+        }
+
+        // Test Scenario: Non-Nullable Relations of Non-Nullable Elements (✓recognized✓)
+        public class CMakeTarget {
+            public enum Mode { Public, Private, Interface };
+            public record struct Macro(string Symbol, string Value);
+
+            [PrimaryKey] public string Project { get; set; } = "";
+            [PrimaryKey] public string TargetName { get; set; } = "";
+            public RelationList<string> Files { get; set; } = new();
+            public RelationSet<Macro> Macros { get; set; } = new();
+            public RelationMap<Mode, int> OptimizationLevel { get; set; } = new();
+        }
+
+        // Test Scenario: Nullable Relations of Non-Nullable Elements (✓recognized✓)
+        public class Forecast {
+            public record struct SingleDay(DateTime Date, float HighTemp, float LowTemp, double ChanceRain);
+
+            [PrimaryKey] public string City { get; set; } = "";
+            public ulong PersonsImpacted { get; set; }
+            public RelationList<SingleDay>? Dailies { get; set; }
+            public RelationSet<string>? Meteorologists { get; set; }
+            public RelationMap<string, bool>? DataSources { get; set; }
+        }
+
+        // Test Scenario: Read-Only Relations (✓recognized✓)
+        public class CivVIDistrict {
+            public enum Terrain { Flat, Grasslands, Marsh, Floodplains, Hills, Desert, Coast, Ocean, Reef, Lake, Mountain }
+            public record struct Yield(byte Amount, bool OneTimeOnly, double Multiplier);
+            public class CivVIBuilding {
+                [PrimaryKey] public string BuildingName { get; set; } = "";
+                public ushort ProductionCost { get; set; }
+                public ushort GoldCost { get; set; }
+                public byte YieldProduction { get; set; }
+                public byte YieldGold { get; set; }
+                public byte YieldFood { get; set; }
+                public double YieldHousing { get; set; }
+                public byte YieldFaith { get; set; }
+                public byte YieldLoyalty { get; set; }
+                public byte YieldCulture { get; set; }
+                public byte YieldScience { get; set; }
+                public byte YieldAmenities { get; set; }
+                public byte GreatWorkSlots { get; set; }
+            }
+
+            [PrimaryKey] public string DistrictName { get; set; } = "";
+            public ushort ProductionCost { get; set; }
+            public string? PrereqTechnology { get; set; }
+            public string? PrereqCivic { get; set; }
+            public IReadOnlyRelationList<Terrain> AllowedTerrain { get; set; } = new RelationList<Terrain>();
+            public IReadOnlyRelationSet<CivVIBuilding> Buildings { get; set; } = new RelationSet<CivVIBuilding>();
+            public IReadOnlyRelationMap<int, Yield> Yields { get; set; } = new RelationMap<int, Yield>();
+        }
+
+        // Test Scenario: Relations Nested Within Aggregates (✓recognized✓)
+        public class Gelateria {
+            public record struct Owning(DateTime Since, IReadOnlyRelationSet<string> People, decimal LifetimeRevenue);
+
+            [PrimaryKey] public Guid GelateriaID { get; set; }
+            public Owning Owners { get; set; }
+            public ushort NumFlavors { get; set; }
+            public bool AuthenticItalian { get; set; }
+            public double InternalTemperature { get; set; }
+        }
+
+        // Test Scenario: Relation Nested Within Relation (✗not permitted✗)
+        public class BlackHole {
+            [PrimaryKey] public string Identifier { get; set; } = "";
+            public string? Constellation { get; set; }
+            public string? Galaxy { get; set; }
+            public RelationSet<string> AKAs { get; set; } = new();
+            public RelationMap<string, RelationMap<string, double>> Measurements { get; set; } = new();
+        }
+
+        // Test Scenario: Relation Nested Within Aggregate Nested Within Relation (✗not permitted✗)
+        public class Poll {
+            public record struct Question(string Text, RelationSet<string> Answers);
+
+            [PrimaryKey] public Guid PollID { get; set; }
+            public string PollTitle { get; set; } = "";
+            public string? Pollster { get; set; }
+            public RelationList<Question> Questions { get; set; } = new();
+            public ulong Responses { get; set; }
+            public double ReponseRate { get; set; }
+        }
+
+        // Test Scenario: Relation List/Set of KeyValuePair<X, Y> (✗not permitted - implementation ambiguity✗)
+        public class Caricature {
+            public enum Location { Circus, Zoo, AmusementPark, SportingEvent, FarmersMarket, Other }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Subject { get; set; } = "";
+            public string Artist { get; set; } = "";
+            public RelationSet<KeyValuePair<DateTime, decimal>> SaleHistory { get; set; } = new();
+            public double HeadSize { get; set; }
+            public bool Certified { get; set; }
+            public Location Source { get; set; }
+        }
+
+        // Test Scenario: IRelation (✗not permitted✗)
+        public class Perfume {
+            [PrimaryKey] public string Brand { get; set; } = "";
+            [PrimaryKey] public string Aroma { get; set; } = "";
+            public decimal RetailValue { get; set; }
+            public DateTime Launched { get; set; }
+            public bool ForWomen { get; set; }
+            public IRelation PatentNumbers { get; set; } = new RelationSet<ulong>();
         }
     }
 
@@ -463,6 +592,16 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public long QuadraticCoefficient { get; set; }
             [PrimaryKey] public long LinearCoefficient { get; set; }
             [PrimaryKey] public long Constant { get; set; }
+        }
+
+        // Test Scenario: [CodeOnly] on Relation Property (✓excluded✓)
+        public class LazarusPit {
+            [PrimaryKey] public Guid PitID { get; set; }
+            public string Earth { get; set; } = "";
+            public string Location { get; set; } = "";
+            public DateTime FirstAppearance { get; set; }
+            [CodeOnly] public IReadOnlyRelationSet<string> Resurrections { get; set; } = new RelationSet<string>();
+            public bool DiscoveredByRasAlGhul { get; set; }
         }
 
         // Test Scenario: First Definition of a Virtual Property (✓included✓)
@@ -832,6 +971,52 @@ namespace UT.Kvasir.Translation {
             public bool HeadphoneJack { get; set; }
             public double AverageBatteryLife { get; set; }
         }
+
+        // Test Scenario: Relations with Nullable Element Types (✓become nullable✓)
+        public class PostOffice {
+            public record struct LicensePlate(string Number, string State);
+            public record struct Stamp(Guid StampID, decimal Price);
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Address { get; set; } = "";
+            public ulong MailVolume { get; set; }
+            public RelationMap<short, string?> POBoxes { get; set; } = new();
+            public RelationSet<string?> Employees { get; set; } = new();
+            public RelationList<LicensePlate?> MailTrucks { get; set; } = new();
+            public RelationMap<DateTime?, Stamp?> Stamps { get; set; } = new();
+        }
+
+        // Test Scenario: Relation with Nullable Aggregate Element Type with Only Nullable Fields (✗ambiguous✗)
+        public class Parabola {
+            public enum Direction { Up, Down, Left, Right }
+            public record struct Point(int X, int Y);
+            public record struct MaybePoint(int? X, int? Y);
+
+            [PrimaryKey] public Point Vertex { get; set; }
+            [PrimaryKey] public float Eccentricity { get; set; }
+            public Direction Concavity { get; set; }
+            public RelationSet<MaybePoint?> Points { get; set; } = new();
+        }
+
+        // Test Scenario: Relation Property Marked as [NonNullable] (✓redundant✓)
+        public class Squintern {
+            public record struct Episode(uint Season, ushort Number, string Title);
+
+            [PrimaryKey] public string FirstName { get; set; } = "";
+            [PrimaryKey] public string LastName { get; set; } = "";
+            public bool IsFemale { get; set; }
+            [NonNullable] public RelationList<Episode> Appearances { get; set; } = new();
+            public bool HasTemperancesApproval { get; set; }
+        }
+
+        // Test Scenario: Relation Property Marked as [Nullable] (✗illegal✗)
+        public class Axiom {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string Formulation { get; set; } = "";
+            public string? PostulatedBy { get; set; }
+            public bool IsLogical { get; set; }
+            [Nullable] public RelationSet<string> DerivedTheories { get; set; } = new();
+        }
     }
 
     internal static class TableNaming {
@@ -842,7 +1027,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public byte Value { get; set; }
         }
 
-        // Test Scenario: Namespace Excluded (✓renamed✓)
+        // Test Scenario: Namespace Excluded with No Relations (✓renamed✓)
         [ExcludeNamespaceFromName]
         public class Pokemon {
             [PrimaryKey] public ushort PokedexNumber { get; set; }
@@ -851,6 +1036,18 @@ namespace UT.Kvasir.Translation {
             public string Name { get; set; } = "";
             public string JapaneseName { get; set; } = "";
             public byte HP { get; set; }
+        }
+
+        // Test Scenario: Namespace Excluded with Relations (✓renamed✓)
+        [ExcludeNamespaceFromName]
+        public class PrisonerExchange {
+            [PrimaryKey] public Guid SwapID { get; set; }
+            public string PartyA { get; set; } = "";
+            public string PartyB { get; set; } = "";
+            public RelationSet<ushort> AtoB { get; set; } = new();
+            public RelationSet<ushort> BtoA { get; set; } = new();
+            public DateTime Executed { get; set; }
+            public bool Covert { get; set; }
         }
 
         // Test Scenario: Two Entities Given Same Primary Table Name (✗duplication✗)
@@ -884,6 +1081,16 @@ namespace UT.Kvasir.Translation {
             public bool IsOnDesktop { get; set; }
         }
 
+        // Test Scenario: Name Changed to `null` (✗illegal✗)
+        [Table(null!)]
+        public class SmokeDetector {
+            [PrimaryKey] public Guid DetectorID { get; set; }
+            public DateTime Installed { get; set; }
+            public DateTime LastSericed { get; set; }
+            public double Sensitivity { get; set; }
+            public bool DetectsViaIonization { get; set; }
+        }
+
         // Test Scenario: Name Changed to the Empty String (✗illegal✗)
         [Table("")]
         public class LogIn {
@@ -906,6 +1113,172 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Scheme { get; set; } = "";
             public ulong PublicKey { get; set; }
             public ulong PrivateKey { get; set; }
+        }
+
+        // Test Scenario: Relation Table Name Unchanged via [RelationTable] (✓redundant✓)
+        public class PacerTest {
+            public class Student {
+                [PrimaryKey] public Guid StudentID { get; set; }
+                public string FirstName { get; set; } = "";
+                public string LastName { get; set; } = "";
+            }
+
+            [PrimaryKey] public string School { get; set; } = "";
+            [PrimaryKey] public ushort Year { get; set; }
+            [RelationTable("UT.Kvasir.Translation.PropertyTypes+PacerTest.LapsCompletedTable")] public RelationMap<Student, byte> LapsCompleted { get; set; } = new();
+            public DateTime AdministeredOn { get; set; }
+        }
+
+        // Test Scenario: Relation Table Name Changed to `null` (✗illegal✗)
+        public class Dwarf {
+            [PrimaryKey] public Guid DwarfID { get; set; }
+            public bool IsFictional { get; set; }
+            public string Name { get; set; } = "";
+            [RelationTable(null!)] public RelationMap<DateTime, string> LifeEvents { get; set; } = new();
+            public byte Height { get; set; }
+            public bool WieldsSword { get; set; }
+            public double ShoeSize { get; set; }
+        }
+
+        // Test Scenario: Relation Table Named Changed to the Empty String (✗illegal✗)
+        public class Rodent {
+            public enum Taxon { Domain, Kingdom, Phylum, Class, Infraclass, Superorder, Order, Family, Subfamily, Genus, Species, Subspecies }
+            public enum IUCN { Extinct, CaptivityOnly, CriticallyEndangered, Endangered, Vulnerable, NearThreatened, LeastConcern }
+
+            [PrimaryKey] public string CommonName { get; set; } = "";
+            [RelationTable("")] public RelationMap<Taxon, string> Taxonomy { get; set; } = new();
+            public double AverageAdultMaleWeight { get; set; }
+            public double AverageAdultFemaleWeight { get; set; }
+            public float TailLength { get; set; }
+            public float IncisorLength { get; set; }
+            public bool MakesGoodPet { get; set; }
+            public IUCN ConservationStatus { get; set; }
+            public ulong GlobalPopulation { get; set; }
+        }
+
+        // Test Scenario: Duplicate Relation Table Name (✗duplication✗)
+        public class Vowel {
+            public enum Location { Front, Central, Back }
+            [Flags] public enum Feature { Raspy = 1, Nasal = 2, Whispered = 4, Creaky = 8, Devoiced = 16 }
+
+            [PrimaryKey] public char IPASymbol { get; set; }
+            public Location Articulation { get; set; }
+            public bool Closed { get; set; }
+            public bool Long { get; set; }
+            public Feature Features { get; set; }
+            [RelationTable("AuxiliaryVowelTable")] public RelationSet<string> Languages { get; set; } = new();
+            [RelationTable("AuxiliaryVowelTable")] public RelationMap<char, char> Diacritics { get; set; } = new();
+        }
+
+        // Test Scenario: Table Name Duplicated between Primary Table and Relation Table (✗duplication✗)
+        [Table("OfficialInfoVPN")]
+        public class VPN {
+            public enum Kind { Private, SiteToSite, Extranet, Other }
+
+            [PrimaryKey] public string IP { get; set; } = "";
+            public Kind Type { get; set; }
+            public bool PasswordProtected { get; set; }
+            [RelationTable("OfficialInfoVPN")] public RelationList<Guid> AuthorizedUsers { get; set; } = new();
+        }
+
+        // Test Scenario: [RelationTable] Applied to Numeric Field (✗impermissible✗)
+        public class Shofar {
+            [PrimaryKey] public Guid ShofarID { get; set; }
+            public string Maker { get; set; } = "";
+            public double Weight { get; set; }
+            public ushort NumTurns { get; set; }
+            [RelationTable("---")] public float Tekiah { get; set; }
+            public float Teruah { get; set; }
+            public float Shevarim { get; set; }
+            public float TekiahGedolah { get; set; }
+        }
+
+        // Test Scenario: [RelationTable] Applied to Textual Field (✗impermissible✗)
+        public class LawnGnome {
+            public record struct Color(byte R, byte G, byte B);
+
+            [PrimaryKey] public Guid ProductID { get; set; }
+            public ushort Height { get; set; }
+            public decimal Price { get; set; }
+            [RelationTable("---")] public string Manufacturer { get; set; } = "";
+            public Color HatColor { get; set; }
+            public bool HoldingTools { get; set; }
+            public bool IsWaterSpout { get; set; }
+        }
+
+        // Test Scenario: [RelationTable] Applied to Boolean Field (✗impermissible✗)
+        public class GovernmentShutdown {
+            [PrimaryKey] public DateTime Start { get; set; }
+            [PrimaryKey] public DateTime End { get; set; }
+            [RelationTable("---")] public bool RepublicansInCharge { get; set; }
+            public decimal EventualBudget { get; set; }
+            public ulong FurloughedWorkers { get; set; }
+            public double PublicApproval { get; set; }
+        }
+
+        // Test Scenario: [RelationTable] Applied to DateTime Field (✗impermissible✗)
+        public class CoalMine {
+            [PrimaryKey] public string MineName { get; set; } = "";
+            public string Operator { get; set; } = "";
+            public ushort TotalMiners { get; set; }
+            public ulong ShortTons { get; set; }
+            public DateTime Opened { get; set; }
+            [RelationTable("---")] public DateTime? LastCollapse { get; set; }
+            public float Latitude { get; set; }
+            public float Longitude { get; set; }
+        }
+
+        // Test Scenario: [RelationTable] Applied to Guid Field (✗impermissible✗)
+        public class LawnMower {
+            [PrimaryKey, RelationTable("---")] public Guid ApplianceID { get; set; }
+            public double Horsepower { get; set; }
+            public ushort WarrantyLength { get; set; }
+            public double GrassVolue { get; set; }
+            public bool IsGasPowered { get; set; }
+            public sbyte NumBlades { get; set; }
+        }
+
+        // Test Scenario: [RelationTable] Applied to Enumeration Field (✗impermissible✗)
+        public class Triplets {
+            public enum Cardinality { Monozygotic, Dizygotic, Trizygotic, Sesquizygotic }
+
+            [PrimaryKey] public string Mother { get; set; } = "";
+            [PrimaryKey] public sbyte PregnancyNumber { get; set; }
+            public bool Surrogate { get; set; }
+            [RelationTable("---")] public Cardinality Zygosity { get; set; }
+            public string EldestName { get; set; } = "";
+            public string MiddleName { get; set; } = "";
+            public string YoungestName { get; set; } = "";
+        }
+
+        // Test Scenario: [RelationTable] Applied to Aggregate Field (✗impermissible✗)
+        public class Toothbrush {
+            public record struct Electricity(double Power, int Duration, bool Vibrating);
+
+            [PrimaryKey] public Guid ProductID { get; set; }
+            public string Brand { get; set; } = "";
+            public string Make { get; set; } = "";
+            public string Model { get; set; } = "";
+            [RelationTable("---")] public Electricity? Electric { get; set; }
+            public double Rating { get; set; }
+        }
+
+        // Test Scenario: [RelationTable] Applied to Reference Field (✗impermissible✗)
+        public class Valet {
+            public class Organization {
+                [PrimaryKey] public Guid CompanyID { get; set; }
+                public string Name { get; set; } = "";
+                public bool IsNonProfit { get; set; }
+                public ushort TotalEmployees { get; set; }
+            }
+
+            [PrimaryKey] public Guid ValetID { get; set; }
+            public string Location { get; set; } = "";
+            [RelationTable("---")] public Organization Company { get; set; } = new();
+            public ushort Capacity { get; set; }
+            public double AverageDistance { get; set; }
+            public decimal CostPerCar { get; set; }
+            public bool TippingExpected { get; set; }
         }
     }
 
@@ -1045,6 +1418,41 @@ namespace UT.Kvasir.Translation {
             public ushort NumTents { get; set; }
         }
 
+        // Test Scenario: Change Relation Field Name (✓affects name of Table✓)
+        public class KidneyStone {
+            [PrimaryKey] public Guid KidneyStoneID { get; set; }
+            public float Size { get; set; }
+            public string Patient { get; set; } = "";
+            [Name("MaterialsTable")] public RelationSet<string> Composition { get; set; } = new();
+            public bool HasPassed { get; set; }
+        }
+
+        // Test Scenario: Change Relation-Nested Field Name to New Value (✓renamed✓)
+        public class SwissCanton {
+            [PrimaryKey] public Guid ID { get; set; }
+            [Name("Canton", Path = "SwissCanton")] public RelationMap<string, string> Names { get; set; } = new();
+            public ulong Area { get; set; }
+            public ulong Population { get; set; }
+            public string CantonCapital { get; set; } = "";
+            public ushort YearJoinedSwissConfederation { get; set; }
+            [Name("CantonID", Path = "SwissCanton.ID"), Name("Councilor", Path = "Item")] public RelationSet<string> Councilors { get; set; } = new();
+            [Name("Religion", Path = "Key"), Name("%PCNT", Path = "Value")] public RelationMap<string, double> Religions { get; set; } = new();
+        }
+
+        // Test Scenario: Change Nested Relation Name (✓affects name of Table✓)
+        public class Gulag {
+            public enum Org { Cheka, GPU, OGPU, KNVD, InternalAffairs, StalinsPersonalGuard }
+            public record struct Naming(string English, string Russian);
+            public record struct Personnel(string Commandant, RelationList<string> Overseers, Org AdministeredBy);
+
+            [PrimaryKey] public Guid GulagID { get; set; }
+            public Naming Name { get; set; }
+            public ulong Laborers { get; set; }
+            [Name("GulagOverseers", Path = "Overseers")] public Personnel Management { get; set; }
+            public float Latitude { get; set; }
+            public float Longitude { get; set; }
+        }
+
         // Test Scenario: Swap Names of Fields (✓renamed✓)
         public class Episode {
             [PrimaryKey, Name("Number")] public byte Season { get; set; }
@@ -1077,7 +1485,7 @@ namespace UT.Kvasir.Translation {
             [Name("Route"), Name("RoutingNumber")] public ulong RoutingNumber { get; set; }
         }
 
-        // Test Scenario: Aggregate [Name] Change on Field that Already Has [Name] Change (✓renamed✓)
+        // Test Scenario: Aggregate-Nested [Name] Change on Field that Already Has [Name] Change (✓renamed✓)
         public class HashMap {
             public struct CppType {
                 public string Typename { get; set; }
@@ -1091,6 +1499,23 @@ namespace UT.Kvasir.Translation {
             public bool ResolveViaChaining { get; set; }
             [Name("ConstQualified", Path = "Const")] public CppType KeyType { get; set; }
             [Name("Ref", Path = "Reference")] public CppType ValueType { get; set; }
+        }
+
+        // Test Scenario: Relation-Nested [Name] Change on Field that Already Has [Name] Change (✓renamed✓)
+        public class ArchaeologicalSite {
+            public struct PointOfInterest {
+                public string Name { get; set; }
+                public string Description { get; set; }
+                public float Latitude { get; set; }
+                public float Longitude { get; set; }
+                [Name("Area")] public double TotalSpace { get; set; }
+            }
+
+            [PrimaryKey] public Guid SiteID { get; set; }
+            public string Name { get; set; } = "";
+            public string Country { get; set; } = "";
+            public ulong Age { get; set; }
+            [Name("TotalArea", Path = "Item.TotalSpace")] public RelationSet<PointOfInterest> Ruins { get; set; } = new();
         }
 
         // Test Scenario: Nested Property with Multiple [Name] Changes (✗cardinality✗)
@@ -1112,7 +1537,7 @@ namespace UT.Kvasir.Translation {
             public uint Length { get; set; }
         }
 
-        // Test Scenario: Name is Changed to null (✗illegal✗)
+        // Test Scenario: Name is Changed to `null` (✗illegal✗)
         public class Longbow {
             [PrimaryKey] public Guid SerialNumber { get; set; }
             public string Manufacturer { get; set; } = "";
@@ -1217,6 +1642,30 @@ namespace UT.Kvasir.Translation {
             public Car Instigator { get; set; } = new();
             [Name("Registration", Path = "Reg")] public Car? Other { get; set; }
         }
+
+        // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+        public class ProcessRegister {
+            [Flags] public enum Operation { None = 0, Read = 1, Write = 2}
+
+            [PrimaryKey] public string Identifier { get; set; } = "";
+            public Operation AllowedOperations { get; set; }
+            public short Size { get; set; }
+            [Name("eax?", Path = "---")] public RelationSet<string> Architectures { get; set; } = new();
+            public bool StackPointer { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+        public class Yeshiva {
+            public enum Denom { Reform, Conservative, Orthodox, Chabad }
+            public record struct Student(string FirstName, string LastName, string HebrewName);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string City { get; set; } = "";
+            public Denom Denomination { get; set; }
+            public string ChiefRabbi { get; set; } = "";
+            public DateTime Founded { get; set; }
+            [Name("HomeCity", Path = "Yeshiva.City")] public RelationList<Student> Students { get; set; } = new();
+        }
     }
 
     internal static class DefaultValues {
@@ -1301,6 +1750,22 @@ namespace UT.Kvasir.Translation {
             public bool ProvenHoax { get; set; }
         }
 
+        // Test Scenario: Original Default on Aggregate-Nested Field (✓propagated✓)
+        public class Sermon {
+            public struct Institute {
+                public string Name { get; set; }
+                public string Address { get; set; }
+                [Default(1756102UL)] public ulong CongregationSize { get; set; }
+            }
+
+            [PrimaryKey] public string Clergy { get; set; } = "";
+            [PrimaryKey] public DateTime DeliveredAt { get; set; }
+            public string? Title { get; set; }
+            public string Text { get; set; } = "";
+            public Institute HouseOfWorship { get; set; }
+            public bool ForHoliday { get; set; }
+        }
+
         // Test Scenario: Default on Aggregate-Nested Field (✓valid✓)
         public class Salsa {
             public struct Pepper {
@@ -1382,6 +1847,49 @@ namespace UT.Kvasir.Translation {
             public ushort BestTime { get; set; }
             [Default(Style.Linguistic, Path = "PuzzleType")] public Puzzle FirstPuzzle { get; set; } = new();
             [Default(Style.Logical, Path = "PuzzleType")] public Puzzle FinalPuzzle { get; set; } = new();
+        }
+
+        // Test Scenario: Original Default on Relation-Nested Field (✓maybe propagated✓)
+        public class DockerContainer {
+            public struct Directory {
+                public string Path { get; set; }
+                [Default((ushort)777)] public ushort Permissions { get; set; }
+                public bool IsSymlink { get; set; }
+                public DateTime Created { get; set; }
+                public DateTime Modified { get; set; }
+            }
+
+            [PrimaryKey] public string Image { get; set; } = "";
+            [PrimaryKey, Default(0)] public int PID { get; set; }
+            public string EntryPoint { get; set; } = "";
+            public RelationMap<Directory, string> Mounts { get; set; } = new();
+        }
+
+        // Test Scenario: Default on Relation-Nested Field (✓valid✓)
+        public class Kami {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string CultCenter { get; set; } = "";
+            [Default("n/a", Path = "Item")] public RelationSet<string> AKAs { get; set; } = new();
+            [Default("Susano'o", Path = "Kami.Name"), Default((short)19, Path = "Value")] public RelationMap<string, short> Appearances { get; set; } = new();
+            public string? PrimaryTorii { get; set; }
+            public bool Female { get; set; }
+        }
+
+        // Test Scenario: Default on Relation-Nested Field that Already Has a Default (✓overrides✓)
+        public class Tamagotchi {
+            public struct Accessory {
+                public Guid ID { get; set; }
+                public string Name { get; set; }
+                [Default(0.50)] public decimal Cost { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Name { get; set; } = "";
+            public DateTime Spawned { get; set; }
+            public ushort HatchTime { get; set; }
+            public byte Age { get; set; }
+            public uint Weight { get; set; }
+            [Default(3.75, Path = "Item.Cost")] public RelationList<Accessory> Accessories { get; set; } = new();
         }
 
         // Test Scenario: `null` Default for Non-Nullable Field (✗invalid✗)
@@ -1469,6 +1977,18 @@ namespace UT.Kvasir.Translation {
             public DateTime TermEnd { get; set; }
             [Default('x', Path = "Entity")] public Polity Of { get; set; }
             public string InauguralPoemTitle { get; set; } = "";
+        }
+
+        // Test Scenario: Applied to Nested Relation (✗invalid✗)
+        public class TimeTraveler {
+            public record struct Machine(Guid SerialNumber, RelationList<string> Owners);
+
+            [PrimaryKey] public string FirstName { get; set; } = "";
+            [PrimaryKey] public string LastName { get; set; } = "";
+            public DateTime BirthDate { get; set; }
+            [Default("Marty McFly", Path = "Owners")] public Machine TimeMachine { get; set; }
+            public RelationSet<DateTime> Visitations { get; set; } = new();
+            public uint ParadoxesCaused { get; set; }
         }
 
         // Test Scenario: Single-Element Array Default (✗invalid✗)
@@ -1684,6 +2204,34 @@ namespace UT.Kvasir.Translation {
             [Default(null)] public Color FrostingColor { get; set; } = new();
             public bool IsChocolatey { get; set; }
         }
+
+        // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+        public class ArcadeGame {
+            [PrimaryKey] public Guid SerialNumber { get; set; }
+            public string Title { get; set; } = "";
+            public string Name { get; set; } = "";
+            [Default(0.00, Path = "---")] public RelationMap<string, double> HighScores { get; set; } = new();
+            public ushort NumLevels { get; set; }
+            public bool IsSports { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+        public class Monad {
+            public enum Operation { Map, Join, Unit, Bind, Constructor }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [Default((sbyte)77, Path = "Monad.ModelsOption")] public RelationMap<Operation, string> Traits { get; set; } = new();
+            public bool ModelsOption { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+        public class LaundryDetergent {
+            [PrimaryKey] public Guid DetergentID { get; set; }
+            public string Brand { get; set; } = "";
+            public double VolumePerLoad { get; set; }
+            [Default(null)] public RelationSet<string> Ingredients { get; set; } = new();
+            public bool ToxiToConsume { get; set; }
+        }
     }
 
     internal static class ColumnOrdering {
@@ -1741,7 +2289,31 @@ namespace UT.Kvasir.Translation {
             [Column(5)] public Basket Vessel { get; set; } = new();
         }
 
-        // Test Scenario: Reference's Primary Keys are Non-Consecutive (✓collapsed✓)
+        // Test Scenario: Relation Fields are Implicitly Ordered (✓default behavior✓)
+        public class DebitCard {
+            public enum Permission { CardHolder, AuthorizedSpender, EmergencyContact }
+            public record struct Transaction(DateTime Timestamp, decimal Amount, string Location);
+
+            [PrimaryKey] public ulong CardNumber { get; set; }
+            [PrimaryKey] public string Issuer { get; set; } = "";
+            public short SecurityCode { get; set; }
+            public decimal DebitLimit { get; set; }
+            public RelationMap<string, Permission> Account { get; set; } = new();
+            public DateTime Expiration { get; set; }
+            public RelationList<Transaction> Transactions { get; set; } = new();
+        }
+
+        // Test Scenario: Relation Fields are Manually Ordered (✗impermissible✗)
+        public class Tapestry {
+            [PrimaryKey] public Guid TapestryID { get; set; }
+            public double Length { get; set; }
+            public double Width { get; set; }
+            [Column(6)] public RelationList<string> Depictions { get; set; } = new();
+            public string? Artist { get; set; }
+            public ulong ThreadCount { get; set; }
+        }
+
+        // Test Scenario: Reference's Primary Key Fields are Non-Consecutive (✓collapsed✓)
         public class MassExtinction {
             public class GeologicPeriod {
                 [PrimaryKey, Column(0)] public string Name { get; set; } = "";
@@ -1754,6 +2326,18 @@ namespace UT.Kvasir.Translation {
             public GeologicPeriod ExitBoundary { get; set; } = new();
             public GeologicPeriod EntryBoundary { get; set; } = new();
             public double Severity { get; set; }
+        }
+
+        // Test Scenario: Anchor Entity's Primary Key Fields are Non-Consecutive (✓collapsed✓)
+        public class DuoPush {
+            public enum Result { Approve, Reject, TimeOut }
+
+            [PrimaryKey, Column(3)] public Guid DeviceID { get; set; }
+            [PrimaryKey, Column(0)] public DateTime Timestamp { get; set; }
+            public Result Outcome { get; set; }
+            public RelationList<string> Notifications { get; set; } = new();
+            public short PassCode { get; set; }
+            public bool Mobile { get; set; }
         }
 
         // Test Scenario: Two Scalar Fields Ordered to Same Index (✗duplication✗)
@@ -1933,6 +2517,28 @@ namespace UT.Kvasir.Translation {
             public bool SelfFulfilling { get; set; }
         }
 
+        // Test Scenario: Relation-Nested Scalar Property Marked as [PrimaryKey] (✓identified✓)
+        public class GrandPrix {
+            public record struct Driver(byte CarNumber, string Name);
+
+            [PrimaryKey] public short Year { get; set; }
+            [PrimaryKey] public string Country { get; set; } = "";
+            [PrimaryKey(Path = "GrandPrix.Year"), PrimaryKey(Path = "GrandPrix.Country"), PrimaryKey(Path = "Key.CarNumber")] public RelationMap<Driver, short> Results { get; set; } = new();
+            public byte NumLaps { get; set; }
+            public ulong TrackLength { get; set; }
+            public uint NumCrashes { get; set; }
+            public bool FormulaOne { get; set; }
+        }
+
+        // Test Scenario: Nested Relation Property Marked as [PrimaryKey] (✗illegal✗)
+        public class Psalm {
+            public record struct TextInfo(string Title, RelationMap<ushort, string> Verses);
+
+            [PrimaryKey] public int Number { get; set; }
+            [PrimaryKey(Path = "Verses")] public TextInfo Text { get; set; } = new();
+            public double PercentWeddingsQuoted { get; set; }
+        }
+
         // Test Scenario: All Properties Marked as [PrimaryKey] (✓identified✓)
         public class Character {
             [PrimaryKey] public char Glyph { get; set; }
@@ -2029,6 +2635,15 @@ namespace UT.Kvasir.Translation {
             [Unique("Formula")] public ushort Phosphorus { get; set; }
         }
 
+        // Test Scenario: Multiple Candidate Keys, but One is Subset of the Others (✓identified✓)
+        public class Escalator {
+            [Unique("ID"), Unique("Key"), Unique("F3")] public Guid EscalatorIdentifier { get; set; }
+            public double Height { get; set; }
+            [Unique("Key")] public bool GoesUp { get; set; }
+            [Unique("F3")] public string Manufacturer { get; set; } = "";
+            [Unique("F3")] public bool InMall { get; set; }
+        }
+
         // Test Scenario: Single Candidate Key Deduced for Other Reasons (✓identified✓)
         public class Repository {
             [Unique] public Guid ID { get; set; }
@@ -2064,6 +2679,58 @@ namespace UT.Kvasir.Translation {
             public float MaxAirTemperature { get; set; }
             public byte PassengerCapacity { get; set; }
             public double Radius { get; set; }
+        }
+
+        // Test Scenario: Default Deduction for List/Set Relations (✓identified✓)
+        public class Brothel {
+            public record struct Service(string Description, decimal CostPerHour);
+
+            [PrimaryKey] public string Address { get; set; } = "";
+            public string Country { get; set; } = "";
+            public string? Proprietor { get; set; }
+            public RelationList<string> Employees { get; set; } = new();
+            public decimal YearlyRevenue { get; set; }
+            public bool IsLegal { get; set; }
+            public RelationSet<Service> Services { get; set; } = new();
+        }
+
+        // Test Scenario: Default Deduction for Map Relation (✓identified✓)
+        public class Cult {
+            public record struct Info(DateTime Joined, bool Alive, string Position);
+
+            [PrimaryKey] public string Title { get; set; } = "";
+            public string Leader { get; set; } = "";
+            public DateTime Founded { get; set; }
+            public DateTime? Shuttered { get; set; }
+            public RelationMap<string, Info> Members { get; set; } = new();
+            public bool FederallyMonitored { get; set; }
+            public ulong AttributableDeaths { get; set; }
+        }
+
+        // Test Scenario: Single Candidate Key on Relation Including Anchor (✓identified✓)
+        public class ChromeExtension {
+            public record struct Rating(string Reviewer, DateTime Timestamp, double Stars);
+
+            [PrimaryKey] public Guid ExtensionID { get; set; }
+            public string ExtensionName { get; set; } = "";
+            public ulong Downloads { get; set; }
+            [Unique("Key", Path = "ChromeExtension.ExtensionID"), Unique("Key", Path = "Item.Reviewer")] public RelationList<Rating> Reviews { get; set; } = new();
+            public string CurrentVersion { get; set; } = "";
+            public ulong Size { get; set; }
+            public bool ByGoogle { get; set; }
+        }
+
+        // Test Scenario: Single Candidate Key on Relation Excluding Anchor (✓identified✓)
+        public class Zipline {
+            [PrimaryKey] public Guid ZiplineID { get; set; }
+            public string Country { get; set; } = "";
+            public ulong Length { get; set; }
+            public ulong MaxHeight { get; set; }
+            public ulong MinHeight { get; set; }
+            public float TopSpeed { get; set; }
+            [Unique(Path = "Item")] public RelationSet<string> Precautions { get; set; } = new();
+            public bool Aquatic { get; set; }
+            public bool Forested { get; set; }
         }
 
         // Test Scenario: Nullable Field Named `ID` + Non-Nullable Field Named `<EntityType>ID` (✓identified✓)
@@ -2135,6 +2802,23 @@ namespace UT.Kvasir.Translation {
             public string DeathCurse { get; set; } = "";
         }
 
+        // Test Scenario: Nullable Reference Field is Marked as [PrimaryKey] (✗illegal✗)
+        public class Avocado {
+            public class Country {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Endonym { get; set; } = "";
+                public ulong Population { get; set; }
+                public string CountryCode { get; set; } = "";
+                public string CapitalCity { get; set; } = "";
+            }
+
+            [PrimaryKey] public Guid AvocadoID { get; set; }
+            [PrimaryKey] public Country? CountryOfOrigin { get; set; }
+            public double Weight { get; set; }
+            public uint Calories { get; set; }
+            public bool Hass { get; set; }
+        }
+
         // Test Scenario: Field in Aggregate is Marked as [PrimaryKey] (✗illegal✗)
         public class LunarCrater {
             public struct Coordinate {
@@ -2149,13 +2833,37 @@ namespace UT.Kvasir.Translation {
             public double Diameter { get; set; }
         }
 
-        // Test Scenario: Primary Key Cannot Be Deduced (✗illegal✗)
+        // Test Scenario: Primary Key on Principal Table Cannot Be Deduced (✗illegal✗)
         public class FederalLaw {
             public string CommonName { get; set; } = "";
             public string? ShortName { get; set; }
             public DateTime Enacted { get; set; }
             public float StatuteIdentifier { get; set; }
             public string IntroducedBy { get; set; } = "";
+        }
+
+        // Test Scenario: Primary Key on Relation Table with No Candidate Keys Cannot Be Deduced (✗illegal✗)
+        public class Lagerstatte {
+            public record struct Fossil(string ScientificName, string? CommonName, DateTime FirstDiscovered);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public float Latitude { get; set; }
+            public float Longitude { get; set; }
+            public DateTime CarbonDating { get; set; }
+            public string GeologicEra { get; set; } = "";
+            public RelationSet<Fossil> Fossils { get; set; } = new();
+        }
+
+        // Test Scenario: Primary Key on Relation Table with Candidate Keys Cannot Be Deduced (✗illegal✗)
+        public class Blockbuster {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Manager { get; set; } = "";
+            public DateTime Opened { get; set; }
+            public DateTime? Closed { get; set; }
+            [Unique("V", Path = "Blockbuster.ID"), Unique("V", Path = "Value")] public RelationMap<string, string> Rentals { get; set; } = new();
+            public ushort TotalVideos { get; set; }
+            public decimal LifetimeRevenue { get; set; }
+            public bool IsFranchise { get; set; }
         }
 
         // Test Scenario: <Path> is `null` (✗illegal✗)
@@ -2247,6 +2955,39 @@ namespace UT.Kvasir.Translation {
             public Temperature MaxTemperature { get; set; } = new();
             public DateTime LastInspected { get; set; }
             public ushort FrostbiteIncidents { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+        public class Missile {
+            public enum Terrain { Surface, Air }
+
+            [PrimaryKey] public Guid MissileID { get; set; }
+            public string Model { get; set; } = "";
+            public Terrain LaunchedFrom { get; set; }
+            public Terrain Targeting { get; set; }
+            public ulong MaxRange { get; set; }
+            [PrimaryKey(Path = "---")] public RelationSet<string> Manufacturers { get; set; } = new();
+        }
+
+        // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+        public class TreasureMap {
+            public record struct Coordinate(float Latitude, float Longitude);
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string? Author { get; set; }
+            public decimal TreasureValue { get; set; }
+            public Coordinate X { get; set; }
+            [PrimaryKey(Path = "TreasureMap.X")] public RelationList<Coordinate> SuggestedPath { get; set; } = new();
+            public bool Damaged { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+        public class Hologram {
+            public Guid ID { get; set; }
+            public double Height { get; set; }
+            public double AspectRatio { get; set; }
+            [PrimaryKey] public RelationMap<short, string> Copyrights { get; set; } = new();
+            public bool ThreeDimensional { get; set; }
         }
     }
 
@@ -2417,7 +3158,7 @@ namespace UT.Kvasir.Translation {
             [Unique(Path = "Name")] public Entry Definition { get; set; }
         }
 
-        // Test Scenario: Field in Aggregate Placed in Candidate Key (✓recognized✓)
+        // Test Scenario: Aggregate Field Natively [Unique] (✓propagated✓)
         public class ZoomMeeting {
             public struct Credentialization {
                 [Unique] public Guid MeetingID { get; set; }
@@ -2483,12 +3224,45 @@ namespace UT.Kvasir.Translation {
             [Unique("Eras", Path = "EnglishEraName")] public Era EndEra { get; set; } = new();
         }
 
-        // Test Scenario: Nested Reference Fields in Candidate Key (✓not propagated✓)
+        // Test Scenario: Nested Reference Fields in Candidate Key (✓recognized✓)
+        public class Kibbutz {
+            public class Mekhoza {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong Area { get; set; }
+                public ulong Population { get; set; }
+            }
+            public record struct Location(Mekhoza District, string NearestMajorCity);
+
+            [PrimaryKey] public string HebrewName { get; set; } = "";
+            [Unique("KBTZ")] public string EnglishName { get; set; } = "";
+            [Unique("KBTZ", Path = "District")] public Location Where { get; set; }
+            public ushort NumResidents { get; set; }
+            public DateTime Established { get; set; }
+            public string PrimaryAgriculture { get; set; } = "";
+        }
+
+        // Test Scenario: Primary Key Reference Fields Natively [Unique] (✓not propagated✓)
+        public class DiscworldGuild {
+            public class Book {
+                [PrimaryKey, Unique] public string Title { get; set; } = "";
+                [PrimaryKey] public ulong ISBN { get; set; }
+                public ushort PageCount { get; set; }
+                public DateTime Released { get; set; }
+            }
+
+            [PrimaryKey] public string Guild { get; set; } = "";
+            public string Head { get; set; } = "";
+            public Book FirstIntroduced { get; set; } = new();
+            public ushort Members { get; set; }
+            public bool InvestigatedByVimes { get; set; }
+        }
+
+        // Test Scenario: Non-Primary-Key Reference Fields Natively [Unique] (✓not propagated✓)
         public class HonestTrailer {
             public class YouTube {
                 [PrimaryKey] public string Channel { get; set; } = "";
-                [PrimaryKey, Unique] public string VideoHash { get; set; } = "";
-                public string VideoTitle { get; set; } = "";
+                [PrimaryKey] public string VideoHash { get; set; } = "";
+                [Unique] public string VideoTitle { get; set; } = "";
                 public ulong Length { get; set; }
                 public ulong Views { get; set; }
             }
@@ -2498,6 +3272,59 @@ namespace UT.Kvasir.Translation {
             public string HonestTitle { get; set; } = "";
             public bool EpicVoiceGuy { get; set; }
             public byte BewbsCount { get; set; }
+        }
+
+        // Test Scenario: Relation-Nested Scalar Fields in Candidate Key (✓recognized✓)
+        public class BigBlockOfCheeseDay {
+            public record struct Slot(string Organization, DateTime Time);
+
+            [PrimaryKey] public ushort Episode { get; set; }
+            public string ChiefOfStaff { get; set; } = "";
+            [PrimaryKey(Path = "Key.Time"), Unique("X", Path = "BigBlockOfCheeseDay"), Unique("X", Path = "Key.Organization")] public RelationMap<Slot, string> Schedule { get; set; } = new();
+            public double PercentCrackpots { get; set; }
+        }
+
+        // Test Scenario: Nested Relation Field in Candidate Key (✗illegal✗)
+        public class RentalCar {
+            public record struct Duration(DateTime Start, DateTime End);
+            public record struct History(RelationMap<string, Duration> Renters, DateTime Acquired);
+
+            [PrimaryKey] public string LicensePlate { get; set; } = "";
+            public decimal CostPerDay { get; set; }
+            public ushort GasGallons { get; set; }
+            public ulong Miles { get; set; }
+            public string Make { get; set; } = "";
+            public string Model { get; set; } = "";
+            [Unique(Path = "Renters")] public History Report { get; set; }
+        }
+
+        // Test Scenario: Relation Field Natively [Unique] (✓propagated✓)
+        public class Intifada {
+            public struct Country {
+                [Unique] public string CountryName { get; set; }
+                [Unique("Code")] public short CountryCode { get; set; }
+                public bool IsArab { get; set; }
+                public ulong Population { get; set; }
+            }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateTime WarStart { get; set; }
+            public DateTime WarEnd { get; set; }
+            [PrimaryKey(Path = "Intifada.Name"), PrimaryKey(Path = "Item.CountryName")] public RelationSet<Country> Belligerents { get; set; } = new();
+            public ulong Casualties { get; set; }
+        }
+
+        // Test Scenario: Anchor + Key in Candidate Key (✓redundant✓)
+        public class VoodooDoll {
+            public enum Color { Red, Orange, Yellow, Green, Blue, Purple, White, Black, Gray, Brown, Pink, Gold }
+            public enum Thing { Straw, Cloth, Fruit, Hay, Cotton, Paper, Sand }
+
+            [PrimaryKey] public Guid VoodooID { get; set; }
+            public string Target { get; set; } = "";
+            public string? PatronLoa { get; set; }
+            [PrimaryKey(Path = "VoodooDoll.VoodooID"), PrimaryKey(Path = "Value"), Unique("Unique", Path = "VoodooDoll.VoodooID"), Unique("Unique", Path = "Key")] public RelationMap<Color, string> Pins { get; set; } = new();
+            public bool Effective { get; set; }
+            public Thing Material { get; set; }
         }
 
         // Test Scenario: Scalar Fields in Same Candidate Key as Nested Fields (✓recognized✓)
@@ -2516,7 +3343,7 @@ namespace UT.Kvasir.Translation {
             public Formulation Formula { get; set; }
         }
 
-        // Test Scenario: Candidate Key Named null (✗illegal✗)
+        // Test Scenario: Candidate Key Named `null` (✗illegal✗)
         public class PlatonicDialogue {
             [PrimaryKey] public string Title { get; set; } = "";
             public string OpposingSocrates { get; set; } = "";
@@ -2653,6 +3480,36 @@ namespace UT.Kvasir.Translation {
             public ulong LawyerCount { get; set; }
             public double WinPercentage { get; set; }
         }
+
+        // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+        public class Antihistamine {
+            [Flags] public enum Symptom { Sneeze = 1, ItchyEyes = 2, RunnyNose = 4, Congestion = 8, Headache = 16, Hives = 32, Anaphylaxis = 64, Rash = 128 }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string Formula { get; set; } = "";
+            public double Bioavalability { get; set; }
+            [Unique(Path = "---")] public RelationMap<string, string> MedicalIdentifiers { get; set; } = new();
+            public Symptom SymptomsRelieved { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+        public class Oasis {
+            [PrimaryKey] public float Latitude { get; set; }
+            [PrimaryKey] public float Longitude { get; set; }
+            public ulong Water { get; set; }
+            [Unique(Path = "Oasis.Water")] public RelationSet<string> TreeSpecies { get; set; } = new();
+            public double AverageTemperature { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+        public class LimboCompetition {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Song { get; set; } = "";
+            public ushort BarLength { get; set; }
+            [Unique] public IReadOnlyRelationMap<string, float> Heights { get; set; } = new RelationMap<string, float>();
+            public decimal PrizeMoney { get; set; }
+            public bool SoberRequired { get; set; }
+        }
     }
 
     internal static class DataConverters {
@@ -2755,6 +3612,19 @@ namespace UT.Kvasir.Translation {
             public double BestPoleVault { get; set; }
             public double BestJavelinThrow { get; set; }
             public double BestMeters1500 { get; set; }
+        }
+
+        // Test Scenario: [DataConverter] Applied to Relation Field (✗impermissible✗)
+        public class Bank {
+            [PrimaryKey] public uint FDICNumber { get; set; }
+            public string Name { get; set; } = "";
+            [DataConverter(typeof(ToInt<RelationMap<ulong, decimal>>))] public RelationMap<ulong, decimal> Accounts { get; set; } = new();
+            public string VaultModel { get; set; } = "";
+            public sbyte NumTellers { get; set; }
+            public decimal CashOnHand { get; set; }
+            public bool CanMakeLoans { get; set; }
+            public byte NumTimesRobbed { get; set; }
+            public bool Crypto { get; set; }
         }
 
         // Test Scenario: Data Conversion Source Type is Non-Nullable on Nullable Field (✓applied✓)
@@ -2941,6 +3811,18 @@ namespace UT.Kvasir.Translation {
             public uint TotalFouls { get; set; }
         }
 
+        // Test Scenario: [Numeric] Applied to Relation Field (✗impermissible✗)
+        public class Wadi {
+            public record struct Coordinate(float Latitude, float Longitude);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public ulong Length { get; set; }
+            public ulong Elevation { get; set; }
+            public Coordinate? Mouth { get; set; }
+            [Numeric] public RelationSet<string> MineralDeposits { get; set; } = new();
+            public sbyte NumOases { get; set; }
+        }
+
         // Test Scenario: [AsString] Applied to Boolean Field (✗impermissible✗)
         public class BondGirl {
             [PrimaryKey] public string Name { get; set; } = "";
@@ -3015,6 +3897,15 @@ namespace UT.Kvasir.Translation {
             public string Location { get; set; } = "";
             public string Color { get; set; } = "";
             public long? NumPetals { get; set; }
+        }
+
+        // Test Scenario: [AsString] Applied to Relation Field (✗impermissible✗)
+        public class Cryptogram {
+            [PrimaryKey] public Guid PuzzleID { get; set; }
+            public DateTime Published { get; set; }
+            public string Author { get; set; } = "";
+            public string EncryptedText { get; set; } = "";
+            [AsString] public RelationMap<char, char> Solution { get; set; } = new();
         }
 
         // Test Scenario: Property Marked with [DataConverter] and [Numeric] (✗conflicting✗)
@@ -3233,6 +4124,51 @@ namespace UT.Kvasir.Translation {
                 [Check.IsPositive(Path = "Unit")] public Output Power { get; set; }
             }
 
+            // Test Scenario: Applied to Relation-Nested Numeric Scalar (✓constrained✓)
+            public class ArtificialIntelligence {
+                public enum Type { General, Generative, Recommendatory, Classification, Search, Other }
+                public record struct Support(double LatestVersions, RelationSet<double> SupportedVersions);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public Type Category { get; set; }
+                public DateTime Debut { get; set; }
+                [Check.IsPositive(Path = "SupportedVersions.Item")] public Support Versions { get; set; }
+                public RelationSet<string> Creators { get; set; } = new();
+                public bool CanPassTuringTest { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-Numeric Scalar (✗impermissible✗)
+            public class Margarita {
+                [Flags] public enum Rimming { Salt = 1, Sugar = 2, Tajin = 4 }
+
+                public class Ingredient {
+                    [PrimaryKey] public Guid ID { get; set; }
+                    public short Name { get; set; }
+                    public bool IsFruit { get; set; }
+                    public ushort Calories { get; set; }
+                }
+
+                [PrimaryKey] public Guid MargaritaID { get; set; }
+                public string Tequila { get; set; } = "";
+                public Rimming Rim { get; set; }
+                [Check.IsPositive(Path = "Item.ID")] public RelationSet<Ingredient> Ingredients { get; set; } = new();
+                public double AlcoholVolume { get; set; }
+                public decimal Price { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class PulitzerPrize {
+                public enum Categorization { Fiction, Music, Drama, Biography, Poetry, History, Reporting, Photography, Illustration }
+                public record struct Committee(RelationList<string> Members, string Chairperson);
+
+                [PrimaryKey] public ushort Year { get; set; }
+                [PrimaryKey] public Categorization Category { get; set; }
+                public string Recipient { get; set; } = "";
+                public string For { get; set; } = "";
+                [Check.IsPositive(Path = "Members")] public Committee AwardCommittee { get; set; }
+                public decimal PrizeMoney { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
             public class SwimmingPool {
                 [PrimaryKey] public uint Depth { get; set; }
@@ -3351,6 +4287,47 @@ namespace UT.Kvasir.Translation {
                 public string Checker { get; set; } = "";
                 public bool JudgedTrue { get; set; }
                 public uint? Pinocchios { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class Sukkah {
+                [PrimaryKey] public Guid SukkahID { get; set; }
+                public float Height { get; set; }
+                public float Width { get; set; }
+                public float Length { get; set; }
+                [Check.IsPositive(Path = "---")] public RelationMap<string, short> Builders { get; set; } = new();
+                public bool IsPermanent { get; set; }
+                public int AmountSkakh { get; set; }
+                public DateTime Constructed { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class Screenwriter {
+                public class Script {
+                    [PrimaryKey] public ulong ScriptNumber { get; set; }
+                    [PrimaryKey] public sbyte Draft { get; set; }
+                    public string Title { get; set; } = "";
+                    public int WordCount { get; set; }
+                    public ushort PageCount { get; set; }
+                    public bool OnSpec { get; set; }
+                }
+
+                [PrimaryKey] public string FirstName { get; set; } = "";
+                [PrimaryKey] public string LastName { get; set; } = "";
+                public DateTime Birthdate { get; set; }
+                [Check.IsPositive(Path = "Item.WordCount")] public RelationList<Script> Scripts { get; set; } = new();
+                public decimal Salary { get; set; }
+                public bool WGAMember { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class Typewriter {
+                [PrimaryKey] public Guid TypewriterID { get; set; }
+                [Check.IsPositive] public RelationSet<char> MissingKeys { get; set; } = new();
+                public bool OwnedByTomHanks { get; set; }
+                public DateTime Created { get; set; }
+                public uint ClickSoundNumber { get; set; }
+                public ushort WordsPerMinute { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -3545,6 +4522,42 @@ namespace UT.Kvasir.Translation {
                 public Guid OwnerID { get; set; }
             }
 
+            // Test Scenario: Applied to Relation-Nested Numeric Scalar (✓constrained✓)
+            public class Almanac {
+                public enum Info { Astronomy, Agriculture, Geography, Hydrology, Meteorology, Calendrical, Folkloric }
+                public record struct Section(Info Category, int PageStart, int PageEnd);
+
+                [PrimaryKey] public ulong ISBN { get; set; }
+                public string Title { get; set; } = "";
+                public string Author { get; set; } = "";
+                public DateTime Copyright { get; set; }
+                [Check.IsNegative(Path = "Item.PageEnd")] public RelationList<Section> Sections { get; set; } = new();
+                public ushort NumImages { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-Numeric Scalar (✗impermissible✗)
+            public class LandMine {
+                public enum Kind { AntiTank, AntiPersonnel }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public float Latitude { get; set; }
+                public float Longitude { get; set; }
+                public bool Detonated { get; set; }
+                [Check.IsNegative(Path = "Item")] public IReadOnlyRelationSet<string> Casualties { get; set; } = new RelationSet<string>();
+                public Kind Type { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class YahtzeeGame {
+                public enum Category { Ones, Twos, Threes, Fours, Five, Sixes, ThreeOAK, FourOAK, FullHouse, SmallSTR, LargeSTR, Yahtzee, Chance };
+                public record struct Player(Guid PlayerID, string Name, RelationMap<Category, byte> Score);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string DiceColor { get; set; } = "";
+                [Check.IsNegative(Path = "Score")] public Player Player1 { get; set; }
+                public Player Player2 { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
             public class Boxer {
                 [PrimaryKey] public string FirstName { get; set; } = "";
@@ -3675,6 +4688,46 @@ namespace UT.Kvasir.Translation {
                 public ushort NumComponents { get; set; }
                 public ulong Height { get; set; }
                 public ulong Width { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class RomanFestival {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string? DeityHonored { get; set; }
+                public bool Drunken { get; set; }
+                [Check.IsNegative(Path = "---")] public RelationSet<DateTime> PossibleDates { get; set; } = new();
+                public string? GreekEquivalent { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class AmberAlert {
+                public enum Category { Make, Model, LicensePlate, Color, NumDoors, Wheels, Other }
+
+                [PrimaryKey] public Guid AlertID { get; set; }
+                public string ChildsName { get; set; } = "";
+                public DateTime Issued { get; set; }
+                [Check.IsNegative(Path = "AmberAlert.EmergencyContactNumber")] public RelationMap<Category, string> VehicleDescription { get; set; } = new();
+                public ushort EmergencyContactNumber { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class BoyBand {
+                public class Singer {
+                    public enum Range { Soprano, MezzoSoprano, Contralto, Countertenor, Tenor, Baritone, Bass }
+
+                    [PrimaryKey] public string FirstName { get; set; } = "";
+                    [PrimaryKey] public string LastName { get; set; } = "";
+                    public Range VocalRange { get; set; }
+                }
+
+                [PrimaryKey] public string BandName { get; set; } = "";
+                public DateTime Debuted { get; set; }
+                public DateTime? Disbanded { get; set; }
+                public DateTime? Renunited { get; set; }
+                public ulong RecordsSold { get; set; }
+                [Check.IsNegative] public RelationList<Singer> Members { get; set; } = new();
+                public ushort NumAlbums { get; set; }
+                public ulong InstagramFollowers { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -3856,6 +4909,46 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNonZero(Path = "Astronomer")] public DiscoveryData Discovery { get; set; }
             }
 
+            // Test Scenario: Applied to Relation-Nested Numeric Scalar (✓constrained✓)
+            public class CircleDance {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Tradition { get; set; } = "";
+                public double Duration { get; set; }
+                public ushort? MaxParticipants { get; set; }
+                [Check.IsNonZero(Path = "Key")] public RelationMap<uint, string> Steps { get; set; } = new();
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-Numeric Scalar (✗impermissible✗)
+            public class KosherAgency {
+                public enum CertType { Kosher, KohserDairy, KoserForPassover, KohserYisrael }
+                public enum Judaism { Reform, Conservative, Orthodox }
+
+                public class Company {
+                    [PrimaryKey] public char ID { get; set; }
+                    public string Name { get; set; } = "";
+                    public decimal Revenue { get; set; }
+                }
+                public record struct Certification(Company Company, DateTime AsOf, CertType Kind);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime Established { get; set; }
+                public char CertificationSymbol { get; set; }
+                [Check.IsNonZero(Path = "Item.ID")] public RelationSet<Company> CertifiedCompanies { get; set; } = new();
+                public Judaism Branch { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class CarpoolKaraoke {
+                public record struct Cantante(string Singer, RelationList<string> Songs);
+
+                [PrimaryKey] public uint EpisodeNumber { get; set; }
+                [Check.IsNonZero(Path = "Songs")] public Cantante Guest { get; set; }
+                public double Duration { get; set; }
+                public ulong YouTubeViews { get; set; }
+                public bool Viral { get; set; }
+                public uint JamesCordenWords { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to Numeric Type (✓constrained✓)
             public class Airline {
                 [PrimaryKey] public string Name { get; set; } = "";
@@ -3994,6 +5087,40 @@ namespace UT.Kvasir.Translation {
                 public Word? Word18 { get; set; } = new();
                 public Word? Word19 { get; set; } = new();
                 public Word? Word20 { get; set; } = new();
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class HallPass {
+                public enum Color { Red, Green, Blue, Orange, Black, White, Pink, Purple, Yellow, Gray, Brown }
+
+                [PrimaryKey] public uint HallPassNumber { get; set; }
+                public string IssuedBy { get; set; } = "";
+                public string School { get; set; } = "";
+                public DateTime LastIssued { get; set; }
+                [Check.IsNonZero(Path = "---")] public RelationList<string> PermittedLocations { get; set; } = new();
+                public bool IsExpired { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class Casserole {
+                public enum Kind { American, French, German, Portuguese, Greek, Scandinavian, Polish, Russian, Italian, Other }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                public Kind Cuisine { get; set; }
+                public float IdealPanDepth { get; set; }
+                [Check.IsNonZero(Path = "Casserole.IdealPanDepth")] public RelationMap<string, bool> Ingredients { get; set; } = new();
+                public bool IsGratin { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class GarbageTruck {
+                [PrimaryKey] public string LicensePlate { get; set; } = "";
+                [Check.IsNonZero] public RelationSet<string> RouteStops { get; set; } = new();
+                public ulong TonnesProcessed { get; set; }
+                public string ManagementCompany { get; set; } = "";
+                public string Driver { get; set; } = "";
+                public bool AlsoRecycling { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -4167,6 +5294,47 @@ namespace UT.Kvasir.Translation {
                 public ulong Donors { get; set; }
                 public double BloodCollected { get; set; }
                 public double PlasmaCollected { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
+            public class KidNextDoor {
+                [PrimaryKey] public long Number { get; set; }
+                public string LegalName { get; set; } = "";
+                public string Sector { get; set; } = "";
+                public string VoiceActor { get; set; } = "";
+                [Check.IsGreaterThan('@', Path = "Key"), Check.IsGreaterThan(0L, Path = "KidNextDoor.Number")] public RelationMap<char, string> DebutMission { get; set; } = new();
+                public string? ArchNemesis { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-Orderable Scalar (✗impermissible✗)
+            public class Antari {
+                public enum LNDN { Grey, Red, White, Black }
+                public enum Element { Fire, Earth, Wind, Water, Metal, Bone }
+                
+                public class Spell {
+                    [PrimaryKey] public Guid SpellID { get; set; }
+                    public string Incantation { get; set; } = "";
+                    public ushort TimesCast { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public LNDN London { get; set; }
+                public Element StrongestElement { get; set; }
+                [Check.IsGreaterThan("9dc286f1-3ce5-4bd6-9afa-5bb6049e0ffe", Path = "Item.SpellID")] public RelationList<Spell> KnownSpells { get; set; } = new();
+                public DateTime Birthdate { get; set; }
+                public bool Deceased { get; set; }
+                public byte? BestEssenTaschPlacement { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class Clown {
+                public enum Kind { Party, Jester, Demon, Circus, Rodeo, Other }
+                public record struct Outfit(decimal Nose, RelationList<string> Accountrement, double Shoes);
+
+                [PrimaryKey] public Guid ClownID { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsGreaterThan(1001, Path = "Accoutrement")] public Outfit Costume { get; set; }
+                public Kind Type { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -4420,6 +5588,52 @@ namespace UT.Kvasir.Translation {
                 [Check.IsGreaterThan("1357-08-16")] public Employee Manager { get; set; } = new();
             }
 
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class Delicatessen {
+                public class MenuItem {
+                    [Flags] public enum Meal { Breakfast = 1, Lunch = 2, Dinner = 4, HolidayOnly = 256 }
+
+                    [PrimaryKey] public ushort ItemNumber { get; set; }
+                    public string ItemName { get; set; } = "";
+                    public string Description { get; set; } = "";
+                    public decimal Price { get; set; }
+                    public bool IsSpecial { get; set; }
+                    public Meal Availability { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime Opened { get; set; }
+                public string Owner { get; set; } = "";
+                public string? URL { get; set; }
+                public ushort MaxSeating { get; set; }
+                [Check.IsGreaterThan(18752.53f, Path = "---")] public RelationList<MenuItem> MenuItems { get; set; } = new();
+                public bool OffersCatering { get; set; }
+                public bool JewishStyle { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class BlackjackHand {
+                public enum FaceValue { Ace, King, Queen, Jack, Ten, Nine, Eight, Seven, Six, Five, Four, Three, Two };
+                public enum CardSuit { Hearts, Diamonds, Clubs, Spades }
+                public record struct Card(FaceValue Value, CardSuit Suit);
+
+                [PrimaryKey] public Guid HandID { get; set; }
+                public RelationSet<Card> PlayerCards { get; set; } = new();
+                [Check.IsGreaterThan(17512UL, Path = "BlackjackHand.TotalPot")] public RelationSet<Card> DealerCards { get; set; } = new();
+                public ulong TotalPot { get; set; }
+                public bool DoubleDown { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class Inquisition {
+                [PrimaryKey] public DateTime Start { get; set; }
+                [PrimaryKey] public DateTime End { get; set; }
+                public string OfficialTitle { get; set; } = "";
+                public string GrandInquisitor { get; set; } = "";
+                [Check.IsGreaterThan("Religious Persecution")] public RelationSet<string> Victims { get; set; } = new();
+                public bool IncludedWitchTrials { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class DraftPick {
                 [PrimaryKey] public string League { get; set; } = "";
@@ -4599,6 +5813,46 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessThan(0UL, Path = "Drug")] public Explanation Reason { get; set; }
                 public bool Fatal { get; set; }
                 public double Duration { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
+            public class FairyGodparent {
+                public enum Color { Red, Green, Orange, Blue, Yellow, Pink, Black, White, Purple, Gray }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Godchild { get; set; } = "";
+                public ulong WishesGranted { get; set; }
+                public Color HairColor { get; set; }
+                public Color EyeColor { get; set; }
+                [Check.IsLessThan("Warmonger", Path = "FairyGodparent.Name"), Check.IsLessThan((ushort)1851, Path = "Key"), Check.IsLessThan((ushort)42144, Path = "Value")] public RelationMap<ushort, ushort> LinesByEpisode { get; set; } = new();
+                public uint TimesDaRulesBroken { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-Orderable Scalar (✗impermissible✗)
+            public class NavalBlockade {
+                public enum AquaKind { Ocean, River, Stream, Lake, Estuary, Swamp, Inlet, Bay }
+                public record struct Waterway(string Name, AquaKind Kind);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public DateTime Instituted { get; set; }
+                public DateTime? Lifted { get; set; }
+                [Check.IsLessThan(AquaKind.Swamp, Path = "Item.Kind")] public RelationSet<Waterway> WaterwaysAffected { get; set; } = new();
+                public decimal EconomicImpact { get; set; }
+                public bool ActOfWar { get; set; }
+                public ushort NumShips { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class Blacksmith {
+                public record struct Inventory(RelationSet<string> Metals, RelationSet<string> Hammers);
+
+                [PrimaryKey] public Guid InternationalBlacksmithNumber { get; set; }
+                public string Address { get; set; } = "";
+                public DateTime Birthdate { get; set; }
+                [Check.IsLessThan(1000, Path = "Hammers")] public Inventory Materials { get; set; }
+                public RelationMap<string, decimal> Prices { get; set; } = new();
+                public double SlagPerDay { get; set; }
+                public ushort BenchPress { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -4833,6 +6087,36 @@ namespace UT.Kvasir.Translation {
                 public ushort NumPubs { get; set; }
             }
 
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class Mime {
+                public record struct Performance(DateTime Date, string Venue, ushort Attendance, byte Length);
+
+                [PrimaryKey] public Guid MimeID { get; set; }
+                public string FullName { get; set; } = "";
+                public DateTime Birthdate { get; set; }
+                [Check.IsLessThan(0L, Path = "---")] public RelationList<Performance> Performances { get; set; } = new();
+                public ulong LifetimeWordsSpoken { get; set; }
+                public string GoToMiming { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class CatholicCardinal {
+                [PrimaryKey] public string FirstName { get; set; } = "";
+                [PrimaryKey] public string LastName { get; set; } = "";
+                public DateTime Birthdate { get; set; }
+                public DateTime? DeathDate { get; set; }
+                public DateTime Elevation { get; set; }
+                [Check.IsLessThan("2657-03-19", Path = "CatholicCardinal.DeathDate")] public RelationSet<DateTime> Conclaves { get; set; } = new();
+                public bool PreviouslyArchbishop { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class Hemalurgy {
+                [PrimaryKey] public string Metal { get; set; } = "";
+                [Check.IsLessThan("Allomantic Powers")] public RelationSet<string> Steals { get; set; } = new();
+                public bool IsDepictedInBooks { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class ParkingGarage {
                 [PrimaryKey] public Guid GarageID { get; set; }
@@ -5008,6 +6292,44 @@ namespace UT.Kvasir.Translation {
                 public float Height { get; set; }
                 [Check.IsGreaterOrEqualTo(11.3f, Path = "Boyfriend.Ken")] public Family Relationships { get; set; } = new();
                 public bool AppearedInMovie { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
+            public class PuppetShow {
+                public enum Kind { Hand, Finger, Sock, Muppet, Shadow, Marionette }
+                public record struct Puppet(string Name, string Shape, decimal Value, Kind Kind);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string ShowTitle { get; set; } = "";
+                public double ShowLength { get; set; }
+                [Check.IsGreaterOrEqualTo("Elmo", Path = "Item.Name"), Check.IsGreaterOrEqualTo(22.5, Path = "Item.Value")] public RelationSet<Puppet> Puppets { get; set; } = new();
+                public decimal TicketPrice { get; set; }
+                public ushort Attendees { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-Orderable Scalar (✗impermissible✗)
+            public class Horcrux {
+                public record struct Pair(DateTime Hidden, bool Discovered);
+
+                [PrimaryKey] public string Creator { get; set; } = "";
+                [PrimaryKey] public string Victim { get; set; } = "";
+                public bool AvadaKedavra { get; set; }
+                public string Object { get; set; } = "";
+                [Check.IsGreaterOrEqualTo(false, Path = "Value.Discovered")] public RelationMap<string, Pair> HidingPlaces { get; set; } = new();
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class WheresWaldo {
+                public record struct Coordinate(float X, float Y);
+                public record struct Quadrant(byte Number, RelationList<Coordinate> Decoys);
+
+                [PrimaryKey] public Guid PuzzleID { get; set; }
+                public string PuzzleTheme { get; set; } = "";
+                public Coordinate Waldo { get; set; }
+                public Quadrant Q1 { get; set; }
+                [Check.IsGreaterOrEqualTo(153.962f, Path = "Decoys")] public Quadrant Q2 { get; set; }
+                public Quadrant Q3 { get; set; }
+                public Quadrant Q4 { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -5253,6 +6575,38 @@ namespace UT.Kvasir.Translation {
                 [Check.IsGreaterOrEqualTo("2017-03-11")] public Gene FirstIsolatedGene { get; set; } = new();
             }
 
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class HighlanderImmortal {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime FirstDeath { get; set; }
+                public double Quickening { get; set; }
+                [Check.IsGreaterOrEqualTo("MacLeod", Path = "---")] public RelationSet<Guid> Swords { get; set; } = new();
+                public double Height { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class Synagogue {
+                public enum Judaism { Reform, Conservative, Orthodox, Chabad, Kabbalah, Reconstructionist }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Judaism Denomination { get; set; }
+                public ulong SquareFootage { get; set; }
+                [Check.IsGreaterOrEqualTo("%999u$", Path = "Synagogue.Denomination")] public RelationSet<string> Congregants { get; set; } = new();
+                public DateTime NeirTamidInstalled { get; set; }
+                public uint BneiMitzvot { get; set; }
+                public string SeniorRabbi { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class Panegyric {
+                [PrimaryKey] public string Speaker { get; set; } = "";
+                [PrimaryKey] public DateTime Delivered { get; set; }
+                public string Topic { get; set; } = "";
+                public bool Religious { get; set; }
+                [Check.IsGreaterOrEqualTo(68174)] public RelationMap<int, string> Lines { get; set; } = new();
+                public bool Recorded { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Camera {
                 [PrimaryKey] public string Model { get; set; } = "";
@@ -5417,6 +6771,43 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessOrEqualTo('_', Path = "Ransom")] public Demand Extortion { get; set; } = new();
                 public decimal Damage { get; set; }
                 public bool RansomPaid { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
+            public class Syllabary {
+                [PrimaryKey] public string Language { get; set; } = "";
+                public DateTime? Created { get; set; }
+                public ulong WorldwideUsers { get; set; }
+                [Check.IsLessOrEqualTo('|', Path = "Value")] public RelationMap<char, char> IPA { get; set; } = new();
+                public bool IsAlphasyllabary { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-Orderable Scalar (✗impermissible✗)
+            public class TreehouseOfHorror {
+                public enum Role { VoiceActor, VoiceActress, Animator, Writer, Producer, Editor, SoundArist }
+
+                [PrimaryKey] public byte Season { get; set; }
+                [PrimaryKey] public byte EpisodeNumber { get; set; }
+                public DateTime AirDate { get; set; }
+                public bool IsParody { get; set; }
+                public RelationMap<string, Role> Cast { get; set; } = new();
+                [Check.IsLessOrEqualTo("Robert", Path = "Value")] public RelationMap<string, Role> Crew { get; set; } = new();
+                public string Segment1Title { get; set; } = "";
+                public string Segment2Title { get; set; } = "";
+                public string Segment3Title { get; set; } = "";
+                public bool KangAndKodos { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class CocoaFarm {
+                public record struct PersonnelGroup(string Owner, RelationSet<string> Workers, RelationList<string> Regulators);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public uint Area { get; set; }
+                public string Country { get; set; } = "";
+                public ulong CocoaVolume { get; set; }
+                [Check.IsLessOrEqualTo("Nikolai Emunatto", Path = "Regulators")] public PersonnelGroup Personnel { get; set; }
+                public decimal Revenue { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields with Total Orders (✓constrained✓)
@@ -5647,6 +7038,45 @@ namespace UT.Kvasir.Translation {
                 public ulong TotalDuration { get; set; }
             }
 
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class ThumbWar {
+                public enum Movement { Up, Down, Left, Right, Wiggle, FlexBack, ForwardPursuit }
+                public enum Result { Player1Win, Player2Win, Draw }
+                public record struct Play(uint Player, Movement Move);
+
+                [PrimaryKey] public Guid ThumbWarID { get; set; }
+                public uint Player1 { get; set; }
+                public uint Player2 { get; set; }
+                [Check.IsLessOrEqualTo(105, Path = "---")] public RelationList<Play> PlayByPlay { get; set; } = new();
+                public Result Outcome { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class EngagementRing {
+                public enum Stone { Diamond, Ruby, Sapphire, Peridot, Amethyst }
+                public record struct Measurement(double Value, string Unit);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Stone Centerpiece { get; set; }
+                [Check.IsLessOrEqualTo(285712905UL, Path = "EngagementRing.Centerpiece")] public RelationMap<string, Measurement> Measurements { get; set; } = new();
+                public decimal Price { get; set; }
+                public bool FamilyHeirloom { get; set; }
+                public string Wearer { get; set; } = "";
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class ImpracticalJoke {
+                public enum Joker { Sal, Q, Murr, Joe, Guest }
+
+                [PrimaryKey] public Guid JokeID { get; set; }
+                public Joker ImpracticalJoker { get; set; }
+                [Check.IsLessOrEqualTo((short)7512)] public RelationSet<string> JokeTargets { get; set; } = new();
+                public double ComedyRating { get; set; }
+                public double JokeLength { get; set; }
+                public bool IsPhysicalComedy { get; set; }
+                public string Location { get; set; } = "";
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class BowlingFrame {
                 [PrimaryKey] public Guid FrameID { get; set; }
@@ -5792,6 +7222,32 @@ namespace UT.Kvasir.Translation {
                 public ushort NumFishCaught { get; set; }
                 [Check.IsNot(false, Path = "Manufacturer")] public Info ManfucaturingInfo { get; set; }
                 public Style RodType { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
+            public class StandUpComedian {
+                public enum Kind { KnockKnock, Observational, WordPlay, HistoricalWhatIf, Political, Other }
+                public record struct Joke(Kind Kind, string SetUp, string PunchLine, double LaughCaliber, bool NSFW);
+
+                [PrimaryKey] public string FirstName { get; set; } = "";
+                [PrimaryKey] public string LastName { get; set; } = "";
+                [Check.IsNot(Kind.Other, Path = "Item.Kind"), Check.IsNot(false, Path = "Item.NSFW")] public RelationList<Joke> Jokes { get; set; } = new();
+                public DateTime FirstShow { get; set; }
+                public bool LateNightHost { get; set; }
+                public ulong TwitterFollowers { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class Interview {
+                public record struct Course(RelationMap<string, double> Questions);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Company { get; set; } = "";
+                public Guid PositionID { get; set; }
+                public string Interviewer { get; set; } = "";
+                public string Interviewee { get; set; } = "";
+                [Check.IsNot("Traveling Salesman", Path = "Questions")]  public Course Questions { get; set; }
+                public bool Pass { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
@@ -6031,6 +7487,41 @@ namespace UT.Kvasir.Translation {
                 public bool UsesIce { get; set; }
             }
 
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class AutoDaFe {
+                [PrimaryKey] public DateTime Date { get; set; }
+                public string Sponsor { get; set; } = "";
+                public string Religion { get; set; } = "";
+                public RelationSet<string> BooksBurned { get; set; } = new();
+                public RelationSet<string> PeopleBurned { get; set; } = new();
+                [Check.IsNot("Mona Lisa", Path = "---")] public RelationSet<string> ArtworkBurned { get; set; } = new();
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class Dream {
+                public enum Kind { Fantasy, Daydream, Nightmare, SexDream, NightTerror, Hallucination, Other }
+
+                [PrimaryKey] public string Dreamer { get; set; } = "";
+                [PrimaryKey] public DateTime DateOfDream { get; set; }
+                [PrimaryKey] public uint SequenceNumber { get; set; }
+                public sbyte Length { get; set; }
+                [Check.IsNot("Hercules", Path = "Dream.REM")] public RelationList<string> Cameos { get; set; } = new();
+                public bool REM { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class BachelorParty {
+                public enum Kind { StripClub, Restaurant, SportingEvent, Casino, Home, Beach, Other }
+                public record struct Destination(sbyte Order, string Location, decimal AmountSpent, Kind Kind);
+
+                [PrimaryKey] public string Bachelor { get; set; } = "";
+                [PrimaryKey] public DateTime Date { get; set; }
+                public sbyte Attendees { get; set; }
+                [Check.IsNot((byte)121)] public RelationList<Destination> Destinations { get; set; } = new();
+                public bool FianceeSanctioned { get; set; }
+                public DateTime WeddingDay { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class RestStop {
                 [PrimaryKey] public string Highway { get; set; } = "";
@@ -6212,6 +7703,52 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNonEmpty(Path = "Caldarium")] public Daria Rooms { get; set; }
             }
 
+            // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
+            public class Boycott {
+                [PrimaryKey] public Guid BoycottID { get; set; }
+                public string Target { get; set; } = "";
+                public DateTime Started { get; set; }
+                public DateTime? Ended { get; set; }
+                public ulong Participants { get; set; }
+                [Check.IsNonEmpty(Path = "Item")] public RelationSet<string> Sponsors { get; set; } = new();
+                public bool BDS { get; set; }
+                public decimal Damage { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-String Scalar (✗impermissible✗)
+            public class MallSanta {
+                public class Mall {
+                    [PrimaryKey] public uint MallID { get; set; }
+                    public string Address { get; set; } = "";
+                    public short NumShops { get; set; }
+                    public sbyte NumFloors { get; set; }
+                    public ulong SquareFootage { get; set; }
+                    public bool HasMovieTheater { get; set; }
+                }
+
+                [PrimaryKey] public Guid SantaID { get; set; }
+                public string FirstName { get; set; } = "";
+                public char MiddleInitial { get; set; }
+                public string LastName { get; set; } = "";
+                [Check.IsNonEmpty(Path = "Value.MallID")] public RelationMap<ushort, Mall> Jobs { get; set; } = new();
+                public ulong TotalKids { get; set; }
+                public bool NaturalBeard { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class ConnectingWall {
+                public enum Wall { Lion, Water }
+                public record struct Category(uint Color, string Connection, RelationList<string> Squares);
+
+                [PrimaryKey] public sbyte Season { get; set; }
+                [PrimaryKey] public sbyte Episode { get; set; }
+                [PrimaryKey] public Wall Choice { get; set; }
+                public Category C1 { get; set; }
+                public Category C2 { get; set; }
+                [Check.IsNonEmpty(Path = "Squares")] public Category C3 { get; set; }
+                public Category C4 { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class Hourglass {
                 [PrimaryKey] public Guid ID { get; set; }
@@ -6328,6 +7865,42 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNonEmpty] public Language TargetLanguage { get; set; } = new();
                 public double HelloWorldLinkingDuration { get; set; }
                 public bool StandardsCompliant { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class Nymph {
+                public enum Variety { Meliad, Dryad, Naiad, Nereid, Oread }
+
+                [PrimaryKey] public string EnglishName { get; set; } = "";
+                public string GreekName { get; set; } = "";
+                public Variety Category { get; set; }
+                [Check.IsNonEmpty(Path = "---")] public RelationSet<sbyte> MetamorphosesAppearances { get; set; } = new();
+                public bool Virgin { get; set; }
+                public string? TurnedInto { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class DatingApp {
+                public record struct Pair(string First, string Second);
+
+                [PrimaryKey] public string AppName { get; set; } = "";
+                public string CEO { get; set; } = "";
+                public DateTime Launched { get; set; }
+                public ulong Users { get; set; }
+                [Check.IsNonEmpty(Path = "DatingApp.CEO")] public RelationList<Pair> CouplesFormed { get; set; } = new();
+                public bool SwipeBased { get; set; }
+                public decimal? MonthlyFee { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class AdBlocker {
+                public enum AdType { PopUp, CouponSuggestion, VideoInterrupt, Sponsorships, GoogleAnalytics }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong Downloads { get; set; }
+                public bool Free { get; set; }
+                [Check.IsNonEmpty] public RelationSet<AdType> EffectiveAgainst { get; set; } = new();
+                public bool Mobile { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -6505,6 +8078,38 @@ namespace UT.Kvasir.Translation {
                 public string? MeteorShower { get; set; }
             }
 
+            // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
+            public class UNSecretaryGeneral {
+                public record struct Resolution(ushort Number, string Title, double Approval, DateTime Date);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime TermBegin { get; set; }
+                public DateTime? TermEnd { get; set; }
+                [Check.LengthIsAtLeast(6, Path = "Item.Title")] public RelationList<Resolution> ResolutionsPassed { get; set; } = new();
+                [Check.LengthIsAtLeast(17, Path = "UNSecretaryGeneral.Name")] public RelationSet<string> CountriesAdmitted { get; set; } = new();
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-String Scalar (✗impermissible✗)
+            public class MemoryBuffer {
+                [PrimaryKey] public ulong StartAddress { get; set; }
+                [PrimaryKey] public ulong EndAddress { get; set; }
+                [Check.LengthIsAtLeast(489, Path = "MemoryBuffer.EndAddress")] public RelationList<bool> Bits { get; set; } = new();
+                public string IntendedType { get; set; } = "";
+                public bool HeapAllocated { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class HotTub {
+                public record struct Settings(RelationMap<string, int> PresetSpeeds, double DefaultTemperature, bool Bubbles);
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public bool IsJacuzzi { get; set; }
+                public double TopTemperature { get; set; }
+                public double Volume { get; set; }
+                [Check.LengthIsAtLeast(33313, Path = "PresetSpeeds")] public Settings TubSettings { get; set; }
+                public sbyte MaxOccupancy { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class Ambassador {
                 [PrimaryKey] public string Who { get; set; } = "";
@@ -6643,6 +8248,48 @@ namespace UT.Kvasir.Translation {
                 [Check.LengthIsAtLeast(1892400)] public Panel MiddlePanel { get; set; } = new();
                 public Panel RightPanel { get; set; } = new();
                 public decimal Appraisal { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class Cigar {
+                public class Tobacco {
+                    [PrimaryKey] public Guid TobaccoID { get; set; }
+                    public string Name { get; set; } = "";
+                    public double Carnicogenicity { get; set; }
+                }
+
+                [PrimaryKey] public Guid CigarID { get; set; }
+                public float Length { get; set; }
+                public bool IsCuban { get; set; }
+                [Check.LengthIsAtLeast(52, Path = "---")] public RelationMap<Tobacco, double> Contents { get; set; } = new();
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class MarijuanaStrain {
+                public class Dispensary {
+                    [PrimaryKey] public Guid ID { get; set; }
+                    public DateTime Opened { get; set; }
+                    public string State { get; set; } = "";
+                    public decimal Revenue { get; set; }
+                }
+
+                [PrimaryKey] public Guid StrainID { get; set; }
+                public string StrainName { get; set; } = "";
+                public DateTime Created { get; set; }
+                [Check.LengthIsAtLeast(4, Path = "MarijuanaStrain.StrainName")] public RelationSet<Dispensary> SoldAt { get; set; } = new();
+                public double Addictiveness { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class BankRobber {
+                public enum BankType { Physical, Crypto, Train, MonopolyGame }
+                public record struct Robbery(string Bank, decimal Haul, BankType TargetType);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public Guid? FBINumber { get; set; }
+                [Check.LengthIsAtLeast(87)] public RelationList<Robbery> Robberies { get; set; } = new();
+                public ushort MurdersCommitted { get; set; }
+                public bool Incarcerated { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -6821,6 +8468,44 @@ namespace UT.Kvasir.Translation {
                 public bool ResultedInConception { get; set; }
             }
 
+            // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
+            public class Golem {
+                [PrimaryKey] public Guid ID { get; set; }
+                public DateTime Created { get; set; }
+                [Check.LengthIsAtMost(26, Path = "Item")] public RelationSet<string> Materials { get; set; } = new();
+                public float ShemSize { get; set; }
+                public string OwningRabbi { get; set; } = "";
+                public ulong Weight { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-String Scalar (✗impermissible✗)
+            public class BalsamicVinegar {
+                public enum Kind { Fruit, Vegetable, Grain, Oil, Dairy, Protein, Legume, Starch, Water, Other }
+                public enum Color { Red, White, Rose }
+                public record struct Ingredient(string Name, double Grams, ushort Calories, Kind Kind);
+
+                [PrimaryKey] public Guid BottleID { get; set; }
+                public string Flavor { get; set; } = "";
+                public double Volume { get; set; }
+                public DateTime ExpirationDate { get; set; }
+                [Check.LengthIsAtMost(255, Path = "Item.Grams")] public RelationSet<Ingredient> Ingredients { get; set; } = new();
+                public Color BalsamicColor { get; set; }
+                public bool DOP { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class TerroristOrganization {
+                public record struct Record(RelationMap<string, DateTime> Entities);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime ActiveSince { get; set; }
+                public string Leader { get; set; } = "";
+                public ulong Members { get; set; }
+                public ulong Victims { get; set; }
+                [Check.LengthIsAtMost(53, Path = "Entities")] public Record Recognition { get; set; } = new();
+                public string Motto { get; set; } = "";
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class OilSpill {
                 [PrimaryKey] public Guid ID { get; set; }
@@ -6959,6 +8644,43 @@ namespace UT.Kvasir.Translation {
                 public Color Nose { get; set; }
                 public Legs LegKind { get; set; }
                 [Check.LengthIsAtMost(3)] public Level? LostAt { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class Antipope {
+                public string BirthName { get; set; } = "";
+                [PrimaryKey] public string PapalName { get; set; } = "";
+                [PrimaryKey] public sbyte PapalNumber { get; set; }
+                public DateTime TermBegin { get; set; }
+                public DateTime TermEnd { get; set; }
+                public string RuledFrom { get; set; } = "";
+                [Check.LengthIsAtMost(30, Path = "---")] public RelationList<string> CardinalsCreated { get; set; } = new();
+                public bool Excommunicated { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class Cabaret {
+                public enum Kind { Bar, Restaurant, Casino, Nightclub, StripClub, Hotel, ParkDistrict, School, Auditorium, Other }
+                public record struct Loc(string Name, Kind Kind);
+
+                [PrimaryKey] public Guid CabaretID { get; set; }
+                public DateTime Date { get; set; }
+                public Loc Venue { get; set; }
+                [Check.LengthIsAtMost(102, Path = "Cabaret.Venue.Name")] public RelationMap<string, string> Performers { get; set; } = new();
+                public bool Drag { get; set; }
+                public bool Burlesque { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class TikTok {
+                [Flags] public enum Kind { Music = 1, News = 2, Sports = 4, Food = 8, Fashion = 16, Gaming = 32, FilmTV = 64, Literature = 128, Education = 256, Peronality = 512, Finance = 1024, Politics = 2048, Technology = 4096 }
+
+                [PrimaryKey] public Guid VideoID { get; set; }
+                public string Creator { get; set; } = "";
+                public ushort Length { get; set; }
+                public bool Viral { get; set; }
+                [Check.LengthIsAtMost(100000)] public RelationMap<string, ulong> Views { get; set; } = new();
+                public Kind Category { get; set; }
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -7136,6 +8858,45 @@ namespace UT.Kvasir.Translation {
                 public bool Yokozuna { get; set; }
             }
 
+            // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
+            public class ComicBook {
+                public enum Pub { Marvel, DC, Archie, Image, DarkHorse, IDW, Boom, Valiant, Chapterhouse, Dynamite, Ohter }
+
+                [PrimaryKey] public string Title { get; set; } = "";
+                public string Series { get; set; } = "";
+                public Pub Publisher { get; set; }
+                public DateTime Published { get; set; }
+                [Check.LengthIsBetween(4, 37, Path = "Item"), Check.LengthIsBetween(8, 19, Path = "ComicBook.Title")] public RelationSet<string> Characters { get; set; } = new();
+                public decimal Price { get; set; }
+                public bool Vintage { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-String Scalar (✗impermissible✗)
+            public class Wormhole {
+                public enum Kind { Schwarzschild, EinsteinRosenBridge, KleinBottle }
+                public record struct Location(float X, float Y, float Z, DateTime Time, uint UniverseID);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Kind Variety { get; set; }
+                [Check.LengthIsBetween(14, 99, Path = "Item.Z")] public RelationSet<Location> ConnectedLocations { get; set; } = new();
+                public double Radius { get; set; }
+                public ulong Density { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class LunarEclipse {
+                public enum Kind { Penumbral, Partial, Total, Central, Selenion }
+                public record struct Coordinate(float Latitude, float Longitude);
+                public record struct Viewing(RelationMap<Coordinate, double> Locations, bool NakedEye);
+
+                [PrimaryKey] public DateTime Date { get; set; }
+                public Kind Type { get; set; }
+                public sbyte Danjon { get; set; }
+                public bool BloodMoon { get; set; }
+                [Check.LengthIsBetween(5, 15, Path = "Locations")] public Viewing Visibility { get; set; }
+                public bool Predicted { get; set; }
+            }
+
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class AesSedai {
                 [PrimaryKey] public string Name { get; set; } = "";
@@ -7282,6 +9043,47 @@ namespace UT.Kvasir.Translation {
                 public decimal PotOfGold { get; set; }
                 public ushort Height { get; set; }
                 [Check.LengthIsBetween(891, 39654)] public WalkingStick Shillelagh { get; set; } = new();
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class MarsRover {
+                public class Specimen {
+                    [PrimaryKey] public Guid ID { get; set; }
+                    public double Weight { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime Launched { get; set; }
+                public decimal Budget { get; set; }
+                public string SpaceAgency { get; set; } = "";
+                [Check.LengthIsBetween(177, 179, Path = "---")] public RelationList<Specimen> SpecimensCollected { get; set; } = new();
+                public double Height { get; set; }
+                public double Length { get; set; }
+                public double Width { get; set; }
+                public ulong DistanceTraveled { get; set; }
+                public bool Online { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class BlackOp {
+                public enum Branch { Army, Navy, AirForce, Marines, SpaceForce, NationalGuard, Paramilitary, Intelligence }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Country { get; set; } = "";
+                public Branch MilitaryBranch { get; set; }
+                [Check.LengthIsBetween(6, 29, Path = "BlackOp.Country")] public RelationSet<string> Participants { get; set; } = new();
+                public DateTime Executed { get; set; }
+                public DateTime Declassified { get; set; }
+                public ushort Casualites { get; set; }
+                public bool SearchAndRescue { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class HeartAttack {
+                [PrimaryKey] public string Victim { get; set; } = "";
+                [PrimaryKey] public DateTime Occurrence { get; set; }
+                public bool Fatal { get; set; }
+                [Check.LengthIsBetween(4, 67)] public RelationSet<string> Symptoms { get; set; } = new();
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -7434,6 +9236,38 @@ namespace UT.Kvasir.Translation {
                 public double Declination { get; set; }
                 public ulong Distance { get; set; }
                 public double SpinRate { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
+            public class Dinosaur {
+                public enum Period { Jurassic, Cretaceous, Triassic }
+                public enum Hips { Saurischia, Ornithischia }
+                public enum Diet { Herbivore, Carnivore, Omnivore }
+
+                [PrimaryKey] public string Genus { get; set; } = "";
+                [PrimaryKey] public string Species { get; set; } = "";
+                public string CommonName { get; set; } = "";
+                public Period MesozoicPeriod { get; set; }
+                public Hips Clade { get; set; }
+                public Diet FoodPreference { get; set; }
+                [Check.IsOneOf("Americas", "Eurasia", "Middle East", "Africa", "Australia", "Pacific Islands", "Arctic", "Antarctica", "Oceans", Path = "Item")] public RelationSet<string> FossilLocations { get; set; } = new();
+                public int FacialHorns { get; set; }
+                public int NumTeeth { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class Cheerleader {
+                [Flags] public enum Item { PomPoms = 1, Batons = 2, Dancing = 4, Sparklers = 8, Instruments = 16 }
+                public record struct Cheer(string Title, string CallSign, RelationMap<int, string> Moves, string Music);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Squad { get; set; } = "";
+                public ushort Championships { get; set; }
+                public int PyramidPosition { get; set; }
+                public bool IsCaptain { get; set; }
+                public double Height { get; set; }
+                [Check.IsOneOf(1, 2, 5, Path = "Moves")] public Cheer PrimaryCheer { get; set; }
+                public Item Accessories { get; set; }
             }
 
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
@@ -7714,6 +9548,45 @@ namespace UT.Kvasir.Translation {
                 public bool IsProtectedArea { get; set; }
             }
 
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class PawnShop {
+                public enum Status { Pawned, Sold, Requisitioned, Found }
+                public record struct Object(string Name, Status Status, decimal Appraisal, DateTime Acquired);
+
+                [PrimaryKey] public string ShopName { get; set; } = "";
+                public RelationList<string> Employees { get; set; } = new();
+                public sbyte Floors { get; set; }
+                public DateTime Opened { get; set; }
+                public Guid License { get; set; }
+                [Check.IsOneOf('A', '7', '_', '/', '=', '~', Path = "---")] public RelationList<Object> Inventory { get; set; } = new();
+                public decimal Revenue { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class DrinkingFountain {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Location { get; set; } = "";
+                public bool Segregated { get; set; }
+                public bool EcoFriendly { get; set; }
+                public double WaterPressure { get; set; }
+                public ulong VolumeDispensed { get; set; }
+                [Check.IsOneOf(37.6, 1158.44, 0.919, 63.6666, Path = "DrinkingFountain.WaterPressure")] public RelationSet<DateTime> Inspections { get; set; } = new();
+                public bool MotionSensored { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class Hairstyle {
+                public enum Gender { Male, Female, Androgynous, Animal, None }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                public string Description { get; set; } = "";
+                [Check.IsOneOf(true, false)] public RelationMap<Guid, bool> Certifications { get; set; } = new();
+                public DateTime? FirstDocumented { get; set; }
+                public string? Culture { get; set; } = "";
+                public Gender AppropriateFor { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Guillotine {
                 [PrimaryKey] public Guid ItemID { get; set; }
@@ -7853,6 +9726,30 @@ namespace UT.Kvasir.Translation {
                 public byte LowerAg { get; set; }
                 public byte UpperAge { get; set; }
                 public bool MotherGoose { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
+            public class Infomercial {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Product { get; set; } = "";
+                [Check.IsNotOneOf("2022-03-17", "1965-11-14", "1333-01-02", Path = "Value")] public RelationMap<uint, DateTime> Broadcasts { get; set; } = new();
+                public string Hawker { get; set; } = "";
+                public double Discount { get; set; }
+                public double CommercialLength { get; set; }
+                public ulong Hits { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class PersonOfTheYear {
+                public enum Category { Politics, FilmTV, Sports, Music, News, Science, Philanthropy, Religion, Art, Other }
+                public record struct Magazine(DateTime Publication, RelationList<uint> Editions);
+
+                [PrimaryKey] public ushort Year { get; set; }
+                public string Person { get; set; } = "";
+                public Category Domain { get; set; }
+                [Check.IsNotOneOf(7U, -9U, 195U, 44U, Path = "Editions")] public Magazine TIME { get; set; }
+                public bool Controversial { get; set; }
+                public string RunnerUp { get; set; } = "";
             }
 
             // Test Scenario: Applied to Nullable Fields (✓constrained✓)
@@ -8144,6 +10041,37 @@ namespace UT.Kvasir.Translation {
                 public bool IsServant { get; set; }
             }
 
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            public class PhoneBook {
+                [PrimaryKey] public Guid ISBN { get; set; }
+                public DateTime Published { get; set; }
+                public string Region { get; set; } = "";
+                public ulong PageCount { get; set; }
+                [Check.IsNotOneOf(8471294811, 2056178955, 8005882340, Path = "---")] public RelationMap<string, ulong> PhoneNumbers { get; set; } = new();
+                public double Weight { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            public class Bakugan {
+                public enum Attribute { Pyrus, Aquos, Subterra, Haos, Darkus, Ventus, Aurelus }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string BakuganName { get; set; } = "";
+                public Attribute BakuganAttribute { get; set; }
+                [Check.IsNotOneOf("Counterspell", "Basic Island", "Lightning Bolt", Path = "Bakugan.BakuganName")] public RelationSet<string> AbilityCards { get; set; } = new();
+                public bool InAnime { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            public class QRCode {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string URL { get; set; } = "";
+                public RelationList<bool> Horizontal { get; set; } = new();
+                [Check.IsNotOneOf(false)] public RelationList<bool> Vertical { get; set; } = new();
+                public double Version { get; set; }
+                public char ErrorCorrection { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Pie {
                 [PrimaryKey] public int ID { get; set; }
@@ -8241,6 +10169,30 @@ namespace UT.Kvasir.Translation {
             [Check(typeof(CustomCheck), Path = "Source")] public Curse Lycan { get; set; }
             public ushort Weight { get; set; }
             public ulong Kills { get; set; }
+        }
+
+        // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
+        public class CareBear {
+            [PrimaryKey] public string Bear { get; set; } = "";
+            public string Color { get; set; } = "";
+            public char TummySymbol { get; set; }
+            [Check(typeof(CustomCheck), Path = "Item")] public RelationSet<string> MediaAppearances { get; set; } = new();
+            public string LeadDesigner { get; set; } = "";
+        }
+
+        // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+        public class RiverWalk {
+            public record struct TimeRange(ushort Open, ushort Close);
+            public record struct Schedule(TimeRange M, TimeRange TU, TimeRange W, TimeRange TH, TimeRange F, TimeRange SA, TimeRange SU, RelationSet<string> HolidaysClosed);
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string City { get; set; } = "";
+            public string River { get; set; } = "";
+            public uint NumShops { get; set; }
+            public uint NumRestaurants { get; set; }
+            [Check(typeof(CustomCheck), Path = "HolidaysClosed")] public Schedule Hours { get; set; }
+            public decimal AnnualRevenue { get; set; }
+            public ulong WalkLength { get; set; }
         }
 
         // Test Scenario: Scalar Property Constrained Multiple Times (✓both applied✓)
@@ -8413,6 +10365,47 @@ namespace UT.Kvasir.Translation {
             public ushort NumDucks { get; set; }
             public ushort NumFishes { get; set; }
             [Check(typeof(CustomCheck))] public Coordinate Location { get; set; } = new();
+        }
+
+        // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+        public class CanadianProvince {
+            public enum Kind { Province, Territory }
+            [Flags] public enum Language { English = 1, French = 2 }
+            public record struct Reps(ushort HouseOfCommons, ushort Senate);
+            
+            public class City {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool IsCapital { get; set; }
+                public DateTime Founded { get; set; }
+                public ulong Population { get; set; }
+            }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public Kind Classification { get; set; }
+            [Check(typeof(CustomCheck), Path = "---")] public RelationList<City> Cities { get; set; } = new();
+            public string PostalCode { get; set; } = "";
+            public Language OfficialLanguages { get; set; }
+            public Reps Representation { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+        public class Skydiver {
+            [Flags] public enum Vehicle { Plane = 1, Helicopter = 2, Blimp = 4, Glider = 8, Drone = 16, HotAirBalloon = 32, Zipline = 64 }
+
+            [PrimaryKey] public Guid SkydiverID { get; set; }
+            public string Name { get; set; } = "";
+            public double Height { get; set; }
+            public double Weight { get; set; }
+            [Check(typeof(CustomCheck), Path = "Skydiver.Height")] public RelationMap<DateTime, long> Dives { get; set; } = new();
+            public Vehicle HasJumpedFrom { get; set; }
+        }
+
+        // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+        public class Spring {
+            [PrimaryKey] public Guid ID { get; set; }
+            [Check(typeof(CustomCheck))] public RelationSet<string> ConstituentMetals { get; set; } = new();
+            public double SpringConstant { get; set; }
+            public ushort NumCoils { get; set; }
         }
     }
 
@@ -9021,6 +11014,64 @@ namespace UT.Kvasir.Translation {
             public ulong NumRefugees { get; set; }
             public Person Director { get; set; } = new();
             public bool IsWartime { get; set; }
+        }
+
+        // Test Scenario: Self-Referential Relation via Direct Element (✓allowed✓)
+        public class SoftwarePackage {
+            [PrimaryKey] public string PackageManager { get; set; } = "";
+            [PrimaryKey] public string Hash { get; set; } = "";
+            public string Name { get; set; } = "";
+            public string Version { get; set; } = "";
+            public RelationMap<string, bool> Flags { get; set; } = new();
+            public RelationSet<SoftwarePackage> BuildDependencies { get; set; } = new();
+            public RelationSet<SoftwarePackage> RunDependencies { get; set; } = new();
+            public bool Secure { get; set; }
+        }
+
+        // Test Scenario: Self-Referential Relation via Aggregate Element (✓allowed✓)
+        public class Indictment {
+            public enum Level { Local, State, Federal, International }
+            public enum Category { Infraction, Misdemeanor, Felony }
+            public record struct Charge(Category Classification, string Statute, uint Counts, Indictment CarriedBy);
+
+            [PrimaryKey] public ulong IndictmentNumber { get; set; }
+            [PrimaryKey] public string Defendant { get; set; } = "";
+            public DateTime Issued { get; set; }
+            public RelationList<Charge> Charges { get; set; } = new();
+            public Level Government { get; set; }
+            public bool? Conviction { get; set; }
+        }
+
+        // Test Scenario: Self-Referential Relation via Reference Element (✓allowed✓)
+        public class StackFrame {
+            public class Breakpoint {
+                [PrimaryKey] public string FileName { get; set; } = "";
+                [PrimaryKey] public uint LineNumber { get; set; }
+                public bool IsConditional { get; set; }
+                public StackFrame? Frame { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public sbyte FrameNumber { get; set; }
+            public RelationList<Breakpoint> Breakpoints { get; set; } = new();
+            public string Debugger { get; set; } = "";
+            public double Memory { get; set; }
+        }
+
+        // Test Scenario: Entity X → Entity Y via Reference → Entity X via Relation (✓allowed✓)
+        public class Filibuster {
+            public class Politician {
+                [PrimaryKey] public string FullName { get; set; } = "";
+                public DateTime FirstElected { get; set; }
+                public RelationSet<Filibuster> FilibustersBroken { get; set; } = new();
+            }
+
+            [PrimaryKey] public Guid FilibusterID { get; set; }
+            public string Legislation { get; set; } = "";
+            public DateTime Date { get; set; }
+            public double Duration { get; set; }
+            public Politician Instigator { get; set; } = new();
+            public bool Successful { get; set; }
         }
     }
 }

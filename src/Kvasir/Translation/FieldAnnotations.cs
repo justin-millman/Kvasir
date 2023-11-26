@@ -20,13 +20,16 @@ using System.Reflection;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
-        private FieldsListing ApplyAnnotations(PropertyInfo property, FieldsListing baseTranslation) {
+        private TranslationState ApplyAnnotations(PropertyInfo property, TranslationState baseTranslation) {
             Debug.Assert(property is not null);
-            Debug.Assert(baseTranslation is not null);
-            Debug.Assert(!baseTranslation.IsEmpty());
+            Debug.Assert(!baseTranslation.Fields.IsEmpty() || !baseTranslation.Relations.IsEmpty());
 
-            var result = new Dictionary<string, FieldDescriptor>(baseTranslation);
+            var resultFields = new Dictionary<string, FieldDescriptor>(baseTranslation.Fields);
+            var resultRelations = new Dictionary<string, IRelationDescriptor>(baseTranslation.Relations);
+            var result = new MutableTranslationState(Fields: resultFields, Relations: resultRelations);
+
             ProcessNames(property, result);
+            ProcessRelationTables(property, result);
             ProcessNullability(property, result);
             ProcessColumn(property, result);
             ProcessConverters(property, result);
@@ -35,12 +38,11 @@ namespace Kvasir.Translation {
             ProcessCandidateKeys(property, result);
             ProcessConstraints(property, result);           // must come after Data Converters
 
-            return result;
+            return new TranslationState(resultFields, resultRelations);
         }
 
-        private static void ProcessNames(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ProcessNames(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
             HashSet<string> processed = new HashSet<string>();
 
             foreach (var annotation in property.GetCustomAttributes<NameAttribute>()) {
@@ -66,13 +68,26 @@ namespace Kvasir.Translation {
 
                 // If the Path on a [Name] attribute refers to a concrete Field (it would be a scalar or an enumeration)
                 // then the Field's name in total is replaced by the annotation value
-                if (state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
-                    state[annotation.Path] = target with { Name = new List<string>() { annotation.Name } };
+                if (state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                    state.Fields[annotation.Path] = target with { Name = new List<string>() { annotation.Name } };
+                    continue;
+                }
+
+                // If the Path on a [Name] attribute refers to a concrete Relation Field, then the Relation's name in
+                // total is replaced by the annotation value
+                if (state.Relations.TryGetValue(annotation.Path, out IRelationDescriptor? relation)) {
+                    state.Relations[annotation.Path] = relation.WithName(Enumerable.Repeat(annotation.Name, 1));
+                    continue;
+                }
+
+                // If the Path on a [Name] attribute refers to a Field potentially nested within a Relation, then the
+                // attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
                     continue;
                 }
 
                 // It is an error for a [Name] attribute to have a non-existent Path
-                var matches = GetMatches(state, annotation.Path).ToList();
+                var matches = GetMatches(state.Fields, annotation.Path).ToList();
                 if (matches.IsEmpty()) {
                     throw Error.InvalidPath(context, annotation);
                 }
@@ -87,7 +102,7 @@ namespace Kvasir.Translation {
                         // This check guards against overwriting the renaming of a Field that has already been renamed
                         // through a previous full-path-supplied annotation
                         if (descriptor.Name[0] == property.Name) {
-                            state[path] = state[path] with {
+                            state.Fields[path] = state.Fields[path] with {
                                 Name = new List<string>(descriptor.Name) { [0] = annotation.Name }
                             };
                         }
@@ -98,7 +113,7 @@ namespace Kvasir.Translation {
                         //   name change is applicable
                         var pathParts = annotation.Path.Split(PATH_SEPARATOR);
                         if (descriptor.Name.Count - 1 > pathParts.Length) {
-                            state[path] = state[path] with {
+                            state.Fields[path] = state.Fields[path] with {
                                 Name = new List<string>(descriptor.Name) { [pathParts.Length] = annotation.Name }
                             };
                         }
@@ -107,9 +122,33 @@ namespace Kvasir.Translation {
             }
         }
 
-        private static void ProcessNullability(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ProcessRelationTables(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
+
+            var annotation = property.GetCustomAttribute<RelationTableAttribute>();
+            var context = new PropertyTranslationContext(property, "");
+
+            if (annotation is not null) {
+                // It is an error for [RelationTable] to be applied to anything other than Relation
+                if (!state.Fields.IsEmpty()) {
+                    throw Error.UserError(context, annotation, "property is not a Relation");
+                }
+
+                // It is an error for the value specified by a [RelationTable] attribute to be invalid; currently, th
+                // only concrete restriction is that the value is neither null nor the empty string
+                if (annotation.Name is null || annotation.Name == "") {
+                    throw Error.InvalidName(context, annotation, annotation.Name);
+                }
+
+                // No errors encountered
+                Debug.Assert(state.Relations.Count == 1);
+                var relationPath = state.Relations.Keys.First();
+                state.Relations[relationPath] = state.Relations[relationPath].WithTableName(annotation.Name);
+            }
+        }
+
+        private static void ProcessNullability(PropertyInfo property, MutableTranslationState state) {
+            Debug.Assert(property is not null);
 
             var nativeNullability = new NullabilityInfoContext().Create(property).ReadState;
             var nullable = property.HasAttribute<NullableAttribute>();
@@ -121,15 +160,24 @@ namespace Kvasir.Translation {
                 throw Error.MutuallyExclusive(context, new NullableAttribute(), new NonNullableAttribute());
             }
 
+            // Native nullability of Relation-type Fields is ignored; annotated [Nullable] is an error
+            if (state.Fields.IsEmpty()) {
+                if (nullable) {
+                    var context = new PropertyTranslationContext(property, "");
+                    throw Error.InapplicableConstraint(context, new NullableAttribute(), "Relations have no nullability");
+                }
+                return;
+            }
+
             // If the property is annotated as being nullable, or if there are no annotations and the property's type
             // is natively nullable, then nullability is imparted. This is done by making all of the Fields nullable;
             // for scalars and aggregates, there will be only one. Because the default for scalars and and aggregates is
             // non-nullable, they will never fail the ambiguity check.
             if (nullable || (!nonNullable && nativeNullability == NullabilityState.Nullable)) {
                 var noAmbiguity = false;
-                foreach ((var path, var descriptor) in state) {
+                foreach ((var path, var descriptor) in state.Fields) {
                     noAmbiguity |= descriptor.Nullability == IsNullable.No;
-                    state[path] = descriptor with { Nullability = IsNullable.Yes };
+                    state.Fields[path] = descriptor with { Nullability = IsNullable.Yes };
                 }
 
                 // It is an error for a compound property, such as an Aggregate, to be nullable if all its constituent
@@ -141,12 +189,17 @@ namespace Kvasir.Translation {
             }
         }
 
-        private static void ProcessColumn(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ProcessColumn(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
             var annotation = property.GetCustomAttribute<ColumnAttribute>();
 
             if (annotation is not null) {
+                // It is an error for a [Column] annotation to be applied to a Relation-type Field
+                if (state.Fields.IsEmpty()) {
+                    var context = new PropertyTranslationContext(property, "");
+                    throw Error.InapplicableConstraint(context, annotation, "Relations cannot be ordered");
+                }
+
                 // It is an error for the index of a [Column] annotation to be negative
                 if (annotation.Column < 0) {
                     var context = new PropertyTranslationContext(property, "");
@@ -154,17 +207,16 @@ namespace Kvasir.Translation {
                     throw Error.UserError(context, annotation, msg);
                 }
 
-                foreach ((var path, var descriptor) in state) {
-                    state[path] = descriptor with {
+                foreach ((var path, var descriptor) in state.Fields) {
+                    state.Fields[path] = descriptor with {
                         AbsoluteColumn = Option.Some(descriptor.RelativeColumn + annotation.Column)
                     };
                 }
             }
         }
 
-        private static void ProcessConverters(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ProcessConverters(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             var dpAnnotation = property.GetCustomAttribute<DataConverterAttribute>();
             var numeric = property.HasAttribute<NumericAttribute>();
@@ -172,8 +224,8 @@ namespace Kvasir.Translation {
 
             var context = new PropertyTranslationContext(property, "");
             var expectedType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-            var isScalarOrEnumeration = state.ContainsKey("");
-            Debug.Assert(!isScalarOrEnumeration || state.Count == 1);
+            var isScalarOrEnumeration = state.Fields.ContainsKey("");
+            Debug.Assert(!isScalarOrEnumeration || state.Fields.Count == 1);
 
             if (dpAnnotation is not null) {
                 // It is an error for a non-Scalar/non-Enumeration property to be annotated with [DataProvider]
@@ -215,7 +267,7 @@ namespace Kvasir.Translation {
                 }
 
                 // No errors encountered
-                state[""] = state[""] with { Converter = converter };
+                state.Fields[""] = state.Fields[""] with { Converter = converter };
             }
             else if (numeric) {
                 // It is an error for a property whose type is not an enumeration to be annotated with [Numeric]
@@ -229,7 +281,7 @@ namespace Kvasir.Translation {
                     throw Error.MutuallyExclusive(context, new NumericAttribute(), new AsStringAttribute());
                 }
 
-                state[""] = state[""] with { Converter = new EnumToNumericConverter(expectedType).ConverterImpl };
+                state.Fields[""] = state.Fields[""] with { Converter = new EnumToNumericConverter(expectedType).ConverterImpl };
             }
             else if (asString) {
                 // It is an error for a property whose type is not an enumeration to be annotated with [AsString]
@@ -238,7 +290,7 @@ namespace Kvasir.Translation {
                     throw Error.UserError(context, new AsStringAttribute(), msg);
                 }
 
-                state[""] = state[""] with { Converter = new EnumToStringConverter(expectedType).ConverterImpl };
+                state.Fields[""] = state.Fields[""] with { Converter = new EnumToStringConverter(expectedType).ConverterImpl };
             }
 
             // Fields whose pre-conversion CLR type is an enumeration have an implicitly restricted domain, which
@@ -249,9 +301,9 @@ namespace Kvasir.Translation {
             // does not actually support enumerations, the restricted image will be realized as a CHECK constraint.
             if (isScalarOrEnumeration) {
                 var updated = new HashSet<object>();
-                foreach (var enumerator in state[""].Constraints.RestrictedImage) {
+                foreach (var enumerator in state.Fields[""].Constraints.RestrictedImage) {
                     try {
-                        updated.Add(state[""].Converter.Convert(enumerator)!);
+                        updated.Add(state.Fields[""].Converter.Convert(enumerator)!);
                     }
                     catch (Exception ex) {
                         Debug.Assert(dpAnnotation is not null);
@@ -259,13 +311,14 @@ namespace Kvasir.Translation {
                         throw Error.UserError(context, dpAnnotation, msg);
                     }
                 }
-                state[""] = state[""] with { Constraints = state[""].Constraints with { RestrictedImage = updated } };
+                state.Fields[""] = state.Fields[""] with {
+                    Constraints = state.Fields[""].Constraints with { RestrictedImage = updated }
+                };
             }
         }
 
-        private static void ProcessDefaults(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ProcessDefaults(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
             HashSet<string> processed = new HashSet<string>();
 
             foreach (var annotation in property.GetCustomAttributes<DefaultAttribute>()) {
@@ -276,8 +329,14 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
+                // If the Path on a [Default] attribute refers to a Field potentially nested within a Relation, then the
+                // attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // It is an error for a [Default] attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (!state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     throw Error.InvalidPath(context, annotation);
                 }
 
@@ -294,16 +353,15 @@ namespace Kvasir.Translation {
                 }
 
                 // No errors encountered
-                state[annotation.Path] = target with { Default = value.WithoutException() };
+                state.Fields[annotation.Path] = target with { Default = value.WithoutException() };
             }
         }
 
-        private static void ProcessPrimaryKeyOptIns(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ProcessPrimaryKeyOptIns(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             void MarkInPrimaryKey(string path) {
-                var target = state[path];
+                var target = state.Fields[path];
                 var annotation = new PrimaryKeyAttribute();
                 var context = new PropertyTranslationContext(property, path);
 
@@ -320,7 +378,7 @@ namespace Kvasir.Translation {
                 }
 
                 // No errors encountered
-                state[path] = state[path] with { InPrimaryKey = true };
+                state.Fields[path] = state.Fields[path] with { InPrimaryKey = true };
             }
 
             foreach (var annotation in property.GetCustomAttributes<PrimaryKeyAttribute>()) {
@@ -331,14 +389,20 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
+                // If the Path on a [PrimaryKey] attribute refers to a Field potentially nested within a Relation, then
+                // the attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // If the Path on a [PrimaryKey] attribute refers to a concrete Field (it would be a scalar or an
                 // enumeration) then the Field is simply placed into the Primary Key
-                if (state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     MarkInPrimaryKey(annotation.Path);
                 }
                 else {
                     // It is an error for a [PrimaryKey] attribute to have a non-existent Path
-                    var matches = GetMatches(state, annotation.Path).ToList();
+                    var matches = GetMatches(state.Fields, annotation.Path).ToList();
                     if (matches.IsEmpty()) {
                         throw Error.InvalidPath(context, annotation);
                     }
@@ -352,13 +416,12 @@ namespace Kvasir.Translation {
             }
         }
 
-        private static void ProcessCandidateKeys(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ProcessCandidateKeys(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             void PlaceInCandidateKey(string path, string keyName) {
-                state[path] = state[path] with {
-                    CandidateKeyMemberships = new HashSet<string>(state[path].CandidateKeyMemberships) { keyName }
+                state.Fields[path] = state.Fields[path] with {
+                    CandidateKeyMemberships = new HashSet<string>(state.Fields[path].CandidateKeyMemberships) { keyName }
                 };
             }
 
@@ -381,14 +444,20 @@ namespace Kvasir.Translation {
                     throw Error.InvalidName(context, annotation, annotation.Name, msg);
                 }
 
+                // If the Path on a [Unique] attribute refers to a Field potentially nested within a Relation, then the
+                // attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // If the Path on a [Unique] attribute refers to a concrete Field (it would be a scalar or an
                 // enumeration) then the Field is simply placed into the appropriate Candidate Key
-                if (state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     PlaceInCandidateKey(annotation.Path, annotation.Name);
                 }
                 else {
                     // It is an error for a [Unique] attribute to have a non-existent Path
-                    var matches = GetMatches(state, annotation.Path).ToList();
+                    var matches = GetMatches(state.Fields, annotation.Path).ToList();
                     if (matches.IsEmpty()) {
                         throw Error.InvalidPath(context, annotation);
                     }
@@ -408,6 +477,36 @@ namespace Kvasir.Translation {
                     yield return (path, descriptor);
                 }
             }
+        }
+
+        private static bool TryAttachAnnotation(MutableTranslationState state, INestableAnnotation annotation) {
+            // There are fundamentally two cases we have to consider: no initial access path (for when an attribute is
+            // applied directly onto a Relation-type property referring to a nested Field) and yes initial access path
+            // (for when an attribute is applied to an Aggregate referring to a Relation-nested Field). In the former
+            // situation, we will have only a single possible Relation that should automatically be a candidate. In the
+            // latter, we will have one or more possible Relations that are candidates only if their access path _plus_
+            // an additional separator character is a prefix of the actual target path. In either case, the annotation's
+            // Path may itself refer to further-nested Fields, so the actual Relation-nested Field is the first segment
+            // after the appropriate prefix has been removed.
+            foreach ((var accessPath, var relationDescriptor) in state.Relations) {
+                if (accessPath == "") {
+                    var nestedField = annotation.Path.Split(PATH_SEPARATOR)[0];
+                    if (relationDescriptor.FieldTypes.ContainsKey(nestedField)) {
+                        state.Relations[accessPath] = relationDescriptor.WithAnnotation(nestedField, annotation);
+                        return true;
+                    }
+                    return false;
+                }
+                else if (annotation.Path.StartsWith(accessPath + ".")) {
+                    var nestedField = annotation.Path[(accessPath.Length + 1)..].Split(PATH_SEPARATOR)[0];
+                    if (relationDescriptor.FieldTypes.ContainsKey(nestedField)) {
+                        state.Relations[accessPath] = relationDescriptor.WithAnnotation(nestedField, annotation);
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
         }
     }
 }

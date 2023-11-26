@@ -20,22 +20,21 @@ using System.Reflection;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
-        private void ProcessConstraints(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private void ProcessConstraints(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
+            Debug.Assert(!state.Fields.IsEmpty() || !state.Relations.IsEmpty());
 
             ApplySignednessConstraints(property, state);
             ApplyComparisonConstraints(property, state);
             ApplyStringLengthConstraints(property, state);
             ApplyDiscretenessConstraints(property, state);
             ApplyCustomConstraints(property, state);
-            ResolveConflictingConstraints(property, state);         // must after everything except Custom constraints
-            EnsureViableDefaults(property, state);                  // must after everything except Custom constraints
+            ResolveConflictingConstraints(property, state.Fields);   // must after everything except Custom constraints
+            EnsureViableDefaults(property, state.Fields);            // must after everything except Custom constraints
         }
 
-        private static void ApplySignednessConstraints(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ApplySignednessConstraints(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             foreach (var annotation in property.GetCustomAttributes<Check.SignednessAttribute>()) {
                 var context = new PropertyTranslationContext(property, annotation.Path);
@@ -45,8 +44,14 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
+                // If the Path on a Signedness attribute refers to a Field potentially nested within a Relation, then
+                // the attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // It is an error for a Signedness attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (!state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     throw Error.InvalidPath(context, annotation);
                 }
 
@@ -72,16 +77,16 @@ namespace Kvasir.Translation {
 
                 // No errors encountered
                 if (!already) {
-                    var original = state[annotation.Path].Constraints;
+                    var original = state.Fields[annotation.Path].Constraints;
                     var type = Nullable.GetUnderlyingType(target.Converter.ResultType) ?? target.Converter.ResultType;
                     var zero = Convert.ChangeType(0, type);
 
-                    state[annotation.Path] = state[annotation.Path] with {
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
                         Constraints = original with {
                             RelativeToZero = Option.Some(annotation.Operator)
                         }
                     };
-                    original = state[annotation.Path].Constraints;
+                    original = state.Fields[annotation.Path].Constraints;
 
                     // Signedness Constraints are shorthand for other constraints relative to the numeric value 0. We
                     // keep track of the specific operator solely for the purpose of identifying mutually exclusive
@@ -89,7 +94,7 @@ namespace Kvasir.Translation {
                     // "standard" constraint.
                     if (annotation.Operator == ComparisonOperator.NE) {
                         var disallowed = new HashSet<object>(original.DisallowedValues) { zero };
-                        state[annotation.Path] = state[annotation.Path] with {
+                        state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
                             Constraints = original with {
                                 DisallowedValues = disallowed
                             }
@@ -97,7 +102,7 @@ namespace Kvasir.Translation {
                     }
                     else if (annotation.Operator == ComparisonOperator.GT) {
                         var bound = new Bound(zero, false);
-                        state[annotation.Path] = state[annotation.Path] with {
+                        state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
                             Constraints = original with {
                                 LowerBound = Option.Some(MaxLowerBound(original.LowerBound, bound))
                             }
@@ -106,7 +111,7 @@ namespace Kvasir.Translation {
                     else {
                         Debug.Assert(annotation.Operator == ComparisonOperator.LT);
                         var bound = new Bound(zero, false);
-                        state[annotation.Path] = state[annotation.Path] with {
+                        state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
                             Constraints = original with {
                                 UpperBound = Option.Some(MinUpperBound(original.LowerBound, bound))
                             }
@@ -116,9 +121,8 @@ namespace Kvasir.Translation {
             }
         }
 
-        private static void ApplyComparisonConstraints(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ApplyComparisonConstraints(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             foreach (var annotation in property.GetCustomAttributes<Check.ComparisonAttribute>()) {
                 var context = new PropertyTranslationContext(property, annotation.Path);
@@ -128,8 +132,14 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
+                // If the Path on a Comparison attribute refers to a Field potentially nested within a Relation, then
+                // the attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // It is an error for a Comparison attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (!state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     throw Error.InvalidPath(context, annotation);
                 }
 
@@ -170,10 +180,10 @@ namespace Kvasir.Translation {
 
                 // No errors encountered - process exclusion comparison
                 if (annotation.Operator == ComparisonOperator.NE) {
-                    state[annotation.Path] = state[annotation.Path] with {
-                        Constraints = state[annotation.Path].Constraints with {
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                        Constraints = state.Fields[annotation.Path].Constraints with {
                             DisallowedValues = new HashSet<object>(
-                                state[annotation.Path].Constraints.DisallowedValues
+                                state.Fields[annotation.Path].Constraints.DisallowedValues
                             ) { value.WithoutException().Unwrap()! }
                         }
                     };
@@ -184,9 +194,9 @@ namespace Kvasir.Translation {
                     bool inclusive = (annotation.Operator == ComparisonOperator.GTE);
                     var bound = new Bound(value.WithoutException().Unwrap()!, inclusive);
 
-                    state[annotation.Path] = state[annotation.Path] with {
-                        Constraints = state[annotation.Path].Constraints with {
-                            LowerBound = Option.Some(MaxLowerBound(state[annotation.Path].Constraints.LowerBound, bound))
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                        Constraints = state.Fields[annotation.Path].Constraints with {
+                            LowerBound = Option.Some(MaxLowerBound(state.Fields[annotation.Path].Constraints.LowerBound, bound))
                         }
                     };
                 }
@@ -196,18 +206,17 @@ namespace Kvasir.Translation {
                     bool inclusive = (annotation.Operator == ComparisonOperator.LTE);
                     var bound = new Bound(value.WithoutException().Unwrap()!, inclusive);
 
-                    state[annotation.Path] = state[annotation.Path] with {
-                        Constraints = state[annotation.Path].Constraints with {
-                            UpperBound = Option.Some(MinUpperBound(state[annotation.Path].Constraints.UpperBound, bound))
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                        Constraints = state.Fields[annotation.Path].Constraints with {
+                            UpperBound = Option.Some(MinUpperBound(state.Fields[annotation.Path].Constraints.UpperBound, bound))
                         }
                     };
                 }
             }
         }
 
-        private static void ApplyStringLengthConstraints(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ApplyStringLengthConstraints(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             foreach (var annotation in property.GetCustomAttributes<Check.StringLengthAttribute>()) {
                 var context = new PropertyTranslationContext(property, annotation.Path);
@@ -217,8 +226,14 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
+                // If the Path on a String Length attribute refers to a Field potentially nested within a Relation, then
+                // the attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // It is an error for a String Length attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (!state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     throw Error.InvalidPath(context, annotation);
                 }
 
@@ -241,9 +256,9 @@ namespace Kvasir.Translation {
                 // No errors encountered - process the minimum
                 if (annotation.Minimum != long.MinValue) {
                     var bound = new Bound((int)annotation.Minimum, true);
-                    state[annotation.Path] = state[annotation.Path] with {
-                        Constraints = state[annotation.Path].Constraints with {
-                            MinimumLength = Option.Some(MaxLowerBound(state[annotation.Path].Constraints.MinimumLength, bound))
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                        Constraints = state.Fields[annotation.Path].Constraints with {
+                            MinimumLength = Option.Some(MaxLowerBound(state.Fields[annotation.Path].Constraints.MinimumLength, bound))
                         }
                     };
                 }
@@ -251,18 +266,17 @@ namespace Kvasir.Translation {
                 // No errors encountered - process the maximum
                 if (annotation.Maximum != long.MaxValue) {
                     var bound = new Bound((int)annotation.Maximum, true);
-                    state[annotation.Path] = state[annotation.Path] with {
-                        Constraints = state[annotation.Path].Constraints with {
-                            MaximumLength = Option.Some(MinUpperBound(state[annotation.Path].Constraints.MaximumLength, bound))
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                        Constraints = state.Fields[annotation.Path].Constraints with {
+                            MaximumLength = Option.Some(MinUpperBound(state.Fields[annotation.Path].Constraints.MaximumLength, bound))
                         }
                     };
                 }
             }
         }
 
-        private static void ApplyDiscretenessConstraints(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private static void ApplyDiscretenessConstraints(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             foreach (var annotation in property.GetCustomAttributes<Check.InclusionAttribute>()) {
                 var context = new PropertyTranslationContext(property, annotation.Path);
@@ -272,8 +286,14 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
+                // If the Path on a Discreteness attribute refers to a Field potentially nested within a Relation, then
+                // the attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // It is an error for a Discreteness attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (!state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     throw Error.InvalidPath(context, annotation);
                 }
 
@@ -293,18 +313,18 @@ namespace Kvasir.Translation {
 
                 // No errors encountered
                 if (annotation.Operator == InclusionOperator.In) {
-                    values.UnionWith(state[annotation.Path].Constraints.AllowedValues);
-                    state[annotation.Path] = state[annotation.Path] with {
-                        Constraints = state[annotation.Path].Constraints with {
+                    values.UnionWith(state.Fields[annotation.Path].Constraints.AllowedValues);
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                        Constraints = state.Fields[annotation.Path].Constraints with {
                             AllowedValues = values
                         }
                     };
                 }
                 else {
                     Debug.Assert(annotation.Operator == InclusionOperator.NotIn);
-                    values.UnionWith(state[annotation.Path].Constraints.DisallowedValues);
-                    state[annotation.Path] = state[annotation.Path] with {
-                        Constraints = state[annotation.Path].Constraints with {
+                    values.UnionWith(state.Fields[annotation.Path].Constraints.DisallowedValues);
+                    state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                        Constraints = state.Fields[annotation.Path].Constraints with {
                             DisallowedValues = values
                         }
                     };
@@ -312,9 +332,8 @@ namespace Kvasir.Translation {
             }
         }
 
-        private void ApplyCustomConstraints(PropertyInfo property, Dictionary<string, FieldDescriptor> state) {
+        private void ApplyCustomConstraints(PropertyInfo property, MutableTranslationState state) {
             Debug.Assert(property is not null);
-            Debug.Assert(state is not null);
 
             foreach (var annotation in property.GetCustomAttributes<CheckAttribute>()) {
                 var context = new PropertyTranslationContext(property, annotation.Path);
@@ -324,8 +343,14 @@ namespace Kvasir.Translation {
                     throw Error.InvalidPath(context, annotation);
                 }
 
+                // If the Path on a [Check] attribute refers to a Field potentially nested within a Relation, then the
+                // attribute is attached to the top-level parent Field in that Relation
+                if (TryAttachAnnotation(state, annotation)) {
+                    continue;
+                }
+
                 // It is an error for a [Check] attribute to have a non-existent Path
-                if (!state.TryGetValue(annotation.Path, out FieldDescriptor target)) {
+                if (!state.Fields.TryGetValue(annotation.Path, out FieldDescriptor target)) {
                     throw Error.InvalidPath(context, annotation);
                 }
 
@@ -348,9 +373,9 @@ namespace Kvasir.Translation {
                         throw Error.UserError(context, annotation, msg);
                     }
                 };
-                state[annotation.Path] = state[annotation.Path] with {
-                    Constraints = state[annotation.Path].Constraints with {
-                        CHECKs = new List<CheckGen>(state[annotation.Path].Constraints.CHECKs) { gen }
+                state.Fields[annotation.Path] = state.Fields[annotation.Path] with {
+                    Constraints = state.Fields[annotation.Path].Constraints with {
+                        CHECKs = new List<CheckGen>(state.Fields[annotation.Path].Constraints.CHECKs) { gen }
                     }
                 };
             }

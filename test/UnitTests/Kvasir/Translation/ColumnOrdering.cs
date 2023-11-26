@@ -91,6 +91,46 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void RelationTableOrdering() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DebitCard);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveField("DebitCard.CardNumber").AtColumn(0).And
+                .HaveField("DebitCard.Issuer").AtColumn(1).And
+                .HaveField("Key").AtColumn(2).And
+                .HaveField("Value").And
+                .HaveNoOtherFields();
+            translation.Relations[1].Table.Should()
+                .HaveField("DebitCard.CardNumber").AtColumn(0).And
+                .HaveField("DebitCard.Issuer").AtColumn(1).And
+                .HaveField("Item.Amount").AtColumn(2).And
+                .HaveField("Item.Location").AtColumn(3).And
+                .HaveField("Item.Timestamp").AtColumn(4).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void RelationFieldsOrdered_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Tapestry);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Tapestry.Depictions))                 // error location
+                .WithMessageContaining("[Column]")                                  // details / explanation
+                .WithMessageContaining("Relation");                                 // details / explanation
+        }
+
         [TestMethod] public void ReferencePrimaryKeysAreNonSequential() {
             // Arrange
             var translator = new Translator();
@@ -107,6 +147,22 @@ namespace UT.Kvasir.Translation {
                 .HaveField("EntryBoundary.Name").AtColumn(0).And
                 .HaveField("EntryBoundary.MYA").AtColumn(1).And
                 .HaveField(nameof(MassExtinction.Severity)).AtColumn(5).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void RelationAnchorPrimaryKeysAreNonSequential() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DuoPush);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveField("DuoPush.Timestamp").AtColumn(0).And
+                .HaveField("DuoPush.DeviceID").AtColumn(1).And
+                .HaveField("Item").AtColumn(2).And
                 .HaveNoOtherFields();
         }
 

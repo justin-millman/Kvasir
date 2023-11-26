@@ -104,7 +104,7 @@ namespace UT.Kvasir.Translation {
             );
         }
 
-        [TestMethod] public void Check_AppliedToNestedAggregate() {
+        [TestMethod] public void Check_AppliedToNestedAggregate_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Vineyard);
@@ -146,7 +146,7 @@ namespace UT.Kvasir.Translation {
             );
         }
 
-        [TestMethod] public void Check_AppliedToNestedReference() {
+        [TestMethod] public void Check_AppliedToNestedReference_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Werewolf);
@@ -161,6 +161,48 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check]")                                   // details / explanation
                 .WithMessageContaining("\"Source\"");                               // details / explanation
+        }
+
+        [TestMethod] public void Check_AppliedToRelationNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CareBear);
+
+            // Act
+            var translation = translator[source];
+            var table = translation.Relations[0].Table;
+
+            // Assert
+            table.CheckConstraints.Should().HaveCount(1);
+            table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
+            table.CheckConstraints[0].Name.Should().NotHaveValue();
+            CustomCheck.LastCtorArgs.Should().BeEmpty();
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
+                    new IField[] {
+                        table[new FieldName("Item")]
+                    }
+                ),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
+                Settings.Default
+            );
+        }
+
+        [TestMethod] public void Check_AppliedToNestedRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(RiverWalk);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(RiverWalk.Hours))                     // error location
+                .WithMessageContaining("refers to a non-scalar")                    // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"HolidaysClosed\"");                       // details / explanation
         }
 
         [TestMethod] public void Check_ScalarConstrainedMultipleTimes() {
@@ -419,6 +461,56 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Pond.Location))                       // error location
+                .WithMessageContaining("path is required")                          // category
+                .WithMessageContaining("[Check]");                                  // details / explanation
+        }
+
+        [TestMethod] public void Check_NonExistentPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CanadianProvince);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(CanadianProvince.Cities))             // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"---\"");                                  // details / explanation
+        }
+
+        [TestMethod] public void Check_NonAnchorPrimaryKeyPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Skydiver);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Skydiver.Dives))                      // error location
+                .WithMessageContaining("path*does not exist")                       // category
+                .WithMessageContaining("[Check]")                                   // details / explanation
+                .WithMessageContaining("\"Height\"");                               // details / explanation
+        }
+
+        [TestMethod] public void Check_NoPathOnRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Spring);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Spring.ConstituentMetals))            // error location
                 .WithMessageContaining("path is required")                          // category
                 .WithMessageContaining("[Check]");                                  // details / explanation
         }

@@ -1,5 +1,6 @@
 ﻿using Cybele.Core;
 using Cybele.Extensions;
+using Kvasir.Relations;
 using Kvasir.Schema;
 using Optional;
 using System;
@@ -23,7 +24,7 @@ using System.Reflection;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
-        private static FieldsListing ScalarBaseTranslation(PropertyInfo property) {
+        private static TranslationState ScalarBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(DBType.IsSupported(property.PropertyType));
             Debug.Assert(DBType.Lookup(property.PropertyType) != DBType.Enumeration);
@@ -52,10 +53,12 @@ namespace Kvasir.Translation {
                 )
             );
 
-            return new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            var fields = new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            var relations = new Dictionary<string, IRelationDescriptor>();
+            return new TranslationState(Fields: fields, Relations: relations);
         }
 
-        private static FieldsListing EnumBaseTranslation(PropertyInfo property) {
+        private static TranslationState EnumBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(DBType.Lookup(property.PropertyType) == DBType.Enumeration);
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
@@ -84,36 +87,48 @@ namespace Kvasir.Translation {
                 )
             );
 
-            return new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            var fields = new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
+            var relations = new Dictionary<string, IRelationDescriptor>();
+            return new TranslationState(Fields: fields, Relations: relations);
         }
 
-        private FieldsListing AggregateBaseTranslation(PropertyInfo property) {
+        private TranslationState AggregateBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(!DBType.IsSupported(property.PropertyType) && property.PropertyType.IsValueType);
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             var typeTranslation = TranslateType(type);
 
-            var result = new Dictionary<string, FieldDescriptor>();
+            var fields = new Dictionary<string, FieldDescriptor>();
             foreach (var (path, descriptor) in typeTranslation.Fields) {
-                result[path] = descriptor with {
+                fields[path] = descriptor with {
                     Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList()
                 };
             }
-            return result;
+
+            var relations = new Dictionary<string, IRelationDescriptor>();
+            foreach (var (path, descriptor) in typeTranslation.Relations) {
+                relations[path] = descriptor.WithName(new List<string>(descriptor.Name).Prepend(property.Name));
+                if (property.ReflectedType!.IsClass) {
+                    relations[path] = relations[path].WithEntity(property.ReflectedType);
+                }
+            }
+
+            return new TranslationState(Fields: fields, Relations: relations);
         }
 
-        private FieldsListing ReferenceBaseTranslation(PropertyInfo property) {
+        private TranslationState ReferenceBaseTranslation(PropertyInfo property) {
             Debug.Assert(property is not null);
             Debug.Assert(!DBType.IsSupported(property.PropertyType) && property.PropertyType.IsClass);
+            Debug.Assert(!property.PropertyType.IsInstanceOf(typeof(IRelation)));
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             var _ = TranslateEntity(type);
             var refKey = primaryKeyCache_[type].OrderBy(kvp => kvp.Value.RelativeColumn);
 
-            var result = new Dictionary<string, FieldDescriptor>();
+            var fields = new Dictionary<string, FieldDescriptor>();
             foreach ((int idx, var (path, descriptor)) in refKey.Select((kvp, idx) => (idx, kvp))) {
-                result[path] = descriptor with {
+                fields[path] = descriptor with {
                     Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList(),
                     AbsoluteColumn = Option.None<int>(),
                     RelativeColumn = idx,
@@ -123,7 +138,38 @@ namespace Kvasir.Translation {
                     ForeignReference = Option.Some(type)
                 };
             }
-            return result;
+
+            var relations = new Dictionary<string, IRelationDescriptor>();
+            return new TranslationState(Fields: fields, Relations: relations);
+        }
+
+        private TranslationState RelationBaseTranslation(PropertyInfo property) {
+            Debug.Assert(property is not null);
+            Debug.Assert(property.PropertyType.IsInstanceOf(typeof(IRelation)) && property.PropertyType != typeof(IRelation));
+
+            var relationType = property.PropertyType;
+            var flags = BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic;
+            var connectionProperty = relationType.GetProperties(flags)[0];
+            var connectionType = (Type)connectionProperty.GetValue(null)!;
+            var nullability = new NullabilityInfoContext().Create(property);
+
+            IRelationDescriptor GetDescriptor() {
+                if (relationType.Name.Contains("Map")) {
+                    return new MapRelationDescriptor(property.Name, connectionType, nullability);
+                }
+                else {
+                    return new ListSetRelationDescriptor(property.Name, connectionType, nullability);
+                }
+            }
+
+            var descriptor = GetDescriptor();
+            if (property.ReflectedType!.IsClass) {
+                descriptor = descriptor.WithEntity(property.ReflectedType);
+            }
+
+            var fields = new Dictionary<string, FieldDescriptor>() { };
+            var relations = new Dictionary<string, IRelationDescriptor>() { { "", descriptor } };
+            return new TranslationState(Fields: fields, Relations: relations);
         }
     }
 }

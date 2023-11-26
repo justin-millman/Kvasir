@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Kvasir.Relations {
     /// <summary>
@@ -19,6 +20,7 @@ namespace Kvasir.Relations {
         ///   huge deal because the property is <c>internal</c>, and we can write exhaustive tests for the
         ///   implementations authored within Kvasir itself.
         /// </remarks>
+        [ExcludeFromCodeCoverage]
         internal static virtual Type ConnectionType => throw new NotImplementedException();
 
         /// <summary>

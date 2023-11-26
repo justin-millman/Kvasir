@@ -57,9 +57,11 @@ namespace Kvasir.Translation {
 
             // Generate the "sequences" of Fields, which must appear consecutively in the final column assignment.
             var sequences = new List<IReadOnlyList<FieldDescriptor>>();
+            var relations = new Dictionary<string, IRelationDescriptor>();
             foreach (var property in ConstituentPropertiesOf(clr)) {
+                var translation = TranslateProperty(property);
                 var members = new List<FieldDescriptor>();
-                foreach ((var path, var propertyDecriptor) in TranslateProperty(property)) {
+                foreach ((var path, var propertyDecriptor) in translation.Fields) {
                     // We have to build up a new path to reflect the property's access mechanics from the
                     // perspective of the type being translated. At a minimum, we need to do this because we may
                     // have multiple scalars with the empty-string path, and they would overwrite each other in the
@@ -67,7 +69,13 @@ namespace Kvasir.Translation {
                     var nestedPath = path == "" ? property.Name : $"{property.Name}{PATH_SEPARATOR}{path}";
                     members.Add(propertyDecriptor with { AccessPath = nestedPath });
                 }
-                sequences.Add(members.OrderBy(fd => fd.RelativeColumn).ToList());
+                foreach ((var path, var relationDescriptor) in translation.Relations) {
+                    var nestedPath = path == "" ? property.Name : $"{property.Name}{PATH_SEPARATOR}{path}";
+                    relations[nestedPath] = relationDescriptor.WithAccessPath(nestedPath);
+                }
+                if (!members.IsEmpty()) {
+                    sequences.Add(members.OrderBy(fd => fd.RelativeColumn).ToList());
+                }
             }
 
             // Solve the columns. This can fail for two reasons: two or more Fields are required to occupy the same
@@ -87,7 +95,7 @@ namespace Kvasir.Translation {
                 .ToDictionary(desc => desc.AccessPath, desc => desc);
 
             // It is an error for an Aggregate type to have fewer than 1 Field
-            if (clr.IsValueType && fields.Count == 0) {
+            if (clr.IsValueType && fields.Count == 0 && relations.IsEmpty()) {
                 throw Error.UserError(clr, $"at least 1 Field required ({fields.Count} found)");
             }
 
@@ -95,7 +103,7 @@ namespace Kvasir.Translation {
             var checks = ComplexConstraintsOf(clr).ToList();
 
             // No errors encountered
-            var descriptor = new TypeDescriptor(fields, checks);
+            var descriptor = new TypeDescriptor(fields, relations, checks);
             typeCache_.Add(clr, descriptor);
             Debug.Assert(inProgress_.Peek() == clr);
             inProgress_.Pop();

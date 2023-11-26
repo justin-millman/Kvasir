@@ -40,11 +40,25 @@ namespace Kvasir.Translation {
             Debug.Assert(clr is not null);
             Debug.Assert(principal is not null);
             Debug.Assert(relations is not null);
-            Debug.Assert(relations.IsEmpty());
 
             CLRSource = clr;
             Principal = principal;
             Relations = new List<RelationTableDef>(relations);
         }
     }
+
+    /// <summary>
+    ///   An intermediate translation of a single Entity Type.
+    /// </summary>
+    /// <remarks>
+    ///   In an intermediate translation, the Entity Type's principal Table definition (containing all of its Fields,
+    ///   its Primary Key, its Candidate Keys, all its constraints, etc.) is available but the constituent Relations are
+    ///   not.
+    /// </remarks>
+    internal readonly record struct IntermediateTranslation(
+        Type CLR,
+        PrincipalTableDef Principal,
+        IReadOnlyList<IRelationDescriptor> Relations,
+        bool BeingCompleted = false
+    );
 }

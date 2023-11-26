@@ -524,7 +524,10 @@
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.StringLengthAttribute">
-            
+            <summary>
+              The base class for all annotations that restrict the length of the value for the Field backing a
+              particular string-type property.
+            </summary>
         </member>
         <member name="P:Kvasir.Annotations.Check.StringLengthAttribute.Path">
             <summary>
@@ -591,7 +594,7 @@
             <summary>
               An annotation that specifies that the value for the Field backing a particular string-type property must
               be at least a certain length.
-            </summary>///
+            </summary>
         </member>
         <member name="M:Kvasir.Annotations.Check.LengthIsAtLeastAttribute.#ctor(System.Int32)">
             <summary>
@@ -980,6 +983,14 @@
             </summary>
             <param name="name">
               The name of the <c>UNIQUE</c> constraint.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.UniqueAttribute.#ctor(System.Char)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.UniqueAttribute"/> class with the dedicated Synthetic name.
+            </summary>
+            <param name="_">
+              A placeholder argument to control overload resolution.
             </param>
         </member>
         <member name="M:Kvasir.Annotations.UniqueAttribute.#ctor(System.String,System.Boolean)">
@@ -6454,7 +6465,7 @@
               The Entity Type.
             </param>
             <returns>
-              The <see cref="T:Kvasir.Translation.Translation"/> of <paramref name="entity"/>.
+              The <see cref="T:Kvasir.Translation.PrincipalTableDef"/> of <paramref name="entity"/>.
             </returns>
             <exception cref="T:Kvasir.Exceptions.KvasirException">
               if <paramref name="entity"/> cannot be translated for any reason.
@@ -6589,6 +6600,20 @@
             <returns>
               A <c>SOME</c> instance carrying the category of <paramref name="property"/> if its type is supported by
               Kvasir; otherwise, a <c>NONE</c> instance carrying an explanation as to why it is not.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.TranslateRelation(Kvasir.Translation.IRelationDescriptor,System.Type)">
+            <summary>
+              Translates a Relation.
+            </summary>
+            <param name="descriptor">
+              The <see cref="T:Kvasir.Translation.IRelationDescriptor"/> defining the Relation.
+            </param>
+            <param name="owningEntity">
+              The Entity <see cref="T:System.Type"/> against which the Relation exists.
+            </param>
+            <returns>
+              The <see cref="T:Kvasir.Translation.RelationTableDef"/> that corresponds to <paramref name="descriptor"/>.
             </returns>
         </member>
         <member name="M:Kvasir.Translation.Translator.TranslateType(System.Type)">
@@ -7170,6 +7195,283 @@
               otherwise unidentified constraint annotations.
             </summary>
         </member>
+        <member name="T:Kvasir.Translation.Synthetic.SyntheticMethodInfo">
+            <summary>
+              A reflection representation of the <c>GET</c> method of a <see cref="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo">Synthetic
+              Property</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.Attributes">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.DeclaringType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.ReflectedType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.ReturnParameter">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.ReturnType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.#ctor(Kvasir.Translation.Synthetic.SyntheticPropertyInfo,System.Type)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Translation.Synthetic.SyntheticMethodInfo"/> class.
+            </summary>
+            <param name="source">
+              The <see cref="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo"/> to which the <c>GET</c> method represented by the new
+              <see cref="T:Kvasir.Translation.Synthetic.SyntheticMethodInfo"/> belongs.
+            </param>
+            <param name="returnType">
+              The <see cref="T:System.Type"/> of value returned by the <c>GET</c> method represented by the new
+              <see cref="T:Kvasir.Translation.Synthetic.SyntheticMethodInfo"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.GetBaseDefinition">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.GetCustomAttributesData">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.MethodHandle">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticMethodInfo.ReturnTypeCustomAttributes">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.GetMethodImplementationFlags">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.GetCustomAttributes(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.GetCustomAttributes(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.GetParameters">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticMethodInfo.IsDefined(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Translation.Synthetic.SyntheticParameterInfo">
+            <summary>
+              A reflection representation of the value returned by a <see cref="T:Kvasir.Translation.Synthetic.SyntheticMethodInfo">Synthetic Method</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticParameterInfo.GetCustomAttributesData">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo">
+            <summary>
+              A reflection representation of a property on a <see cref="T:Kvasir.Translation.Synthetic.SyntheticType"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.DeclaringType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.PropertyType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.ReflectedType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.#ctor(System.String,Kvasir.Translation.Synthetic.SyntheticType,System.Type,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo"/> class.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.Name"/> of the property represented by the new <see cref="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo"/>.
+            </param>
+            <param name="source">
+              The <see cref="T:Kvasir.Translation.Synthetic.SyntheticType"/> to which the property represented by the new
+              <see cref="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo"/> belongs.
+            </param>
+            <param name="propertyType">
+              The <see cref="T:System.Type"/> of the property represented by the new <see cref="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo"/>.
+            </param>
+            <param name="attributes">
+              The collection of <see cref="T:System.Attribute">Attributes</see> that have been applied to the property
+              represented by the new <see cref="T:Kvasir.Translation.Synthetic.SyntheticPropertyInfo"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetCustomAttributes(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetCustomAttributes(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetCustomAttributesData">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetGetMethod(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetIndexParameters">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetSetMethod(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.Attributes">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.CanRead">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.CanWrite">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetAccessors(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.GetValue(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.IsDefined(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.SetValue(System.Object,System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Translation.Synthetic.SyntheticType">
+            <summary>
+              A reflection representation of the "type" that models the hypothetical Entity of a Relation Table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.Assembly">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.BaseType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.FullName">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.Namespace">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.UnderlyingSystemType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.#ctor(Kvasir.Translation.IRelationDescriptor,System.Type)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Translation.Synthetic.SyntheticType"/> class.
+            </summary>
+            <param name="descriptor">
+              The <see cref="T:Kvasir.Translation.IRelationDescriptor"/> that describes the structure of the new <see cref="T:Kvasir.Translation.Synthetic.SyntheticType"/>.
+            </param>
+            <param name="owningEntity">
+              The <see cref="T:System.Type"/> of the Entity on which the Relation was originally defined.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetCustomAttributes(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetCustomAttributes(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetCustomAttributesData">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetInterfaces">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetProperties(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetAttributeFlagsImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetPropertyImpl(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Type,System.Type[],System.Reflection.ParameterModifier[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.IsPrimitiveImpl">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.AssemblyQualifiedName">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.GUID">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticType.Module">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetConstructors(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetElementType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetEvent(System.String,System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetEvents(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetField(System.String,System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetFields(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetInterface(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetMembers(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetMethods(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetNestedType(System.String,System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetNestedTypes(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.IsDefined(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetConstructorImpl(System.Reflection.BindingFlags,System.Reflection.Binder,System.Reflection.CallingConventions,System.Type[],System.Reflection.ParameterModifier[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.GetMethodImpl(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Reflection.CallingConventions,System.Type[],System.Reflection.ParameterModifier[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.HasElementTypeImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.IsArrayImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.IsByRefImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.IsCOMObjectImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.Synthetic.SyntheticType.IsPointerImpl">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Translation.PrincipalTableDef">
             <summary>
               A representation of the data model for a Principal Table (rather than a Relation Table).
@@ -7213,6 +7515,37 @@
             </summary>
             <seealso cref="T:Kvasir.Translation.PrincipalTableDef"/>
         </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Table">
+            <summary>
+              The <see cref="T:Kvasir.Schema.ITable">Table</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Extractor">
+            <summary>
+              The <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extraction plan</see> for pulling data out of a Relation to be
+              stored in the <see cref="P:Kvasir.Translation.RelationTableDef.Table">Primary Table</see>
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Reconstitutor">
+            <summary>
+              The <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan">reconstitution plan</see> for converting data stored in the
+              <see cref="P:Kvasir.Translation.RelationTableDef.Table">Relation Table</see> back into an Relation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationReconstitutionPlan)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Translation.RelationTableDef"/> class.
+            </summary>
+            <param name="table">
+              The <see cref="P:Kvasir.Translation.RelationTableDef.Table">Principal Table</see>.
+            </param>
+            <param name="extractor">
+              The <see cref="P:Kvasir.Translation.RelationTableDef.Extractor">extraction plan</see>.
+            </param>
+            <param name="reconstitutor">
+              The <see cref="P:Kvasir.Translation.RelationTableDef.Reconstitutor">reconstitution plan</see>.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.Translation">
             <summary>
               A translation of a single Entity Type.
@@ -7247,6 +7580,26 @@
             <param name="relations">
               The <see cref="P:Kvasir.Translation.Translation.Relations">definitions of the Relation Tables</see>, if any.
             </param>
+        </member>
+        <member name="T:Kvasir.Translation.IntermediateTranslation">
+            <summary>
+              An intermediate translation of a single Entity Type.
+            </summary>
+            <remarks>
+              In an intermediate translation, the Entity Type's principal Table definition (containing all of its Fields,
+              its Primary Key, its Candidate Keys, all its constraints, etc.) is available but the constituent Relations are
+              not.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Translation.IntermediateTranslation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.IRelationDescriptor},System.Boolean)">
+            <summary>
+              An intermediate translation of a single Entity Type.
+            </summary>
+            <remarks>
+              In an intermediate translation, the Entity Type's principal Table definition (containing all of its Fields,
+              its Primary Key, its Candidate Keys, all its constraints, etc.) is available but the constituent Relations are
+              not.
+            </remarks>
         </member>
     </members>
 </doc>
