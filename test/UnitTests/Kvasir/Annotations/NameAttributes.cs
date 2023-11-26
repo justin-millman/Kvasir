@@ -63,6 +63,28 @@ namespace UT.Kvasir.Annotations {
             isUnique.Should().BeTrue();
         }
 
+        [TestMethod] public void RelationTableName() {
+            // Arrange
+            var value = "RelationTable";
+
+            // Act
+            var attr = new RelationTableAttribute(value);
+
+            // Assert
+            attr.Name.ToString().Should().Be(value);
+        }
+
+        [TestMethod] public void RelationTableName_UniqueId() {
+            // Arrange
+            var attr = new RelationTableAttribute("RelationTable");
+
+            // Act
+            var isUnique = ids_.Add(attr.TypeId);
+
+            // Assert
+            isUnique.Should().BeTrue();
+        }
+
         [TestMethod] public void NamedPrimaryKey() {
             // Arrange
             var value = "Key";

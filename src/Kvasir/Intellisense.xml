@@ -777,6 +777,30 @@
               The name of the Table.
             </param>
         </member>
+        <member name="T:Kvasir.Annotations.RelationTableAttribute">
+            <summary>
+              An annotation that specifies the name of the Relation Table backing a particular relation-type property.
+            </summary>
+            <remarks>
+              The Kvasir framework will automatically determine the name of backing Relation Tables based on the name of the
+              in-code property and the owning POCO class. The <see cref="T:Kvasir.Annotations.RelationTableAttribute"/> can be used to override
+              the default deduction when that deduction would be incorrect or undesirable.
+            </remarks>
+            <seealso cref="T:Kvasir.Schema.FieldName"/>
+        </member>
+        <member name="P:Kvasir.Annotations.RelationTableAttribute.Name">
+            <summary>
+              The Table name specified by the annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.RelationTableAttribute.#ctor(System.String)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.RelationTableAttribute"/>.
+            </summary>
+            <param name="name">
+              The name of the Table.
+            </param>
+        </member>
         <member name="T:Kvasir.Annotations.UniqueAttribute">
             <summary>
               An annotation that marks the Field backing a particular property as being part of a <c>UNIQUE</c> constraint.
