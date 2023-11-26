@@ -10,7 +10,7 @@ namespace Kvasir.Relations {
         ///   The type of the Relation connection (the "many" in the one-to-many).
         /// </summary>
         /// <remarks>
-        ///   A few notes about this. We need something this is <see langword="static"/> so that we can access its value
+        ///   A few notes about this. We need something that is <see langword="static"/> so that we can access its value
         ///   via reflection when holding just the type, which is the situation we find ourself in when doing
         ///   Translation. However, for mocking purposes, we also need to be able to use <see cref="IRelation"/> as a
         ///   generic type parameter, which we cannot do if this property were <see langword="abstract"/>. We therefore

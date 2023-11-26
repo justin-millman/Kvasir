@@ -22,6 +22,7 @@ namespace UT.Kvasir.Relations {
             map.Keys.Should().BeEmpty();
             map.Values.Should().BeEmpty();
             map.Should().HaveConnectionType<KVP>();
+            (map as IReadOnlyRelationMap<string, string>).Should().HaveConnectionType<KVP>();
             map.Should().HaveEntryCount(0);
         }
 

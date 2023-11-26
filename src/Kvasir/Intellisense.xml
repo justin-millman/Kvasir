@@ -1870,7 +1870,7 @@
               The type of the Relation connection (the "many" in the one-to-many).
             </summary>
             <remarks>
-              A few notes about this. We need something this is <see langword="static"/> so that we can access its value
+              A few notes about this. We need something that is <see langword="static"/> so that we can access its value
               via reflection when holding just the type, which is the situation we find ourself in when doing
               Translation. However, for mocking purposes, we also need to be able to use <see cref="T:Kvasir.Relations.IRelation"/> as a
               generic type parameter, which we cannot do if this property were <see langword="abstract"/>. We therefore
@@ -2821,6 +2821,9 @@
               The type of element to be stored in the collection.
             </typeparam>
         </member>
+        <member name="P:Kvasir.Relations.IReadOnlyRelationList`1.Kvasir#Relations#IRelation#ConnectionType">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Relations.RelationMap`2">
             <summary>
               A collection that tracks the state of its key-value mappings for interaction with a back-end database.
@@ -3221,6 +3224,9 @@
               The type of the value of the collection's key-value pairs.
             </typeparam>
         </member>
+        <member name="P:Kvasir.Relations.IReadOnlyRelationMap`2.Kvasir#Relations#IRelation#ConnectionType">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Relations.RelationSet`1">
             <summary>
               An unordered collection that tracks the state of its unique elements for interaction with a back-end
@@ -3507,6 +3513,9 @@
             <typeparam name="T">
               The type of element to be stored in the collection.
             </typeparam>
+        </member>
+        <member name="P:Kvasir.Relations.IReadOnlyRelationSet`1.Kvasir#Relations#IRelation#ConnectionType">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Relations.Status">
             <summary>

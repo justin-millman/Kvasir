@@ -16,6 +16,7 @@ namespace UT.Kvasir.Relations {
             // Assert
             list.Count.Should().Be(0);
             list.Should().HaveConnectionType<string>();
+            (list as IReadOnlyRelationList<string>).Should().HaveConnectionType<string>();
             list.Should().HaveEntryCount(0);
         }
 

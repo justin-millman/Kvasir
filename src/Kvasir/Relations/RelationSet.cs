@@ -495,5 +495,8 @@ namespace Kvasir.Relations {
     /// <typeparam name="T">
     ///   The type of element to be stored in the collection.
     /// </typeparam>
-    public interface IReadOnlyRelationSet<T> : IReadOnlySet<T>, IRelation where T : notnull {}
+    public interface IReadOnlyRelationSet<T> : IReadOnlySet<T>, IRelation where T : notnull {
+        /// <inheritdoc/>
+        static Type IRelation.ConnectionType => typeof(T);
+    }
 }
