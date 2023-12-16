@@ -5,7 +5,6 @@ using Kvasir.Schema;
 using Optional;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 // Descriptors are the intermediate stages of Translation. The purpose of Descriptors is to reflect the information
 // known up to a point, with the expectation being that future logic may update or extend the initial translation. The

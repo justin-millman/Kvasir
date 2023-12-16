@@ -48,8 +48,20 @@ namespace Kvasir.Annotations {
             IsAnonymous = false;
         }
 
+        /// <summary>
+        ///   Constructs a new instance of the <see cref="UniqueAttribute"/> class with the dedicated Synthetic name.
+        /// </summary>
+        /// <param name="_">
+        ///   A placeholder argument to control overload resolution.
+        /// </param>
+        internal UniqueAttribute(char _) {
+            Name = SYNTHETIC_NAME;
+            IsAnonymous = true;
+        }
+
 
         private static readonly object LOCK = new();
         private static int sequence_ = 0;
+        private static readonly string SYNTHETIC_NAME = $"{ANONYMOUS_PREFIX}-SYNTHETIC";
     }
 }
