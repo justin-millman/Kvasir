@@ -29,6 +29,20 @@ namespace UT.Kvasir.Annotations {
             attr.Operator.Should().Be(ComparisonOperator.NE);
         }
 
+        [TestMethod] public void IsNonZero_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsNonZeroAttribute();
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsNonZeroAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsNonZeroAttribute)!.Operator.Should().Be(original.Operator);
+        }
+
         [TestMethod] public void IsNonZero_UniqueId() {
             // Arrange
             var attr = new Check.IsNonZeroAttribute();
@@ -63,6 +77,20 @@ namespace UT.Kvasir.Annotations {
             attr.Operator.Should().Be(ComparisonOperator.GT);
         }
 
+        [TestMethod] public void IsPositive_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsPositiveAttribute();
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsPositiveAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsPositiveAttribute)!.Operator.Should().Be(original.Operator);
+        }
+
         [TestMethod] public void IsPositive_UniqueId() {
             // Arrange
             var attr = new Check.IsPositiveAttribute();
@@ -95,6 +123,20 @@ namespace UT.Kvasir.Annotations {
             // Assert
             attr.Path.Should().Be(path);
             attr.Operator.Should().Be(ComparisonOperator.LT);
+        }
+
+        [TestMethod] public void IsNegative_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsNegativeAttribute();
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsNegativeAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsNegativeAttribute)!.Operator.Should().Be(original.Operator);
         }
 
         [TestMethod] public void IsNegative_UniqueId() {

@@ -5,11 +5,8 @@ namespace Kvasir.Annotations {
     ///   An annotation that defines the default value for the Field backing a particular property.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class DefaultAttribute : Attribute {
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
+    public sealed class DefaultAttribute : Attribute, INestableAnnotation {
+        /// <inheritdoc/>
         public string Path { get; init; } = "";
 
         /// <summary>
@@ -33,6 +30,11 @@ namespace Kvasir.Annotations {
         /// </remarks>
         public DefaultAttribute(object? value) {
             Value = value ?? DBNull.Value;
+        }
+
+        /// <inheritdoc/>
+        INestableAnnotation INestableAnnotation.WithPath(string path) {
+            return new DefaultAttribute(Value) { Path = path };
         }
     }
 }

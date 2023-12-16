@@ -65,6 +65,20 @@ namespace UT.Kvasir.Annotations {
             attr.Value.Should().Be(DBNull.Value);
         }
 
+        [TestMethod] public void Default_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new DefaultAttribute(1000);
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<DefaultAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as DefaultAttribute)!.Value.Should().Be(original.Value);
+        }
+
         [TestMethod] public void Default_UniqueId() {
             // Arrange
             var attr = new DefaultAttribute("Bellevue");

@@ -30,6 +30,20 @@ namespace UT.Kvasir.Annotations {
             attr.Path.Should().Be(path);
         }
 
+        [TestMethod] public void FieldName_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new NameAttribute("Field");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<NameAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as NameAttribute)!.Name.Should().Be(original.Name);
+        }
+
         [TestMethod] public void FieldName_UniqueId() {
             // Arrange
             var attr = new NameAttribute("Field");

@@ -23,12 +23,14 @@ namespace Kvasir.Annotations {
     ///   </para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class PrimaryKeyAttribute : Attribute {
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
+    public sealed class PrimaryKeyAttribute : Attribute, INestableAnnotation {
+        /// <inheritdoc/>
         public string Path { get; init; } = "";
+
+        /// <inheritdoc/>
+        INestableAnnotation INestableAnnotation.WithPath(string path) {
+            return new PrimaryKeyAttribute() { Path = path };
+        }
     }
 
     /// <summary>

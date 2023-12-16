@@ -4,6 +4,30 @@
         <name>Kvasir</name>
     </assembly>
     <members>
+        <member name="T:Kvasir.Annotations.INestableAnnotation">
+            <summary>
+              The base interface to be implemented by any Kvasir annotations that expose a <c>Path</c> property for nested
+              application.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Annotations.INestableAnnotation.Path">
+            <summary>
+              The dot-separated path, relative to the property on which the annotation is placed, to the property to
+              which the annotation actually applies.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.INestableAnnotation.WithPath(System.String)">
+            <summary>
+              Creates an exact copy of a <see cref="T:Kvasir.Annotations.INestableAnnotation"/>, but with a different <see cref="P:Kvasir.Annotations.INestableAnnotation.Path"/>.
+            </summary>
+            <param name="path">
+              The new <see cref="P:Kvasir.Annotations.INestableAnnotation.Path"/>.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Annotations.INestableAnnotation"/> of the same most-derived type as <c>this</c>, whose <see cref="P:Kvasir.Annotations.INestableAnnotation.Path"/>
+              attribute is exactly <paramref name="path"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Annotations.CalculatedAttribute">
             <summary>
               An annotation that marks the Field backing a particular property as "calculated."
@@ -43,10 +67,7 @@
             <seealso cref="T:Kvasir.Annotations.Check.ComplexAttribute"/>
         </member>
         <member name="P:Kvasir.Annotations.CheckAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Kvasir.Annotations.CheckAttribute.ConstraintGenerator">
             <summary>
@@ -80,6 +101,18 @@
             <param name="args">
               The parameterization of the <c>CHECK</c> constraint.
             </param>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(Kvasir.Core.IConstraintGenerator)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute"/> class.
+            </summary>
+            <param name="generator">
+              The already-constructed <see cref="T:Kvasir.Core.IConstraintGenerator"/> to be used to produce the <c>CHECK</c>
+              constraint clause for this annotation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check">
             <summary>
@@ -159,10 +192,7 @@
             </summary>
         </member>
         <member name="P:Kvasir.Annotations.Check.ComparisonAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Kvasir.Annotations.Check.ComparisonAttribute.Operator">
             <summary>
@@ -192,6 +222,21 @@
               The <see cref="P:Kvasir.Annotations.Check.ComparisonAttribute.Anchor"/> for the constraint.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.ComparisonAttribute.WithPath(System.String)">
+            <summary>
+              Creates an exact copy of a <see cref="T:Kvasir.Annotations.Check.ComparisonAttribute"/>, but with a different <see cref="P:Kvasir.Annotations.Check.ComparisonAttribute.Path"/>.
+            </summary>
+            <param name="path">
+              The new <see cref="P:Kvasir.Annotations.Check.ComparisonAttribute.Path"/>.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Annotations.Check.ComparisonAttribute"/> of the same most-derived type as <c>this</c>, whose
+              <see cref="P:Kvasir.Annotations.Check.ComparisonAttribute.Path"/> attribute is exactly <paramref name="path"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.ComparisonAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsNotAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property cannot have a
@@ -207,6 +252,9 @@
               The value that the Field backing the annotated property cannot take.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.IsNotAttribute.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsGreaterThanAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property must be strictly
@@ -220,6 +268,9 @@
             <param name="lowerBound">
               The value that the Field backing the annotated property must be strictly greater than.
             </param>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsGreaterThanAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsLessThanAttribute">
             <summary>
@@ -235,6 +286,9 @@
               The value that the Field backing the annotated property must be strictly less than.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.IsLessThanAttribute.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property must be greater
@@ -248,6 +302,9 @@
             <param name="lowerBound">
               The value that the Field backing the annotated property must be greater than or equal to.
             </param>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute">
             <summary>
@@ -263,6 +320,9 @@
               The value that the Field backing the annotated property must be less than or equal to.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.IsLessOrEqualToAttribute.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.InclusionAttribute">
             <summary>
               The base class for all annotations that restrict the value for the Field backing a particular property
@@ -270,10 +330,7 @@
             </summary>
         </member>
         <member name="P:Kvasir.Annotations.Check.InclusionAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Kvasir.Annotations.Check.InclusionAttribute.Operator">
             <summary>
@@ -302,6 +359,21 @@
               The <see cref="P:Kvasir.Annotations.Check.InclusionAttribute.Anchor"/> for the constraint.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.InclusionAttribute.WithPath(System.String)">
+            <summary>
+              Creates an exact copy of a <see cref="T:Kvasir.Annotations.Check.InclusionAttribute"/>, but with a different <see cref="P:Kvasir.Annotations.Check.InclusionAttribute.Path"/>.
+            </summary>
+            <param name="path">
+              The new <see cref="P:Kvasir.Annotations.Check.InclusionAttribute.Path"/>.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Annotations.Check.InclusionAttribute"/> of the same most-derived type as <c>this</c>, whose
+              <see cref="P:Kvasir.Annotations.Check.InclusionAttribute.Path"/> attribute is exactly <paramref name="path"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.InclusionAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsOneOfAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property must be one of a
@@ -324,6 +396,18 @@
               Each element of <paramref name="rest"/> should be the same exact type as <paramref name="first"/>,
               though this is not checked or enforced until Translation.
             </remarks>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsOneOfAttribute.#ctor(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Construct a new instance of the <see cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/> class.
+            </summary>
+            <param name="all">
+              The complete discrete set of options, of which the value that the Field backing the annotated property
+              must be one.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsOneOfAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsNotOneOfAttribute">
             <summary>
@@ -348,6 +432,18 @@
               though this is not checked or enforced until Translation.
             </remarks>
         </member>
+        <member name="M:Kvasir.Annotations.Check.IsNotOneOfAttribute.#ctor(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Construct a new instance of the <see cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/> class.
+            </summary>
+            <param name="all">
+              The complete discrete set of options, of which the value that the Field backing the annotated property
+              cannot be one.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNotOneOfAttribute.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.SignednessAttribute">
             <summary>
               The base class for all annotations that restrict the value for the Field backing a particular numeric-type
@@ -355,10 +451,7 @@
             </summary>
         </member>
         <member name="P:Kvasir.Annotations.Check.SignednessAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Kvasir.Annotations.Check.SignednessAttribute.Operator">
             <summary>
@@ -373,6 +466,21 @@
               The <see cref="P:Kvasir.Annotations.Check.ComparisonAttribute.Operator"/> for the constraint.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.SignednessAttribute.WithPath(System.String)">
+            <summary>
+              Creates an exact copy of a <see cref="T:Kvasir.Annotations.Check.SignednessAttribute"/>, but with a different <see cref="P:Kvasir.Annotations.Check.SignednessAttribute.Path"/>.
+            </summary>
+            <param name="path">
+              The new <see cref="P:Kvasir.Annotations.Check.SignednessAttribute.Path"/>.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Annotations.Check.SignednessAttribute"/> of the same most-derived type as <c>this</c>, whose
+              <see cref="P:Kvasir.Annotations.Check.SignednessAttribute.Path"/> attribute is exactly <paramref name="path"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.SignednessAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsNonZeroAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property cannot be
@@ -383,6 +491,9 @@
             <summary>
               Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNonZeroAttribute"/> class.
             </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNonZeroAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.IsPositiveAttribute">
             <summary>
@@ -395,6 +506,9 @@
               Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsPositiveAttribute"/> class.
             </summary>
         </member>
+        <member name="M:Kvasir.Annotations.Check.IsPositiveAttribute.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsNegativeAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular property must be positive
@@ -405,6 +519,9 @@
             <summary>
               Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNegativeAttribute"/> class.
             </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNegativeAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.StringLengthAttribute">
             
@@ -440,6 +557,22 @@
               The <see cref="P:Kvasir.Annotations.Check.StringLengthAttribute.Maximum"/> string length.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.StringLengthAttribute.WithPath(System.String)">
+            <summary>
+              Creates an exact copy of a <see cref="T:Kvasir.Annotations.Check.StringLengthAttribute"/>, but with a different
+              <see cref="P:Kvasir.Annotations.Check.StringLengthAttribute.Path"/>.
+            </summary>
+            <param name="path">
+              The new <see cref="P:Kvasir.Annotations.Check.StringLengthAttribute.Path"/>.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Annotations.Check.StringLengthAttribute"/> of the same most-derived type as <c>this</c>, whose
+              <see cref="P:Kvasir.Annotations.Check.StringLengthAttribute.Path"/> attribute is exactly <paramref name="path"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.StringLengthAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.IsNonEmptyAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular string-type property must
@@ -450,6 +583,9 @@
             <summary>
               Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute"/> class.
             </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.IsNonEmptyAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute">
             <summary>
@@ -465,6 +601,9 @@
               The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             </param>
         </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsAtLeastAttribute.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute">
             <summary>
               An annotation that specifies that the value for the Field backing a particular string-type property can
@@ -478,6 +617,9 @@
             <param name="upperBound">
               The length (<i>inclusive</i>) that the Field backing the annotated property must be no shorter than.
             </param>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsAtMostAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute">
             <summary>
@@ -495,6 +637,9 @@
             <param name="upperBound">
               The length (<i>inclusive</i>) that the Field backing the annotated property must be no longer than.
             </param>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsBetweenAttribute.WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.ColumnAttribute">
             <summary>
@@ -553,10 +698,7 @@
             </summary>
         </member>
         <member name="P:Kvasir.Annotations.DefaultAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Kvasir.Annotations.DefaultAttribute.Value">
             <summary>
@@ -579,6 +721,9 @@
               property.
             </remarks>
         </member>
+        <member name="M:Kvasir.Annotations.DefaultAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.NumericAttribute">
             <summary>
               An annotation that specifies that the type of the Field backing a particular property should correspond to
@@ -592,10 +737,10 @@
             </remarks>
         </member>
         <member name="P:Kvasir.Annotations.NumericAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Annotations.NumericAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.AsStringAttribute">
             <summary>
@@ -610,10 +755,10 @@
             </remarks>
         </member>
         <member name="P:Kvasir.Annotations.AsStringAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Annotations.AsStringAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.CodeOnlyAttribute">
             <summary>
@@ -650,10 +795,7 @@
             <seealso cref="T:Kvasir.Schema.FieldName"/>
         </member>
         <member name="P:Kvasir.Annotations.NameAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Kvasir.Annotations.NameAttribute.Name">
             <summary>
@@ -667,6 +809,9 @@
             <param name="name">
               The name of the Field.
             </param>
+        </member>
+        <member name="M:Kvasir.Annotations.NameAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.NullableAttribute">
             <summary>
@@ -728,10 +873,10 @@
             </remarks>
         </member>
         <member name="P:Kvasir.Annotations.PrimaryKeyAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Annotations.PrimaryKeyAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.NamedPrimaryKeyAttribute">
             <summary>
@@ -812,10 +957,7 @@
             </summary>
         </member>
         <member name="P:Kvasir.Annotations.UniqueAttribute.Path">
-            <summary>
-              The dot-separated path, relative to the property on which the annotation is placed, to the property to
-              which the annotation actually applies.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Kvasir.Annotations.UniqueAttribute.Name">
             <summary>
@@ -839,6 +981,20 @@
             <param name="name">
               The name of the <c>UNIQUE</c> constraint.
             </param>
+        </member>
+        <member name="M:Kvasir.Annotations.UniqueAttribute.#ctor(System.String,System.Boolean)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.UniqueAttribute"/> class.
+            </summary>
+            <param name="name">
+              The name of the <c>UNIQUE</c> constraint.
+            </param>
+            <param name="anonymous">
+              Whether or not the <c>UNIQUE</c> constraint is "anonymous."
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.UniqueAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Core.EnumToNumericConverter">
             <summary>

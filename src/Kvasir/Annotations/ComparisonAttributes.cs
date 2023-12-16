@@ -9,11 +9,8 @@ namespace Kvasir.Annotations {
         ///   The base class for all annotations that restrict the value for the Field backing a particular property
         ///   relative to a single anchor point.
         /// </summary>
-        public abstract class ComparisonAttribute : Attribute {
-            /// <summary>
-            ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-            ///   which the annotation actually applies.
-            /// </summary>
+        public abstract class ComparisonAttribute : Attribute, INestableAnnotation {
+            /// <inheritdoc/>
             public string Path { get; init; } = "";
 
             /// <summary>
@@ -48,6 +45,23 @@ namespace Kvasir.Annotations {
                 Operator = op;
                 Anchor = anchor ?? DBNull.Value;
             }
+
+            /// <summary>
+            ///   Creates an exact copy of a <see cref="ComparisonAttribute"/>, but with a different <see cref="Path"/>.
+            /// </summary>
+            /// <param name="path">
+            ///   The new <see cref="Path"/>.
+            /// </param>
+            /// <returns>
+            ///   A <see cref="ComparisonAttribute"/> of the same most-derived type as <c>this</c>, whose
+            ///   <see cref="Path"/> attribute is exactly <paramref name="path"/>.
+            /// </returns>
+            private protected abstract ComparisonAttribute WithPath(string path);
+
+            /// <inheritdoc/>
+            INestableAnnotation INestableAnnotation.WithPath(string path) {
+                return WithPath(path);
+            }
         }
 
         /// <summary>
@@ -65,6 +79,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public IsNotAttribute(object value)
                 : base(ComparisonOperator.NE, value) {}
+
+            /// <inheritdoc/>
+            private protected sealed override ComparisonAttribute WithPath(string path) {
+                return new IsNotAttribute(Anchor) { Path = path };
+            }
         }
 
         /// <summary>
@@ -81,6 +100,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public IsGreaterThanAttribute(object lowerBound)
                 : base(ComparisonOperator.GT, lowerBound) {}
+
+            /// <inheritdoc/>
+            private protected sealed override ComparisonAttribute WithPath(string path) {
+                return new IsGreaterThanAttribute(Anchor) { Path = path };
+            }
         }
 
         /// <summary>
@@ -97,6 +121,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public IsLessThanAttribute(object upperBound)
                 : base(ComparisonOperator.LT, upperBound) {}
+
+            /// <inheritdoc/>
+            private protected sealed override ComparisonAttribute WithPath(string path) {
+                return new IsLessThanAttribute(Anchor) { Path = path };
+            }
         }
 
         /// <summary>
@@ -113,6 +142,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public IsGreaterOrEqualToAttribute(object lowerBound)
                 : base(ComparisonOperator.GTE, lowerBound) {}
+
+            /// <inheritdoc/>
+            private protected sealed override ComparisonAttribute WithPath(string path) {
+                return new IsGreaterOrEqualToAttribute(Anchor) { Path = path };
+            }
         }
 
         /// <summary>
@@ -129,6 +163,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public IsLessOrEqualToAttribute(object upperBound)
                 : base(ComparisonOperator.LTE, upperBound) {}
+
+            /// <inheritdoc/>
+            private protected sealed override ComparisonAttribute WithPath(string path) {
+                return new IsLessOrEqualToAttribute(Anchor) { Path = path };
+            }
         }
     }
 }
