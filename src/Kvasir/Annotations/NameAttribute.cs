@@ -12,11 +12,8 @@ namespace Kvasir.Annotations {
     /// </remarks>
     /// <seealso cref="FieldName"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class NameAttribute : Attribute {
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
+    public sealed class NameAttribute : Attribute, INestableAnnotation {
+        /// <inheritdoc/>
         public string Path { get; init; } = "";
 
         /// <summary>
@@ -32,6 +29,11 @@ namespace Kvasir.Annotations {
         /// </param>
         public NameAttribute(string name) {
             Name = name;
+        }
+
+        /// <inheritdoc/>
+        INestableAnnotation INestableAnnotation.WithPath(string path) {
+            return new NameAttribute(Name) { Path = path };
         }
     }
 }

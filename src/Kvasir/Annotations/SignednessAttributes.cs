@@ -9,11 +9,8 @@ namespace Kvasir.Annotations {
         ///   The base class for all annotations that restrict the value for the Field backing a particular numeric-type
         ///   property relative to zero.
         /// </summary>
-        public abstract class SignednessAttribute : Attribute {
-            /// <summary>
-            ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-            ///   which the annotation actually applies.
-            /// </summary>
+        public abstract class SignednessAttribute : Attribute, INestableAnnotation {
+            /// <inheritdoc/>
             public string Path { get; init; } = "";
 
             /// <summary>
@@ -31,6 +28,23 @@ namespace Kvasir.Annotations {
                 Debug.Assert(op.IsValid());
                 Operator = op;
             }
+
+            /// <summary>
+            ///   Creates an exact copy of a <see cref="SignednessAttribute"/>, but with a different <see cref="Path"/>.
+            /// </summary>
+            /// <param name="path">
+            ///   The new <see cref="Path"/>.
+            /// </param>
+            /// <returns>
+            ///   A <see cref="SignednessAttribute"/> of the same most-derived type as <c>this</c>, whose
+            ///   <see cref="Path"/> attribute is exactly <paramref name="path"/>.
+            /// </returns>
+            private protected abstract SignednessAttribute WithPath(string path);
+
+            /// <inheritdoc/>
+            INestableAnnotation INestableAnnotation.WithPath(string path) {
+                return WithPath(path);
+            }
         }
 
         /// <summary>
@@ -44,6 +58,11 @@ namespace Kvasir.Annotations {
             /// </summary>
             public IsNonZeroAttribute()
                 : base(ComparisonOperator.NE) {}
+
+            /// <inheritdoc/>
+            private protected sealed override SignednessAttribute WithPath(string path) {
+                return new IsNonZeroAttribute() { Path = path };
+            }
         }
 
         /// <summary>
@@ -57,6 +76,11 @@ namespace Kvasir.Annotations {
             /// </summary>
             public IsPositiveAttribute()
                 : base(ComparisonOperator.GT) {}
+
+            /// <inheritdoc/>
+            private protected sealed override SignednessAttribute WithPath(string path) {
+                return new IsPositiveAttribute() { Path = path };
+            }
         }
 
         /// <summary>
@@ -70,6 +94,11 @@ namespace Kvasir.Annotations {
             /// </summary>
             public IsNegativeAttribute()
                 : base(ComparisonOperator.LT) {}
+
+            /// <inheritdoc/>
+            private protected sealed override SignednessAttribute WithPath(string path) {
+                return new IsNegativeAttribute() { Path = path };
+            }
         }
     }
 }

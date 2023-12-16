@@ -46,7 +46,22 @@ namespace UT.Kvasir.Annotations {
             attr.Operator.Should().Be(ComparisonOperator.NE);
             attr.Anchor.Should().Be(DBNull.Value);
         }
-        
+
+        [TestMethod] public void IsNot_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsNotAttribute("Scottsbluff");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsNotAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsNotAttribute)!.Operator.Should().Be(original.Operator);
+            (attr as Check.IsNotAttribute)!.Anchor.Should().Be(original.Anchor);
+        }
+
         [TestMethod] public void IsNot_UniqueId() {
             // Arrange
             var attr = new Check.IsNotAttribute("Chula Vista");
@@ -96,6 +111,21 @@ namespace UT.Kvasir.Annotations {
             attr.Path.Should().BeEmpty();
             attr.Operator.Should().Be(ComparisonOperator.GT);
             attr.Anchor.Should().Be(DBNull.Value);
+        }
+
+        [TestMethod] public void IsGreaterThan_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsGreaterThanAttribute("Fredericksburg");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsGreaterThanAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsGreaterThanAttribute)!.Operator.Should().Be(original.Operator);
+            (attr as Check.IsGreaterThanAttribute)!.Anchor.Should().Be(original.Anchor);
         }
 
         [TestMethod] public void IsGreaterThan_UniqueId() {
@@ -149,6 +179,21 @@ namespace UT.Kvasir.Annotations {
             attr.Anchor.Should().Be(DBNull.Value);
         }
 
+        [TestMethod] public void IsGreaterOrEqual_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsGreaterOrEqualToAttribute("Spotsylvania Courthouse");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsGreaterOrEqualToAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsGreaterOrEqualToAttribute)!.Operator.Should().Be(original.Operator);
+            (attr as Check.IsGreaterOrEqualToAttribute)!.Anchor.Should().Be(original.Anchor);
+        }
+
         [TestMethod] public void IsGreaterOrEqualTo_UniqueId() {
             // Arrange
             var attr = new Check.IsGreaterOrEqualToAttribute("Salinas");
@@ -200,6 +245,21 @@ namespace UT.Kvasir.Annotations {
             attr.Anchor.Should().Be(DBNull.Value);
         }
 
+        [TestMethod] public void IsLessThan_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsLessThanAttribute("Matewan");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsLessThanAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsLessThanAttribute)!.Operator.Should().Be(original.Operator);
+            (attr as Check.IsLessThanAttribute)!.Anchor.Should().Be(original.Anchor);
+        }
+
         [TestMethod] public void IsLessThan_UniqueId() {
             // Arrange
             var attr = new Check.IsLessThanAttribute("Columbia");
@@ -249,6 +309,21 @@ namespace UT.Kvasir.Annotations {
             attr.Path.Should().BeEmpty();
             attr.Operator.Should().Be(ComparisonOperator.LTE);
             attr.Anchor.Should().Be(DBNull.Value);
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsLessOrEqualToAttribute("Oswego");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsLessOrEqualToAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsLessOrEqualToAttribute)!.Operator.Should().Be(original.Operator);
+            (attr as Check.IsLessOrEqualToAttribute)!.Anchor.Should().Be(original.Anchor);
         }
 
         [TestMethod] public void IsLessOrEqualTo_UniqueId() {

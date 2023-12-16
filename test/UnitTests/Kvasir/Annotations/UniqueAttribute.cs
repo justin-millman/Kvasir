@@ -57,6 +57,21 @@ namespace UT.Kvasir.Annotations {
             attr.Name.ToString().Should().StartWith(UniqueAttribute.ANONYMOUS_PREFIX);
         }
 
+        [TestMethod] public void Unique_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new UniqueAttribute();
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<UniqueAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as UniqueAttribute)!.Name.Should().Be(original.Name);
+            (attr as UniqueAttribute)!.IsAnonymous.Should().Be(original.IsAnonymous);
+        }
+
         [TestMethod] public void Unique_UniqueId() {
             // Arrange
             var attr = new UniqueAttribute();

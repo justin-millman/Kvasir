@@ -12,12 +12,14 @@ namespace Kvasir.Annotations {
     ///   and insist that the storage be a numeric type instead.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class NumericAttribute : Attribute {
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
+    public sealed class NumericAttribute : Attribute, INestableAnnotation {
+        /// <inheritdoc/>
         public string Path { get; init; } = "";
+
+        /// <inheritdoc/>
+        INestableAnnotation INestableAnnotation.WithPath(string path) {
+            return new NumericAttribute() { Path = path };
+        }
     }
 
     /// <summary>
@@ -31,11 +33,13 @@ namespace Kvasir.Annotations {
     ///   and insist that the storage be a string type even if enumeration support is available.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class AsStringAttribute : Attribute {
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
+    public sealed class AsStringAttribute : Attribute, INestableAnnotation {
+        /// <inheritdoc/>
         public string Path { get; init; } = "";
+
+        /// <inheritdoc/>
+        INestableAnnotation INestableAnnotation.WithPath(string path) {
+            return new AsStringAttribute() { Path = path };
+        }
     }
 }

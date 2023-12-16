@@ -26,11 +26,8 @@ namespace Kvasir.Annotations {
     /// <seealso cref="Check.IsNotOneOfAttribute"/>
     /// <seealso cref="Check.ComplexAttribute"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class CheckAttribute : Attribute {
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
+    public sealed class CheckAttribute : Attribute, INestableAnnotation {
+        /// <inheritdoc/>
         public string Path { get; init; } = "";
 
         /// <summary>
@@ -95,6 +92,23 @@ namespace Kvasir.Annotations {
                 UserError = $"error constructing {constraint.FullName!} from arguments: {argString} ({reason})";
                 generator_ = null;
             }
+        }
+
+        /// <summary>
+        ///   Constructs a new instance of the <see cref="CheckAttribute"/> class.
+        /// </summary>
+        /// <param name="generator">
+        ///   The already-constructed <see cref="IConstraintGenerator"/> to be used to produce the <c>CHECK</c>
+        ///   constraint clause for this annotation.
+        /// </param>
+        private CheckAttribute(IConstraintGenerator generator) {
+            generator_ = generator;
+        }
+
+        /// <inheritdoc/>
+        INestableAnnotation INestableAnnotation.WithPath(string path) {
+            Debug.Assert(generator_ is not null);
+            return new CheckAttribute(generator_) { Path = path };
         }
 
 

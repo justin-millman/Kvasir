@@ -11,11 +11,8 @@ namespace Kvasir.Annotations {
         ///   The base class for all annotations that restrict the value for the Field backing a particular property
         ///   relative to a collection of anchor values.
         /// </summary>
-        public abstract class InclusionAttribute : Attribute {
-            /// <summary>
-            ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-            ///   which the annotation actually applies.
-            /// </summary>
+        public abstract class InclusionAttribute : Attribute, INestableAnnotation {
+            /// <inheritdoc/>
             public string Path { get; init; } = "";
 
             /// <summary>
@@ -50,6 +47,23 @@ namespace Kvasir.Annotations {
                 Operator = op;
                 Anchor = anchor.Select(v => v ?? DBNull.Value).ToArray();
             }
+
+            /// <summary>
+            ///   Creates an exact copy of a <see cref="InclusionAttribute"/>, but with a different <see cref="Path"/>.
+            /// </summary>
+            /// <param name="path">
+            ///   The new <see cref="Path"/>.
+            /// </param>
+            /// <returns>
+            ///   A <see cref="InclusionAttribute"/> of the same most-derived type as <c>this</c>, whose
+            ///   <see cref="Path"/> attribute is exactly <paramref name="path"/>.
+            /// </returns>
+            private protected abstract InclusionAttribute WithPath(string path);
+
+            /// <inheritdoc/>
+            INestableAnnotation INestableAnnotation.WithPath(string path) {
+                return WithPath(path);
+            }
         }
 
         /// <summary>
@@ -75,6 +89,21 @@ namespace Kvasir.Annotations {
             /// </remarks>
             public IsOneOfAttribute(object first, params object[] rest)
                 : base(InclusionOperator.In, rest.Prepend(first)) {}
+
+            /// <summary>
+            ///   Construct a new instance of the <see cref="IsOneOfAttribute"/> class.
+            /// </summary>
+            /// <param name="all">
+            ///   The complete discrete set of options, of which the value that the Field backing the annotated property
+            ///   must be one.
+            /// </param>
+            private IsOneOfAttribute(IEnumerable<object> all)
+                : base(InclusionOperator.In, all) {}
+
+            /// <inheritdoc/>
+            private protected sealed override InclusionAttribute WithPath(string path) {
+                return new IsOneOfAttribute(Anchor) { Path = path };
+            }
         }
 
         /// <summary>
@@ -100,6 +129,21 @@ namespace Kvasir.Annotations {
             /// </remarks>
             public IsNotOneOfAttribute(object first, params object[] rest)
                 : base(InclusionOperator.NotIn, rest.Prepend(first)) {}
+
+            /// <summary>
+            ///   Construct a new instance of the <see cref="IsOneOfAttribute"/> class.
+            /// </summary>
+            /// <param name="all">
+            ///   The complete discrete set of options, of which the value that the Field backing the annotated property
+            ///   cannot be one.
+            /// </param>
+            private IsNotOneOfAttribute(IEnumerable<object> all)
+                : base(InclusionOperator.NotIn, all) { }
+
+            /// <inheritdoc/>
+            private protected sealed override InclusionAttribute WithPath(string path) {
+                return new IsNotOneOfAttribute(Anchor) { Path = path };
+            }
         }
     }
 }

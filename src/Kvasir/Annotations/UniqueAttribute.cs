@@ -5,16 +5,13 @@ namespace Kvasir.Annotations {
     ///   An annotation that marks the Field backing a particular property as being part of a <c>UNIQUE</c> constraint.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class UniqueAttribute : Attribute {
+    public sealed class UniqueAttribute : Attribute, INestableAnnotation {
         /// <summary>
         ///   The name prefix reserved for use by Kvasir itself.
         /// </summary>
         public static string ANONYMOUS_PREFIX => "@@@";
 
-        /// <summary>
-        ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
-        ///   which the annotation actually applies.
-        /// </summary>
+        /// <inheritdoc/>
         public string Path { get; init; } = "";
 
         /// <summary>
@@ -57,6 +54,25 @@ namespace Kvasir.Annotations {
         internal UniqueAttribute(char _) {
             Name = SYNTHETIC_NAME;
             IsAnonymous = true;
+        }
+
+        /// <summary>
+        ///   Constructs a new instance of the <see cref="UniqueAttribute"/> class.
+        /// </summary>
+        /// <param name="name">
+        ///   The name of the <c>UNIQUE</c> constraint.
+        /// </param>
+        /// <param name="anonymous">
+        ///   Whether or not the <c>UNIQUE</c> constraint is "anonymous."
+        /// </param>
+        private UniqueAttribute(string name, bool anonymous) {
+            Name = name;
+            IsAnonymous = anonymous;
+        }
+
+        /// <inheritdoc/>
+        INestableAnnotation INestableAnnotation.WithPath(string path) {
+            return new UniqueAttribute(Name, IsAnonymous) { Path = path };
         }
 
 

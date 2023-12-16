@@ -35,6 +35,21 @@ namespace UT.Kvasir.Annotations {
             attr.Anchor.Should().BeEquivalentTo(values);
         }
 
+        [TestMethod] public void IsOneOf_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsOneOfAttribute("Corvallis", "Muncie", "Hanover");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsOneOfAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsOneOfAttribute)!.Operator.Should().Be(original.Operator);
+            (attr as Check.IsOneOfAttribute)!.Anchor.Should().BeEquivalentTo(original.Anchor);
+        }
+
         [TestMethod] public void IsOneOf_UniqueId() {
             // Arrange
             var attr = new Check.IsOneOfAttribute("Concord", "Inglewood", "San Jacinto");
@@ -97,6 +112,21 @@ namespace UT.Kvasir.Annotations {
             attr.Path.Should().Be(path);
             attr.Operator.Should().Be(InclusionOperator.NotIn);
             attr.Anchor.Should().BeEquivalentTo(values);
+        }
+
+        [TestMethod] public void IsNotOneOf_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsNotOneOfAttribute("Wahpeton", "Bethlehem", "Kodiak", "Clarksville");
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsNotOneOfAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsNotOneOfAttribute)!.Operator.Should().Be(original.Operator);
+            (attr as Check.IsNotOneOfAttribute)!.Anchor.Should().BeEquivalentTo(original.Anchor);
         }
 
         [TestMethod] public void IsNotOneOf_UniqueId() {

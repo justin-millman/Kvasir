@@ -2,8 +2,11 @@ using System;
 
 namespace Kvasir.Annotations {
     public static partial class Check {
-        ///
-        public abstract class StringLengthAttribute : Attribute {
+        /// <summary>
+        ///   The base class for all annotations that restrict the length of the value for the Field backing a
+        ///   particular string-type property.
+        /// </summary>
+        public abstract class StringLengthAttribute : Attribute, INestableAnnotation {
             /// <summary>
             ///   The dot-separated path, relative to the property on which the annotation is placed, to the property to
             ///   which the annotation actually applies.
@@ -37,6 +40,24 @@ namespace Kvasir.Annotations {
                 Minimum = minimum ?? long.MinValue;
                 Maximum = maximum ?? long.MaxValue;
             }
+
+            /// <summary>
+            ///   Creates an exact copy of a <see cref="StringLengthAttribute"/>, but with a different
+            ///   <see cref="Path"/>.
+            /// </summary>
+            /// <param name="path">
+            ///   The new <see cref="Path"/>.
+            /// </param>
+            /// <returns>
+            ///   A <see cref="StringLengthAttribute"/> of the same most-derived type as <c>this</c>, whose
+            ///   <see cref="Path"/> attribute is exactly <paramref name="path"/>.
+            /// </returns>
+            private protected abstract StringLengthAttribute WithPath(string path);
+
+            /// <inheritdoc/>
+            INestableAnnotation INestableAnnotation.WithPath(string path) {
+                return WithPath(path);
+            }
         }
 
 
@@ -51,6 +72,11 @@ namespace Kvasir.Annotations {
             /// </summary>
             public IsNonEmptyAttribute()
                 : base(minimum: 1) {}
+
+            /// <inheritdoc/>
+            private protected sealed override StringLengthAttribute WithPath(string path) {
+                return new IsNonEmptyAttribute() { Path = path };
+            }
         }
 
         /// <summary>
@@ -67,6 +93,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public LengthIsAtLeastAttribute(int lowerBound)
                 : base(minimum: lowerBound) {}
+
+            /// <inheritdoc/>
+            private protected sealed override StringLengthAttribute WithPath(string path) {
+                return new LengthIsAtLeastAttribute((int)Minimum) { Path = path };
+            }
         }
 
         /// <summary>
@@ -83,6 +114,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public LengthIsAtMostAttribute(int upperBound)
                 : base(maximum: upperBound) {}
+
+            /// <inheritdoc/>
+            private protected sealed override StringLengthAttribute WithPath(string path) {
+                return new LengthIsAtMostAttribute((int)Maximum) { Path = path };
+            }
         }
 
         /// <summary>
@@ -102,6 +138,11 @@ namespace Kvasir.Annotations {
             /// </param>
             public LengthIsBetweenAttribute(int lowerBound, int upperBound)
                 : base(minimum: lowerBound, maximum: upperBound) {}
+
+            /// <inheritdoc/>
+            private protected sealed override LengthIsBetweenAttribute WithPath(string path) {
+                return new LengthIsBetweenAttribute((int)Minimum, (int)Maximum) { Path = path };
+            }
         }
     }
 }

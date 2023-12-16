@@ -30,6 +30,21 @@ namespace UT.Kvasir.Annotations {
             attr.Maximum.Should().Be(long.MaxValue);
         }
 
+        [TestMethod] public void IsNonEmpty_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.IsNonEmptyAttribute();
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.IsNonEmptyAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.IsNonEmptyAttribute)!.Minimum.Should().Be(original.Minimum);
+            (attr as Check.IsNonEmptyAttribute)!.Maximum.Should().Be(original.Maximum);
+        }
+
         [TestMethod] public void IsNotEmpty_UniqueId() {
             // Arrange
             var attr = new Check.IsNonEmptyAttribute();
@@ -66,6 +81,21 @@ namespace UT.Kvasir.Annotations {
             attr.Path.Should().Be(path);
             attr.Minimum.Should().Be(bound);
             attr.Maximum.Should().Be(long.MaxValue);
+        }
+
+        [TestMethod] public void LengthIsAtLeast_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.LengthIsAtLeastAttribute(17);
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.LengthIsAtLeastAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.LengthIsAtLeastAttribute)!.Minimum.Should().Be(original.Minimum);
+            (attr as Check.LengthIsAtLeastAttribute)!.Maximum.Should().Be(original.Maximum);
         }
 
         [TestMethod] public void LengthIsAtLeast_UniqueId() {
@@ -106,6 +136,21 @@ namespace UT.Kvasir.Annotations {
             attr.Maximum.Should().Be(bound);
         }
 
+        [TestMethod] public void LengthIsAtMost_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.LengthIsAtMostAttribute(4918251);
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.LengthIsAtMostAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.LengthIsAtMostAttribute)!.Minimum.Should().Be(original.Minimum);
+            (attr as Check.LengthIsAtMostAttribute)!.Maximum.Should().Be(original.Maximum);
+        }
+
         [TestMethod] public void LengthIsAtMost_UniqueId() {
             // Arrange
             var attr = new Check.LengthIsAtMostAttribute(19);
@@ -144,6 +189,21 @@ namespace UT.Kvasir.Annotations {
             attr.Path.Should().Be(path);
             attr.Minimum.Should().Be(lower);
             attr.Maximum.Should().Be(upper);
+        }
+
+        [TestMethod] public void LengthIsBetween_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var original = new Check.LengthIsBetweenAttribute(189, 5124910);
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<Check.LengthIsBetweenAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as Check.LengthIsBetweenAttribute)!.Minimum.Should().Be(original.Minimum);
+            (attr as Check.LengthIsBetweenAttribute)!.Maximum.Should().Be(original.Maximum);
         }
 
         [TestMethod] public void LengthIsBetween_UniqueId() {

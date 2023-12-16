@@ -123,6 +123,22 @@ namespace UT.Kvasir.Annotations {
                 .Match("*construct*");
         }
 
+        [TestMethod] public void Check_DuplicateWithPath() {
+            // Arrange
+            var path = "Nested.Path";
+            var constraintType = typeof(ComplexConstraint);
+            var original = new CheckAttribute(constraintType, ComplexConstraint.Argument);
+
+            // Act
+            var attr = (original as INestableAnnotation).WithPath(path);
+
+            // Assert
+            attr.Should().BeOfType<CheckAttribute>();
+            attr.Path.Should().Be(path);
+            (attr as CheckAttribute)!.UserError.Should().BeNull();
+            (attr as CheckAttribute)!.ConstraintGenerator.Should().Be(original.ConstraintGenerator);
+        }
+
         [TestMethod] public void Check_UniqueId() {
             // Arrange
             var attr = new CheckAttribute(typeof(SimpleConstraint));
