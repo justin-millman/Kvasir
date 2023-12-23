@@ -417,7 +417,7 @@ namespace UT.Kvasir.Relations {
             map.Should().ExposeEntry(deleted, Status.Saved);
         }
 
-        [TestMethod] public void AddExistingItem() {
+        [TestMethod] public void AddExistingItem_IsError() {
             // Arrange
             var pairs = new KVP[] {
                 new KVP("Christchurch", "New Zealand"),
