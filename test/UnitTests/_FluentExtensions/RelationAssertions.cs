@@ -25,6 +25,12 @@ namespace FluentAssertions {
         public static RelationAssertion Should<K, V>(this IReadOnlyRelationMap<K, V> self) where K : notnull where V : notnull {
             return new RelationAssertion(self);
         }
+        public static RelationAssertion Should<T>(this RelationOrderedList<T> self) where T : notnull {
+            return new RelationAssertion(self);
+        }
+        public static RelationAssertion Should<T>(this IReadOnlyRelationOrderedList<T> self) where T : notnull {
+            return new RelationAssertion(self);
+        }
 
         public class RelationAssertion : Primitives.ObjectAssertions {
             public new IRelation Subject { get; }

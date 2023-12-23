@@ -56,6 +56,9 @@ namespace Kvasir.Relations {
     /// <typeparam name="TValue">
     ///   The type of the value of the collection's key-value pairs.
     /// </typeparam>
+    /// <seealso cref="RelationList{T}"/>
+    /// <seealso cref="RelationSet{T}"/>
+    /// <seealso cref="RelationOrderedList{T}"/>
     public sealed class RelationMap<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>>, IDictionary,
         IDictionary<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>,
         IReadOnlyCollection<KeyValuePair<TKey, TValue>>, IReadOnlyDictionary<TKey, TValue>,

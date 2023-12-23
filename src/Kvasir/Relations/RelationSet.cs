@@ -44,6 +44,9 @@ namespace Kvasir.Relations {
     /// <typeparam name="T">
     ///   The type of element to be stored in the collection.
     /// </typeparam>
+    /// <seealso cref="RelationList{T}"/>
+    /// <seealso cref="RelationMap{TKey, TValue}"/>
+    /// <seealso cref="RelationOrderedList{T}"/>
     public sealed class RelationSet<T> : ICollection<T>, IEnumerable<T>, IReadOnlyCollection<T>,
         IReadOnlyRelationSet<T>, IReadOnlySet<T>, IRelation, ISet<T> where T : notnull {
 

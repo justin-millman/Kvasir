@@ -193,7 +193,7 @@ namespace UT.Kvasir.Relations {
             list.Should().ExposeEntry(elements[3], Status.Saved);
         }
 
-        [TestMethod] public void RemoveAtNegativeIndex() {
+        [TestMethod] public void RemoveAtNegativeIndex_IsError() {
             // Arrange
             var list = new RelationList<string>() { "West Covina", "Palatine" };
 
@@ -204,7 +204,7 @@ namespace UT.Kvasir.Relations {
             act.Should().ThrowExactly<ArgumentOutOfRangeException>().WithAnyMessage();
         }
 
-        [TestMethod] public void RemoveAtOverlargeIndex() {
+        [TestMethod] public void RemoveAtOverlargeIndex_IsError() {
             // Arrange
             var list = new RelationList<string>() { "Gulfport" };
 
@@ -259,7 +259,7 @@ namespace UT.Kvasir.Relations {
             list.Should().ExposeEntry(elements[3], Status.New);
         }
 
-        [TestMethod] public void RemoveInvalidRange() {
+        [TestMethod] public void RemoveInvalidRange_IsError() {
             // Arrange
             var list = new RelationList<string>() { "Fort Hood", "Manassas", "Narragansett Pier" };
 
@@ -581,7 +581,7 @@ namespace UT.Kvasir.Relations {
             list.Should().ExposeEntry(deleted, Status.Saved);
         }
 
-        [TestMethod] public void InsertNegativeIndex() {
+        [TestMethod] public void InsertNegativeIndex_IsError() {
             // Arrange
             var list = new RelationList<string>() { "Lander", "East Hartford" };
 
@@ -594,7 +594,7 @@ namespace UT.Kvasir.Relations {
             second_act.Should().ThrowExactly<ArgumentOutOfRangeException>().WithAnyMessage();
         }
 
-        [TestMethod] public void InsertOverlargeIndex() {
+        [TestMethod] public void InsertOverlargeIndex_IsError() {
             // Arrange
             var list = new RelationList<string>();
 
@@ -685,7 +685,7 @@ namespace UT.Kvasir.Relations {
             list.Should().ExposeEntry(insertions[2], Status.New);
         }
 
-        [TestMethod] public void InsertNullRange() {
+        [TestMethod] public void InsertNullRange_IsError() {
             // Arrange
             var list = new RelationList<string>();
 
@@ -696,7 +696,7 @@ namespace UT.Kvasir.Relations {
             act.Should().ThrowExactly<ArgumentNullException>().WithAnyMessage();
         }
 
-        [TestMethod] public void InsertInvalidRange() {
+        [TestMethod] public void InsertInvalidRange_IsError() {
             // Arrange
             var list = new RelationList<string>() { "Pontiac", "Quincy", "Tafuna" };
 
