@@ -204,6 +204,78 @@ namespace Kvasir.Translation {
         }
     }
 
+    internal readonly struct OrderedListRelationDescriptor : IRelationDescriptor {
+        public string AccessPath { get; init; }
+        public IReadOnlyList<string> Name { get; init; }
+        public Option<string> TableName { get; init; }
+        public IReadOnlyDictionary<string, Type> FieldTypes { get; init; }
+        public IReadOnlyDictionary<string, IReadOnlyList<Attribute>> Attributes { get; init; }
+
+        public OrderedListRelationDescriptor(string name, Type itemType, NullabilityInfo nullability) {
+            Debug.Assert(name is not null && name != "");
+            Debug.Assert(itemType is not null);
+            Debug.Assert(itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>));
+
+            var indexType = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!.PropertyType;
+            var elementType = itemType.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public)!.PropertyType;
+            Debug.Assert(indexType == typeof(uint));
+
+            AccessPath = "";
+            Name = new List<string>() { name };
+            TableName = Option.None<string>();
+            FieldTypes = new Dictionary<string, Type>() { { "Index", indexType }, { "Item", elementType } };
+
+            var attributes = new Dictionary<string, IReadOnlyList<Attribute>>() {
+                { "Index", new List<Attribute>() { new UniqueAttribute('\0') } },
+                { "Item", new List<Attribute>() }
+            };
+            if (nullability.GenericTypeArguments[0].ReadState == NullabilityState.Nullable) {
+                attributes["Item"] = new List<Attribute>(attributes["Item"]) { new NullableAttribute() };
+            }
+            Attributes = attributes;
+        }
+
+        public IRelationDescriptor WithEntity(Type entityType) {
+            Debug.Assert(FieldTypes.Count == 2);
+            var newAttributes = new Dictionary<string, IReadOnlyList<Attribute>>(Attributes);
+            newAttributes[entityType.Name] = new List<Attribute>() { new ColumnAttribute(0), new UniqueAttribute('\0') };
+
+            var updated = this with {
+                AccessPath = AccessPath,
+                Name = Name,
+                TableName = TableName,
+                FieldTypes = new Dictionary<string, Type>(FieldTypes) { { entityType.Name, entityType } },
+                Attributes = newAttributes
+            };
+
+            return updated;
+        }
+        public IRelationDescriptor WithAccessPath(string accessPath) {
+            return this with { AccessPath = accessPath };
+        }
+        public IRelationDescriptor WithName(IEnumerable<string> name) {
+            return this with { Name = name.ToList() };
+        }
+        public IRelationDescriptor WithTableName(string tableName) {
+            Debug.Assert(!TableName.HasValue);
+            return this with { TableName = Option.Some(tableName) };
+        }
+        public IRelationDescriptor WithAnnotation(string field, INestableAnnotation annotation) {
+            Debug.Assert(Attributes.ContainsKey(field));
+            Debug.Assert(annotation is not null);
+
+            var prefix = AccessPath == "" ? field : AccessPath + "." + field;
+            var newPath = annotation.Path[prefix.Length..];
+            newPath = newPath.StartsWith(".") ? newPath[1..] : newPath;
+
+            var newAttributes = new Dictionary<string, IReadOnlyList<Attribute>>(Attributes);
+            var newList = new List<Attribute>(newAttributes[field]) { (annotation.WithPath(newPath) as Attribute)! };
+            newAttributes[field] = newList;
+
+            return this with { Attributes = newAttributes };
+        }
+    }
+
     /////////////////////////////////////////// TYPES ///////////////////////////////////////////
 
     internal readonly record struct TypeDescriptor(

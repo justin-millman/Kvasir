@@ -424,6 +424,23 @@ namespace UT.Kvasir.Translation {
                 );
         }
 
+        [TestMethod] public void DefaultPrimaryKeyForOrderedListRelation() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PianoSonata);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "PianoSonata.Composer",
+                    "PianoSonata.OpusNumber",
+                    "Index"
+                );
+        }
+
         [TestMethod] public void RelationWithSingleViableCandidateKeyIncludingAnchor() {
             // Arrange
             var translator = new Translator();

@@ -157,6 +157,9 @@ namespace Kvasir.Translation {
                 if (relationType.Name.Contains("Map")) {
                     return new MapRelationDescriptor(property.Name, connectionType, nullability);
                 }
+                else if (relationType.Name.Contains("Ordered")) {
+                    return new OrderedListRelationDescriptor(property.Name, connectionType, nullability);
+                }
                 else {
                     return new ListSetRelationDescriptor(property.Name, connectionType, nullability);
                 }

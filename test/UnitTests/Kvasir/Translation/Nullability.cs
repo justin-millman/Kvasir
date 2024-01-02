@@ -238,7 +238,8 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations[0].Table.Should()
                 .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
-                .HaveField("Item").OfTypeText().BeingNullable().And
+                .HaveField("Index").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Item").OfTypeDecimal().BeingNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("PostOffice.ID")
                     .Against(translation.Principal.Table)
@@ -246,6 +247,15 @@ namespace UT.Kvasir.Translation {
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
             translation.Relations[1].Table.Should()
+                .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("PostOffice.ID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[2].Table.Should()
                 .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Item.Number").OfTypeText().BeingNullable().And
                 .HaveField("Item.State").OfTypeText().BeingNullable().And
@@ -255,7 +265,7 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
-            translation.Relations[2].Table.Should()
+            translation.Relations[3].Table.Should()
                 .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Key").OfTypeInt16().BeingNonNullable().And
                 .HaveField("Value").OfTypeText().BeingNullable().And
@@ -265,7 +275,7 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
-            translation.Relations[3].Table.Should()
+            translation.Relations[4].Table.Should()
                 .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Key").OfTypeDateTime().BeingNullable().And
                 .HaveField("Value.StampID").OfTypeGuid().BeingNullable().And
