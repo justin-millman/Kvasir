@@ -1,5 +1,5 @@
-﻿using System;
-using Kvasir.Translation.Synthetic;
+﻿using Kvasir.Translation.Synthetic;
+using System;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {

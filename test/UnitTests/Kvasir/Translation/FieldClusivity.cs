@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Kvasir.Exceptions;
-using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

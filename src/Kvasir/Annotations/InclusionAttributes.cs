@@ -138,7 +138,7 @@ namespace Kvasir.Annotations {
             ///   cannot be one.
             /// </param>
             private IsNotOneOfAttribute(IEnumerable<object> all)
-                : base(InclusionOperator.NotIn, all) { }
+                : base(InclusionOperator.NotIn, all) {}
 
             /// <inheritdoc/>
             private protected sealed override InclusionAttribute WithPath(string path) {
