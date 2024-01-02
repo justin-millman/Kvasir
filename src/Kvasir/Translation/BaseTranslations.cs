@@ -170,7 +170,7 @@ namespace Kvasir.Translation {
                 descriptor = descriptor.WithEntity(property.ReflectedType);
             }
 
-            var fields = new Dictionary<string, FieldDescriptor>() { };
+            var fields = new Dictionary<string, FieldDescriptor>() {};
             var relations = new Dictionary<string, IRelationDescriptor>() { { "", descriptor } };
             return new TranslationState(Fields: fields, Relations: relations);
         }

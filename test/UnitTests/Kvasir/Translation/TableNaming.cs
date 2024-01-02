@@ -2,7 +2,6 @@
 using Kvasir.Exceptions;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 using static UT.Kvasir.Translation.TableNaming;
 
