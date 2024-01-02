@@ -4,6 +4,7 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.CandidateKeys;
+
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Candidate Keys")]
     public class CandidateKeyTests {
@@ -365,6 +366,23 @@ namespace UT.Kvasir.Translation {
                 .HaveCandidateKey("Unique").OfFields(
                     "VoodooDoll.VoodooID",
                     "Key"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void AnchorPlusOrderedListIndexIsCandidateKey_Redundant() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(OPO);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveCandidateKey("Unique").OfFields(
+                    "OPO.ID",
+                    "Index"
                 ).And
                 .HaveNoOtherCandidateKeys();
         }

@@ -591,7 +591,7 @@ namespace UT.Kvasir.Translation {
             var translation = translator[source];
 
             // Assert
-            translation.Relations.Should().HaveCount(3);
+            translation.Relations.Should().HaveCount(4);
             translation.Relations[0].Table.Should()
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+CMakeTarget.FilesTable").And
                 .HaveField("CMakeTarget.Project").OfTypeText().BeingNonNullable().And
@@ -604,6 +604,18 @@ namespace UT.Kvasir.Translation {
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
             translation.Relations[1].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+CMakeTarget.LinkAgainstTable").And
+                .HaveField("CMakeTarget.Project").OfTypeText().BeingNonNullable().And
+                .HaveField("CMakeTarget.TargetName").OfTypeText().BeingNonNullable().And
+                .HaveField("Index").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Item").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("CMakeTarget.Project", "CMakeTarget.TargetName")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[2].Table.Should()
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+CMakeTarget.MacrosTable").And
                 .HaveField("CMakeTarget.Project").OfTypeText().BeingNonNullable().And
                 .HaveField("CMakeTarget.TargetName").OfTypeText().BeingNonNullable().And
@@ -615,7 +627,7 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
-            translation.Relations[2].Table.Should()
+            translation.Relations[3].Table.Should()
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+CMakeTarget.OptimizationLevelTable").And
                 .HaveField("CMakeTarget.Project").OfTypeText().BeingNonNullable().And
                 .HaveField("CMakeTarget.TargetName").OfTypeText().BeingNonNullable().And
@@ -640,7 +652,7 @@ namespace UT.Kvasir.Translation {
             var translation = translator[source];
 
             // Assert
-            translation.Relations.Should().HaveCount(3);
+            translation.Relations.Should().HaveCount(4);
             translation.Relations[0].Table.Should()
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+Forecast.DailiesTable").And
                 .HaveField("Forecast.City").OfTypeText().BeingNonNullable().And
@@ -666,6 +678,20 @@ namespace UT.Kvasir.Translation {
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
             translation.Relations[2].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+Forecast.ExtremeWeatherTable").And
+                .HaveField("Forecast.City").OfTypeText().BeingNonNullable().And
+                .HaveField("Index").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Item").OfTypeEnumeration(
+                    Forecast.Extremity.Hurricane, Forecast.Extremity.Tornado, Forecast.Extremity.Blizzard,
+                    Forecast.Extremity.Thunderstorm, Forecast.Extremity.Hailstorm, Forecast.Extremity.Sandstorm
+                ).BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Forecast.City")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[3].Table.Should()
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+Forecast.MeteorologistsTable").And
                 .HaveField("Forecast.City").OfTypeText().BeingNonNullable().And
                 .HaveField("Item").OfTypeText().BeingNonNullable().And
@@ -686,7 +712,7 @@ namespace UT.Kvasir.Translation {
             var translation = translator[source];
 
             // Assert
-            translation.Relations.Should().HaveCount(3);
+            translation.Relations.Should().HaveCount(4);
             translation.Relations[0].Table.Should()
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+CivVIDistrict.AllowedTerrainTable").And
                 .HaveField("CivVIDistrict.DistrictName").OfTypeText().BeingNonNullable().And
@@ -717,6 +743,17 @@ namespace UT.Kvasir.Translation {
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
             translation.Relations[2].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+CivVIDistrict.IconsTable").And
+                .HaveField("CivVIDistrict.DistrictName").OfTypeText().BeingNonNullable().And
+                .HaveField("Index").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Item").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("CivVIDistrict.DistrictName")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[3].Table.Should()
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+CivVIDistrict.YieldsTable").And
                 .HaveField("CivVIDistrict.DistrictName").OfTypeText().BeingNonNullable().And
                 .HaveField("Key").OfTypeInt32().BeingNonNullable().And

@@ -331,10 +331,12 @@ namespace UT.Kvasir.Translation {
             public RelationList<string> Files { get; set; } = new();
             public RelationSet<Macro> Macros { get; set; } = new();
             public RelationMap<Mode, int> OptimizationLevel { get; set; } = new();
+            public RelationOrderedList<string> LinkAgainst { get; set; } = new();
         }
 
         // Test Scenario: Nullable Relations of Non-Nullable Elements (✓recognized✓)
         public class Forecast {
+            public enum Extremity { Hurricane, Tornado, Thunderstorm, Blizzard, Hailstorm, Sandstorm }
             public record struct SingleDay(DateTime Date, float HighTemp, float LowTemp, double ChanceRain);
 
             [PrimaryKey] public string City { get; set; } = "";
@@ -342,6 +344,7 @@ namespace UT.Kvasir.Translation {
             public RelationList<SingleDay>? Dailies { get; set; }
             public RelationSet<string>? Meteorologists { get; set; }
             public RelationMap<string, bool>? DataSources { get; set; }
+            public RelationOrderedList<Extremity>? ExtremeWeather { get; set; }
         }
 
         // Test Scenario: Read-Only Relations (✓recognized✓)
@@ -371,6 +374,7 @@ namespace UT.Kvasir.Translation {
             public IReadOnlyRelationList<Terrain> AllowedTerrain { get; set; } = new RelationList<Terrain>();
             public IReadOnlyRelationSet<CivVIBuilding> Buildings { get; set; } = new RelationSet<CivVIBuilding>();
             public IReadOnlyRelationMap<int, Yield> Yields { get; set; } = new RelationMap<int, Yield>();
+            public IReadOnlyRelationOrderedList<string> Icons { get; set; } = new RelationOrderedList<string>();
         }
 
         // Test Scenario: Relations Nested Within Aggregates (✓recognized✓)
@@ -984,6 +988,7 @@ namespace UT.Kvasir.Translation {
             public RelationSet<string?> Employees { get; set; } = new();
             public RelationList<LicensePlate?> MailTrucks { get; set; } = new();
             public RelationMap<DateTime?, Stamp?> Stamps { get; set; } = new();
+            public RelationOrderedList<decimal?> Budgets { get; set; } = new();
         }
 
         // Test Scenario: Relation with Nullable Aggregate Element Type with Only Nullable Fields (✗ambiguous✗)
@@ -2707,6 +2712,23 @@ namespace UT.Kvasir.Translation {
             public ulong AttributableDeaths { get; set; }
         }
 
+        // Test Scenario: Default Deduction for OrderedList Relation (✓identified✓)
+        public class PianoSonata {
+            public enum Tone { A, B, C, D, E, F, G, Rest }
+            public enum Accentuation { Sharp, Flat, Natural }
+            public enum Length { Full, Half, Quarter, Eight, Sixteenth }
+            public record struct TimeSignature(byte Top, byte Bottom);
+            public record struct Note(Tone Tone, Accentuation? Accent, Length Beat);
+
+            [PrimaryKey] public string Composer { get; set; } = "";
+            [PrimaryKey] public ushort OpusNumber { get; set; }
+            public string? Nickname { get; set; }
+            public double Duration { get; set; }
+            public TimeSignature Signature { get; set; }
+            public sbyte Movements { get; set; }
+            public RelationOrderedList<Note> Score { get; set; } = new();
+        }
+
         // Test Scenario: Single Candidate Key on Relation Including Anchor (✓identified✓)
         public class ChromeExtension {
             public record struct Rating(string Reviewer, DateTime Timestamp, double Stars);
@@ -3325,6 +3347,19 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey(Path = "VoodooDoll.VoodooID"), PrimaryKey(Path = "Value"), Unique("Unique", Path = "VoodooDoll.VoodooID"), Unique("Unique", Path = "Key")] public RelationMap<Color, string> Pins { get; set; } = new();
             public bool Effective { get; set; }
             public Thing Material { get; set; }
+        }
+
+        // Test Scenario: Anchor + Index in Candidate Key (✓redundant✓)
+        public class OPO {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Name { get; set; } = "";
+            public string State { get; set; } = "";
+            public DateTime Inception { get; set; }
+            public ulong HeartsProcessed { get; set; }
+            public ulong LungsProcessed { get; set; }
+            public ulong LiversProcessed { get; set; }
+            public ulong KidneysProcessed { get; set; }
+            [PrimaryKey(Path = "OPO.ID"), PrimaryKey(Path = "Item"), Unique("Unique", Path = "OPO.ID"), Unique("Unique", Path = "Index")] public RelationOrderedList<string> Administrators { get; set; } = new();
         }
 
         // Test Scenario: Scalar Fields in Same Candidate Key as Nested Fields (✓recognized✓)
