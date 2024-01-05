@@ -11129,4 +11129,90 @@ namespace UT.Kvasir.Translation {
             public bool Successful { get; set; }
         }
     }
+
+    internal static class DataExtraction {
+        // Scenario: Non-Null, Public, Instance Scalars and Enumerations (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null, Public, Static Scalars and Enumerations (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null, Non-Public, Instance Scalars and Enumerations (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null, Non-Public, Static Scalars and Enumerations (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Null Scalars and Enumerations (✓null extracted✓)
+        // [TODO]
+
+        // Scenario: Explicit Interface Implementation Property (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Virtual Override Property (✓most-derived values extracted✓)
+        // [TODO]
+
+        // Scenario: Hiding Property (✓hiding values extracted✓)
+        // [TODO]
+
+        // Scenario: [DataConverter] Applied to Scalar Property (✓converted values extracted✓)
+        // [TODO]
+
+        // Scenario: [Numeric] Applied to Enumeration Property (✓converted values extracted✓)
+        // [TODO]
+
+        // Scenario: [AsString] Applied to Enumeration Property (✓converted values extracted✓)
+        // [TODO]
+
+        // Scenario: [Calculated] Property (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null Aggregate Property with Single Scalar/Enumeration Nested Fields (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null Aggregate Property with Multiple Scalar/Enumeration Nested Fields (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null Aggregate Property with All Null Nested Fields (✓null values extracted✓)
+        // [TODO]
+
+        // Scenario: Data Conversion Applied to Aggregate-Nested Fields (✓converted values extracted✓)
+        // [TODO]
+
+        // Scenario: Null Aggregate Property with One Nested Field (✓null values extracted✓)
+        // [TODO]
+
+        // Scenario: Null Aggregate Property with Multiple Nested Fields (✓null values extracted✓)
+        // [TODO]
+
+        // Scenario: Nested Aggregate Property (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null Reference Property (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Null Reference Property with Single-Field Primary Key (✓null values extracted✓)
+        // [TODO]
+
+        // Scenario: Null Reference Property with Multi-Field Primary Key (✓null values extracted✓)
+        // [TODO]
+
+        // Scenario: Data Conversion Applied to Reference-Nested Field (✓converted values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null Relation Property with Zero Elements (✓no values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null Relation Property with At Least One Element (✓values extracted per element✓)
+        // [TODO]
+
+        // Scenario: Null Relation Property (✓no values extracted✓)
+        // [TODO]
+
+        // Scenario: Non-Null Relation Property with Owning Entity in Element (✓values extracted✓)
+        // [TODO]
+
+        // Scenario: Data Conversion Applied to Relation-Nested Field (✓converted values extracted✓)
+        // [TODO]
+    }
 }
