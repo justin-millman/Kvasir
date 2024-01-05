@@ -355,6 +355,25 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void IncludeInModel_ExplicitInterfaceImplementation() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BasicDiceRoll);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(BasicDiceRoll.RollID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(IDiceRoll.NumDice)).OfTypeInt32().BeingNonNullable().And
+                .HaveField(nameof(IDiceRoll.DiceSides)).OfTypeInt32().BeingNonNullable().And
+                .HaveField(nameof(IDiceRoll.Plus)).OfTypeInt32().BeingNonNullable().And
+                .HaveField(nameof(IDiceRoll.Advantage)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField(nameof(IDiceRoll.Disadvantage)).OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void CodeOnly_InterfaceProperty_Redundant() {
             // Arrange
             var translator = new Translator();

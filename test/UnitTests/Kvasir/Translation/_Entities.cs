@@ -746,6 +746,23 @@ namespace UT.Kvasir.Translation {
             [IncludeInModel] public override string? LowestKey { get; set; }
         }
 
+        // Test Scenario: Explicit Interface Implementation Property Marked as [IncludeInModel] (✓included✓)
+        public interface IDiceRoll {
+            int NumDice { get; set; }
+            int DiceSides { get; set; }
+            int Plus { get; set; }
+            bool Advantage { get; set; }
+            bool Disadvantage { get; set; }
+        }
+        public class BasicDiceRoll : IDiceRoll {
+            [PrimaryKey] public Guid RollID { get; set; }
+            [IncludeInModel] int IDiceRoll.NumDice { get; set; }
+            [IncludeInModel] int IDiceRoll.DiceSides { get; set; }
+            [IncludeInModel] int IDiceRoll.Plus { get; set; }
+            [IncludeInModel] bool IDiceRoll.Advantage { get; set; }
+            [IncludeInModel] bool IDiceRoll.Disadvantage { get; set; }
+        }
+
         // Test Scenario: Public Property Declared by an Interface Marked as [CodeOnly] (✓redundant✓)
         public interface IWebProtocol {
             int RFC { get; set; }

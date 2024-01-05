@@ -260,6 +260,7 @@ Denarian
 Dentist
 Desert
 Diamond
+Dice Roll
 Dinosaur
 Directory (file system)
 Discworld Guild
