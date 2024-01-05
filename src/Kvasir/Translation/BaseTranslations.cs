@@ -31,7 +31,7 @@ namespace Kvasir.Translation {
 
             var descriptor = new FieldDescriptor(
                 AccessPath: "",
-                Name: Enumerable.Repeat(property.Name, 1).ToList(),
+                Name: Enumerable.Repeat(PropertyName(property), 1).ToList(),
                 Nullability: IsNullable.No,
                 AbsoluteColumn: Option.None<int>(),
                 RelativeColumn: 0,
@@ -65,7 +65,7 @@ namespace Kvasir.Translation {
 
             var descriptor = new FieldDescriptor(
                 AccessPath: "",
-                Name: Enumerable.Repeat(property.Name, 1).ToList(),
+                Name: Enumerable.Repeat(PropertyName(property), 1).ToList(),
                 Nullability: IsNullable.No,
                 AbsoluteColumn: Option.None<int>(),
                 RelativeColumn: 0,
@@ -96,19 +96,20 @@ namespace Kvasir.Translation {
             Debug.Assert(property is not null);
             Debug.Assert(!DBType.IsSupported(property.PropertyType) && property.PropertyType.IsValueType);
 
+            var propertyName = PropertyName(property);
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             var typeTranslation = TranslateType(type);
 
             var fields = new Dictionary<string, FieldDescriptor>();
             foreach (var (path, descriptor) in typeTranslation.Fields) {
                 fields[path] = descriptor with {
-                    Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList()
+                    Name = new List<string>(descriptor.Name).Prepend(propertyName).ToList()
                 };
             }
 
             var relations = new Dictionary<string, IRelationDescriptor>();
             foreach (var (path, descriptor) in typeTranslation.Relations) {
-                relations[path] = descriptor.WithName(new List<string>(descriptor.Name).Prepend(property.Name));
+                relations[path] = descriptor.WithName(new List<string>(descriptor.Name).Prepend(propertyName));
                 if (property.ReflectedType!.IsClass) {
                     relations[path] = relations[path].WithEntity(property.ReflectedType);
                 }
@@ -129,7 +130,7 @@ namespace Kvasir.Translation {
             var fields = new Dictionary<string, FieldDescriptor>();
             foreach ((int idx, var (path, descriptor)) in refKey.Select((kvp, idx) => (idx, kvp))) {
                 fields[path] = descriptor with {
-                    Name = new List<string>(descriptor.Name).Prepend(property.Name).ToList(),
+                    Name = new List<string>(descriptor.Name).Prepend(PropertyName(property)).ToList(),
                     AbsoluteColumn = Option.None<int>(),
                     RelativeColumn = idx,
                     Default = Option.None<object?>(),
@@ -152,16 +153,17 @@ namespace Kvasir.Translation {
             var connectionProperty = relationType.GetProperties(flags)[0];
             var connectionType = (Type)connectionProperty.GetValue(null)!;
             var nullability = new NullabilityInfoContext().Create(property);
+            var propertyName = PropertyName(property);
 
             IRelationDescriptor GetDescriptor() {
                 if (relationType.Name.Contains("Map")) {
-                    return new MapRelationDescriptor(property.Name, connectionType, nullability);
+                    return new MapRelationDescriptor(propertyName, connectionType, nullability);
                 }
                 else if (relationType.Name.Contains("Ordered")) {
-                    return new OrderedListRelationDescriptor(property.Name, connectionType, nullability);
+                    return new OrderedListRelationDescriptor(propertyName, connectionType, nullability);
                 }
                 else {
-                    return new ListSetRelationDescriptor(property.Name, connectionType, nullability);
+                    return new ListSetRelationDescriptor(propertyName, connectionType, nullability);
                 }
             }
 
@@ -173,6 +175,15 @@ namespace Kvasir.Translation {
             var fields = new Dictionary<string, FieldDescriptor>() {};
             var relations = new Dictionary<string, IRelationDescriptor>() { { "", descriptor } };
             return new TranslationState(Fields: fields, Relations: relations);
+        }
+
+        private static string PropertyName(PropertyInfo property) {
+            Debug.Assert(property is not null);
+
+            // For almost all properties, the split operation will produce an array of size 1 because there will be no
+            // dot character in the property's name. However, for explicit interface implementations, the arrays's size
+            // will be at least two (and likely more due to full qualification).
+            return property.Name.Split(PATH_SEPARATOR)[^1];
         }
     }
 }
