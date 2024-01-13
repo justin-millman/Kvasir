@@ -1,4 +1,4 @@
-# This document lists the Entity concepts that have been used in unit tests for Kvasir Translation.
+Ôªø# This document lists the Entity concepts that have been used in unit tests for Kvasir Translation.
 
 Achaean Naval Contingent
 Acid
@@ -41,6 +41,7 @@ Archangel
 Archbishop
 Aria
 Armada
+Armory
 Aron Kodesh
 Arrondissement
 Arthurian Knight
@@ -52,7 +53,8 @@ Atmospheric Layer
 Atoll
 Attribute (C#)
 Auction Lot
-Auto-da-FÈ
+Aurora
+Auto-da-F√©
 Avatar
 Avocado
 Axiom
@@ -112,6 +114,7 @@ Bond Girl
 Bone
 Book
 Bookmark (web browsing)
+Boon (Hades)
 Borate
 Border Crossing
 Botanical Garden
@@ -227,9 +230,10 @@ Constellation
 Constitution
 Constitutional Amendment
 Coral Reef
+Corn Maze
 Country
 County
-Coup d'…tat
+Coup d'√âtat
 Coupon
 Court Case
 Credit Card
@@ -241,6 +245,7 @@ Cryptid
 Cryptocurrency
 Cryptogram
 Cult
+Curling Match
 Currency
 Cybersite
 D&D Character
@@ -300,6 +305,7 @@ Encryption
 Encyclopedia
 Engagement Ring
 Enumeration
+Enzyme
 Episode
 Escalator
 Escape Room
@@ -309,6 +315,7 @@ Etiology
 Eunuch
 Eurovision Song Contest
 Excel Range
+Existentialist
 Exorcism
 Experiment
 Expiration
@@ -378,6 +385,7 @@ Greek Letter
 Guillotine
 Guitar
 Gulag
+Guy's Grocery Game
 Gymnast
 Haiku
 Hairstyle
@@ -413,6 +421,7 @@ Hominin
 Honest Trailer
 Horcrux
 Hormone
+Horoscope
 Hospital
 Hot Air Balloon
 Hot Spring
@@ -430,7 +439,9 @@ Igloo
 Imaginary Friend
 Immaculate Grid
 Immortal (Highlander)
+Impeachment
 Impractical Joke
+Improv Troupe
 Inator
 Indictment
 Infinity Stone
@@ -472,9 +483,10 @@ King of England
 Kite
 Knife
 Knock-Knock Joke
+Knot
 Kosher Agency
 Labor of Heracles
-Lagerst‰tte
+Lagerst√§tte
 Lake
 Lamp
 Land Card (MTG)
@@ -486,12 +498,15 @@ Lawn Gnome
 Lawn Mower
 Lazarus Pit
 Lease
+Lego Set
 Legume
 Lens
 Leprechaun
+Library (books)
 License Plate
 Lifeguard
 Ligament
+Lighthouse
 Limbo Competition
 Limerick
 Linker
@@ -516,11 +531,13 @@ Mafia Family
 Magazine
 Magic System
 Mall Santa
+MƒÅori God
 Marathon
 Marble League
 Margarita
 Marian Apparition
 Marijuana Strain
+Mario Kart Racetrack
 Mark-Up Symbol
 Mars Rover
 Masked Singer
@@ -547,6 +564,7 @@ Monad
 Monopoly Property
 Month
 Moon of Jupiter
+Morgue
 Mosque
 Motorcycle
 Mountain
@@ -578,6 +596,7 @@ Nobel Prize
 Norse God
 Norse World
 Nuclear Power Plant
+Nucleobase
 NuGet Package
 Nursery Rhyme
 Nymph
@@ -587,6 +606,7 @@ Obi
 Ocean Current
 Oceanic Trench
 Oceanid
+Ode
 Oil (cooking)
 Oil Field
 Oil Spill
@@ -608,6 +628,7 @@ Pagoda
 Painting
 Pajamas
 Panegyric
+Papal Conclave
 Parabola
 Parashah
 Parking Garage
@@ -643,6 +664,7 @@ Pigment (biology)
 Pillow
 Ping
 Pirate
+Pirate Ship
 Pizza
 Plane of Existence (D&D)
 Planeswalker
@@ -653,7 +675,7 @@ Playlist
 PO Box
 Podcast
 Poet Laurete
-PokÈmon
+Pok√©mon
 Poker Hand
 Police Officer
 Poll
@@ -668,6 +690,7 @@ Potato
 Pregnancy Test
 Prescription
 Presidential Election
+Pretzel
 Printer
 Prison
 Prisoner Exchange
@@ -684,6 +707,7 @@ Pulitzer Prize
 Pulley
 Pulsar
 Puppet Show
+Python Interpreter
 QR Code
 Quadratic Equation
 Quarterback
@@ -769,6 +793,8 @@ Smoothie
 Smurf
 Snake
 SNL Episode
+Snowball Fight
+Soap Opera
 Soccer Team
 Solar Eclipse
 Solicitor General
@@ -779,6 +805,7 @@ Soup
 Space Shuttle
 Speed Limit
 Speedometer
+Spelling Bee
 Spider-Man
 Sporcle Quiz
 Sports Bet
@@ -793,6 +820,7 @@ Stanley Cup
 Star
 Star-Crossed Lovers
 State of the Union
+State Quarter
 Steak
 Step Pyramid
 Stock
@@ -830,6 +858,7 @@ TED Talk
 Telescope
 Tendon
 Tennis Match
+Teppanyaki
 Tepui
 Terminator
 Terrorist Organization
@@ -842,6 +871,7 @@ TikTok
 Time Traveler
 Time Zone
 Timestamp
+Tlatoani
 Tongue Twister
 Tooth
 Toothbrush
@@ -870,6 +900,7 @@ Typewriter
 Umpire
 UN Resolution
 UN Secretary General
+Underworld
 Union
 University
 Upanishad
@@ -879,7 +910,7 @@ Vacuum Cleaner
 Valet
 Vampire Slayer
 Verb
-VigenËre Cipher
+Vigen√®re Cipher
 Vineyard
 Vitamin
 Voicemail
@@ -901,6 +932,7 @@ Web Browser
 Weekend Update
 Werewolf
 Where's Waldo?
+Who Wants to Be a Millionaire? Question
 Wikipedia Page
 Wildfire
 Windmill

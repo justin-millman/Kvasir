@@ -11132,87 +11132,144 @@ namespace UT.Kvasir.Translation {
 
     internal static class DataExtraction {
         // Scenario: Non-Null, Public, Instance Scalars and Enumerations (✓values extracted✓)
-        // [TODO]
+        public class Morgue {
+            [Flags] public enum Service { Autopsy, Identification, Cremation, Refrigeration, Sequestration }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string ChiefMedicalExaminer { get; set; } = "";
+            [Column(2)] public uint Capacity { get; set; }
+            [Column(3)] public decimal Budget { get; set; }
+            [Column(4)] public char FederalGrade { get; set; }
+            [Column(5)] public Service AvailableServices { get; set; }
+            [Column(6)] public bool GovernmentRun { get; set; }
+        }
 
         // Scenario: Non-Null, Public, Static Scalars and Enumerations (✓values extracted✓)
-        // [TODO]
+        public class PythonInterpreter {
+            public enum Language { C, CPP, Python, Rust, Java }
+
+            [PrimaryKey, Column(0)] public Guid ProgramID { get; set; }
+            [Column(1)] public string Path { get; set; } = "";
+            [Column(2)] public DateTime InstalledOn { get; set; }
+            [Column(3)] public static double MinVersion { get; set; }
+            [Column(4)] public static double MaxVersion { get; set; }
+            [Column(5)] public Language BackEndLanguage { get; set; }
+        }
 
         // Scenario: Non-Null, Non-Public, Instance Scalars and Enumerations (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Pirate Ship
 
         // Scenario: Non-Null, Non-Public, Static Scalars and Enumerations (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Enzyme
 
         // Scenario: Null Scalars and Enumerations (✓null extracted✓)
-        // [TODO]
+        // [TODO] - Ode
 
         // Scenario: Explicit Interface Implementation Property (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Tlatoani
 
         // Scenario: Virtual Override Property (✓most-derived values extracted✓)
-        // [TODO]
+        // [TODO] - Aurora
 
         // Scenario: Hiding Property (✓hiding values extracted✓)
-        // [TODO]
+        // [TODO] - State Quarter
 
         // Scenario: [DataConverter] Applied to Scalar Property (✓converted values extracted✓)
-        // [TODO]
+        // [TODO] - Underworld
 
         // Scenario: [Numeric] Applied to Enumeration Property (✓converted values extracted✓)
-        // [TODO]
+        // [TODO] - Corn Maze
 
         // Scenario: [AsString] Applied to Enumeration Property (✓converted values extracted✓)
-        // [TODO]
+        // [TODO] - Mario Kart Racetrack
 
         // Scenario: [Calculated] Property (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Lighthouse
 
         // Scenario: Non-Null Aggregate Property with Single Scalar/Enumeration Nested Fields (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Nucleobase
 
         // Scenario: Non-Null Aggregate Property with Multiple Scalar/Enumeration Nested Fields (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Lego Set
 
         // Scenario: Non-Null Aggregate Property with All Null Nested Fields (✓null values extracted✓)
-        // [TODO]
+        // [TODO] - Snowball Fight
 
         // Scenario: Data Conversion Applied to Aggregate-Nested Fields (✓converted values extracted✓)
-        // [TODO]
+        // [TODO] - Grocery Game
 
         // Scenario: Null Aggregate Property with One Nested Field (✓null values extracted✓)
-        // [TODO]
+        // [TODO] - Knot
 
         // Scenario: Null Aggregate Property with Multiple Nested Fields (✓null values extracted✓)
-        // [TODO]
+        // [TODO] - Armory
 
         // Scenario: Nested Aggregate Property (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Millionaire? Question
 
         // Scenario: Non-Null Reference Property (✓values extracted✓)
-        // [TODO]
+        public class PapalConclave {
+            public class Cardinal {
+                [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+                [Column(1)] public string Country { get; set; } = "";
+                [Column(2)] public byte Age { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public DateTime Date { get; set; }
+            [Column(1)] public byte Ballots { get; set; }
+            [Column(2)] public Cardinal ElectedPope { get; set; } = new();
+            [Column(3)] public ushort NumElectors { get; set; }
+            [Column(4)] public Cardinal Dean { get; set; } = new();
+        }
 
         // Scenario: Null Reference Property with Single-Field Primary Key (✓null values extracted✓)
-        // [TODO]
+        // [TODO] - Soap Opera
 
         // Scenario: Null Reference Property with Multi-Field Primary Key (✓null values extracted✓)
-        // [TODO]
+        // [TODO] - Library
 
         // Scenario: Data Conversion Applied to Reference-Nested Field (✓converted values extracted✓)
-        // [TODO]
+        // [TODO] - Curling Match
 
         // Scenario: Non-Null Relation Property with Zero Elements (✓no values extracted✓)
-        // [TODO]
+        // [TODO] - Pretzel
 
-        // Scenario: Non-Null Relation Property with At Least One Element (✓values extracted per element✓)
-        // [TODO]
+        // Scenario: Non-Null List/Set Relation Property with At Least One Element (✓values extracted per element✓)
+        // [TODO] - Teppanyanki
+
+        // Scenario: Non-Null Map Relation Property with At Least One Element (✓values extracted per element✓)
+        // [TODO] - Spelling Bee
+
+        // Scenario: Non-Null Ordered List Relation Property with At Least One Element (✓values extracted per element✓)
+        public class OlympianBoon {
+            public enum Deity { Ares, Athena, Aphrodite, Artemis, Demeter, Dionysus, Hermes, Poseidon, Zeus }
+            public enum Ability { Attack, Special, Cast, Dash, Upper, Call }
+
+            public struct Benefit {
+                [Column(0)] public string ParameterName { get; set; }
+                [Column(1)] public double ParameterValue { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string BoonName { get; set; } = "";
+            [Column(1)] public Deity Benefactor { get; set; }
+            [Column(2)] public Ability AbilityAffected { get; set; }
+            public RelationOrderedList<Benefit> Progressions { get; set; } = new();
+            [Column(3)] public double Likelihood { get; set; }
+        }
 
         // Scenario: Null Relation Property (✓no values extracted✓)
-        // [TODO]
+        // [TODO] - Existentialist
 
         // Scenario: Non-Null Relation Property with Owning Entity in Element (✓values extracted✓)
-        // [TODO]
+        // [TODO] - Maori God
+
+        // Scenario: Non-Null Relation Property with Nested Aggregate and At Least One Element (✓values extracted✓)
+        // [TODO] - Improv Troupe
+
+        // Scenario: Non-Null Relation Property with Nested Reference and At Least One Element (✓values extracted✓)
+        // [TODO] - Impeachment
 
         // Scenario: Data Conversion Applied to Relation-Nested Field (✓converted values extracted✓)
-        // [TODO]
+        // [TODO] - Horoscope
     }
 }
