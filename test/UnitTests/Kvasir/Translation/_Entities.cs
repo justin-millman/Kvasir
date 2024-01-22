@@ -2,6 +2,7 @@
 using Kvasir.Relations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using static UT.Kvasir.Translation.TestConstraints;
 using static UT.Kvasir.Translation.TestConverters;
@@ -11133,7 +11134,7 @@ namespace UT.Kvasir.Translation {
     internal static class DataExtraction {
         // Scenario: Non-Null, Public, Instance Scalars and Enumerations (✓values extracted✓)
         public class Morgue {
-            [Flags] public enum Service { Autopsy, Identification, Cremation, Refrigeration, Sequestration }
+            [Flags] public enum Service { Autopsy = 1, Identification = 2, Cremation = 4, Refrigeration = 8, Sequestration = 16 }
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public string ChiefMedicalExaminer { get; set; } = "";
@@ -11151,61 +11152,247 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public Guid ProgramID { get; set; }
             [Column(1)] public string Path { get; set; } = "";
             [Column(2)] public DateTime InstalledOn { get; set; }
-            [Column(3)] public static double MinVersion { get; set; }
-            [Column(4)] public static double MaxVersion { get; set; }
-            [Column(5)] public Language BackEndLanguage { get; set; }
+            [IncludeInModel, Column(3)] public static double MinVersion { get; set; }
+            [IncludeInModel, Column(4)] public static double MaxVersion { get; set; }
+            [IncludeInModel, Column(5)] public static Language BackEndLanguage { get; set; }
         }
 
         // Scenario: Non-Null, Non-Public, Instance Scalars and Enumerations (✓values extracted✓)
-        // [TODO] - Pirate Ship
+        public class PirateShip {
+            public enum ShipKind { Sloop, Schooner, Frigate, Brigantine, Galleon, Barque, Carrack, Other }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public string ShipName { get; set; } = "";
+            [Column(2)] public string Captain { get; set; } = "";
+            [IncludeInModel, Column(3)] private double Length { get; set; }
+            [IncludeInModel, Column(4)] protected int NumCannons { get; set; }
+            [IncludeInModel, Column(5)] internal ShipKind Style { get; set; }
+            [IncludeInModel, Column(6)] protected internal bool CarriedSlaves { get; set; }
+
+            public void SetLength(double length) => Length = length;
+            public void SetNumCannons(int numCannons) => NumCannons = numCannons;
+            public void SetCarriedSlaves(bool carriedSlaves) => CarriedSlaves = carriedSlaves;
+        }
 
         // Scenario: Non-Null, Non-Public, Static Scalars and Enumerations (✓values extracted✓)
-        // [TODO] - Enzyme
+        public class Enzyme {
+            [PrimaryKey, Column(0)] public string EnzymeCommissionNumber { get; set; } = "";
+            [Column(1)] public string CommonName { get; set; } = "";
+            [IncludeInModel, Column(2)] private static bool IsEnzyme { get; set; }
+            [IncludeInModel, Column(3)] protected static double NumEnzymesTotal { get; set; }
+            [IncludeInModel, Column(4)] internal static string Regulator { get; set; } = "";
+            [IncludeInModel, Column(5)] protected internal static DateTime FirstDiscovered { get; set; }
+
+            public static void SetIsEnzyme(bool isEnzyme) => IsEnzyme = isEnzyme;
+            public static void SetNumEnzymesTotal(double numEnzymesTotal) => NumEnzymesTotal = numEnzymesTotal;
+            public static void SetFirstDiscovered(DateTime firstDiscovered) => FirstDiscovered = firstDiscovered;
+        }
 
         // Scenario: Null Scalars and Enumerations (✓null extracted✓)
-        // [TODO] - Ode
+        public class Ode {
+            public enum Kind { Victory, Eulogy, Musical, Romantic, Other }
+
+            [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+            [PrimaryKey, Column(1)] public string Author { get; set; } = "";
+            [Column(2)] public ushort Lines { get; set; }
+            [Column(3)] public ushort WordCount { get; set; }
+            [Column(4)] public DateTime? Publication { get; set; }
+            [Column(5)] public string? Collection { get; set; }
+            [Column(6)] public Kind? Style { get; set; }
+        }
 
         // Scenario: Explicit Interface Implementation Property (✓values extracted✓)
-        // [TODO] - Tlatoani
+        public interface IWorldLeader {
+            string Name { get; set; }
+            string Polity { get; set; }
+        }
+        public class Tlatoani : IWorldLeader {
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [IncludeInModel, Column(1)] string IWorldLeader.Name { get; set; } = "";
+            [IncludeInModel, Column(2)] string IWorldLeader.Polity { get; set; } = "Aztec Empire";
+            [Column(3)] public DateTime Death { get; set; }
+            [Column(4)] public bool EncounteredConquistadors { get; set; }
+            [Column(5)] public ushort CoronationYear { get; set; }
+        }
 
         // Scenario: Virtual Override Property (✓most-derived values extracted✓)
-        // [TODO] - Aurora
+        public abstract class Coin {
+            public abstract double Denomination { get; set; }
+        }
+        public sealed class StateQuarter : Coin {
+            [PrimaryKey, Column(0)] public string State { get; set; } = "";
+            [IncludeInModel, Column(1)] public sealed override double Denomination { get; set; }
+            [Column(2)] public ushort Year { get; set; }
+            [Column(3)] public string Engraver { get; set; } = "";
+            [Column(4)] public ulong Mintage { get; set; }
+        }
 
         // Scenario: Hiding Property (✓hiding values extracted✓)
-        // [TODO] - State Quarter
+        public abstract class Light {
+            public double Intensity { get; set; }
+            public byte Red { get; set; }
+            public byte Green { get; set; }
+            public byte Blue { get; set; }
+            public byte? Alpha { get; set; }
+        }
+        public class Aurora : Light {
+            [PrimaryKey, Column(0)] public Guid AuroraID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public string? AKA { get; set; }
+            [Column(3)] public new float Intensity { get; set; }
+        }
 
         // Scenario: [DataConverter] Applied to Scalar Property (✓converted values extracted✓)
-        // [TODO] - Underworld
+        public class Underworld {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string Civilization { get; set; } = "";
+            [Column(2)] public string Lord { get; set; } = "";
+            [Column(3), DataConverter(typeof(Invert))] public bool ForMortals { get; set; }
+            [Column(4), DataConverter(typeof(MakeDate<int>))] public int GoogleResults { get; set; }
+        }
 
         // Scenario: [Numeric] Applied to Enumeration Property (✓converted values extracted✓)
-        // [TODO] - Corn Maze
+        public class CornMaze {
+            public enum Corn : byte { Field, Sweet, Flint, BlackAztec, BloodyButcher, Blue, PaintedMountain, Other }
+            [Flags] public enum Shape : ulong { Animal = 1, Geometry = 2, Character = 4, Vehicle = 8, Person = 16, Object = 32, Foodstuff = 64, Weapon = 128, Geography = 256, Other = 2048 }
+
+            [PrimaryKey, Column(0)] public Guid MazeID { get; set; }
+            [Numeric, Column(1)] public Corn CornType { get; set; }
+            [Numeric, Column(2)] public Shape MazeShape { get; set; }
+            [Column(3)] public ulong StalkCount { get; set; }
+            [Column(4)] public ulong MazeArea { get; set; }
+            [Column(5)] public double SuccessRate { get; set; }
+            [Column(6)] public double RecordTime { get; set; }
+        }
 
         // Scenario: [AsString] Applied to Enumeration Property (✓converted values extracted✓)
-        // [TODO] - Mario Kart Racetrack
+        public class MarioKartRacetrack {
+            public enum Cup { Mushroom, Flower, Star, Special, Shell, Banana, Leaf, Lightning, Battle, RetroBattle }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string FirstAppearance { get; set; } = "";
+            [AsString, Column(2)] public Cup Series { get; set; }
+            [Column(3)] public ulong TrackLength { get; set; }
+            [Column(4)] public bool AvailableOnline { get; set; }
+        }
 
         // Scenario: [Calculated] Property (✓values extracted✓)
-        // [TODO] - Lighthouse
+        public class Lighthouse {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string Location { get; set; } = "";
+            [Column(2)] public double Height { get; set; }
+            [Column(3)] public ushort FocalLength { get; set; }
+            [Calculated, Column(4)] public ulong LightouseRating => (ulong)(Math.Sqrt(Height) + 137.54) * FocalLength;
+        }
 
         // Scenario: Non-Null Aggregate Property with Single Scalar/Enumeration Nested Fields (✓values extracted✓)
-        // [TODO] - Nucleobase
+        public class Nucleobase {
+            public struct Letter {
+                [Column(0)] public char Value { get; set; }
+            }
+
+            [PrimaryKey(Path = "Value"), Column(0)] public Letter Symbol { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public string ChemicalFormula { get; set; } = "";
+        }
 
         // Scenario: Non-Null Aggregate Property with Multiple Scalar/Enumeration Nested Fields (✓values extracted✓)
-        // [TODO] - Lego Set
+        public class LegoSet {
+            public enum Rating { One, OnePointFive, Two, TwoPointFive, Three, ThreePointFive, Four, FourPointFive, Five }
+            public enum Series { Architecture, Batman, Brikz, City, Classic, Creator, DC, Disney, HarryPotter, Ideas, Jurassic, IndianaJones, SuperMario, LOTR, Marvel, Minecraft, Ninjago, StarWars, Technic }
+            
+            public struct Listing {
+                [Column(0)] public decimal Price { get; set; }
+                [Column(1)] public Rating Stars { get; set; }
+                [Column(2)] public string URL { get; set; }
+                [Column(3)] public ulong InsiderPoints { get; set; }
+                [Column(4)] public Series Theme { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public uint ItemNumber { get; set; }
+            [Column(1)] public string Title { get; set; } = "";
+            [Column(2)] public Listing Catalog { get; set; }
+            [Column(7)] public ulong Pieces { get; set; }
+            [Column(8)] public byte LowerBoundAge { get; set; }
+        }
 
         // Scenario: Non-Null Aggregate Property with All Null Nested Fields (✓null values extracted✓)
-        // [TODO] - Snowball Fight
+        public class SnowballFight {
+            public struct Structure {
+                [Column(0)] public byte? NumTeams { get; set; }
+                [Column(1)] public byte? HitsAllowed { get; set; }
+                [Column(2)] public double? MaxBallRadius { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid FightID { get; set; }
+            [Column(1)] public DateTime KickOff { get; set; }
+            [Column(2)] public Structure FightStructure { get; set; }
+            [Column(3)] public ulong Length { get; set; }
+            [Column(4)] public double LowTemperature { get; set; }
+        }
 
         // Scenario: Data Conversion Applied to Aggregate-Nested Fields (✓converted values extracted✓)
-        // [TODO] - Grocery Game
+        public class GroceryGame {
+            public struct Episode {
+                [Column(0), DataConverter(typeof(ToInt<byte>))] public byte Season { get; set; }
+                [Column(1), DataConverter(typeof(ToInt<byte>))] public byte Number { get; set; }
+                [Column(2)] public string Judge1 { get; set; }
+                [Column(3)] public string Judge2 { get; set; }
+                [Column(4)] public string Judge3 { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string Description { get; set; } = "";
+            [Column(2)] public Episode FirstAppearance { get; set; }
+            [Column(7)] public ulong NumTimesPlayed { get; set; }
+        }
 
         // Scenario: Null Aggregate Property with One Nested Field (✓null values extracted✓)
-        // [TODO] - Knot
+        public class Knot {
+            public record struct Geometry(double ConwayNotation);
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public Geometry? Shape { get; set; }
+            [Column(2)] public double Efficiency { get; set; }
+            [Column(4)] public ushort? AshleyBookOfKnotsPage { get; set; }
+        }
 
         // Scenario: Null Aggregate Property with Multiple Nested Fields (✓null values extracted✓)
-        // [TODO] - Armory
+        public class Armory {
+            public enum Level { International, Federal, State, Local, Private, Vigilante }
+
+            public struct Coordinate {
+                [Column(0)] public float Latitude { get; set; }
+                [Column(1)] public float Longitude { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public bool Decommissioned { get; set; }
+            [Column(2)] public Coordinate? Location { get; set; }
+            [Column(4)] public ulong WeaponsCount { get; set; }
+            [Column(5)] public Level Owner { get; set; }
+        }
 
         // Scenario: Nested Aggregate Property (✓values extracted✓)
-        // [TODO] - Millionaire? Question
+        public class MillionaireQuestion {
+            public struct Option {
+                [Column(0)] public string Text { get; set; }
+                [Column(1)] public bool FiftyFiftyEliminated { get; set; }
+                [Column(2)] public double AudiencePercentage { get; set; }
+                [Column(3)] public bool IsCorrect { get; set; }
+            }
+            public struct Options {
+                [Column(0)] public Option A { get; set; }
+                [Column(4)] public Option B { get; set; }
+                [Column(8)] public Option C { get; set; }
+                [Column(12)] public Option D { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid QuestionID { get; set; }
+            [Column(1)] public string Category { get; set; } = "";
+            [Column(2)] public string Question { get; set; } = "";
+            [Column(3)] public Options Answers { get; set; }
+        }
 
         // Scenario: Non-Null Reference Property (✓values extracted✓)
         public class PapalConclave {
@@ -11223,24 +11410,123 @@ namespace UT.Kvasir.Translation {
         }
 
         // Scenario: Null Reference Property with Single-Field Primary Key (✓null values extracted✓)
-        // [TODO] - Soap Opera
+        public class SoapOpera {
+            public class Network {
+                [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+                [Column(1)] public string StockSymbol { get; set; } = "";
+                [Column(2)] public ulong NumEmployees { get; set; }
+                [Column(3)] public DateTime Founded { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+            [Column(1)] public bool IsStillAiring { get; set; }
+            [Column(2)] public DateTime Premiere { get; set; }
+            [Column(3)] public ushort NumSeasons { get; set; }
+            [Column(4)] public ushort NumEpisodes { get; set; }
+            [Column(5)] public ushort NumCastMembers { get; set; }
+            [Column(6)] public Network? OwningNetwork { get; set; }
+            [Column(7)] public bool IsTelenovela { get; set; }
+        }
 
         // Scenario: Null Reference Property with Multi-Field Primary Key (✓null values extracted✓)
-        // [TODO] - Library
+        public class Library {
+            public class Person {
+                [PrimaryKey, Column(0)] public string FirstName { get; set; } = "";
+                [PrimaryKey, Column(1)] public string LastName { get; set; } = "";
+                [Column(2)] public DateTime DOB { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid LibraryID { get; set; }
+            [Column(1)] public ulong NumBooks { get; set; }
+            [Column(2)] public Person? HeadLibrarian { get; set; }
+            [Column(5)] public decimal Endowment { get; set; }
+            [Column(6)] public ushort Branches { get; set; }
+        }
 
         // Scenario: Data Conversion Applied to Reference-Nested Field (✓converted values extracted✓)
-        // [TODO] - Curling Match
+        public class CurlingMatch {
+            public class OlympicOrganization {
+                [PrimaryKey, DataConverter(typeof(AllCaps)), Column(0)] public string Code { get; set; } = "";
+                [Column(2)] public string Country { get; set; } = "";
+                [Column(3)] public DateTime Recognized { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] OlympicOrganization TeamA { get; set; } = new();
+            [Column(2)] OlympicOrganization TeamB { get; set; } = new();
+            [Column(3)] public sbyte ScoreA { get; set; }
+            [Column(4)] public sbyte ScoreB { get; set; }
+            [Column(5)] public DateTime Date { get; set; }
+            [Column(6)] public ushort? Olympiad { get; set; }
+            [Column(7)] public bool HammerForA { get; set; }
+        }
 
         // Scenario: Non-Null Relation Property with Zero Elements (✓no values extracted✓)
-        // [TODO] - Pretzel
+        public class Pretzel {
+            [PrimaryKey, Column(0)] public Guid PretzelID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            public RelationSet<string> Toppings { get; set; } = new();
+            [Column(2)] public decimal RetailPrice { get; set; }
+            [Column(3)] public string DoughSource { get; set; } = "";
+        }
 
         // Scenario: Non-Null List/Set Relation Property with At Least One Element (✓values extracted per element✓)
-        // [TODO] - Teppanyanki
+        public class Teppanyaki {
+            [PrimaryKey, Column(0)] public Guid GrillID { get; set; }
+            [Column(1)] public double GrillSurfaceArea { get; set; }
+            public RelationSet<string> AuthorizedChefs { get; set; } = new();
+            public RelationList<string> SupportedFoods { get; set; } = new();
+            [Column(2)] public float MaxTemperature { get; set; }
+            [Column(3)] public string? Restaurant { get; set; }
+            [Column(4)] public bool IsHibachi { get; set; }
+        }
 
         // Scenario: Non-Null Map Relation Property with At Least One Element (✓values extracted per element✓)
-        // [TODO] - Spelling Bee
+        public class SpellingBee {
+            [PrimaryKey, Column(0)] public ushort Year { get; set; }
+            [Column(2)] public byte NumRounds { get; set; }
+            [Column(3)] public string Champion { get; set; } = "";
+            public RelationMap<uint, string> Participants { get; set; } = new();
+            public RelationMap<uint, string> EliminationWords { get; set; } = new();
+        }
 
         // Scenario: Non-Null Ordered List Relation Property with At Least One Element (✓values extracted per element✓)
+        public class ImprovTroupe {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public DateTime Created { get; set; }
+            [Column(2)] public uint NumShows { get; set; }
+            RelationOrderedList<string> Lineup { get; set; } = new();
+            [Column(3)] public string Location { get; set; } = "";
+            [Column(4)] public string URL { get; set; } = "";
+        }
+
+        // Scenario: Null Relation Property (✓no values extracted✓)
+        public class Existentialist {
+            public class Thesis {
+                [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+                [Column(1)] public ushort YearSubmitted { get; set; }
+                [Column(2)] public ushort PageCount { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            Thesis? DoctoralThesis { get; set; }
+            [Column(1)] public DateTime DateOfBirth { get; set; }
+            [Column(2)] public DateTime? DateOfDeath { get; set; }
+            [Column(3)] public string ExistentialSchool { get; set; } = "";
+        }
+
+        // Scenario: Non-Null Relation Property with Owning Entity in Element (✓values extracted✓)
+        public class MaoriGod {
+            public enum Relation { Self, Parent, Grandparent, Child, Grandchild, Sibling, Cousing, Nibling, AuntUncle };
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string Domain { get; set; } = "";
+            public RelationMap<MaoriGod, Relation> Family { get; set; } = new();
+            [Column(2)] public bool IsAtua { get; set; }
+            [Column(3)] public bool EncounteredMaui { get; set; }
+        }
+
+        // Scenario: Non-Null Relation Property with Nested Aggregate and At Least One Element (✓values extracted✓)
         public class OlympianBoon {
             public enum Deity { Ares, Athena, Aphrodite, Artemis, Demeter, Dionysus, Hermes, Poseidon, Zeus }
             public enum Ability { Attack, Special, Cast, Dash, Upper, Call }
@@ -11257,19 +11543,43 @@ namespace UT.Kvasir.Translation {
             [Column(3)] public double Likelihood { get; set; }
         }
 
-        // Scenario: Null Relation Property (✓no values extracted✓)
-        // [TODO] - Existentialist
-
-        // Scenario: Non-Null Relation Property with Owning Entity in Element (✓values extracted✓)
-        // [TODO] - Maori God
-
-        // Scenario: Non-Null Relation Property with Nested Aggregate and At Least One Element (✓values extracted✓)
-        // [TODO] - Improv Troupe
-
         // Scenario: Non-Null Relation Property with Nested Reference and At Least One Element (✓values extracted✓)
-        // [TODO] - Impeachment
+        public class Impeachment {
+            public struct Charge {
+                public enum Category { HighCrime, Misdemeanor, Treason }
+
+                [Column(0)] public string Claim { get; set; }
+                [Column(1)] public Category Severity { get; set; }
+            }
+            public class Count {
+                [Column(0)] public Guid ID { get; set; }
+                [Column(1)] public Charge Claim { get; set; }
+                [Column(2)] public bool Guilty { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Official { get; set; } = "";
+            [Column(1)] public string Position { get; set; } = "";
+            [PrimaryKey, Column(2)] public DateTime Commenced { get; set; }
+            public RelationSet<Count> Counts { get; set; } = new();
+            [Calculated, Column(3)] public bool Convicted => Counts.Any(c => c.Guilty);
+        }
 
         // Scenario: Data Conversion Applied to Relation-Nested Field (✓converted values extracted✓)
-        // [TODO] - Horoscope
+        public class Horoscope {
+            public enum Zodiac { Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Saggitarius, Capricorn, Aquarius, Pisces }
+
+            public struct Listing {
+                [Column(0)] public string Prediction { get; set; }
+                [Column(1), DataConverter(typeof(ToInt<char>))] public char Sex { get; set; }
+                [Column(2), DataConverter(typeof(ToInt<char>))] public char Hustle { get; set; }
+                [Column(3), DataConverter(typeof(ToInt<char>))] public char Vibe { get; set; }
+                [Column(4), DataConverter(typeof(ToInt<char>))] public char Success { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Zodiac Sign { get; set; }
+            RelationMap<DateTime, Listing> Readings { get; set; } = new();
+            [Column(1)] public DateTime RangeLower { get; set; }
+            [Column(2)] public DateTime RangeUpper { get; set; }
+        }
     }
 }
