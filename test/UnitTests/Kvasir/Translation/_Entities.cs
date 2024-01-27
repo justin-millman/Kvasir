@@ -11170,8 +11170,9 @@ namespace UT.Kvasir.Translation {
             [IncludeInModel, Column(6)] protected internal bool CarriedSlaves { get; set; }
 
             public void SetLength(double length) => Length = length;
+            public double GetLength() => Length;
             public void SetNumCannons(int numCannons) => NumCannons = numCannons;
-            public void SetCarriedSlaves(bool carriedSlaves) => CarriedSlaves = carriedSlaves;
+            public int GetNumCannons() => NumCannons;
         }
 
         // Scenario: Non-Null, Non-Public, Static Scalars and Enumerations (✓values extracted✓)
@@ -11184,8 +11185,9 @@ namespace UT.Kvasir.Translation {
             [IncludeInModel, Column(5)] protected internal static DateTime FirstDiscovered { get; set; }
 
             public static void SetIsEnzyme(bool isEnzyme) => IsEnzyme = isEnzyme;
+            public static bool GetIsEnzme() => IsEnzyme;
             public static void SetNumEnzymesTotal(double numEnzymesTotal) => NumEnzymesTotal = numEnzymesTotal;
-            public static void SetFirstDiscovered(DateTime firstDiscovered) => FirstDiscovered = firstDiscovered;
+            public static double GetNumEnzymesTotal() => NumEnzymesTotal;
         }
 
         // Scenario: Null Scalars and Enumerations (✓null extracted✓)
@@ -11217,7 +11219,7 @@ namespace UT.Kvasir.Translation {
 
         // Scenario: Virtual Override Property (✓most-derived values extracted✓)
         public abstract class Coin {
-            public abstract double Denomination { get; set; }
+            public virtual double Denomination { get; set; } = 2.0;
         }
         public sealed class StateQuarter : Coin {
             [PrimaryKey, Column(0)] public string State { get; set; } = "";
@@ -11272,7 +11274,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public string FirstAppearance { get; set; } = "";
             [AsString, Column(2)] public Cup Series { get; set; }
-            [Column(3)] public ulong TrackLength { get; set; }
+            [Column(3)] public ulong? TrackLength { get; set; }
             [Column(4)] public bool AvailableOnline { get; set; }
         }
 
@@ -11282,7 +11284,7 @@ namespace UT.Kvasir.Translation {
             [Column(1)] public string Location { get; set; } = "";
             [Column(2)] public double Height { get; set; }
             [Column(3)] public ushort FocalLength { get; set; }
-            [Calculated, Column(4)] public ulong LightouseRating => (ulong)(Math.Sqrt(Height) + 137.54) * FocalLength;
+            [Calculated, Column(4)] public ulong LighthouseRating => (ulong)(Math.Sqrt(Height) + 137.54) * FocalLength;
         }
 
         // Scenario: Non-Null Aggregate Property with Single Scalar/Enumeration Nested Fields (✓values extracted✓)

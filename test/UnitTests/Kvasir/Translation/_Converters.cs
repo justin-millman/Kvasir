@@ -23,11 +23,6 @@ namespace UT.Kvasir.Translation {
             public bool Revert(bool result) { return !result; }
         }
         public class MakeDate<T> : IDataConverter<T, DateTime> where T : notnull {
-            public MakeDate() {
-                conversions_ = new Dictionary<T, DateTime>();
-                reversions_ = new Dictionary<DateTime, T>();
-                lastDate_ = new DateTime(2000, 1, 1);
-            }
             public DateTime Convert(T source) {
                 conversions_.TryAdd(source, lastDate_);
                 lastDate_ = lastDate_.AddDays(1);
@@ -38,9 +33,9 @@ namespace UT.Kvasir.Translation {
             }
 
 
-            public DateTime lastDate_;
-            public readonly Dictionary<T, DateTime> conversions_;
-            public readonly Dictionary<DateTime, T> reversions_;
+            public static DateTime lastDate_ = new DateTime(2000, 1, 1);
+            public readonly static Dictionary<T, DateTime> conversions_ = new();
+            public readonly static Dictionary<DateTime, T> reversions_ = new();
         }
         public class Nullify<T> : IDataConverter<T, T?> where T : notnull {
             public T? Convert(T source) { return source; }
