@@ -11329,34 +11329,20 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public Guid FightID { get; set; }
             [Column(1)] public DateTime KickOff { get; set; }
             [Column(2)] public Structure FightStructure { get; set; }
-            [Column(3)] public ulong Length { get; set; }
-            [Column(4)] public double LowTemperature { get; set; }
-        }
-
-        // Scenario: Data Conversion Applied to Aggregate-Nested Fields (✓converted values extracted✓)
-        public class GroceryGame {
-            public struct Episode {
-                [Column(0), DataConverter(typeof(ToInt<byte>))] public byte Season { get; set; }
-                [Column(1), DataConverter(typeof(ToInt<byte>))] public byte Number { get; set; }
-                [Column(2)] public string Judge1 { get; set; }
-                [Column(3)] public string Judge2 { get; set; }
-                [Column(4)] public string Judge3 { get; set; }
-            }
-
-            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
-            [Column(1)] public string Description { get; set; } = "";
-            [Column(2)] public Episode FirstAppearance { get; set; }
-            [Column(7)] public ulong NumTimesPlayed { get; set; }
+            [Column(5)] public ulong Length { get; set; }
+            [Column(6)] public double LowTemperature { get; set; }
         }
 
         // Scenario: Null Aggregate Property with One Nested Field (✓null values extracted✓)
         public class Knot {
-            public record struct Geometry(double ConwayNotation);
+            public struct Geometry {
+                [Column(0)] public Double ConwayNotation { get; set; }
+            }
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public Geometry? Shape { get; set; }
             [Column(2)] public double Efficiency { get; set; }
-            [Column(4)] public ushort? AshleyBookOfKnotsPage { get; set; }
+            [Column(3)] public ushort? AshleyBookOfKnotsPage { get; set; }
         }
 
         // Scenario: Null Aggregate Property with Multiple Nested Fields (✓null values extracted✓)
@@ -11394,6 +11380,22 @@ namespace UT.Kvasir.Translation {
             [Column(1)] public string Category { get; set; } = "";
             [Column(2)] public string Question { get; set; } = "";
             [Column(3)] public Options Answers { get; set; }
+        }
+
+        // Scenario: Data Conversion Applied to Aggregate-Nested Fields (✓converted values extracted✓)
+        public class GroceryGame {
+            public struct Episode {
+                [Column(0), DataConverter(typeof(ToInt<byte>))] public byte Season { get; set; }
+                [Column(1), DataConverter(typeof(ToInt<byte>))] public byte Number { get; set; }
+                [Column(2)] public string Judge1 { get; set; }
+                [Column(3)] public string Judge2 { get; set; }
+                [Column(4)] public string Judge3 { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string Description { get; set; } = "";
+            [Column(2)] public Episode FirstAppearance { get; set; }
+            [Column(7)] public ulong NumTimesPlayed { get; set; }
         }
 
         // Scenario: Non-Null Reference Property (✓values extracted✓)

@@ -313,5 +313,230 @@ namespace UT.Kvasir.Translation {
             data[3].Should().Be(lighthouse.FocalLength);
             data[4].Should().Be(lighthouse.LighthouseRating);
         }
+
+        [TestMethod] public void NonNullSingleFieldAggregate() {
+            // Arrange
+            var nucleobase = new Nucleobase {
+                Symbol = new Nucleobase.Letter() { Value = 'G' },
+                Name = "Guanine",
+                ChemicalFormula = "C5H5N5O"
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(Nucleobase)];
+            var data = translation.Principal.Extractor.Execute(nucleobase);
+
+            // Assert
+            data.Should().HaveCount(3);
+            data[0].Should().Be(nucleobase.Symbol.Value);
+            data[1].Should().Be(nucleobase.Name);
+            data[2].Should().Be(nucleobase.ChemicalFormula);
+        }
+
+        [TestMethod] public void NonNullMultiFieldAggregate() {
+            // Arrange
+            var legos = new LegoSet() {
+                ItemNumber = 75912,
+                Title = "Millennium Falcon",
+                Catalog = new LegoSet.Listing() {
+                    Price = 849.99M,
+                    Stars = LegoSet.Rating.FourPointFive,
+                    URL = "https://www.lego.com/en-us/product/millennium-falcon-75192",
+                    InsiderPoints = 5525,
+                    Theme = LegoSet.Series.StarWars
+                },
+                Pieces = 7541,
+                LowerBoundAge = 16
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(LegoSet)];
+            var data = translation.Principal.Extractor.Execute(legos);
+
+            // Assert
+            data.Should().HaveCount(9);
+            data[0].Should().Be(legos.ItemNumber);
+            data[1].Should().Be(legos.Title);
+            data[2].Should().Be(legos.Catalog.Price);
+            data[3].Should().Be(legos.Catalog.Stars);
+            data[4].Should().Be(legos.Catalog.URL);
+            data[5].Should().Be(legos.Catalog.InsiderPoints);
+            data[6].Should().Be(legos.Catalog.Theme);
+            data[7].Should().Be(legos.Pieces);
+            data[8].Should().Be(legos.LowerBoundAge);
+        }
+
+        [TestMethod] public void AggregateWithAllNullNestedFields() {
+            // Arrange
+            var fight = new SnowballFight() {
+                FightID = new Guid(),
+                KickOff = new DateTime(2023, 12, 7),
+                FightStructure = new SnowballFight.Structure() {
+                    NumTeams = null,
+                    HitsAllowed = null,
+                    MaxBallRadius = null
+                },
+                Length = 120,
+                LowTemperature = 14.3
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(SnowballFight)];
+            var data = translation.Principal.Extractor.Execute(fight);
+
+            // Assert
+            data.Should().HaveCount(7);
+            data[0].Should().Be(fight.FightID);
+            data[1].Should().Be(fight.KickOff);
+            data[2].Should().Be(fight.FightStructure.NumTeams);
+            data[3].Should().Be(fight.FightStructure.HitsAllowed);
+            data[4].Should().Be(fight.FightStructure.MaxBallRadius);
+            data[5].Should().Be(fight.Length);
+            data[6].Should().Be(fight.LowTemperature);
+        }
+
+        [TestMethod] public void NullSingleFieldAggregate() {
+            // Arrange
+            var knot = new Knot() {
+                Name = "Savoy Knot",
+                Shape = null,
+                Efficiency = 0.8,
+                AshleyBookOfKnotsPage = null
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(Knot)];
+            var data = translation.Principal.Extractor.Execute(knot);
+
+            // Assert
+            data.Should().HaveCount(4);
+            data[0].Should().Be(knot.Name);
+            data[1].Should().Be(knot.Shape?.ConwayNotation);
+            data[2].Should().Be(knot.Efficiency);
+            data[3].Should().Be(knot.AshleyBookOfKnotsPage);
+        }
+
+        [TestMethod] public void NullMultiFieldAggregate() {
+            // Arrange
+            var armory = new Armory() {
+                Name = "Sergeant Camilo's Principal Weapons Warehouse",
+                Decommissioned = false,
+                Location = null,
+                WeaponsCount = 876182491284,
+                Owner = Armory.Level.Vigilante
+            };
+
+            // Act
+            var translator = new Translator(); ;
+            var translation = translator[typeof(Armory)];
+            var data = translation.Principal.Extractor.Execute(armory);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Should().Be(armory.Name);
+            data[1].Should().Be(armory.Decommissioned);
+            data[2].Should().Be(armory.Location?.Latitude);
+            data[3].Should().Be(armory.Location?.Longitude);
+            data[4].Should().Be(armory.WeaponsCount);
+            data[5].Should().Be(armory.Owner);
+        }
+
+        [TestMethod] public void NestedAggregate() {
+            // Arrange
+            var question = new MillionaireQuestion() {
+                QuestionID = new Guid(),
+                Category = "European Ruins",
+                Question = "The ruins of Urquhart Castle stand on the banks of which loch?",
+                Answers = new MillionaireQuestion.Options() {
+                    A = new MillionaireQuestion.Option() {
+                        Text = "Loch Lomond",
+                        FiftyFiftyEliminated = true,
+                        AudiencePercentage = 0.08,
+                        IsCorrect = false,
+                    },
+                    B = new MillionaireQuestion.Option() {
+                        Text = "Loch Ness",
+                        FiftyFiftyEliminated = false,
+                        AudiencePercentage = 0.81,
+                        IsCorrect = true
+                    },
+                    C = new MillionaireQuestion.Option() {
+                        Text = "Loch Broom",
+                        FiftyFiftyEliminated = false,
+                        AudiencePercentage = 0.03,
+                        IsCorrect = false
+                    },
+                    D = new MillionaireQuestion.Option() {
+                        Text = "Loch Maree",
+                        FiftyFiftyEliminated = true,
+                        AudiencePercentage = 0.08,
+                        IsCorrect = false
+                    }
+                }
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(MillionaireQuestion)];
+            var data = translation.Principal.Extractor.Execute(question);
+
+            // Assert
+            data.Should().HaveCount(19);
+            data[0].Should().Be(question.QuestionID);
+            data[1].Should().Be(question.Category);
+            data[2].Should().Be(question.Question);
+            data[3].Should().Be(question.Answers.A.Text);
+            data[4].Should().Be(question.Answers.A.FiftyFiftyEliminated);
+            data[5].Should().Be(question.Answers.A.AudiencePercentage);
+            data[6].Should().Be(question.Answers.A.IsCorrect);
+            data[7].Should().Be(question.Answers.B.Text);
+            data[8].Should().Be(question.Answers.B.FiftyFiftyEliminated);
+            data[9].Should().Be(question.Answers.B.AudiencePercentage);
+            data[10].Should().Be(question.Answers.B.IsCorrect);
+            data[11].Should().Be(question.Answers.C.Text);
+            data[12].Should().Be(question.Answers.C.FiftyFiftyEliminated);
+            data[13].Should().Be(question.Answers.C.AudiencePercentage);
+            data[14].Should().Be(question.Answers.C.IsCorrect);
+            data[15].Should().Be(question.Answers.D.Text);
+            data[16].Should().Be(question.Answers.D.FiftyFiftyEliminated);
+            data[17].Should().Be(question.Answers.D.AudiencePercentage);
+            data[18].Should().Be(question.Answers.D.IsCorrect);
+        }
+
+        [TestMethod] public void AggregateNestedDataConversion() {
+            // Arrange
+            var game = new GroceryGame() {
+                Name = "No Carts Allowed",
+                Description = "Contestants must shop for ingredients without their carts, carrying everything by hand",
+                FirstAppearance = new GroceryGame.Episode() {
+                    Season = 1,
+                    Number = 4,
+                    Judge1 = "Melissa d'Arabian",
+                    Judge2 = "Troy Johnson",
+                    Judge3 = "Lorena Garcia"
+                },
+                NumTimesPlayed = 11
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(GroceryGame)];
+            var data = translation.Principal.Extractor.Execute(game);
+
+            // Assert
+            data.Should().HaveCount(8);
+            data[0].Should().Be(game.Name);
+            data[1].Should().Be(game.Description);
+            data[2].Should().Be(new ToInt<byte>().Convert(game.FirstAppearance.Season));
+            data[3].Should().Be(new ToInt<byte>().Convert(game.FirstAppearance.Number));
+            data[4].Should().Be(game.FirstAppearance.Judge1);
+            data[5].Should().Be(game.FirstAppearance.Judge2);
+            data[6].Should().Be(game.FirstAppearance.Judge3);
+            data[7].Should().Be(game.NumTimesPlayed);
+        }
     }
 }
