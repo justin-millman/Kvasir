@@ -538,5 +538,160 @@ namespace UT.Kvasir.Translation {
             data[6].Should().Be(game.FirstAppearance.Judge3);
             data[7].Should().Be(game.NumTimesPlayed);
         }
+
+        [TestMethod] public void NonNullReferenceSingleFieldPrimaryKey() {
+            // Arrange
+            var conclave = new PapalConclave() {
+                Date = new DateTime(2013, 3, 12),
+                Ballots = 5,
+                ElectedPope = new PapalConclave.Cardinal() {
+                    Name = "Jorge Mario Bergoglio",
+                    Country = "Argentina",
+                    Age = 76
+                },
+                NumElectors = 115,
+                Dean = new PapalConclave.Cardinal() {
+                    Name = "Angelo Sodano",
+                    Country = "Italy",
+                    Age = 85
+                }
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(PapalConclave)];
+            var data = translation.Principal.Extractor.Execute(conclave);
+
+            // Assert
+            data.Count.Should().Be(5);
+            data[0].Should().Be(conclave.Date);
+            data[1].Should().Be(conclave.Ballots);
+            data[2].Should().Be(conclave.ElectedPope.Name);
+            data[3].Should().Be(conclave.NumElectors);
+            data[4].Should().Be(conclave.Dean.Name);
+        }
+
+        [TestMethod] public void NonNullReferenceMultiFieldPrimaryKey() {
+            // Arrange
+            var cytonic = new Cytonic() {
+                Name = "Doomslug",
+                CallSign = null,
+                SelfSpecies = new Cytonic.Species() {
+                    Grouping = 498,
+                    Name = "Taynix",
+                    SubNumber = 3,
+                    PrimaryIntelligence = false,
+                },
+                Abilities = Cytonic.Power.Hyperjump,
+                Appearances = Cytonic.Book.Skyward | Cytonic.Book.Starsight | Cytonic.Book.Cytonic | Cytonic.Book.Defiant
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(Cytonic)];
+            var data = translation.Principal.Extractor.Execute(cytonic);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Should().Be(cytonic.Name);
+            data[1].Should().Be(cytonic.CallSign);
+            data[2].Should().Be(cytonic.SelfSpecies.Grouping);
+            data[3].Should().Be(cytonic.SelfSpecies.SubNumber);
+            data[4].Should().Be(cytonic.Abilities);
+            data[5].Should().Be(cytonic.Appearances);
+        }
+
+        [TestMethod] public void NullReferenceSingleFieldPrimaryKey() {
+            // Arrange
+            var soapOpera = new SoapOpera() {
+                Title = "Days of Our Lives",
+                IsStillAiring = true,
+                Premiere = new DateTime(1965, 11, 8),
+                NumSeasons = 59,
+                NumEpisodes = 14430,
+                NumCastMembers = 69,
+                OwningNetwork = null,
+                IsTelenovela = false
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(SoapOpera)];
+            var data = translation.Principal.Extractor.Execute(soapOpera);
+
+            // Assert
+            data.Should().HaveCount(8);
+            data[0].Should().Be(soapOpera.Title);
+            data[1].Should().Be(soapOpera.IsStillAiring);
+            data[2].Should().Be(soapOpera.Premiere);
+            data[3].Should().Be(soapOpera.NumSeasons);
+            data[4].Should().Be(soapOpera.NumEpisodes);
+            data[5].Should().Be(soapOpera.NumCastMembers);
+            data[6].Should().Be(soapOpera.OwningNetwork?.Name);
+            data[7].Should().Be(soapOpera.IsTelenovela);
+        }
+
+        [TestMethod] public void NullReferenceMultiFieldPrimaryKey() {
+            // Arrange
+            var library = new Library() {
+                LibraryID = new Guid(),
+                NumBooks = 716284,
+                HeadLibrarian = null,
+                Endowment = 7000000,
+                Branches = 40
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(Library)];
+            var data = translation.Principal.Extractor.Execute(library);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Should().Be(library.LibraryID);
+            data[1].Should().Be(library.NumBooks);
+            data[2].Should().Be(library.HeadLibrarian?.FirstName);
+            data[3].Should().Be(library.HeadLibrarian?.LastName);
+            data[4].Should().Be(library.Endowment);
+            data[5].Should().Be(library.Branches);
+        }
+
+        [TestMethod] public void RelationNestedDataConversion() {
+            // Arrange
+            var match = new CurlingMatch() {
+                ID = new Guid(),
+                TeamA = new CurlingMatch.OlympicOrganization() {
+                    Code = "ita",
+                    Country = "Italy",
+                    Recognized = 1915
+                },
+                TeamB = new CurlingMatch.OlympicOrganization() {
+                    Code = "",
+                    Country = "Norway",
+                    Recognized = 1861
+                },
+                ScoreA = 8,
+                ScoreB = 5,
+                Date = new DateTime(2022, 2, 8),
+                Olympiad = 24,
+                HammerForA = true
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(CurlingMatch)];
+            var data = translation.Principal.Extractor.Execute(match);
+
+            // Assert
+            data.Should().HaveCount(8);
+            data[0].Should().Be(match.ID);
+            data[1].Should().Be(new AllCaps().Convert(match.TeamA.Code));
+            data[2].Should().Be(new AllCaps().Convert(match.TeamB.Code));
+            data[3].Should().Be(match.ScoreA);
+            data[4].Should().Be(match.ScoreB);
+            data[5].Should().Be(match.Date);
+            data[6].Should().Be(match.Olympiad);
+            data[7].Should().Be(match.HammerForA);
+        }
     }
 }

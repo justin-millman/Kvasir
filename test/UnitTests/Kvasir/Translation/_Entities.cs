@@ -11398,7 +11398,7 @@ namespace UT.Kvasir.Translation {
             [Column(7)] public ulong NumTimesPlayed { get; set; }
         }
 
-        // Scenario: Non-Null Reference Property (✓values extracted✓)
+        // Scenario: Non-Null Reference Property with Single-Field Primary Key (✓values extracted✓)
         public class PapalConclave {
             public class Cardinal {
                 [PrimaryKey, Column(0)] public string Name { get; set; } = "";
@@ -11411,6 +11411,25 @@ namespace UT.Kvasir.Translation {
             [Column(2)] public Cardinal ElectedPope { get; set; } = new();
             [Column(3)] public ushort NumElectors { get; set; }
             [Column(4)] public Cardinal Dean { get; set; } = new();
+        }
+
+        // Scenario: Non-Null Reference Property with Multi-Field Primary Key (✓values extracted✓)
+        public class Cytonic {
+            [Flags] public enum Power { Hyperjump = 1, Cytosense = 2, Mindblade = 4, Bolts = 8, Inhibition = 16, Illusions = 32 }
+            [Flags] public enum Book { Skyward = 1, Starsight = 2, Cytonic = 4, Defiant = 8 }
+
+            public class Species {
+                [PrimaryKey, Column(0)] public int Grouping { get; set; }
+                [Column(1)] public string Name { get; set; } = "";
+                [PrimaryKey, Column(2)] public int SubNumber { get; set; }
+                [Column(3)] public bool PrimaryIntelligence { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string? CallSign { get; set; }
+            [Column(2)] public Species SelfSpecies { get; set; } = new();
+            [Column(4)] public Power Abilities { get; set; }
+            [Column(5)] public Book Appearances { get; set; }
         }
 
         // Scenario: Null Reference Property with Single-Field Primary Key (✓null values extracted✓)
@@ -11443,8 +11462,8 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public Guid LibraryID { get; set; }
             [Column(1)] public ulong NumBooks { get; set; }
             [Column(2)] public Person? HeadLibrarian { get; set; }
-            [Column(5)] public decimal Endowment { get; set; }
-            [Column(6)] public ushort Branches { get; set; }
+            [Column(4)] public decimal Endowment { get; set; }
+            [Column(5)] public ushort Branches { get; set; }
         }
 
         // Scenario: Data Conversion Applied to Reference-Nested Field (✓converted values extracted✓)
@@ -11452,12 +11471,12 @@ namespace UT.Kvasir.Translation {
             public class OlympicOrganization {
                 [PrimaryKey, DataConverter(typeof(AllCaps)), Column(0)] public string Code { get; set; } = "";
                 [Column(2)] public string Country { get; set; } = "";
-                [Column(3)] public DateTime Recognized { get; set; }
+                [Column(3)] public short Recognized { get; set; }
             }
 
             [PrimaryKey, Column(0)] public Guid ID { get; set; }
-            [Column(1)] OlympicOrganization TeamA { get; set; } = new();
-            [Column(2)] OlympicOrganization TeamB { get; set; } = new();
+            [Column(1)] public OlympicOrganization TeamA { get; set; } = new();
+            [Column(2)] public OlympicOrganization TeamB { get; set; } = new();
             [Column(3)] public sbyte ScoreA { get; set; }
             [Column(4)] public sbyte ScoreB { get; set; }
             [Column(5)] public DateTime Date { get; set; }
