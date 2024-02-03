@@ -1,48 +1,64 @@
-using FluentAssertions;
-using Kvasir.Extraction;
-using Kvasir.Reconstitution;
+﻿using Kvasir.Reconstitution;
 using Kvasir.Relations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
 
 namespace UT.Kvasir.Reconstitution {
-    [TestClass, TestCategory("FromPropertyRepopulator")]
-    public class FromPropertyRepopulatorTests {
-        [TestMethod] public void Construct() {
+    [TestClass, TestCategory("DirectRepopulator")]
+    public class DirectRepopulatorTests {
+        [TestMethod] public void RepopulateZeroElements() {
             // Arrange
-            var type = typeof(Tuple<IReadOnlyRelationSet<int>>);
-            var prop = type.GetProperty("Item1")!;
-            var extractor = new IdentityExtractor<Tuple<IReadOnlyRelationSet<int>>>();
+            var relation = Substitute.For<IRelation>();
+            var elements = Array.Empty<object>();
 
             // Act
-            var repopulator = new FromPropertyRepopulator(extractor, prop);
+            var repopulator = new DirectRepopulator();
+            repopulator.Repopulate(relation, elements);
 
             // Assert
-            repopulator.ExpectedSubject.Should().Be(type);
+            relation.DidNotReceive().Repopulate(Arg.Any<object>());
         }
 
-        [TestMethod] public void Execute() {
+        [TestMethod] public void RepopulateSingleElement() {
             // Arrange
-            var mockRelation = Substitute.For<IRelation>();
-            var source = new Tuple<IRelation>(mockRelation);
-            var entries = new List<string>() { "Seneca Falls", "Richmond", "Hackensack", "Ogden", "Bloomington" };
-            var extractor = new IdentityExtractor<Tuple<IRelation>>();
-            var repopulator = new FromPropertyRepopulator(extractor, source.GetType().GetProperty("Item1")!);
+            var relation = Substitute.For<IRelation>();
+            var elements = new object[] { "Davao" };
+
+            // ACt
+            var repopulator = new DirectRepopulator();
+            repopulator.Repopulate(relation, elements);
+
+            // Assert
+            relation.Received().Repopulate(elements[0]);
+        }
+
+        [TestMethod] public void RepopulateMultipleElements() {
+            // Arrange
+            var relation = Substitute.For<IRelation>();
+            var elements = new object[] { 100, 101, 103, 106, 110, 115, 121, 128, 136, 145, 155, 166, 178, 191, 205 };
 
             // Act
-            repopulator.Execute(source, entries);
+            var repopulator = new DirectRepopulator();
+            repopulator.Repopulate(relation, elements);
 
             // Assert
             Received.InOrder(() => {
-                mockRelation.Repopulate(entries[0]);
-                mockRelation.Repopulate(entries[1]);
-                mockRelation.Repopulate(entries[2]);
-                mockRelation.Repopulate(entries[3]);
-                mockRelation.Repopulate(entries[4]);
+                relation.Repopulate(elements[0]);
+                relation.Repopulate(elements[1]);
+                relation.Repopulate(elements[2]);
+                relation.Repopulate(elements[3]);
+                relation.Repopulate(elements[4]);
+                relation.Repopulate(elements[5]);
+                relation.Repopulate(elements[6]);
+                relation.Repopulate(elements[7]);
+                relation.Repopulate(elements[8]);
+                relation.Repopulate(elements[9]);
+                relation.Repopulate(elements[10]);
+                relation.Repopulate(elements[11]);
+                relation.Repopulate(elements[12]);
+                relation.Repopulate(elements[13]);
             });
-            mockRelation.ReceivedCalls().Should().HaveCount(5);
         }
     }
 }

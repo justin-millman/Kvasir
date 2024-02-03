@@ -76,10 +76,10 @@ namespace Kvasir.Translation {
         public RelationExtractionPlan Extractor { get; }
 
         /// <summary>
-        ///   The <see cref="RelationReconstitutionPlan">reconstitution plan</see> for converting data stored in the
+        ///   The <see cref="RelationRepopulationPlan">repopulation plan</see> for converting data stored in the
         ///   <see cref="Table">Relation Table</see> back into an Relation.
         /// </summary>
-        public RelationReconstitutionPlan Reconstitutor { get; }
+        public RelationRepopulationPlan Repopulator { get; }
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="RelationTableDef"/> class.
@@ -90,17 +90,17 @@ namespace Kvasir.Translation {
         /// <param name="extractor">
         ///   The <see cref="Extractor">extraction plan</see>.
         /// </param>
-        /// <param name="reconstitutor">
-        ///   The <see cref="Reconstitutor">reconstitution plan</see>.
+        /// <param name="repopulator">
+        ///   The <see cref="Repopulator">repopulation plan</see>.
         /// </param>
-        public RelationTableDef(ITable table, RelationExtractionPlan extractor, RelationReconstitutionPlan reconstitutor) {
+        public RelationTableDef(ITable table, RelationExtractionPlan extractor, RelationRepopulationPlan repopulator) {
             Debug.Assert(table is not null);
             Debug.Assert(extractor is null);            // not yet implemented
-            Debug.Assert(reconstitutor is null);        // not yet implemented
+            Debug.Assert(repopulator is null);        // not yet implemented
 
             Table = table;
             Extractor = extractor!;
-            Reconstitutor = reconstitutor!;
+            Repopulator = repopulator!;
         }
 
         /* Because RelationTableDef is a record type, the following methods are synthesized automatically by the compiler:

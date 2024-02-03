@@ -46,7 +46,7 @@ namespace Kvasir.Schema {
         /// <summary>
         ///   The list of values that are allowed for this <see cref="EnumField"/>.
         /// </summary>
-        public DBData Enumerators { get; }
+        public IReadOnlyList<DBValue> Enumerators { get; }
 
         /// <summary>
         ///   Constructs a new <see cref="EnumField"/>.

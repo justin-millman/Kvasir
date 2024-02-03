@@ -1256,775 +1256,592 @@
               The contextual information about the source or destination.
             </param>
         </member>
+        <member name="T:Kvasir.Extraction.ConvertingExtractor">
+            <summary>
+              An <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that executes a <see cref="T:Cybele.Core.DataConverter"/> after extracting a value.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.ConvertingExtractor.SourceType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Extraction.ConvertingExtractor.ResultType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Extraction.ConvertingExtractor.#ctor(Kvasir.Extraction.ISingleExtractor,Cybele.Core.DataConverter)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Extraction.ConvertingExtractor"/>.
+            </summary>
+            <param name="extractor">
+              The <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that produces the unconverted value.
+            </param>
+            <param name="converter">
+              The <see cref="T:Cybele.Core.DataConverter"/> to run over the value produced by <paramref name="extractor"/> during
+              <see cref="M:Kvasir.Extraction.ConvertingExtractor.ExtractFrom(System.Object)">extraction</see>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Extraction.ConvertingExtractor.ExtractFrom(System.Object)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Extraction.DataExtractionPlan">
             <summary>
-              A description of the way in which data for a particular CLR object type is to be extracted from instances,
-              transformed, and prepared to be stored in a back-end database.
+              A plan that describes how to extract a set of <see cref="T:Kvasir.Schema.DBValue">database values</see> from a single CLR
+              source object.
             </summary>
         </member>
-        <member name="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource">
+        <member name="P:Kvasir.Extraction.DataExtractionPlan.SourceType">
             <summary>
-              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> is capable of
-              being executed.
+              The <see cref="T:System.Type"/> of object from which this <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> extracts values.
             </summary>
         </member>
-        <member name="M:Kvasir.Extraction.DataExtractionPlan.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Extraction.IExtractionStep},System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter})">
+        <member name="M:Kvasir.Extraction.DataExtractionPlan.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Extraction.IMultiExtractor})">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.DataExtractionPlan"/>.
+              Construct a new <see cref="T:Kvasir.Extraction.DataExtractionPlan"/>.
             </summary>
-            <param name="steps">
-              The ordered sequence of <see cref="T:Kvasir.Extraction.IExtractionStep">extraction steps</see> that produce the unconverted
-              values from a source CLR object.
+            <param name="extractors">
+              The collection of extractors that produce the constituent values during <see cref="N:Kvasir.Extraction"/>.
             </param>
-            <param name="converters">
-              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that transform the values produced
-              by <paramref name="steps"/>.
-            </param>
-            <pre>
-              <paramref name="steps"/> is not empty
-                --and--
-              Each element of <paramref name="steps"/> expects the same type of
-              <see cref="P:Kvasir.Extraction.IExtractionStep.ExpectedSource">source object</see>
-                --and--
-              The number of elements in <paramref name="converters"/> matches the number of values, in total, produced
-              by <paramref name="steps"/> (note that this is not necessarily the number of elements in
-              <paramref name="steps"/>, as an <see cref="T:Kvasir.Extraction.IExtractionStep"/> may produce multiple values).
-            </pre>
         </member>
-        <member name="M:Kvasir.Extraction.DataExtractionPlan.Execute(System.Object)">
+        <member name="M:Kvasir.Extraction.DataExtractionPlan.ExtractFrom(System.Object)">
             <summary>
-              Execute this <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> on a source object, producing an ordered sequence of
-              values that can be stored in a back-end database.
+              Run the extraction logic over a CLR source object, producing one or more database values.
             </summary>
             <param name="source">
-              The source object on which to execute this <see cref="T:Kvasir.Extraction.IExtractionStep"/>.
+              The CLR source object.
             </param>
-            <pre>
-              <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
-              interface thereof.
-            </pre>
             <returns>
-              An immutable, indexable, ordered sequence of <see cref="T:Kvasir.Schema.DBValue">database values</see> extracted from
-              <paramref name="source"/>.
+              One or more possibly database values, any of which may be <see cref="P:Kvasir.Schema.DBValue.NULL"/>. Each invocation of
+              this method on a particular <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> instance will return the same number of
+              database values.
             </returns>
         </member>
-        <member name="M:Kvasir.Extraction.DataExtractionPlan.ExecutePiecewise(System.Object)">
+        <member name="T:Kvasir.Extraction.DecomposingExtractor">
             <summary>
-              Execute this <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> on a source object by extracting and presenting a single
-              value at a time, producing (in totality) an ordered sequence of values that can be stored in a back-end
-              database.
+              A <see cref="T:Kvasir.Extraction.IMultiExtractor"/> that takes a single CLR source object and "decomposes" it into one or more
+              constituent components.
             </summary>
-            <pre>
-              <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
-              instance thereof.
-            </pre>
+        </member>
+        <member name="P:Kvasir.Extraction.DecomposingExtractor.SourceType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Extraction.DecomposingExtractor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Extraction.IMultiExtractor})">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Extraction.DecomposingExtractor"/>.
+            </summary>
+            <param name="extractors">
+              The collection of extractors that produce the constituent values during
+              <see cref="M:Kvasir.Extraction.DecomposingExtractor.ExtractFrom(System.Object)">extraction</see>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Extraction.DecomposingExtractor.ExtractFrom(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Extraction.IMultiExtractor">
+            <summary>
+              The interface describing a component that extracts one or more values from a single CLR source object.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.IMultiExtractor.SourceType">
+            <summary>
+              The <see cref="T:System.Type"/> of object from which this <see cref="T:Kvasir.Extraction.IMultiExtractor"/> extracts values.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Extraction.IMultiExtractor.ExtractFrom(System.Object)">
+            <summary>
+              Run the extraction logic over a CLR source object, producing one or more values.
+            </summary>
+            <param name="source">
+              The CLR source object.
+            </param>
             <returns>
-              A lazily-evaluated, immutable, non-indexable ordered sequence of <see cref="T:Kvasir.Schema.DBValue">database values</see>
-              extracted from <paramref name="source"/>.
+              One or more possibly <see langword="null"/> values. If <paramref name="source"/> is
+              <see langword="null"/>, then all the values will be <see langword="null"/>. Each invocation of this
+              method will return the same number of values.
             </returns>
         </member>
-        <member name="T:Kvasir.Extraction.DecomposingExtractionStep">
+        <member name="T:Kvasir.Extraction.ISingleExtractor">
             <summary>
-              An <see cref="T:Kvasir.Extraction.IExtractionStep"/> that produces a collection of primitive values obtained by recursively
-              extracting Field values from an aggregate.
+              The interface describing a component that extracts a single value from a CLR source object.
             </summary>
         </member>
-        <member name="P:Kvasir.Extraction.DecomposingExtractionStep.ExpectedSource">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Extraction.DecomposingExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor,System.Collections.Generic.IEnumerable{Kvasir.Extraction.IExtractionStep})">
+        <member name="P:Kvasir.Extraction.ISingleExtractor.ResultType">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.DecomposingExtractionStep"/>.
+              The <see cref="T:System.Type"/> of object produced by this <see cref="T:Kvasir.Extraction.ISingleExtractor"/>.
             </summary>
-            <param name="extractor">
-              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> defining how the primitive value is to be obtained.
+        </member>
+        <member name="M:Kvasir.Extraction.ISingleExtractor.ExtractFrom(System.Object)">
+            <summary>
+              Run the extraction logic over a CLR source object, producing a single value.
+            </summary>
+            <param name="source">
+              The CLR source object.
             </param>
-            <param name="decomposition">
-              The steps defining how to decompose the value produced by <paramref name="extractor"/>.
-            </param>
-            <pre>
-             <paramref name="decomposition"/> is not empty
-               --and--
-              The <see cref="P:Kvasir.Extraction.IExtractionStep.ExpectedSource">ExpectedSource</see> of each element of
-              <paramref name="decomposition"/> is the same as the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see>
-              of <paramref name="extractor"/>, or is a base class or interface thereof
-                --and--
-              The <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
-              not supported by the Framework.
-            </pre>
-        </member>
-        <member name="M:Kvasir.Extraction.DecomposingExtractionStep.Execute(System.Object)">
-            <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Extraction.IdentityExtractor`1">
-            <summary>
-              An <see cref="T:Kvasir.Extraction.IFieldExtractor"/> that simply returns the value it was provided.
-            </summary>
-            <remarks>
-              The <see cref="T:Kvasir.Extraction.IdentityExtractor`1"/> class is intended to be used with collection elements, where primitive
-              values may be stored directly. In such circumstances, there is no wrapping object and therefore no property
-              or function that can be used to access the value. Note, however, that if the element type of a collection is
-              itself a complex type (either an Entity or an Aggregate), the <see cref="T:Kvasir.Extraction.IdentityExtractor`1"/> should not
-              be used.
-            </remarks>
-        </member>
-        <member name="P:Kvasir.Extraction.IdentityExtractor`1.ExpectedSource">
-            <inheritdoc/>
-        </member>
-        <member name="P:Kvasir.Extraction.IdentityExtractor`1.FieldType">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Extraction.IdentityExtractor`1.#ctor">
-            <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.IdentityExtractor`1"/>.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Extraction.IdentityExtractor`1.Execute(System.Object)">
-            <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Extraction.IExtractionStep">
-            <summary>
-              The interface describing a unit of logic that extracts and potentially decomposes one or more values out of
-              a source object in database-ready form.
-            </summary>
-            <remarks>
-              The <see cref="T:Kvasir.Extraction.IExtractionStep"/> interface is a companion to the <see cref="T:Kvasir.Extraction.IFieldExtractor"/> interface,
-              separating the logic for what to do with a piece of extracted data from how to obtain it. The data produced
-              by executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance is fully decomposed but has not undergone any
-              transforms.
-            </remarks>
-        </member>
-        <member name="P:Kvasir.Extraction.IExtractionStep.ExpectedSource">
-            <summary>
-              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.IExtractionStep"/> is capable of being
-              executed.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Extraction.IExtractionStep.Execute(System.Object)">
-            <summary>
-              Execute this <see cref="T:Kvasir.Extraction.IExtractionStep"/> on a source object, producing an ordered sequence of values
-              that can be stored in a back-end database.
-            </summary>
-            <remarks>
-              Executing an <see cref="T:Kvasir.Extraction.IExtractionStep"/> on a <see langword="null"/> source object will produce a
-              sequence of <see cref="P:Kvasir.Schema.DBValue.NULL"/> of the appropriate length. This ensures that a particular
-              <see cref="T:Kvasir.Extraction.IExtractionStep"/> instance always produces sequences of equal length independent of the
-              source object's nullity.
-            </remarks>
-            <param name="sourceObject">
-              The source object on which to execute this <see cref="T:Kvasir.Extraction.IExtractionStep"/>.
-            </param>
-            <pre>
-              If <paramref name="sourceObject"/> is not <see langword="null"/>, then <see cref="P:Kvasir.Extraction.IExtractionStep.ExpectedSource"/> is
-              its dynamic type or is a base class or interface thereof.
-            </pre>
             <returns>
-              An immutable, indexable, ordered sequence of <see cref="T:Kvasir.Schema.DBValue">database values</see> extracted from
-              <paramref name="sourceObject"/>.
+              If <paramref name="source"/> is <see langword="null"/>, then <see langword="null"/>. Otherwise, a single
+              value extracted from <paramref name="source"/> that is either <see langword="null"/> or an instance of
+              <see cref="P:Kvasir.Extraction.ISingleExtractor.ResultType"/>.
             </returns>
         </member>
-        <member name="T:Kvasir.Extraction.IFieldExtractor">
-            <summary>
-              The interface describing a unit of logic that extracts a single, undecomposed value out of a source object.
-            </summary>
-            <remarks>
-              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> interface is a companion to the <see cref="T:Kvasir.Extraction.IExtractionStep"/> interface,
-              separating the logic for how to extract data from a source object from what to do with the extracting content
-              afterward. Because the <see cref="T:Kvasir.Extraction.IFieldExtractor"/> interface is not responsible for decomposition or any
-              form of data transformation, it cannot guarantee that the singular value produced by an execution can be
-              stored in a back-end database as is.
-            </remarks>
-        </member>
-        <member name="P:Kvasir.Extraction.IFieldExtractor.ExpectedSource">
-            <summary>
-              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.IExtractionStep"/> is capable of being
-              executed.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Extraction.IFieldExtractor.FieldType">
-            <summary>
-              The <see cref="T:System.Type"/> of the field value produced by executing this <see cref="T:Kvasir.Extraction.IExtractionStep"/>.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Extraction.IFieldExtractor.Execute(System.Object)">
-            <summary>
-              Execute this <see cref="T:Kvasir.Extraction.IFieldExtractor"/> on a source object, producing a single value of unspecified
-              type and structure.
-            </summary>
-            <param name="sourceObject">
-              The source object on which to execute this <see cref="T:Kvasir.Extraction.IFieldExtractor"/>.
-            </param>
-            <pre>
-              If <paramref name="sourceObject"/> is not <see langword="null"/>, then <see cref="P:Kvasir.Extraction.IFieldExtractor.ExpectedSource"/> is
-              its dynamic type or is a base class or interface thereof.
-            </pre>
-            <returns>
-              The singular value extracted from <paramref name="sourceObject"/>, which is guaranteed to be
-              <see langword="null"/> if <paramref name="sourceObject"/> itself is <see langword="null"/>.
-            </returns>
-        </member>
-        <member name="T:Kvasir.Extraction.PrimitiveExtractionStep">
-            <summary>
-              An <see cref="T:Kvasir.Extraction.IExtractionStep"/> that produces a single, primitive value.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Extraction.PrimitiveExtractionStep.ExpectedSource">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.#ctor(Kvasir.Extraction.IFieldExtractor)">
-            <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.PrimitiveExtractionStep"/>.
-            </summary>
-            <param name="extractor">
-              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> defining how the primitive value is to be obtained.
-            </param>
-            <pre>
-              The <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">FieldType</see> of <paramref name="extractor"/> is a data type
-              supported by the Framework.
-            </pre>
-        </member>
-        <member name="M:Kvasir.Extraction.PrimitiveExtractionStep.Execute(System.Object)">
+        <member name="M:Kvasir.Extraction.ISingleExtractor.Kvasir#Extraction#IMultiExtractor#ExtractFrom(System.Object)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Extraction.ReadPropertyExtractor">
             <summary>
-              An <see cref="T:Kvasir.Extraction.IFieldExtractor"/> that performs extracting by reading from a property through reflection.
+              A <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that produces its value by reading from a sequence of properties via
+              reflection.
             </summary>
         </member>
-        <member name="P:Kvasir.Extraction.ReadPropertyExtractor.ExpectedSource">
+        <member name="P:Kvasir.Extraction.ReadPropertyExtractor.SourceType">
             <inheritdoc/>
         </member>
-        <member name="P:Kvasir.Extraction.ReadPropertyExtractor.FieldType">
+        <member name="P:Kvasir.Extraction.ReadPropertyExtractor.ResultType">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Extraction.ReadPropertyExtractor.#ctor(Cybele.Core.PropertyChain)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.ReadPropertyExtractor"/>.
+              Construct a new <see cref="T:Kvasir.Extraction.ReadPropertyExtractor"/>.
             </summary>
-            <param name="property">
-              The <see cref="T:Cybele.Core.PropertyChain"/> describing the property (or chain or properties) from which to read.
+            <param name="path">
+              The path describing the sequence of properties to be read during
+              <see cref="M:Kvasir.Extraction.ReadPropertyExtractor.ExtractFrom(System.Object)">extraction</see>.
             </param>
         </member>
-        <member name="M:Kvasir.Extraction.ReadPropertyExtractor.Execute(System.Object)">
+        <member name="M:Kvasir.Extraction.ReadPropertyExtractor.ExtractFrom(System.Object)">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Extraction.RelationExtractionPlan">
             <summary>
-              A description of the way in which data is extracted from an <see cref="T:Kvasir.Relations.IRelation"/> stored on a particular
-              CLR object type and then transformed and prepared to be stored in a back-end database.
+              A plan that extracts rows of database values from a <see cref="T:Kvasir.Relations.IRelation">Relation</see> to be inserted,
+              updated, and/or deleted from a back-end table.
             </summary>
         </member>
-        <member name="P:Kvasir.Extraction.RelationExtractionPlan.ExpectedSource">
+        <member name="P:Kvasir.Extraction.RelationExtractionPlan.SourceType">
             <summary>
-              The <see cref="T:System.Type"/> of source object on which this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/> is capable of
-              being executed.
+              The <see cref="T:System.Type"/> of object from which this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/> extracts values.
             </summary>
         </member>
-        <member name="M:Kvasir.Extraction.RelationExtractionPlan.#ctor(Kvasir.Extraction.IFieldExtractor,Kvasir.Extraction.DataExtractionPlan)">
+        <member name="M:Kvasir.Extraction.RelationExtractionPlan.#ctor(Kvasir.Extraction.ISingleExtractor,Kvasir.Extraction.DataExtractionPlan)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
+              Construct a new <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
             </summary>
             <param name="relationExtractor">
-              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> that describes how to obtain the target <see cref="T:Kvasir.Relations.IRelation"/> from a
-              source object.
+              The <see cref="T:Kvasir.Extraction.ISingleExtractor"/> describing how to obtain the <see cref="T:Kvasir.Relations.IRelation">Relation</see> from
+              which to extract actions from the actual source object.
             </param>
-            <param name="plan">
-              The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> that describes how to extract data from an entry in the relation
-              obtained from <paramref name="relationExtractor"/>.
+            <param name="elementExtractionPlan">
+              The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> describing how to turn a single element of the target Relation into a
+              row of database values.
             </param>
-            <pre>
-              The <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType"/> of <paramref name="relationExtractor"/> is a type that
-              implements the <see cref="T:Kvasir.Relations.IRelation"/> interface (or is that interface itself)
-                --and--
-              The type of data stored in the relation obtained from <paramref name="relationExtractor"/> is compatible
-              with the <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> of <paramref name="plan"/>.
-            </pre>
         </member>
-        <member name="M:Kvasir.Extraction.RelationExtractionPlan.Execute(System.Object)">
+        <member name="M:Kvasir.Extraction.RelationExtractionPlan.ExtractFrom(System.Object)">
             <summary>
-              Execute this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/> on a source object.
+              Run the extraction logic over a CLR source object, producing <see cref="T:Kvasir.Extraction.RelationData"/>.
             </summary>
             <param name="source">
-              The source object on which to execute this <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
+              The CLR source object.
             </param>
-            <pre>
-              <see cref="P:Kvasir.Extraction.RelationExtractionPlan.ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
-              interface thereof.
-            </pre>
             <returns>
-              A triplet containing the values extracted from the relation targeted on <paramref name="source"/> by this
-              <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/>.
+              The <see cref="T:Kvasir.Extraction.RelationData"/> containing the insertions, modifications, and deletions of the
+              <see cref="T:Kvasir.Relations.IRelation">Relation</see> extracted from <paramref name="source"/>.
             </returns>
         </member>
-        <member name="T:Kvasir.Reconstitution.ByConstructorCreator">
+        <member name="T:Kvasir.Extraction.RelationData">
             <summary>
-              An <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> that produces a single, complex CLR object by invoking a constructor via
-              reflection.
+              A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
             </summary>
         </member>
-        <member name="P:Kvasir.Reconstitution.ByConstructorCreator.Target">
+        <member name="M:Kvasir.Extraction.RelationData.#ctor(System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <summary>
+              A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Reconstitution.ConstructingCreator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that creates a new CLR object by invoking a constructor via reflection.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.ConstructingCreator.ResultType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.ByConstructorCreator.#ctor(System.Reflection.ConstructorInfo,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.IReconstitutor},System.Boolean)">
+        <member name="M:Kvasir.Reconstitution.ConstructingCreator.#ctor(System.Reflection.ConstructorInfo,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.ICreator},System.Boolean)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.ByConstructorCreator"/>.
+              Construct a new <see cref="T:Kvasir.Reconstitution.ConstructingCreator"/>.
             </summary>
             <param name="ctor">
-              The <see cref="T:System.Reflection.ConstructorInfo"/> describing the constructor to be invoked.
+              The <see cref="T:System.Reflection.ConstructorInfo">constructor</see> to invoke.
             </param>
-            <param name="argReconstitutors">
-              A list of <see cref="T:Kvasir.Reconstitution.IReconstitutor">Reconstitutors</see> to be used to create the arguments to the
-              reflection invocation of <paramref name="ctor"/>, in the order in which they are listed.
+            <param name="argumentCreators">
+              A collection of <see cref="T:Kvasir.Reconstitution.ICreator">ICreators</see> that define how each argument in the
+              <paramref name="ctor">constructor</paramref> is created from the
+              <see cref="T:Kvasir.Schema.DBValue">database values</see>.
             </param>
-            <param name="opt">
-              Whether or not the object being constructed is "optional." An optional object is one that can take on the
-              value of <see langword="null"/>. Specifically, this argument controls the behavior of
-              <see cref="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})"/> in the event that a set of all <see cref="P:Kvasir.Schema.DBValue.NULL"/>
-              is provided.
+            <param name="allowAllNulls">
+              If <see langword="true"/>, then a new non-<see langword="null"/> CLR object will be constructed even if
+              each of the <see cref="T:Kvasir.Schema.DBValue">database values</see> provided is <see cref="P:Kvasir.Schema.DBValue.NULL"/>. If
+              <see langword="false"/>, then such a set of values will result in a <see langword="null"/> object.
             </param>
-            <pre>
-              <paramref name="argReconstitutors"/> is not empty
-                --and--
-              The <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target">target type</see> of each element of
-              <paramref name="argReconstitutors"/> is compatible with the corresponding argument to
-              <paramref name="ctor"/>.
-            </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Reconstitution.ConstructingCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
-        <member name="T:Kvasir.Reconstitution.ByKeyLookupCreator">
+        <member name="T:Kvasir.Reconstitution.CreatorFacade">
             <summary>
-              An <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> that looks up an existing CLR object by a primary or secondary key.
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that forwards a contiguous subset of <see cref="T:Kvasir.Schema.DBValue">database values</see> to
+              another <see cref="T:Kvasir.Reconstitution.ICreator"/>.
             </summary>
+            <remarks>
+              The purpose of the <see cref="T:Kvasir.Reconstitution.CreatorFacade"/> is to allow the reconstitution logic for an Aggregate type to
+              be reused, both within a single Entity and across Entities. The logic for reconstituting an Aggregate depends
+              only on the values extracted from that Aggregate, which are guaranteed to be contiguous within the data of the
+              owning Entity. Likewise, any data reversions that must applied are known at the scope of the Aggregate, since
+              data converters cannot be applied to nested properties. The <see cref="T:Kvasir.Reconstitution.CreatorFacade"/> therefore allows
+              Kvasir to build an <see cref="T:Kvasir.Reconstitution.ICreator"/> (generally a <see cref="T:Kvasir.Reconstitution.ReconstitutingCreator"/>) for a particular
+              Aggregate assuming that the values of interest are 0-index, then wrap that instance multiple times based on
+              the actual offset into the row of values.
+            </remarks>
         </member>
-        <member name="P:Kvasir.Reconstitution.ByKeyLookupCreator.Target">
+        <member name="P:Kvasir.Reconstitution.CreatorFacade.ResultType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.ByKeyLookupCreator.#ctor(System.Func{System.Collections.Generic.IEnumerable{System.Object}},Kvasir.Extraction.DataExtractionPlan)">
+        <member name="M:Kvasir.Reconstitution.CreatorFacade.#ctor(Kvasir.Reconstitution.ICreator,System.Int32,System.Int32)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.ByKeyLookupCreator"/>.
+              Create a new <see cref="T:Kvasir.Reconstitution.CreatorFacade"/>.
             </summary>
-            <param name="factory">
-              A function that produces the collection of possible Entity matches, which can produce different results
-              each time it is invoked (if so desired).
+            <param name="creator">
+              The <see cref="T:Kvasir.Reconstitution.ICreator"/> to which the new <see cref="T:Kvasir.Reconstitution.CreatorFacade"/> is to delegate.
             </param>
-            <param name="keyExtractor">
-              The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> that produces the key for possible Entity matches against which to
-              compare the raw values upon <see cref="M:Kvasir.Reconstitution.ByKeyLookupCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">execution</see>.
+            <param name="startIdx">
+              The index into the collection of <see cref="T:Kvasir.Schema.DBValue">database values</see> at which the first relevant
+              value for <paramref name="creator"/> is located.
             </param>
-            <pre>
-              The <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> of <paramref name="keyExtractor"/> is the dynamic type
-              of each item produced by every invocation of <paramref name="factory"/>, or is a base class or interface
-              thereof.
-            </pre>
+            <param name="length">
+              The number of <see cref="T:Kvasir.Schema.DBValue">database values</see> to forward to <paramref name="creator"/>.
+            </param>
         </member>
-        <member name="M:Kvasir.Reconstitution.ByKeyLookupCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Reconstitution.CreatorFacade.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Reconstitution.DataReconstitutionPlan">
             <summary>
-              A description of the way in which data for a particular CLR object type is to be extracted from a back-end
-              database, transformed, and re-imagined as an instance.
+              A plan that describes how to reconstitute a single CLR source object from a set of
+              <see cref="T:Kvasir.Schema.DBValue">database values</see>.
             </summary>
         </member>
-        <member name="P:Kvasir.Reconstitution.DataReconstitutionPlan.Target">
+        <member name="P:Kvasir.Reconstitution.DataReconstitutionPlan.ResultType">
             <summary>
-              The <see cref="T:System.Type"/> of CLR object produced by this <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/>.
+              The <see cref="T:System.Type"/> of CLR object reconstituted by this <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Reconstitution.DataReconstitutionPlan.#ctor(Kvasir.Reconstitution.IReconstitutor,System.Collections.Generic.IEnumerable{Cybele.Core.DataConverter})">
+        <member name="M:Kvasir.Reconstitution.DataReconstitutionPlan.#ctor(Kvasir.Reconstitution.ICreator,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.IMutator})">
             <summary>
               Construct a new <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/>.
             </summary>
-            <param name="reconstitutor">
-              The <see cref="T:Kvasir.Reconstitution.IReconstitutor"/> with which to produce the CLR object when the new
-              <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/> is executed.
+            <param name="creator">
+              The <see cref="T:Kvasir.Reconstitution.ICreator"/> with which to create the bare CLR object.
             </param>
-            <param name="reverters">
-              The ordered sequence of <see cref="T:Cybele.Core.DataConverter">data converters</see> that transform the values
-              extracted from the back-end database..
+            <param name="mutators">
+              Zero or more <see cref="T:Kvasir.Reconstitution.IMutator"/> to be applied to the CLR object produced by <paramref name="creator"/>
+              in the given order.
             </param>
-            <pre>
-              <paramref name="reverters"/> is not empty
-                --and--
-              each element of <paramref name="reverters"/> is a bidirectional <see cref="T:Cybele.Core.DataConverter"/>.
-            </pre>
         </member>
         <member name="M:Kvasir.Reconstitution.DataReconstitutionPlan.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <summary>
-              Execute this <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/> to create a brand new CLR object from a "row" of
-              database values.
+              Reconstitute a CLR object from one or more <see cref="T:Kvasir.Schema.DBValue">database values</see>.
             </summary>
-            <param name="rawValues">
-              The database values from which to reconstitute a CLR object.
+            <param name="dbValues">
+              A non-empty, ordered collection of <see cref="T:Kvasir.Schema.DBValue">database values</see>, any of which may be
+              <see cref="P:Kvasir.Schema.DBValue.NULL"/>, from which to reconstitute a new CLR object.
             </param>
-            <pre>
-              <paramref name="rawValues"/> is not empty.
-            </pre>
             <returns>
-              A CLR object of type <see cref="P:Kvasir.Reconstitution.DataReconstitutionPlan.Target"/> that, when run through the dedicated extractor for
-              <see cref="P:Kvasir.Reconstitution.DataReconstitutionPlan.Target"/>, produces <paramref name="rawValues"/>.
+              A non-<see langword="null"/> CLR object created from <paramref name="dbValues"/> that is an instance of
+              <see cref="P:Kvasir.Reconstitution.DataReconstitutionPlan.ResultType"/>.
             </returns>
         </member>
-        <member name="T:Kvasir.Reconstitution.FromPropertyRepopulator">
+        <member name="T:Kvasir.Reconstitution.DefaultStructCreator">
             <summary>
-              An <see cref="T:Kvasir.Reconstitution.IRepopulator"/> that obtains its target <see cref="T:Kvasir.Relations.IRelation"/> by calling the getter on a
-              readable instance property of a CLR object.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Reconstitution.FromPropertyRepopulator.ExpectedSubject">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Reconstitution.FromPropertyRepopulator.#ctor(Kvasir.Extraction.IFieldExtractor,System.Reflection.PropertyInfo)">
-            <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.FromPropertyRepopulator"/>.
-            </summary>
-            <param name="extractor">
-              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> describing how to access the object on which the
-              <see cref="T:Kvasir.Relations.IRelation"/> resides.
-            </param>
-            <param name="property">
-              The <see cref="T:System.Reflection.PropertyInfo"/> describing the property from which to read the <see cref="T:Kvasir.Relations.IRelation"/>
-              instance to be populated.
-            </param>
-            <pre>
-              <paramref name="property"/> is a readable instance property
-                --and--
-              <paramref name="property"/> is accessible from the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">type produced by
-              <paramref name="extractor"/></see>.
-                --and--
-              the <see cref="P:System.Reflection.PropertyInfo.PropertyType"/> of <paramref name="property"/> is <see cref="T:Kvasir.Relations.IRelation"/> or
-              a type that implements the <see cref="T:Kvasir.Relations.IRelation"/> interface.
-            </pre>
-        </member>
-        <member name="M:Kvasir.Reconstitution.FromPropertyRepopulator.Execute(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
-            <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Reconstitution.IMutationStep">
-            <summary>
-              The interface that defines how an existing CLR object is modified based on a list of values extracted from a
-              back-end relational database
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that creates a default-constructed instance of a <see cref="T:System.ValueType"/>.
             </summary>
             <remarks>
-              <para>
-                The process of creating a CLR object from a "row" of database values is a two-step process. In the first
-                step, the object is <i>created</i>; that is, some valid CLR object is brought into existence according to
-                the APIs exposed by the target type. In the second step, that object is modified so that its state reflects
-                the full slate of values in the "row." This two-step dance allows for the use of, for example, read-only
-                properties in conjunction with constructors, which is a more natural object model for most users (as
-                compared to requiring that all properties be writeable).
-              </para>
-              <para>
-                The <see cref="T:Kvasir.Reconstitution.IMutationStep"/> interface describes the shape of the second step in the object-building
-                process only. The guarantee of the interface is that the provided subject, modified in place, will be in a
-                state that fully reflects the provided database state.
-              </para>
+              This implementation is essentially the same as a <see cref="T:Kvasir.Reconstitution.ConstructingCreator"/>. However, the implicit
+              default constructor available for every <see cref="T:System.ValueType"/> is not exposed via reflection (e.g. via
+              <see cref="M:System.Type.GetConstructors"/>.
             </remarks>
-            <seealso cref="T:Kvasir.Reconstitution.IObjectCreator"/>
-            <seealso cref="T:Kvasir.Reconstitution.IRepopulator"/>
-            <seealso cref="T:Kvasir.Reconstitution.Reconstitutor"/>
         </member>
-        <member name="P:Kvasir.Reconstitution.IMutationStep.ExpectedSubject">
-            <summary>
-              The <see cref="T:System.Type"/> of object on which this <see cref="T:Kvasir.Reconstitution.IMutationStep"/> is expected to operate.
-            </summary>
+        <member name="P:Kvasir.Reconstitution.DefaultStructCreator.ResultType">
+            <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.IMutationStep.Execute(System.Object,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Reconstitution.DefaultStructCreator.#ctor(System.Type)">
             <summary>
-              Execute this <see cref="T:Kvasir.Reconstitution.IMutationStep"/> to modify an existing CLR object in-place.
+              Create a new <see cref="T:Kvasir.Reconstitution.DefaultStructCreator"/>.
             </summary>
-            <param name="subject">
-              The non-<see langword="null"/> object to mutate.
+            <param name="resultType">
+              The <see cref="P:Kvasir.Reconstitution.DefaultStructCreator.ResultType"/> of the new <see cref="T:Kvasir.Reconstitution.DefaultStructCreator"/>.
             </param>
-            <param name="rawValues">
-              The raw database values with which to perform the mutation.
-            </param>
-            <pre>
-              <paramref name="subject"/> is an instance of <see cref="P:Kvasir.Reconstitution.IMutationStep.ExpectedSubject"/>.
-            </pre>
         </member>
-        <member name="T:Kvasir.Reconstitution.IObjectCreator">
+        <member name="M:Kvasir.Reconstitution.DefaultStructCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Reconstitution.DirectRepopulator">
             <summary>
-              The interface that defines how a CLR object is created from a list of values extracted from a back-end
-              relational database
+              An <see cref="T:Kvasir.Reconstitution.IRepopulator"/> that passes each element directly to the
+              <see cref="M:Kvasir.Relations.IRelation.Repopulate(System.Object)"/> method of the target <see cref="T:Kvasir.Relations.IRelation">Relation</see>.
             </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.DirectRepopulator.Repopulate(Kvasir.Relations.IRelation,System.Collections.Generic.IEnumerable{System.Object})">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Reconstitution.ICreator">
+            <summary>
+              The interface describing a component that creates a CLR object from one or more
+              <see cref="T:Kvasir.Schema.DBValue">database values</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.ICreator.ResultType">
+            <summary>
+              The <see cref="T:System.Type"/> of CLR object created by this <see cref="T:Kvasir.Reconstitution.ICreator"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.ICreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <summary>
+              Create a CLR object from one or more <see cref="T:Kvasir.Schema.DBValue">database values</see>.
+            </summary>
+            <param name="dbValues">
+              A non-empty, ordered collection of <see cref="T:Kvasir.Schema.DBValue">database values</see>, any of which may be
+              <see cref="P:Kvasir.Schema.DBValue.NULL"/>, from which to create a new CLR object.
+            </param>
+            <returns>
+              A CLR object created from <paramref name="dbValues"/> that is either <see langword="null"/> or is an
+              instance of <see cref="P:Kvasir.Reconstitution.ICreator.ResultType"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Reconstitution.IdentityCreator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that simply unwraps a <see cref="T:Kvasir.Schema.DBValue">database value</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.IdentityCreator.ResultType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Reconstitution.IdentityCreator.#ctor(System.Type)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Reconstitution.IdentityCreator"/>.
+            </summary>
+            <param name="resultType">
+              The <see cref="P:Kvasir.Reconstitution.IdentityCreator.ResultType"/> of the new <see cref="T:Kvasir.Reconstitution.IdentityCreator"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Reconstitution.IdentityCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Reconstitution.IMutator">
+            <summary>
+              The interface describing a component that modifies a CLR object that has already been created by an
+              <see cref="T:Kvasir.Reconstitution.ICreator"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.IMutator.SourceType">
+            <summary>
+              The <see cref="T:System.Type"/> of object acted upon by this <see cref="T:Kvasir.Reconstitution.IMutator"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.IMutator.Mutate(System.Object,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <summary>
+              Modify a CLR object using one or more database values.
+            </summary>
+            <param name="source">
+              The possibly-<see langword="null"/> CLR object to modify.
+            </param>
+            <param name="dbValues">
+              A non-empty, ordered collection of <see cref="T:Kvasir.Schema.DBValue">database values</see>, any of which may be
+              <see cref="P:Kvasir.Schema.DBValue.NULL"/>, with which to modify <paramref name="source"/>
+            </param>
             <remarks>
-              The <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> interface describes the shape of the first step in the object-building
-              process only. The guarantee of the interface is that a produced object is valid according to the domain object
-              being created, though it is not necessarily fully reflective of the database state.
+              If <paramref name="source"/> is <see langword="null"/>, no modification occurs.
             </remarks>
-            <seealso cref="T:Kvasir.Reconstitution.IMutationStep"/>
-            <seealso cref="T:Kvasir.Reconstitution.Reconstitutor"/>
-        </member>
-        <member name="P:Kvasir.Reconstitution.IObjectCreator.Target">
-            <summary>
-              The <see cref="T:System.Type"/> of CLR object created by this <see cref="T:Kvasir.Reconstitution.IObjectCreator"/>.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Reconstitution.IObjectCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
-            <summary>
-              Execute this <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> to create a brand new CLR object.
-            </summary>
-            <param name="rawValues">
-              The raw database values from which to perform the reconstitution.
-            </param>
-            <pre>
-              <paramref name="rawValues"/> constitutes a collection of values that were produced by an extraction run
-              over an instance of <see cref="P:Kvasir.Reconstitution.IObjectCreator.Target"/>, with relevant values aligned to position <c>0</c>.
-            </pre>
-            <returns>
-              An object of type <see cref="P:Kvasir.Reconstitution.IObjectCreator.Target"/> created from <paramref name="rawValues"/> according to the rules
-              of this <see cref="T:Kvasir.Reconstitution.IObjectCreator"/>. If the relevant slots of <paramref name="rawValues"/> correspond to
-              a <see langword="null"/> object, <see langword="null"/> is returned.
-            </returns>
-        </member>
-        <member name="T:Kvasir.Reconstitution.IReconstitutor">
-            <summary>
-              The interface that defines the mechanism by which a "row" of database values is converted into an equivalent
-              CLR object.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Reconstitution.IReconstitutor.Target">
-            <summary>
-              The <see cref="T:System.Type"/> of object produced by this <see cref="T:Kvasir.Reconstitution.Reconstitutor"/>.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Reconstitution.IReconstitutor.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
-            <summary>
-              Execute this <see cref="T:Kvasir.Reconstitution.IReconstitutor"/> to create a brand new CLR object from a "row" of database
-              values.
-            </summary>
-            <param name="rawValues">
-              The database values from which to reconstitute a CLR object.
-            </param>
-            <pre>
-              <paramref name="rawValues"/> is not empty.
-            </pre>
-            <returns>
-              A CLR object of type <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target"/> that, when run through the dedicated extractor for
-              <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target"/>, produces <paramref name="rawValues"/>.
-            </returns>
         </member>
         <member name="T:Kvasir.Reconstitution.IRepopulator">
             <summary>
-              The interface that defines how CLR objects that have been reconstituted from a back-end relation database are
-              placed into a <see cref="T:Kvasir.Relations.IRelation"/> on another CLR instance.
+              The interface describing a component that repopulates a <see cref="T:Kvasir.Relations.IRelation">Relation</see>.
             </summary>
         </member>
-        <member name="P:Kvasir.Reconstitution.IRepopulator.ExpectedSubject">
+        <member name="M:Kvasir.Reconstitution.IRepopulator.Repopulate(Kvasir.Relations.IRelation,System.Collections.Generic.IEnumerable{System.Object})">
             <summary>
-              The <see cref="T:System.Type"/> of object on which this <see cref="T:Kvasir.Reconstitution.IRepopulator"/> is expected to operate.
+              Repopulate a <see cref="T:Kvasir.Relations.IRelation">Relation</see>.
             </summary>
+            <param name="relation">
+              The <see cref="T:Kvasir.Relations.IRelation">Relation</see> to repopulate.
+            </param>
+            <param name="elements">
+              A possibly empty collection of element to repopulate into <paramref name="relation"/>.
+            </param>
         </member>
-        <member name="M:Kvasir.Reconstitution.IRepopulator.Execute(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
+        <member name="T:Kvasir.Reconstitution.KeyLookupCreator">
             <summary>
-              Execute this <see cref="T:Kvasir.Reconstitution.IRepopulator"/> to modify a relation on an existing CLR object in-place.
-            </summary>
-            <param name="subject">
-              The non-<see langword="null"/> object to mutate.
-            </param>
-            <param name="entries">
-              The reconstituted elements that are to be placed into the relation.
-            </param>
-            <pre>
-              <paramref name="subject"/> is an instance of <see cref="P:Kvasir.Reconstitution.IRepopulator.ExpectedSubject"/>
-                --and--
-              <paramref name="entries"/> is non-empty.
-            </pre>
-        </member>
-        <member name="T:Kvasir.Reconstitution.Lookup">
-            <summary>
-              A collection of utilities for performing look-up operations during Reconstitution.
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that treats its collection of <see cref="T:Kvasir.Schema.DBValue">database values</see> as the
+              Primary Key of an Entity and looks that Entity up.
             </summary>
         </member>
-        <member name="M:Kvasir.Reconstitution.Lookup.ByKey(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue},System.Collections.Generic.IEnumerable{System.Object},Kvasir.Extraction.DataExtractionPlan)">
-            <summary>
-              Lookup the Entity from a list of options that matches a given key.
-            </summary>
-            <param name="key">
-              The probe key, which may be the primary key of the Entities or any other collection of unique Fields.
-            </param>
-            <param name="entities">
-              The collection of possible Entity matches.
-            </param>
-            <param name="extractor">
-              The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> that produces the key for possible Entity matches against which to
-              compare <paramref name="key"/>.
-            </param>
-            <pre>
-              The <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> of <paramref name="extractor"/> is the dynamic type
-              of each item in <paramref name="entities"/>, or is a base class or interface thereof.
-            </pre>
-        </member>
-        <member name="T:Kvasir.Reconstitution.PrimitiveCreator">
-            <summary>
-              An <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> that produces a single, primitive value.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Reconstitution.PrimitiveCreator.Target">
+        <member name="P:Kvasir.Reconstitution.KeyLookupCreator.ResultType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.#ctor(System.Index,System.Type)">
+        <member name="M:Kvasir.Reconstitution.KeyLookupCreator.#ctor(Kvasir.Reconstitution.KeyMatcher)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.PrimitiveCreator"/>.
+              Create a new <see cref="T:Kvasir.Reconstitution.KeyLookupCreator"/>.
             </summary>
-            <param name="index">
-              The index in the to-be-provided array of database values at which the target primitive value resides.
+            <param name="lookup">
+              The <see cref="T:Kvasir.Reconstitution.KeyMatcher"/> with which to look up Entities.
             </param>
-            <param name="targetType">
-              The type of primitive type that can be handled.
-            </param>
-            <pre>
-              <paramref name="targetType"/> is a data type supported by the Framework.
-            </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Reconstitution.KeyLookupCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
-        <member name="T:Kvasir.Reconstitution.Reconstitutor">
+        <member name="T:Kvasir.Reconstitution.KeyMatcher">
             <summary>
-              The standard form of <see cref="T:Kvasir.Reconstitution.IReconstitutor"/>, which presumes that the provided data will consist exactly
-              of the expected values (i.e. aligned to index <c>0</c>, with nothing extraneous).
+              A simple component that enables efficient, cached lookup of Entities by their Primary Key.
             </summary>
         </member>
-        <member name="P:Kvasir.Reconstitution.Reconstitutor.Target">
+        <member name="P:Kvasir.Reconstitution.KeyMatcher.ResultType">
+            <summary>
+              The <see cref="T:System.Type"/> of Entity produced by look-ups on this <see cref="T:Kvasir.Reconstitution.KeyMatcher"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.KeyMatcher.#ctor(System.Func{System.Collections.Generic.IEnumerable{System.Object}},Kvasir.Extraction.DataExtractionPlan)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Reconstitution.KeyMatcher"/>.
+            </summary>
+            <param name="domainGenerator">
+              A generator function that produces the collection of possible Entities.
+            </param>
+            <param name="keyExtractor">
+              The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> describing how to determine the Primary Key of a candidate Entity
+              produced by <paramref name="domainGenerator"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Reconstitution.KeyMatcher.Lookup(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <summary>
+              Find the Entity whose Primary Key matches a collection of <see cref="T:Kvasir.Schema.DBValue">database values</see>.
+            </summary>
+            <param name="dbValues">
+              The target Primary Key.
+            </param>
+            <returns>
+              The Entity (of type <see cref="P:Kvasir.Reconstitution.KeyMatcher.ResultType"/>) whose Primary Key is <paramref name="dbValues"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Reconstitution.KeyMatcher.ListEqualityComparer">
+            <summary>
+              An <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> for lists of <see cref="T:Kvasir.Schema.DBValue">database values</see> that supports
+              ordered, member-wise equality.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Reconstitution.ReconstitutingCreator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that may apply <see cref="T:Kvasir.Reconstitution.IMutator">modifications</see> after creating the bare CLR
+              object.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.ReconstitutingCreator.ResultType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.Reconstitutor.#ctor(Kvasir.Reconstitution.IObjectCreator,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.IMutationStep})">
+        <member name="M:Kvasir.Reconstitution.ReconstitutingCreator.#ctor(Kvasir.Reconstitution.ICreator,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.IMutator})">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.Reconstitutor"/>.
+              Create a new <see cref="T:Kvasir.Reconstitution.ReconstitutingCreator"/>.
             </summary>
             <param name="creator">
-              The <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> with which to create the CLR object shell.
+              The <see cref="T:Kvasir.Reconstitution.ICreator"/> with which to create the bare CLR object.
             </param>
             <param name="mutators">
-              A list of zero or more <see cref="T:Kvasir.Reconstitution.IMutationStep">IMutationSteps</see> to be applied to the object created
-              by <paramref name="creator"/>.
+              Zero or more <see cref="T:Kvasir.Reconstitution.IMutator"/> to be applied to the CLR object produced by <paramref name="creator"/>
+              in the given order.
             </param>
-            <pre>
-              The <see cref="P:Kvasir.Reconstitution.IMutationStep.ExpectedSubject">expected subject type</see> of each element of
-              <paramref name="mutators"/> is the same as the <see cref="P:Kvasir.Reconstitution.IObjectCreator.Target">target type</see> of
-              <paramref name="creator"/>.
-            </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.Reconstitutor.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Reconstitution.ReconstitutingCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
-        <member name="T:Kvasir.Reconstitution.ReconstitutorFacade">
+        <member name="T:Kvasir.Reconstitution.RelationRepopulationPlan">
             <summary>
-              An <see cref="T:Kvasir.Reconstitution.IReconstitutor"/> that provides a view over a "row" of data to another
-              <see cref="T:Kvasir.Reconstitution.IReconstitutor"/> that is concerned with only a specific subset of values.
+              A plan that describes how to repopulate a <see cref="T:Kvasir.Relations.IRelation">Relation</see> from a collection of rows of
+              <see cref="T:Kvasir.Schema.DBValue">database values</see>.
             </summary>
-            <remarks>
-              Fundamentally, the process for reconstituting an object of type <c>T</c> is independent of the manner in
-              which <c>T</c> an instance of <c>T</c> is stored in the back-end database. Specifically, it is independent of
-              the Table, the position in the "row," and the names of the back-end Fields. To mirror this independence in
-              the Reconstitution Layer requires a mechanism by which individual owning entities can indicate that an
-              instance of <c>T</c> is stored at varying offsets. The <see cref="T:Kvasir.Reconstitution.ReconstitutorFacade"/> fulfills this
-              responsibility, allowing for a single concrete <see cref="T:Kvasir.Reconstitution.Reconstitutor"/> to be synthesized per type.
-            </remarks>
         </member>
-        <member name="P:Kvasir.Reconstitution.ReconstitutorFacade.Target">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Reconstitution.ReconstitutorFacade.#ctor(Kvasir.Reconstitution.IReconstitutor,System.Index,System.Int32)">
+        <member name="P:Kvasir.Reconstitution.RelationRepopulationPlan.SourceType">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.ReconstitutorFacade"/>.
+              The <see cref="T:System.Type"/> of object on which the <see cref="T:Kvasir.Relations.IRelation">Relation</see> repopulated by this
+              <see cref="T:Kvasir.Reconstitution.RelationRepopulationPlan"/> resides.
             </summary>
-            <param name="impl">
-              The implementation to which the new <see cref="T:Kvasir.Reconstitution.ReconstitutorFacade"/> is to delegate action.
+        </member>
+        <member name="M:Kvasir.Reconstitution.RelationRepopulationPlan.#ctor(Kvasir.Extraction.ISingleExtractor,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Reconstitution.IRepopulator)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Reconstitution.RelationRepopulationPlan"/>.
+            </summary>
+            <param name="relationExtractor">
+              The <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that pulls the target <see cref="T:Kvasir.Relations.IRelation">Relation</see>  out of the
+              original CLR object.
             </param>
-            <param name="startIdx">
-              The <c>0</c>-based index in the overall "row" of data values at which the ones relevant to this
-              <paramref name="impl"/> begin.
-            </param>
-            <param name="length">
-              The number of "row" data values that are relevant to <paramref name="impl"/>.
-            </param>
-            <pre>
-              <paramref name="length"/> <c>&gt; 0</c>
-            </pre>
-        </member>
-        <member name="M:Kvasir.Reconstitution.ReconstitutorFacade.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
-            <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Reconstitution.RelationReconstitutionPlan">
-            <summary>
-              A description of the way in which data for a particular Relation is to be extracted from a back-end database,
-              transformed, and re-imagined as the elements of some CLR collection.
-            </summary>
-        </member>
-        <member name="P:Kvasir.Reconstitution.RelationReconstitutionPlan.ExpectedSubject">
-            <summary>
-              The <see cref="T:System.Type"/> of object on which this <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan"/> is expected to
-              operate.
-            </summary>
-        </member>
-        <member name="M:Kvasir.Reconstitution.RelationReconstitutionPlan.#ctor(Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Reconstitution.IRepopulator)">
-            <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan"/>.
-            </summary>
-            <param name="plan">
-              The <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/> with which to reconstitute the individual elements of the
-              relation.
+            <param name="elementReconstitutor">
+              The <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/> that describes how to reconstitute an element of the
+              <see cref="T:Kvasir.Relations.IRelation">Relation</see> for a list of <see cref="T:Kvasir.Schema.DBValue">database values</see>.
             </param>
             <param name="repopulator">
-              The <see cref="T:Kvasir.Reconstitution.IRepopulator"/> dictating how elements are to be placed into the
-              <see cref="T:Kvasir.Relations.IRelation"/> during repopulation.
+              The <see cref="T:Kvasir.Reconstitution.IRepopulator"/> that describes how to repopulate elements into the
+              <see cref="T:Kvasir.Relations.IRelation">Relation</see>.
             </param>
         </member>
-        <member name="M:Kvasir.Reconstitution.RelationReconstitutionPlan.RepopulateFrom(System.Object,System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+        <member name="M:Kvasir.Reconstitution.RelationRepopulationPlan.Repopulate(System.Object,System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
-              Execute this <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan"/> to repopulate some
-              <see cref="T:Kvasir.Relations.IRelation"/> on some CLR object.
+              Repopulate a <see cref="T:Kvasir.Relations.IRelation">Relation</see> with a collection of rows of
+              <see cref="T:Kvasir.Schema.DBValue">database values</see>.
             </summary>
-            <param name="subject">
-              The non-<see langword="null"/> object on which to repopulate a <see cref="T:Kvasir.Relations.IRelation"/>.
+            <param name="source">
+              The object on which the target <see cref="T:Kvasir.Relations.IRelation">Relation</see> resides. If this is
+              <see langword="null"/>, no repopulation will be performed.
             </param>
-            <param name="rawValues">
-              The list of raw database values from which to reconstitute the elements with which to repopulate the
-              target <see cref="T:Kvasir.Relations.IRelation"/>.
+            <param name="dbRows">
+              The rows of <see cref="T:Kvasir.Schema.DBValue">database values</see> from which to repopulate the target
+              <see cref="T:Kvasir.Relations.IRelation">Relation</see>.
             </param>
-            <pre>
-              <paramref name="subject"/> is an instance of <see cref="P:Kvasir.Reconstitution.RelationReconstitutionPlan.ExpectedSubject"/>
-                --and--
-              Each of the "rows" in <paramref name="rawValues"/> is non-empty.
-            </pre>
         </member>
-        <member name="T:Kvasir.Reconstitution.SetPropertyMutationStep">
+        <member name="T:Kvasir.Reconstitution.RevertingCreator">
             <summary>
-              An <see cref="T:Kvasir.Reconstitution.IMutationStep"/> that changes an existing CLR object by calling the setter on a writeable
-              instance property.
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that executes a <see cref="T:Cybele.Core.DataConverter"/> after creating an object.
             </summary>
         </member>
-        <member name="P:Kvasir.Reconstitution.SetPropertyMutationStep.ExpectedSubject">
+        <member name="P:Kvasir.Reconstitution.RevertingCreator.ResultType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.SetPropertyMutationStep.#ctor(Kvasir.Extraction.IFieldExtractor,System.Reflection.PropertyInfo,Kvasir.Reconstitution.IReconstitutor)">
+        <member name="M:Kvasir.Reconstitution.RevertingCreator.#ctor(Kvasir.Reconstitution.ICreator,Cybele.Core.DataConverter)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Reconstitution.SetPropertyMutationStep"/>.
+              Create a new <see cref="T:Kvasir.Reconstitution.RevertingCreator"/>.
             </summary>
-            <param name="extractor">
-              The <see cref="T:Kvasir.Extraction.IFieldExtractor"/> describing how to access the object whose property to mutate.
+            <param name="creator">
+              The <see cref="T:Kvasir.Reconstitution.ICreator"/> that produces the unreverted value.
             </param>
-            <param name="property">
-              The <see cref="T:System.Reflection.PropertyInfo"/> describing the property to which to write.
+            <param name="reverter">
+              The <see cref="T:Cybele.Core.DataConverter"/> to run over the value produced by <paramref name="creator"/>.
             </param>
-            <param name="valueReconstitutor">
-              The <see cref="T:Kvasir.Reconstitution.IReconstitutor"/> to use to create the value to write to <paramref name="property"/>.
-            </param>
-            <pre>
-              <paramref name="property"/> is a writeable instance property
-                --and--
-              <paramref name="property"/> is accessible from the <see cref="P:Kvasir.Extraction.IFieldExtractor.FieldType">type produced by
-              <paramref name="extractor"/></see>.
-                --and--
-              the <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target">target type</see> of <paramref name="valueReconstitutor"/> is
-              compatible with the property type of <paramref name="property"/>.
-            </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.SetPropertyMutationStep.Execute(System.Object,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+        <member name="M:Kvasir.Reconstitution.RevertingCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Reconstitution.WritePropertyMutator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.IMutator"/> that writes a value to a property via reflection.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.WritePropertyMutator.SourceType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Reconstitution.WritePropertyMutator.#ctor(System.Reflection.PropertyInfo,Kvasir.Reconstitution.ICreator)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Reconstitution.WritePropertyMutator"/>.
+            </summary>
+            <param name="property">
+              The property to which to write a value.
+            </param>
+            <param name="valueCreator">
+              The <see cref="T:Kvasir.Reconstitution.ICreator"/> with which to create the value to write to <paramref name="property"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Reconstitution.WritePropertyMutator.Mutate(System.Object,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Relations.IRelation">
@@ -8435,13 +8252,13 @@
               stored in the <see cref="P:Kvasir.Translation.RelationTableDef.Table">Primary Table</see>
             </summary>
         </member>
-        <member name="P:Kvasir.Translation.RelationTableDef.Reconstitutor">
+        <member name="P:Kvasir.Translation.RelationTableDef.Repopulator">
             <summary>
-              The <see cref="T:Kvasir.Reconstitution.RelationReconstitutionPlan">reconstitution plan</see> for converting data stored in the
+              The <see cref="T:Kvasir.Reconstitution.RelationRepopulationPlan">repopulation plan</see> for converting data stored in the
               <see cref="P:Kvasir.Translation.RelationTableDef.Table">Relation Table</see> back into an Relation.
             </summary>
         </member>
-        <member name="M:Kvasir.Translation.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationReconstitutionPlan)">
+        <member name="M:Kvasir.Translation.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationRepopulationPlan)">
             <summary>
               Constructs a new instance of the <see cref="T:Kvasir.Translation.RelationTableDef"/> class.
             </summary>
@@ -8451,8 +8268,8 @@
             <param name="extractor">
               The <see cref="P:Kvasir.Translation.RelationTableDef.Extractor">extraction plan</see>.
             </param>
-            <param name="reconstitutor">
-              The <see cref="P:Kvasir.Translation.RelationTableDef.Reconstitutor">reconstitution plan</see>.
+            <param name="repopulator">
+              The <see cref="P:Kvasir.Translation.RelationTableDef.Repopulator">repopulation plan</see>.
             </param>
         </member>
         <member name="T:Kvasir.Translation.Translation">

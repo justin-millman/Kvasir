@@ -1,31 +1,20 @@
-using System;
+﻿using Kvasir.Relations;
 using System.Collections.Generic;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
-    ///   The interface that defines how CLR objects that have been reconstituted from a back-end relation database are
-    ///   placed into a <see cref="Kvasir.Relations.IRelation"/> on another CLR instance.
+    ///   The interface describing a component that repopulates a <see cref="IRelation">Relation</see>.
     /// </summary>
-    public interface IRepopulator {
+    internal interface IRepopulator {
         /// <summary>
-        ///   The <see cref="Type"/> of object on which this <see cref="IRepopulator"/> is expected to operate.
+        ///   Repopulate a <see cref="IRelation">Relation</see>.
         /// </summary>
-        Type ExpectedSubject { get; }
-
-        /// <summary>
-        ///   Execute this <see cref="IRepopulator"/> to modify a relation on an existing CLR object in-place.
-        /// </summary>
-        /// <param name="subject">
-        ///   The non-<see langword="null"/> object to mutate.
+        /// <param name="relation">
+        ///   The <see cref="IRelation">Relation</see> to repopulate.
         /// </param>
-        /// <param name="entries">
-        ///   The reconstituted elements that are to be placed into the relation.
+        /// <param name="elements">
+        ///   A possibly empty collection of element to repopulate into <paramref name="relation"/>.
         /// </param>
-        /// <pre>
-        ///   <paramref name="subject"/> is an instance of <see cref="ExpectedSubject"/>
-        ///     --and--
-        ///   <paramref name="entries"/> is non-empty.
-        /// </pre>
-        void Execute(object subject, IEnumerable<object> entries);
+        void Repopulate(IRelation relation, IEnumerable<object> elements);
     }
 }

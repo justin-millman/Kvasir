@@ -1,6 +1,4 @@
-using Ardalis.GuardClauses;
-using Cybele.Core;
-using Cybele.Extensions;
+﻿using Cybele.Extensions;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -9,101 +7,51 @@ using System.Linq;
 
 namespace Kvasir.Extraction {
     /// <summary>
-    ///   A description of the way in which data for a particular CLR object type is to be extracted from instances,
-    ///   transformed, and prepared to be stored in a back-end database.
+    ///   A plan that describes how to extract a set of <see cref="DBValue">database values</see> from a single CLR
+    ///   source object.
     /// </summary>
-    public sealed class DataExtractionPlan {
+    internal sealed class DataExtractionPlan {
         /// <summary>
-        ///   The <see cref="Type"/> of source object on which this <see cref="DataExtractionPlan"/> is capable of
-        ///   being executed.
+        ///   The <see cref="Type"/> of object from which this <see cref="DataExtractionPlan"/> extracts values.
         /// </summary>
-        public Type ExpectedSource { get; }
+        public Type SourceType { get; }
 
         /// <summary>
-        ///   Constructs a new <see cref="DataExtractionPlan"/>.
+        ///   Construct a new <see cref="DataExtractionPlan"/>.
         /// </summary>
-        /// <param name="steps">
-        ///   The ordered sequence of <see cref="IExtractionStep">extraction steps</see> that produce the unconverted
-        ///   values from a source CLR object.
+        /// <param name="extractors">
+        ///   The collection of extractors that produce the constituent values during <see cref="Extraction"/>.
         /// </param>
-        /// <param name="converters">
-        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that transform the values produced
-        ///   by <paramref name="steps"/>.
-        /// </param>
-        /// <pre>
-        ///   <paramref name="steps"/> is not empty
-        ///     --and--
-        ///   Each element of <paramref name="steps"/> expects the same type of
-        ///   <see cref="IExtractionStep.ExpectedSource">source object</see>
-        ///     --and--
-        ///   The number of elements in <paramref name="converters"/> matches the number of values, in total, produced
-        ///   by <paramref name="steps"/> (note that this is not necessarily the number of elements in
-        ///   <paramref name="steps"/>, as an <see cref="IExtractionStep"/> may produce multiple values).
-        /// </pre>
-        internal DataExtractionPlan(IEnumerable<IExtractionStep> steps, ConverterSeq converters) {
-            Guard.Against.Null(steps, nameof(steps));
-            Guard.Against.Null(converters, nameof(converters));
-            Debug.Assert(!steps.IsEmpty());
-            Debug.Assert(!converters.IsEmpty());
-            Debug.Assert(steps.AllSame(e => e.ExpectedSource));
+        public DataExtractionPlan(IEnumerable<IMultiExtractor> extractors) {
+            Debug.Assert(extractors is not null && !extractors.IsEmpty());
+            Debug.Assert(extractors.AllSame(e => e.SourceType));
 
-            paramSteps_ = steps;
-            converters_ = converters;
-            ExpectedSource = steps.First().ExpectedSource;
+            extractors_ = new List<IMultiExtractor>(extractors);
+            SourceType = extractors_[0].SourceType;
         }
 
         /// <summary>
-        ///   Execute this <see cref="DataExtractionPlan"/> on a source object, producing an ordered sequence of
-        ///   values that can be stored in a back-end database.
+        ///   Run the extraction logic over a CLR source object, producing one or more database values.
         /// </summary>
         /// <param name="source">
-        ///   The source object on which to execute this <see cref="IExtractionStep"/>.
+        ///   The CLR source object.
         /// </param>
-        /// <pre>
-        ///   <see cref="ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
-        ///   interface thereof.
-        /// </pre>
         /// <returns>
-        ///   An immutable, indexable, ordered sequence of <see cref="DBValue">database values</see> extracted from
-        ///   <paramref name="source"/>.
+        ///   One or more possibly database values, any of which may be <see cref="DBValue.NULL"/>. Each invocation of
+        ///   this method on a particular <see cref="DataExtractionPlan"/> instance will return the same number of
+        ///   database values.
         /// </returns>
-        public DBData Execute(object source) {
-            Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
-            return ExecutePiecewise(source).ToList();
-        }
+        public IReadOnlyList<DBValue> ExtractFrom(object source) {
+            Debug.Assert(source is not null && source.GetType().IsInstanceOf(SourceType));
 
-        /// <summary>
-        ///   Execute this <see cref="DataExtractionPlan"/> on a source object by extracting and presenting a single
-        ///   value at a time, producing (in totality) an ordered sequence of values that can be stored in a back-end
-        ///   database.
-        /// </summary>
-        /// <pre>
-        ///   <see cref="ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
-        ///   instance thereof.
-        /// </pre>
-        /// <returns>
-        ///   A lazily-evaluated, immutable, non-indexable ordered sequence of <see cref="DBValue">database values</see>
-        ///   extracted from <paramref name="source"/>.
-        /// </returns>
-        public IEnumerable<DBValue> ExecutePiecewise(object source) {
-            Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
-
-            var converterIter = converters_.GetEnumerator();
-            foreach (var step in paramSteps_) {
-                var extractedParams = step.Execute(source);
-                foreach (var param in extractedParams) {
-                    converterIter.MoveNext();
-
-                    // The unwrap-and-rewrap paradigm here is a little annoying, but at least this way we can leverage
-                    // the DBValue in the IExtractionStep's return content to ensure that identity conversions are
-                    // perfectly valid.
-                    yield return DBValue.Create(converterIter.Current.Convert(param.Datum));
-                }
+            var results = new List<DBValue>();
+            foreach (var extractor in extractors_) {
+                results.AddRange(extractor.ExtractFrom(source).Select(v => DBValue.Create(v)));
             }
+            return results;
         }
 
 
-        private readonly IEnumerable<IExtractionStep> paramSteps_;
-        private readonly ConverterSeq converters_;
+        private readonly IReadOnlyList<IMultiExtractor> extractors_;
     }
 }
