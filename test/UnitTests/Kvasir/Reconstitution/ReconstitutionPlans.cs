@@ -16,7 +16,7 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var mockReconstitutor = Substitute.For<IReconstitutor>();
             mockReconstitutor.Target.Returns(typeof(string));
-            mockReconstitutor.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns("");
+            mockReconstitutor.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns("");
             var reverter = DataConverter.Identity<int>();
 
             // Act
@@ -39,7 +39,7 @@ namespace UT.Kvasir.Reconstitution {
 
             var reconstitutor = Substitute.For<IReconstitutor>();
             reconstitutor.Target.Returns(typeof(DateTime));
-            reconstitutor.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(new DateTime());
+            reconstitutor.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(new DateTime());
 
             var plan = new DataReconstitutionPlan(reconstitutor, reverters);
 
@@ -47,11 +47,11 @@ namespace UT.Kvasir.Reconstitution {
             _ = plan.ReconstituteFrom(values);
 
             // Assert
-            var expYear = DBValue.Create(2012);
-            var expMonth = DBValue.Create(12);
-            var expDay = DBValue.Create(31);
-            var expValues = new DBValue[] { expYear, expMonth, expDay };
-            reconstitutor.Received().ReconstituteFrom(NArg.IsSameSequence<IReadOnlyList<DBValue>>(expValues));
+            var expYear = 2012;
+            var expMonth = 12;
+            var expDay = 31;
+            var expValues = new object?[] { expYear, expMonth, expDay };
+            reconstitutor.Received().ReconstituteFrom(NArg.IsSameSequence<IReadOnlyList<object?>>(expValues));
         }
     }
 

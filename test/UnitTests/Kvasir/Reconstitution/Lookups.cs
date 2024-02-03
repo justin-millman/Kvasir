@@ -84,7 +84,7 @@ namespace UT.Kvasir.Reconstitution {
             var step0 = new PrimitiveExtractionStep(new IdentityExtractor<string>());
             var mockStep = Substitute.For<IExtractionStep>();
             mockStep.ExpectedSource.Returns(typeof(string));
-            mockStep.Execute(target).Returns(new List<DBValue>() { key[1] });
+            mockStep.Execute(target).Returns(new object?[] { key[1].Datum });
             mockStep.Execute(Arg.Is<string>(s => s != target)).Returns(_ => { throw new NotSupportedException(); });
             var step1 = mockStep;
             var plan = new DataExtractionPlan(new IExtractionStep[] { step0, step1 }, new DataConverter[] { conv, conv });

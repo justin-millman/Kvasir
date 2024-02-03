@@ -93,11 +93,7 @@ namespace Kvasir.Extraction {
                 var extractedParams = step.Execute(source);
                 foreach (var param in extractedParams) {
                     converterIter.MoveNext();
-
-                    // The unwrap-and-rewrap paradigm here is a little annoying, but at least this way we can leverage
-                    // the DBValue in the IExtractionStep's return content to ensure that identity conversions are
-                    // perfectly valid.
-                    yield return DBValue.Create(converterIter.Current.Convert(param.Datum));
+                    yield return DBValue.Create(converterIter.Current.Convert(param));
                 }
             }
         }
