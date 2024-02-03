@@ -1419,7 +1419,7 @@
               its dynamic type or is a base class or interface thereof.
             </pre>
             <returns>
-              An immutable, indexable, ordered sequence of untransformed values extracted from
+              An immutable, indexable, ordered sequence of <see cref="T:Kvasir.Schema.DBValue">database values</see> extracted from
               <paramref name="sourceObject"/>.
             </returns>
         </member>
@@ -1579,7 +1579,7 @@
             <param name="opt">
               Whether or not the object being constructed is "optional." An optional object is one that can take on the
               value of <see langword="null"/>. Specifically, this argument controls the behavior of
-              <see cref="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{System.Object})"/> in the event that a set of all <see cref="P:Kvasir.Schema.DBValue.NULL"/>
+              <see cref="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})"/> in the event that a set of all <see cref="P:Kvasir.Schema.DBValue.NULL"/>
               is provided.
             </param>
             <pre>
@@ -1590,7 +1590,7 @@
               <paramref name="ctor"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.ByConstructorCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Reconstitution.ByKeyLookupCreator">
@@ -1611,7 +1611,7 @@
             </param>
             <param name="keyExtractor">
               The <see cref="T:Kvasir.Extraction.DataExtractionPlan"/> that produces the key for possible Entity matches against which to
-              compare the raw values upon <see cref="!:Execute(IReadOnlyList&lt;DBValue&gt;)">execution</see>.
+              compare the raw values upon <see cref="M:Kvasir.Reconstitution.ByKeyLookupCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">execution</see>.
             </param>
             <pre>
               The <see cref="P:Kvasir.Extraction.DataExtractionPlan.ExpectedSource"/> of <paramref name="keyExtractor"/> is the dynamic type
@@ -1619,7 +1619,7 @@
               thereof.
             </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.ByKeyLookupCreator.Execute(System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.ByKeyLookupCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Reconstitution.DataReconstitutionPlan">
@@ -1730,7 +1730,7 @@
               The <see cref="T:System.Type"/> of object on which this <see cref="T:Kvasir.Reconstitution.IMutationStep"/> is expected to operate.
             </summary>
         </member>
-        <member name="M:Kvasir.Reconstitution.IMutationStep.Execute(System.Object,System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.IMutationStep.Execute(System.Object,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <summary>
               Execute this <see cref="T:Kvasir.Reconstitution.IMutationStep"/> to modify an existing CLR object in-place.
             </summary>
@@ -1762,7 +1762,7 @@
               The <see cref="T:System.Type"/> of CLR object created by this <see cref="T:Kvasir.Reconstitution.IObjectCreator"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Reconstitution.IObjectCreator.Execute(System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.IObjectCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <summary>
               Execute this <see cref="T:Kvasir.Reconstitution.IObjectCreator"/> to create a brand new CLR object.
             </summary>
@@ -1790,7 +1790,7 @@
               The <see cref="T:System.Type"/> of object produced by this <see cref="T:Kvasir.Reconstitution.Reconstitutor"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Reconstitution.IReconstitutor.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.IReconstitutor.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <summary>
               Execute this <see cref="T:Kvasir.Reconstitution.IReconstitutor"/> to create a brand new CLR object from a "row" of database
               values.
@@ -1803,7 +1803,7 @@
             </pre>
             <returns>
               A CLR object of type <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target"/> that, when run through the dedicated extractor for
-              <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target"/>, produced <paramref name="rawValues"/>.
+              <see cref="P:Kvasir.Reconstitution.IReconstitutor.Target"/>, produces <paramref name="rawValues"/>.
             </returns>
         </member>
         <member name="T:Kvasir.Reconstitution.IRepopulator">
@@ -1879,7 +1879,7 @@
               <paramref name="targetType"/> is a data type supported by the Framework.
             </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.Execute(System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.PrimitiveCreator.Execute(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Reconstitution.Reconstitutor">
@@ -1908,7 +1908,7 @@
               <paramref name="creator"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.Reconstitutor.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.Reconstitutor.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Reconstitution.ReconstitutorFacade">
@@ -1946,7 +1946,7 @@
               <paramref name="length"/> <c>&gt; 0</c>
             </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.ReconstitutorFacade.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.ReconstitutorFacade.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Reconstitution.RelationReconstitutionPlan">
@@ -2024,7 +2024,7 @@
               compatible with the property type of <paramref name="property"/>.
             </pre>
         </member>
-        <member name="M:Kvasir.Reconstitution.SetPropertyMutationStep.Execute(System.Object,System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Reconstitution.SetPropertyMutationStep.Execute(System.Object,System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Relations.IRelation">

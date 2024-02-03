@@ -1,6 +1,5 @@
 using Kvasir.Schema;
 using System;
-using System.Collections.Generic;
 
 namespace Kvasir.Extraction {
     /// <summary>
@@ -38,9 +37,9 @@ namespace Kvasir.Extraction {
         ///   its dynamic type or is a base class or interface thereof.
         /// </pre>
         /// <returns>
-        ///   An immutable, indexable, ordered sequence of untransformed values extracted from
+        ///   An immutable, indexable, ordered sequence of <see cref="DBValue">database values</see> extracted from
         ///   <paramref name="sourceObject"/>.
         /// </returns>
-        IReadOnlyList<object?> Execute(object? sourceObject);
+        DBData Execute(object? sourceObject);
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
@@ -24,8 +23,8 @@ namespace Kvasir.Reconstitution {
         /// </pre>
         /// <returns>
         ///   A CLR object of type <see cref="Target"/> that, when run through the dedicated extractor for
-        ///   <see cref="Target"/>, produced <paramref name="rawValues"/>.
+        ///   <see cref="Target"/>, produces <paramref name="rawValues"/>.
         /// </returns>
-        object? ReconstituteFrom(IReadOnlyList<object?> rawValues);
+        object? ReconstituteFrom(DBData rawValues);
     }
 }
