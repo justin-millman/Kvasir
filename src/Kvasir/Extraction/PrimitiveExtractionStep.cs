@@ -2,6 +2,7 @@ using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Kvasir.Schema;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kvasir.Extraction {
@@ -29,11 +30,11 @@ namespace Kvasir.Extraction {
         }
 
         /// <inheritdoc/>
-        public DBData Execute(object? source) {
+        public IReadOnlyList<object?> Execute(object? source) {
             Debug.Assert(source is null || source.GetType().IsInstanceOf(ExpectedSource));
 
             if (source is null) {
-                return new DBValue[] { DBValue.NULL };
+                return new object?[] { null };
             }
 
             // If the source object is not null, then performing the extraction will produce the requisite primitive.
@@ -41,7 +42,7 @@ namespace Kvasir.Extraction {
             // this and produce DBValue.NULL. The PrimitiveExtractionStep can only ever return a collection of size 1,
             // so this heuristic is sufficient to satisfy all postconditions.
             var extraction = extractor_.Execute(source);
-            return new DBValue[] { DBValue.Create(extraction) };
+            return new object?[] { extraction };
         }
 
 

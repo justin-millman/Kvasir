@@ -63,15 +63,13 @@ namespace Kvasir.Reconstitution {
             Guard.Against.Null(rawValues, nameof(rawValues));
             Debug.Assert(!rawValues.IsEmpty());
 
-            List<DBValue> reversions = new List<DBValue>();
+            var reversions = new List<object?>();
             var reverterIter = reverters_.GetEnumerator();
 
             foreach (var value in rawValues) {
                 reverterIter.MoveNext();
-
-                // The unwrap-and-rewrap paradigm here is a little annoying, but at least this way we can leverage
-                // the DBValue to ensure that identity conversions are perfectly valid.
-                reversions.Add(DBValue.Create(reverterIter.Current.Revert(value.Datum)));
+                var datum = value == DBValue.NULL ? null : value.Datum;
+                reversions.Add(reverterIter.Current.Revert(datum));
             }
 
             return reconstitutor_.ReconstituteFrom(reversions)!;

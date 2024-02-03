@@ -27,16 +27,16 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var mockCreator = Substitute.For<IObjectCreator>();
             mockCreator.Target.Returns(typeof(Exception));
-            mockCreator.Execute(Arg.Any<IReadOnlyList<DBValue>>()).Returns(new Exception());
+            mockCreator.Execute(Arg.Any<IReadOnlyList<object?>>()).Returns(new Exception());
             var mockMutator0 = Substitute.For<IMutationStep>();
             mockMutator0.ExpectedSubject.Returns(typeof(Exception));
-            mockMutator0.Execute(Arg.Any<object>(), Arg.Any<IReadOnlyList<DBValue>>());
+            mockMutator0.Execute(Arg.Any<object>(), Arg.Any<IReadOnlyList<object?>>());
             var mockMutator1 = Substitute.For<IMutationStep>();
             mockMutator1.ExpectedSubject.Returns(typeof(Exception));
-            mockMutator1.Execute(Arg.Any<object>(), Arg.Any<IReadOnlyList<DBValue>>());
+            mockMutator1.Execute(Arg.Any<object>(), Arg.Any<IReadOnlyList<object?>>());
             var mutators = new IMutationStep[] { mockMutator0, mockMutator1 };
             var reconstitutor = new Reconstitutor(mockCreator, mutators);
-            var data = new DBValue[] { DBValue.Create(7), DBValue.Create('='), DBValue.NULL };
+            var data = new object?[] { 7, '=', null };
 
             // Act
             var _ = reconstitutor.ReconstituteFrom(data);
@@ -51,14 +51,14 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var mockCreator = Substitute.For<IObjectCreator>();
             mockCreator.Target.Returns(typeof(Exception));
-            mockCreator.Execute(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            mockCreator.Execute(Arg.Any<IReadOnlyList<object?>>()).Returns(null);
             var mockMutator0 = Substitute.For<IMutationStep>();
             mockMutator0.ExpectedSubject.Returns(typeof(Exception));
             var mockMutator1 = Substitute.For<IMutationStep>();
             mockMutator1.ExpectedSubject.Returns(typeof(Exception));
             var mutators = new IMutationStep[] { mockMutator0, mockMutator1 };
             var reconstitutor = new Reconstitutor(mockCreator, mutators);
-            var data = new DBValue[] { DBValue.Create(7), DBValue.Create('='), DBValue.NULL };
+            var data = new object?[] { 7, '=', null };
 
             // Act
             var _ = reconstitutor.ReconstituteFrom(data);
@@ -90,16 +90,16 @@ namespace UT.Kvasir.Reconstitution {
             var length = 2;
             var mockRecon = Substitute.For<IReconstitutor>();
             mockRecon.Target.Returns(typeof(Lazy<string>));
-            mockRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            mockRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(null);
             var reconstitutor = new ReconstitutorFacade(mockRecon, start, length);
-            var data = new DBValue[] { DBValue.Create(1), DBValue.Create(2), DBValue.Create(3), DBValue.Create(4) };
+            var data = new object?[] { 1, 2, 3, 4 };
 
             // Act
             var _ = reconstitutor.ReconstituteFrom(data);
 
             // Assert
             var view = data[1..3];
-            mockRecon.Received().ReconstituteFrom(NArg.IsSameSequence<IReadOnlyList<DBValue>>(view));
+            mockRecon.Received().ReconstituteFrom(NArg.IsSameSequence<IReadOnlyList<object?>>(view));
         }
     }
 }

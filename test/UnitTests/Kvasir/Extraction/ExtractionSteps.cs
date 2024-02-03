@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Kvasir.Extraction;
-using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
@@ -36,7 +35,7 @@ namespace UT.Kvasir.Extraction {
 
             // Assert
             mockExtractor.Received(1).Execute(source);
-            value.Should().BeEquivalentTo(new DBValue[] { DBValue.Create(result) });
+            value.Should().BeEquivalentTo(new object?[] { result });
         }
 
         [TestMethod] public void ExtractFromDerived() {
@@ -54,7 +53,7 @@ namespace UT.Kvasir.Extraction {
 
             // Assert
             mockExtractor.Received(1).Execute(source);
-            value.Should().BeEquivalentTo(new DBValue[] { DBValue.Create(result) });
+            value.Should().BeEquivalentTo(new object?[] { result });
         }
 
         [TestMethod] public void ExtractFromNull() {
@@ -71,7 +70,25 @@ namespace UT.Kvasir.Extraction {
             var value = step.Execute(source);
 
             // Assert
-            value.Should().BeEquivalentTo(new DBValue[] { DBValue.NULL });
+            value.Should().BeEquivalentTo(new object?[] { null });
+        }
+
+        [TestMethod] public void ExtractYieldsEnumeration() {
+            // Arrange
+            var result = DayOfWeek.Thursday;
+            var mockExtractor = Substitute.For<IFieldExtractor>();
+            mockExtractor.ExpectedSource.Returns(typeof(Tuple<DayOfWeek>));
+            mockExtractor.FieldType.Returns(typeof(DayOfWeek));
+            mockExtractor.Execute(Arg.Any<Tuple<DayOfWeek>>()).Returns(result);
+            var step = new PrimitiveExtractionStep(mockExtractor);
+            var source = new Tuple<DayOfWeek>(result);
+
+            // Act
+            var value = step.Execute(source);
+
+            // Assert
+            mockExtractor.Received(1).Execute(source);
+            value.Should().BeEquivalentTo(new object?[] { result });
         }
     }
 
@@ -95,15 +112,14 @@ namespace UT.Kvasir.Extraction {
 
         [TestMethod] public void DecomposeWithSingleStep() {
             // Arrange
-            var v = 100;
-            var value = DBValue.Create(v);
+            var value = 100;
             var mockExtractor = Substitute.For<IFieldExtractor>();
             mockExtractor.ExpectedSource.Returns(typeof(string));
             mockExtractor.FieldType.Returns(typeof(Exception));
-            mockExtractor.Execute(Arg.Any<string>()).Returns(v);
+            mockExtractor.Execute(Arg.Any<string>()).Returns(value);
             var mockDecomp = Substitute.For<IExtractionStep>();
             mockDecomp.ExpectedSource.Returns(typeof(Exception));
-            mockDecomp.Execute(Arg.Any<int>()).Returns(new DBValue[] { value });
+            mockDecomp.Execute(Arg.Any<int>()).Returns(new object?[] { value });
             var decomps = new IExtractionStep[] { mockDecomp };
             var step = new DecomposingExtractionStep(mockExtractor, decomps);
             var source = "Walla Walla";
@@ -113,25 +129,24 @@ namespace UT.Kvasir.Extraction {
 
             // Assert
             mockExtractor.Received(1).Execute(source);
-            mockDecomp.Received(1).Execute(v);
-            values.Should().BeEquivalentTo(new DBValue[] { value });
+            mockDecomp.Received(1).Execute(value);
+            values.Should().BeEquivalentTo(new object?[] { value });
         }
 
         [TestMethod] public void DecomposeWithMultipleSteps() {
             // Arrange
-            var v = 100;
-            var value0 = DBValue.Create(v);
-            var value1 = DBValue.Create(v * 10);
+            var value0 = 100;
+            var value1 = 1000;
             var mockExtractor = Substitute.For<IFieldExtractor>();
             mockExtractor.ExpectedSource.Returns(typeof(string));
             mockExtractor.FieldType.Returns(typeof(Exception));
-            mockExtractor.Execute(Arg.Any<string>()).Returns(v);
+            mockExtractor.Execute(Arg.Any<string>()).Returns(value0);
             var mockDecomp0 = Substitute.For<IExtractionStep>();
             mockDecomp0.ExpectedSource.Returns(typeof(Exception));
-            mockDecomp0.Execute(Arg.Any<int>()).Returns(new DBValue[] { value0 });
+            mockDecomp0.Execute(Arg.Any<int>()).Returns(new object?[] { value0 });
             var mockDecomp1 = Substitute.For<IExtractionStep>();
             mockDecomp1.ExpectedSource.Returns(typeof(Exception));
-            mockDecomp1.Execute(Arg.Any<int>()).Returns(new DBValue[] { value1, value0 });
+            mockDecomp1.Execute(Arg.Any<int>()).Returns(new object?[] { value1, value0 });
             var decomps = new IExtractionStep[] { mockDecomp0, mockDecomp1 };
             var step = new DecomposingExtractionStep(mockExtractor, decomps);
             var source = "Albany";
@@ -141,23 +156,22 @@ namespace UT.Kvasir.Extraction {
 
             // Assert
             mockExtractor.Received(1).Execute(source);
-            mockDecomp0.Received(1).Execute(v);
-            mockDecomp1.Received(1).Execute(v);
-            values.Should().BeEquivalentTo(new DBValue[] { value0, value1, value0 });
+            mockDecomp0.Received(1).Execute(value0);
+            mockDecomp1.Received(1).Execute(value0);
+            values.Should().BeEquivalentTo(new object?[] { value0, value1, value0 });
         }
 
         [TestMethod] public void ExtractFromNull() {
             // Arrange
-            var v = 100;
-            var value = DBValue.Create(v);
+            var value = 100;
             var mockExtractor = Substitute.For<IFieldExtractor>();
             mockExtractor.ExpectedSource.Returns(typeof(string));
             mockExtractor.FieldType.Returns(typeof(Exception));
             mockExtractor.Execute(null).Returns(null);
             var mockDecomp = Substitute.For<IExtractionStep>();
             mockDecomp.ExpectedSource.Returns(typeof(Exception));
-            mockDecomp.Execute(Arg.Any<int>()).Returns(new DBValue[] { value, value });
-            mockDecomp.Execute(null).Returns(new DBValue[] { DBValue.NULL, DBValue.NULL });
+            mockDecomp.Execute(Arg.Any<int>()).Returns(new object?[] { value, value });
+            mockDecomp.Execute(null).Returns(new object?[] { DBNull.Value, DBNull.Value });
             var decomps = new IExtractionStep[] { mockDecomp };
             var step = new DecomposingExtractionStep(mockExtractor, decomps);
             string? source = null;
@@ -166,7 +180,7 @@ namespace UT.Kvasir.Extraction {
             var values = step.Execute(source);
 
             // Assert
-            values.Should().BeEquivalentTo(new DBValue[] { DBValue.NULL, DBValue.NULL });
+            values.Should().BeEquivalentTo(new object?[] { DBNull.Value, DBNull.Value });
         }
     }
 }

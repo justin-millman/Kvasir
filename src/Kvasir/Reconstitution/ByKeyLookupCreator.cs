@@ -40,14 +40,14 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? Execute(DBData rawValues) {
+        public object? Execute(IReadOnlyList<object?> rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
-            if (rawValues.Any(v => v == DBValue.NULL)) {
-                Debug.Assert(rawValues.All(v => v == DBValue.NULL));
+            if (rawValues.Any(v => v is null)) {
+                Debug.Assert(rawValues.All(v => v is null));
                 return null;
             }
-            return Lookup.ByKey(rawValues, factory_(), keyExtractor_);
+            return Lookup.ByKey(rawValues.Select(v => DBValue.Create(v)).ToList(), factory_(), keyExtractor_);
         }
 
 

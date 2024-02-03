@@ -47,17 +47,17 @@ namespace Kvasir.Extraction {
         }
 
         /// <inheritdoc/>
-        public DBData Execute(object? source) {
+        public IReadOnlyList<object?> Execute(object? source) {
             Debug.Assert(source is null || source.GetType().IsInstanceOf(ExpectedSource));
 
-            // If the source object is null, we cannot simply return a collection with 1 DBValue.NULL instance, as the
+            // If the source object is null, we cannot simply return a collection with 1 DBNull.Value instance, as the
             // postcondition of the DecomposingExtractionStep is that each invocation yield a collection with the same
             // number of items. We have no way to know a priori what this size should be, so instead we have to
             // actually perform each of the decompositions (which themselves may be complex pipelines) to produce the
-            // individual DBValue.NULL elements.
+            // individual DBNull.Value elements.
 
             var extraction = extractor_.Execute(source);
-            var results = new List<DBValue>();
+            var results = new List<object?>();
 
             foreach (var step in decomposition_) {
                 results.AddRange(step.Execute(extraction));

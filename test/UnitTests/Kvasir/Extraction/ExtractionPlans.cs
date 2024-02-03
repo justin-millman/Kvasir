@@ -16,7 +16,7 @@ namespace UT.Kvasir.Extraction {
             // Arrange
             var mockExtractor = Substitute.For<IExtractionStep>();
             mockExtractor.ExpectedSource.Returns(typeof(string));
-            mockExtractor.Execute(Arg.Any<string>()).Returns(Array.Empty<DBValue>());
+            mockExtractor.Execute(Arg.Any<string>()).Returns(Array.Empty<object>());
             var converter = DataConverter.Identity<int>();
 
             // Act
@@ -30,19 +30,19 @@ namespace UT.Kvasir.Extraction {
 
         [TestMethod] public void Execute() {
             // Arrange
-            var year = DBValue.Create(2012);
-            var month = DBValue.Create(12);
-            var day = DBValue.Create(31);
+            var year = 2012;
+            var month = 12;
+            var day = 31;
             var ymd = Substitute.For<IExtractionStep>();
             ymd.ExpectedSource.Returns(typeof(DateTime));
-            ymd.Execute(Arg.Any<DateTime>()).Returns(new DBValue[] { year, month, day });
+            ymd.Execute(Arg.Any<DateTime>()).Returns(new object?[] { year, month, day });
 
-            var hour = DBValue.Create(23);
-            var minute = DBValue.Create(59);
-            var second = DBValue.Create(59);
+            var hour = 23;
+            var minute = 59;
+            var second = 59;
             var hms = Substitute.For<IExtractionStep>();
             hms.ExpectedSource.Returns(typeof(DateTime));
-            hms.Execute(Arg.Any<DateTime>()).Returns(new DBValue[] { hour, minute, second });
+            hms.Execute(Arg.Any<DateTime>()).Returns(new object?[] { hour, minute, second });
 
             var offsetCnv = DataConverter.Create<int, int>(i => i - 1);
             var identityCnv = DataConverter.Identity<int>();
@@ -57,12 +57,12 @@ namespace UT.Kvasir.Extraction {
 
             // Assert
             values.Should().HaveCount(6);
-            values[0].Should().Be(DBValue.Create((int)year.Datum - 1));
-            values[1].Should().Be(DBValue.Create((int)month.Datum - 1));
-            values[2].Should().Be(DBValue.Create((int)day.Datum - 1));
-            values[3].Should().Be(hour);
-            values[4].Should().Be(minute);
-            values[5].Should().Be(second);
+            values[0].Should().Be(DBValue.Create(year - 1));
+            values[1].Should().Be(DBValue.Create(month - 1));
+            values[2].Should().Be(DBValue.Create(day - 1));
+            values[3].Should().Be(DBValue.Create(hour));
+            values[4].Should().Be(DBValue.Create(minute));
+            values[5].Should().Be(DBValue.Create(second));
             ymd.Received().Execute(source);
             hms.Received().Execute(source);
         }

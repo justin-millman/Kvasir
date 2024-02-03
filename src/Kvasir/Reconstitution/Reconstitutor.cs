@@ -40,7 +40,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? ReconstituteFrom(DBData rawValues) {
+        public object? ReconstituteFrom(IReadOnlyList<object?> rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
             // Mutators cannot operate on null objects, because there would be no target on which to call the property

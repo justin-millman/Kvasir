@@ -25,20 +25,20 @@ namespace UT.Kvasir.Reconstitution {
         [TestMethod] public void ProduceNonNull() {
             // Arrange
             var idx = new Index(1);
-            var data = new DBValue[] { DBValue.Create(7), DBValue.Create("Jefferson City") };
+            var data = new object?[] { 7, "Jefferson City" };
             var creator = new PrimitiveCreator(idx, typeof(string));
 
             // Act
             var value = creator.Execute(data);
 
             // Assert
-            value.Should().Be(data[idx].Datum);
+            value.Should().Be(data[idx]);
         }
 
         [TestMethod] public void ProduceNull() {
             // Arrange
             var idx = new Index(1);
-            var data = new DBValue[] { DBValue.Create('&'), DBValue.NULL, DBValue.Create(-4L) };
+            var data = new object?[] { '&', null, -4L };
             var creator = new PrimitiveCreator(idx, typeof(ushort));
 
             // Act
@@ -70,8 +70,8 @@ namespace UT.Kvasir.Reconstitution {
             var arg = "Fort Lauderdale";
             var mockArgRecon = Substitute.For<IReconstitutor>();
             mockArgRecon.Target.Returns(typeof(string));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
-            var data = new DBValue[] { DBValue.NULL, DBValue.Create(35L) };
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(arg);
+            var data = new object?[] { null, 35L };
             var creator = new ByConstructorCreator(ctor, new IReconstitutor[] { mockArgRecon }, false);
 
             // Act
@@ -90,12 +90,12 @@ namespace UT.Kvasir.Reconstitution {
             var arg1 = new Index(2074);
             var mockArgRecon0 = Substitute.For<IReconstitutor>();
             mockArgRecon0.Target.Returns(typeof(Index));
-            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg0);
+            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(arg0);
             var mockArgRecon1 = Substitute.For<IReconstitutor>();
             mockArgRecon1.Target.Returns(typeof(Index));
-            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg1);
+            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(arg1);
             var recons = new IReconstitutor[] { mockArgRecon0, mockArgRecon1 };
-            var data = new DBValue[] { DBValue.Create('|'), DBValue.Create('>'), DBValue.Create("Eugene") };
+            var data = new object?[] { '|', '<', "Eugene" };
             var creator = new ByConstructorCreator(ctor, recons, false);
 
             // Act
@@ -111,12 +111,12 @@ namespace UT.Kvasir.Reconstitution {
             var ctor = typeof(ArgumentException).GetConstructor(new Type[] { typeof(string), typeof(Exception) })!;
             var mockArgRecon0 = Substitute.For<IReconstitutor>();
             mockArgRecon0.Target.Returns(typeof(string));
-            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(null);
             var mockArgRecon1 = Substitute.For<IReconstitutor>();
             mockArgRecon1.Target.Returns(typeof(Exception));
-            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(null);
             var recons = new IReconstitutor[] { mockArgRecon0, mockArgRecon1 };
-            var data = new DBValue[] { DBValue.Create('%') };
+            var data = new object?[] { '%' };
             var creator = new ByConstructorCreator(ctor, recons, false);
 
             // Act
@@ -132,9 +132,9 @@ namespace UT.Kvasir.Reconstitution {
             var ctor = typeof(DateTime).GetConstructor(new Type[] { typeof(int), typeof(int), typeof(int) })!;
             var mockArgRecon = Substitute.For<IReconstitutor>();
             mockArgRecon.Target.Returns(typeof(int));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(null);
             var recons = new IReconstitutor[] { mockArgRecon, mockArgRecon, mockArgRecon };
-            var data = new DBValue[] { DBValue.NULL, DBValue.NULL, DBValue.NULL };
+            var data = new object?[] { null, null, null };
             var creator = new ByConstructorCreator(ctor, recons, true);
 
             // Act
@@ -151,12 +151,12 @@ namespace UT.Kvasir.Reconstitution {
             string? arg1 = null;
             var mockArgRecon0 = Substitute.For<IReconstitutor>();
             mockArgRecon0.Target.Returns(typeof(int));
-            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg0);
+            mockArgRecon0.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(arg0);
             var mockArgRecon1 = Substitute.For<IReconstitutor>();
             mockArgRecon1.Target.Returns(typeof(string));
-            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg1);
+            mockArgRecon1.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(arg1);
             var recons = new IReconstitutor[] { mockArgRecon0, mockArgRecon1 };
-            var data = new DBValue[] { DBValue.NULL, DBValue.NULL, DBValue.Create('=') };
+            var data = new object?[] { null, null, '=' };
             var optCreator = new ByConstructorCreator(ctor, recons, true);
             var reqCreator = new ByConstructorCreator(ctor, recons, false);
 
@@ -193,7 +193,7 @@ namespace UT.Kvasir.Reconstitution {
             var plan = new DataExtractionPlan(new IExtractionStep[] { step, step }, new DataConverter[] { conv, conv });
             var entities = new string[] { "Belo Horizonte", "Gladstone", "Cluj-Napoca" };
             var target = entities[2];
-            var data = new DBValue[] { DBValue.Create(target), DBValue.Create(target) };
+            var data = new object?[] { target, target };
             var creator = new ByKeyLookupCreator(() => entities, plan);
 
             // Act
@@ -210,7 +210,7 @@ namespace UT.Kvasir.Reconstitution {
             var plan = new DataExtractionPlan(new IExtractionStep[] { step, step }, new DataConverter[] { conv, conv });
             var entities = new string[] { "Whanganui", "Valladolid", "Chișinău" };
             var target = entities[0];
-            var data = new DBValue[] { DBValue.NULL, DBValue.NULL };
+            var data = new object?[] { null, null };
             var creator = new ByKeyLookupCreator(() => entities, plan);
 
             // Act

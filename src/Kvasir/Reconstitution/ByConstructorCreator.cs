@@ -29,7 +29,7 @@ namespace Kvasir.Reconstitution {
         /// <param name="opt">
         ///   Whether or not the object being constructed is "optional." An optional object is one that can take on the
         ///   value of <see langword="null"/>. Specifically, this argument controls the behavior of
-        ///   <see cref="Execute(IReadOnlyList{DBValue})"/> in the event that a set of all <see cref="DBValue.NULL"/>
+        ///   <see cref="Execute(IReadOnlyList{object?})"/> in the event that a set of all <see cref="DBValue.NULL"/>
         ///   is provided.
         /// </param>
         /// <pre>
@@ -52,10 +52,10 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? Execute(DBData rawValues) {
+        public object? Execute(IReadOnlyList<object?> rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
-            if (constructFromNulls_ || rawValues.Any(v => v != DBValue.NULL)) {
+            if (constructFromNulls_ || rawValues.Any(v => v is not null)) {
                 var args = arguments_.Select(r => r.ReconstituteFrom(rawValues));
                 return ctor_.Invoke(args.ToArray());
             }
