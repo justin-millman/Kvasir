@@ -28,8 +28,8 @@ namespace UT.Kvasir.Reconstitution {
             var arg = "Santa Clara";
             var mockArgRecon = Substitute.For<IReconstitutor>();
             mockArgRecon.Target.Returns(typeof(string));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(arg);
-            var data = new object?[] { null, 0, '@' };
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
+            var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
             var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
             object source = new PODClass();
 
@@ -47,8 +47,8 @@ namespace UT.Kvasir.Reconstitution {
             var arg = "Valparaiso";
             var mockArgRecon = Substitute.For<IReconstitutor>();
             mockArgRecon.Target.Returns(typeof(string));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(arg);
-            var data = new object?[] { null, 0, '@' };
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
+            var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
             var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODStruct>(), prop, mockArgRecon);
             object source = new PODStruct();
 
@@ -65,8 +65,8 @@ namespace UT.Kvasir.Reconstitution {
             var prop = typeof(PODClass).GetProperty(nameof(PODClass.Character))!;
             var mockArgRecon = Substitute.For<IReconstitutor>();
             mockArgRecon.Target.Returns(typeof(char));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<object?>>()).Returns(null);
-            var data = new object?[] { null, 0, '@' };
+            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
+            var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
             var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
             var source = new PODClass() { Character = '.' };
 

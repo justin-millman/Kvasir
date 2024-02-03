@@ -1,6 +1,5 @@
 using Ardalis.GuardClauses;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Kvasir.Reconstitution {
@@ -47,7 +46,7 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? ReconstituteFrom(IReadOnlyList<object?> rawValues) {
+        public object? ReconstituteFrom(DBData rawValues) {
             Guard.Against.NullOrEmpty(rawValues, nameof(rawValues));
 
             var view = rawValues.Skip(start_.Value).Take(length_).ToList();

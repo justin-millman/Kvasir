@@ -1,7 +1,6 @@
 using Ardalis.GuardClauses;
 using Kvasir.Schema;
 using System;
-using System.Collections.Generic;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
@@ -29,9 +28,13 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object? Execute(IReadOnlyList<object?> values) {
+        public object? Execute(DBData values) {
             Guard.Against.NullOrEmpty(values, nameof(values));
-            return values[index_];
+
+            if (values[index_] == DBValue.NULL) {
+                return null;
+            }
+            return values[index_].Datum;
         }
 
 
