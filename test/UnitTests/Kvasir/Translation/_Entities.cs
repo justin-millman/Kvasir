@@ -11493,7 +11493,7 @@ namespace UT.Kvasir.Translation {
             [Column(3)] public string DoughSource { get; set; } = "";
         }
 
-        // Scenario: Non-Null List/Set Relation Property with At Least One Element (✓values extracted per element✓)
+        // Scenario: Non-Null List/Set Relation Property with Only New Elements (✓values extracted per element✓)
         public class Teppanyaki {
             [PrimaryKey, Column(0)] public Guid GrillID { get; set; }
             [Column(1)] public double GrillSurfaceArea { get; set; }
@@ -11504,7 +11504,7 @@ namespace UT.Kvasir.Translation {
             [Column(4)] public bool IsHibachi { get; set; }
         }
 
-        // Scenario: Non-Null Map Relation Property with At Least One Element (✓values extracted per element✓)
+        // Scenario: Non-Null Map Relation Property with Only New Elements (✓values extracted per element✓)
         public class SpellingBee {
             [PrimaryKey, Column(0)] public ushort Year { get; set; }
             [Column(2)] public byte NumRounds { get; set; }
@@ -11513,7 +11513,7 @@ namespace UT.Kvasir.Translation {
             public RelationMap<uint, string> EliminationWords { get; set; } = new();
         }
 
-        // Scenario: Non-Null Ordered List Relation Property with At Least One Element (✓values extracted per element✓)
+        // Scenario: Non-Null Ordered List Relation Property with Only New Elements (✓values extracted per element✓)
         public class ImprovTroupe {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public DateTime Created { get; set; }
@@ -11523,7 +11523,14 @@ namespace UT.Kvasir.Translation {
             [Column(4)] public string URL { get; set; } = "";
         }
 
-        // Scenario: Null Relation Property (✓no values extracted✓)
+        // Scenario: Non-Null Relation Property with Only Saved Elements (✓no values extracted✓)
+        // [TODO] - 
+
+        // Scenario: Non-Null Relation Property with At Least One Modified Element (✓values extracted per element✓)
+        // [TODO] - 
+
+        // Scenario: Non-Null Relation Property with At Least One Deleted Element (✓values extracted per element✓)
+        // [TODO] -         // Scenario: Null Relation Property (✓no values extracted✓)
         public class Existentialist {
             public class Thesis {
                 [PrimaryKey, Column(0)] public string Title { get; set; } = "";
