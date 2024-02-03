@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
+using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using static UT.Kvasir.Translation.DataExtraction;
@@ -722,19 +724,19 @@ namespace UT.Kvasir.Translation {
                 GrillID = new Guid(),
                 GrillSurfaceArea = 88.5,
                 AuthorizedChefs = new() {
-            "Daisuke Orinaka",
-            "Kaidon Hotosata",
-            "Hideki Natsuo",
-        },
+                    "Daisuke Orinaka",
+                    "Kaidon Hotosata",
+                    "Hideki Natsuo",
+                },
                 SupportedFoods = new() {
-            "Chicken",
-            "Beef",
-            "Onion",
-            "Egg",
-            "Shrimp",
-            "Daikon",
-            "Fried Rice"
-        },
+                    "Chicken",
+                    "Beef",
+                    "Onion",
+                    "Egg",
+                    "Shrimp",
+                    "Daikon",
+                    "Fried Rice"
+                },
                 MaxTemperature = 140,
                 Restaurant = null,
                 IsHibachi = false
@@ -748,11 +750,19 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             listInserts.Should().HaveCount(7);
-            teppanyaki.SupportedFoods.ForEach(v => setInserts.Should().Contain(e => e.Count == 1 && e[0].Datum == v));
+            ExpectEntry(listInserts, DBValue.Create("Chicken"));
+            ExpectEntry(listInserts, DBValue.Create("Beef"));
+            ExpectEntry(listInserts, DBValue.Create("Onion"));
+            ExpectEntry(listInserts, DBValue.Create("Egg"));
+            ExpectEntry(listInserts, DBValue.Create("Shrimp"));
+            ExpectEntry(listInserts, DBValue.Create("Daikon"));
+            ExpectEntry(listInserts, DBValue.Create("Fried Rice"));
             listUpdates.Should().BeEmpty();
             listDeletes.Should().BeEmpty();
             setInserts.Should().HaveCount(3);
-            teppanyaki.AuthorizedChefs.ToList().ForEach(v => setUpdates.Should().Contain(e => e.Count == 1 && e[0].Datum == v));
+            ExpectEntry(setInserts, DBValue.Create("Daisuke Orinaka"));
+            ExpectEntry(setInserts, DBValue.Create("Kaidon Hotosata"));
+            ExpectEntry(setInserts, DBValue.Create("Hideki Natsuo"));
             setUpdates.Should().BeEmpty();
             setDeletes.Should().BeEmpty();
         }
@@ -763,6 +773,11 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NonNullOrderedListRelationWithOnlyNewElements() {
 
+        }
+
+
+        private static void ExpectEntry(IEnumerable<IReadOnlyList<DBValue>> extraction, params DBValue[] values) {
+            extraction.Should().Contain(e => e.Count == values.Length && e.SequenceEqual(values));
         }
     }
 }

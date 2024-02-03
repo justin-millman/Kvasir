@@ -11541,7 +11541,7 @@ namespace UT.Kvasir.Translation {
             }
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
-            public RelationOrderedList<Thesis?> DoctoralTheses { get; set; }
+            public RelationOrderedList<Thesis>? DoctoralTheses { get; set; }
             [Column(1)] public DateTime DateOfBirth { get; set; }
             [Column(2)] public DateTime? DateOfDeath { get; set; }
             [Column(3)] public string ExistentialSchool { get; set; } = "";
@@ -11609,7 +11609,7 @@ namespace UT.Kvasir.Translation {
             }
 
             [PrimaryKey, Column(0)] public Zodiac Sign { get; set; }
-            RelationMap<DateTime, Listing> Readings { get; set; } = new();
+            public RelationMap<DateTime, Listing> Readings { get; set; } = new();
             [Column(1)] public DateTime RangeLower { get; set; }
             [Column(2)] public DateTime RangeUpper { get; set; }
         }
