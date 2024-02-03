@@ -11509,7 +11509,6 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public ushort Year { get; set; }
             [Column(2)] public byte NumRounds { get; set; }
             [Column(3)] public string Champion { get; set; } = "";
-            public RelationMap<uint, string> Participants { get; set; } = new();
             public RelationMap<uint, string> EliminationWords { get; set; } = new();
         }
 
@@ -11518,7 +11517,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public DateTime Created { get; set; }
             [Column(2)] public uint NumShows { get; set; }
-            RelationOrderedList<string> Lineup { get; set; } = new();
+            public RelationOrderedList<string> Lineup { get; set; } = new();
             [Column(3)] public string Location { get; set; } = "";
             [Column(4)] public string URL { get; set; } = "";
         }
@@ -11547,17 +11546,6 @@ namespace UT.Kvasir.Translation {
             [Column(3)] public string ExistentialSchool { get; set; } = "";
         }
 
-        // Scenario: Non-Null Relation Property with Owning Entity in Element (✓values extracted✓)
-        public class MaoriGod {
-            public enum Relation { Self, Parent, Grandparent, Child, Grandchild, Sibling, Cousing, Nibling, AuntUncle };
-
-            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
-            [Column(1)] public string Domain { get; set; } = "";
-            public RelationMap<MaoriGod, Relation> Family { get; set; } = new();
-            [Column(2)] public bool IsAtua { get; set; }
-            [Column(3)] public bool EncounteredMaui { get; set; }
-        }
-
         // Scenario: Non-Null Relation Property with Nested Aggregate and At Least One Element (✓values extracted✓)
         public class OlympianBoon {
             public enum Deity { Ares, Athena, Aphrodite, Artemis, Demeter, Dionysus, Hermes, Poseidon, Zeus }
@@ -11584,16 +11572,27 @@ namespace UT.Kvasir.Translation {
                 [Column(1)] public Category Severity { get; set; }
             }
             public class Count {
-                [Column(0)] public Guid ID { get; set; }
+                [PrimaryKey, Column(0)] public Guid ID { get; set; }
                 [Column(1)] public Charge Claim { get; set; }
-                [Column(2)] public bool Guilty { get; set; }
+                [PrimaryKey, Column(2)] public bool Guilty { get; set; }
             }
 
             [PrimaryKey, Column(0)] public string Official { get; set; } = "";
             [Column(1)] public string Position { get; set; } = "";
             [PrimaryKey, Column(2)] public DateTime Commenced { get; set; }
-            public RelationSet<Count> Counts { get; set; } = new();
+            public RelationList<Count> Counts { get; set; } = new();
             [Calculated, Column(3)] public bool Convicted => Counts.Any(c => c.Guilty);
+        }
+
+        // Scenario: Non-Null Relation Property with Owning Entity in Element (✓values extracted✓)
+        public class MaoriGod {
+            public enum Relation { Self, Parent, Grandparent, Child, Grandchild, Sibling, Cousing, Nibling, AuntUncle };
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string Domain { get; set; } = "";
+            public RelationMap<MaoriGod, Relation> Family { get; set; } = new();
+            [Column(2)] public bool IsAtua { get; set; }
+            [Column(3)] public bool EncounteredMaui { get; set; }
         }
 
         // Scenario: Data Conversion Applied to Relation-Nested Field (✓converted values extracted✓)

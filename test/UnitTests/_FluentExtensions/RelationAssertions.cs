@@ -34,7 +34,7 @@ namespace FluentAssertions {
 
         public class RelationAssertion : Primitives.ObjectAssertions {
             public new IRelation Subject { get; }
-            public List<(object Item, Status Status)> SubjectList { get; }
+            private List<(object Item, Status Status)> SubjectList { get; }
             public RelationAssertion(IRelation subject)
                 : base(subject) {
 

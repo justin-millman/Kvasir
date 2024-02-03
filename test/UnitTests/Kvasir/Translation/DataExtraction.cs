@@ -36,7 +36,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(morgue.Capacity);
             data[3].Datum.Should().Be(morgue.Budget);
             data[4].Datum.Should().Be(morgue.FederalGrade);
-            data[5].Datum.Should().Be(morgue.AvailableServices);
+            data[5].Datum.Should().Be(morgue.AvailableServices.ToString().Replace(", ", "|"));
             data[6].Datum.Should().Be(morgue.GovernmentRun);
         }
 
@@ -63,7 +63,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(interpreter.InstalledOn);
             data[3].Datum.Should().Be(PythonInterpreter.MinVersion);
             data[4].Datum.Should().Be(PythonInterpreter.MaxVersion);
-            data[5].Datum.Should().Be(PythonInterpreter.BackEndLanguage);
+            data[5].Datum.Should().Be(PythonInterpreter.BackEndLanguage.ToString().Replace(", ", "|");
         }
 
         [TestMethod] public void NonNullNonPublicInstanceScalars() {
@@ -90,7 +90,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(ship.Captain);
             data[3].Datum.Should().Be(ship.GetLength());
             data[4].Datum.Should().Be(ship.GetNumCannons());
-            data[5].Datum.Should().Be(ship.Style);
+            data[5].Datum.Should().Be(ship.Style.ToString().Replace(", ", "|"));
             data[6].Datum.Should().Be(ship.CarriedSlaves);
         }
 
@@ -289,7 +289,7 @@ namespace UT.Kvasir.Translation {
             data.Should().HaveCount(5);
             data[0].Datum.Should().Be(racetrack.Name);
             data[1].Datum.Should().Be(racetrack.FirstAppearance);
-            data[2].Datum.Should().Be(racetrack.Series.ToString());
+            data[2].Datum.Should().Be(racetrack.Series.ToString().Replace(", ", "|"));
             data[3].Datum.Should().Be(DBNull.Value);
             data[4].Datum.Should().Be(racetrack.AvailableOnline);
         }
@@ -363,10 +363,10 @@ namespace UT.Kvasir.Translation {
             data[0].Datum.Should().Be(legos.ItemNumber);
             data[1].Datum.Should().Be(legos.Title);
             data[2].Datum.Should().Be(legos.Catalog.Price);
-            data[3].Datum.Should().Be(legos.Catalog.Stars);
+            data[3].Datum.Should().Be(legos.Catalog.Stars.ToString().Replace(", ", "|"));
             data[4].Datum.Should().Be(legos.Catalog.URL);
             data[5].Datum.Should().Be(legos.Catalog.InsiderPoints);
-            data[6].Datum.Should().Be(legos.Catalog.Theme);
+            data[6].Datum.Should().Be(legos.Catalog.Theme.ToString().Replace(", ", "|"));
             data[7].Datum.Should().Be(legos.Pieces);
             data[8].Datum.Should().Be(legos.LowerBoundAge);
         }
@@ -445,7 +445,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(DBNull.Value);
             data[3].Datum.Should().Be(DBNull.Value);
             data[4].Datum.Should().Be(armory.WeaponsCount);
-            data[5].Datum.Should().Be(armory.Owner);
+            data[5].Datum.Should().Be(armory.Owner.ToString().Replace(", ", "|"));
         }
 
         [TestMethod] public void NestedAggregate() {
@@ -600,8 +600,8 @@ namespace UT.Kvasir.Translation {
             data[1].Datum.Should().Be(DBNull.Value);
             data[2].Datum.Should().Be(cytonic.SelfSpecies.Grouping);
             data[3].Datum.Should().Be(cytonic.SelfSpecies.SubNumber);
-            data[4].Datum.Should().Be(cytonic.Abilities);
-            data[5].Datum.Should().Be(cytonic.Appearances);
+            data[4].Datum.Should().Be(cytonic.Abilities.ToString().Replace(", ", "|"));
+            data[5].Datum.Should().Be(cytonic.Appearances.ToString().Replace(", ", "|"));
         }
 
         [TestMethod] public void NullReferenceSingleFieldPrimaryKey() {
@@ -659,7 +659,7 @@ namespace UT.Kvasir.Translation {
             data[5].Datum.Should().Be(library.Branches);
         }
 
-        [TestMethod] public void RelationNestedDataConversion() {
+        [TestMethod] public void ReferenceNestedDataConversion() {
             // Arrange
             var match = new CurlingMatch() {
                 ID = new Guid(),
@@ -726,7 +726,7 @@ namespace UT.Kvasir.Translation {
                 AuthorizedChefs = new() {
                     "Daisuke Orinaka",
                     "Kaidon Hotosata",
-                    "Hideki Natsuo",
+                    "Hideki Iwanatsuo",
                 },
                 SupportedFoods = new() {
                     "Chicken",
@@ -750,34 +750,237 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             listInserts.Should().HaveCount(7);
-            ExpectEntry(listInserts, DBValue.Create("Chicken"));
-            ExpectEntry(listInserts, DBValue.Create("Beef"));
-            ExpectEntry(listInserts, DBValue.Create("Onion"));
-            ExpectEntry(listInserts, DBValue.Create("Egg"));
-            ExpectEntry(listInserts, DBValue.Create("Shrimp"));
-            ExpectEntry(listInserts, DBValue.Create("Daikon"));
-            ExpectEntry(listInserts, DBValue.Create("Fried Rice"));
+            listInserts.Should().ContainRow("Chicken");
+            listInserts.Should().ContainRow("Beef");
+            listInserts.Should().ContainRow("Onion");
+            listInserts.Should().ContainRow("Egg");
+            listInserts.Should().ContainRow("Shrimp");
+            listInserts.Should().ContainRow("Daikon");
+            listInserts.Should().ContainRow("Fried Rice");
             listUpdates.Should().BeEmpty();
             listDeletes.Should().BeEmpty();
             setInserts.Should().HaveCount(3);
-            ExpectEntry(setInserts, DBValue.Create("Daisuke Orinaka"));
-            ExpectEntry(setInserts, DBValue.Create("Kaidon Hotosata"));
-            ExpectEntry(setInserts, DBValue.Create("Hideki Natsuo"));
+            setInserts.Should().ContainRow("Daisuke Orinaka");
+            setInserts.Should().ContainRow("Kaidon Hotosata");
+            setInserts.Should().ContainRow("Hideki Iwanatsuo");
             setUpdates.Should().BeEmpty();
             setDeletes.Should().BeEmpty();
         }
 
         [TestMethod] public void NonNullMapRelationWithOnlyNewElements() {
+            // Arrange
+            var spellingBee = new SpellingBee() {
+                Year = 2023,
+                NumRounds = 13,
+                Champion = "Dev Shah",
+                EliminationWords = new() {
+                    { 46, "chthonic" },
+                    { 119, "querken" },
+                    { 6, "pataca" },
+                    { 122, "pharetone" }
+                }
+            };
 
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(SpellingBee)];
+            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(spellingBee);
+
+            // Assert
+            inserts.Should().HaveCount(4);
+            inserts.Should().ContainRow(46, "chthonic");
+            inserts.Should().ContainRow(119, "querken");
+            inserts.Should().ContainRow(6, "pataca");
+            inserts.Should().ContainRow(122, "pharetone");
         }
 
         [TestMethod] public void NonNullOrderedListRelationWithOnlyNewElements() {
+            // Arrange
+            var troupe = new ImprovTroupe() {
+                Name = "Players of Locura",
+                Created = new DateTime(2015, 9, 19),
+                NumShows = 496,
+                Lineup = {
+                    "Amanda Corningsweather",
+                    "Randy Cappaco",
+                    "Edith Sumak",
+                    "Nicole d'Francia",
+                    "Aaron Goliin",
+                    "Harrison B. Tarmalonz"
+                },
+                URL = "https://locuraplayers.org/"
+            };
 
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(ImprovTroupe)];
+            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(troupe);
+
+            // Assert
+            inserts.Should().HaveCount(6);
+            inserts.Should().ContainRow(0, "Amanda Corningsweather");
+            inserts.Should().ContainRow(1, "Randy Cappaco");
+            inserts.Should().ContainRow(2, "Edith Summak");
+            inserts.Should().ContainRow(3, "Nicole d'Francia");
+            inserts.Should().ContainRow(4, "Aaron Goliin");
+            inserts.Should().ContainRow(5, "Harrison B. Tarmalonz");
+            updates.Should().BeEmpty();
+            deletes.Should().BeEmpty();
         }
 
 
-        private static void ExpectEntry(IEnumerable<IReadOnlyList<DBValue>> extraction, params DBValue[] values) {
-            extraction.Should().Contain(e => e.Count == values.Length && e.SequenceEqual(values));
+        [TestMethod] public void NullRelation() {
+            // Arrange
+            var existentialist = new Existentialist() {
+                Name = "Jean-Paul Sartre",
+                DoctoralTheses = null,
+                DateOfBirth = new DateTime(1905, 6, 21),
+                DateOfDeath = new DateTime(1980, 4, 15),
+                ExistentialSchool = "Phenomenlogy"
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(Existentialist)];
+            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(existentialist);
+
+            // Assert
+            inserts.Should().BeEmpty();
+            updates.Should().BeEmpty();
+            deletes.Should().BeEmpty();
+        }
+
+        [TestMethod] public void RelationNestedAggregate() {
+            // Arrange
+            var boon = new OlympianBoon() {
+                BoonName = "Curse of Pain",
+                Benefactor = OlympianBoon.Deity.Ares,
+                AbilityAffected = OlympianBoon.Ability.Special,
+                Progressions = new() {
+                    new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 60 },
+                    new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 80 },
+                    new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 100 },
+                    new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 120 }
+                },
+                Likelihood = 0.2
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(OlympianBoon)];
+            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(boon);
+
+            // Assert
+            inserts.Should().HaveCount(4);
+            inserts.Should().ContainRow(0, "Damage", 60);
+            inserts.Should().ContainRow(1, "Damage", 80);
+            inserts.Should().ContainRow(2, "Damage", 100);
+            inserts.Should().ContainRow(3, "Damage", 120);
+            updates.Should().BeEmpty();
+            deletes.Should().BeEmpty();
+        }
+
+        [TestMethod] public void RelationNestedReference() {
+            // Arrange
+            var impeachment = new Impeachment() {
+                Official = "Samuel Chase",
+                Position = "Associate Justice of the U.S. Supreme Court",
+                Commenced = new DateTime(1804, 3, 12),
+                Counts = new() {
+                    new Impeachment.Count() {
+                        ID = new Guid(),
+                        Claim = new Impeachment.Charge() {
+                            Claim = "Improper Conduct during the Trial of John Fries",
+                            Severity = Impeachment.Charge.Category.Misdemeanor
+                        },
+                        Guilty = false
+                    },
+                    new Impeachment.Count() {
+                        ID = new Guid(),
+                        Claim = new Impeachment.Charge() {
+                            Claim = "Improper Conduct during the Trial of James T. Callendar",
+                            Severity = Impeachment.Charge.Category.Misdemeanor
+                        },
+                        Guilty = false
+                    },
+                    new Impeachment.Count() {
+                        ID = new Guid(),
+                        Claim = new Impeachment.Charge() {
+                            Claim = "Conduct Unbecoming in front of a Baltimore Grand Jury",
+                            Severity = Impeachment.Charge.Category.Misdemeanor
+                        },
+                        Guilty = false
+                    }
+                }
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(Impeachment)];
+            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(impeachment);
+
+            // Assert
+            inserts.Should().HaveCount(3);
+            inserts.Should().ContainRow(impeachment.Counts[0].ID, false);
+            inserts.Should().ContainRow(impeachment.Counts[1].ID, false);
+            inserts.Should().ContainRow(impeachment.Counts[2].ID, false);
+            updates.Should().BeEmpty();
+            deletes.Should().BeEmpty();
+        }
+
+        [TestMethod] public void RelationReferencesOwningEntity() {
+            // Arrange
+            var god = new MaoriGod() {
+                Name = "Tangaroa",
+                Domain = "Sea",
+                Family = new(),
+                IsAtua = true,
+                EncounteredMaui = true
+            };
+            god.Family[god] = MaoriGod.Relation.Self;
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(MaoriGod)];
+            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(god);
+
+            // Assert
+            inserts.Should().HaveCount(1);
+            inserts.Should().ContainRow(god.Name);
+            updates.Should().BeEmpty();
+            deletes.Should().BeEmpty();
+        }
+
+        [TestMethod] public void RelationNestedDataConversion() {
+            // Arrange
+            var horoscope = new Horoscope() {
+                Sign = Horoscope.Zodiac.Gemini,
+                Readings = new() {
+                    {
+                        new DateTime(2024, 2, 3),
+                        new Horoscope.Listing() {
+                            Prediction = "[gobbledy gook]",
+                            Sex = 'q',
+                            Hustle = '!',
+                            Vibe = 'B',
+                            Success = '9'
+                        }
+                    }
+                },
+                RangeLower = new DateTime(2024, 5, 21),
+                RangeUpper = new DateTime(2024, 6, 20)
+            };
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(Horoscope)];
+            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(horoscope);
+
+            // Assert
+            inserts.Should().HaveCount(1);
+            inserts.Should().ContainRow(new DateTime(2024, 2, 3), (int)'q', (int)'!', (int)'B', (int)'9');
+            updates.Should().BeEmpty();
+            deletes.Should().BeEmpty();
         }
     }
 }
