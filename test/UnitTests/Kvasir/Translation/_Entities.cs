@@ -11530,7 +11530,9 @@ namespace UT.Kvasir.Translation {
         // [TODO] - 
 
         // Scenario: Non-Null Relation Property with At Least One Deleted Element (✓values extracted per element✓)
-        // [TODO] -         // Scenario: Null Relation Property (✓no values extracted✓)
+        // [TODO] -         
+        
+        // Scenario: Null Relation Property (✓no values extracted✓)
         public class Existentialist {
             public class Thesis {
                 [PrimaryKey, Column(0)] public string Title { get; set; } = "";
@@ -11539,7 +11541,7 @@ namespace UT.Kvasir.Translation {
             }
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
-            Thesis? DoctoralThesis { get; set; }
+            public RelationOrderedList<Thesis?> DoctoralTheses { get; set; }
             [Column(1)] public DateTime DateOfBirth { get; set; }
             [Column(2)] public DateTime? DateOfDeath { get; set; }
             [Column(3)] public string ExistentialSchool { get; set; } = "";
