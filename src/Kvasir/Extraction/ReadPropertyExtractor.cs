@@ -1,46 +1,47 @@
-using Ardalis.GuardClauses;
-using Cybele.Core;
+﻿using Cybele.Core;
 using Cybele.Extensions;
 using System;
 using System.Diagnostics;
 
 namespace Kvasir.Extraction {
     /// <summary>
-    ///   An <see cref="IFieldExtractor"/> that performs extracting by reading from a property through reflection.
+    ///   A <see cref="ISingleExtractor"/> that produces its value by reading from a sequence of properties via
+    ///   reflection.
     /// </summary>
-    public sealed class ReadPropertyExtractor : IFieldExtractor {
+    internal sealed class ReadPropertyExtractor : ISingleExtractor {
         /// <inheritdoc/>
-        public Type ExpectedSource { get; }
+        public Type SourceType { get; }
 
         /// <inheritdoc/>
-        public Type FieldType { get; }
+        public Type ResultType { get; }
 
         /// <summary>
-        ///   Constructs a new <see cref="ReadPropertyExtractor"/>.
+        ///   Construct a new <see cref="ReadPropertyExtractor"/>.
         /// </summary>
-        /// <param name="property">
-        ///   The <see cref="PropertyChain"/> describing the property (or chain or properties) from which to read.
+        /// <param name="path">
+        ///   The path describing the sequence of properties to be read during
+        ///   <see cref="ExtractFrom(object?)">extraction</see>.
         /// </param>
-        internal ReadPropertyExtractor(PropertyChain property) {
-            Guard.Against.Null(property, nameof(property));
-            Debug.Assert(property.ReflectedType is not null);
+        public ReadPropertyExtractor(PropertyChain path) {
+            Debug.Assert(path is not null);
 
-            property_ = property;
-            ExpectedSource = property_.ReflectedType;
-            FieldType = property_.PropertyType;
+            path_ = path;
+            SourceType = path_.ReflectedType;
+            ResultType = path_.PropertyType;
         }
 
         /// <inheritdoc/>
-        public object? Execute(object? source) {
-            Debug.Assert(source is null || source.GetType().IsInstanceOf(ExpectedSource));
+        public object? ExtractFrom(object? source) {
+            Debug.Assert(source is null || source.GetType().IsInstanceOf(SourceType));
 
             if (source is null) {
                 return null;
             }
-            return property_.GetValue(source);
+            return path_.GetValue(source);
         }
 
 
-        private readonly PropertyChain property_;
+
+        private readonly PropertyChain path_;
     }
 }

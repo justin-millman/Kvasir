@@ -1,108 +1,102 @@
-using Ardalis.GuardClauses;
-using Cybele.Extensions;
+﻿using Cybele.Extensions;
 using Kvasir.Relations;
+using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kvasir.Extraction {
     /// <summary>
-    ///   A description of the way in which data is extracted from an <see cref="IRelation"/> stored on a particular
-    ///   CLR object type and then transformed and prepared to be stored in a back-end database.
+    ///   A plan that extracts rows of database values from a <see cref="IRelation">Relation</see> to be inserted,
+    ///   updated, and/or deleted from a back-end table.
     /// </summary>
-    public sealed class RelationExtractionPlan {
+    internal sealed class RelationExtractionPlan {
         /// <summary>
-        ///   The <see cref="Type"/> of source object on which this <see cref="RelationExtractionPlan"/> is capable of
-        ///   being executed.
+        ///   The <see cref="Type"/> of object from which this <see cref="RelationExtractionPlan"/> extracts values.
         /// </summary>
-        public Type ExpectedSource { get; }
-
+        public Type SourceType { get; }
+         
         /// <summary>
-        ///   Constructs a new <see cref="RelationExtractionPlan"/>.
+        ///   Construct a new <see cref="RelationExtractionPlan"/>.
         /// </summary>
         /// <param name="relationExtractor">
-        ///   The <see cref="IFieldExtractor"/> that describes how to obtain the target <see cref="IRelation"/> from a
-        ///   source object.
+        ///   The <see cref="ISingleExtractor"/> describing how to obtain the <see cref="IRelation">Relation</see> from
+        ///   which to extract actions from the actual source object.
         /// </param>
-        /// <param name="plan">
-        ///   The <see cref="DataExtractionPlan"/> that describes how to extract data from an entry in the relation
-        ///   obtained from <paramref name="relationExtractor"/>.
+        /// <param name="elementExtractionPlan">
+        ///   The <see cref="DataExtractionPlan"/> describing how to turn a single element of the target Relation into a
+        ///   row of database values.
         /// </param>
-        /// <pre>
-        ///   The <see cref="IFieldExtractor.FieldType"/> of <paramref name="relationExtractor"/> is a type that
-        ///   implements the <see cref="IRelation"/> interface (or is that interface itself)
-        ///     --and--
-        ///   The type of data stored in the relation obtained from <paramref name="relationExtractor"/> is compatible
-        ///   with the <see cref="DataExtractionPlan.ExpectedSource"/> of <paramref name="plan"/>.
-        /// </pre>
-        internal RelationExtractionPlan(IFieldExtractor relationExtractor, DataExtractionPlan plan) {
-            Guard.Against.Null(relationExtractor, nameof(relationExtractor));
-            Guard.Against.Null(plan, nameof(plan));
-            Debug.Assert(relationExtractor.FieldType.IsInstanceOf(typeof(IRelation)));
-            
-            // There's no good way to check on construction that the type of item exposed by the Relation matches the
-            // source type expected by the subunit plan. Instead, we'll have to settle for that being checked when the
-            // actual extraction is executed. This isn't ideal (it's heavily delayed from start-up), but it's what we
-            // have.
+        public RelationExtractionPlan(ISingleExtractor relationExtractor, DataExtractionPlan elementExtractionPlan) {
+            Debug.Assert(relationExtractor is not null);
+            Debug.Assert(elementExtractionPlan is not null);
+            Debug.Assert(relationExtractor.ResultType.IsInstanceOf(typeof(IRelation)));
 
-            extractor_ = relationExtractor;
-            plan_ = plan;
-            ExpectedSource = relationExtractor.ExpectedSource;
+            relationExtractor_ = relationExtractor;
+            elementExtractionPlan_ = elementExtractionPlan;
+            SourceType = relationExtractor_.SourceType;
         }
 
         /// <summary>
-        ///   Execute this <see cref="RelationExtractionPlan"/> on a source object.
+        ///   Run the extraction logic over a CLR source object, producing <see cref="RelationData"/>.
         /// </summary>
         /// <param name="source">
-        ///   The source object on which to execute this <see cref="RelationExtractionPlan"/>.
+        ///   The CLR source object.
         /// </param>
-        /// <pre>
-        ///   <see cref="ExpectedSource"/> is the dynamic type of <paramref name="source"/> or is a base class or
-        ///   interface thereof.
-        /// </pre>
         /// <returns>
-        ///   A triplet containing the values extracted from the relation targeted on <paramref name="source"/> by this
-        ///   <see cref="RelationExtractionPlan"/>.
+        ///   The <see cref="RelationData"/> containing the insertions, modifications, and deletions of the
+        ///   <see cref="IRelation">Relation</see> extracted from <paramref name="source"/>.
         /// </returns>
-        public (IEnumerable<DBData> Insertions, IEnumerable<DBData> Modifications, IEnumerable<DBData> Deletions)
-        Execute(object source) {
-            Debug.Assert(source.GetType().IsInstanceOf(ExpectedSource));
+        public RelationData ExtractFrom(object source) {
+            Debug.Assert(source is null || source.GetType().IsInstanceOf(SourceType));
 
-            // In order to keep the API of the extracted data wrapper "read only," we have to build up the containers
-            // a priori and then construct the wrapper, rather than constructing the wrapper with empty containers and
-            // then incrementally adding.
-            var insertions = new List<DBData>();
-            var modifications = new List<DBData>();
-            var deletions = new List<DBData>();
+            var insertions = new List<IReadOnlyList<DBValue>>();
+            var modifications = new List<IReadOnlyList<DBValue>>();
+            var deletions = new List<IReadOnlyList<DBValue>>();
 
-            // It's a little annoying that we can't just do a for-each loop over the contents of the Relation, but
-            // that's inhibited by the GetEnumerator() function in the IRelation interface being internal. We don't
-            // want to change that, because we only want the Framework to have access to that introspection.
-            IRelation relation = (IRelation)extractor_.Execute(source)!;
-            var iter = relation.GetEnumerator();
-            while (iter.MoveNext()) {
-                switch (iter.Current.Status) {
-                    case Status.Saved:
+            var relation = (IRelation?)relationExtractor_.ExtractFrom(source);
+            if (relation is not null) {
+                // It's annoying that we can just use a standard foreach loop, but that is inhibited by the fact that
+                // the GetEnumerator() function on the IRelation interface is internal; even though we're in the same
+                // assembly, the language doesn't recognize it properly. We don't want to change the access modifier, so
+                // we have to do a bit of manual iteration.
+                var iter = relation.GetEnumerator();
+                while (iter.MoveNext()) {
+                    if (iter.Current.Status == Status.Saved) {
                         continue;
-                    case Status.New:
-                        insertions.Add(plan_.Execute(iter.Current.Item));
-                        break;
-                    case Status.Modified:
-                        modifications.Add(plan_.Execute(iter.Current.Item));
-                        break;
-                    case Status.Deleted:
-                        deletions.Add(plan_.Execute(iter.Current.Item));
-                        break;
-                    default:
-                        throw new ApplicationException($"Switch statement over {nameof(Status)} exhausted");
+                    }
+
+                    var elementData = elementExtractionPlan_.ExtractFrom(iter.Current.Item);
+                    switch (iter.Current.Status) {
+                        case Status.New:
+                            insertions.Add(elementData);
+                            break;
+                        case Status.Modified:
+                            modifications.Add(elementData);
+                            break;
+                        case Status.Deleted:
+                            deletions.Add(elementData);
+                            break;
+                        default:
+                            throw new ApplicationException($"Switch statement over {nameof(Status)} exhausted");
+                    }
                 }
             }
 
-            return (insertions, modifications, deletions);
+            return new RelationData(Insertions: insertions, Modifications: modifications, Deletions: deletions);
         }
 
 
-        private readonly IFieldExtractor extractor_;
-        private readonly DataExtractionPlan plan_;
+        private readonly ISingleExtractor relationExtractor_;
+        private readonly DataExtractionPlan elementExtractionPlan_;
     }
+
+    /// <summary>
+    ///   A triple of lists describing the data <see cref="RelationExtractionPlan">extracted from a Relation</see>.
+    /// </summary>
+    internal readonly record struct RelationData(
+        IReadOnlyList<IReadOnlyList<DBValue>> Insertions,
+        IReadOnlyList<IReadOnlyList<DBValue>> Modifications,
+        IReadOnlyList<IReadOnlyList<DBValue>> Deletions
+    );
 }

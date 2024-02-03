@@ -1,93 +1,166 @@
-using FluentAssertions;
-using Kvasir.Extraction;
+﻿using FluentAssertions;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace UT.Kvasir.Reconstitution {
-    [TestClass, TestCategory("SetPropertyMutationStep")]
-    public class SetPropertyMutationTests {
-        [TestMethod] public void Construct() {
+    [TestClass, TestCategory("WritePropertyMutator")]
+    public class WritePropertyMutatorTests {
+        [TestMethod] public void MutateNull() {
             // Arrange
-            var prop = typeof(PODClass).GetProperty(nameof(PODClass.String))!;
-            var mockArgRecon = Substitute.For<IReconstitutor>();
-            mockArgRecon.Target.Returns(typeof(string));
+            var property = typeof(Pair).GetProperty(nameof(Pair.Value0))!;
+            var value = "Hafnarfjörður";
+            var creator = Substitute.For<ICreator>();
+            creator.ResultType.Returns(typeof(string));
+            creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(value);
 
             // Act
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
+            Pair? pair = null;
+            var row = new DBValue[] { DBValue.Create(-984L), DBValue.Create('?') };
+            var mutator = new WritePropertyMutator(property, creator);
+            mutator.Mutate(pair, row);
 
             // Assert
-            mutator.ExpectedSubject.Should().Be(typeof(PODClass));
+            mutator.SourceType.Should().Be(property.ReflectedType);
+            pair.Should().BeNull();
+            creator.DidNotReceive().CreateFrom(Arg.Any<IReadOnlyList<DBValue>>());
         }
 
-        [TestMethod] public void ExecuteOnClass() {
+        [TestMethod] public void MutateExact() {
             // Arrange
-            var prop = typeof(PODClass).GetProperty(nameof(PODClass.String))!;
-            var arg = "Santa Clara";
-            var mockArgRecon = Substitute.For<IReconstitutor>();
-            mockArgRecon.Target.Returns(typeof(string));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
-            var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
-            object source = new PODClass();
+            var property = typeof(Pair).GetProperty(nameof(Pair.Value0))!;
+            var value = "Liege";
+            var creator = Substitute.For<ICreator>();
+            creator.ResultType.Returns(typeof(string));
+            creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(value);
 
             // Act
-            ((PODClass)source).String.Should().BeNull();
-            mutator.Execute(source, data);
+            var pair = new Pair();
+            var row = new DBValue[] { DBValue.Create(true), DBValue.Create("Utrecht"), DBValue.Create(DateTime.Now) };
+            var mutator = new WritePropertyMutator(property, creator);
+            mutator.Mutate(pair, row);
 
             // Assert
-            ((PODClass)source).String.Should().Be(arg);
+            mutator.SourceType.Should().Be(property.ReflectedType);
+            pair.Value0.Should().Be(value);
+            pair.Value1.Should().Be("");
+            pair.GetPrivateValue().Should().Be("");
+            Pair.Value3.Should().Be("");
+            creator.Received().CreateFrom(row);
         }
 
-        [TestMethod] public void ExecuteOnStruct() {
+        [TestMethod] public void MutateDerived() {
             // Arrange
-            var prop = typeof(PODStruct).GetProperty(nameof(PODStruct.String))!;
-            var arg = "Valparaiso";
-            var mockArgRecon = Substitute.For<IReconstitutor>();
-            mockArgRecon.Target.Returns(typeof(string));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(arg);
-            var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODStruct>(), prop, mockArgRecon);
-            object source = new PODStruct();
+            var property = typeof(Base).GetProperty(nameof(Base.Value1))!;
+            var value = "Verona";
+            var creator = Substitute.For<ICreator>();
+            creator.ResultType.Returns(typeof(string));
+            creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(value);
 
             // Act
-            ((PODStruct)source).String.Should().BeNull();
-            mutator.Execute(source, data);
+            var pair = new Pair();
+            var row = new DBValue[] { DBValue.Create(new Guid()), DBValue.Create(-77.331M) };
+            var mutator = new WritePropertyMutator(property, creator);
+            mutator.Mutate(pair, row);
 
             // Assert
-            ((PODStruct)source).String.Should().Be(arg);
+            mutator.SourceType.Should().Be(property.ReflectedType);
+            pair.Value0.Should().Be("");
+            pair.Value1.Should().Be(value);
+            pair.GetPrivateValue().Should().Be("");
+            Pair.Value3.Should().Be("");
+            creator.Received().CreateFrom(row);
         }
 
-        [TestMethod] public void ExecuteWithNullValue() {
+        [TestMethod] public void MutateImplementation() {
             // Arrange
-            var prop = typeof(PODClass).GetProperty(nameof(PODClass.Character))!;
-            var mockArgRecon = Substitute.For<IReconstitutor>();
-            mockArgRecon.Target.Returns(typeof(char));
-            mockArgRecon.ReconstituteFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(null);
-            var data = new DBValue[] { DBValue.NULL, DBValue.Create(0), DBValue.Create('@') };
-            var mutator = new SetPropertyMutationStep(new IdentityExtractor<PODClass>(), prop, mockArgRecon);
-            var source = new PODClass() { Character = '.' };
+            var property = typeof(IInterface).GetProperty(nameof(IInterface.Value0))!;
+            var value = "A Coruña";
+            var creator = Substitute.For<ICreator>();
+            creator.ResultType.Returns(typeof(string));
+            creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(value);
 
             // Act
-            source.Character.Should().NotBeNull();
-            mutator.Execute(source, data);
+            var pair = new Pair();
+            var row = new DBValue[] { DBValue.Create(1.666606f) };
+            var mutator = new WritePropertyMutator(property, creator);
+            mutator.Mutate(pair, row);
 
             // Assert
-            source.Character.Should().BeNull();
+            mutator.SourceType.Should().Be(property.ReflectedType);
+            pair.Value0.Should().Be(value);
+            pair.Value1.Should().Be("");
+            pair.GetPrivateValue().Should().Be("");
+            Pair.Value3.Should().Be("");
+            creator.Received().CreateFrom(row);
         }
-    }
+
+        [TestMethod] public void MutateNonPublicProperty() {
+            // Arrange
+            var property = typeof(Pair).GetProperty("Value2", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            var value = "Santiago de los Caballeros";
+            var creator = Substitute.For<ICreator>();
+            creator.ResultType.Returns(typeof(string));
+            creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(value);
+
+            // Act
+            var pair = new Pair();
+            var row = new DBValue[] { DBValue.Create(1.666606f) };
+            var mutator = new WritePropertyMutator(property, creator);
+            mutator.Mutate(pair, row);
+
+            // Assert
+            mutator.SourceType.Should().Be(property.ReflectedType);
+            pair.Value0.Should().Be("");
+            pair.Value1.Should().Be("");
+            pair.GetPrivateValue().Should().Be(value);
+            Pair.Value3.Should().Be("");
+            creator.Received().CreateFrom(row);
+        }
+
+        [TestMethod] public void MutateStaticProperty() {
+            // Arrange
+            var property = typeof(Pair).GetProperty(nameof(Pair.Value3))!;
+            var value = "Palembang";
+            var creator = Substitute.For<ICreator>();
+            creator.ResultType.Returns(typeof(string));
+            creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(value);
+
+            // Act
+            var pair = new Pair();
+            var row = new DBValue[] { DBValue.Create(1.666606f) };
+            var mutator = new WritePropertyMutator(property, creator);
+            mutator.Mutate(pair, row);
+
+            // Assert
+            mutator.SourceType.Should().Be(property.ReflectedType);
+            pair.Value0.Should().Be("");
+            pair.Value1.Should().Be("");
+            pair.GetPrivateValue().Should().Be("");
+            Pair.Value3.Should().Be(value);
+            creator.Received().CreateFrom(row);
+        }
 
 
-    internal class PODClass {
-        public int? Integer { get; set; }
-        public char? Character { get; set; }
-        public string? String { get; set; }
-    }
-    internal struct PODStruct {
-        public int? Integer { get; set; }
-        public char? Character { get; set; }
-        public string? String { get; set; }
+        private interface IInterface {
+            string Value0 { get; set; }
+        }
+        private abstract class Base {
+            public abstract string Value1 { get; set; }
+        }
+        private sealed class Pair : Base, IInterface {
+            public string Value0 { get; set; } = "";
+            public sealed override string Value1 { get; set; } = "";
+            private string Value2 { get; set; } = "";
+            public static string Value3 { get; set; } = "";
+
+            public string GetPrivateValue() {
+                return Value2;
+            }
+        }
     }
 }

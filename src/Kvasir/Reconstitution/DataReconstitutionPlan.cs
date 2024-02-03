@@ -1,6 +1,4 @@
-using Ardalis.GuardClauses;
-using Cybele.Core;
-using Cybele.Extensions;
+﻿using Cybele.Extensions;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -9,76 +7,59 @@ using System.Linq;
 
 namespace Kvasir.Reconstitution {
     /// <summary>
-    ///   A description of the way in which data for a particular CLR object type is to be extracted from a back-end
-    ///   database, transformed, and re-imagined as an instance.
+    ///   A plan that describes how to reconstitute a single CLR source object from a set of
+    ///   <see cref="DBValue">database values</see>.
     /// </summary>
-    public sealed class DataReconstitutionPlan {
+    internal sealed class DataReconstitutionPlan {
         /// <summary>
-        ///   The <see cref="Type"/> of CLR object produced by this <see cref="DataReconstitutionPlan"/>.
+        ///   The <see cref="Type"/> of CLR object reconstituted by this <see cref="DataReconstitutionPlan"/>.
         /// </summary>
-        public Type Target { get; }
+        public Type ResultType { get; }
 
         /// <summary>
         ///   Construct a new <see cref="DataReconstitutionPlan"/>.
         /// </summary>
-        /// <param name="reconstitutor">
-        ///   The <see cref="IReconstitutor"/> with which to produce the CLR object when the new
-        ///   <see cref="DataReconstitutionPlan"/> is executed.
+        /// <param name="creator">
+        ///   The <see cref="ICreator"/> with which to create the bare CLR object.
         /// </param>
-        /// <param name="reverters">
-        ///   The ordered sequence of <see cref="DataConverter">data converters</see> that transform the values
-        ///   extracted from the back-end database..
+        /// <param name="mutators">
+        ///   Zero or more <see cref="IMutator"/> to be applied to the CLR object produced by <paramref name="creator"/>
+        ///   in the given order.
         /// </param>
-        /// <pre>
-        ///   <paramref name="reverters"/> is not empty
-        ///     --and--
-        ///   each element of <paramref name="reverters"/> is a bidirectional <see cref="DataConverter"/>.
-        /// </pre>
-        internal DataReconstitutionPlan(IReconstitutor reconstitutor, ConverterSeq reverters) {
-            Guard.Against.Null(reconstitutor, nameof(reconstitutor));
-            Guard.Against.Null(reverters, nameof(reverters));
-            Debug.Assert(!reverters.IsEmpty());
-            Debug.Assert(reverters.All(dc => dc.IsBidirectional));
+        public DataReconstitutionPlan(ICreator creator, IEnumerable<IMutator> mutators) {
+            Debug.Assert(creator is not null);
+            Debug.Assert(mutators is not null);
+            Debug.Assert(mutators.AllSame(m => m.SourceType));
+            Debug.Assert(mutators.IsEmpty() || creator.ResultType.IsInstanceOf(mutators.First().SourceType));
 
-            Target = reconstitutor.Target;
-            reconstitutor_ = reconstitutor;
-            reverters_ = reverters;
+            creator_ = creator;
+            mutators_ = new List<IMutator>(mutators);
+            ResultType = creator_.ResultType;
         }
 
         /// <summary>
-        ///   Execute this <see cref="DataReconstitutionPlan"/> to create a brand new CLR object from a "row" of
-        ///   database values.
+        ///   Reconstitute a CLR object from one or more <see cref="DBValue">database values</see>.
         /// </summary>
-        /// <param name="rawValues">
-        ///   The database values from which to reconstitute a CLR object.
+        /// <param name="dbValues">
+        ///   A non-empty, ordered collection of <see cref="DBValue">database values</see>, any of which may be
+        ///   <see cref="DBValue.NULL"/>, from which to reconstitute a new CLR object.
         /// </param>
-        /// <pre>
-        ///   <paramref name="rawValues"/> is not empty.
-        /// </pre>
         /// <returns>
-        ///   A CLR object of type <see cref="Target"/> that, when run through the dedicated extractor for
-        ///   <see cref="Target"/>, produces <paramref name="rawValues"/>.
+        ///   A non-<see langword="null"/> CLR object created from <paramref name="dbValues"/> that is an instance of
+        ///   <see cref="ResultType"/>.
         /// </returns>
-        public object ReconstituteFrom(DBData rawValues) {
-            Guard.Against.Null(rawValues, nameof(rawValues));
-            Debug.Assert(!rawValues.IsEmpty());
+        public object ReconstituteFrom(IReadOnlyList<DBValue> dbValues) {
+            Debug.Assert(dbValues is not null && !dbValues.IsEmpty());
 
-            List<DBValue> reversions = new List<DBValue>();
-            var reverterIter = reverters_.GetEnumerator();
-
-            foreach (var value in rawValues) {
-                reverterIter.MoveNext();
-
-                // The unwrap-and-rewrap paradigm here is a little annoying, but at least this way we can leverage
-                // the DBValue to ensure that identity conversions are perfectly valid.
-                reversions.Add(DBValue.Create(reverterIter.Current.Revert(value.Datum)));
+            var reconstitution = creator_.CreateFrom(dbValues)!;
+            foreach (var mutator in mutators_) {
+                mutator.Mutate(reconstitution, dbValues);
             }
-
-            return reconstitutor_.ReconstituteFrom(reversions)!;
+            return reconstitution;
         }
 
 
-        private readonly IReconstitutor reconstitutor_;
-        private readonly ConverterSeq reverters_;
+        private readonly ICreator creator_;
+        private readonly IReadOnlyList<IMutator> mutators_;
     }
 }
