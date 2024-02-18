@@ -454,6 +454,9 @@ namespace UT.Kvasir.Translation {
             public ushort RepublicanEVs { get; set; }
         }
 
+        // Static Class (✗not permitted✗)
+        public static class HighHell {}
+
         // Test Scenario: Private (✓allowed✓)
         private class GitCommit {
             [PrimaryKey] public string Hash { get; set; } = "";
