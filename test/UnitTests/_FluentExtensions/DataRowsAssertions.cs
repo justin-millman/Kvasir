@@ -19,7 +19,7 @@ namespace FluentAssertions {
             [CustomAssertion]
             public AndConstraint<DataRowsAssertion> ContainRow(params object?[] values) {
                 base.Contain(e => e.SequenceEqual(values.Select(v => DBValue.Create(v))));
-                return new AndConstraint<DataRowAssertion>(this);
+                return new AndConstraint<DataRowsAssertion>(this);
             }
         }
     }

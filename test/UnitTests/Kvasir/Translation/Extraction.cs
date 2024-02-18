@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Kvasir.Core;
 using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,7 +11,7 @@ using static UT.Kvasir.Translation.DataExtraction;
 using static UT.Kvasir.Translation.TestConverters;
 
 namespace UT.Kvasir.Translation {
-    [TestClass, TestCategory("Data Extraction")]
+    [TestClass, TestCategory("Extraction")]
     public class DataExtractionTests {
         [TestMethod] public void NonNullPublicInstanceScalars() {
             // Arrange
@@ -27,7 +28,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Morgue)];
-            var data = translation.Principal.Extractor.Execute(morgue);
+            var data = translation.Principal.Extractor.ExtractFrom(morgue);
 
             // Assert
             data.Should().HaveCount(7);
@@ -36,7 +37,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(morgue.Capacity);
             data[3].Datum.Should().Be(morgue.Budget);
             data[4].Datum.Should().Be(morgue.FederalGrade);
-            data[5].Datum.Should().Be(morgue.AvailableServices.ToString().Replace(", ", "|"));
+            data[5].Datum.Should().Be(ConversionOf(morgue.AvailableServices));
             data[6].Datum.Should().Be(morgue.GovernmentRun);
         }
 
@@ -54,7 +55,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(PythonInterpreter)];
-            var data = translation.Principal.Extractor.Execute(interpreter);
+            var data = translation.Principal.Extractor.ExtractFrom(interpreter);
 
             // Assert
             data.Should().HaveCount(6);
@@ -63,7 +64,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(interpreter.InstalledOn);
             data[3].Datum.Should().Be(PythonInterpreter.MinVersion);
             data[4].Datum.Should().Be(PythonInterpreter.MaxVersion);
-            data[5].Datum.Should().Be(PythonInterpreter.BackEndLanguage.ToString().Replace(", ", "|");
+            data[5].Datum.Should().Be(ConversionOf(PythonInterpreter.BackEndLanguage));
         }
 
         [TestMethod] public void NonNullNonPublicInstanceScalars() {
@@ -81,7 +82,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(PirateShip)];
-            var data = translation.Principal.Extractor.Execute(ship);
+            var data = translation.Principal.Extractor.ExtractFrom(ship);
 
             // Assert
             data.Should().HaveCount(7);
@@ -90,7 +91,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(ship.Captain);
             data[3].Datum.Should().Be(ship.GetLength());
             data[4].Datum.Should().Be(ship.GetNumCannons());
-            data[5].Datum.Should().Be(ship.Style.ToString().Replace(", ", "|"));
+            data[5].Datum.Should().Be(ConversionOf(ship.Style));
             data[6].Datum.Should().Be(ship.CarriedSlaves);
         }
 
@@ -108,7 +109,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Enzyme)];
-            var data = translation.Principal.Extractor.Execute(enzyme);
+            var data = translation.Principal.Extractor.ExtractFrom(enzyme);
 
             // Assert
             data.Should().HaveCount(6);
@@ -135,7 +136,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Ode)];
-            var data = translation.Principal.Extractor.Execute(ode);
+            var data = translation.Principal.Extractor.ExtractFrom(ode);
 
             // Assert
             data.Should().HaveCount(7);
@@ -161,7 +162,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Tlatoani)];
-            var data = translation.Principal.Extractor.Execute(tlatoani);
+            var data = translation.Principal.Extractor.ExtractFrom(tlatoani);
 
             // Assert
             data.Should().HaveCount(6);
@@ -186,7 +187,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(StateQuarter)];
-            var data = translation.Principal.Extractor.Execute(quarter);
+            var data = translation.Principal.Extractor.ExtractFrom(quarter);
 
             // Assert
             data.Should().HaveCount(5);
@@ -209,7 +210,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Aurora)];
-            var data = translation.Principal.Extractor.Execute(aurora);
+            var data = translation.Principal.Extractor.ExtractFrom(aurora);
 
             // Assert
             data.Should().HaveCount(4);
@@ -232,7 +233,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Underworld)];
-            var data = translation.Principal.Extractor.Execute(underworld);
+            var data = translation.Principal.Extractor.ExtractFrom(underworld);
 
             // Act
             data[0].Datum.Should().Be(underworld.Name);
@@ -257,7 +258,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(CornMaze)];
-            var data = translation.Principal.Extractor.Execute(maze);
+            var data = translation.Principal.Extractor.ExtractFrom(maze);
 
             // Assert
             data.Should().HaveCount(7);
@@ -283,13 +284,13 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(MarioKartRacetrack)];
-            var data = translation.Principal.Extractor.Execute(racetrack);
+            var data = translation.Principal.Extractor.ExtractFrom(racetrack);
 
             // Assert
             data.Should().HaveCount(5);
             data[0].Datum.Should().Be(racetrack.Name);
             data[1].Datum.Should().Be(racetrack.FirstAppearance);
-            data[2].Datum.Should().Be(racetrack.Series.ToString().Replace(", ", "|"));
+            data[2].Datum.Should().Be(ConversionOf(racetrack.Series));
             data[3].Datum.Should().Be(DBNull.Value);
             data[4].Datum.Should().Be(racetrack.AvailableOnline);
         }
@@ -306,7 +307,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Lighthouse)];
-            var data = translation.Principal.Extractor.Execute(lighthouse);
+            var data = translation.Principal.Extractor.ExtractFrom(lighthouse);
 
             // Assert
             data.Should().HaveCount(5);
@@ -328,7 +329,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Nucleobase)];
-            var data = translation.Principal.Extractor.Execute(nucleobase);
+            var data = translation.Principal.Extractor.ExtractFrom(nucleobase);
 
             // Assert
             data.Should().HaveCount(3);
@@ -356,17 +357,17 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(LegoSet)];
-            var data = translation.Principal.Extractor.Execute(legos);
+            var data = translation.Principal.Extractor.ExtractFrom(legos);
 
             // Assert
             data.Should().HaveCount(9);
             data[0].Datum.Should().Be(legos.ItemNumber);
             data[1].Datum.Should().Be(legos.Title);
             data[2].Datum.Should().Be(legos.Catalog.Price);
-            data[3].Datum.Should().Be(legos.Catalog.Stars.ToString().Replace(", ", "|"));
+            data[3].Datum.Should().Be(ConversionOf(legos.Catalog.Stars));
             data[4].Datum.Should().Be(legos.Catalog.URL);
             data[5].Datum.Should().Be(legos.Catalog.InsiderPoints);
-            data[6].Datum.Should().Be(legos.Catalog.Theme.ToString().Replace(", ", "|"));
+            data[6].Datum.Should().Be(ConversionOf(legos.Catalog.Theme));
             data[7].Datum.Should().Be(legos.Pieces);
             data[8].Datum.Should().Be(legos.LowerBoundAge);
         }
@@ -388,7 +389,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(SnowballFight)];
-            var data = translation.Principal.Extractor.Execute(fight);
+            var data = translation.Principal.Extractor.ExtractFrom(fight);
 
             // Assert
             data.Should().HaveCount(7);
@@ -413,7 +414,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Knot)];
-            var data = translation.Principal.Extractor.Execute(knot);
+            var data = translation.Principal.Extractor.ExtractFrom(knot);
 
             // Assert
             data.Should().HaveCount(4);
@@ -436,7 +437,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator(); ;
             var translation = translator[typeof(Armory)];
-            var data = translation.Principal.Extractor.Execute(armory);
+            var data = translation.Principal.Extractor.ExtractFrom(armory);
 
             // Assert
             data.Should().HaveCount(6);
@@ -445,7 +446,7 @@ namespace UT.Kvasir.Translation {
             data[2].Datum.Should().Be(DBNull.Value);
             data[3].Datum.Should().Be(DBNull.Value);
             data[4].Datum.Should().Be(armory.WeaponsCount);
-            data[5].Datum.Should().Be(armory.Owner.ToString().Replace(", ", "|"));
+            data[5].Datum.Should().Be(ConversionOf(armory.Owner));
         }
 
         [TestMethod] public void NestedAggregate() {
@@ -485,7 +486,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(MillionaireQuestion)];
-            var data = translation.Principal.Extractor.Execute(question);
+            var data = translation.Principal.Extractor.ExtractFrom(question);
 
             // Assert
             data.Should().HaveCount(19);
@@ -528,7 +529,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(GroceryGame)];
-            var data = translation.Principal.Extractor.Execute(game);
+            var data = translation.Principal.Extractor.ExtractFrom(game);
 
             // Assert
             data.Should().HaveCount(8);
@@ -563,7 +564,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(PapalConclave)];
-            var data = translation.Principal.Extractor.Execute(conclave);
+            var data = translation.Principal.Extractor.ExtractFrom(conclave);
 
             // Assert
             data.Should().HaveCount(5);
@@ -592,7 +593,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Cytonic)];
-            var data = translation.Principal.Extractor.Execute(cytonic);
+            var data = translation.Principal.Extractor.ExtractFrom(cytonic);
 
             // Assert
             data.Should().HaveCount(6);
@@ -600,8 +601,8 @@ namespace UT.Kvasir.Translation {
             data[1].Datum.Should().Be(DBNull.Value);
             data[2].Datum.Should().Be(cytonic.SelfSpecies.Grouping);
             data[3].Datum.Should().Be(cytonic.SelfSpecies.SubNumber);
-            data[4].Datum.Should().Be(cytonic.Abilities.ToString().Replace(", ", "|"));
-            data[5].Datum.Should().Be(cytonic.Appearances.ToString().Replace(", ", "|"));
+            data[4].Datum.Should().Be(ConversionOf(cytonic.Abilities));
+            data[5].Datum.Should().Be(ConversionOf(cytonic.Appearances));
         }
 
         [TestMethod] public void NullReferenceSingleFieldPrimaryKey() {
@@ -620,7 +621,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(SoapOpera)];
-            var data = translation.Principal.Extractor.Execute(soapOpera);
+            var data = translation.Principal.Extractor.ExtractFrom(soapOpera);
 
             // Assert
             data.Should().HaveCount(8);
@@ -647,7 +648,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Library)];
-            var data = translation.Principal.Extractor.Execute(library);
+            var data = translation.Principal.Extractor.ExtractFrom(library);
 
             // Assert
             data.Should().HaveCount(6);
@@ -683,7 +684,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(CurlingMatch)];
-            var data = translation.Principal.Extractor.Execute(match);
+            var data = translation.Principal.Extractor.ExtractFrom(match);
 
             // Assert
             data.Should().HaveCount(8);
@@ -710,12 +711,12 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Pretzel)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(pretzel);
+            var data = translation.Relations[0].Extractor.ExtractFrom(pretzel);
 
             // Assert
-            inserts.Should().BeEmpty();
-            updates.Should().BeEmpty();
-            deletes.Should().BeEmpty();
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
         }
 
         [TestMethod] public void NonNullSequenceRelationWithOnlyNewElements() {
@@ -745,26 +746,26 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Teppanyaki)];
-            (var setInserts, var setUpdates, var setDeletes) = translation.Relations[0].Extractor.Execute(teppanyaki);
-            (var listInserts, var listUpdates, var listDeletes) = translation.Relations[1].Extractor.Execute(teppanyaki);
+            var setData = translation.Relations[0].Extractor.ExtractFrom(teppanyaki);
+            var listData = translation.Relations[1].Extractor.ExtractFrom(teppanyaki);
 
             // Assert
-            listInserts.Should().HaveCount(7);
-            listInserts.Should().ContainRow("Chicken");
-            listInserts.Should().ContainRow("Beef");
-            listInserts.Should().ContainRow("Onion");
-            listInserts.Should().ContainRow("Egg");
-            listInserts.Should().ContainRow("Shrimp");
-            listInserts.Should().ContainRow("Daikon");
-            listInserts.Should().ContainRow("Fried Rice");
-            listUpdates.Should().BeEmpty();
-            listDeletes.Should().BeEmpty();
-            setInserts.Should().HaveCount(3);
-            setInserts.Should().ContainRow("Daisuke Orinaka");
-            setInserts.Should().ContainRow("Kaidon Hotosata");
-            setInserts.Should().ContainRow("Hideki Iwanatsuo");
-            setUpdates.Should().BeEmpty();
-            setDeletes.Should().BeEmpty();
+            listData.Insertions.Should().HaveCount(7);
+            listData.Insertions.Should().ContainRow("Chicken");
+            listData.Insertions.Should().ContainRow("Beef");
+            listData.Insertions.Should().ContainRow("Onion");
+            listData.Insertions.Should().ContainRow("Egg");
+            listData.Insertions.Should().ContainRow("Shrimp");
+            listData.Insertions.Should().ContainRow("Daikon");
+            listData.Insertions.Should().ContainRow("Fried Rice");
+            listData.Modifications.Should().BeEmpty();
+            listData.Deletions.Should().BeEmpty();
+            setData.Insertions.Should().HaveCount(3);
+            setData.Insertions.Should().ContainRow("Daisuke Orinaka");
+            setData.Insertions.Should().ContainRow("Kaidon Hotosata");
+            setData.Insertions.Should().ContainRow("Hideki Iwanatsuo");
+            setData.Modifications.Should().BeEmpty();
+            setData.Deletions.Should().BeEmpty();
         }
 
         [TestMethod] public void NonNullMapRelationWithOnlyNewElements() {
@@ -784,14 +785,16 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(SpellingBee)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(spellingBee);
+            var data = translation.Relations[0].Extractor.ExtractFrom(spellingBee);
 
             // Assert
-            inserts.Should().HaveCount(4);
-            inserts.Should().ContainRow(46, "chthonic");
-            inserts.Should().ContainRow(119, "querken");
-            inserts.Should().ContainRow(6, "pataca");
-            inserts.Should().ContainRow(122, "pharetone");
+            data.Insertions.Should().HaveCount(4);
+            data.Insertions.Should().ContainRow(46, "chthonic");
+            data.Insertions.Should().ContainRow(119, "querken");
+            data.Insertions.Should().ContainRow(6, "pataca");
+            data.Insertions.Should().ContainRow(122, "pharetone");
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
         }
 
         [TestMethod] public void NonNullOrderedListRelationWithOnlyNewElements() {
@@ -814,20 +817,19 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(ImprovTroupe)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(troupe);
+            var data = translation.Relations[0].Extractor.ExtractFrom(troupe);
 
             // Assert
-            inserts.Should().HaveCount(6);
-            inserts.Should().ContainRow(0, "Amanda Corningsweather");
-            inserts.Should().ContainRow(1, "Randy Cappaco");
-            inserts.Should().ContainRow(2, "Edith Summak");
-            inserts.Should().ContainRow(3, "Nicole d'Francia");
-            inserts.Should().ContainRow(4, "Aaron Goliin");
-            inserts.Should().ContainRow(5, "Harrison B. Tarmalonz");
-            updates.Should().BeEmpty();
-            deletes.Should().BeEmpty();
+            data.Insertions.Should().HaveCount(6);
+            data.Insertions.Should().ContainRow(0, "Amanda Corningsweather");
+            data.Insertions.Should().ContainRow(1, "Randy Cappaco");
+            data.Insertions.Should().ContainRow(2, "Edith Summak");
+            data.Insertions.Should().ContainRow(3, "Nicole d'Francia");
+            data.Insertions.Should().ContainRow(4, "Aaron Goliin");
+            data.Insertions.Should().ContainRow(5, "Harrison B. Tarmalonz");
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
         }
-
 
         [TestMethod] public void NullRelation() {
             // Arrange
@@ -842,12 +844,12 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Existentialist)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(existentialist);
+            var data = translation.Relations[0].Extractor.ExtractFrom(existentialist);
 
             // Assert
-            inserts.Should().BeEmpty();
-            updates.Should().BeEmpty();
-            deletes.Should().BeEmpty();
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
         }
 
         [TestMethod] public void RelationNestedAggregate() {
@@ -868,16 +870,16 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(OlympianBoon)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(boon);
+            var data = translation.Relations[0].Extractor.ExtractFrom(boon);
 
             // Assert
-            inserts.Should().HaveCount(4);
-            inserts.Should().ContainRow(0, "Damage", 60);
-            inserts.Should().ContainRow(1, "Damage", 80);
-            inserts.Should().ContainRow(2, "Damage", 100);
-            inserts.Should().ContainRow(3, "Damage", 120);
-            updates.Should().BeEmpty();
-            deletes.Should().BeEmpty();
+            data.Insertions.Should().HaveCount(4);
+            data.Insertions.Should().ContainRow(0, "Damage", 60);
+            data.Insertions.Should().ContainRow(1, "Damage", 80);
+            data.Insertions.Should().ContainRow(2, "Damage", 100);
+            data.Insertions.Should().ContainRow(3, "Damage", 120);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
         }
 
         [TestMethod] public void RelationNestedReference() {
@@ -917,15 +919,15 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Impeachment)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(impeachment);
+            var data = translation.Relations[0].Extractor.ExtractFrom(impeachment);
 
             // Assert
-            inserts.Should().HaveCount(3);
-            inserts.Should().ContainRow(impeachment.Counts[0].ID, false);
-            inserts.Should().ContainRow(impeachment.Counts[1].ID, false);
-            inserts.Should().ContainRow(impeachment.Counts[2].ID, false);
-            updates.Should().BeEmpty();
-            deletes.Should().BeEmpty();
+            data.Insertions.Should().HaveCount(3);
+            data.Insertions.Should().ContainRow(impeachment.Counts[0].ID, false);
+            data.Insertions.Should().ContainRow(impeachment.Counts[1].ID, false);
+            data.Insertions.Should().ContainRow(impeachment.Counts[2].ID, false);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
         }
 
         [TestMethod] public void RelationReferencesOwningEntity() {
@@ -942,13 +944,13 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(MaoriGod)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(god);
+            var data = translation.Relations[0].Extractor.ExtractFrom(god);
 
             // Assert
-            inserts.Should().HaveCount(1);
-            inserts.Should().ContainRow(god.Name);
-            updates.Should().BeEmpty();
-            deletes.Should().BeEmpty();
+            data.Insertions.Should().HaveCount(1);
+            data.Insertions.Should().ContainRow(god.Name, ConversionOf(MaoriGod.Relation.Self));
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
         }
 
         [TestMethod] public void RelationNestedDataConversion() {
@@ -974,13 +976,19 @@ namespace UT.Kvasir.Translation {
             // Act
             var translator = new Translator();
             var translation = translator[typeof(Horoscope)];
-            (var inserts, var updates, var deletes) = translation.Relations[0].Extractor.Execute(horoscope);
+            var data = translation.Relations[0].Extractor.ExtractFrom(horoscope);
 
             // Assert
-            inserts.Should().HaveCount(1);
-            inserts.Should().ContainRow(new DateTime(2024, 2, 3), (int)'q', (int)'!', (int)'B', (int)'9');
-            updates.Should().BeEmpty();
-            deletes.Should().BeEmpty();
+            data.Insertions.Should().HaveCount(1);
+            data.Insertions.Should().ContainRow(new DateTime(2024, 2, 3), "[gobbledy gook]", (int)'q', (int)'!', (int)'B', (int)'9');
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+
+        private static string ConversionOf<T>(T enumerator) where T : Enum {
+            var converter = new EnumToStringConverter(typeof(T)).ConverterImpl;
+            return (string)converter.Convert(enumerator)!;
         }
     }
 }
