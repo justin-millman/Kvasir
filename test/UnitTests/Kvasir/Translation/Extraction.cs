@@ -1,11 +1,9 @@
 ﻿using FluentAssertions;
 using Kvasir.Core;
-using Kvasir.Schema;
+using Kvasir.Relations;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 using static UT.Kvasir.Translation.DataExtraction;
 using static UT.Kvasir.Translation.TestConverters;
@@ -829,6 +827,90 @@ namespace UT.Kvasir.Translation {
             data.Insertions.Should().ContainRow(5, "Harrison B. Tarmalonz");
             data.Modifications.Should().BeEmpty();
             data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonNullRelationWithOnlySavedElements() {
+            // Arrange
+            var tip = new NedsDeclassifiedTip() {
+                ID = new Guid(),
+                Category = "Photo Day",
+                Tip = "Bring a hair brush to fix your hair before the picture",
+                For = {
+                    "Jennifer Mosely",
+                    "Suzie Crabgrass",
+                    "Bitsy Johnson"
+                }
+            };
+            (tip.For as IRelation).Canonicalize();
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(NedsDeclassifiedTip)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(tip);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonNullRelationWithAtLeastOneModifiedElement() {
+            // Arrange
+            var territory = new PendragonTerritory() {
+                Name = "Zadaa",
+                Travellers = {
+                    "Osa",
+                    "Loor"
+                },
+                FirstAppearance = "The Lost City of Faar",
+                Capital = "Xhaxhu"
+            };
+            (territory.Travellers as IRelation).Canonicalize();
+            territory.Travellers[0] = "Loor";
+            territory.Travellers[1] = "Osa";
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(PendragonTerritory)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(territory);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().HaveCount(2);
+            data.Modifications.Should().ContainRow(0, "Loor");
+            data.Modifications.Should().ContainRow(1, "Osa");
+        }
+
+        [TestMethod] public void NonNullRelationWithAtLeastOneDeletedElement() {
+            // Arrange
+            var caucus = new IowaCaucus() {
+                Year = 2008,
+                Party = IowaCaucus.PoliticalParty.Democratic,
+                Date = new DateTime(2008, 1, 3),
+                DelegatesEarned = {
+                    { "Barack Obama", 16.0 },
+                    { "John Edwards", 14.0 },
+                    { "Hillary Clinton", 15.0 },
+                    { "Bill Richardson", 0.0 },
+                    { "Joe Biden", 0.0 },
+                    { "uncommitted", 0.0 },
+                    { "Christopher Dodd", 0.0 }
+                },
+                Bellwether = true
+            };
+            (caucus.DelegatesEarned as IRelation).Canonicalize();
+            caucus.DelegatesEarned.Remove("uncommitted");
+
+            // Act
+            var translator = new Translator();
+            var translation = translator[typeof(IowaCaucus)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(caucus);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().HaveCount(1);
+            data.Deletions.Should().ContainRow("uncommitted", 0.0);
         }
 
         [TestMethod] public void NullRelation() {

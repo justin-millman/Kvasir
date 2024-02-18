@@ -11523,13 +11523,31 @@ namespace UT.Kvasir.Translation {
         }
 
         // Scenario: Non-Null Relation Property with Only Saved Elements (✓no values extracted✓)
-        // [TODO] - 
+        public class NedsDeclassifiedTip {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Category { get; set; } = "";
+            public string Tip { get; set; } = "";
+            public RelationSet<string> For { get; set; } = new();
+        }
 
         // Scenario: Non-Null Relation Property with At Least One Modified Element (✓values extracted per element✓)
-        // [TODO] - 
+        public class PendragonTerritory {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public RelationOrderedList<string> Travellers { get; set; } = new();
+            public string FirstAppearance { get; set; } = "";
+            public string Capital { get; set; } = "";
+        }
 
         // Scenario: Non-Null Relation Property with At Least One Deleted Element (✓values extracted per element✓)
-        // [TODO] -         
+        public class IowaCaucus {
+            public enum PoliticalParty { Republican, Democratic }
+
+            [PrimaryKey] public ushort Year { get; set; }
+            [PrimaryKey] public PoliticalParty Party { get; set; }
+            public DateTime Date { get; set; }
+            public RelationMap<string, double> DelegatesEarned { get; set; } = new();
+            public bool Bellwether { get; set; }
+        }
         
         // Scenario: Null Relation Property (✓no values extracted✓)
         public class Existentialist {
