@@ -141,6 +141,11 @@ namespace Kvasir.Translation {
                 return Option.Some("an interface");
             }
 
+            // An Entity type cannot be a static class
+            if (type.IsAbstract && type.IsSealed) {
+                return Option.Some("a static class");
+            }
+
             // An Entity type cannot be an open generic
             if (type.IsGenericTypeDefinition) {
                 return Option.Some("an open generic");

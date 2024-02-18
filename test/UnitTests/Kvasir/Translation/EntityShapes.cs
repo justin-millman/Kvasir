@@ -49,6 +49,21 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void EntityTypeIsStaticClass_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HighHell);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("cannot be an Entity type")                  // category
+                .WithMessageContaining("static");                                   // details / explanation
+        }
+
         [TestMethod] public void EntityTypeIsPrivate() {
             // Arrange
             var translator = new Translator();
