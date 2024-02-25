@@ -95,7 +95,7 @@ namespace Kvasir.Translation {
                 .Select(n => typeTranslation.Fields
                     .First(kvp => n == string.Join(NAME_SEPARATOR, kvp.Value.Name)))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            primaryKeyCache_[entity] = pkListing;
+            primaryKeyCache_[entity] = new PrimaryKeyDescriptor(Fields: pkListing, Extractor: null!);
 
             // Build up the Principal Table Definition, to store while Relation translation is deferred
             var foreignKeys = MakeForeignKeys(fields, orderedDescriptors);

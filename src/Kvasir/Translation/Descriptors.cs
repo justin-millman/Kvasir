@@ -3,6 +3,7 @@ global using RelationsListing = System.Collections.Generic.IReadOnlyDictionary<s
 
 using Cybele.Core;
 using Kvasir.Annotations;
+using Kvasir.Extraction;
 using Kvasir.Schema;
 using Optional;
 using System;
@@ -283,5 +284,12 @@ namespace Kvasir.Translation {
         FieldsListing Fields,
         RelationsListing Relations,
         IReadOnlyList<ComplexCheckGen> CHECKs
+    );
+
+    /////////////////////////////////////////// PRIMARY KEYS ///////////////////////////////////////////
+
+    internal readonly record struct PrimaryKeyDescriptor(
+        FieldsListing Fields,
+        IMultiExtractor Extractor
     );
 }

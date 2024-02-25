@@ -127,7 +127,7 @@ namespace Kvasir.Translation {
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             var _ = TranslateEntity(type);
-            var refKey = primaryKeyCache_[type].OrderBy(kvp => kvp.Value.RelativeColumn);
+            var refKey = primaryKeyCache_[type].Fields.OrderBy(kvp => kvp.Value.RelativeColumn);
 
             var fields = new Dictionary<string, FieldDescriptor>();
             foreach ((int idx, var (path, descriptor)) in refKey.Select((kvp, idx) => (idx, kvp))) {

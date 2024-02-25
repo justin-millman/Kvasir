@@ -107,7 +107,7 @@ namespace Kvasir.Translation {
             inProgress_ = new Stack<Type>();
             typeCache_ = new Dictionary<Type, TypeDescriptor>();
             entityCache_ = new Dictionary<Type, Translation>();
-            primaryKeyCache_ = new Dictionary<Type, FieldsListing>();
+            primaryKeyCache_ = new Dictionary<Type, PrimaryKeyDescriptor>();
             intermediates_ = new List<IntermediateTranslation>();
             tableNames_ = new HashSet<TableName>();
         }
@@ -118,7 +118,7 @@ namespace Kvasir.Translation {
         private readonly Stack<Type> inProgress_;
         private readonly Dictionary<Type, TypeDescriptor> typeCache_;
         private readonly Dictionary<Type, Translation> entityCache_;
-        private readonly Dictionary<Type, FieldsListing> primaryKeyCache_;
+        private readonly Dictionary<Type, PrimaryKeyDescriptor> primaryKeyCache_;
         private readonly List<IntermediateTranslation> intermediates_;
         private readonly HashSet<TableName> tableNames_;
         private const char NAME_SEPARATOR = '.';
