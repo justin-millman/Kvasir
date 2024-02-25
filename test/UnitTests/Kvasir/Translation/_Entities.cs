@@ -3577,7 +3577,7 @@ namespace UT.Kvasir.Translation {
             public decimal Longitude { get; set; }
         }
 
-        // Test Scenario: Data Conversion Changes Field's Type (✓applied✓)
+        // Test Scenario: Data Conversion Changes Field's Type to Scalar (✓applied✓)
         public class Comet {
             [PrimaryKey] public Guid AstronomicalIdentifier { get; set; }
             public double Aphelion { get; set; }
@@ -3586,6 +3586,32 @@ namespace UT.Kvasir.Translation {
             public ulong MassKg { get; set; }
             public double Albedo { get; set; }
             public float OrbitalPeriod { get; set; }
+        }
+
+        // Test Scenario: Data Conversion Changes Field's Type to Enumeration (✓applied✓)
+        public class TitleOfYourSexTape {
+            [PrimaryKey] public string Title { get; set; } = "";
+            public string CharacterSaying { get; set; } = "";
+            public string CharacterReceiving { get; set; } = "";
+            [DataConverter(typeof(Enumify<int, DayOfWeek>))] public int DayOfWeek { get; set; }
+            public int Season { get; set; }
+            public int EpisodeNumber { get; set; }
+            public double Timestamp { get; set; }
+        }
+
+        // Test Scenario: Data Conversion Changes Field's Type to Different Enumeration (✓applied✓)
+        public class VestigeOfDivergence {
+            public enum Campaign { C1, C2, C3 }
+            public enum Party { VoxMachina, MightyNein, BellsHells, DarringtonBrigade, CrownKeepers }
+            public enum State { Dormant, Awakened, Exalted }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string Deity { get; set; } = "";
+            public string? Wielder { get; set; }
+            [DataConverter(typeof(SwapEnums<Campaign, Party>))] public Campaign? IntroducedIn { get; set; }
+            public byte AttackBonus { get; set; }
+            public int AverageDamage { get; set; }
+            public State CurrentState { get; set; }
         }
 
         // Test Scenario: Custom Data Conversion for Enumeration Field (✓applied✓)
