@@ -26,8 +26,8 @@ namespace Kvasir.Extraction {
             Debug.Assert(path is not null);
 
             path_ = path;
-            SourceType = path_.ReflectedType;
-            ResultType = path_.PropertyType;
+            SourceType = Nullable.GetUnderlyingType(path_.ReflectedType) ?? path_.ReflectedType;
+            ResultType = Nullable.GetUnderlyingType(path_.PropertyType) ?? path_.PropertyType;
         }
 
         /// <inheritdoc/>
