@@ -37,6 +37,7 @@ namespace Kvasir.Translation {
     ////////////////////////////////////////// FIELDS ///////////////////////////////////////////
 
     internal readonly record struct FieldDescriptor(
+        Guid ID,
         string AccessPath,
         IReadOnlyList<string> Name,
         IsNullable Nullability,

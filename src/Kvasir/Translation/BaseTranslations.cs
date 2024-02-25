@@ -30,6 +30,7 @@ namespace Kvasir.Translation {
             Debug.Assert(DBType.Lookup(property.PropertyType) != DBType.Enumeration);
 
             var descriptor = new FieldDescriptor(
+                ID: new Guid(),
                 AccessPath: "",
                 Name: Enumerable.Repeat(PropertyName(property), 1).ToList(),
                 Nullability: IsNullable.No,
@@ -64,6 +65,7 @@ namespace Kvasir.Translation {
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
             var descriptor = new FieldDescriptor(
+                ID: new Guid(),
                 AccessPath: "",
                 Name: Enumerable.Repeat(PropertyName(property), 1).ToList(),
                 Nullability: IsNullable.No,
