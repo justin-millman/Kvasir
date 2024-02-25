@@ -31,8 +31,8 @@ namespace Kvasir.Extraction {
 
             extractor_ = extractor;
             converter_ = converter;
-            SourceType = extractor_.SourceType;
-            ResultType = converter_.ResultType;
+            SourceType = Nullable.GetUnderlyingType(extractor_.SourceType) ?? extractor_.SourceType;
+            ResultType = Nullable.GetUnderlyingType(converter_.ResultType) ?? converter_.ResultType;
         }
 
         /// <inheritdoc/>

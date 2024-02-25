@@ -131,6 +131,19 @@ namespace UT.Kvasir.Extraction {
             datum.Should().BeNull();
             multiDatum.Should().BeEquivalentTo(new object?[] { datum });
         }
+
+        [TestMethod] public void ExtractionPropertyTypeIsNullable() {
+            // Arrange
+            var type = typeof(Tuple<int?, char?, double?>);
+            var path = new PropertyChain(type, "Item2");
+
+            // Act
+            var extractor = new ReadPropertyExtractor(path);
+
+            // Assert
+            extractor.SourceType.Should().Be(type);
+            extractor.ResultType.Should().Be(typeof(char));
+        }
     }
 
     [TestClass, TestCategory("ConvertingExtractor")]
@@ -244,6 +257,21 @@ namespace UT.Kvasir.Extraction {
             datum.Should().BeNull();
             multiDatum.Should().BeEquivalentTo(new object?[] { datum });
             originalExtractor.Received().ExtractFrom(source);
+        }
+
+        [TestMethod] public void ConversionTypeIsNullable() {
+            // Arrange
+            var originalExtractor = Substitute.For<ISingleExtractor>();
+            originalExtractor.SourceType.Returns(typeof(int?));
+            originalExtractor.ResultType.Returns(typeof(int));
+            var converter = DataConverter.Create<int?, int?>(p => -p, p => -p);
+
+            // Act
+            var extractor = new ConvertingExtractor(originalExtractor, converter);
+
+            // Assert
+            extractor.SourceType.Should().Be(typeof(int));
+            extractor.ResultType.Should().Be(typeof(int));
         }
     }
 
