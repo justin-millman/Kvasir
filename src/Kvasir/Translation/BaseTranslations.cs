@@ -1,5 +1,6 @@
 ﻿using Cybele.Core;
 using Cybele.Extensions;
+using Kvasir.Extraction;
 using Kvasir.Relations;
 using Kvasir.Schema;
 using Optional;
@@ -53,10 +54,12 @@ namespace Kvasir.Translation {
                     CHECKs: new List<CheckGen>()
                 )
             );
+            var extractor = new ReadPropertyExtractor(property);
 
             var fields = new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
             var relations = new Dictionary<string, IRelationDescriptor>();
-            return new TranslationState(Fields: fields, Relations: relations);
+            var extractors = new Dictionary<Guid, IMultiExtractor>() { { descriptor.ID, extractor } };
+            return new TranslationState(Fields: fields, Relations: relations, Extractors: extractors);
         }
 
         private static TranslationState EnumBaseTranslation(PropertyInfo property) {
@@ -88,10 +91,12 @@ namespace Kvasir.Translation {
                     CHECKs: new List<CheckGen>()
                 )
             );
+            var extractor = new ReadPropertyExtractor(property);
 
             var fields = new Dictionary<string, FieldDescriptor>() { { "", descriptor } };
             var relations = new Dictionary<string, IRelationDescriptor>();
-            return new TranslationState(Fields: fields, Relations: relations);
+            var extractors = new Dictionary<Guid, IMultiExtractor>() { { descriptor.ID, extractor } };
+            return new TranslationState(Fields: fields, Relations: relations, Extractors: extractors);
         }
 
         private TranslationState AggregateBaseTranslation(PropertyInfo property) {
@@ -117,7 +122,13 @@ namespace Kvasir.Translation {
                 }
             }
 
-            return new TranslationState(Fields: fields, Relations: relations);
+            var extractor = new CurryingExtractor(new ReadPropertyExtractor(property), typeTranslation.Extractor);
+            var extractors = new Dictionary<Guid, IMultiExtractor>();
+            foreach (var descriptor in typeTranslation.Fields.Values) {
+                extractors[descriptor.ID] = extractor;
+            }
+
+            return new TranslationState(Fields: fields, Relations: relations, Extractors: extractors);
         }
 
         private TranslationState ReferenceBaseTranslation(PropertyInfo property) {
@@ -128,6 +139,7 @@ namespace Kvasir.Translation {
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             var _ = TranslateEntity(type);
             var refKey = primaryKeyCache_[type].Fields.OrderBy(kvp => kvp.Value.RelativeColumn);
+            var refExtractor = primaryKeyCache_[type].Extractor;
 
             var fields = new Dictionary<string, FieldDescriptor>();
             foreach ((int idx, var (path, descriptor)) in refKey.Select((kvp, idx) => (idx, kvp))) {
@@ -142,8 +154,14 @@ namespace Kvasir.Translation {
                 };
             }
 
+            var extractor = new CurryingExtractor(new ReadPropertyExtractor(property), primaryKeyCache_[type].Extractor);
+            var extractors = new Dictionary<Guid, IMultiExtractor>();
+            foreach (var descriptor in refKey.Select(kvp => kvp.Value)) {
+                extractors[descriptor.ID] = extractor;
+            }
+
             var relations = new Dictionary<string, IRelationDescriptor>();
-            return new TranslationState(Fields: fields, Relations: relations);
+            return new TranslationState(Fields: fields, Relations: relations, Extractors: extractors);
         }
 
         private TranslationState RelationBaseTranslation(PropertyInfo property) {
@@ -156,16 +174,17 @@ namespace Kvasir.Translation {
             var connectionType = (Type)connectionProperty.GetValue(null)!;
             var nullability = new NullabilityInfoContext().Create(property);
             var propertyName = PropertyName(property);
+            var extractor = new ReadPropertyExtractor(property);
 
             IRelationDescriptor GetDescriptor() {
                 if (relationType.Name.Contains("Map")) {
-                    return new MapRelationDescriptor(propertyName, connectionType, nullability);
+                    return new MapRelationDescriptor(propertyName, connectionType, nullability, extractor);
                 }
                 else if (relationType.Name.Contains("Ordered")) {
-                    return new OrderedListRelationDescriptor(propertyName, connectionType, nullability);
+                    return new OrderedListRelationDescriptor(propertyName, connectionType, nullability, extractor);
                 }
                 else {
-                    return new ListSetRelationDescriptor(propertyName, connectionType, nullability);
+                    return new ListSetRelationDescriptor(propertyName, connectionType, nullability, extractor);
                 }
             }
 
@@ -176,7 +195,8 @@ namespace Kvasir.Translation {
 
             var fields = new Dictionary<string, FieldDescriptor>() {};
             var relations = new Dictionary<string, IRelationDescriptor>() { { "", descriptor } };
-            return new TranslationState(Fields: fields, Relations: relations);
+            var extractors = new Dictionary<Guid, IMultiExtractor>();
+            return new TranslationState(Fields: fields, Relations: relations, Extractors: extractors);
         }
 
         private static string PropertyName(PropertyInfo property) {

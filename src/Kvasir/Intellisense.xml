@@ -8025,6 +8025,9 @@
               A reflection representation of a property on a <see cref="T:Kvasir.Translation.Synthetic.SyntheticType"/>.
             </summary>
         </member>
+        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.CanRead">
+            <inheritdoc/>
+        </member>
         <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.DeclaringType">
             <inheritdoc/>
         </member>
@@ -8075,9 +8078,6 @@
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.Attributes">
-            <inheritdoc/>
-        </member>
-        <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.CanRead">
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.Synthetic.SyntheticPropertyInfo.CanWrite">

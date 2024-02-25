@@ -1,9 +1,12 @@
-﻿global using FieldsListing = System.Collections.Generic.IReadOnlyDictionary<string, Kvasir.Translation.FieldDescriptor>;
+﻿global using ExtractorsListing = System.Collections.Generic.IReadOnlyDictionary<System.Guid, Kvasir.Extraction.IMultiExtractor>;
+global using FieldsListing = System.Collections.Generic.IReadOnlyDictionary<string, Kvasir.Translation.FieldDescriptor>;
 global using RelationsListing = System.Collections.Generic.IReadOnlyDictionary<string, Kvasir.Translation.IRelationDescriptor>;
 
 using Cybele.Core;
+using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Extraction;
+using Kvasir.Relations;
 using Kvasir.Schema;
 using Optional;
 using System;
@@ -60,6 +63,7 @@ namespace Kvasir.Translation {
         Option<string> TableName { get; }
         IReadOnlyDictionary<string, Type> FieldTypes { get; }
         IReadOnlyDictionary<string, IReadOnlyList<Attribute>> Attributes { get; }
+        ISingleExtractor RelationExtractor { get; }
 
         IRelationDescriptor WithEntity(Type entityType);
         public IRelationDescriptor WithAccessPath(string accessPath);
@@ -74,15 +78,18 @@ namespace Kvasir.Translation {
         public Option<string> TableName { get; init; }
         public IReadOnlyDictionary<string, Type> FieldTypes { get; init; }
         public IReadOnlyDictionary<string, IReadOnlyList<Attribute>> Attributes { get; init; }
+        public ISingleExtractor RelationExtractor { get; }
 
-        public ListSetRelationDescriptor(string name, Type itemType, NullabilityInfo nullability) {
+        public ListSetRelationDescriptor(string name, Type itemType, NullabilityInfo nullability, ISingleExtractor extractor) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(itemType is not null);
+            Debug.Assert(extractor is not null && extractor.ResultType.IsInstanceOf(typeof(IRelation)));
 
             AccessPath = "";
             Name = new List<string>() { name };
             TableName = Option.None<string>();
             FieldTypes = new Dictionary<string, Type>() { { "Item", itemType } };
+            RelationExtractor = extractor;
 
             var attributes = new Dictionary<string, IReadOnlyList<Attribute>>() { { "Item", new List<Attribute>() } };
             if (nullability.GenericTypeArguments[0].ReadState == NullabilityState.Nullable) {
@@ -138,11 +145,13 @@ namespace Kvasir.Translation {
         public Option<string> TableName { get; init; }
         public IReadOnlyDictionary<string, Type> FieldTypes { get; init; }
         public IReadOnlyDictionary<string, IReadOnlyList<Attribute>> Attributes { get; init; }
+        public ISingleExtractor RelationExtractor { get; }
 
-        public MapRelationDescriptor(string name, Type itemType, NullabilityInfo nullability) {
+        public MapRelationDescriptor(string name, Type itemType, NullabilityInfo nullability, ISingleExtractor extractor) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(itemType is not null);
             Debug.Assert(itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>));
+            Debug.Assert(extractor is not null && extractor.ResultType.IsInstanceOf(typeof(IRelation)));
 
             var keyType = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!.PropertyType;
             var valueType = itemType.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public)!.PropertyType;
@@ -151,6 +160,7 @@ namespace Kvasir.Translation {
             Name = new List<string>() { name };
             TableName = Option.None<string>();
             FieldTypes = new Dictionary<string, Type>() { { "Key", keyType }, { "Value", valueType } };
+            RelationExtractor = extractor;
 
             var attributes = new Dictionary<string, IReadOnlyList<Attribute>>() {
                 { "Key", new List<Attribute>() { new UniqueAttribute('\0') } },
@@ -212,11 +222,13 @@ namespace Kvasir.Translation {
         public Option<string> TableName { get; init; }
         public IReadOnlyDictionary<string, Type> FieldTypes { get; init; }
         public IReadOnlyDictionary<string, IReadOnlyList<Attribute>> Attributes { get; init; }
+        public ISingleExtractor RelationExtractor { get; }
 
-        public OrderedListRelationDescriptor(string name, Type itemType, NullabilityInfo nullability) {
+        public OrderedListRelationDescriptor(string name, Type itemType, NullabilityInfo nullability, ISingleExtractor extractor) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(itemType is not null);
             Debug.Assert(itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>));
+            Debug.Assert(extractor is not null && extractor.ResultType.IsInstanceOf(typeof(IRelation)));
 
             var indexType = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!.PropertyType;
             var elementType = itemType.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public)!.PropertyType;
@@ -226,6 +238,7 @@ namespace Kvasir.Translation {
             Name = new List<string>() { name };
             TableName = Option.None<string>();
             FieldTypes = new Dictionary<string, Type>() { { "Index", indexType }, { "Item", elementType } };
+            RelationExtractor = extractor;
 
             var attributes = new Dictionary<string, IReadOnlyList<Attribute>>() {
                 { "Index", new List<Attribute>() { new UniqueAttribute('\0') } },
@@ -283,7 +296,8 @@ namespace Kvasir.Translation {
     internal readonly record struct TypeDescriptor(
         FieldsListing Fields,
         RelationsListing Relations,
-        IReadOnlyList<ComplexCheckGen> CHECKs
+        IReadOnlyList<ComplexCheckGen> CHECKs,
+        IMultiExtractor Extractor
     );
 
     /////////////////////////////////////////// PRIMARY KEYS ///////////////////////////////////////////

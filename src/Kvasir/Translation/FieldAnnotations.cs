@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Core;
+using Kvasir.Extraction;
 using Kvasir.Schema;
 using Optional;
 using System;
@@ -26,7 +27,8 @@ namespace Kvasir.Translation {
 
             var resultFields = new Dictionary<string, FieldDescriptor>(baseTranslation.Fields);
             var resultRelations = new Dictionary<string, IRelationDescriptor>(baseTranslation.Relations);
-            var result = new MutableTranslationState(Fields: resultFields, Relations: resultRelations);
+            var resultExtractors = new Dictionary<Guid, IMultiExtractor>(baseTranslation.Extractors);
+            var result = new MutableTranslationState(Fields: resultFields, Relations: resultRelations, Extractors: resultExtractors);
 
             ProcessNames(property, result);
             ProcessRelationTables(property, result);
@@ -38,7 +40,7 @@ namespace Kvasir.Translation {
             ProcessCandidateKeys(property, result);
             ProcessConstraints(property, result);           // must come after Data Converters
 
-            return new TranslationState(resultFields, resultRelations);
+            return new TranslationState(resultFields, resultRelations, resultExtractors);
         }
 
         private static void ProcessNames(PropertyInfo property, MutableTranslationState state) {
@@ -266,8 +268,14 @@ namespace Kvasir.Translation {
                     throw Error.UserError(context, dpAnnotation, msg);
                 }
 
-                // No errors encountered
+                // No errors encountered - Update Converter
                 state.Fields[""] = state.Fields[""] with { Converter = converter };
+
+                // No errors encountered - Update Extractor
+                var id = state.Fields[""].ID;
+                var currentExtractor = state.Extractors[id] as ISingleExtractor;
+                var convertingExtractor = new ConvertingExtractor(currentExtractor!, converter);
+                state.Extractors[id] = convertingExtractor;
             }
             else if (numeric) {
                 // It is an error for a property whose type is not an enumeration to be annotated with [Numeric]
@@ -281,7 +289,15 @@ namespace Kvasir.Translation {
                     throw Error.MutuallyExclusive(context, new NumericAttribute(), new AsStringAttribute());
                 }
 
-                state.Fields[""] = state.Fields[""] with { Converter = new EnumToNumericConverter(expectedType).ConverterImpl };
+                // No errors encountered - Update Converter
+                var converter = new EnumToNumericConverter(expectedType).ConverterImpl;
+                state.Fields[""] = state.Fields[""] with { Converter =  converter };
+
+                // No errors encountered - Update Extractor
+                var id = state.Fields[""].ID;
+                var currentExtractor = state.Extractors[id] as ISingleExtractor;
+                var convertingExtractor = new ConvertingExtractor(currentExtractor!, converter);
+                state.Extractors[id] = convertingExtractor;
             }
             else if (asString) {
                 // It is an error for a property whose type is not an enumeration to be annotated with [AsString]
@@ -290,7 +306,15 @@ namespace Kvasir.Translation {
                     throw Error.UserError(context, new AsStringAttribute(), msg);
                 }
 
-                state.Fields[""] = state.Fields[""] with { Converter = new EnumToStringConverter(expectedType).ConverterImpl };
+                // No errors encountered - Update Converter
+                var converter = new EnumToStringConverter(expectedType).ConverterImpl;
+                state.Fields[""] = state.Fields[""] with { Converter = converter };
+
+                // No errors encountered - Update Extractor
+                var id = state.Fields[""].ID;
+                var currentExtractor = state.Extractors[id] as ISingleExtractor;
+                var convertingExtractor = new ConvertingExtractor(currentExtractor!, converter);
+                state.Extractors[id] = convertingExtractor;
             }
 
             // Fields whose pre-conversion CLR type is an enumeration have an implicitly restricted domain, which

@@ -1,4 +1,5 @@
-﻿using Kvasir.Translation.Synthetic;
+﻿using Kvasir.Extraction;
+using Kvasir.Translation.Synthetic;
 using System;
 
 namespace Kvasir.Translation {
@@ -18,7 +19,9 @@ namespace Kvasir.Translation {
         private RelationTableDef TranslateRelation(IRelationDescriptor descriptor, Type owningEntity) {
             Type synthetic = new SyntheticType(descriptor, owningEntity);
             var translation = this[synthetic];
-            return new RelationTableDef(translation.Principal.Table, null!, null!);
+            var extractionPlan = new RelationExtractionPlan(descriptor.RelationExtractor, translation.Principal.Extractor);
+
+            return new RelationTableDef(translation.Principal.Table, extractionPlan, null!);
         }
     }
 }

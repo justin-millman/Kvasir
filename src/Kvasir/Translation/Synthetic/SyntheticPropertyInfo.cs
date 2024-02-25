@@ -13,6 +13,9 @@ namespace Kvasir.Translation.Synthetic {
     /// </summary>
     internal sealed partial class SyntheticPropertyInfo : PropertyInfo {
         /// <inheritdoc/>
+        public sealed override bool CanRead => true;
+
+        /// <inheritdoc/>
         public sealed override Type? DeclaringType => ReflectedType;
 
         /// <inheritdoc/>
@@ -100,14 +103,6 @@ namespace Kvasir.Translation.Synthetic {
         public sealed override PropertyAttributes Attributes {
             get {
                 throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(Attributes)}");
-            }
-        }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public sealed override bool CanRead {
-            get {
-                throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(CanRead)}");
             }
         }
 

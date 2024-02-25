@@ -2,6 +2,7 @@
 using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Exceptions;
+using Kvasir.Extraction;
 using Kvasir.Schema;
 using Optional;
 using System;
@@ -58,6 +59,7 @@ namespace Kvasir.Translation {
             // Generate the "sequences" of Fields, which must appear consecutively in the final column assignment.
             var sequences = new List<IReadOnlyList<FieldDescriptor>>();
             var relations = new Dictionary<string, IRelationDescriptor>();
+            var extractors = new Dictionary<Guid, IMultiExtractor>();
             foreach (var property in ConstituentPropertiesOf(clr)) {
                 var translation = TranslateProperty(property);
                 var members = new List<FieldDescriptor>();
@@ -72,6 +74,9 @@ namespace Kvasir.Translation {
                 foreach ((var path, var relationDescriptor) in translation.Relations) {
                     var nestedPath = path == "" ? property.Name : $"{property.Name}{PATH_SEPARATOR}{path}";
                     relations[nestedPath] = relationDescriptor.WithAccessPath(nestedPath);
+                }
+                foreach ((var id, var extractor) in translation.Extractors) {
+                    extractors[id] = extractor;
                 }
                 if (!members.IsEmpty()) {
                     sequences.Add(members.OrderBy(fd => fd.RelativeColumn).ToList());
@@ -102,8 +107,17 @@ namespace Kvasir.Translation {
             // Translate all of the [Check.Complex] constraints, which may result in further errors
             var checks = ComplexConstraintsOf(clr).ToList();
 
+            // Build up the overall extractor
+            var pieces = new List<IMultiExtractor>();
+            foreach (var entry in fields.Values.OrderBy(f => f.RelativeColumn)) {
+                if (pieces.IsEmpty() || !ReferenceEquals(pieces[^1], extractors[entry.ID])) {
+                    pieces.Add(extractors[entry.ID]);
+                }
+            }
+            var typeExtractor = new DecomposingExtractor(pieces);
+
             // No errors encountered
-            var descriptor = new TypeDescriptor(fields, relations, checks);
+            var descriptor = new TypeDescriptor(fields, relations, checks, typeExtractor);
             typeCache_.Add(clr, descriptor);
             Debug.Assert(inProgress_.Peek() == clr);
             inProgress_.Pop();

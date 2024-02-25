@@ -27,7 +27,7 @@ namespace Kvasir.Extraction {
 
             path_ = path;
             SourceType = path_.ReflectedType;
-            ResultType = path_.PropertyType;
+            ResultType = Nullable.GetUnderlyingType(path_.PropertyType) ?? path_.PropertyType;
         }
 
         /// <inheritdoc/>
