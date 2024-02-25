@@ -1282,6 +1282,30 @@
         <member name="M:Kvasir.Extraction.ConvertingExtractor.ExtractFrom(System.Object)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Extraction.CurryingExtractor">
+            <summary>
+              A <see cref="T:Kvasir.Extraction.IMultiExtractor"/> that takes a single CLR object, extracts a single value from it, and then runs
+              extraction logic over that single value.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.CurryingExtractor.SourceType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Extraction.CurryingExtractor.#ctor(Kvasir.Extraction.ISingleExtractor,Kvasir.Extraction.IMultiExtractor)">
+            <summary>
+              Construct a new <see cref="T:Kvasir.Extraction.CurryingExtractor"/>.
+            </summary>
+            <param name="sourceExtractor">
+              The <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that produces the single nested value on which to run additional
+              extraction logic.
+            </param>
+            <param name="valuesExtractor">
+              The additional extraction logic to run over the value produced by <paramref name="sourceExtractor"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Extraction.CurryingExtractor.ExtractFrom(System.Object)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Extraction.DataExtractionPlan">
             <summary>
               A plan that describes how to extract a set of <see cref="T:Kvasir.Schema.DBValue">database values</see> from a single CLR

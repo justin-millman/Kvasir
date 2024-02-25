@@ -357,4 +357,124 @@ namespace UT.Kvasir.Extraction {
             secondSubExtractor.Received().ExtractFrom(null);
         }
     }
+
+    [TestClass, TestCategory("CurryingExtractor")]
+    public class CurryingExtractorTests {
+        [TestMethod] public void ExtractFromExact() {
+            // Arrange
+            var curriedValue = "Mosul";
+            var singleExtractor = Substitute.For<ISingleExtractor>();
+            singleExtractor.SourceType.Returns(typeof(double[]));
+            singleExtractor.ResultType.Returns(typeof(string));
+            singleExtractor.ExtractFrom(Arg.Any<double[]>()).Returns(curriedValue);
+            var resultValues = new object?[] { '-', 17.554f, DateTime.Now, new Guid(), new Guid() };
+            var multiExtractor = Substitute.For<IMultiExtractor>();
+            multiExtractor.SourceType.Returns(typeof(string));
+            multiExtractor.ExtractFrom(Arg.Any<string>()).Returns(resultValues);
+
+            // Act
+            var source = new double[] { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
+            var extractor = new CurryingExtractor(singleExtractor, multiExtractor);
+            var data = extractor.ExtractFrom(source);
+
+            // Assert
+            extractor.SourceType.Should().Be(singleExtractor.SourceType);
+            data.Should().BeEquivalentTo(resultValues);
+            singleExtractor.Received().ExtractFrom(source);
+            multiExtractor.Received().ExtractFrom(curriedValue);
+        }
+
+        [TestMethod] public void ExtractFromDerived() {
+            // Arrange
+            var curriedValue = DateTime.Now;
+            var singleExtractor = Substitute.For<ISingleExtractor>();
+            singleExtractor.SourceType.Returns(typeof(Exception));
+            singleExtractor.ResultType.Returns(typeof(DateTime));
+            singleExtractor.ExtractFrom(Arg.Any<Exception>()).Returns(curriedValue);
+            var resultValues = new object?[] { "Aleppo", -1440414L };
+            var multiExtractor = Substitute.For<IMultiExtractor>();
+            multiExtractor.SourceType.Returns(typeof(DateTime));
+            multiExtractor.ExtractFrom(Arg.Any<DateTime>()).Returns(resultValues);
+
+            // Act
+            var source = new DivideByZeroException();
+            var extractor = new CurryingExtractor(singleExtractor, multiExtractor);
+            var data = extractor.ExtractFrom(source);
+
+            // Assert
+            extractor.SourceType.Should().Be(singleExtractor.SourceType);
+            data.Should().BeEquivalentTo(resultValues);
+            singleExtractor.Received().ExtractFrom(source);
+            multiExtractor.Received().ExtractFrom(curriedValue);
+        }
+
+        [TestMethod] public void ExtractFromImplementation() {
+            // Arrange
+            var curriedValue = "Montego Bay";
+            var singleExtractor = Substitute.For<ISingleExtractor>();
+            singleExtractor.SourceType.Returns(typeof(IDisposable));
+            singleExtractor.ResultType.Returns(typeof(string));
+            singleExtractor.ExtractFrom(Arg.Any<IDisposable>()).Returns(curriedValue);
+            var resultValues = new object?[] { (ushort)1124 };
+            var multiExtractor = Substitute.For<IMultiExtractor>();
+            multiExtractor.SourceType.Returns(typeof(string));
+            multiExtractor.ExtractFrom(Arg.Any<string>()).Returns(resultValues);
+
+            // Act
+            var source = new StreamReader(new MemoryStream());
+            var extractor = new CurryingExtractor(singleExtractor, multiExtractor);
+            var data = extractor.ExtractFrom(source);
+
+            // Assert
+            extractor.SourceType.Should().Be(singleExtractor.SourceType);
+            data.Should().BeEquivalentTo(resultValues);
+            singleExtractor.Received().ExtractFrom(source);
+            multiExtractor.Received().ExtractFrom(curriedValue);
+        }
+
+        [TestMethod] public void ExtractFromNull() {
+            // Arrange
+            var singleExtractor = Substitute.For<ISingleExtractor>();
+            singleExtractor.SourceType.Returns(typeof(DateTime));
+            singleExtractor.ResultType.Returns(typeof(XorClause));
+            singleExtractor.ExtractFrom(Arg.Any<DateTime>()).Returns(null);
+            var resultValues = new object?[] { null, null, null, null };
+            var multiExtractor = Substitute.For<IMultiExtractor>();
+            multiExtractor.SourceType.Returns(typeof(XorClause));
+            multiExtractor.ExtractFrom(Arg.Any<XorClause>()).Returns(resultValues);
+
+            // Act
+            var extractor = new CurryingExtractor(singleExtractor, multiExtractor);
+            var data = extractor.ExtractFrom(null);
+
+            // Assert
+            extractor.SourceType.Should().Be(singleExtractor.SourceType);
+            data.Should().BeEquivalentTo(resultValues);
+            singleExtractor.Received().ExtractFrom(null);
+            multiExtractor.Received().ExtractFrom(null);
+        }
+
+        [TestMethod] public void OriginalExtractionProducesNull() {
+            // Arrange
+            var singleExtractor = Substitute.For<ISingleExtractor>();
+            singleExtractor.SourceType.Returns(typeof(List<char>));
+            singleExtractor.ResultType.Returns(typeof(List<char>));
+            singleExtractor.ExtractFrom(Arg.Any<List<char>>()).Returns(null);
+            var resultValues = new object?[] { null, null };
+            var multiExtractor = Substitute.For<IMultiExtractor>();
+            multiExtractor.SourceType.Returns(typeof(List<char>));
+            multiExtractor.ExtractFrom(Arg.Any<List<char>>()).Returns(resultValues);
+
+            // Act
+            var source = new List<char>() { 'K', 'a', 'n', 'd', 'a', 'h', 'a', 'r' };
+            var extractor = new CurryingExtractor(singleExtractor, multiExtractor);
+            var data = extractor.ExtractFrom(source);
+
+            // Assert
+            extractor.SourceType.Should().Be(singleExtractor.SourceType);
+            data.Should().BeEquivalentTo(resultValues);
+            singleExtractor.Received().ExtractFrom(source);
+            multiExtractor.Received().ExtractFrom(null);
+        }
+    }
 }
