@@ -31,7 +31,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
         
-        [TestMethod] public void ChangeToFieldsType() {
+        [TestMethod] public void ChangFieldsTypeToScalar() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Comet);
@@ -48,6 +48,62 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(Comet.MassKg)).OfTypeUInt64().BeingNonNullable().And
                 .HaveField(nameof(Comet.Albedo)).OfTypeDouble().BeingNonNullable().And
                 .HaveField(nameof(Comet.OrbitalPeriod)).OfTypeSingle().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ChangeFieldsTypeToEnumeration() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(TitleOfYourSexTape);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(TitleOfYourSexTape.Title)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(TitleOfYourSexTape.CharacterSaying)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(TitleOfYourSexTape.CharacterReceiving)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(TitleOfYourSexTape.DayOfWeek)).OfTypeEnumeration(
+                    DayOfWeek.Sunday,
+                    DayOfWeek.Monday,
+                    DayOfWeek.Tuesday,
+                    DayOfWeek.Wednesday,
+                    DayOfWeek.Thursday,
+                    DayOfWeek.Friday,
+                    DayOfWeek.Saturday
+                ).BeingNonNullable().And
+                .HaveField(nameof(TitleOfYourSexTape.Season)).OfTypeInt32().BeingNonNullable().And
+                .HaveField(nameof(TitleOfYourSexTape.EpisodeNumber)).OfTypeInt32().BeingNonNullable().And
+                .HaveField(nameof(TitleOfYourSexTape.Timestamp)).OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ChangeFieldsTypeToDifferentEnumeration() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(VestigeOfDivergence);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(VestigeOfDivergence.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(VestigeOfDivergence.Deity)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(VestigeOfDivergence.Wielder)).OfTypeText().BeingNullable().And
+                .HaveField(nameof(VestigeOfDivergence.IntroducedIn)).OfTypeEnumeration(
+                    VestigeOfDivergence.Party.VoxMachina,
+                    VestigeOfDivergence.Party.MightyNein,
+                    VestigeOfDivergence.Party.BellsHells
+                ).BeingNullable().And
+                .HaveField(nameof(VestigeOfDivergence.AttackBonus)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField(nameof(VestigeOfDivergence.AverageDamage)).OfTypeInt32().BeingNonNullable().And
+                .HaveField(nameof(VestigeOfDivergence.CurrentState)).OfTypeEnumeration(
+                    VestigeOfDivergence.State.Dormant,
+                    VestigeOfDivergence.State.Awakened,
+                    VestigeOfDivergence.State.Exalted
+                ).BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 

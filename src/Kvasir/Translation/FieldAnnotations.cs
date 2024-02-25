@@ -268,6 +268,19 @@ namespace Kvasir.Translation {
 
                 // No errors encountered
                 state.Fields[""] = state.Fields[""] with { Converter = converter };
+
+                // If the original type is not an enumeration but the converted type is, we need to set the restricted
+                // image that would ordinarily be set by the Enumeration BaseTranslation. We assume that all the result
+                // enumerators are possible. However, if we are converting between two different enumeration types (or
+                // between the same enumeration types), we update the range just like we would if the source weren't an
+                // enumeration at all.
+                if (dpAnnotation.DataConverter.ResultType.IsEnum && !dpAnnotation.DataConverter.SourceType.IsEnum) {
+                    state.Fields[""] = state.Fields[""] with {
+                        Constraints = state.Fields[""].Constraints with {
+                            RestrictedImage = dpAnnotation.DataConverter.ResultType.ValidValues().Cast<object>().ToHashSet()
+                        }
+                    };
+                }
             }
             else if (numeric) {
                 // It is an error for a property whose type is not an enumeration to be annotated with [Numeric]
@@ -299,7 +312,7 @@ namespace Kvasir.Translation {
             // values. These values may be augmented or filtered by [Check.IsOneOf] and [Check.IsNotOneOf] constraints
             // later. If the converter's result type is not itself an enumeration, or if the back-end database provider
             // does not actually support enumerations, the restricted image will be realized as a CHECK constraint.
-            if (isScalarOrEnumeration) {
+            if (isScalarOrEnumeration && state.Fields[""].Converter.SourceType.IsEnum) {
                 var updated = new HashSet<object>();
                 foreach (var enumerator in state.Fields[""].Constraints.RestrictedImage) {
                     try {
