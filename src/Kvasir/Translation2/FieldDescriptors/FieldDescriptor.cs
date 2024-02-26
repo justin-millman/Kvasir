@@ -1,9 +1,6 @@
 ﻿using Cybele.Core;
-using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Core;
-using Kvasir.Exceptions;
-using Kvasir.Schema;
 using Optional;
 using System;
 using System.Collections.Generic;
@@ -14,69 +11,69 @@ namespace Kvasir.Translation2 {
     ///
     internal abstract class FieldDescriptor {
         ///
-        public static FieldDescriptor CreateFrom(PropertyInfo property) {
-            var converter = GetDataConverter(property);
-            var dataType = converter.Match(some: c => c.ResultType, none: () => property.PropertyType);
-            dataType = Nullable.GetUnderlyingType(dataType) ?? dataType;
-
-            Debug.Assert(DBType.IsSupported(dataType));
-            if (dataType == typeof(string)) {
-                return new StringFieldDescriptor(property, converter);
-            }
-            else if (dataType == typeof(DateTime)) {
-                return new DateTimeFieldDescriptor(property, converter);
-            }
-            else if (dataType == typeof(Guid)) {
-                return new GuidFieldDescriptor(property, converter);
-            }
-            else if (dataType == typeof(decimal)) {
-                return new DecimalFieldDescriptor(property, converter);
-            }
-            else if (dataType.IsEnum) {
-                return new EnumFieldDescriptor(property, converter);
-            }
-            else if (dataType == typeof(bool) || dataType == typeof(char)) {
-                return new BasicNonOrderableFieldDescriptor(property, converter);
-            }
-            else {
-                return new BasicNumericFieldDescriptor(property, converter);
+        public Type FieldType {
+            get {
+                var type = converter_.Match(some: c => c.ResultType, none: () => source_.PropertyType);
+                return Nullable.GetUnderlyingType(type) ?? type;
             }
         }
 
         ///
-        private static Option<DataConverter> GetDataConverter(PropertyInfo property) {
-            Debug.Assert(property is not null);
-
-            var attribute = property.GetCustomAttribute<DataConverterAttribute>();
-            if (attribute is not null) {
-                if (attribute.UserError != "") {
-                    throw new KvasirException(
-                        "Error Performing Translation:\n" +
-                       $"  • Location: property '{property.Name}' of type '{property.ReflectedType!.Name}'\n" +
-                        "  • Annotation: [DataConverter]\n" +
-                       $"  • Problem: {attribute.UserError}\n"
-                    );
-                }
-                else {
-                    Debug.Assert(attribute.DataConverter.IsBidirectional);
-                    return Option.Some(attribute.DataConverter);
-                }
+        public FieldDescriptor Apply(NameAttribute annotation) {
+            if (annotation.Name is null || annotation.Name == "") {
+                throw new System.InvalidOperationException("INVALID NAME - NULL OR EMPTY");
             }
             else {
-                return Option.None<DataConverter>();
+                var clone = Clone();
+                clone.name_ = annotation.Name;
+                return clone;
             }
         }
 
+        ///
+        protected FieldDescriptor(FieldDescriptor source) {
+            Debug.Assert(source is not null);
 
-        private readonly PropertyInfo source_;
-        private readonly string name_;
-        private readonly bool nullable_;
-        private readonly int column_;
-        private readonly Option<DataConverter> converter_;
-        private readonly bool inPrimaryKey_;
-        private readonly IReadOnlySet<string> keyMemberships_;
-        private readonly IReadOnlySet<object> AllowedValues_;
-        private readonly IReadOnlySet<object> DisallowedValues_;
-        private readonly IReadOnlyList<IConstraintGenerator> checks_;
+            source_ = source.source_;
+            name_ = source.name_;
+            nullable_ = source.nullable_;
+            converter_ = source.converter_;
+            inPrimaryKey_ = source.inPrimaryKey_;
+            keyMemberships_ = new HashSet<string>(source.keyMemberships_);
+            allowedValues_ = new HashSet<object>(source.allowedValues_);
+            disallowedValues_ = new HashSet<object>(source.disallowedValues_);
+            checks_ = new List<IConstraintGenerator>(source.checks_);
+        }
+
+        ///
+        protected FieldDescriptor(PropertyInfo source) {
+            Debug.Assert(source is not null);
+
+            source_ = source;
+            name_ = source.Name;
+            nullable_ = new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable;
+            column_ = 0;
+            converter_ = Option.None<DataConverter>();
+            inPrimaryKey_ = false;
+            keyMemberships_ = new HashSet<string>();
+            allowedValues_ = new HashSet<object>();
+            disallowedValues_ = new HashSet<object>();
+            checks_ = new List<IConstraintGenerator>();
+        }
+
+        ///
+        protected abstract FieldDescriptor Clone();
+
+
+        private PropertyInfo source_;
+        private string name_;
+        private bool nullable_;
+        private int column_;
+        private Option<DataConverter> converter_;
+        private bool inPrimaryKey_;
+        private IReadOnlySet<string> keyMemberships_;
+        private IReadOnlySet<object> allowedValues_;
+        private IReadOnlySet<object> disallowedValues_;
+        private IReadOnlyList<IConstraintGenerator> checks_;
     }
 }
