@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -24,9 +23,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(DNDSpell.Range), ComparisonOperator.GT, (ushort)0).And
-                .HaveConstraint(nameof(DNDSpell.Level), ComparisonOperator.GT, -1).And
-                .HaveConstraint(nameof(DNDSpell.AverageDamage), ComparisonOperator.GT, 2.5f).And
+                .HaveConstraint("Range", ComparisonOperator.GT, (ushort)0).And
+                .HaveConstraint("Level", ComparisonOperator.GT, -1).And
+                .HaveConstraint("AverageDamage", ComparisonOperator.GT, 2.5f).And
                 .HaveNoOtherConstraints();
         }
 
@@ -40,11 +39,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(MultipleChoiceQuestion.CorrectAnswer), ComparisonOperator.GT, '*').And
-                .HaveConstraint(nameof(MultipleChoiceQuestion.ChoiceA), ComparisonOperator.GT, "A. ").And
-                .HaveConstraint(nameof(MultipleChoiceQuestion.ChoiceB), ComparisonOperator.GT, "B. ").And
-                .HaveConstraint(nameof(MultipleChoiceQuestion.ChoiceC), ComparisonOperator.GT, "C. ").And
-                .HaveConstraint(nameof(MultipleChoiceQuestion.ChoiceD), ComparisonOperator.GT, "D. ").And
+                .HaveConstraint("CorrectAnswer", ComparisonOperator.GT, '*').And
+                .HaveConstraint("ChoiceA", ComparisonOperator.GT, "A. ").And
+                .HaveConstraint("ChoiceB", ComparisonOperator.GT, "B. ").And
+                .HaveConstraint("ChoiceC", ComparisonOperator.GT, "C. ").And
+                .HaveConstraint("ChoiceD", ComparisonOperator.GT, "D. ").And
                 .HaveNoOtherConstraints();
         }
 
@@ -57,13 +56,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Font.HasSerifs))                      // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Font` → HasSerifs")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `bool`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_DecimalField() {
@@ -76,7 +73,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(AuctionLot.TopBid), ComparisonOperator.GT, (decimal)10000).And
+                .HaveConstraint("TopBid", ComparisonOperator.GT, (decimal)10000).And
                 .HaveNoOtherConstraints();
         }
 
@@ -90,8 +87,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(GoldRush.StartDate), ComparisonOperator.GT, new DateTime(1200, 3, 18)).And
-                .HaveConstraint(nameof(GoldRush.EndDate), ComparisonOperator.GT, new DateTime(1176, 11, 22)).And
+                .HaveConstraint("StartDate", ComparisonOperator.GT, new DateTime(1200, 3, 18)).And
+                .HaveConstraint("EndDate", ComparisonOperator.GT, new DateTime(1176, 11, 22)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -104,13 +101,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Skyscraper.RegistryIdentifier))       // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Skyscraper` → RegistryIdentifier")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_EnumerationField_IsError() {
@@ -122,13 +117,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Orisha.BelongsTo))                    // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Orisha.Culture));                     // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Orisha` → BelongsTo")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Culture`")
+                .WithAnnotations("[Check.IsGreaterThan")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_AggregateNestedApplicableScalar() {
@@ -155,14 +148,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Wordle.Guess3))                       // error location
-                .WithMessageContaining("\"L4.Hint\"")                               // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Wordle.Result));                      // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Wordle` → Guess3")
+                .WithPath("L4.Hint")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Result`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NestedAggregate_IsError() {
@@ -174,12 +165,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FlashMob.Participants))               // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"Leader\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FlashMob` → Participants")
+                .WithPath("Leader")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Person`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_ReferenceNestedApplicableScalar() {
@@ -205,14 +196,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Influenza.DeadliestOutbreak))         // error location
-                .WithMessageContaining("\"OutbreakID\"")                            // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Influenza.Outbreak));                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Influenza` → DeadliestOutbreak")
+                .WithPath("OutbreakID")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_OriginalOnReferenceNestedScalar() {
@@ -237,12 +226,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BloodDrive.SponsoredBy))              // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"Hospital\"");                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BloodDrive` → SponsoredBy")
+                .WithPath("Hospital")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Hospital`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_RelationNestedApplicableScalar() {
@@ -269,14 +258,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Act
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Antari.KnownSpells))                  // error location
-                .WithMessageContaining("\"SpellID\"")                               // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Antari` → <synthetic> `KnownSpells`")
+                .WithPath("Item.SpellID")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NestedRelation_IsError() {
@@ -288,12 +275,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Clown.Costume))                       // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"Accoutrement\"");                         // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Clown` → Costume")
+                .WithPath("Accoutrement")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NullableTotallyOrderedFields() {
@@ -306,9 +293,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Baryon.Symbol), ComparisonOperator.GT, '-').And
-                .HaveConstraint(nameof(Baryon.Charge), ComparisonOperator.GT, (short)-5).And
-                .HaveConstraint(nameof(Baryon.Discovered), ComparisonOperator.GT, new DateTime(1344, 6, 21)).And
+                .HaveConstraint("Symbol", ComparisonOperator.GT, '-').And
+                .HaveConstraint("Charge", ComparisonOperator.GT, (short)-5).And
+                .HaveConstraint("Discovered", ComparisonOperator.GT, new DateTime(1344, 6, 21)).And
                 .HaveNoOtherConstraints();
         }
 
@@ -321,13 +308,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Racehorse.FirstDerbyWin))             // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining($"true of type {nameof(Boolean)}")           // details / explanation
-                .WithMessageContaining(nameof(UInt64));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Racehorse` → FirstDerbyWin")
+                .WithProblem("value true is of type `bool`, not `ulong` as expected")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_ConvertibleAnchor_IsError() {
@@ -339,13 +324,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ChineseCharacter.Character))          // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining($"14 of type {nameof(Byte)}")                // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`ChineseCharacter` → Character")
+                .WithProblem("value 14 is of type `byte`, not `char` as expected")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_ArrayAnchor_IsError() {
@@ -357,13 +340,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Query.WHERE))                         // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Query` → WHERE")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NullAnchor_IsError() {
@@ -375,12 +356,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(UNResolution.NumSignatories))         // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`UNResolution` → NumSignatories")
+                .WithProblem("the constraint boundary cannot be 'null'")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_AnchorIsMaximum_IsError() {
@@ -392,14 +372,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Upanishad.Index))                     // error location
-                .WithMessageContaining("constraint is unsatisfiable")               // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("exclusive lower bound")                     // details / explanation
-                .WithMessageContaining($"maximum value {sbyte.MaxValue}")           // details / explanation
-                .WithMessageContaining(nameof(SByte));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Upanishad` → Index")
+                .WithProblem("the constraint anchor cannot be the maximum possible value")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_DecimalAnchorIsNotDouble_IsError() {
@@ -411,14 +388,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GarageSale.Gross))                    // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining($"200 of type {nameof(Int32)}")              // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`GarageSale` → Gross")
+                .WithProblem("value 200 is of type `int`, not `double` as expected")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_DecimalAnchorIsOutOfRange_IsError() {
@@ -430,14 +404,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TalkShow.Rating))                     // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining(double.MinValue.ToString())                  // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`TalkShow` → Rating")
+                .WithProblem($"`double` {double.MinValue} is outside the supported range for `decimal`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_DateTimeAnchorIsNotString_IsError() {
@@ -449,14 +420,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Meme.FirstPublished))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining($"\"NEVER\" of type {nameof(String)}")       // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Meme` → FirstPublished")
+                .WithProblem("value 'N' is of type `char`, not `string` as expected")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_DateTimeAnchorIsMalformatted_IsError() {
@@ -468,14 +436,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ChristianDenomination.Founded))       // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"0001_01_01\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`ChristianDenomination` → Founded")
+                .WithProblem($"unable to parse `string` value \"0001_01_01\" as a `DateTime`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_DateTimeAnchorIsOutOfRange_IsError() {
@@ -487,14 +452,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GraduateThesis.Argued))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"1873-15-12\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`GraduateThesis` → Argued")
+                .WithProblem($"unable to parse `string` value \"1873-15-12\" as a `DateTime`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_AnchorMatchesDataConversionSourceType_IsError() {
@@ -506,13 +468,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Azeotrope.BoilingPoint))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining($"-237.44 of type {nameof(Single)}")         // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Azeotrope` → BoilingPoint")
+                .WithProblem("value -237.44 is of type `float`, not `string` as expected")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_AnchorMatchesDataConversionTargetType() {
@@ -525,7 +485,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(BingoCard.CellR4C1), ComparisonOperator.GT, "-1").And
+                .HaveConstraint("CellR4C1", ComparisonOperator.GT, "-1").And
                 .HaveNoOtherConstraints();
         }
 
@@ -539,7 +499,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(NuclearPowerPlant.Meltdowns), ComparisonOperator.GT, 37L).And
+                .HaveConstraint("Meltdowns", ComparisonOperator.GT, 37L).And
                 .HaveNoOtherConstraints();
         }
 
@@ -552,11 +512,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Domino.RightPips))                    // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsGreaterThan]");                    // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Domino` → RightPips")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_PathOnScalar_IsError() {
@@ -568,12 +528,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Canyon.Depth))                        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Canyon` → Depth")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NonExistentPathOnAggregate_IsError() {
@@ -585,12 +544,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Conlang.Codes))                       // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Conlang` → Codes")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NoPathOnAggregate_IsError() {
@@ -602,11 +560,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LaborStrike.Members))                 // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsGreaterThan]");                    // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LaborStrike` → Members")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Parties`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NonExistentPathOnReference_IsError() {
@@ -618,12 +576,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(InstallationWizard.Program))          // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`InstallationWizard` → Program")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NonPrimaryKeyPathOnReference_IsError() {
@@ -635,12 +592,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BugSpray.ActiveIngredient))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"LethalDose\"");                           // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`BugSpray` → ActiveIngredient")
+                .WithProblem("the path \"LethalDose\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NoPathOnReference_IsError() {
@@ -652,11 +608,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Intern.Manager))                      // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsGreaterThan]");                    // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Intern` → Manager")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Employee`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NonExistentPathOnRelation_IsError() {
@@ -668,12 +624,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Delicatessen.MenuItems))              // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Delicatessen` → <synthetic> `MenuItems`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -685,12 +640,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BlackjackHand.DealerCards))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterThan]")                     // details / explanation
-                .WithMessageContaining("\"TotalPot\"");                             // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`BlackjackHand` → <synthetic> `DealerCards`")
+                .WithProblem("the path \"BlackjackHand.TotalPot\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_NoPathOnRelation_IsError() {
@@ -702,11 +656,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Inquisition.Victims))                 // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsGreaterThan]");                    // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Inquisition` → <synthetic> `Victims`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -718,13 +672,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(DraftPick.Overall))                   // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("0")                                         // details / explanation
-                .WithMessageContaining("is not in interval (0, +∞)");               // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`DraftPick` → Overall")
+                .WithProblem("the Field's default value of 0 does not pass the constraint")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterThan_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -736,13 +688,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Madrasa.ID.Class))                    // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("'s'")                                       // details / explanation
-                .WithMessageContaining("is not in interval ('w', +∞)");             // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Madrasa` → ID")
+                .WithPath("Class")
+                .WithProblem("the Field's default value of 's' does not pass the constraint")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
     }
 
@@ -758,9 +709,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Resistor.Resistance), ComparisonOperator.LT, 27814L).And
-                .HaveConstraint(nameof(Resistor.PhysicalLength), ComparisonOperator.LT, 893.44501f).And
-                .HaveConstraint(nameof(Resistor.Power), ComparisonOperator.LT, 27814UL).And
+                .HaveConstraint("Resistance", ComparisonOperator.LT, 27814L).And
+                .HaveConstraint("PhysicalLength", ComparisonOperator.LT, 893.44501f).And
+                .HaveConstraint("Power", ComparisonOperator.LT, 27814UL).And
                 .HaveNoOtherConstraints();
         }
 
@@ -774,8 +725,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Senator.LastName), ComparisonOperator.LT, "...").And
-                .HaveConstraint(nameof(Senator.NRARating), ComparisonOperator.LT, 'G').And
+                .HaveConstraint("LastName", ComparisonOperator.LT, "...").And
+                .HaveConstraint("NRARating", ComparisonOperator.LT, 'G').And
                 .HaveNoOtherConstraints();
         }
 
@@ -788,13 +739,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Milkshake.IsDairyFree))               // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Milkshake` → IsDairyFree")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `bool`")
+                .WithAnnotations("[Check.IsLessThan")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_DecimalField() {
@@ -807,7 +756,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(TreasuryBond.BoughtFor), ComparisonOperator.LT, (decimal)57182391.33167994).And
+                .HaveConstraint("BoughtFor", ComparisonOperator.LT, (decimal)57182391.33167994).And
                 .HaveNoOtherConstraints();
         }
 
@@ -821,7 +770,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Commercial.TimeSlot), ComparisonOperator.LT, new DateTime(2300, 1, 1)).And
+                .HaveConstraint("TimeSlot", ComparisonOperator.LT, new DateTime(2300, 1, 1)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -834,13 +783,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(DLL.ID))                              // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`DLL` → ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsLessThan")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_EnumerationField_IsError() {
@@ -852,13 +799,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SolicitorGeneral.Affiliation))        // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(SolicitorGeneral.PoliticalParty));    // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SolicitorGeneral` → Affiliation")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `PoliticalParty`")
+                .WithAnnotations("[Check.IsLessThan")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_AggregateNestedApplicableScalar() {
@@ -887,14 +832,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Feruchemy.Effects))                   // error location
-                .WithMessageContaining("\"Kind\"")                                  // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Feruchemy.Matrix));                   // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Feruchemy` → Effects")
+                .WithPath("Kind")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Matrix`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NestedAggregate_IsError() {
@@ -906,12 +849,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Firefighter.Firehouse))               // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"ServiceArea\"");                          // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Firefighter` → Firehouse")
+                .WithPath("ServiceArea")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Polity`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_ReferenceNestedApplicableScalar() {
@@ -937,14 +880,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cartel.Control))                      // error location
-                .WithMessageContaining("\"Kind\"")                                  // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Cartel.CommodityType));               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Cartel` → Control")
+                .WithPath("Kind")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `CommodityType`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_OriginalOnReferenceNestedScalar() {
@@ -969,12 +910,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hallucination.Reason))                // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"Drug\"");                                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Hallucination` → Reason")
+                .WithPath("Drug")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Drug`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_RelationNestedApplicableScalar() {
@@ -1002,14 +943,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Act
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NavalBlockade.WaterwaysAffected))     // error location
-                .WithMessageContaining("\"Kind\"")                                  // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(NavalBlockade.AquaKind));             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`NavalBlockade` → <synthetic> `WaterwaysAffected`")
+                .WithPath("Item.Kind")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `AquaKind`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NestedRelation_IsError() {
@@ -1021,12 +960,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Blacksmith.Materials))                // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"Hammers\"");                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Blacksmith` → Materials")
+                .WithPath("Hammers")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NullableTotallyOrderedFields() {
@@ -1039,9 +978,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(AutoRacetrack.Nickname), ComparisonOperator.LT, "Zytrotzko").And
-                .HaveConstraint(nameof(AutoRacetrack.TrackLength), ComparisonOperator.LT, 12000000L).And
-                .HaveConstraint(nameof(AutoRacetrack.LastRace), ComparisonOperator.LT, new DateTime(4319, 2, 21)).And
+                .HaveConstraint("Nickname", ComparisonOperator.LT, "Zytrotzko").And
+                .HaveConstraint("TrackLength", ComparisonOperator.LT, 12000000L).And
+                .HaveConstraint("LastRace", ComparisonOperator.LT, new DateTime(4319, 2, 21)).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1054,13 +993,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Distribution.Mode))                   // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining($"\"Zero\" of type {nameof(String)}")        // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Distribution` → Mode")
+                .WithProblem("value \"Zero\" is of type `string`, not `double` as expected")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_ConvertibleAnchor_IsError() {
@@ -1072,13 +1009,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(WebBrowser.MarketShare))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining($"100 of type {nameof(Int32)}")              // details / explanation
-                .WithMessageContaining(nameof(Single));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`WebBrowser` → MarketShare")
+                .WithProblem("value 100 is of type `int`, not `float` as expected")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_ArrayAnchor_IsError() {
@@ -1090,13 +1025,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GrammaticalCase.Affix))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`GrammaticalCase` → Affix")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NullAnchor_IsError() {
@@ -1108,12 +1041,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PowerPointAnimation.Duration))        // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`PowerPointAnimation` → Duration")
+                .WithProblem("the constraint boundary cannot be 'null'")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_AnchorIsMinimum_IsError() {
@@ -1125,14 +1057,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(StrategoPiece.Value))                 // error location
-                .WithMessageContaining("constraint is unsatisfiable")               // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("exclusive upper bound")                     // details / explanation
-                .WithMessageContaining($"minimum value {uint.MinValue}")            // details / explanation
-                .WithMessageContaining(nameof(UInt32));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`StrategoPiece` → Value")
+                .WithProblem("the constraint anchor cannot be the minimum possible value")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_DecimalAnchorIsNotDouble_IsError() {
@@ -1144,14 +1073,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Toothpaste.Efficacy))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining($"\"100%\" of type {nameof(String)}")        // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Toothpaste` → Efficacy")
+                .WithProblem("value \"100%\" is of type `string`, not `double` as expected")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_DecimalAnchorIsOutOfRange_IsError() {
@@ -1163,14 +1089,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Census.PercentIndian))                // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining(double.MaxValue.ToString())                  // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Census` → PercentIndian")
+                .WithProblem($"`double` {double.MaxValue} is outside the supported range for `decimal`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_DateTimeAnchorIsNotString_IsError() {
@@ -1182,14 +1105,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NobelPrize.Awarded))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining($"37 of type {nameof(SByte)}")               // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`NobelPrize` → Awarded")
+                .WithProblem("value 37 is of type `sbyte`, not `string` as expected")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_DateTimeAnchorIsMalformatted_IsError() {
@@ -1201,14 +1121,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Shogunate.Established))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"Wednesday, August 18, 1988\"")            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Shogunate` → Established")
+                .WithProblem($"unable to parse `string` value \"Wednesday, August 18, 1988\" as a `DateTime`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_DateTimeAnchorIsOutOfRange_IsError() {
@@ -1220,14 +1137,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ISOStandard.Adopted))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"1735-02-48\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`ISOStandard` → Adopted")
+                .WithProblem($"unable to parse `string` value \"1735-02-48\" as a `DateTime`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_AnchorMatchesDataConversionSourceType_IsError() {
@@ -1239,13 +1153,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Artiodactyl.NumToes))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining($"8 of type {nameof(Byte)}")                 // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Artiodactyl` → NumToes")
+                .WithProblem("value 8 is of type `byte`, not `int` as expected")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_AnchorMatchesDataConversionTargetType() {
@@ -1258,7 +1170,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Phobia.Prevalence), ComparisonOperator.LT, "100.00001").And
+                .HaveConstraint("Prevalence", ComparisonOperator.LT, "100.00001").And
                 .HaveNoOtherConstraints();
         }
 
@@ -1272,7 +1184,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(CinemaSins.SinCount), ComparisonOperator.LT, 1712312389UL).And
+                .HaveConstraint("SinCount", ComparisonOperator.LT, 1712312389UL).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1285,11 +1197,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BaseballBat.Weight))                  // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsLessThan]");                       // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`BaseballBat` → Weight")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_PathOnScalar_IsError() {
@@ -1301,12 +1213,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Potato.Weight))                       // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Potato` → Weight")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessthan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NonExistentPathOnAggregate_IsError() {
@@ -1318,12 +1229,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SurgicalMask.ID))                     // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`SurgicalMask` → ID")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NoPathOnAggregate_IsError() {
@@ -1335,11 +1245,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SecretSociety.Initiation))            // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsLessThan]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SecretSociety` → Initiation")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Activity`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NonExistentPathOnReference_IsError() {
@@ -1351,12 +1261,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NationalMonument.EstablishedBy))      // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`NationalMonument` → EstablishedBy")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NonPrimaryKeyPathOnReference_IsError() {
@@ -1368,12 +1277,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(YogaPosition.SanskritName))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"Sanskrit\"");                             // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`YogaPosition` → SanskritName")
+                .WithProblem("the path \"Sanskrit\" does not exist")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NoPathOnReference_IsError() {
@@ -1385,11 +1293,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PubCrawl.FirstPub))                   // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsLessThan]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PubCrawl` → FirstPub")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Pub`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NonExistentPathOnRelation_IsError() {
@@ -1401,12 +1309,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mime.Performances))                   // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Mime` → <synthetic> `Performances`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -1418,12 +1325,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CatholicCardinal.Conclaves))          // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
-                .WithMessageContaining("\"DeathDate\"");                            // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`CatholicCardinal` → <synthetic> `Conclaves`")
+                .WithProblem("the path \"CatholicCardinal.DeathDate\" does not exist")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_NoPathOnRelation_IsError() {
@@ -1435,11 +1341,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hemalurgy.Steals))                    // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsLessThan]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Hemalurgy` → <synthetic> `Steals`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -1451,13 +1357,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ParkingGarage.CostPerHour))           // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("15.0")                                      // details / explanation
-                .WithMessageContaining("is not in interval (-∞, 10.0)");            // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`ParkingGarage` → CostPerHour")
+                .WithProblem("the Field's default value of 15.0 does not pass the constraint")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessThan_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -1469,13 +1373,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ContactLens.HexQuad.B))               // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("197")                                       // details / explanation
-                .WithMessageContaining("is not in interval (-∞, 101)");             // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`ContactLens` → Color")
+                .WithPath("B")
+                .WithProblem("the Field's default value of 197 does not pass the constraint")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
     }
 
@@ -1491,9 +1394,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Geyser.EruptionHeight), ComparisonOperator.GTE, 0L).And
-                .HaveConstraint(nameof(Geyser.Elevation), ComparisonOperator.GTE, 0f).And
-                .HaveConstraint(nameof(Geyser.EruptionDuration), ComparisonOperator.GTE, 0U).And
+                .HaveConstraint("EruptionHeight", ComparisonOperator.GTE, 0L).And
+                .HaveConstraint("Elevation", ComparisonOperator.GTE, 0f).And
+                .HaveConstraint("EruptionDuration", ComparisonOperator.GTE, 0U).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1507,8 +1410,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Hotel.HotelName), ComparisonOperator.GTE, "").And
-                .HaveConstraint(nameof(Hotel.Stars), ComparisonOperator.GTE, '1').And
+                .HaveConstraint("HotelName", ComparisonOperator.GTE, "").And
+                .HaveConstraint("Stars", ComparisonOperator.GTE, '1').And
                 .HaveNoOtherConstraints();
         }
 
@@ -1521,13 +1424,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Steak.FromSteakhouse))                // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Steak` → FromSteakhouse")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `bool`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_DecimalField() {
@@ -1540,7 +1441,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(ETF.ClosingPrice), ComparisonOperator.GTE, (decimal)-18.412006).And
+                .HaveConstraint("ClosingPrice", ComparisonOperator.GTE, (decimal)-18.412006).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1554,7 +1455,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(PEP.CreatedOn), ComparisonOperator.GTE, new DateTime(1887, 4, 29)).And
+                .HaveConstraint("CreatedOn", ComparisonOperator.GTE, new DateTime(1887, 4, 29)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -1567,13 +1468,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CoatOfArms.ID))                       // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CoatOfArms` → ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_EnumerationField_IsError() {
@@ -1585,13 +1484,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CivCityState.Type))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(CivCityState.Category));              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CivCityState` → Type")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Category`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_AggregateNestedApplicableScalar() {
@@ -1618,14 +1515,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Readymade.Registration))              // error location
-                .WithMessageContaining("\"IsFormallyRegistered\"")                  // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Readymade` → Registration")
+                .WithPath("IsFormallyRegistered")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `bool`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NestedAggregate_IsError() {
@@ -1637,12 +1532,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FitnessCenter.Address))               // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"Street\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FitnessCenter` → Address")
+                .WithPath("Street")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Street`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_ReferenceNestedApplicableScalar() {
@@ -1668,14 +1563,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SlumberParty.Place))                  // error location
-                .WithMessageContaining("\"StreetSuffix\"")                          // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(SlumberParty.RoadType));              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SlumberParty` → Place")
+                .WithPath("StreetSuffix")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `RoadType`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_OriginalOnReferenceNestedScalar() {
@@ -1700,12 +1593,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Barbie.Relationships))                // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"Boyfriend.Ken\"");                        // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Barbie` → Relationships")
+                .WithPath("Boyfriend.Ken")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Ken`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_RelationNestedApplicableScalar() {
@@ -1732,14 +1625,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Act
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Horcrux.HidingPlaces))                // error location
-                .WithMessageContaining("\"Discovered\"")                            // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Horcrux` → <synthetic> `HidingPlaces`")
+                .WithPath("Value.Discovered")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `bool`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NestedRelation_IsError() {
@@ -1751,12 +1642,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(WheresWaldo.Q2))                      // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"Decoys\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`WheresWaldo` → Q2")
+                .WithPath("Decoys")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<Coordinate>`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NullableTotallyOrderedFields() {
@@ -1769,9 +1660,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Muscle.TA2), ComparisonOperator.GTE, 10U).And
-                .HaveConstraint(nameof(Muscle.Nerve), ComparisonOperator.GTE, "~~~").And
-                .HaveConstraint(nameof(Muscle.FirstDocumented), ComparisonOperator.GTE, new DateTime(937, 12, 18)).And
+                .HaveConstraint("TA2", ComparisonOperator.GTE, 10U).And
+                .HaveConstraint("Nerve", ComparisonOperator.GTE, "~~~").And
+                .HaveConstraint("FirstDocumented", ComparisonOperator.GTE, new DateTime(937, 12, 18)).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1784,13 +1675,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LandCard.BlueManna))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining($"\"None\" of type {nameof(String)}")        // details / explanation
-                .WithMessageContaining(nameof(Byte));                               // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`LandCard` → BlueManna")
+                .WithProblem("value \"None\" is of type `string`, not `byte` as expected")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_ConvertibleAnchor_IsError() {
@@ -1802,13 +1691,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Keystroke.ResultingGlyph))            // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining($"290 of type {nameof(Int32)}")              // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Keystroke` → ResultingGlyph")
+                .WithProblem("value 290 is of type `int`, not `char` as expected")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_ArrayAnchor_IsError() {
@@ -1820,13 +1707,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Zoo.AverageVisitorsPerDay))           // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(Single));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Zoo` → AverageVisitorsPerDay")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NullAnchor_IsError() {
@@ -1838,12 +1723,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Neurotoxin.MolarMass))                // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Neurotoxin` → MolarMass")
+                .WithProblem("the constraint boundary cannot be 'null'")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_AnchorIsMinimum_Redundant() {
@@ -1856,7 +1740,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Bacterium.NumStrains), ComparisonOperator.GTE, ushort.MinValue).And
+                .HaveConstraint("NumStrains", ComparisonOperator.GTE, ushort.MinValue).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1869,14 +1753,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GitHook.NumExecutions))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining($"1.0 of type {nameof(Single)}")             // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`GitHook` → NumExecutions")
+                .WithProblem("value 1.0 is of type `float`, not `double` as expected")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_DecimalAnchorIsOutOfRange_IsError() {
@@ -1888,14 +1769,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RubeGoldbergMachine.MaterialsCost))   // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining(double.NegativeInfinity.ToString())          // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`RubeGoldbergMachine` → MaterialsCost")
+                .WithProblem($"`double` {double.NegativeInfinity} is outside the supported range for `decimal`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_DateTimeAnchorIsNotString_IsError() {
@@ -1907,14 +1785,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Smurf.FirstIntroduced))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining($"318.909 of type {nameof(Single)}")         // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Smurf` → FirstIntroduced")
+                .WithProblem("value 318.909 is of type `float`, not `string` as expected")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_DateTimeAnchorIsMalformatted_IsError() {
@@ -1926,14 +1801,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(WorldCup.ChampionshipDate))           // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"1111(11)11\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`WorldCup` → ChampionshipDate")
+                .WithProblem($"unable to parse `string` value \"1111(11)11\" as a `DateTime`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_DateTimeAnchorIsOutOfRange_IsError() {
@@ -1945,14 +1817,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SharkTankPitch.AirDate))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"91237-00-16\"")                           // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`SharkTankPitch` → AirDate")
+                .WithProblem($"unable to parse `string` value \"91237-00-16\" as a `DateTime`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_AnchorMatchesDataConversionSourceType_IsError() {
@@ -1964,13 +1833,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mushroom.AverageWeight))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining($"-18.0933 of type {nameof(Double)}")        // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Mushroom` → AverageWeight")
+                .WithProblem("value -18.0933 is of type `double`, not `int` as expected")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_AnchorMatchesDataConversionTargetType() {
@@ -1983,7 +1850,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(EMail.CC), ComparisonOperator.GTE, 73).And
+                .HaveConstraint("CC", ComparisonOperator.GTE, 73).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1997,7 +1864,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(SolarEclipse.SarosCycle), ComparisonOperator.GTE, 3).And
+                .HaveConstraint("SarosCycle", ComparisonOperator.GTE, 3).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2010,11 +1877,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(YuGiOhMonster.Attack))                // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]");               // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`YuGiOhMonster` → Attack")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_PathOnScalar_IsError() {
@@ -2026,12 +1893,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hieroglyph.Glyph))                    // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Hieroglyph` → Glyph")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NonExistentPathOnAggregate_IsError() {
@@ -2043,12 +1909,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pagoda.Location))                     // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Pagoda` → Location")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NoPathOnAggregate_IsError() {
@@ -2060,11 +1925,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Motorcycle.Wheels))                   // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]");               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Motorcycle` → Wheels")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Wheel`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NonExistentPathOnReference_IsError() {
@@ -2076,12 +1941,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Druid.WildShape2))                    // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Druid` → WildShape2")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NonPrimaryKeyPathOnReference_IsError() {
@@ -2093,12 +1957,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mirror.MirrorShape))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"Sides\"");                                // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Mirror` → MirrorShape")
+                .WithProblem("the path \"Sides\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NoPathOnReference_IsError() {
@@ -2110,11 +1973,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Chromosome.FirstIsolatedGene))        // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]");               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Chromosome` → FirstIsolatedGene")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Gene`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NonExistentPathOnRelation_IsError() {
@@ -2126,12 +1989,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HighlanderImmortal.Swords))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`HighlanderImmortal` → <synthetic> `Swords`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -2143,12 +2005,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Synagogue.Congregants))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualto]")                // details / explanation
-                .WithMessageContaining("\"Denomination\"");                         // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Synagogue` → <synthetic> `Congregants`")
+                .WithProblem("the path \"Synagogue.Denomination\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NoPathOnRelation_IsError() {
@@ -2160,11 +2021,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Panegyric.Lines))                     // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsGreaterOrEqualTo]");               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Panegyric` → <synthetic> `Lines`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<int, string>`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -2176,13 +2037,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Camera.ShutterSpeed))                 // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("1E-05")                                     // details / explanation
-                .WithMessageContaining("is not in interval [1.3, +∞)");             // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Camera` → ShutterSpeed")
+                .WithProblem("the Field's default value of 1E-05 does not pass the constraint")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -2194,13 +2053,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SlapBet.Terms.Slaps))                 // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("1")                                         // details / explanation
-                .WithMessageContaining("is not in interval [3, +∞)");               // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`SlapBet` → Wager")
+                .WithPath("Slaps")
+                .WithProblem("the Field's default value of 1 does not pass the constraint")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
         }
     }
 
@@ -2216,10 +2074,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Fjord.Latitude), ComparisonOperator.LTE, 90f).And
-                .HaveConstraint(nameof(Fjord.Longitude), ComparisonOperator.LTE, 90f).And
-                .HaveConstraint(nameof(Fjord.Length), ComparisonOperator.LTE, 100000UL).And
-                .HaveConstraint(nameof(Fjord.Width), ComparisonOperator.LTE, (short)6723).And
+                .HaveConstraint("Latitude", ComparisonOperator.LTE, 90f).And
+                .HaveConstraint("Longitude", ComparisonOperator.LTE, 90f).And
+                .HaveConstraint("Length", ComparisonOperator.LTE, 100000UL).And
+                .HaveConstraint("Width", ComparisonOperator.LTE, (short)6723).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2233,8 +2091,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(ExcelRange.StartColumn), ComparisonOperator.LTE, 'Z').And
-                .HaveConstraint(nameof(ExcelRange.EndColumn), ComparisonOperator.LTE, "XFD").And
+                .HaveConstraint("StartColumn", ComparisonOperator.LTE, 'Z').And
+                .HaveConstraint("EndColumn", ComparisonOperator.LTE, "XFD").And
                 .HaveNoOtherConstraints();
         }
 
@@ -2247,13 +2105,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TectonicPlate.OnRingOfFire))          // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TectonicPlate` → OnRingOfFire")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `bool`")
+                .WithAnnotations("[Check.IsLessOrEqualTo")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_DecimalField() {
@@ -2266,7 +2122,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Caliphate.Population), ComparisonOperator.LTE, (decimal)8192481241.412841).And
+                .HaveConstraint("Population", ComparisonOperator.LTE, (decimal)8192481241.412841).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2280,7 +2136,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Representative.FirstElected), ComparisonOperator.LTE, new DateTime(2688, 12, 2)).And
+                .HaveConstraint("FirstElected", ComparisonOperator.LTE, new DateTime(2688, 12, 2)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -2293,13 +2149,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Sunscreen.ID))                        // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Sunscreen` → ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsLessOrEqualTo")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_EnumerationField_IsError() {
@@ -2311,13 +2165,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ConcertTour.ArtistType))              // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(ConcertTour.Type));                   // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ConcertTour` → ArtistType")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Type`")
+                .WithAnnotations("[Check.IsLessOrEqualTo")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_AggregateNestedApplicableScalar() {
@@ -2343,14 +2195,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AmazonService.Plan))                  // error location
-                .WithMessageContaining("\"Type\"")                                  // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(AmazonService.SubscriptionType));     // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`AmazonService` → Plan")
+                .WithPath("Type")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `SubscriptionType`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NestedAggregate_IsError() {
@@ -2362,12 +2212,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Shampoo.Directions))                  // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"Ages\"");                                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Shampoo` → Directions")
+                .WithPath("Ages")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `AgeRange`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_ReferenceNestedApplicableScalar() {
@@ -2393,14 +2243,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Knife.Categorization))                // error location
-                .WithMessageContaining("\"Which\"")                                 // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(Knife.Category));                     // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Knife` → Categorization")
+                .WithPath("Which")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Category`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_OriginalOnReferenceNestedScalar() {
@@ -2425,12 +2273,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Ransomware.Extortion))                // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"Ransom\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Ransomware` → Extortion")
+                .WithPath("Ransom")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Ransom`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_RelationNestedApplicableScalar() {
@@ -2456,13 +2304,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Act
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TreehouseOfHorror.Crew))              // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("totally ordered")                           // details / explanation
-                .WithMessageContaining(nameof(TreehouseOfHorror.Role));             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TreehouseOfHorror` → <synthetic> `Crew`")
+                .WithPath("Value")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Role`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NestedRelation_IsError() {
@@ -2474,12 +2321,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CocoaFarm.Personnel))                 // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"Regulators\"");                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CocoaFarm` → Personnel")
+                .WithPath("Regulators")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NullableTotallyOrderedFields() {
@@ -2492,9 +2339,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Subreddit.Moderator), ComparisonOperator.LTE, "???").And
-                .HaveConstraint(nameof(Subreddit.Initiated), ComparisonOperator.LTE, new DateTime(7771, 4, 15)).And
-                .HaveConstraint(nameof(Subreddit.TimesQuarantined), ComparisonOperator.LTE, 47).And
+                .HaveConstraint("Moderator", ComparisonOperator.LTE, "???").And
+                .HaveConstraint("Initiated", ComparisonOperator.LTE, new DateTime(7771, 4, 15)).And
+                .HaveConstraint("TimesQuarantined", ComparisonOperator.LTE, 47).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2507,13 +2354,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Dreidel.SerialCode))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining($"153 of type {nameof(Byte)}")               // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Dreidel` → SerialCode")
+                .WithProblem("value 153 is of type `byte`, not `string` as expected")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_ConvertibleAnchor_IsError() {
@@ -2525,13 +2370,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ArthurianKnight.MalloryMentions))     // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining($"4 of type {nameof(UInt32)}")               // details / explanation
-                .WithMessageContaining(nameof(UInt64));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`ArthurianKnight` → MalloryMentions")
+                .WithProblem("value 4 is of type `uint`, not `ulong` as expected")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_ArrayAnchor_IsError() {
@@ -2543,13 +2386,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mint.Established))                    // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Mint` → Established")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NullAnchor_IsError() {
@@ -2561,12 +2402,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(VoirDire.BatsonChallenges))           // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`VoirDire` → BatsonChallenges")
+                .WithProblem("the constraint boundary cannot be 'null'")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_AnchorIsMaximum_Redundant() {
@@ -2579,7 +2419,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(ShellCommand.NumOptions), ComparisonOperator.LTE, long.MaxValue).And
+                .HaveConstraint("NumOptions", ComparisonOperator.LTE, long.MaxValue).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2592,14 +2432,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ChewingGum.AverageLifetime))          // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining($"'(' of type {nameof(Char)}")               // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`ChewingGum` → AverageLifetime")
+                .WithProblem("value '(' is of type `char`, not `double` as expected")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_DecimalAnchorIsOutOfRange_IsError() {
@@ -2611,14 +2448,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Headphones.MaxVolume))                // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining(double.PositiveInfinity.ToString())          // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Headphones` → MaxVolume")
+                .WithProblem($"`double` {double.PositiveInfinity} is outside the supported range for `decimal`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_DateTimeAnchorIsNotString_IsError() {
@@ -2630,14 +2464,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ClockTower.Inaugurated))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining($"-381723 of type {nameof(Int64)}")          // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`ClockTower` → Inaugurated")
+                .WithProblem("value -381723 is of type `long`, not `string` as expected")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_DateTimeAnchorIsMalformatted_IsError() {
@@ -2649,14 +2480,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(KentuckyDerby.Racetime))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"2317-04-19 @ 2:00pm\"")                   // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`KentuckyDerby` → Racetime")
+                .WithProblem($"unable to parse `string` value \"2317-04-19 @ 2:00pm\" as a `DateTime`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_DateTimeAnchorIsOutOfRange_IsError() {
@@ -2668,14 +2496,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Firearm.Manufactured))                // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"1927-03-109\"")                           // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Firearm` → Manufactured")
+                .WithProblem($"unable to parse `string` value \"1927-03-109\" as a `DateTime`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_AnchorMatchesDataConversionSourceType_IsError() {
@@ -2687,13 +2512,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ShardOfAdonalsium.Splintered))        // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining($"false of type {nameof(Boolean)}")          // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`ShardOfAdonalsium` → Splintered")
+                .WithProblem("value false is of type `bool`, not `int` as expected")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_AnchorMatchesDataConversionTargetType() {
@@ -2706,7 +2529,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(HTMLElement.NumChildren), ComparisonOperator.LTE, "400000").And
+                .HaveConstraint("NumChildren", ComparisonOperator.LTE, "400000").And
                 .HaveNoOtherConstraints();
         }
 
@@ -2720,7 +2543,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Archbishop.City), ComparisonOperator.LTE, "124").And
+                .HaveConstraint("City", ComparisonOperator.LTE, "124").And
                 .HaveNoOtherConstraints();
         }
 
@@ -2733,11 +2556,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GameOfClue.CrimeScene))               // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]");                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`GameOfClue` → CrimeScene")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_PathOnScalar_IsError() {
@@ -2749,12 +2572,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PlaneOfExistence.Name))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`PlaneOfExistence` → Name")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NonExistentPathOnAggregate_IsError() {
@@ -2766,12 +2588,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mausoleum.Location))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Mausoleum` → Location")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NoPathOnAggregate_IsError() {
@@ -2783,11 +2604,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pseudonym.For))                       // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Pseudonym` → For")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Name`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NonExistentPathOnReference_IsError() {
@@ -2799,12 +2620,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FoodPantry.WhichState))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`FoodPantry` → WhichState")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NonPrimaryKeyPathOnReference_IsError() {
@@ -2816,12 +2636,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FittedSheet.Dimensions))              // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"ThreadCount\"");                          // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`FittedSheet` → Dimensions")
+                .WithProblem("the path \"ThreadCount\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NoPathOnReference_IsError() {
@@ -2833,11 +2652,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Playlist.MostPlayed))                 // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Playlist` → MostPlayed")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Song`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NonExistentPathOnRelation_IsError() {
@@ -2849,12 +2668,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ThumbWar.PlayByPlay))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ThumbWar` → <synthetic> `PlayByPlay`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -2866,12 +2684,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(EngagementRing.Measurements))         // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsLessOrEqualto]")                   // details / explanation
-                .WithMessageContaining("\"Centerpiece\"");                          // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`EngagementRing` → <synthetic> `Measurements`")
+                .WithProblem("the path \"EngagementRing.Centerpiece\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NoPathOnRelation_IsError() {
@@ -2883,11 +2700,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ImpracticalJoke.JokeTargets))         // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsLessOrEqualTo]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ImpracticalJoke` → <synthetic> `JokeTargets`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -2899,13 +2716,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BowlingFrame.SecondThrowPins))        // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("23")                                        // details / explanation
-                .WithMessageContaining("is not in interval (-∞, 10]");              // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`BowlingFrame` → SecondThrowPins")
+                .WithProblem("the Field's default value of 23 does not pass the constraint")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsLessOrEqualTo_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -2917,13 +2732,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Defenestration.Window.Width))         // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("178.916")                                   // details / explanation
-                .WithMessageContaining("is not in interval (-∞, 8.9]");             // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Defenestration` → ThrownFrom")
+                .WithPath("Width")
+                .WithProblem("the Field's default value of 178.916 does not pass the constraint")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
     }
 
@@ -2939,9 +2753,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Bridge.Length), ComparisonOperator.NE, 34).And
-                .HaveConstraint(nameof(Bridge.Height), ComparisonOperator.NE, 15UL).And
-                .HaveConstraint(nameof(Bridge.Width), ComparisonOperator.NE, 0.23776f).And
+                .HaveConstraint("Length", ComparisonOperator.NE, 34).And
+                .HaveConstraint("Height", ComparisonOperator.NE, 15UL).And
+                .HaveConstraint("Width", ComparisonOperator.NE, 0.23776f).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2955,11 +2769,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Quatrain.Line1), ComparisonOperator.NE, "Elephant").And
-                .HaveConstraint(nameof(Quatrain.Line2), ComparisonOperator.NE, "Giraffe").And
-                .HaveConstraint(nameof(Quatrain.Line3), ComparisonOperator.NE, "Crocodile").And
-                .HaveConstraint(nameof(Quatrain.Line4), ComparisonOperator.NE, "Rhinoceros").And
-                .HaveConstraint(nameof(Quatrain.FirstLetter), ComparisonOperator.NE, '$').And
+                .HaveConstraint("Line1", ComparisonOperator.NE, "Elephant").And
+                .HaveConstraint("Line2", ComparisonOperator.NE, "Giraffe").And
+                .HaveConstraint("Line3", ComparisonOperator.NE, "Crocodile").And
+                .HaveConstraint("Line4", ComparisonOperator.NE, "Rhinoceros").And
+                .HaveConstraint("FirstLetter", ComparisonOperator.NE, '$').And
                 .HaveNoOtherConstraints();
         }
 
@@ -2973,7 +2787,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(PoliceOfficer.IsRetired), ComparisonOperator.NE, false).And
+                .HaveConstraint("IsRetired", ComparisonOperator.EQ, true).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2987,7 +2801,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Therapist.CostPerHour), ComparisonOperator.NE, (decimal)0.750).And
+                .HaveConstraint("CostPerHour", ComparisonOperator.NE, (decimal)0.750).And
                 .HaveNoOtherConstraints();
         }
 
@@ -3001,7 +2815,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(SlotMachine.InstalledOn), ComparisonOperator.NE, new DateTime(4431, 1, 21)).And
+                .HaveConstraint("InstalledOn", ComparisonOperator.NE, new DateTime(4431, 1, 21)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -3015,7 +2829,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Church.ChurchID), ComparisonOperator.NE, new Guid("a3c3ac24-4cf2-428e-a4db-76b30958cc90")).And
+                .HaveConstraint("ChurchID", ComparisonOperator.NE, new Guid("a3c3ac24-4cf2-428e-a4db-76b30958cc90")).And
                 .HaveNoOtherConstraints();
         }
 
@@ -3029,11 +2843,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(MarianApparition.When)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(MarianApparition.Location)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(MarianApparition.Witnesses)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(MarianApparition.MarianTitle)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(MarianApparition.Recognition)).OfTypeEnumeration(
+                .HaveField("When").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Location").OfTypeText().BeingNonNullable().And
+                .HaveField("Witnesses").OfTypeText().BeingNonNullable().And
+                .HaveField("MarianTitle").OfTypeText().BeingNonNullable().And
+                .HaveField("Recognition").OfTypeEnumeration(
                     MarianApparition.Status.Accepted,
                     MarianApparition.Status.Alleged,
                     MarianApparition.Status.Confirmed,
@@ -3068,12 +2882,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SportsBet.Odds))                      // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"OneDollarPayout\"");                      // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SportsBet` → Odds")
+                .WithPath("OneDollarPayout")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `OneDollar`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_ReferenceNestedScalar() {
@@ -3116,12 +2930,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FishingRod.ManfucaturingInfo))        // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"Manufacturer\"");                         // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FishingRod` → ManufacturingInfo")
+                .WithPath("Manufacturer")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Company`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_RelationNestedScalar() {
@@ -3135,11 +2949,13 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations[0].Table.Should()
                 .HaveField("Item.Kind").OfTypeEnumeration(
-                    StandUpComedian.Kind.KnockKnock, StandUpComedian.Kind.Observational,
-                    StandUpComedian.Kind.WordPlay, StandUpComedian.Kind.HistoricalWhatIf,
+                    StandUpComedian.Kind.KnockKnock,
+                    StandUpComedian.Kind.Observational,
+                    StandUpComedian.Kind.WordPlay,
+                    StandUpComedian.Kind.HistoricalWhatIf,
                     StandUpComedian.Kind.Political
                 ).BeingNonNullable().And
-                .HaveConstraint("Item.NSFW", ComparisonOperator.NE, false).And
+                .HaveConstraint("Item.NSFW", ComparisonOperator.EQ, true).And
                 .HaveNoOtherConstraints();
         }
 
@@ -3152,15 +2968,15 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Interview.Questions))                 // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"Questions\"");                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Interview` → Questions")
+                .WithPath("Questions")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<string, double>`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
-        [TestMethod] public void IsNot_NullableTotallyOrderedFields() {
+        [TestMethod] public void IsNot_NullableFields() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Fountain);
@@ -3170,11 +2986,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Fountain.FountainUUID), ComparisonOperator.NE, new Guid("926dbe07-875c-46fd-863b-051b98a2d6be")).And
-                .HaveConstraint(nameof(Fountain.Unveiled), ComparisonOperator.NE, new DateTime(1131, 8, 19)).And
-                .HaveConstraint(nameof(Fountain.Spout), ComparisonOperator.NE, 35.22).And
-                .HaveConstraint(nameof(Fountain.Masonry), ComparisonOperator.NE, "Play-Doh").And
-                .HaveConstraint(nameof(Fountain.IsActive), ComparisonOperator.NE, false).And
+                .HaveConstraint("FountainUUID", ComparisonOperator.NE, new Guid("926dbe07-875c-46fd-863b-051b98a2d6be")).And
+                .HaveConstraint("Unveiled", ComparisonOperator.NE, new DateTime(1131, 8, 19)).And
+                .HaveConstraint("Spout", ComparisonOperator.NE, 35.22).And
+                .HaveConstraint("Masonry", ComparisonOperator.NE, "Play-Doh").And
+                .HaveConstraint("IsActive", ComparisonOperator.EQ, true).And
                 .HaveNoOtherConstraints();
         }
 
@@ -3187,13 +3003,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Candle.Width))                        // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining($"\"Wide\" of type {nameof(String)}")        // details / explanation
-                .WithMessageContaining(nameof(Single));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Candle` → Width")
+                .WithProblem("value \"Wide\" is of type `string`, not `float` as expected")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_ConvertibleAnchor_IsError() {
@@ -3205,13 +3019,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CompilerWarning.DebugOnly))           // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining($"1 of type {nameof(Int32)}")                // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`CompilerWarning` → DebugOnly")
+                .WithProblem("value 1 is of type `int`, not `bool` as expected")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_ArrayAnchor_IsError() {
@@ -3223,30 +3035,27 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Alarm.Snoozeable))                    // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Alarm` → Snoozeable")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NullAnchor_IsError() {
             // Arrange
             var translator = new Translator();
-            var source = typeof(SecurityBug);
+            var source = typeof(HallOfFame);
 
             // Act
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SecurityBug.VersionPatched))          // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`HallOfFame` → Categorization")
+                .WithProblem("the constraint value cannot be 'null'")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_DecimalAnchorIsNotDouble_IsError() {
@@ -3258,14 +3067,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(DistrictAttorney.ConvictionRate))     // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining($"false of type {nameof(Boolean)}")          // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`DistrictAttorney` → ConvictionRate")
+                .WithProblem("value false is of type `bool`, not `double` as expected")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_DecimalAnchorIsOutOfRange_IsError() {
@@ -3277,14 +3083,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Ping.RoundTrip))                      // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining((double.MaxValue - 3.0).ToString())          // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Ping` → RoundTrip")
+                .WithProblem($"`double` {double.MaxValue - 3.0} is outside the supported range for `decimal`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_DateTimeAnchorIsNotString_IsError() {
@@ -3296,14 +3099,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(InsurancePolicy.EffectiveAsOf))       // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining($"-8193.018 of type {nameof(Single)}")       // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`InsurancePolicy` → EffectiveAsOf")
+                .WithProblem("value -8193.018 is of type `float`, not `string` as expected")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_DateTimeAnchorIsMalformatted_IsError() {
@@ -3315,14 +3115,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mosque.Established))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"1.4.5.0.1.0.3.0\"")                       // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Mosque` → Established")
+                .WithProblem($"unable to parse `string` value \"1.4.5.0.1.0.3.0\" as a `DateTime`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_DateTimeAnchorIsOutOfRange_IsError() {
@@ -3334,14 +3131,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Lease.StartDate))                     // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"1637-07-8819\"")                          // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Lease` → StartDate")
+                .WithProblem($"unable to parse `string` value \"1637-07-8819\" as a `DateTime`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_AnchorMatchesDataConversionSourceType_IsError() {
@@ -3353,13 +3147,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FairyTale.Disneyfied))                // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining($"false of type {nameof(Boolean)}")          // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`FairyTale` → Disneyfied")
+                .WithProblem("value false is of type `bool`, not `string` as expected")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_AnchorMatchesDataConversionTargetType() {
@@ -3372,7 +3164,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(RingOfPower.Destroyed), ComparisonOperator.NE, 7).And
+                .HaveConstraint("Destroyed", ComparisonOperator.NE, 7).And
                 .HaveNoOtherConstraints();
         }
 
@@ -3386,7 +3178,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(NazcaLine.Name), ComparisonOperator.NE, "Iguana").And
+                .HaveConstraint("Name", ComparisonOperator.NE, "Iguana").And
                 .HaveNoOtherConstraints();
         }
 
@@ -3400,7 +3192,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Pterosaur.Specimens), InclusionOperator.NotIn,
+                .HaveConstraint("Specimens", InclusionOperator.NotIn,
                     0U, 7894520U
                 ).And
                 .HaveNoOtherConstraints();
@@ -3415,11 +3207,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LotteryTicket.PurchaseTime))          // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsNot]");                            // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`LotteryTicket` → PurchaseTime")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_PathOnScalar_IsError() {
@@ -3431,12 +3223,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Prison.SecurityLevel))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Prison` → SecurityLevel")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NonExistentPathOnAggregate_IsError() {
@@ -3448,12 +3239,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Restaurant.SaladBar))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Restaurant` → SaladBar")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NoPathOnAggregate_IsError() {
@@ -3465,11 +3255,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Balk.Pitcher))                        // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNot]");                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Balk` → Pitcher")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Player`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NonExistentPathOnReference_IsError() {
@@ -3481,12 +3271,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Planetarium.Architect))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Planetarium` → Architect")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NonPrimaryKeyPathOnReference_IsError() {
@@ -3498,12 +3287,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LiquorStore.BestSellingWine))         // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"Vineyard\"");                             // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`LiquorStore` → BestSellingWine")
+                .WithProblem("the path \"Vineyard\" does not exist")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NoPathOnReference_IsError() {
@@ -3515,11 +3303,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Waterbending.StrongestPractitioner))  // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNot]");                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Waterbending` → StrongestPractitioner")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Person`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NonExistentPathOnRelation_IsError() {
@@ -3531,12 +3319,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AutoDaFe.ArtworkBurned))              // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`AutoDaFe` → <synthetic> `ArtworkBurned`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -3548,12 +3335,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Dream.Cameos))                        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNot]")                             // details / explanation
-                .WithMessageContaining("\"REM\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Dream` → <synthetic> `Cameos`")
+                .WithProblem("the path \"Dream.REM\" does not exist")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_NoPathOnRelation_IsError() {
@@ -3565,11 +3351,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BachelorParty.Destinations))          // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNot]");                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BachelorParty` → <synthetic> `Destinations`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<Destination>`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -3581,13 +3367,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RestStop.Exit))                       // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("153")                                       // details / explanation
-                .WithMessageContaining("is explicitly disallowed");                 // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`RestStop` → Exit")
+                .WithProblem("the Field's default value of 153 does not pass the constraint")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -3599,13 +3383,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HearthstoneMinion.Statistics.Health)) // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("-69")                                       // details / explanation
-                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`HearthstoneMinion` → Statistics")
+                .WithPath("Health")
+                .WithProblem("the Field's default value of -69 does not pass the constraint")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
     }
 }

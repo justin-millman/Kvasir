@@ -2,14 +2,14 @@
 using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Core;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using NameOfField = Kvasir.Schema.FieldName;
 
 using static UT.Kvasir.Translation.TestConstraints;
 using static UT.Kvasir.Translation.CustomCheckConstraints;
@@ -35,7 +35,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(VampireSlayer.Deaths))]
+                        table[new NameOfField("Deaths")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -60,7 +60,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(Lyric.IsSpoken))]
+                        table[new NameOfField("IsSpoken")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -87,7 +87,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName("Orbit.Aphelion")]
+                        table[new NameOfField("Orbit.Aphelion")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -96,7 +96,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName("Orbit.Eccentricity")]
+                        table[new NameOfField("Orbit.Eccentricity")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -113,12 +113,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Vineyard.SignatureWine))              // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"Vintage\"");                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Vineyard` → SignatureWine")
+                .WithPath("Vintage")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Vintage`")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_AppliedToReferenceNestedScalar() {
@@ -138,7 +138,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName("Sydney.Exchange.ExchangeID")]
+                        table[new NameOfField("Sydney.Exchange.ExchangeID")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -155,12 +155,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Werewolf.Lycan))                      // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"Source\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Werewolf` → Lycan")
+                .WithPath("Source")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Lycanthropy`")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_AppliedToRelationNestedScalar() {
@@ -180,7 +180,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName("Item")]
+                        table[new NameOfField("Item")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -197,12 +197,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RiverWalk.Hours))                     // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"HolidaysClosed\"");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`RiverWalk` → Hours")
+                .WithPath("HolidaysClosed")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_ScalarConstrainedMultipleTimes() {
@@ -223,7 +223,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(2).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(TarotCard.Pips))]
+                        table[new NameOfField("Pips")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -246,7 +246,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(DataStructure.RemoveBigO))]
+                        table[new NameOfField("RemoveBigO")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -269,7 +269,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName("HeightOf")]
+                        table[new NameOfField("HeightOf")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -286,16 +286,14 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Patreon.Tier3))                       // error location
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining(nameof(NonSerializedAttribute))              // details / explanation
-                .WithMessageContaining("does not implement")                        // details / explanation
-                .WithMessageContaining(nameof(IConstraintGenerator));               // details / explanation
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`Patreon` → Tier3")
+                .WithProblem("`NonSerializedAttribute` does not implement the `IConstraintGenerator` interface")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
-        [TestMethod] public void Check_ConstraintGeneratorNoViableConstructor_IsError() {
+        [TestMethod] public void Check_ConstraintGeneratorNoViableArgumentsConstructor_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Transistor);
@@ -304,16 +302,14 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Transistor.Dopant))                   // error location
-                .WithMessageContaining("cannot be constructed")                     // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining(nameof(PrivateCheck))                        // details / explanation
-                .WithMessageContaining("\"Dopant\", 4");                            // details / explanation
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`Transistor` → Dopant")
+                .WithProblem("`PrivateCheck` cannot be constructed from arguments {\"Dopant\", 4}")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
-        [TestMethod] public void Check_ConstraintGeneratorConstructorThrows_IsError() {
+        [TestMethod] public void Check_ConstraintGeneratorArgumentsConstructorThrows_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(BasketballPlayer);
@@ -322,14 +318,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BasketballPlayer.Rebounds))           // error location
-                .WithMessageContaining("error constructing")                        // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining(nameof(UnconstructibleCheck))                // details / explanation
-                .WithMessageContaining(CANNOT_CONSTRUCT_MSG)                        // details / explanation
-                .WithMessageContaining("false, 17");                                // details / explanation
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`BasketballPlayer` → Rebounds")
+                .WithProblem($"error constructing `UnconstructibleCheck` from arguments {{false, 17}} ({CANNOT_CONSTRUCT_MSG})")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_ConstraintGeneratorGenerationThrows_IsError() {
@@ -341,12 +334,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Aquarium.HasDolphins))                // error location
-                .WithMessageContaining("unable to create custom constraint")        // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining(CANNOT_CREATE_MSG);                          // details / explanation
+            translate.Should().FailWith<FailedOperationException>()
+                .WithLocation("`Aquarium` → HasDolphins")
+                .WithProblem($"unable to generate custom CHECK constraint ({CANNOT_CREATE_MSG})")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_PathIsNull_IsError() {
@@ -358,11 +350,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Trilogy.Entry2))                      // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check]");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Trilogy` → Entry2")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_PathOnScalar_IsError() {
@@ -374,12 +366,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TarPits.FirstFossil))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`TarPits` → FirstFossil")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NonExistentPathOnAggregate_IsError() {
@@ -391,12 +382,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(StarCrossedLovers.Lover2))            // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`StarCrossedLovers` → Lover2")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NoPathOnAggregate_IsError() {
@@ -408,11 +398,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Zombie.Legs))                         // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check]");                                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Zombie` → Legs")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Necrotization`")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NonExistentPathOnReference_IsError() {
@@ -424,12 +414,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Piano.Manufacturer))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Piano` → Manufacturer")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NonPrimaryKeyFieldPathOnReference_IsError() {
@@ -441,12 +430,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Exorcism.Target))                     // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"Incipience\"");                           // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Exorcism` → Target")
+                .WithProblem("the path \"Incipience\" does not exist")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NoPathOnReference_IsError() {
@@ -458,11 +446,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pond.Location))                       // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check]");                                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Pond` → Location")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Coordinate`")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NonExistentPathOnRelation_IsError() {
@@ -474,12 +462,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CanadianProvince.Cities))             // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`CanadianProvince` → <synthetic> `Cities`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -491,12 +478,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Skydiver.Dives))                      // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check]")                                   // details / explanation
-                .WithMessageContaining("\"Height\"");                               // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Skydiver` → <synthetic> `Dives`")
+                .WithProblem("the path \"Skydiver.Height\" does not exist")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
 
         [TestMethod] public void Check_NoPathOnRelation_IsError() {
@@ -508,11 +494,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Spring.ConstituentMetals))            // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check]");                                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Spring` → <synthetic> `ConstituentMetals`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check]")
+                .EndMessage();
         }
     }
 
@@ -535,7 +521,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(CanterburyTale.FirstLine))]
+                        table[new NameOfField("FirstLine")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -561,7 +547,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(Pope.ConclaveRounds))]
+                        table[new NameOfField("ConclaveRounds")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -578,10 +564,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("[Check.Complex]")                           // details / explanation
-                .WithMessageContaining("at least 1 Field name required");           // details / explanation
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`Terminator`")
+                .WithProblem("expected at least 1 Field, but found 0")
+                .WithAnnotations("[Check.Complex]")
+                .EndMessage();
         }
 
         [TestMethod] public void ComplexCheck_MultipleFieldsInOneConstraint() {
@@ -600,9 +587,9 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(LinuxDistribution.Major))],
-                        table[new FieldName(nameof(LinuxDistribution.Minor))],
-                        table[new FieldName(nameof(LinuxDistribution.Patch))]
+                        table[new NameOfField("Major")],
+                        table[new NameOfField("Minor")],
+                        table[new NameOfField("Patch")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 3),
@@ -626,10 +613,10 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(Muppet.Name))],
-                        table[new FieldName(nameof(Muppet.Name))],
-                        table[new FieldName(nameof(Muppet.Name))],
-                        table[new FieldName(nameof(Muppet.Name))]
+                        table[new NameOfField("Name")],
+                        table[new NameOfField("Name")],
+                        table[new NameOfField("Name")],
+                        table[new NameOfField("Name")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 4),
@@ -653,8 +640,8 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName("Cuisine")],
-                        table[new FieldName("ContainsTomatoes")]
+                        table[new NameOfField("Cuisine")],
+                        table[new NameOfField("ContainsTomatoes")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 2),
@@ -671,11 +658,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("[Check.Complex]")                           // details / explanation
-                .WithMessageContaining("Field*does not exist")                      // details / explanation
-                .WithMessageContaining("\"Width\"");                                // details / explanation
+            translate.Should().FailWith<UnrecognizedFieldException>()
+                .WithLocation("`Dam`")
+                .WithProblem("no Field named \"Width\" exists on the Table")
+                .WithAnnotations("[Check.Complex]")
+                .EndMessage();
         }
 
         [TestMethod] public void ComplexCheck_UnrecognizedField_IsError() {
@@ -687,11 +674,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("[Check.Complex]")                           // details / explanation
-                .WithMessageContaining("Field*does not exist")                      // details / explanation
-                .WithMessageContaining("\"Belligerents\"");                         // details / explanation
+            translate.Should().FailWith<UnrecognizedFieldException>()
+                .WithLocation("`PeaceTreaty`")
+                .WithProblem("no Field named \"Belligerents\" exists on the Table")
+                .WithAnnotations("[Check.Complex]")
+                .EndMessage();
         }
 
         [TestMethod] public void ComplexCheck_DataConvertedFields() {
@@ -710,9 +697,9 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(Massacre.When))],
-                        table[new FieldName(nameof(Massacre.Casualties))],
-                        table[new FieldName(nameof(Massacre.When))]
+                        table[new NameOfField("When")],
+                        table[new NameOfField("Casualties")],
+                        table[new NameOfField("When")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 3),
@@ -740,7 +727,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(1).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(Musical.LengthMinutes))]
+                        table[new NameOfField("LengthMinutes")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -749,7 +736,7 @@ namespace UT.Kvasir.Translation {
             CustomCheck.Generator.Received(2).MakeConstraint(
                 NArg.IsSameSequence<IEnumerable<IField>>(
                     new IField[] {
-                        table[new FieldName(nameof(Musical.SungThrough))]
+                        table[new NameOfField("SungThrough")]
                     }
                 ),
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
@@ -766,15 +753,14 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("[Check.Complex]")                           // details / explanation
-                .WithMessageContaining(nameof(AssemblyLoadEventArgs))               // details / explanation
-                .WithMessageContaining("does not implement")                        // details / explanation
-                .WithMessageContaining(nameof(IConstraintGenerator));               // details / explanation
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`Mutant`")
+                .WithProblem("`AssemblyLoadEventArgs` does not implement the `IConstraintGenerator` interface")
+                .WithAnnotations("[Check.Complex]")
+                .EndMessage();
         }
 
-        [TestMethod] public void ComplexCheck_ConstraintGeneratorNoViableConstructor_IsError() {
+        [TestMethod] public void ComplexCheck_ConstraintGeneratorNoViableArgumentsConstructor_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(CookingOil);
@@ -783,15 +769,14 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be constructed")                     // category
-                .WithMessageContaining("[Check.Complex]")                           // details / explanation
-                .WithMessageContaining(nameof(PrivateCheck))                        // details / explanation
-                .WithMessageContaining("'O', 'I', 'L', '!'");                       // details / explanation
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`CookingOil`")
+                .WithProblem("`PrivateCheck` cannot be constructed from arguments {'O', 'I', 'L', '!'}")
+                .WithAnnotations("[Check.Complex]")
+                .EndMessage();
         }
 
-        [TestMethod] public void ComplexCheck_ConstraintGeneratorConstructorThrows_IsError() {
+        [TestMethod] public void ComplexCheck_ConstraintGeneratorArgumentsConstructorThrows_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Pirate);
@@ -800,13 +785,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("error constructing")                        // category
-                .WithMessageContaining("[Check.Complex]")                           // details / explanation
-                .WithMessageContaining(nameof(UnconstructibleCheck))                // details / explanation
-                .WithMessageContaining(CANNOT_CONSTRUCT_MSG)                        // details / explanation
-                .WithMessageContaining("\"Lifespan\", 2918.01, true");              // details / explanation
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`Pirate`")
+                .WithProblem($"error constructing `UnconstructibleCheck` from arguments {{\"Lifespan\", 2918.01, true}} ({CANNOT_CONSTRUCT_MSG})")
+                .WithAnnotations("[Check.Complex]")
+                .EndMessage();
         }
 
         [TestMethod] public void ComplexCheck_ConstraintGeneratorGenerationThrows_IsError() {
@@ -818,11 +801,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("unable to create custom constraint")        // category
-                .WithMessageContaining("[Check.Complex]")                           // details / explanation
-                .WithMessageContaining(CANNOT_CREATE_MSG);                          // details / explanation
+            translate.Should().FailWith<FailedOperationException>()
+                .WithLocation("`Attribute`")
+                .WithProblem($"unable to generate custom CHECK constraint ({CANNOT_CREATE_MSG})")
+                .WithAnnotations("[Check.Complex]")
+                .EndMessage();
         }
     }
 }

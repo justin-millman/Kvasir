@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 
@@ -21,9 +20,9 @@ namespace UT.Kvasir.Translation {
             translation.CLRSource.Should().Be(source);
             translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.EntityShapes+ColorTable");
             translation.Principal.Table.Should()
-                .HaveField(nameof(Color.Red)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(Color.Green)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(Color.Blue)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Red").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Green").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Blue").OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -39,13 +38,13 @@ namespace UT.Kvasir.Translation {
             translation.CLRSource.Should().Be(source);
             translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.EntityShapes+PresidentialElectionTable");
             translation.Principal.Table.Should()
-                .HaveField(nameof(PresidentialElection.Year)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(PresidentialElection.DemocraticCandidate)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(PresidentialElection.DemocraticPVs)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(PresidentialElection.DemocraticEVs)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(PresidentialElection.RepublicanCandidate)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(PresidentialElection.RepublicanPVs)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(PresidentialElection.RepublicanEVs)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Year").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("DemocraticCandidate").OfTypeText().BeingNonNullable().And
+                .HaveField("DemocraticPVs").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("DemocraticEVs").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("RepublicanCandidate").OfTypeText().BeingNonNullable().And
+                .HaveField("RepublicanPVs").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("RepublicanEVs").OfTypeUInt16().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -58,10 +57,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("static");                                   // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`HighHell`")
+                .WithProblem("a static class cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsPrivate() {
@@ -95,10 +94,10 @@ namespace UT.Kvasir.Translation {
             translation.CLRSource.Should().Be(source);
             translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.EntityShapes+BeltTable");
             translation.Principal.Table.Should()
-                .HaveField(nameof(Belt.BeltID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Belt.Length)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Belt.NumHoles)).OfTypeInt8().BeingNonNullable().And
-                .HaveField(nameof(Belt.IsBuckled)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("BeltID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Length").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("NumHoles").OfTypeInt8().BeingNonNullable().And
+                .HaveField("IsBuckled").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -111,10 +110,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("struct");                                   // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`Carbohydrate`")
+                .WithProblem("a struct or a record struct cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsRecordStruct_IsError() {
@@ -126,10 +125,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("record struct");                            // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`AminoAcid`")
+                .WithProblem("a struct or a record struct cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsAbstractClass_IsError() {
@@ -141,10 +140,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("abstract");                                 // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`SuperBowl`")
+                .WithProblem("an abstract class cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsOpenGeneric_IsError() {
@@ -156,10 +155,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("open generic");                             // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`Speedometer<>`")
+                .WithProblem("an open generic type cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsClosedGeneric_IsError() {
@@ -171,10 +170,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("closed generic");                             // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`Speedometer<double>`")
+                .WithProblem("a closed generic type cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsInterface_IsError() {
@@ -186,10 +185,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("interface");                                // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`ILiquor`")
+                .WithProblem("an interface cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsEnumeration_IsError() {
@@ -201,10 +200,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`Season`")
+                .WithProblem("an enumeration type cannot be an Entity type")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityTypeIsDelegate_IsError() {
@@ -216,10 +215,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("cannot be an Entity type")                  // category
-                .WithMessageContaining("delegate");                                 // details / explanation
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`SurfingManeuver`")
+                .WithProblem("a delegate cannot be an Entity type")
+                .EndMessage();
         }
     }
 }

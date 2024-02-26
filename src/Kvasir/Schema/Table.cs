@@ -91,7 +91,6 @@ namespace Kvasir.Schema {
             Debug.Assert(candidateKeys.All(k => k.Fields.All(f => fields.Contains(f))));
             Debug.Assert(foreignKeys is not null);
             Debug.Assert(foreignKeys.None(k => ReferenceEquals(k.ReferencedTable, this)));
-            Debug.Assert(foreignKeys.All(k => k.ReferencingFields.All(f => fields.Contains(f))));
             Debug.Assert(checkConstraints is not null);
             Debug.Assert(checkConstraints.All(c => c.Condition.GetDependentFields().All(f => fields.Contains(f))));
 

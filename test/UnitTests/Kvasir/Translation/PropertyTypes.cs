@@ -1,12 +1,10 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
-using Kvasir.Relations;
+using FluentAssertions.Execution;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Optional;
 using System;
-using System.Collections.Generic;
+using System.Collections;
 
 using static UT.Kvasir.Translation.PropertyTypes;
 
@@ -24,21 +22,21 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(Smorgasbord.Byte)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Char)).OfTypeCharacter().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.DateTime)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Decimal)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Double)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Float)).OfTypeSingle().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Guid)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Int)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Long)).OfTypeInt64().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.SByte)).OfTypeInt8().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.Short)).OfTypeInt16().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.String)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.UInt)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.ULong)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Smorgasbord.UShort)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Byte").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Char").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("DateTime").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Decimal").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("Double").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Float").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Guid").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Int").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Long").OfTypeInt64().BeingNonNullable().And
+                .HaveField("SByte").OfTypeInt8().BeingNonNullable().And
+                .HaveField("Short").OfTypeInt16().BeingNonNullable().And
+                .HaveField("String").OfTypeText().BeingNonNullable().And
+                .HaveField("UInt").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("ULong").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("UShort").OfTypeUInt16().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherForeignKeys();
         }
@@ -54,22 +52,22 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(Plethora.Byte)).OfTypeUInt8().BeingNullable().And
-                .HaveField(nameof(Plethora.Char)).OfTypeCharacter().BeingNullable().And
-                .HaveField(nameof(Plethora.DateTime)).OfTypeDateTime().BeingNullable().And
-                .HaveField(nameof(Plethora.Decimal)).OfTypeDecimal().BeingNullable().And
-                .HaveField(nameof(Plethora.Double)).OfTypeDouble().BeingNullable().And
-                .HaveField(nameof(Plethora.Float)).OfTypeSingle().BeingNullable().And
-                .HaveField(nameof(Plethora.Guid)).OfTypeGuid().BeingNullable().And
-                .HaveField(nameof(Plethora.Int)).OfTypeInt32().BeingNullable().And
-                .HaveField(nameof(Plethora.Long)).OfTypeInt64().BeingNullable().And
-                .HaveField(nameof(Plethora.SByte)).OfTypeInt8().BeingNullable().And
-                .HaveField(nameof(Plethora.Short)).OfTypeInt16().BeingNullable().And
-                .HaveField(nameof(Plethora.String)).OfTypeText().BeingNullable().And
-                .HaveField(nameof(Plethora.UInt)).OfTypeUInt32().BeingNullable().And
-                .HaveField(nameof(Plethora.ULong)).OfTypeUInt64().BeingNullable().And
-                .HaveField(nameof(Plethora.UShort)).OfTypeUInt16().BeingNullable().And
-                .HaveField(nameof(Plethora.PrimaryKey)).OfTypeInt32().BeingNonNullable().And
+                .HaveField("Byte").OfTypeUInt8().BeingNullable().And
+                .HaveField("Char").OfTypeCharacter().BeingNullable().And
+                .HaveField("DateTime").OfTypeDateTime().BeingNullable().And
+                .HaveField("Decimal").OfTypeDecimal().BeingNullable().And
+                .HaveField("Double").OfTypeDouble().BeingNullable().And
+                .HaveField("Float").OfTypeSingle().BeingNullable().And
+                .HaveField("Guid").OfTypeGuid().BeingNullable().And
+                .HaveField("Int").OfTypeInt32().BeingNullable().And
+                .HaveField("Long").OfTypeInt64().BeingNullable().And
+                .HaveField("SByte").OfTypeInt8().BeingNullable().And
+                .HaveField("Short").OfTypeInt16().BeingNullable().And
+                .HaveField("String").OfTypeText().BeingNullable().And
+                .HaveField("UInt").OfTypeUInt32().BeingNullable().And
+                .HaveField("ULong").OfTypeUInt64().BeingNullable().And
+                .HaveField("UShort").OfTypeUInt16().BeingNullable().And
+                .HaveField("PrimaryKey").OfTypeInt32().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherForeignKeys();
         }
@@ -83,12 +81,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hurricane.Form))                      // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining("delegate")                                  // details / explanation
-                .WithMessageContaining(nameof(Action));                             // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Hurricane` → Form")
+                .WithProblem("type `HurricaneAction` is a delegate and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsDynamic_IsError() {
@@ -100,11 +96,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MonopolyProperty.HotelCost))          // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining("dynamic");                                  // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`MonopolyProperty` → HotelCost")
+                .WithProblem("type `object` is `object` (or `dynamic`) and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsObject_IsError() {
@@ -116,11 +111,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(URL.NetLoc))                          // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(Object));                             // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`URL` → NetLoc")
+                .WithProblem("type `object` is `object` (or `dynamic`) and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsSystemEnum_IsError() {
@@ -132,11 +126,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Enumeration.ZeroValue))               // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(Enum));                               // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Enumeration` → ZeroValue")
+                .WithProblem("type `Enum` is a universal base class and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsSystemValueType_IsError() {
@@ -148,11 +141,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(YouTubeVideo.CommentCount))           // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(ValueType));                          // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`YouTubeVideo` → CommentCount")
+                .WithProblem("type `ValueType` is a universal base class and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsNonCollectionClassFromStandardLibrary_IsError() {
@@ -164,12 +156,13 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Coin.CounterfeitResult))              // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(Exception))                           // details / explanation
-                .WithMessageContaining(typeof(Exception).Assembly.FullName!);       // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Coin` → CounterfeitResult")
+                .WithProblem(
+                    $"type `Exception` comes from assembly {typeof(Exception).Assembly.FullName!}, " +
+                    $"not from user assembly {typeof(Coin).Assembly.FullName!}"
+                )
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsCollectionFromStandardLibrary_IsError() {
@@ -181,12 +174,13 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Eigenvector.Vector))                  // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(List<int>))                           // details / explanation
-                .WithMessageContaining(typeof(List<int>).Assembly.FullName!);       // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Eigenvector` → Vector")
+                .WithProblem(
+                    $"type `ArrayList` comes from assembly {typeof(ArrayList).Assembly.FullName!}, " +
+                    $"not from user assembly {typeof(Eigenvector).Assembly.FullName!}"
+                )
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsStructFromStandardLibrary_IsError() {
@@ -198,12 +192,13 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Emoji.Identity))                      // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(ValueTuple<string, string>))          // details / explanation
-                .WithMessageContaining(typeof(ValueTuple).Assembly.FullName!);      // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Emoji` → Identity")
+                .WithProblem(
+                    $"type `Uri` comes from assembly {typeof(Uri).Assembly.FullName!}, " +
+                    $"not from user assembly {typeof(Emoji).Assembly.FullName!}"
+                )
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsClassFromNugetPackage_IsError() {
@@ -215,12 +210,13 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(UUID.Signature))                      // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(Option<string>))                      // details / explanation
-                .WithMessageContaining(typeof(Option<string>).Assembly.FullName!);  // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`UUID` → GenerationScope")
+                .WithProblem(
+                    $"type `Continuation` comes from assembly {typeof(Continuation).Assembly.FullName!}, " +
+                    $"not from user assembly {typeof(UUID).Assembly.FullName!}"
+                )
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsInterface_IsError() {
@@ -232,12 +228,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Painting.Artist))                     // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining("interface")                                 // details / explanation
-                .WithMessageContaining(nameof(IArtist));                            // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Painting` → Artist")
+                .WithProblem("type `IArtist` is an interface and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsClosedGenericClass_IsError() {
@@ -249,12 +243,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SlackChannel.NumMessages))            // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining("generic")                                   // details / explanation
-                .WithMessageContaining(nameof(MessageCount<short>));                // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`SlackChannel` → NumMessages")
+                .WithProblem("type `MessageCount<short>` is a closed generic type and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsAbstractClass_IsError() {
@@ -266,12 +258,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BotanicalGarden.OfficialFlower))      // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining("abstract")                                  // details / explanation
-                .WithMessageContaining(nameof(Flower));                             // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`BotanicalGarden` → OfficialFlower")
+                .WithProblem("type `Flower` is an abstract class and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void CodeOnly_PropertyOfUnsupportedType() {
@@ -285,13 +275,13 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(DNDCharacter.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(DNDCharacter.Charisma)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(DNDCharacter.Constitution)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(DNDCharacter.Dexterity)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(DNDCharacter.Intelligence)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(DNDCharacter.Strength)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(DNDCharacter.Wisdom)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Charisma").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Constitution").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Dexterity").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Intelligence").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Strength").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Wisdom").OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -306,15 +296,15 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(DNDWeapon.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(DNDWeapon.AttackBonus)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(DNDWeapon.AverageDamage)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(DNDWeapon.Type)).OfTypeEnumeration(
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("AttackBonus").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("AverageDamage").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Type").OfTypeEnumeration(
                     DNDWeapon.WeaponType.Simple,
                     DNDWeapon.WeaponType.Martial,
                     DNDWeapon.WeaponType.Improvised
                 ).BeingNonNullable().And
-                .HaveField(nameof(DNDWeapon.Properties)).OfTypeEnumeration(
+                .HaveField("Properties").OfTypeEnumeration(
                     DNDWeapon.WeaponProperty.Finesse,
                     DNDWeapon.WeaponProperty.Silvered,
                     DNDWeapon.WeaponProperty.Ranged,
@@ -331,7 +321,7 @@ namespace UT.Kvasir.Translation {
                     DNDWeapon.WeaponProperty.Ranged | DNDWeapon.WeaponProperty.TwoHanded | DNDWeapon.WeaponProperty.Finesse,
                     DNDWeapon.WeaponProperty.Finesse | DNDWeapon.WeaponProperty.Silvered | DNDWeapon.WeaponProperty.Ranged | DNDWeapon.WeaponProperty.TwoHanded
                 ).BeingNonNullable().And
-                .HaveField(nameof(DNDWeapon.MostEffectiveOn)).OfTypeEnumeration(
+                .HaveField("MostEffectiveOn").OfTypeEnumeration(
                     DayOfWeek.Sunday,
                     DayOfWeek.Monday,
                     DayOfWeek.Tuesday,
@@ -355,15 +345,15 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(ChineseDynasty.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
                 .HaveField("Founder.Name").OfTypeText().BeingNonNullable().And
                 .HaveField("Founder.ReignBegin").OfTypeInt16().BeingNonNullable().And
                 .HaveField("Founder.ReignEnd").OfTypeInt16().BeingNonNullable().And
                 .HaveField("Founder.Death").OfTypeText().BeingNullable().And
-                .HaveField(nameof(ChineseDynasty.MaxExtent)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(ChineseDynasty.Established)).OfTypeInt16().BeingNonNullable().And
-                .HaveField(nameof(ChineseDynasty.Fell)).OfTypeInt16().BeingNonNullable().And
-                .HaveField(nameof(ChineseDynasty.Population)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("MaxExtent").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Established").OfTypeInt16().BeingNonNullable().And
+                .HaveField("Fell").OfTypeInt16().BeingNonNullable().And
+                .HaveField("Population").OfTypeUInt64().BeingNonNullable().And
                 .HaveField("Capital.Name").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherForeignKeys();
@@ -380,16 +370,18 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(BarbecueSauce.ID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(BarbecueSauce.Brand)).OfTypeText().BeingNonNullable().And
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Brand").OfTypeText().BeingNonNullable().And
                 .HaveField("PerServing.Calories").OfTypeUInt32().BeingNullable().And
                 .HaveField("PerServing.Fat").OfTypeDouble().BeingNullable().And
                 .HaveField("PerServing.Sugar").OfTypeDouble().BeingNullable().And
                 .HaveField("PerServing.Carbohydrates").OfTypeDouble().BeingNullable().And
-                .HaveField(nameof(BarbecueSauce.KetchupBased)).OfTypeBoolean().BeingNonNullable().And
-                .HaveField(nameof(BarbecueSauce.Style)).OfTypeEnumeration(
-                    BarbecueSauce.Kind.Sweet, BarbecueSauce.Kind.Spicy,
-                    BarbecueSauce.Kind.Tangy, BarbecueSauce.Kind.Chocolatey
+                .HaveField("KetchupBased").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Style").OfTypeEnumeration(
+                    BarbecueSauce.Kind.Sweet,
+                    BarbecueSauce.Kind.Spicy,
+                    BarbecueSauce.Kind.Tangy,
+                    BarbecueSauce.Kind.Chocolatey
                 ).BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherForeignKeys();
@@ -406,7 +398,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(DNDMonster.Species)).OfTypeText().BeingNonNullable().And
+                .HaveField("Species").OfTypeText().BeingNonNullable().And
                 .HaveField("Stats.STR").OfTypeUInt8().BeingNullable().And
                 .HaveField("Stats.DEX").OfTypeUInt8().BeingNullable().And
                 .HaveField("Stats.CON").OfTypeUInt8().BeingNullable().And
@@ -419,7 +411,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Stats.Saves.INT").OfTypeUInt8().BeingNullable().And
                 .HaveField("Stats.Saves.WIS").OfTypeUInt8().BeingNullable().And
                 .HaveField("Stats.Saves.CHA").OfTypeUInt8().BeingNullable().And
-                .HaveField(nameof(DNDMonster.Size)).OfTypeEnumeration(
+                .HaveField("Size").OfTypeEnumeration(
                     DNDMonster.BodySize.Tiny,
                     DNDMonster.BodySize.Small,
                     DNDMonster.BodySize.Medium,
@@ -431,10 +423,10 @@ namespace UT.Kvasir.Translation {
                 .HaveField("PhysicalSenses.Sight.Distance").OfTypeUInt16().BeingNonNullable().And
                 .HaveField("PhysicalSenses.Sight.Darkness").OfTypeBoolean().BeingNonNullable().And
                 .HaveField("PhysicalSenses.Sight.Trueness").OfTypeBoolean().BeingNonNullable().And
-                .HaveField(nameof(DNDMonster.CR)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(DNDMonster.AC)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(DNDMonster.HP)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(DNDMonster.LegendaryActions)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField("CR").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("AC").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("HP").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("LegendaryActions").OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherForeignKeys();
         }
@@ -450,12 +442,12 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(Scorpion.CommonName)).OfTypeText().BeingNonNullable().And
+                .HaveField("CommonName").OfTypeText().BeingNonNullable().And
                 .HaveField("Genus.Genus").OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Scorpion.Species)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Scorpion.StingIndex)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Scorpion.AverageLength)).OfTypeSingle().BeingNonNullable().And
-                .HaveField(nameof(Scorpion.AverageWeight)).OfTypeSingle().BeingNonNullable().And
+                .HaveField("Species").OfTypeText().BeingNonNullable().And
+                .HaveField("StingIndex").OfTypeDouble().BeingNonNullable().And
+                .HaveField("AverageLength").OfTypeSingle().BeingNonNullable().And
+                .HaveField("AverageWeight").OfTypeSingle().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("Genus.Genus")
                     .Against(translator[typeof(Scorpion.TaxonomicGenus)].Principal.Table)
@@ -475,9 +467,9 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(Ferry.RegistrationNumber)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Ferry.PassengerCapacity)).OfTypeUInt64().BeingNullable().And
-                .HaveField(nameof(Ferry.Type)).OfTypeEnumeration(
+                .HaveField("RegistrationNumber").OfTypeGuid().BeingNonNullable().And
+                .HaveField("PassengerCapacity").OfTypeUInt64().BeingNullable().And
+                .HaveField("Type").OfTypeEnumeration(
                     Ferry.Kind.Passenger,
                     Ferry.Kind.Cargo,
                     Ferry.Kind.State,
@@ -513,14 +505,20 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(WeekendUpdate.ID)).OfTypeGuid().BeingNonNullable().And
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Airing.Month").OfTypeEnumeration(
-                    WeekendUpdate.Date.MonthOfYear.JAN, WeekendUpdate.Date.MonthOfYear.FEB,
-                    WeekendUpdate.Date.MonthOfYear.MAR, WeekendUpdate.Date.MonthOfYear.APR,
-                    WeekendUpdate.Date.MonthOfYear.MAY, WeekendUpdate.Date.MonthOfYear.JUN,
-                    WeekendUpdate.Date.MonthOfYear.JUL, WeekendUpdate.Date.MonthOfYear.AUG,
-                    WeekendUpdate.Date.MonthOfYear.SEP, WeekendUpdate.Date.MonthOfYear.OCT,
-                    WeekendUpdate.Date.MonthOfYear.NOV, WeekendUpdate.Date.MonthOfYear.DEC
+                    WeekendUpdate.Date.MonthOfYear.JAN,
+                    WeekendUpdate.Date.MonthOfYear.FEB,
+                    WeekendUpdate.Date.MonthOfYear.MAR,
+                    WeekendUpdate.Date.MonthOfYear.APR,
+                    WeekendUpdate.Date.MonthOfYear.MAY,
+                    WeekendUpdate.Date.MonthOfYear.JUN,
+                    WeekendUpdate.Date.MonthOfYear.JUL,
+                    WeekendUpdate.Date.MonthOfYear.AUG,
+                    WeekendUpdate.Date.MonthOfYear.SEP,
+                    WeekendUpdate.Date.MonthOfYear.OCT,
+                    WeekendUpdate.Date.MonthOfYear.NOV,
+                    WeekendUpdate.Date.MonthOfYear.DEC
                 ).BeingNonNullable().And
                 .HaveField("Airing.Day").OfTypeUInt8().BeingNonNullable().And
                 .HaveField("Airing.Year").OfTypeInt16().BeingNonNullable().And
@@ -532,7 +530,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("SecondSegment.Name").OfTypeText().BeingNullable().And
                 .HaveField("SecondSegment.Portrayal.FirstName").OfTypeText().BeingNullable().And
                 .HaveField("SecondSegment.Portrayal.LastName").OfTypeText().BeingNullable().And
-                .HaveField(nameof(WeekendUpdate.NumJokes)).OfTypeInt8().And
+                .HaveField("NumJokes").OfTypeInt8().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("Airing.Day", "Airing.Month", "Airing.Year")
                     .Against(translator[typeof(WeekendUpdate.Date)].Principal.Table)
@@ -564,15 +562,15 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations.Should().BeEmpty();
             translation.Principal.Table.Should()
-                .HaveField(nameof(DannyPhantomGhost.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(DannyPhantomGhost.Powers)).OfTypeEnumeration(
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Powers").OfTypeEnumeration(
                     DannyPhantomGhost.Ability.Intangibiblity,
                     DannyPhantomGhost.Ability.Blast,
                     DannyPhantomGhost.Ability.Overshadowing,
                     DannyPhantomGhost.Ability.Duplication,
                     DannyPhantomGhost.Ability.Telekinesis
                 ).BeingNonNullable().And
-                .HaveField(nameof(DannyPhantomGhost.Appearances)).OfTypeInt32().BeingNonNullable().And
+                .HaveField("Appearances").OfTypeInt32().BeingNonNullable().And
                 .HaveField("Debut.Overall").OfTypeInt16().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("Debut.Overall")
@@ -682,8 +680,12 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Forecast.City").OfTypeText().BeingNonNullable().And
                 .HaveField("Index").OfTypeUInt32().BeingNonNullable().And
                 .HaveField("Item").OfTypeEnumeration(
-                    Forecast.Extremity.Hurricane, Forecast.Extremity.Tornado, Forecast.Extremity.Blizzard,
-                    Forecast.Extremity.Thunderstorm, Forecast.Extremity.Hailstorm, Forecast.Extremity.Sandstorm
+                    Forecast.Extremity.Hurricane,
+                    Forecast.Extremity.Tornado,
+                    Forecast.Extremity.Blizzard,
+                    Forecast.Extremity.Thunderstorm,
+                    Forecast.Extremity.Hailstorm,
+                    Forecast.Extremity.Sandstorm
                 ).BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("Forecast.City")
@@ -717,10 +719,17 @@ namespace UT.Kvasir.Translation {
                 .HaveName("UT.Kvasir.Translation.PropertyTypes+CivVIDistrict.AllowedTerrainTable").And
                 .HaveField("CivVIDistrict.DistrictName").OfTypeText().BeingNonNullable().And
                 .HaveField("Item").OfTypeEnumeration(
-                    CivVIDistrict.Terrain.Flat, CivVIDistrict.Terrain.Grasslands, CivVIDistrict.Terrain.Marsh,
-                    CivVIDistrict.Terrain.Floodplains, CivVIDistrict.Terrain.Hills, CivVIDistrict.Terrain.Desert,
-                    CivVIDistrict.Terrain.Coast, CivVIDistrict.Terrain.Ocean, CivVIDistrict.Terrain.Reef,
-                    CivVIDistrict.Terrain.Lake, CivVIDistrict.Terrain.Mountain
+                    CivVIDistrict.Terrain.Flat,
+                    CivVIDistrict.Terrain.Grasslands,
+                    CivVIDistrict.Terrain.Marsh,
+                    CivVIDistrict.Terrain.Floodplains,
+                    CivVIDistrict.Terrain.Hills,
+                    CivVIDistrict.Terrain.Desert,
+                    CivVIDistrict.Terrain.Coast,
+                    CivVIDistrict.Terrain.Ocean,
+                    CivVIDistrict.Terrain.Reef,
+                    CivVIDistrict.Terrain.Lake,
+                    CivVIDistrict.Terrain.Mountain
                 ).BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("CivVIDistrict.DistrictName")
@@ -799,12 +808,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BlackHole.Measurements))              // error location
-                .WithMessageContaining("Value")                                     // error sub-location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining("nested");                                   // details / explanation
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`BlackHole` → <synthetic> `Measurements` → Value")
+                .WithProblem("nested Relations are not supported")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationNestedWithAggregateNestedWithinRelation_IsError() {
@@ -816,12 +823,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Poll.Questions))                      // error location
-                .WithMessageContaining(nameof(Poll.Question.Answers))               // error sub-location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining("nested");                                   // details / explanation
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`Poll` → <synthetic> `Questions` → `Question` (from \"Item\") → Answers")
+                .WithProblem("nested Relations are not supported")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsListSetOfKeyValuePair_IsError() {
@@ -833,12 +838,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Caricature.SaleHistory))              // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(KeyValuePair<DateTime, decimal>))     // details / explanation
-                .WithMessageContaining(typeof(KeyValuePair).Assembly.FullName!);    // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Caricature` → <synthetic> `SaleHistory` → Item")
+                .WithProblem("type `KeyValuePair<DateTime, decimal>` is a closed generic type and cannot be the backing type of a property")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsIRelation_IsError() {
@@ -850,11 +853,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Perfume.PatentNumbers))               // error location
-                .WithMessageContaining("unsupported type")                          // category
-                .WithMessageContaining(nameof(IRelation));                          // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Perfume` → PatentNumbers")
+                .WithProblem("type `IRelation` is the `IRelation` interface and cannot be the backing type of a property")
+                .EndMessage();
         }
     }
 }

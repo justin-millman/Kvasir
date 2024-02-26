@@ -20,7 +20,7 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             attr.UserError.Should()
-                .Match($"*{constraintType.Name}*").And
+                .Match($"*int*").And
                 .Match($"*{nameof(IConstraintGenerator)}*").And
                 .Match("*does not implement*");
         }

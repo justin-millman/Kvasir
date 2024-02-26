@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -20,7 +19,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Peninsula.Coastline), ComparisonOperator.GT, 0L).And
+                .HaveConstraint("Coastline", ComparisonOperator.GT, 0L).And
                 .HaveNoOtherConstraints();
         }
 
@@ -34,7 +33,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(HTTPError.ErrorCode), ComparisonOperator.LT, 0).And
+                .HaveConstraint("ErrorCode", ComparisonOperator.LT, 0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -47,12 +46,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Directory.Mode))                      // error location
-                .WithMessageContaining("mutually exclusive")                        // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("[Check.IsNegative]");                       // details / explanation
+            translate.Should().FailWith<ConflictingAnnotationsException>()
+                .WithLocation("`Directory` → Mode")
+                .WithProblem("the two annotations are mutually exclusive")
+                .WithAnnotations("[Check.IsPositive]", "[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void GreaterThanConstraints() {
@@ -65,10 +63,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(ACT.Mathematics), ComparisonOperator.GT, (sbyte)10).And
-                .HaveConstraint(nameof(ACT.Science), ComparisonOperator.GT, (sbyte)0).And
-                .HaveConstraint(nameof(ACT.Reading), ComparisonOperator.GTE, (sbyte)9).And
-                .HaveConstraint(nameof(ACT.English), ComparisonOperator.GTE, (sbyte)8).And
+                .HaveConstraint("Mathematics", ComparisonOperator.GT, (sbyte)10).And
+                .HaveConstraint("Science", ComparisonOperator.GT, (sbyte)0).And
+                .HaveConstraint("Reading", ComparisonOperator.GTE, (sbyte)9).And
+                .HaveConstraint("English", ComparisonOperator.GTE, (sbyte)8).And
                 .HaveNoOtherConstraints();
         }
 
@@ -82,10 +80,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Concert.Duration), ComparisonOperator.LT, 251U).And
-                .HaveConstraint(nameof(Concert.AverageTicketPrice), ComparisonOperator.LT, (decimal)0).And
-                .HaveConstraint(nameof(Concert.Attendees), ComparisonOperator.LTE, 28172831).And
-                .HaveConstraint(nameof(Concert.Encores), ComparisonOperator.LT, (sbyte)0).And
+                .HaveConstraint("Duration", ComparisonOperator.LT, 251U).And
+                .HaveConstraint("AverageTicketPrice", ComparisonOperator.LT, (decimal)0).And
+                .HaveConstraint("Attendees", ComparisonOperator.LTE, 28172831).And
+                .HaveConstraint("Encores", ComparisonOperator.LT, (sbyte)0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -99,14 +97,14 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(SlaveRevolt.Leader), ComparisonOperator.GT, "Asmodeus").And
-                .HaveConstraint(nameof(SlaveRevolt.Leader), ComparisonOperator.LT, "Zylaphtanes").And
-                .HaveConstraint(nameof(SlaveRevolt.SlaveCasualties), ComparisonOperator.GTE, -3).And
-                .HaveConstraint(nameof(SlaveRevolt.SlaveCasualties), ComparisonOperator.LTE, 20491486).And
-                .HaveConstraint(nameof(SlaveRevolt.OwnerCasualties), ComparisonOperator.GT, 4UL).And
-                .HaveConstraint(nameof(SlaveRevolt.OwnerCasualties), ComparisonOperator.LTE, 510492UL).And
-                .HaveConstraint(nameof(SlaveRevolt.Date), ComparisonOperator.GTE, new DateTime(575, 3, 19)).And
-                .HaveConstraint(nameof(SlaveRevolt.Date), ComparisonOperator.LT, new DateTime(8753, 11, 26)).And
+                .HaveConstraint("Leader", ComparisonOperator.GT, "Asmodeus").And
+                .HaveConstraint("Leader", ComparisonOperator.LT, "Zylaphtanes").And
+                .HaveConstraint("SlaveCasualties", ComparisonOperator.GTE, -3).And
+                .HaveConstraint("SlaveCasualties", ComparisonOperator.LTE, 20491486).And
+                .HaveConstraint("OwnerCasualties", ComparisonOperator.GT, 4UL).And
+                .HaveConstraint("OwnerCasualties", ComparisonOperator.LTE, 510492UL).And
+                .HaveConstraint("Date", ComparisonOperator.GTE, new DateTime(575, 3, 19)).And
+                .HaveConstraint("Date", ComparisonOperator.LT, new DateTime(8753, 11, 26)).And
                 .HaveNoOtherConstraints();
         }
 
@@ -120,8 +118,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Prescription.Medication), ComparisonOperator.EQ, "Bastioquiloquine").And
-                .HaveConstraint(nameof(Prescription.Refills), ComparisonOperator.EQ, (byte)2).And
+                .HaveConstraint("Medication", ComparisonOperator.EQ, "Bastioquiloquine").And
+                .HaveConstraint("Refills", ComparisonOperator.EQ, (byte)2).And
                 .HaveNoOtherConstraints();
         }
 
@@ -134,12 +132,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Genie.NumWishes))                     // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("[1, 1)");                                   // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Genie` → NumWishes")
+                .WithProblem("the interval [1, 1) of allowed values is empty")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
         
         [TestMethod] public void ComparisonExclusiveLowerEqualsComparisonInclusiveUpper_IsError() {
@@ -151,12 +148,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ComicCon.NumPanels))                  // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("(275, 275]");                               // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`ComicCon` → NumPanels")
+                .WithProblem("the interval (275, 275] of allowed values is empty")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
         }
 
         [TestMethod] public void ComparisonExclusiveLowerEqualsComparisonExclusiveUpper_IsError() {
@@ -168,12 +164,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CabinetDepartment.Budget))            // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("(481723.5, 481723.5)");                     // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`CabinetDepartment` → Budget")
+                .WithProblem("the interval (481723.5, 481723.5) of allowed values is empty")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void ComparisonLowerGreaterThanComparisonUpper_IsError() {
@@ -185,12 +180,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Locale.CodeSet))                      // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("(\"UTF-7\", \"ASCII\"]");                   // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Locale` → CodeSet")
+                .WithProblem("the interval (\"UTF-7\", \"ASCII\"] of allowed values is empty")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotValueOutsideComparisonRange_Redundant() {
@@ -203,7 +197,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Calendar.NumMonths), ComparisonOperator.LT, 21U).And
+                .HaveConstraint("NumMonths", ComparisonOperator.LT, 21U).And
                 .HaveNoOtherConstraints();
         }
 
@@ -217,8 +211,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(StepPyramid.KnownAs), ComparisonOperator.GTE, 5).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(StepPyramid.Civilization), ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "KnownAs", ComparisonOperator.GTE, 5).And
+                .HaveConstraint(FieldFunction.LengthOf, "Civilization", ComparisonOperator.GTE, 1).And
                 .HaveNoOtherConstraints();
         }
 
@@ -232,8 +226,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(UIButton.ComponentID), ComparisonOperator.LTE, 20).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(UIButton.ComponentID), ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "ComponentID", ComparisonOperator.LTE, 20).And
+                .HaveConstraint(FieldFunction.LengthOf, "ComponentID", ComparisonOperator.GTE, 1).And
                 .HaveNoOtherConstraints();
         }
 
@@ -247,10 +241,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Cave.Name), ComparisonOperator.GTE, 75412).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Cave.Name), ComparisonOperator.LTE, 12981147).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Cave.ManagingOrg), ComparisonOperator.GTE, 1).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Cave.ManagingOrg), ComparisonOperator.LTE, 74).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.GTE, 75412).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.LTE, 12981147).And
+                .HaveConstraint(FieldFunction.LengthOf, "ManagingOrg", ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "ManagingOrg", ComparisonOperator.LTE, 74).And
                 .HaveNoOtherConstraints();
         }
 
@@ -264,9 +258,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Vulgarity.Spanish), ComparisonOperator.GTE, 18).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Vulgarity.Spanish), ComparisonOperator.LTE, 197).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Vulgarity.French), ComparisonOperator.EQ, 14981).And
+                .HaveConstraint(FieldFunction.LengthOf, "Spanish", ComparisonOperator.GTE, 18).And
+                .HaveConstraint(FieldFunction.LengthOf, "Spanish", ComparisonOperator.LTE, 197).And
+                .HaveConstraint(FieldFunction.LengthOf, "French", ComparisonOperator.EQ, 14981).And
                 .HaveNoOtherConstraints();
         }
 
@@ -279,12 +273,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Generation.Name))                     // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("[153, 111]");                               // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Generation` → Name")
+                .WithProblem("the interval [153, 111] of valid string lengths is empty")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeastLengthIsBetween() {
@@ -297,13 +290,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WitchHunt.Name), ComparisonOperator.GTE, 15).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WitchHunt.Name), ComparisonOperator.LTE, 30).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WitchHunt.Leader), ComparisonOperator.GTE, 19).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WitchHunt.Leader), ComparisonOperator.LTE, 50).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WitchHunt.FirstVictim), ComparisonOperator.GTE, 309).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WitchHunt.FirstVictim), ComparisonOperator.LTE, 12000000).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WitchHunt.ExecutionMethod), ComparisonOperator.EQ, 100).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.GTE, 15).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.LTE, 30).And
+                .HaveConstraint(FieldFunction.LengthOf, "Leader", ComparisonOperator.GTE, 19).And
+                .HaveConstraint(FieldFunction.LengthOf, "Leader", ComparisonOperator.LTE, 50).And
+                .HaveConstraint(FieldFunction.LengthOf, "FirstVictim", ComparisonOperator.GTE, 309).And
+                .HaveConstraint(FieldFunction.LengthOf, "FirstVictim", ComparisonOperator.LTE, 12000000).And
+                .HaveConstraint(FieldFunction.LengthOf, "ExecutionMethod", ComparisonOperator.EQ, 100).And
                 .HaveNoOtherConstraints();
         }
 
@@ -316,12 +309,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Integral.Expression))                 // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("[555, 22]");                                // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Integral` → Expression")
+                .WithProblem("the interval [555, 22] of valid string lengths is empty")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMostLengthIsBetween() {
@@ -334,13 +326,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Isthmus.Name), ComparisonOperator.GTE, 22).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Isthmus.Name), ComparisonOperator.LTE, 413).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Isthmus.StarRating), ComparisonOperator.EQ, 1).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Isthmus.MostPopulousCity), ComparisonOperator.GTE, 18).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Isthmus.MostPopulousCity), ComparisonOperator.LTE, 35).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Isthmus.Management), ComparisonOperator.GTE, 110).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Isthmus.Management), ComparisonOperator.LTE, 113).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.GTE, 22).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.LTE, 413).And
+                .HaveConstraint(FieldFunction.LengthOf, "StarRating", ComparisonOperator.EQ, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "MostPopulousCity", ComparisonOperator.GTE, 18).And
+                .HaveConstraint(FieldFunction.LengthOf, "MostPopulousCity", ComparisonOperator.LTE, 35).And
+                .HaveConstraint(FieldFunction.LengthOf, "Management", ComparisonOperator.GTE, 110).And
+                .HaveConstraint(FieldFunction.LengthOf, "Management", ComparisonOperator.LTE, 113).And
                 .HaveNoOtherConstraints();
         }
 
@@ -353,12 +345,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NuGetPackage.Version))                // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("[15, 10]");                                 // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`NuGetPackage` → Version")
+                .WithProblem("the interval [15, 10] of valid string lengths is empty")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotValueHasInvalidLength_Redundant() {
@@ -371,8 +362,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(LicensePlate.PlateNumber), ComparisonOperator.GTE, 1).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(LicensePlate.PlateNumber), ComparisonOperator.LTE, 8).And
+                .HaveConstraint(FieldFunction.LengthOf, "PlateNumber", ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "PlateNumber", ComparisonOperator.LTE, 8).And
                 .HaveNoOtherConstraints();
         }
 
@@ -386,7 +377,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(SkiSlope.Level), InclusionOperator.In,
+                .HaveConstraint("Level", InclusionOperator.In,
                     "Black Diamond", "Novice"
                 ).And
                 .HaveNoOtherConstraints();
@@ -402,7 +393,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(AmusementPark.Name), InclusionOperator.In,
+                .HaveConstraint("Name", InclusionOperator.In,
                     "Six Flags", "Universal Studios"
                 ).And
                 .HaveNoOtherConstraints();
@@ -417,12 +408,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MarkUpSymbol.Symbol))                 // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("{ '*', '_', '`', '+' }");                   // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`MarkUpSymbol` → Symbol")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOfWithComparisons() {
@@ -435,22 +424,22 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(TicTacToeGame.TopLeft), InclusionOperator.In,
+                .HaveConstraint("TopLeft", InclusionOperator.In,
                     'O', 'X', 'Y'
                 ).And
-                .HaveConstraint(nameof(TicTacToeGame.TopCenter), InclusionOperator.In,
+                .HaveConstraint("TopCenter", InclusionOperator.In,
                     'X', 'Y'
                 ).And
-                .HaveConstraint(nameof(TicTacToeGame.MiddleLeft), InclusionOperator.In,
+                .HaveConstraint("MiddleLeft", InclusionOperator.In,
                     'O', 'Y'
                 ).And
-                .HaveConstraint(nameof(TicTacToeGame.MiddleCenter), InclusionOperator.In,
+                .HaveConstraint("MiddleCenter", InclusionOperator.In,
                     'O', 'X', 'Y'
                 ).And
-                .HaveConstraint(nameof(TicTacToeGame.BottomCenter), InclusionOperator.In,
+                .HaveConstraint("BottomCenter", InclusionOperator.In,
                     'X', 'Y'
                 ).And
-                .HaveConstraint(nameof(TicTacToeGame.BottomRight), InclusionOperator.In,
+                .HaveConstraint("BottomRight", InclusionOperator.In,
                     'O', 'X', 'Y'
                 ).And
                 .HaveNoOtherConstraints();
@@ -466,10 +455,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Printer.Brand), InclusionOperator.In,
+                .HaveConstraint("Brand", InclusionOperator.In,
                     "Hijack", "Mecha-Print"
                 ).And
-                .HaveConstraint(nameof(Printer.PaperSize), ComparisonOperator.EQ, "Poster Board").And
+                .HaveConstraint("PaperSize", ComparisonOperator.EQ, "Poster Board").And
                 .HaveNoOtherConstraints();
         }
 
@@ -482,13 +471,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Aqueduct.WaterVolume))                // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("each of the allowed values*is disallowed")  // details / explanation
-                .WithMessageContaining("{ 200.1, 13.6237, 450.087798 }");           // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Aqueduct` → WaterVolume")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOfAllFailLengthChecks_IsError() {
@@ -500,13 +486,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SurvivorSeason.Location))             // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("each of the allowed values*is disallowed")  // details / explanation
-                .WithMessageContaining("{ \"Madagascar\", \"The Serengeti\" }");    // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`SurvivorSeason` → Location")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOfAllFailEitherComparisonOrLengthChecks_IsError() {
@@ -518,13 +501,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SurvivorSeason.Location))             // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("each of the allowed values*is disallowed")  // details / explanation
-                .WithMessageContaining("{ \"Thor\", \"Heimdallr\", \"Ymir\" }");    // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`NorseGod` → Name")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOfWithComparisons() {
@@ -537,17 +517,17 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(PostageStamp.Length), ComparisonOperator.GTE, 0.05).And
-                .HaveConstraint(nameof(PostageStamp.Length), InclusionOperator.NotIn,
+                .HaveConstraint("Length", ComparisonOperator.GTE, 0.05).And
+                .HaveConstraint("Length", InclusionOperator.NotIn,
                     0.05, 0.7712
                 ).And
-                .HaveConstraint(nameof(PostageStamp.Height), ComparisonOperator.GT, 0.01).And
-                .HaveConstraint(nameof(PostageStamp.Height), ComparisonOperator.LT, 2.37).And
-                .HaveConstraint(nameof(PostageStamp.Height), InclusionOperator.NotIn,
+                .HaveConstraint("Height", ComparisonOperator.GT, 0.01).And
+                .HaveConstraint("Height", ComparisonOperator.LT, 2.37).And
+                .HaveConstraint("Height", InclusionOperator.NotIn,
                     1.335, 2.012
                 ).And
-                .HaveConstraint(nameof(PostageStamp.Cost), ComparisonOperator.LTE, 1.0).And
-                .HaveConstraint(nameof(PostageStamp.Cost), InclusionOperator.NotIn,
+                .HaveConstraint("Cost", ComparisonOperator.LTE, 1.0).And
+                .HaveConstraint("Cost", InclusionOperator.NotIn,
                     0.25, 0.5, 0.75, 1.0
                 ).And
                 .HaveNoOtherConstraints();
@@ -563,8 +543,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Obelisk.Material), ComparisonOperator.GTE, 9).And
-                .HaveConstraint(nameof(Obelisk.Material), InclusionOperator.NotIn,
+                .HaveConstraint(FieldFunction.LengthOf, "Material", ComparisonOperator.GTE, 9).And
+                .HaveConstraint("Material", InclusionOperator.NotIn,
                     "Limestone", "Reinforced Steel"
                 ).And
                 .HaveNoOtherConstraints();
@@ -579,13 +559,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Beach.Coastline))                     // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("each of the allowed values*is disallowed")  // details / explanation
-                .WithMessageContaining("{ 75 }");                                   // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Beach` → Coastline")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConversionWithSignedness() {
@@ -598,13 +575,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Soup.Variety), InclusionOperator.In,
+                .HaveConstraint("Variety", InclusionOperator.In,
                     14, 177, 90
                 ).And
-                .HaveConstraint(nameof(Soup.HasNoodles), InclusionOperator.In,
+                .HaveConstraint("HasNoodles", InclusionOperator.In,
                     1, -1
                 ).And
-                .HaveConstraint(nameof(Soup.BrothProtein), InclusionOperator.In,
+                .HaveConstraint("BrothProtein", InclusionOperator.In,
                     -8124, -4, -99
                 ).And
                 .HaveNoOtherConstraints();
@@ -620,7 +597,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(CavePainting.Material), InclusionOperator.In,
+                .HaveConstraint("Material", InclusionOperator.In,
                     3, 4
                 ).And
                 .HaveNoOtherConstraints();
@@ -636,7 +613,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Triangle.Kind), InclusionOperator.In,
+                .HaveConstraint("Kind", InclusionOperator.In,
                     1, 2, 4, 8, 6, 10
                 ).And
                 .HaveNoOtherConstraints();
@@ -652,7 +629,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Casino.TopMoneyMaker), InclusionOperator.In,
+                .HaveConstraint("TopMoneyMaker", InclusionOperator.In,
                     "Poker", "Craps", "Roulette", "Pachinko"
                 ).And
                 .HaveNoOtherConstraints();
@@ -668,7 +645,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(FacebookPost.Visibility), InclusionOperator.In,
+                .HaveConstraint("Visibility", InclusionOperator.In,
                     "Private", "FriendsOnly", "Subscribers"
                 ).And
                 .HaveNoOtherConstraints();
@@ -684,7 +661,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(ZodiacSign.SignSeason), InclusionOperator.In,
+                .HaveConstraint("SignSeason", InclusionOperator.In,
                     "Summer", "Autumn"
                 ).And
                 .HaveNoOtherConstraints();

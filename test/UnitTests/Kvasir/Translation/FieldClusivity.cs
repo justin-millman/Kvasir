@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.FieldClusivity;
@@ -17,10 +16,10 @@ namespace UT.Kvasir.Translation {
             var translation = () => translator[source];
 
             // Assert
-            translation.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("at least 2 Fields")                         // details / explanation
-                .WithMessageContaining("0 found");                                  // details / explanation
+            translation.Should().FailWith<NotEnoughFieldsException>()
+                .WithLocation("`Nothing`")
+                .WithProblem("expected at least 2 Fields, but found 0")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityHasOneField_IsError() {
@@ -32,10 +31,10 @@ namespace UT.Kvasir.Translation {
             var translation = () => translator[source];
 
             // Assert
-            translation.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("at least 2 Fields required")                // details / explanation
-                .WithMessageContaining("1 found");                                  // details / explanation
+            translation.Should().FailWith<NotEnoughFieldsException>()
+                .WithLocation("`Integer`")
+                .WithProblem("expected at least 2 Fields, but found 1")
+                .EndMessage();
         }
 
         [TestMethod] public void AggregateHasZeroFields_IsError() {
@@ -47,10 +46,10 @@ namespace UT.Kvasir.Translation {
             var translation = () => translator[source];
 
             // Assert
-            translation.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(nameof(TotemPole.Festival))                  // source type
-                .WithMessageContaining("at least 1 Field")                          // details / explanation
-                .WithMessageContaining("0 found");                                  // details / explanation
+            translation.Should().FailWith<NotEnoughFieldsException>()
+                .WithLocation("`TotemPole` → `Festival` (from \"Dedication\")")
+                .WithProblem("expected at least 1 Field, but found 0")
+                .EndMessage();
         }
 
         [TestMethod] public void NonPublicPropertiesAreExcluded() {
@@ -63,8 +62,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Animal.Genus)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Animal.Species)).OfTypeText().BeingNonNullable().And
+                .HaveField("Genus").OfTypeText().BeingNonNullable().And
+                .HaveField("Species").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -78,8 +77,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(ScrabbleTile.Letter)).OfTypeCharacter().BeingNonNullable().And
-                .HaveField(nameof(ScrabbleTile.Value)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Letter").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("Value").OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -93,8 +92,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(ChemicalElement.Symbol)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(ChemicalElement.NumAllotropes)).OfTypeInt8().BeingNonNullable().And
+                .HaveField("Symbol").OfTypeText().BeingNonNullable().And
+                .HaveField("NumAllotropes").OfTypeInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -108,9 +107,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Circle.CenterX)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(Circle.CenterY)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(Circle.Radius)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("CenterX").OfTypeInt32().BeingNonNullable().And
+                .HaveField("CenterY").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Radius").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -124,8 +123,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(BattingOrder.GameID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(BattingOrder.Team)).OfTypeText().BeingNonNullable().And
+                .HaveField("GameID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Team").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -139,9 +138,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(QuadraticEquation.QuadraticCoefficient)).OfTypeInt64().BeingNonNullable().And
-                .HaveField(nameof(QuadraticEquation.LinearCoefficient)).OfTypeInt64().BeingNonNullable().And
-                .HaveField(nameof(QuadraticEquation.Constant)).OfTypeInt64().BeingNonNullable().And
+                .HaveField("QuadraticCoefficient").OfTypeInt64().BeingNonNullable().And
+                .HaveField("LinearCoefficient").OfTypeInt64().BeingNonNullable().And
+                .HaveField("Constant").OfTypeInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -167,9 +166,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(GreekGod.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(GreekGod.RomanEquivalent)).OfTypeText().BeingNullable().And
-                .HaveField(nameof(GreekGod.NumChildren)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("RomanEquivalent").OfTypeText().BeingNullable().And
+                .HaveField("NumChildren").OfTypeUInt32().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -183,10 +182,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Movie.ID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Movie.Release)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Movie.Runtime)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(Movie.Director)).OfTypeText().BeingNonNullable().And
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Release").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Runtime").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Director").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -200,8 +199,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Holiday.Date)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Holiday.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("Date").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -215,8 +214,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(POBox.POBoxNumber)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(POBox.KnownAs)).OfTypeText().BeingNullable().And
+                .HaveField("POBoxNumber").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("KnownAs").OfTypeText().BeingNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -230,10 +229,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(FighterJet.Type)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(FighterJet.Nickname)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(FighterJet.FirstFlight)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(FighterJet.Capacity)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Type").OfTypeText().BeingNonNullable().And
+                .HaveField("Nickname").OfTypeText().BeingNonNullable().And
+                .HaveField("FirstFlight").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Capacity").OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -246,10 +245,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("indexer")                                   // error location
-                .WithMessageContaining("[IncludeInModel]");                         // category
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Language` → this[]")
+                .WithProblem("an indexer cannot be included in the data model")
+                .EndMessage();
         }
 
         [TestMethod] public void IncludeInModel_PublicWriteOnlyProperty_IsError() {
@@ -261,11 +260,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HebrewPrayer.OnShabbat))              // error location
-                .WithMessageContaining("[IncludeInModel]")                          // category
-                .WithMessageContaining("write-only");                               // details / explanation
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`HebrewPrayer` → OnShabbat")
+                .WithProblem("a write-only property cannot be included in the data model")
+                .EndMessage();
         }
 
         [TestMethod] public void IncludeInModel_PublicStaticProperty() {
@@ -278,10 +276,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(ChessPiece.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(ChessPiece.Icon)).OfTypeCharacter().BeingNonNullable().And
-                .HaveField(nameof(ChessPiece.Value)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(ChessPiece.FIDE)).OfTypeText().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Icon").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("Value").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("FIDE").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -295,8 +293,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Song.Title)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Song.Artist)).OfTypeText().BeingNonNullable().And
+                .HaveField("Title").OfTypeText().BeingNonNullable().And
+                .HaveField("Artist").OfTypeText().BeingNonNullable().And
                 .HaveField("Album").OfTypeText().BeingNullable().And
                 .HaveField("Length").OfTypeUInt16().BeingNonNullable().And
                 .HaveField("ReleaseYear").OfTypeUInt16().BeingNonNullable().And
@@ -315,12 +313,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Country.Exonym)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Country.Endonym)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Country.IndependenceDay)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Country.Population)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Country.LandArea)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Country.Coastline)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Exonym").OfTypeText().BeingNonNullable().And
+                .HaveField("Endonym").OfTypeText().BeingNonNullable().And
+                .HaveField("IndependenceDay").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Population").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("LandArea").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Coastline").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -334,8 +332,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Book.ISBN)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Book.Title)).OfTypeText().BeingNonNullable().And
+                .HaveField("ISBN").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Title").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -349,9 +347,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Drum.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Drum.UseDrumsticks)).OfTypeBoolean().BeingNonNullable().And
-                .HaveField(nameof(Drum.LowestKey)).OfTypeText().BeingNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("UseDrumsticks").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("LowestKey").OfTypeText().BeingNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -365,12 +363,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(BasicDiceRoll.RollID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(IDiceRoll.NumDice)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(IDiceRoll.DiceSides)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(IDiceRoll.Plus)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(IDiceRoll.Advantage)).OfTypeBoolean().BeingNonNullable().And
-                .HaveField(nameof(IDiceRoll.Disadvantage)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("RollID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("NumDice").OfTypeInt32().BeingNonNullable().And
+                .HaveField("DiceSides").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Plus").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Advantage").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Disadvantage").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -384,10 +382,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(IAthlete.InternationalAthleteIdentifier)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Wrestler.BirthName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Wrestler.RingName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Wrestler.WWETitles)).OfTypeInt32().BeingNonNullable().And
+                .HaveField("InternationalAthleteIdentifier").OfTypeGuid().BeingNonNullable().And
+                .HaveField("BirthName").OfTypeText().BeingNonNullable().And
+                .HaveField("RingName").OfTypeText().BeingNonNullable().And
+                .HaveField("WWETitles").OfTypeInt32().BeingNonNullable().And
                 .HaveField("Bio.Height").OfTypeDouble().BeingNonNullable().And
                 .HaveField("Bio.Weight").OfTypeDouble().BeingNonNullable().And
                 .HaveField("Bio.DOB").OfTypeDateTime().BeingNonNullable().And
@@ -404,8 +402,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(IPAddress.Value)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(IPAddress.Version)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Value").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Version").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -419,12 +417,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Submarine.Identifier)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Submarine.Class)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Submarine.Commissioned)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Submarine.IsActive)).OfTypeBoolean().BeingNonNullable().And
-                .HaveField(nameof(Submarine.CrewMembers)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(Submarine.Weight)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Identifier").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Class").OfTypeText().BeingNonNullable().And
+                .HaveField("Commissioned").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("IsActive").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("CrewMembers").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Weight").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -438,10 +436,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(CourtCase.Volume)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(CourtCase.CasePage)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(CourtCase.Plaintiff)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(CourtCase.Defendant)).OfTypeText().BeingNonNullable().And
+                .HaveField("Volume").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("CasePage").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Plaintiff").OfTypeText().BeingNonNullable().And
+                .HaveField("Defendant").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -455,9 +453,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Lake.Latitude)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Lake.Longitude)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Lake.SurfaceArea)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Latitude").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("Longitude").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("SurfaceArea").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -471,10 +469,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Mountain.Exoynym)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Mountain.Latitude)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Mountain.Longitude)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Mountain.SevenSummits)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Exonym").OfTypeText().BeingNonNullable().And
+                .HaveField("Latitude").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("Longitude").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("SevenSummits").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -488,11 +486,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Tossup.ID)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(Tossup.LocationCode)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Tossup.SubjectCode)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Tossup.TimeCode)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Tossup.Body)).OfTypeText().BeingNonNullable().And
+                .HaveField("ID").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("LocationCode").OfTypeText().BeingNonNullable().And
+                .HaveField("SubjectCode").OfTypeText().BeingNonNullable().And
+                .HaveField("TimeCode").OfTypeText().BeingNonNullable().And
+                .HaveField("Body").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -506,11 +504,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(University.System)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(University.Campus)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(University.UndergradEnrollment)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(University.GraduateEnrollment)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(University.Endowment)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("System").OfTypeText().BeingNonNullable().And
+                .HaveField("Campus").OfTypeText().BeingNonNullable().And
+                .HaveField("UndergradEnrollment").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("GraduateEnrollment").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Endowment").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -524,11 +522,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Haiku.Title)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Haiku.Author)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Haiku.Line1)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Haiku.Line2)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Haiku.Line3)).OfTypeText().BeingNonNullable().And
+                .HaveField("Title").OfTypeText().BeingNonNullable().And
+                .HaveField("Author").OfTypeText().BeingNonNullable().And
+                .HaveField("Line1").OfTypeText().BeingNonNullable().And
+                .HaveField("Line2").OfTypeText().BeingNonNullable().And
+                .HaveField("Line3").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -541,12 +539,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CreditCard.CVV))                      // error location
-                .WithMessageContaining("mutually exclusive")                        // category
-                .WithMessageContaining("[IncludeInModel]")                          // details / explanation
-                .WithMessageContaining("[CodeOnly]");                               // details / explanation
+            translate.Should().FailWith<ConflictingAnnotationsException>()
+                .WithLocation("`CreditCard` → CVV")
+                .WithProblem("the two annotations are mutually exclusive")
+                .WithAnnotations("[IncludeInModel]", "[CodeOnly]")
+                .EndMessage();
         }
     }
 }

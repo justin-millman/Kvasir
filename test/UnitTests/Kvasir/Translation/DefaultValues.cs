@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -19,11 +18,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(BloodType.ABO)).WithDefault("O").And
-                .HaveField(nameof(BloodType.RHPositive)).WithDefault(true).And
-                .HaveField(nameof(BloodType.ApproxPrevalence)).WithDefault(0.5f).And
-                .HaveField(nameof(BloodType.NumSubgroups)).WithDefault(1).And
-                .HaveField(nameof(BloodType.AnnualDonationsL)).WithNoDefault().And
+                .HaveField("ABO").WithDefault("O").And
+                .HaveField("RHPositive").WithDefault(true).And
+                .HaveField("ApproxPrevalence").WithDefault(0.5f).And
+                .HaveField("NumSubgroups").WithDefault(1).And
+                .HaveField("AnnualDonationsL").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -37,13 +36,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Bestiary.ISBN)).WithNoDefault().And
-                .HaveField(nameof(Bestiary.Title)).WithNoDefault().And
-                .HaveField(nameof(Bestiary.Author)).WithNoDefault().And
-                .HaveField(nameof(Bestiary.MarketValue)).WithDefault((decimal)35.78).And
-                .HaveField(nameof(Bestiary.NumPages)).WithNoDefault().And
-                .HaveField(nameof(Bestiary.Published)).WithNoDefault().And
-                .HaveField(nameof(Bestiary.NumBeasts)).WithNoDefault().And
+                .HaveField("ISBN").WithNoDefault().And
+                .HaveField("Title").WithNoDefault().And
+                .HaveField("Author").WithNoDefault().And
+                .HaveField("MarketValue").WithDefault((decimal)35.78).And
+                .HaveField("NumPages").WithNoDefault().And
+                .HaveField("Published").WithNoDefault().And
+                .HaveField("NumBeasts").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -57,11 +56,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Umpire.UniqueUmpireNumber)).WithNoDefault().And
-                .HaveField(nameof(Umpire.UniformNumber)).WithNoDefault().And
-                .HaveField(nameof(Umpire.Name)).WithNoDefault().And
-                .HaveField(nameof(Umpire.Debut)).WithDefault(new DateTime(1970, 1, 1)).And
-                .HaveField(nameof(Umpire.Ejections)).WithNoDefault().And
+                .HaveField("UniqueUmpireNumber").WithNoDefault().And
+                .HaveField("UniformNumber").WithNoDefault().And
+                .HaveField("Name").WithNoDefault().And
+                .HaveField("Debut").WithDefault(new DateTime(1970, 1, 1)).And
+                .HaveField("Ejections").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -75,11 +74,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Saint.SainthoodIdentifier)).WithDefault(new Guid("81a130d2-502f-4cf1-a376-63edeb000e9f")).And
-                .HaveField(nameof(Saint.Name)).WithNoDefault().And
-                .HaveField(nameof(Saint.CanonizationDate)).WithNoDefault().And
-                .HaveField(nameof(Saint.FeastMonth)).WithNoDefault().And
-                .HaveField(nameof(Saint.FeastDay)).WithNoDefault().And
+                .HaveField("SainthoodIdentifier").WithDefault(new Guid("81a130d2-502f-4cf1-a376-63edeb000e9f")).And
+                .HaveField("Name").WithNoDefault().And
+                .HaveField("CanonizationDate").WithNoDefault().And
+                .HaveField("FeastMonth").WithNoDefault().And
+                .HaveField("FeastDay").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -93,29 +92,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Oceanid.Name)).WithNoDefault().And
-                .HaveField(nameof(Oceanid.Greek)).WithNoDefault().And
-                .HaveField(nameof(Oceanid.MentionedIn)).WithDefault(Oceanid.Source.Hesiod | Oceanid.Source.Hyginus).And
-                .HaveField(nameof(Oceanid.NumChildren)).WithNoDefault().And
+                .HaveField("Name").WithNoDefault().And
+                .HaveField("Greek").WithNoDefault().And
+                .HaveField("MentionedIn").WithDefault(Oceanid.Source.Hesiod | Oceanid.Source.Hyginus).And
+                .HaveField("NumChildren").WithNoDefault().And
                 .HaveNoOtherFields();
-        }
-
-        [TestMethod] public void NonNullInvalidEnumerationDefault_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(HallOfFame);
-
-            // Act
-            var translate = () => translator[source];
-
-            // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HallOfFame.Categorization))           // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("Category.185")                              // details / explanation
-                .WithMessageContaining("enumerator is invalid");                    // details / explanation
         }
 
         [TestMethod] public void NullDefaultsOnNullableScalars() {
@@ -128,11 +109,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Pepper.Genus)).WithNoDefault().And
-                .HaveField(nameof(Pepper.Species)).WithNoDefault().And
-                .HaveField(nameof(Pepper.CommonName)).WithDefault(null).And
-                .HaveField(nameof(Pepper.FirstCultivated)).WithDefault(null).And
-                .HaveField(nameof(Pepper.ScovilleRating)).WithNoDefault().And
+                .HaveField("Genus").WithNoDefault().And
+                .HaveField("Species").WithNoDefault().And
+                .HaveField("CommonName").WithDefault(null).And
+                .HaveField("FirstCultivated").WithDefault(null).And
+                .HaveField("ScovilleRating").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -146,11 +127,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Cryptid.Name)).WithNoDefault().And
-                .HaveField(nameof(Cryptid.AllegedSightings)).WithNoDefault().And
-                .HaveField(nameof(Cryptid.HomeContinent)).WithDefault(null).And
-                .HaveField(nameof(Cryptid.FeatureSet)).WithDefault(null).And
-                .HaveField(nameof(Cryptid.ProvenHoax)).WithNoDefault().And
+                .HaveField("Name").WithNoDefault().And
+                .HaveField("AllegedSightings").WithNoDefault().And
+                .HaveField("HomeContinent").WithDefault(null).And
+                .HaveField("FeatureSet").WithDefault(null).And
+                .HaveField("ProvenHoax").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -164,14 +145,14 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Sermon.Clergy)).WithNoDefault().And
-                .HaveField(nameof(Sermon.DeliveredAt)).WithNoDefault().And
-                .HaveField(nameof(Sermon.Title)).WithNoDefault().And
-                .HaveField(nameof(Sermon.Text)).WithNoDefault().And
+                .HaveField("Clergy").WithNoDefault().And
+                .HaveField("DeliveredAt").WithNoDefault().And
+                .HaveField("Title").WithNoDefault().And
+                .HaveField("Text").WithNoDefault().And
                 .HaveField("HouseOfWorship.Name").WithNoDefault().And
                 .HaveField("HouseOfWorship.Address").WithNoDefault().And
                 .HaveField("HouseOfWorship.CongregationSize").WithDefault(1756102UL).And
-                .HaveField(nameof(Sermon.ForHoliday)).WithNoDefault().And
+                .HaveField("ForHoliday").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -185,11 +166,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Salsa.SalsaName)).WithNoDefault().And
+                .HaveField("SalsaName").WithNoDefault().And
                 .HaveField("PrimaryPepper.Name").WithNoDefault().And
                 .HaveField("PrimaryPepper.ScovilleRating").WithDefault(10000U).And
-                .HaveField(nameof(Salsa.Verde)).WithNoDefault().And
-                .HaveField(nameof(Salsa.ClovesGarlic)).WithNoDefault().And
+                .HaveField("Verde").WithNoDefault().And
+                .HaveField("ClovesGarlic").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -203,7 +184,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Bicycle.BikeID)).WithNoDefault().And
+                .HaveField("BikeID").WithNoDefault().And
                 .HaveField("FrontWheel.Diameter").WithNoDefault().And
                 .HaveField("FrontWheel.NumSpokes").WithNoDefault().And
                 .HaveField("FrontWheel.Material.Metal1").WithNoDefault().And
@@ -216,8 +197,8 @@ namespace UT.Kvasir.Translation {
                 .HaveField("SpareWheel.NumSpokes").WithNoDefault().And
                 .HaveField("SpareWheel.Material.Metal1").WithNoDefault().And
                 .HaveField("SpareWheel.Material.Metal2").WithDefault(null).And
-                .HaveField(nameof(Bicycle.Gears)).WithNoDefault().And
-                .HaveField(nameof(Bicycle.TopSpeed)).WithNoDefault().And
+                .HaveField("Gears").WithNoDefault().And
+                .HaveField("TopSpeed").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -231,13 +212,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Arch.ArchID)).WithNoDefault().And
-                .HaveField(nameof(Arch.Material)).WithNoDefault().And
-                .HaveField(nameof(Arch.Height)).WithNoDefault().And
-                .HaveField(nameof(Arch.Diameter)).WithNoDefault().And
+                .HaveField("ArchID").WithNoDefault().And
+                .HaveField("Material").WithNoDefault().And
+                .HaveField("Height").WithNoDefault().And
+                .HaveField("Diameter").WithNoDefault().And
                 .HaveField("Location.Latitude").WithNoDefault().And
                 .HaveField("Location.Longitude").WithNoDefault().And
-                .HaveField(nameof(Arch.KeystoneID)).WithNoDefault().And
+                .HaveField("KeystoneID").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -251,13 +232,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Kite.KiteID)).WithNoDefault().And
+                .HaveField("KiteID").WithNoDefault().And
                 .HaveField("KiteString.BallSource").WithNoDefault().And
                 .HaveField("KiteString.CutNumber").WithDefault((ushort)31).And
-                .HaveField(nameof(Kite.MajorAxis)).WithNoDefault().And
-                .HaveField(nameof(Kite.MinorAxis)).WithNoDefault().And
-                .HaveField(nameof(Kite.Material)).WithNoDefault().And
-                .HaveField(nameof(Kite.TopSpeed)).WithNoDefault().And
+                .HaveField("MajorAxis").WithNoDefault().And
+                .HaveField("MinorAxis").WithNoDefault().And
+                .HaveField("Material").WithNoDefault().And
+                .HaveField("TopSpeed").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -271,9 +252,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(EscapeRoom.RoomID)).WithNoDefault().And
-                .HaveField(nameof(EscapeRoom.TimeLimit)).WithNoDefault().And
-                .HaveField(nameof(EscapeRoom.BestTime)).WithNoDefault().And
+                .HaveField("RoomID").WithNoDefault().And
+                .HaveField("TimeLimit").WithNoDefault().And
+                .HaveField("BestTime").WithNoDefault().And
                 .HaveField("FirstPuzzle.Description").WithNoDefault().And
                 .HaveField("FirstPuzzle.PuzzleType").WithDefault(EscapeRoom.Style.Linguistic).And
                 .HaveField("FinalPuzzle.Description").WithNoDefault().And
@@ -281,7 +262,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void DefaultOnRelationNestedFieldMaybePropagated() {
+        [TestMethod] public void DefaultOnRelationNestedFieldPropagated() {
             // Arrange
             var translator = new Translator();
             var source = typeof(DockerContainer);
@@ -348,12 +329,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RadioStation.CallSign))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`RadioStation` → CallSign")
+                .WithProblem("the default value is 'null', but the Field is non-nullable")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void InconvertibleNonNullDefaultValue_IsError() {
@@ -365,13 +345,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Battleship.Length))                   // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"\"100 feet\" of type {nameof(String)}")    // details / explanation
-                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Battleship` → Length")
+                .WithProblem("value \"100 feet\" is of type `string`, not `ushort` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void ConvertibleNonNullDefaultValue_IsError() {
@@ -383,54 +361,46 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(County.Population))                   // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"5000000 of type {nameof(Int32)}")          // details / explanation
-                .WithMessageContaining(nameof(UInt64));                             // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`County` → Population")
+                .WithProblem("value 5000000 is of type `int`, not `ulong` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void EnumerationDefaultOnNumericChangedField_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(MasterClass);
-            var enumTypename = nameof(MasterClass.Domain);
 
             // Act
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MasterClass.Category))                // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"Domain.Politics of type {enumTypename}")   // details / explanation
-                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`MasterClass` → Category")
+                .WithProblem("value Domain.Politics is of type `Domain`, not `ushort` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void EnumerationDefaultOnStringChangedField_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Orphanage);
-            var enumTypename = nameof(Orphanage.Kind);
 
             // Act
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Orphanage.Type))                      // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"Kind.Private of type {enumTypename}")      // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Orphanage` → Type")
+                .WithProblem("value Kind.Private is of type `Kind`, not `string` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
-        [TestMethod] public void DefaultOnNetedAggregate_IsError() {
+        [TestMethod] public void DefaultOnNestedAggregate_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(StuffedAnimal);
@@ -439,12 +409,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(StuffedAnimal.Description))           // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"Stuffing\"");                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`StuffedAnimal` → Description")
+                .WithPath("Face")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Face`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DefaultOnNestedReference_IsError() {
@@ -456,12 +426,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PoetLaureate.Of))                     // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"Entity\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PoetLaureate` → Of")
+                .WithPath("Entity")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `State`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DefaultOnNestedRelation_IsError() {
@@ -473,12 +443,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TimeTraveler.TimeMachine))            // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"Owners\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TimeTraveler` → TimeMachine")
+                .WithPath("Owners")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void ArrayDefaultValue_IsError() {
@@ -490,13 +460,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BilliardBall.Number))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`BilliardBall` → Number")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DecimalDefaultIsNotDouble_IsError() {
@@ -508,14 +476,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Geocache.NetTrinketValue))            // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"45109.336 of type {nameof(Single)}")       // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Geocache` → NetTrinketValue")
+                .WithProblem("value 45109.336 is of type `float`, not `double` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DecimalDefaultIsOutOfRange_IsError() {
@@ -527,14 +492,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Screwdriver.HeadWidth))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining(double.MaxValue.ToString())                  // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Screwdriver` → HeadWidth")
+                .WithProblem($"`double` {double.MaxValue} is outside the supported range for `decimal`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DateTimeDefaultIsNotString_IsError() {
@@ -546,14 +508,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RomanEmperor.ReignEnd))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"true of type {nameof(Boolean)}")           // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`RomanEmperor` → ReignEnd")
+                .WithProblem("value true is of type `bool`, not `string` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DateTimeDefaultIsMalformatted_IsError() {
@@ -565,14 +524,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Tournament.Kickoff))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"20030714\"")                              // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Tournament` → Kickoff")
+                .WithProblem("unable to parse `string` value \"20030714\" as a `DateTime`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DateTimeDefaultIsOutOfRange_IsError() {
@@ -584,14 +540,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Sculpture.CreationDate))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"1344-18-18\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Sculpture` → CreationDate")
+                .WithProblem("unable to parse `string` value \"1344-18-18\" as a `DateTime`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void GuidDefaultIsNotString_IsError() {
@@ -603,14 +556,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HogwartsHouse.TermIndex))             // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"'^' of type {nameof(Char)}")               // details / explanation
-                .WithMessageContaining(nameof(Guid))                                // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`HogwartsHouse` → TermIndex")
+                .WithProblem("value '^' is of type `char`, not `string` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void GuidDefaultIsMalformatted_IsError() {
@@ -620,17 +570,13 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var translate = () => translator[source];
-            var badGuid = "ee98f44827b248a2bb9fc5ef342e7ab2!!!";
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Gene.UUID))                           // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining(badGuid)                                     // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Gene` → UUID")
+                .WithProblem("unable to parse `string` value \"ee98f44827b248a2bb9fc5ef342e7ab2!!!\" as a `Guid`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void EnumerationDefaultIsInvalidEnumerator_IsError() {
@@ -642,13 +588,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MoonOfJupiter.MoonGroup))             // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("Group.87123")                               // details / explanation
-                .WithMessageContaining("enumerator is invalid");                    // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`MoonOfJupiter` → MoonGroup")
+                .WithProblem("enumerator Group.87123 is not valid")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void EnumerationDefaultIsInvalidCombination_IsError() {
@@ -660,13 +604,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Newspaper.Contents))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("Section.15")                                // details / explanation
-                .WithMessageContaining("enumerator is invalid");                    // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Newspaper` → Contents")
+                .WithProblem("enumerator Section.15 is not valid")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DefaultMatchesDataConversionSourceType_IsError() {
@@ -678,13 +620,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CrosswordClue.AcrossOrDown))          // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining($"'A' of type {nameof(Char)}")               // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`CrosswordClue` → AcrossOrDown")
+                .WithProblem("value 'A' is of type `char`, not `int` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void DefaultMatchesDataConversionTargetType() {
@@ -697,12 +637,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Coupon.Barcode)).WithNoDefault().And
-                .HaveField(nameof(Coupon.Code)).WithNoDefault().And
-                .HaveField(nameof(Coupon.IsBOGO)).WithDefault(0).And
-                .HaveField(nameof(Coupon.DiscountPercentage)).WithNoDefault().And
-                .HaveField(nameof(Coupon.MinimumPurchase)).WithNoDefault().And
-                .HaveField(nameof(Coupon.ExpirationDate)).WithNoDefault().And
+                .HaveField("Barcode").WithNoDefault().And
+                .HaveField("Code").WithNoDefault().And
+                .HaveField("IsBOGO").WithDefault(0).And
+                .HaveField("DiscountPercentage").WithNoDefault().And
+                .HaveField("MinimumPurchase").WithNoDefault().And
+                .HaveField("ExpirationDate").WithNoDefault().And
                 .HaveNoOtherFields();
         }
 
@@ -715,11 +655,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SkeeBall.L1Value))                    // error location
-                .WithMessageContaining("annotation is duplicated")                  // category
-                .WithMessageContaining("[Default]");                                // details / explanation
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`SkeeBall` → L1Value")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void PathIsNull_IsError() {
@@ -731,11 +671,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Waterfall.WorldRanking))              // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Default]");                                // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Waterfall` → WorldRanking")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void PathOnScalar_IsError() {
@@ -747,12 +687,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NativeAmericanTribe.Exonym))          // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`NativeAmericanTribe` → Exonym")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnAggregate_IsError() {
@@ -764,12 +703,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TourDeFrance.Victor))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`TourDeFrance` → Victor")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NoPathOnAggregate_IsError() {
@@ -781,11 +719,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(nameof(InfinityStone.Descriptor))            // source type
-                .WithMessageContaining(nameof(InfinityStone.Descriptor.Color))      // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Default]");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`InfinityStone` → `Descriptor` (from \"Description\") → Color")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Color`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnReference_IsError() {
@@ -797,12 +735,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hepatitis.Treatment))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Hepatitis` → Treatment")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonPrimaryKeyPathOnReference_IsError() {
@@ -814,12 +751,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Calculator.MakeModel))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"IsInCirculation\"");                      // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Calculator` → MakeModel")
+                .WithProblem("the path \"IsInCirculation\" does not exist")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NoPathOnReference_IsError() {
@@ -831,11 +767,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PopTart.FrostingColor))               // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Default]");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PopTart` → FrostingColor")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Color`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnRelation_IsError() {
@@ -847,12 +783,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ArcadeGame.HighScores))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ArcadeGame` → <synthetic> `HighScores`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -864,12 +799,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Monad.Traits))                        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Default]")                                 // details / explanation
-                .WithMessageContaining("\"ModelsOption\"");                         // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Monad` → <synthetic> `Traits`")
+                .WithProblem("the path \"Monad.ModelsOption\" does not exist")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
 
         [TestMethod] public void NoPathOnRelation_IsError() {
@@ -881,11 +815,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LaundryDetergent.Ingredients))        // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Default]");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LaundryDetergent` → <synthetic> `Ingredients`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
         }
     }
 }

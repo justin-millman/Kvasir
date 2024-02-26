@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.Nullability;
@@ -19,13 +18,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Timestamp.UnixSinceEpoch)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Timestamp.Hour)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(Timestamp.Minute)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(Timestamp.Second)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(Timestamp.Millisecond)).OfTypeUInt16().BeingNullable().And
-                .HaveField(nameof(Timestamp.Microsecond)).OfTypeUInt16().BeingNullable().And
-                .HaveField(nameof(Timestamp.Nanosecond)).OfTypeUInt16().BeingNullable().And
+                .HaveField("UnixSinceEpoch").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Hour").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Minute").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Second").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Millisecond").OfTypeUInt16().BeingNullable().And
+                .HaveField("Microsecond").OfTypeUInt16().BeingNullable().And
+                .HaveField("Nanosecond").OfTypeUInt16().BeingNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -39,13 +38,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Bankruptcy.Filing)).OfTypeGuid().BeingNonNullable().And
+                .HaveField("Filing").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Company.Name").OfTypeText().BeingNullable().And
                 .HaveField("Company.Founded").OfTypeDateTime().BeingNullable().And
                 .HaveField("Company.TickerSymbol").OfTypeText().BeingNullable().And
-                .HaveField(nameof(Bankruptcy.Chapter)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(Bankruptcy.TotalDebt)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Bankruptcy.NumCreditors)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Chapter").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("TotalDebt").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("NumCreditors").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -59,12 +58,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Jukebox.ProductID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Jukebox.NumSongs)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField("ProductID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("NumSongs").OfTypeUInt16().BeingNonNullable().And
                 .HaveField("MostPlayed.Title").OfTypeText().BeingNullable().And
                 .HaveField("MostPlayed.Singer").OfTypeText().BeingNullable().And
-                .HaveField(nameof(Jukebox.CostPerPlay)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Jukebox.IsDigital)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("CostPerPlay").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("IsDigital").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("MostPlayed.Singer", "MostPlayed.Title")
                     .Against(translator[typeof(Jukebox.Song)].Principal.Table)
@@ -83,10 +82,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Bone.TA2)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(Bone.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Bone.LatinName)).OfTypeText().BeingNullable().And
-                .HaveField(nameof(Bone.MeSH)).OfTypeText().BeingNonNullable().And
+                .HaveField("TA2").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("LatinName").OfTypeText().BeingNullable().And
+                .HaveField("MeSH").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -100,8 +99,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Orchestra.ID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Orchestra.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
                 .HaveField("Composition.Strings.Violins").OfTypeUInt32().BeingNullable().And
                 .HaveField("Composition.Strings.Violas").OfTypeUInt32().BeingNonNullable().And
                 .HaveField("Composition.Strings.Cellos").OfTypeUInt32().BeingNonNullable().And
@@ -128,15 +127,15 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Bodhisattva.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Bodhisattva.Buddhism)).OfTypeEnumeration(
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Buddhism").OfTypeEnumeration(
                     Bodhisattva.Denomination.Nikaya,
                     Bodhisattva.Denomination.Theravada,
                     Bodhisattva.Denomination.Mahayana
                 ).BeingNonNullable().And
                 .HaveField("LastBhumi.English").OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Bodhisattva.DateOfBirth)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Bodhisattva.DateOfDeath)).OfTypeDateTime().BeingNonNullable().And
+                .HaveField("DateOfBirth").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("DateOfDeath").OfTypeDateTime().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("LastBhumi.English")
                     .Against(translator[typeof(Bodhisattva.Bhumi)].Principal.Table)
@@ -155,11 +154,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(CivMilitaryUnit.Identifier)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(CivMilitaryUnit.Promotion)).OfTypeText().BeingNullable().And
-                .HaveField(nameof(CivMilitaryUnit.MeleeStrength)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(CivMilitaryUnit.RangedStrength)).OfTypeUInt8().BeingNullable().And
-                .HaveField(nameof(CivMilitaryUnit.IsUnique)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Identifier").OfTypeText().BeingNonNullable().And
+                .HaveField("Promotion").OfTypeText().BeingNullable().And
+                .HaveField("MeleeStrength").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("RangedStrength").OfTypeUInt8().BeingNullable().And
+                .HaveField("IsUnique").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -173,10 +172,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Patent.DocumentID)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Patent.PublicationDate)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Patent.Description)).OfTypeText().BeingNullable().And
-                .HaveField(nameof(Patent.ApplicationNumber)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("DocumentID").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("PublicationDate").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Description").OfTypeText().BeingNullable().And
+                .HaveField("ApplicationNumber").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -189,12 +188,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RetailProduct.SalePrice))             // error location
-                .WithMessageContaining("mutually exclusive")                        // category
-                .WithMessageContaining("[Nullable]")                                // details / explanation
-                .WithMessageContaining("[NonNullable]");                            // details / explanation
+            translate.Should().FailWith<ConflictingAnnotationsException>()
+                .WithLocation("`RetailProduct` → SalePrice")
+                .WithProblem("the two annotations are mutually exclusive")
+                .WithAnnotations("[Nullable]", "[NonNullable]")
+                .EndMessage();
         }
 
         [TestMethod] public void NativelyNullableAggregateContainsOnlyNullableFields_IsError() {
@@ -206,10 +204,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Waffle.Toppings))                     // error location
-                .WithMessageContaining("nullability of Aggregate is ambiguous");    // category
+            translate.Should().FailWith<AmbiguousNullabilityException>()
+                .WithLocation("`Waffle` → Toppings")
+                .WithProblem("the property cannot be nullable because all nested Fields are already nullable")
+                .EndMessage();
         }
 
         [TestMethod] public void AnnotatedNullableAggregateContainsOnlyNullableFields_IsError() {
@@ -221,10 +219,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(iPhone.iOSVersion))                   // error location
-                .WithMessageContaining("nullability of Aggregate is ambiguous");    // category
+            translate.Should().FailWith<AmbiguousNullabilityException>()
+                .WithLocation("`iPhone` → iOSVersion")
+                .WithProblem("the property cannot be nullable because all nested Fields are already nullable")
+                .WithAnnotations("[Nullable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationWithNullableElements() {
@@ -297,10 +296,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("Item")                                      // error location
-                .WithMessageContaining("nullability of Aggregate is ambiguous");    // category
+            translate.Should().FailWith<AmbiguousNullabilityException>()
+                .WithLocation("`Parabola` → <synthetic> `Points`")
+                .WithProblem("the property cannot be nullable because all nested Fields are already nullable")
+                .WithAnnotations("[Nullable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationMarkedNonNullable_Redundant() {
@@ -336,11 +336,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Axiom.DerivedTheories))               // error location
-                .WithMessageContaining("[Nullable]")                                // details / explanation
-                .WithMessageContaining("Relation");                                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Axiom` → <synthetic> `DerivedTheories`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Nullable]");
         }
     }
 }

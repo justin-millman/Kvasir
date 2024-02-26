@@ -1,6 +1,5 @@
 ﻿using Cybele.Extensions;
 using FluentAssertions.Execution;
-using Kvasir.Annotations;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -71,7 +70,7 @@ namespace FluentAssertions {
                 return new CandidateKeysAssertion(Subject.CandidateKeys, checkedKeys_, this).ThatIsAnonymous();
             }
             [CustomAssertion] public And HaveNoOtherCandidateKeys() {
-                var missing = string.Join(", ", Subject.CandidateKeys.Select(k => k.Name.Unwrap()).Where(n => !checkedKeys_.Contains(n)));
+                var missing = string.Join(", ", Subject.CandidateKeys.Where(ck => !checkedKeys_.Contains(ck)));
                 Execute.Assertion
                     .ForCondition(missing == "")
                     .FailWith($"{{context:Table}} have additional Candidate Keys: {missing}");
@@ -180,7 +179,7 @@ namespace FluentAssertions {
 
 
             private readonly HashSet<FieldName> checkedFields_;
-            private readonly HashSet<KeyName> checkedKeys_;
+            private readonly HashSet<CandidateKey> checkedKeys_;
             private readonly HashSet<CheckConstraint> checkedConstraints_;
             private readonly HashSet<ForeignKey> checkedForeignKeys_;
         }
@@ -331,7 +330,7 @@ namespace FluentAssertions {
 
         public class CandidateKeysAssertion : Primitives.ObjectAssertions {
             public new IEnumerable<CandidateKey> Subject { get; }
-            public CandidateKeysAssertion(IEnumerable<CandidateKey> subject, HashSet<KeyName> tracker, TableAssertion parent)
+            public CandidateKeysAssertion(IEnumerable<CandidateKey> subject, HashSet<CandidateKey> tracker, TableAssertion parent)
                 : base(parent) { Subject = subject; parent_ = parent; tracker_ = tracker; }
             protected override string Identifier => "Candidate Keys";
 
@@ -340,7 +339,7 @@ namespace FluentAssertions {
             [CustomAssertion] public KeyAssertion WithName(string keyName) {
                 foreach (var candidate in Subject) {
                     if (candidate.Name.Contains(new KeyName(keyName))) {
-                        tracker_.Add(new KeyName(keyName));
+                        tracker_.Add(candidate);
                         return new KeyAssertion(candidate, parent_);
                     }
                 }
@@ -352,8 +351,7 @@ namespace FluentAssertions {
                 throw new ApplicationException("UNREACHABLE CODE!");
             }
             [CustomAssertion] public CandidateKeysAssertion ThatIsAnonymous() {
-                var prefix = UniqueAttribute.ANONYMOUS_PREFIX;
-                var anonymous = Subject.Where(k => k.Name.Exists(n => n.ToString().StartsWith(prefix)));
+                var anonymous = Subject.Where(k => !k.Name.HasValue);
                 Execute.Assertion
                     .ForCondition(!anonymous.IsEmpty())
                     .FailWith("Expected {context:Table} to have at least one anonymous Candidate Key, but none found");
@@ -364,7 +362,7 @@ namespace FluentAssertions {
                 foreach (var candidate in Subject) {
                     try {
                         var impl = new KeyAssertion(candidate, parent_).OfFields(first, rest);
-                        tracker_.Add(candidate.Name.Unwrap());
+                        tracker_.Add(candidate);
                         return impl;
                     }
                     catch (Exception) {}
@@ -380,7 +378,7 @@ namespace FluentAssertions {
 
 
             private readonly TableAssertion parent_;
-            private readonly HashSet<KeyName> tracker_;
+            private readonly HashSet<CandidateKey> tracker_;
         }
 
         public class ForeignKeyAssertion : Primitives.ObjectAssertions {

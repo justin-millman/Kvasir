@@ -110,7 +110,7 @@ namespace UT.Kvasir.Annotations {
 
             // Assert
             attr.UserError.Should()
-                .Match($"*{type.Name}*").And
+                .Match($"*string*").And
                 .Match($"*{nameof(IDataConverter)}*").And
                 .Match("*does not implement*");
         }

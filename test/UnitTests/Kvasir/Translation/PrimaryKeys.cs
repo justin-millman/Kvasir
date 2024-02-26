@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.PrimaryKeyIdentification;
@@ -19,7 +18,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(XKCDComic.URL));
+                .HavePrimaryKey().OfFields("URL");
         }
 
         [TestMethod] public void MultipleScalarsMarkedPrimaryKey() {
@@ -33,8 +32,8 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(
-                    nameof(Month.Calendar),
-                    nameof(Month.Index)
+                    "Calendar",
+                    "Index"
                 );
         }
 
@@ -49,7 +48,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(
-                    nameof(SpaceShuttle.Name),
+                    "Name",
                     "Specification.SerialNumber",
                     "Specification.Weight",
                     "Specification.ID"
@@ -83,8 +82,8 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(
-                    nameof(ChoppedBasket.AirDate),
-                    nameof(ChoppedBasket.Round),
+                    "AirDate",
+                    "Round",
                     "Ingredient1.Name.English",
                     "Ingredient1.Name.Alternative",
                     "Ingredient2.Name.English",
@@ -136,7 +135,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(
-                    nameof(Prophecy.ProphecyID),
+                    "ProphecyID",
                     "Subjects.P1.FirstName",
                     "Subjects.P1.MiddleInitial",
                     "Subjects.P1.LastName"
@@ -169,12 +168,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Psalm.Text))                          // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("Verses")                                    // error sub-location
-                .WithMessageContaining("[PrimaryKey]");                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Psalm` → Text")
+                .WithPath("Verses")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<ushort, string>`")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void AllScalarsMarkedPrimaryKey() {
@@ -188,9 +187,9 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(
-                    nameof(Character.Glyph),
-                    nameof(Character.CodePoint),
-                    nameof(Character.IsASCII)
+                    "Glyph",
+                    "CodePoint",
+                    "IsASCII"
                 );
         }
 
@@ -204,7 +203,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Actor.ID));
+                .HavePrimaryKey().OfFields("ID");
         }
 
         [TestMethod] public void NonNullableScalarFieldRenamedToID() {
@@ -230,7 +229,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(IntegerSequence.IntegerSequenceID));
+                .HavePrimaryKey().OfFields("IntegerSequenceID");
         }
 
         [TestMethod] public void NonNullableScalarFieldRenamedToEntityID() {
@@ -256,7 +255,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Function.FunctionID));
+                .HavePrimaryKey().OfFields("FunctionID");
         }
 
         [TestMethod] public void SingleCandidateKeyWithSingleNonNullableField() {
@@ -269,7 +268,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Star.ARICNS)).And
+                .HavePrimaryKey().OfFields("ARICNS").And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -283,7 +282,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey("PK").OfFields(nameof(Expiration.FeedCode), nameof(Expiration.Underlying));
+                .HavePrimaryKey("PK").OfFields(
+                    "FeedCode",
+                    "Underlying"
+                );
         }
 
         [TestMethod] public void MultipleCandidateKeysOnlyOneAllNonNullable() {
@@ -297,16 +299,16 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey("Formula").OfFields(
-                    nameof(Vitamin.Carbon),
-                    nameof(Vitamin.Hydrogen),
-                    nameof(Vitamin.Cobalt),
-                    nameof(Vitamin.Nitrogen),
-                    nameof(Vitamin.Oxygen),
-                    nameof(Vitamin.Phosphorus)
+                    "Carbon",
+                    "Hydrogen",
+                    "Cobalt",
+                    "Nitrogen",
+                    "Oxygen",
+                    "Phosphorus"
                 ).And
                 .HaveCandidateKey("CK1").OfFields(
-                    nameof(Vitamin.Name),
-                    nameof(Vitamin.Alternative)
+                    "Name",
+                    "Alternative"
                 ).And
                 .HaveNoOtherCandidateKeys();
         }
@@ -321,9 +323,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey("ID").OfFields(
-                    nameof(Escalator.EscalatorIdentifier)
-                ).And
+                .HavePrimaryKey("ID").OfFields("EscalatorIdentifier").And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -337,7 +337,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Repository.ID)).And
+                .HavePrimaryKey().OfFields("ID").And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -351,7 +351,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Earthquake.SeismicIdentificationNumber));
+                .HavePrimaryKey().OfFields("SeismicIdentificationNumber");
         }
 
         [TestMethod] public void SingleAnnotatedNonNullableField() {
@@ -364,7 +364,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(GeologicEpoch.StartingMYA));
+                .HavePrimaryKey().OfFields("StartingMYA");
         }
 
         [TestMethod] public void AllNonNullableFieldsDefaultDeduction() {
@@ -378,11 +378,11 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(
-                    nameof(HotAirBalloon.Manufacturer),
-                    nameof(HotAirBalloon.MaxHeight),
-                    nameof(HotAirBalloon.MaxAirTemperature),
-                    nameof(HotAirBalloon.PassengerCapacity),
-                    nameof(HotAirBalloon.Radius)
+                    "Manufacturer",
+                    "MaxHeight",
+                    "MaxAirTemperature",
+                    "PassengerCapacity",
+                    "Radius"
                 );
         }
 
@@ -484,7 +484,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Rollercoaster.RollercoasterID));
+                .HavePrimaryKey().OfFields("RollercoasterID");
         }
 
         [TestMethod] public void NullableFieldNamedEntityIDSkipped() {
@@ -498,8 +498,8 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey("DoctorWho").OfFields(
-                    nameof(Doctor.Regeneration),
-                    nameof(Doctor.Portrayal)
+                    "Regeneration",
+                    "Portrayal"
                 ).And
                 .HaveNoOtherCandidateKeys();
         }
@@ -514,7 +514,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Polyhedron.Name));
+                .HavePrimaryKey().OfFields("Name");
         }
 
         [TestMethod] public void ScalarMarkedPrimaryKeyMultipleTimesDirectly_Redundant() {
@@ -527,7 +527,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey().OfFields(nameof(Airport.IATA));
+                .HavePrimaryKey().OfFields("IATA");
         }
 
         [TestMethod] public void ScalarMarkedPrimaryKeyMultipleTimesIndirectly_Redundant() {
@@ -541,7 +541,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(
-                    nameof(CompressionFormat.Suffix),
+                    "Suffix",
                     "LastStableRelease.Major",
                     "LastStableRelease.Minor",
                     "LastStableRelease.Patch"
@@ -557,11 +557,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NorseWorld.EddaMentions))             // error location
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("nullable Field");                           // details / explanation
+            translate.Should().FailWith<InvalidPrimaryKeyFieldException>()
+                .WithLocation("`NorseWorld` → EddaMentions")
+                .WithProblem("a nullable Field cannot be part of an Entity's primary key")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NullableAggregateMarkedPrimaryKey_IsError() {
@@ -573,11 +573,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MedievalCastle.Drawbridge))           // error location
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("nullable Field");                           // details / explanation
+            translate.Should().FailWith<InvalidPrimaryKeyFieldException>()
+                .WithLocation("`MedievalCastle` → DrawBridge")
+                .WithApplicationTo("Length")
+                .WithProblem("a nullable Field cannot be part of an Entity's primary key")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void AggregateWithNullablePropertyMarkedPrimaryKey_IsError() {
@@ -589,12 +590,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Wizard.Background))                   // error location
-                .WithMessageContaining("Schooling.School")                          // error sub-location
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("nullable Field");                           // details / explanation
+            translate.Should().FailWith<InvalidPrimaryKeyFieldException>()
+                .WithLocation("`Wizard` → Background")
+                .WithApplicationTo("Schooling.School")
+                .WithProblem("a nullable Field cannot be part of an Entity's primary key")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NullableReferenceMarkedPrimaryKey_IsError() {
@@ -606,11 +607,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Avocado.CountryOfOrigin))             // error location
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("nullable Field");                           // details / explanation
+            translate.Should().FailWith<InvalidPrimaryKeyFieldException>()
+                .WithLocation("`Avocado` → CountryOfOrigin")
+                .WithApplicationTo("Name")
+                .WithProblem("a nullable Field cannot be part of an Entity's primary key")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyInAggregateMarkedPrimaryKey_IsError() {
@@ -622,11 +624,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(nameof(LunarCrater.Coordinate))              // source type
-                .WithMessageContaining(nameof(LunarCrater.Coordinate.Longitude))    // error location
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("nested Field");                             // details / explanation
+            translate.Should().FailWith<InvalidPrimaryKeyFieldException>()
+                .WithLocation("`LunarCrater` → `Coordinate` (from \"Location\") → Longitude")
+                .WithProblem("nested properties cannot be directly annotated as part of an Entity's primary key")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void CannotDeducePrincipalPrimaryKey_IsError() {
@@ -638,9 +640,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("could not deduce Primary Key");             // category
+            translate.Should().FailWith<CannotDeducePrimaryKeyException>()
+                .WithLocation("`FederalLaw`")
+                .WithProblem("the Primary Key for the Table could not be deduced")
+                .EndMessage();
         }
 
         [TestMethod] public void CannotDeduceRelationPrimaryKeyWithoutCandidateKeys_IsError() {
@@ -652,9 +655,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("could not deduce Primary Key");             // category
+            translate.Should().FailWith<CannotDeducePrimaryKeyException>()
+                .WithLocation("`Lagerstatte` → <synthetic> `Fossils`")
+                .WithProblem("the primary key for the Table could not be deduced")
+                .EndMessage();
         }
 
         [TestMethod] public void CannotDeduceRelationPrimaryKeyWithCandidateKeys_IsError() {
@@ -666,9 +670,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("could not deduce Primary Key");             // category
+            translate.Should().FailWith<CannotDeducePrimaryKeyException>()
+                .WithLocation("`Blockbuster` → <synthetic> `Rentals`")
+                .WithProblem("the Primary Key for the Table could not be deduced")
+                .EndMessage();
         }
 
         [TestMethod] public void PathIsNull_IsError() {
@@ -680,11 +685,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Alphabet.Name))                       // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[PrimaryKey]");                             // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Alphabet` → Name")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void PathOnScalar_IsError() {
@@ -696,12 +701,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Highway.Number))                      // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Highway` → Number")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnAggregate_IsError() {
@@ -713,12 +717,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ConfidenceInterval.PlusMinus))        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ConfidenceInterval` → PlusMinus")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnReference_IsError() {
@@ -730,12 +733,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PhoneBooth.Manufacturer))             // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`PhoneBooth` → Manufacturer")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonPrimaryKeyPathOnReference_IsError() {
@@ -747,12 +749,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ScientificExperiment.ControlGroup))   // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("\"Animate\"");                              // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ScientificExperiment` → ControlGroup")
+                .WithProblem("the path \"Animate\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void PathOnReferenceRefersToPartiallyExposedAggregate_IsError() {
@@ -764,12 +765,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cryochamber.MinTemperature))          // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("\"Temp\"");                                 // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Cryochamber` → MinTemperature")
+                .WithProblem("the path \"Temp\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnRelation_IsError() {
@@ -781,12 +781,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Missile.Manufacturers))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Missile` → <synthetic> `Manufacturers`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -798,15 +797,14 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TreasureMap.SuggestedPath))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[PrimaryKey]")                              // details / explanation
-                .WithMessageContaining("\"X\"");                                    // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`TreasureMap` → <synthetic> `SuggestedPath`")
+                .WithProblem("the path \"TreasureMap.X\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
 
-        [TestMethod] public void IsGreaterThan_NoPathOnRelation_IsError() {
+        [TestMethod] public void NoPathOnRelation_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Hologram);
@@ -815,11 +813,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hologram.Copyrights))                 // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[PrimaryKey]");                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Hologram` → <synthetic> `Copyrights`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<short, string>`")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
         }
     }
 
@@ -835,7 +833,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey("LetterPK").OfFields(nameof(HebrewLetter.Letter));
+                .HavePrimaryKey("LetterPK").OfFields("Letter");
         }
 
         [TestMethod] public void NamedPrimaryKeyForUnnamedDeducedCandidateKey() {
@@ -848,7 +846,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey("PrimaryKey").OfFields(nameof(DatabaseField.QualifiedName)).And
+                .HavePrimaryKey("PrimaryKey").OfFields("QualifiedName").And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -862,7 +860,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey("PK").OfFields(nameof(TimeZone.GMT)).And
+                .HavePrimaryKey("PK").OfFields("GMT").And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -876,7 +874,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HavePrimaryKey("Something").OfFields(nameof(JigsawPuzzle.PuzzleIDFR));
+                .HavePrimaryKey("Something").OfFields("PuzzleIDFR");
         }
 
         [TestMethod] public void NamedPrimaryKeySameAsNonDeducedCandidateKey_IsError() {
@@ -888,12 +886,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("name*is invalid")                           // category
-                .WithMessageContaining("[NamedPrimaryKey]")                         // details / explanation
-                .WithMessageContaining("Key13")                                     // details / explanation
-                .WithMessageContaining("non-deduced Candidate Key");                // details / explanation
+            translate.Should().FailWith<ConflictingKeyNameException>()
+                .WithLocation("`Currency`")
+                .WithProblem("name \"Key13\" is already taken by a candidate key consisting of {Character, ExchangeRate}")
+                .WithAnnotations("[NamedPrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NamedPrimaryKeyIsNull_IsError() {
@@ -905,10 +902,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("name is null")                              // category
-                .WithMessageContaining("[NamedPrimaryKey]");                        // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`HinduGod`")
+                .WithProblem("the name of a Primary Key cannot be 'null'")
+                .WithAnnotations("[NamedPrimaryKey]")
+                .EndMessage();
         }
 
         [TestMethod] public void NamedPrimaryKeyIsEmptyString_IsError() {
@@ -920,11 +918,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("name*is invalid")                           // category
-                .WithMessageContaining("[NamedPrimaryKey]")                         // details / explanation
-                .WithMessageContaining("\"\"");                                     // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`Bay`")
+                .WithProblem("the name of a Primary Key cannot be empty")
+                .WithAnnotations("[NamedPrimaryKey]")
+                .EndMessage();
         }
     }
 }

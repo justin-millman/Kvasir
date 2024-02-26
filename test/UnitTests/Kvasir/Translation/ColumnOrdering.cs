@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.ColumnOrdering;
@@ -18,9 +17,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Fraction.Numerator)).AtColumn(2).And
-                .HaveField(nameof(Fraction.Denominator)).AtColumn(1).And
-                .HaveField(nameof(Fraction.IsNegative)).AtColumn(0).And
+                .HaveField("Numerator").AtColumn(2).And
+                .HaveField("Denominator").AtColumn(1).And
+                .HaveField("IsNegative").AtColumn(0).And
                 .HaveNoOtherFields();
         }
 
@@ -34,11 +33,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Parashah.Book)).AtColumn(0).And
-                .HaveField(nameof(Parashah.StartChapter)).AtColumn(1).And
-                .HaveField(nameof(Parashah.StartVerse)).AtColumn(3).And
-                .HaveField(nameof(Parashah.EndChapter)).AtColumn(4).And
-                .HaveField(nameof(Parashah.EndVerse)).AtColumn(2).And
+                .HaveField("Book").AtColumn(0).And
+                .HaveField("StartChapter").AtColumn(1).And
+                .HaveField("StartVerse").AtColumn(3).And
+                .HaveField("EndChapter").AtColumn(4).And
+                .HaveField("EndVerse").AtColumn(2).And
                 .HaveNoOtherFields();
         }
 
@@ -52,9 +51,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Armada.ID)).AtColumn(1).And
-                .HaveField(nameof(Armada.Commander)).AtColumn(0).And
-                .HaveField(nameof(Armada.Sponsor)).AtColumn(2).And
+                .HaveField("ID").AtColumn(1).And
+                .HaveField("Commander").AtColumn(0).And
+                .HaveField("Sponsor").AtColumn(2).And
                 .HaveField("Flagship.Name").AtColumn(5).And
                 .HaveField("Flagship.Class").AtColumn(3).And
                 .HaveField("Flagship.Munitions").AtColumn(4).And
@@ -64,7 +63,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Tertiary.Name").AtColumn(12).And
                 .HaveField("Tertiary.Class").AtColumn(10).And
                 .HaveField("Tertiary.Munitions").AtColumn(11).And
-                .HaveField(nameof(Armada.VictoryPercentage)).AtColumn(6).And
+                .HaveField("VictoryPercentage").AtColumn(6).And
                 .HaveNoOtherFields();
         }
 
@@ -78,13 +77,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(EdibleArrangement.ID)).AtColumn(3).And
-                .HaveField(nameof(EdibleArrangement.Price)).AtColumn(8).And
-                .HaveField(nameof(EdibleArrangement.Strawberries)).AtColumn(9).And
-                .HaveField(nameof(EdibleArrangement.Bananas)).AtColumn(0).And
-                .HaveField(nameof(EdibleArrangement.Grapes)).AtColumn(2).And
-                .HaveField(nameof(EdibleArrangement.Cantaloupe)).AtColumn(1).And
-                .HaveField(nameof(EdibleArrangement.OtherFruit)).AtColumn(4).And
+                .HaveField("ID").AtColumn(3).And
+                .HaveField("Price").AtColumn(8).And
+                .HaveField("Strawberries").AtColumn(9).And
+                .HaveField("Bananas").AtColumn(0).And
+                .HaveField("Grapes").AtColumn(2).And
+                .HaveField("Cantaloupe").AtColumn(1).And
+                .HaveField("OtherFruit").AtColumn(4).And
                 .HaveField("Vessel.FactoryID").AtColumn(6).And
                 .HaveField("Vessel.Brand").AtColumn(7).And
                 .HaveField("Vessel.Item").AtColumn(5).And
@@ -124,11 +123,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Tapestry.Depictions))                 // error location
-                .WithMessageContaining("[Column]")                                  // details / explanation
-                .WithMessageContaining("Relation");                                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Tapestry` → <synthetic> `Depictions`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
+                .WithAnnotations("[Column]")
+                .EndMessage();
         }
 
         [TestMethod] public void ReferencePrimaryKeysAreNonSequential() {
@@ -141,12 +140,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(MassExtinction.Index)).AtColumn(4).And
+                .HaveField("Index").AtColumn(4).And
                 .HaveField("ExitBoundary.Name").AtColumn(2).And
                 .HaveField("ExitBoundary.MYA").AtColumn(3).And
                 .HaveField("EntryBoundary.Name").AtColumn(0).And
                 .HaveField("EntryBoundary.MYA").AtColumn(1).And
-                .HaveField(nameof(MassExtinction.Severity)).AtColumn(5).And
+                .HaveField("Severity").AtColumn(5).And
                 .HaveNoOtherFields();
         }
 
@@ -175,10 +174,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("two Fields pinned to column index")         // category
-                .WithMessageContaining("7");                                        // details / explanation
+            translate.Should().FailWith<CannotAssignColumnsException>()
+                .WithLocation("`Pizza`")
+                .WithProblem("two Fields pinned to column index 7 (\"Meat1\" and \"Veggie2\")")
+                .EndMessage();
         }
 
         [TestMethod] public void TwoScalarFieldsOrderedToSameIndexInAggregate_IsError() {
@@ -190,10 +189,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(nameof(BiblicalPlague.Translation))          // source type
-                .WithMessageContaining("two Fields pinned to column index")         // category
-                .WithMessageContaining("1");                                        // details / explanation
+            translate.Should().FailWith<CannotAssignColumnsException>()
+                .WithLocation("`BiblicalPlague` → `Translation` (from \"Terminology\")")
+                .WithProblem("two Fields pinned to column index 1 (\"Greek\" and \"Hebrew\")")
+                .EndMessage();
         }
 
         [TestMethod] public void TwoNestedFieldsOrderedToSameIndex_IsError() {
@@ -206,10 +205,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("two Fields pinned to column index")         // category
-                .WithMessageContaining("3");                                        // details / explanation
+            translate.Should().FailWith<CannotAssignColumnsException>()
+                .WithLocation("`Coup`")
+                .WithProblem("two Fields pinned to column index 3 (\"Overthrowee.MiddleName\" and \"Overthrower.FirstName\")")
+                .EndMessage();
         }
 
         [TestMethod] public void ScalarAndNestedFieldOrderedToSameIndex_IsError() {
@@ -221,11 +220,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("two Fields pinned to column index")         // category
-                .WithMessageContaining("4");                                        // details / explanation
+            translate.Should().FailWith<CannotAssignColumnsException>()
+                .WithLocation("`Bread`")
+                .WithProblem("two Fields pinned to column index 4 (\"Leavening\" and \"Recipe.Sugar\"")
+                .EndMessage();
         }
 
         [TestMethod] public void ColumnOrderingOfScalarsLeavesGaps_IsError() {
@@ -237,11 +235,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("unable to assign Fields to columns")        // category
-                .WithMessageContaining("gaps");                                     // details / explanation
+            translate.Should().FailWith<CannotAssignColumnsException>()
+                .WithLocation("`PhoneNumber`")
+                .WithProblem("unable to assign Fields to columns without introducing gaps")
+                .EndMessage();
         }
 
         [TestMethod] public void ColumnOrderingOfAggregatesLeavesGaps_IsError() {
@@ -253,11 +250,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("unable to assign Fields to columns")        // category
-                .WithMessageContaining("gaps");                                     // details / explanation
+            translate.Should().FailWith<CannotAssignColumnsException>()
+                .WithLocation("`Verb`")
+                .WithProblem("unable to assign Fields to columns without introducing gaps")
+                .EndMessage();
         }
 
         [TestMethod] public void ColumnOrderingOfReferencesLeavesGaps_IsError() {
@@ -269,11 +265,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("unable to assign Fields to columns")        // category
-                .WithMessageContaining("gaps");                                     // details / explanation
+            translate.Should().FailWith<CannotAssignColumnsException>()
+                .WithLocation("`Origami`")
+                .WithProblem("unable to assign Fields to columns without introducing gaps")
+                .EndMessage();
         }
 
         [TestMethod] public void NegativeColumnIndex_IsError() {
@@ -285,12 +280,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NationalPark.Established))            // error location
-                .WithMessageContaining("[Column]")                                  // details / explanation
-                .WithMessageContaining("negative")                                  // details / explanation
-                .WithMessageContaining("-196");                                     // details / explanation
+            translate.Should().FailWith<InvalidColumnIndexException>()
+                .WithLocation("`NationalPark` → Established")
+                .WithProblem("the column index -196 is negative")
+                .WithAnnotations("[Column]")
+                .EndMessage();
         }
     }
 }

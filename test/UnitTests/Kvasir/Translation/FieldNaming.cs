@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.FieldNaming;
@@ -19,10 +18,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Surah._EnglishName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Surah.__ArabicName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Surah.juz_start)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Surah.juzEnd)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField("_EnglishName").OfTypeText().BeingNonNullable().And
+                .HaveField("__ArabicName").OfTypeText().BeingNonNullable().And
+                .HaveField("juz_start").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("juzEnd").OfTypeDecimal().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -36,11 +35,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(River.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
                 .HaveField("SourceElevation").OfTypeUInt16().BeingNonNullable().And
                 .HaveField("Length").OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(River.MouthLatitude)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(River.MouthLongitude)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField("MouthLatitude").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("MouthLongitude").OfTypeDecimal().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -54,14 +53,14 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(BorderCrossing.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
                 .HaveField("Degrees.Latitude").OfTypeSingle().BeingNonNullable().And
                 .HaveField("Degrees.Longitude").OfTypeSingle().BeingNonNullable().And
-                .HaveField(nameof(BorderCrossing.CountryA)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(BorderCrossing.CountryB)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(BorderCrossing.Length)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(BorderCrossing.YearlyCrossings)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(BorderCrossing.IsDriveable)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("CountryA").OfTypeText().BeingNonNullable().And
+                .HaveField("CountryB").OfTypeText().BeingNonNullable().And
+                .HaveField("Length").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("YearlyCrossings").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("IsDriveable").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -75,10 +74,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Ziggurat.ZigguratID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Ziggurat.Height)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Ziggurat.NumTerraces)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(Ziggurat.NumSteps)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField("ZigguratID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Height").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("NumTerraces").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("NumSteps").OfTypeUInt32().BeingNonNullable().And
                 .HaveField("CivWho").OfTypeText().BeingNonNullable().And
                 .HaveField("CivWhere").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
@@ -94,9 +93,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(DogShow.Year)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(DogShow.Sponsor)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(DogShow.Participants)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Year").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Sponsor").OfTypeText().BeingNonNullable().And
+                .HaveField("Participants").OfTypeUInt64().BeingNonNullable().And
                 .HaveField("BestInShow.Name").OfTypeText().BeingNonNullable().And
                 .HaveField("BestInShow.Breed.Genus").OfTypeText().BeingNonNullable().And
                 .HaveField("BestInShow.Breed.Species").OfTypeText().BeingNonNullable().And
@@ -114,11 +113,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Cliff.CliffID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Cliff.Height)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Cliff.SheerAngle)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Cliff.IsUNESCO)).OfTypeBoolean().BeingNonNullable().And
-                .HaveField(nameof(Cliff.PrimaryStone)).OfTypeText().BeingNonNullable().And
+                .HaveField("CliffID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Height").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("SheerAngle").OfTypeDouble().BeingNonNullable().And
+                .HaveField("IsUNESCO").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("PrimaryStone").OfTypeText().BeingNonNullable().And
                 .HaveField("Place.Location.CityName").OfTypeText().BeingNonNullable().And
                 .HaveField("Place.Location.GeoCity.SubLocale").OfTypeText().BeingNullable().And
                 .HaveField("Place.Location.GeoCity.LATITUDE").OfTypeSingle().BeingNonNullable().And
@@ -142,11 +141,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Ballerina.SSN)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(Ballerina.FirstName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Ballerina.LastName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Ballerina.Height)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Ballerina.ShoeSize)).OfTypeUInt8().BeingNonNullable().And
+                .HaveField("SSN").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("FirstName").OfTypeText().BeingNonNullable().And
+                .HaveField("LastName").OfTypeText().BeingNonNullable().And
+                .HaveField("Height").OfTypeDouble().BeingNonNullable().And
+                .HaveField("ShoeSize").OfTypeUInt8().BeingNonNullable().And
                 .HaveField("DebutBallet.BalletID").OfTypeGuid().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
@@ -161,17 +160,21 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(DMZ.DMZName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(DMZ.Length)).OfTypeDouble().BeingNonNullable().And
+                .HaveField("DMZName").OfTypeText().BeingNonNullable().And
+                .HaveField("Length").OfTypeDouble().BeingNonNullable().And
                 .HaveField("Value").OfTypeDouble().BeingNonNullable().And
                 .HaveField("Definition.Lat_or_Long").OfTypeEnumeration(
-                    DMZ.LineType.Latitude, DMZ.LineType.Longitude
+                    DMZ.LineType.Latitude,
+                    DMZ.LineType.Longitude
                 ).BeingNonNullable().And
                 .HaveField("Definition.Dir").OfTypeEnumeration(
-                    DMZ.Direction.North, DMZ.Direction.South, DMZ.Direction.East, DMZ.Direction.West
+                    DMZ.Direction.North,
+                    DMZ.Direction.South,
+                    DMZ.Direction.East,
+                    DMZ.Direction.West
                 ).BeingNonNullable().And
-                .HaveField(nameof(DMZ.OverseenBy)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(DMZ.Established)).OfTypeDateTime().BeingNonNullable().And
+                .HaveField("OverseenBy").OfTypeText().BeingNonNullable().And
+                .HaveField("Established").OfTypeDateTime().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -185,10 +188,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Carnival.CarnivalID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Carnival.CarnivalName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Carnival.City)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Carnival.IsTravelling)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("CarnivalID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("CarnivalName").OfTypeText().BeingNonNullable().And
+                .HaveField("City").OfTypeText().BeingNonNullable().And
+                .HaveField("IsTravelling").OfTypeBoolean().BeingNonNullable().And
                 .HaveField("CarnivalStaff.HeadCarny.ID").OfTypeInt32().BeingNonNullable().And
                 .HaveField("CarnivalStaff.HeadCarny.Title").OfTypeText().BeingNonNullable().And
                 .HaveField("CarnivalStaff.Zookeeper.ID").OfTypeInt32().BeingNonNullable().And
@@ -197,8 +200,8 @@ namespace UT.Kvasir.Translation {
                 .HaveField("CarnivalStaff.SanitationLord.Title").OfTypeText().BeingNonNullable().And
                 .HaveField("CarnivalStaff.Spokesperson.ID").OfTypeInt32().BeingNonNullable().And
                 .HaveField("CarnivalStaff.Spokesperson.Title").OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Carnival.PopcornCost)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Carnival.NumTents)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField("PopcornCost").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("NumTents").OfTypeUInt16().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -302,9 +305,9 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should()
                 .HaveField("Number").OfTypeUInt8().BeingNonNullable().And
                 .HaveField("Season").OfTypeInt16().BeingNonNullable().And
-                .HaveField(nameof(Episode.Length)).OfTypeSingle().BeingNonNullable().And
-                .HaveField(nameof(Episode.Part)).OfTypeInt32().BeingNullable().And
-                .HaveField(nameof(Episode.Title)).OfTypeText().BeingNonNullable().And
+                .HaveField("Length").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Part").OfTypeInt32().BeingNullable().And
+                .HaveField("Title").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -318,10 +321,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("two or more Fields with name")              // category
-                .WithMessageContaining("\"CaloriesPerGram\"");                      // details / explanation
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`GroundMeat`")
+                .WithProblem("there are two or more Fields with the name \"CaloriesPerGram\"")
+                .EndMessage();
         }
 
         [TestMethod] public void ChangeToNameOfExistingField_IsError() {
@@ -334,10 +337,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("two or more Fields with name")              // category
-                .WithMessageContaining("\"IsReentrant\"");                          // details / explanation
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`ComputerLock`")
+                .WithProblem("there are two or more Fields with the name \"IsReentrant\"")
+                .EndMessage();
         }
 
         [TestMethod] public void TwoFieldsNamesChangedToSameName_IsError() {
@@ -349,10 +352,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("two or more Fields with name")              // category
-                .WithMessageContaining("\"Destination\"");                          // details / explanation
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`Ticket2RideRoute`")
+                .WithProblem("there are two or more Fields with the name \"Destination\"")
+                .EndMessage();
         }
 
         [TestMethod] public void MultipleIdenticalNameChangesOnScalarProperty() {
@@ -365,12 +368,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Antiparticle.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Antiparticle.Spin)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Antiparticle.Charge)).OfTypeInt32().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Spin").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Charge").OfTypeInt32().BeingNonNullable().And
                 .HaveField("Counterpart").OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Antiparticle.Mass)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Antiparticle.DiscoveredBy)).OfTypeText().BeingNullable().And
+                .HaveField("Mass").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("DiscoveredBy").OfTypeText().BeingNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -383,11 +386,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BankAccount.RoutingNumber))           // error location
-                .WithMessageContaining("duplicated")                                // category
-                .WithMessageContaining("[Name]");                                   // details / explanation
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`BankAccount` → RoutingNumber")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void RedundantAndImpactfulNameChangesOnScalarProperty_IsError() {
@@ -399,11 +402,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Billionaire.FirstReached))            // error location
-                .WithMessageContaining("duplicated")                                // category
-                .WithMessageContaining("[Name]");                                   // details / explanation
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`Billionaire` → FirstReached")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void NameChangeOnAggregateOverridesOriginalNameChange() {
@@ -416,9 +419,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(HashMap.ID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(HashMap.MemoryAddress)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(HashMap.ResolveViaChaining)).OfTypeBoolean().BeingNonNullable().And
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("MemoryAddress").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("ResolveViaChaining").OfTypeBoolean().BeingNonNullable().And
                 .HaveField("KeyType.Typename").OfTypeText().BeingNonNullable().And
                 .HaveField("KeyType.IsPointer").OfTypeBoolean().BeingNonNullable().And
                 .HaveField("ConstQualified").OfTypeBoolean().BeingNonNullable().And
@@ -464,12 +467,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("Debut")                                     // error location
-                .WithMessageContaining("\"Year\"")                                  // error sub-location
-                .WithMessageContaining("duplicated")                                // category
-                .WithMessageContaining("[Name]");                                   // details / explanation
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`Helicopter` → Debut")
+                .WithPath("Year")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void FieldNameIsUnchangedByAnnotation_Redundant() {
@@ -482,10 +485,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Opera.ID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Opera.Composer)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Opera.PremiereDate)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(Opera.Length)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Composer").OfTypeText().BeingNonNullable().And
+                .HaveField("PremiereDate").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Length").OfTypeUInt32().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -498,11 +501,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Longbow.Weight))                      // error location
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`Longbow` → Weight")
+                .WithProblem("the name of a Field cannot be 'null'")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void NewNameIsEmptyString_IsError() {
@@ -514,11 +517,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Volcano.IsActive))                    // error location
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("\"\"");                                     // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`Volcano` → IsActive")
+                .WithProblem("the name of a Field cannot be empty")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void PathIsNull_IsError() {
@@ -530,11 +533,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MedalOfHonor.Recipient))              // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Name]");                                   // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`MedalOfHonor` → Recipient")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void PathOnScalar_IsError() {
@@ -546,12 +549,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Legume.Energy))                       // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Legume` → Energy")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnAggregate_IsError() {
@@ -563,12 +565,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Madonna.Painter))                     // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Madonna` → Painter")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonExistentPathOnReference_IsError() {
@@ -580,12 +581,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CapitolBuilding.Architect))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`CapitolBuilding` → Architect")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonPrimaryKeyPathOnReference_IsError() {
@@ -597,12 +597,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Rabbi.CurrentTemple))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("\"Denomination\"");                         // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Rabbi` → CurrentTemple")
+                .WithProblem("the path \"Denomination\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void PathOnReferenceRefersToPartiallyExposedAggregate() {
@@ -615,8 +614,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(CarAccident.AccidentReportID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(CarAccident.Casualties)).OfTypeUInt16().BeingNonNullable().And
+                .HaveField("AccidentReportID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Casualties").OfTypeUInt16().BeingNonNullable().And
                 .HaveField("Instigator.Reg.ID").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Other.Registration.ID").OfTypeGuid().BeingNullable().And
                 .HaveNoOtherFields();
@@ -631,12 +630,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ProcessRegister.Architectures))       // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ProcessRegister` → <synthetic> `Architectures`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
 
         [TestMethod] public void NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -648,12 +646,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Yeshiva.Students))                    // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Name]")                                    // details / explanation
-                .WithMessageContaining("\"City\"");                                 // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Yeshiva` → <synthetic> `Students`")
+                .WithProblem("the path \"Yeshiva.City\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
         }
     }
 }
