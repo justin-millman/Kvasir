@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Kvasir.Translation2 {
     ///
-    internal sealed class GuidFieldDescriptor : FieldDescriptor {
+    internal sealed class GuidFieldDescriptor : NonOrderableFieldDescriptor {
         ///
         public GuidFieldDescriptor(PropertyInfo source)
             : base(source) {

@@ -19,15 +19,35 @@ namespace Kvasir.Translation2 {
         }
 
         ///
-        public FieldDescriptor Apply(NameAttribute annotation) {
-            if (annotation.Name is null || annotation.Name == "") {
-                throw new System.InvalidOperationException("INVALID NAME - NULL OR EMPTY");
-            }
-            else {
-                var clone = Clone();
-                clone.name_ = annotation.Name;
-                return clone;
-            }
+        public FieldDescriptor WithName(string name) {
+            Debug.Assert(name is not null && name != "");
+
+            var clone = Clone();
+            clone.name_ = name;
+            return clone;
+        }
+
+        ///
+        public FieldDescriptor AsNullable() {            
+            var clone = Clone();
+            clone.nullable_ = true;
+            return clone;
+        }
+
+        ///
+        public FieldDescriptor AsNonNullable() {
+            var clone = Clone();
+            clone.nullable_ = true;
+            return clone;
+        }
+
+        ///
+        public FieldDescriptor WithColumn(int column) {
+            Debug.Assert(column >= 0);
+
+            var clone = Clone();
+            clone.column_ = column;
+            return clone;
         }
 
         ///
