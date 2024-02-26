@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Kvasir.Core;
+using Kvasir.Translation2;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -72,7 +73,7 @@ namespace Kvasir.Annotations {
             Guard.Against.Null(args, nameof(args));
 
             if (!constraint.IsInstanceOf(typeof(IConstraintGenerator))) {
-                UserError = $"{constraint.FullName!} does not implement the {nameof(IConstraintGenerator)} interface";
+                UserError = $"{constraint.DisplayName()} does not implement the {typeof(IConstraintGenerator).DisplayName()} interface";
                 generator_ = null;
                 return;
             }
@@ -83,13 +84,13 @@ namespace Kvasir.Annotations {
             }
             catch (MissingMethodException) {
                 var argString = args.Length == 0 ? "<none>" : string.Join(", ", args.Select(a => a.ForDisplay()));
-                UserError = $"{constraint.FullName!} cannot be constructed from arguments: {argString}";
+                UserError = $"{constraint.DisplayName()} cannot be constructed from arguments {{{argString}}}";
                 generator_ = null;
             }
             catch (TargetInvocationException ex) {
                 var argString = args.Length == 0 ? "<none>" : string.Join(", ", args.Select(a => a.ForDisplay()));
                 var reason = ex.InnerException?.Message ?? "<reason unknown>";
-                UserError = $"error constructing {constraint.FullName!} from arguments: {argString} ({reason})";
+                UserError = $"error constructing {constraint.DisplayName()} from arguments {{{argString}}} ({reason})";
                 generator_ = null;
             }
         }

@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 using static UT.Kvasir.Translation.StringLengthConstraints.IsNonEmpty;
 using static UT.Kvasir.Translation.StringLengthConstraints.LengthIsAtLeast;
@@ -23,7 +21,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Chocolate.Name), ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.GTE, 1).And
                 .HaveNoOtherConstraints();
         }
 
@@ -37,8 +35,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Scholarship.Organization), ComparisonOperator.GTE, 1).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Scholarship.TargetSchool), ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "Organization", ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "TargetSchool", ComparisonOperator.GTE, 1).And
                 .HaveNoOtherConstraints();
         }
 
@@ -51,13 +49,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Biography.PageCount))                 // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Biography` → PageCount")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ushort`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_CharacterField_IsError() {
@@ -69,13 +65,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MovieTicket.Row))                     // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MovieTicket` → Row")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `char`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_BooleanField_IsError() {
@@ -87,13 +81,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FortuneCookie.Eaten))                 // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FortuneCookie` → Eaten")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `bool`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_DateTimeField_IsError() {
@@ -105,13 +97,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ScubaDive.EntryTime))                 // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ScubaDive` → EntryTime")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateTime`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_GuidField_IsError() {
@@ -123,13 +113,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hormone.HormoneID))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Hormone` → HormoneID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_EnumerationField_IsError() {
@@ -141,13 +129,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mustache.Style))                      // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Mustache.Kind));                      // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Mustache` → Style")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Kind`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_AggregateNestedApplicableScalar() {
@@ -165,7 +151,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsNonError_AggregateNestedInapplicableScalar_IsError() {
+        [TestMethod] public void IsNonEmpty_AggregateNestedInapplicableScalar_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(BackyardBaseballPlayer);
@@ -174,17 +160,15 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BackyardBaseballPlayer.Statistics))   // error location
-                .WithMessageContaining("\"Pitching\"")                              // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                         // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Byte));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BackyardBaseballPlayer` → Statistics")
+                .WithPath("Pitching")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `byte`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
-        [TestMethod] public void IsNonZero_NestedAggregate_IsError() {
+        [TestMethod] public void IsNonEmpty_NestedAggregate_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(OilField);
@@ -193,12 +177,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(OilField.Where))                      // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"Place.Coordinate\"");                     // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`OilField` → Where")
+                .WithPath("Place.Coordinate")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Coordinate`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_ReferenceNestedApplicableScalar() {
@@ -224,14 +208,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Limerick.Author))                     // error location
-                .WithMessageContaining("\"SSN\"")                                   // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt32));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Limerick` → Author")
+                .WithPath("SSN")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `uint`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_OriginalOnReferenceNestedScalar() {
@@ -256,12 +238,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RomanBaths.Rooms))                    // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"Caldarium\"");                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`RomanBaths` → Rooms")
+                .WithPath("Caldarium")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Bathroom`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_RelationNestedApplicableScalar() {
@@ -287,14 +269,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MallSanta.Jobs))                      // error location
-                .WithMessageContaining("\"MallID\"")                                // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt32));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MallSanta` → <synthetic> `Jobs`")
+                .WithPath("Value.MallID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `uint`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NestedRelation_IsError() {
@@ -306,12 +286,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ConnectingWall.C3))                   // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"Squares\"");                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ConnectingWall` → C3")
+                .WithPath("Squares")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_FieldWithStringDataConversionTarget() {
@@ -324,11 +304,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Hourglass.Duration), ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "Duration", ComparisonOperator.GTE, 1).And
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsNonEmpty_FieldWithNumericDataConversionSource_IsError() {
+        [TestMethod] public void IsNonEmpty_FieldWithStringDataConversionSource_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(FoodChain);
@@ -337,13 +317,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FoodChain.SecondaryConsumer))         // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FoodChain` → SecondaryConsumer")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `int`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_ScalarConstrainedMultipleTimes_Redundant() {
@@ -356,7 +334,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Top10List.Number9), ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "Number9", ComparisonOperator.GTE, 1).And
                 .HaveNoOtherConstraints();
         }
 
@@ -369,11 +347,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hoedown.WayneBradyLine))              // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsNonEmpty]");                       // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Hoedown` → WayneBradyLine")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_PathOnScalar_IsError() {
@@ -385,12 +363,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ASLSign.Gloss))                       // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ASLSign` → Gloss")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NonExistentPathOnAggregate_IsError() {
@@ -402,12 +379,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Sutra.Source))                        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Sutra` → Source")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NoPathOnAggregate_IsError() {
@@ -419,11 +395,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Kaiju.Size))                          // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNonEmpty]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Kaiju` → Size")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Measurements`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NonExistentPathOnReference_IsError() {
@@ -435,12 +411,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Peerage.PeerageTitle))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Peerage` → PeerageTitle")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NonPrimaryKeyPathOnReference_IsError() {
@@ -452,12 +427,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BountyHunter.Credentials))            // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"IssuingAgency\"");                        // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`BountyHunter` → Credentials")
+                .WithProblem("the path \"IssuingAgency\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NoPathOnReference_IsError() {
@@ -469,11 +443,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Linker.TargetLanguage))               // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNonEmpty]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Linker` → TargetLanguage")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Language`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NonExistentPathOnRelation_IsError() {
@@ -485,12 +459,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Nymph.MetamorphosesAppearances))      // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Nymph` → <synthetic> `MetamorphosesAppearances`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -502,12 +475,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(DatingApp.CouplesFormed))             // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonEmpty]")                        // details / explanation
-                .WithMessageContaining("\"CEO\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`DatingApp` → <synthetic> `CouplesFormed`")
+                .WithProblem("the path \"DatingApp.CEO\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_NoPathOnRelation_IsError() {
@@ -519,11 +491,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AdBlocker.EffectiveAgainst))          // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNonEmpty]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`AdBlocker` → <synthetic> `EffectiveAgainst`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<AdType>`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonEmpty_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -535,14 +507,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AztecGod.Festival))                   // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"\"")                                      // details / explanation
-                .WithMessageContaining("length is 0")                               // details / explanation
-                .WithMessageContaining("is not in interval [1, +∞)");               // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`AztecGod` → Festival")
+                .WithProblem("the Field's default value of \"\" does not pass the constraint")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsNonEmpty_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -554,14 +523,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Lollipop.LollipopFlavor.Name))        // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"\"")                                      // details / explanation
-                .WithMessageContaining("length is 0")                               // details / explanation
-                .WithMessageContaining("is not in interval [1, +∞)");               // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Lollipop` → LollipopFlavor")
+                .WithPath("Name")
+                .WithProblem("the Field's default value of \"\" does not pass the constraint")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
         }
     }
 
@@ -577,7 +544,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(NFLPenalty.Penalty), ComparisonOperator.GTE, 5).And
+                .HaveConstraint(FieldFunction.LengthOf, "Penalty", ComparisonOperator.GTE, 5).And
                 .HaveNoOtherConstraints();
         }
 
@@ -591,7 +558,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Ben10Alien.AlternateName), ComparisonOperator.GTE, 7).And
+                .HaveConstraint(FieldFunction.LengthOf, "AlternateName", ComparisonOperator.GTE, 7).And
                 .HaveNoOtherConstraints();
         }
 
@@ -604,13 +571,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HashFunction.BlockSize))              // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`HashFunction` → BlockSize")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ushort`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_CharacterField_IsError() {
@@ -622,13 +587,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Kanji.Logograph))                     // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Kanji` → Logograph")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `char`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_BooleanField_IsError() {
@@ -640,13 +603,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Magazine.Syndicated))                 // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Magazine` → Syndicated")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `bool`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_DateTimeField_IsError() {
@@ -658,13 +619,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Camerlengo.Appointed))                // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Camerlengo` → Appointed")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateTime`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_GuidField_IsError() {
@@ -676,13 +635,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Rainforest.ID))                       // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Rainforest` → ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_EnumerationField_IsError() {
@@ -694,13 +651,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cybersite.FirstSeasonAppeared))       // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Cybersite.Season));                   // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Cybersite` → FirstSeasonAppeared")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Season`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_AggregateNestedApplicableScalar() {
@@ -727,14 +682,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BaseballMogul.Version))               // error location
-                .WithMessageContaining("\"Patch\"")                                 // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BaseballMogul` → Version")
+                .WithPath("Patch")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ushort`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NestedAggregate_IsError() {
@@ -746,12 +699,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MagicSystem.SandersonsLaws))          // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"Zeroth\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MagicSystem` → SandersonsLaws")
+                .WithPath("Zeroth")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Law`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_ReferenceNestedApplicableScalar() {
@@ -777,14 +730,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Arrondissement.Department))           // error location
-                .WithMessageContaining("\"Population\"")                            // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt64));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Arrondissement` → Department")
+                .WithPath("Population")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ulong`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_OriginalOnReferenceNestedScalar() {
@@ -809,12 +760,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Constellation.MainAsterism))          // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"CentralStar\"");                          // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Constellation` → MainAsterism")
+                .WithPath("CentralStar")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Star`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_RelationNestedApplicableScalar() {
@@ -843,14 +794,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MemoryBuffer.Bits))                   // error location
-                .WithMessageContaining("\"EndAddress\"")                            // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt64));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MemoryBuffer` → <synthetic> `Bits`")
+                .WithPath("MemoryBuffer.EndAddress")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ulong`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NestedRelation_IsError() {
@@ -862,12 +811,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HotTub.TubSettings))                  // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"PresetSpeeds\"");                         // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`HotTub` → TubSettings")
+                .WithPath("PresetSpeeds")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<string, int>`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_FieldWithStringDataConversionTarget() {
@@ -880,11 +829,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Ambassador.Assumed), ComparisonOperator.GTE, 10).And
+                .HaveConstraint(FieldFunction.LengthOf, "Assumed", ComparisonOperator.GTE, 10).And
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void LengthIsAtLeast_FieldWithNumericDataConversionSource_IsError() {
+        [TestMethod] public void LengthIsAtLeast_FieldWithStringDataConversionSource_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Campfire);
@@ -893,13 +842,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Campfire.WoodType))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Campfire` → WoodType")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `int`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_AnchorIsZero_Redundant() {
@@ -912,7 +859,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(HolyRomanEmperor.Name), ComparisonOperator.GTE, 0).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.GTE, 0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -925,12 +872,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LaborOfHeracles.Target))              // error location
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("negative")                                  // details / explanation
-                .WithMessageContaining("-144");                                     // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`LaborOfHeracles` → Target")
+                .WithProblem("the minimum string length (-144) cannot be negative")
+                .WithAnnotations("[Check.LengthIsAtLeast")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_ScalarConstrainedMultipleTimes() {
@@ -943,7 +889,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Bagel.Flavor), ComparisonOperator.GTE, 34).And
+                .HaveConstraint(FieldFunction.LengthOf, "Flavor", ComparisonOperator.GTE, 34).And
                 .HaveNoOtherConstraints();
         }
 
@@ -956,11 +902,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Localization.LocalizedValue))         // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]");                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Localization` → LocalizedValue")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_PathOnScalar_IsError() {
@@ -972,12 +918,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Histogram.BucketUnit))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Histogram` → BucketUnit")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NonExistentPathOnAggregate_IsError() {
@@ -989,12 +934,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cactus.ScientificName))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Cactus` → ScientificName")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NoPathOnAggregate_IsError() {
@@ -1006,11 +950,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SederPlate.Karpas))                   // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SederPlate` → Karpas")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Slot`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NonExistentPathOnReference_IsError() {
@@ -1022,12 +966,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Crusade.MuslimLeader))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Crusade` → MuslimLeader")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NonPrimaryKeyPathOnReference_IsError() {
@@ -1039,12 +982,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(StateOfTheUnion.DesignatedSurvivor))  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"Department\"");                           // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`StateOfTheUnion` → DesignatedSurvivor")
+                .WithProblem("the path \"Department\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NoPathOnReference_IsError() {
@@ -1056,11 +998,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Triptych.MiddlePanel))                // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Triptych` → MiddlePanel")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Panel`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NonExistentPathOnRelation_IsError() {
@@ -1072,12 +1014,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cigar.Contents))                      // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Cigar` → <synthetic> `Contents`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -1089,12 +1030,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MarijuanaStrain.SoldAt))              // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
-                .WithMessageContaining("\"StrainName\"");                           // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`MarijuanaStrain` → <synthetic> `SoldAt`")
+                .WithProblem("the path \"MarijuanaStrain.StrainName\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_NoPathOnRelation_IsError() {
@@ -1106,11 +1046,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BankRobber.Robberies))                // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsAtLeast]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BankRobber` → <synthetic> `Robberies`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<Robbery>`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -1122,14 +1062,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MaskedSinger.Costume))                // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"Pelican\"")                               // details / explanation
-                .WithMessageContaining("length is 7")                               // details / explanation
-                .WithMessageContaining("is not in interval [289, +∞)");             // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`MaskedSinger` → Costume")
+                .WithProblem("the Field's default value of \"Pelican\" does not pass the constraint")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtLeast_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -1141,14 +1078,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Briefcase.Color.PantoneName))         // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"unknown\"")                               // details / explanation
-                .WithMessageContaining("length is 7")                               // details / explanation
-                .WithMessageContaining("is not in interval [15, +∞)");              // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Briefcase` → Color")
+                .WithPath("PantoneName")
+                .WithProblem("the Field's default value of \"unknown\" does not pass the constraint")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
         }
     }
 
@@ -1164,9 +1099,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Snake.Genus), ComparisonOperator.LTE, 175).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Snake.Species), ComparisonOperator.LTE, 13512).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Snake.CommonName), ComparisonOperator.LTE, 25).And
+                .HaveConstraint(FieldFunction.LengthOf, "Genus", ComparisonOperator.LTE, 175).And
+                .HaveConstraint(FieldFunction.LengthOf, "Species", ComparisonOperator.LTE, 13512).And
+                .HaveConstraint(FieldFunction.LengthOf, "CommonName", ComparisonOperator.LTE, 25).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1180,7 +1115,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(WinterStorm.Name), ComparisonOperator.LTE, 300).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.LTE, 300).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1193,13 +1128,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GasStation.DeiselPrice))              // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`GasStation` → DeiselPrice")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `decimal`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_CharacterField_IsError() {
@@ -1211,13 +1144,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BinaryTest.False))                    // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BinaryTest` → False")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `char`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_BooleanField_IsError() {
@@ -1229,13 +1160,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Diamond.IsBloodDiamond))              // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Diamond` → IsBloodDiamond")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `bool`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_DateTimeField_IsError() {
@@ -1247,13 +1176,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Marathon.Date))                       // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Marathon` → Date")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateTime`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_GuidField_IsError() {
@@ -1265,13 +1192,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CppHeader.ModuleID))                  // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CppHeader` → ModuleID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_EnumerationField_IsError() {
@@ -1283,13 +1208,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ComputerVirus.Classification))        // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(ComputerVirus.Type));                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ComputerVirus` → Classification")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Type`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_AggregateNestedApplicableScalar() {
@@ -1316,14 +1239,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Kayak.KayakSeat))                     // error location
-                .WithMessageContaining("\"Radius\"")                                // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Kayak` → KayakSeat")
+                .WithPath("Radius")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `double`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NestedAggregate_IsError() {
@@ -1335,12 +1256,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MaddenNFL.CoverPlayer))               // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"Name\"");                                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MaddenNFL` → CoverPlayer")
+                .WithPath("Name")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Person`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_ReferenceNestedApplicableScalar() {
@@ -1366,14 +1287,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(IceCreamSundae.Scoop3))               // error location
-                .WithMessageContaining("\"ID\"")                                    // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`IceCreamSundae` → Scoop3")
+                .WithPath("ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_OriginalOnReferenceNestedScalar() {
@@ -1398,12 +1317,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Orgasm.Receiver))                     // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"Who\"");                                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Orgasm` → Receiver")
+                .WithPath("Who")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Person`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_RelationNestedApplicableScalar() {
@@ -1429,14 +1348,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BalsamicVinegar.Ingredients))         // error location
-                .WithMessageContaining("\"Grams\"")                                 // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BalsamicVinegar` → <synthetic> `Ingredients`")
+                .WithPath("Item.Grams")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `double`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NestedRelation_IsError() {
@@ -1448,12 +1365,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TerroristOrganization.Recognition))   // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"Entities\"");                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TerroristOrganization` → Recognition")
+                .WithPath("Entities")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<string, DateTime>`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_FieldWithStringDataConversionTarget() {
@@ -1466,11 +1383,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(OilSpill.Volume), ComparisonOperator.LTE, 14).And
+                .HaveConstraint(FieldFunction.LengthOf, "Volume", ComparisonOperator.LTE, 14).And
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void LengthIsAtMost_FieldWithNumericDataConversionSource_IsError() {
+        [TestMethod] public void LengthIsAtMost_FieldWithStringDataConversionSource_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(RandomNumberGenerator);
@@ -1479,13 +1396,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RandomNumberGenerator.Algorithm))     // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`RandomNumberGenerator` → Algorithm")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `int`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_AnchorIsZero() {
@@ -1498,8 +1413,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(KnockKnockJoke.SetUp), ComparisonOperator.LTE, 0).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(KnockKnockJoke.PunchLine), ComparisonOperator.LTE, 0).And
+                .HaveConstraint(FieldFunction.LengthOf, "SetUp", ComparisonOperator.LTE, 0).And
+                .HaveConstraint(FieldFunction.LengthOf, "PunchLine", ComparisonOperator.LTE, 0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1512,12 +1427,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Fraternity.Name))                     // error location
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("negative")                                  // details / explanation
-                .WithMessageContaining("-7");                                       // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Fraternity` → Name")
+                .WithProblem("the maximum string length (-7) cannot be negative")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_ScalarConstrainedMultipleTimes() {
@@ -1530,7 +1444,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(OceanicTrench.Location), ComparisonOperator.LTE, 60).And
+                .HaveConstraint(FieldFunction.LengthOf, "Location", ComparisonOperator.LTE, 60).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1543,11 +1457,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Passport.PassportNumber))             // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.LengthIsAtMost]");                   // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Passport` → PassportNumber")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_PathOnScalar_IsError() {
@@ -1559,12 +1473,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Nebula.Name))                         // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Nebula` → Name")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NonExistentPathOnAggregate_IsError() {
@@ -1576,12 +1489,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ImaginaryFriend.Features))            // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ImaginaryFriend` → Features")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NoPathOnAggregate_IsError() {
@@ -1593,11 +1505,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Newscast.Sports))                     // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsAtMost]");                   // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Newscast` → Sports")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Segment`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NonExistentPathOnReference_IsError() {
@@ -1609,12 +1521,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PhaseDiagram.CriticalPoint))          // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`PhaseDiagram` → CriticalPoint")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NonPrimaryKeyPathOnReference_IsError() {
@@ -1626,12 +1537,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Sundial.CenterLocation))              // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"Identifier\"");                           // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Sundial` → CenterLocation")
+                .WithProblem("the path \"Identifier\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NoPathOnReference_IsError() {
@@ -1643,11 +1553,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Zoombini.LostAt))                     // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsAtMost]");                   // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Zoombini` → LostAt")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Level`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NonExistentPathOnRelation_IsError() {
@@ -1659,12 +1569,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Antipope.CardinalsCreated))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Antipope` → <synthetic> `CardinalsCreated`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -1676,12 +1585,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cabaret.Performers))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
-                .WithMessageContaining("\"Venue.Name\"");                           // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Cabaret` → <synthetic> `Performers`")
+                .WithProblem("the path \"Cabaret.Venue.Name\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_NoPathOnRelation_IsError() {
@@ -1693,11 +1601,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TikTok.Views))                        // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsAtMost]");                   // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TikTok` → <synthetic> `Views`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<string, ulong>`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -1709,14 +1617,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Obi.Color))                           // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"White\"")                                 // details / explanation
-                .WithMessageContaining("length is 5")                               // details / explanation
-                .WithMessageContaining("is not in interval [0, 3]");                // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Obi` → Color")
+                .WithProblem("the Field's default value of \"White\" does not pass the constraint")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsAtMost_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -1728,14 +1633,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Speakeasy.Address.StreetName))        // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"Main First Prime\"")                      // details / explanation
-                .WithMessageContaining("length is 16")                              // details / explanation
-                .WithMessageContaining("is not in interval [0, 14]");               // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Speakeasy` → Address")
+                .WithPath("StreetName")
+                .WithProblem("the Field's default value of \"Main First Prime\" does not pass the constraint")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
         }
     }
 
@@ -1751,8 +1654,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Sorority.Motto), ComparisonOperator.GTE, 4).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Sorority.Motto), ComparisonOperator.LTE, 1713).And
+                .HaveConstraint(FieldFunction.LengthOf, "Motto", ComparisonOperator.GTE, 4).And
+                .HaveConstraint(FieldFunction.LengthOf, "Motto", ComparisonOperator.LTE, 1713).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1766,8 +1669,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Telescope.Name), ComparisonOperator.GTE, 1).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Telescope.Name), ComparisonOperator.LTE, int.MaxValue).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.LTE, int.MaxValue).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1780,13 +1683,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Capacitor.Capacitance))               // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Single));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Capacitor` → Capacitance")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `float`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_CharacterField_IsError() {
@@ -1798,13 +1699,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Lipstick.Quality))                    // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Lipstick` → Quality")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `char`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_BooleanField_IsError() {
@@ -1816,13 +1715,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Process.IsActive))                    // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Process` → IsActive")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `bool`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_DateTimeField_IsError() {
@@ -1834,13 +1731,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mummy.Discovered))                    // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Mummy` → Discovered")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateTime`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_GuidField_IsError() {
@@ -1852,13 +1747,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CelticGod.DeityID))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CelticGod` → DeityID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_EnumerationField_IsError() {
@@ -1870,13 +1763,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Kinesis.Kind))                        // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Kinesis.Group));                      // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Kinesis` → Kind")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Group`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_AggregateNestedApplicableScalar() {
@@ -1905,14 +1796,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(OvernightCamp.Schedule))              // error location
-                .WithMessageContaining("\"Sessions\"")                              // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(UInt32));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`OvernightCamp` → Schedule")
+                .WithPath("Sessions")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `uint`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NestedAggregate_IsError() {
@@ -1924,12 +1813,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Dentist.Qualifications))              // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"Doctorate\"");                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Dentist` → Qualification")
+                .WithPath("Doctorate")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Degree`")
+                .WithAnnotations("[Check.LengthIsBetween")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_ReferenceNestedApplicableScalar() {
@@ -1956,14 +1845,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TrivialPursuitPie.HistoryWedge))      // error location
-                .WithMessageContaining("\"CardID\"")                                // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TrivialPursuitPie` → HistoryWedge")
+                .WithPath("CardID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `char`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NestedReference_IsError() {
@@ -1975,12 +1862,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SumoWrestler.DOB))                    // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"Month\"");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SumoWrestler` → DOB")
+                .WithPath("Month")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Number`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_RelationNestedApplicableScalar() {
@@ -2009,14 +1896,29 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Wormhole.ConnectedLocations))         // error location
-                .WithMessageContaining("\"Z\"")                                     // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Single));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Wormhole` → <synthetic> `ConnectedLocations`")
+                .WithPath("Item.Z")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `float`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsBetween_NestedRelation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(LunarEclipse);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LunarEclipse` → Visibility")
+                .WithPath("Locations")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<Coordinate, double>`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_OriginalOnReferenceNestedScalar() {
@@ -2032,23 +1934,6 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void LengthIsBetween_NestedRelation_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(LunarEclipse);
-
-            // Act
-            var translate = () => translator[source];
-
-            // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LunarEclipse.Visibility))             // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"Locations\"");                            // details / explanation
-        }
-
         [TestMethod] public void LengthIsBetween_FieldWithStringDataConversionTarget() {
             // Arrange
             var translator = new Translator();
@@ -2059,12 +1944,12 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(AesSedai.Ajah), ComparisonOperator.GTE, 1).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(AesSedai.Ajah), ComparisonOperator.LTE, 15).And
+                .HaveConstraint(FieldFunction.LengthOf, "Ajah", ComparisonOperator.GTE, 1).And
+                .HaveConstraint(FieldFunction.LengthOf, "Ajah", ComparisonOperator.LTE, 15).And
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void LengthIsBetween_FieldWithNumericDataConversionSource_IsError() {
+        [TestMethod] public void LengthIsBetween_FieldWithStringDataConversionSource_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(AtmosphericLayer);
@@ -2073,13 +1958,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AtmosphericLayer.Name))               // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`AtmosphericLayer` → Name")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `int`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_LowerBoundEqualsUpperBound() {
@@ -2092,7 +1975,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(DNACodon.CodonSequence), ComparisonOperator.EQ, 3).And
+                .HaveConstraint(FieldFunction.LengthOf, "CodonSequence", ComparisonOperator.EQ, 3).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2105,12 +1988,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ChristmasCarol.FirstVerse))           // error location
-                .WithMessageContaining("conflicting constraints")                   // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("[28841, 1553]");                            // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`ChristmasCarol` → FirstVerse")
+                .WithProblem("the interval [28841, 1553] of valid string lengths is empty")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NegativeLowerBound_IsError() {
@@ -2122,12 +2004,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ShenGongWu.InitialEpisode))           // error location
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("negative")                                  // details / explanation
-                .WithMessageContaining("-4");                                       // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`ShenGongWu` → InitialEpisode")
+                .WithProblem("the minimum string length (-4) cannot be negative")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NegativeLowerAndUpperBounds_IsError() {
@@ -2139,12 +2020,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MilitaryBase.Commander))              // error location
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("negative")                                  // details / explanation
-                .WithMessageContaining("-156");                                     // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`MilitaryBase` → Commander")
+                .WithProblem("the minimum string length (-156) cannot be negative")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_ScalarConstrainedMultipleTimes() {
@@ -2157,8 +2037,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Aria.Lyrics), ComparisonOperator.GTE, 27).And
-                .HaveConstraint(FieldFunction.LengthOf, nameof(Aria.Lyrics), ComparisonOperator.LTE, 100).And
+                .HaveConstraint(FieldFunction.LengthOf, "Lyrics", ComparisonOperator.GTE, 27).And
+                .HaveConstraint(FieldFunction.LengthOf, "Lyrics", ComparisonOperator.LTE, 100).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2171,11 +2051,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Apocalypse.SourceMaterial))           // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.LengthIsBetween]");                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Apocalypse` → SourceMaterial")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_PathOnScalar_IsError() {
@@ -2187,12 +2067,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SetCard.Pattern))                     // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`SetCard` → Pattern")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NonExistentPathOnAggregate_IsError() {
@@ -2204,12 +2083,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(InternetCraze.Dangers))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`InternetCraze` → Dangers")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NoPathOnAggregate_IsError() {
@@ -2221,11 +2099,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MesopotamianGod.Names))               // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsBetween]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MesopotamianGod` → Names")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Naming`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NonExistentPathOnReference_IsError() {
@@ -2237,12 +2115,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HeatWave.Low))                        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`HeatWave` → Low")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NonPrimaryKeyPathOnReference_IsError() {
@@ -2254,12 +2131,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Sprachbund.Progenitor))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"Endonym\"");                              // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Sprachbund` → Progenitor")
+                .WithProblem("the path \"Endonym\" does not exist")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NoPathOnReference_IsError() {
@@ -2271,11 +2147,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Leprechaun.Shillelagh))               // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsBetween]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Leprechaun` → Shillelagh")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `WalkingStick`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NonExistentPathOnRelation_IsError() {
@@ -2287,12 +2163,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MarsRover.SpecimensCollected))        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`MarsRover` → <synthetic> `SpecimensCollected`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -2304,12 +2179,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BlackOp.Participants))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
-                .WithMessageContaining("\"Country\"");                              // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`BlackOp` → <synthetic> `Participants`")
+                .WithProblem("the path \"BlackOp.Country\" does not exist")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_NoPathOnRelation_IsError() {
@@ -2321,11 +2195,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HeartAttack.Symptoms))                // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.LengthIsBetween]");                  // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`HeartAttack` → <synthetic> `Symptoms`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -2337,14 +2211,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PeanutButter.Brand))                  // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"Smucker's\"")                             // details / explanation
-                .WithMessageContaining("length is 9")                               // details / explanation
-                .WithMessageContaining("is not in interval [4, 8]");                // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`PeanutButter` → Brand")
+                .WithProblem("the Field's default value of \"Smucker's\" does not pass the constraint")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
 
         [TestMethod] public void LengthIsBetween_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -2356,14 +2227,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Kebab.StreetVendor.Name))             // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"Ezekiel's Meat-on-a-Stick Emporium\"")    // details / explanation
-                .WithMessageContaining("length is 34")                              // details / explanation
-                .WithMessageContaining("is not in interval [13, 21]");              // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Kebab` → Vendor")
+                .WithPath("Name")
+                .WithProblem("the Field's default value of \"Ezekiel's Meat-on-a-Stick Emporium\" does not pass the constraint")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
         }
     }
 }

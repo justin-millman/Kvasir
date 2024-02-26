@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.TableNaming;
@@ -56,10 +55,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[secondSource];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(secondSource.Name)                           // source type
-                .WithMessageContaining("Table name*is already in use")              // category
-                .WithMessageContaining("\"Miscellaneous\"");                        // details / explanation
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`Battle`")
+                .WithProblem("Table name \"Miscellaneous\" is already in use for the Principal Table of `Flight`")
+                .EndMessage();
         }
 
         [TestMethod] public void PrimaryTable_NameIsUnchanged_Redundant() {
@@ -83,10 +82,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("[Table]")                                   // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`SmokeDetector`")
+                .WithProblem("the name of a Primary Table cannot be 'null'")
+                .WithAnnotations("[Table]")
+                .EndMessage();
         }
 
         [TestMethod] public void PrimaryTable_NameChangedToEmptyString_IsError() {
@@ -98,10 +98,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("[Table]")                                   // details / explanation
-                .WithMessageContaining("\"\"");                                     // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`LogIn`")
+                .WithProblem("the name of a Primary Table cannot be empty")
+                .WithAnnotations("[Table]")
+                .EndMessage();
         }
 
         [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_LatterEnforced() {
@@ -150,11 +151,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Dwarf.LifeEvents))                    // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`Dwarf` → <synthetic> `LifeEvents`")
+                .WithProblem("the name of a Relation Table cannot be 'null'")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_NameChangedToEmptyString_IsError() {
@@ -166,11 +167,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Rodent.Taxonomy))                     // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("\"\"");                                     // details / explanation
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`Rodent` → <synthetic> `Taxonomy`")
+                .WithProblem("the name of a Relation Table cannot be empty")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_DuplicateNameWithRelationTable_IsError() {
@@ -182,10 +183,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("Table name*is already in use")              // category
-                .WithMessageContaining("\"AuxiliaryVowelTable\"");                  // details / explanation
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`Vowel` → <synthetic> `Languages`")
+                .WithProblem("Table name \"AuxiliaryVowelTable\" is already in use for the Relation Table of `Vowel` → <synthetic> `Diacritics`")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_DuplicateNameWithPrimaryTable_IsError() {
@@ -197,10 +198,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining("Table name*is already in use")              // category
-                .WithMessageContaining("\"OfficialInfoVPN\"");                      // details / explanation
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`VPN` → <synthetic> `AuthorizedUsers`")
+                .WithProblem("Table name \"OfficialInfoVPN\" is already in use for the Principal Table of `VPN`")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToNumericField_IsError() {
@@ -212,11 +213,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Shofar.Tekiah))                       // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("is not a Relation");                        // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`Shofar` → Tekiah")
+                .WithProblem("the property type `float` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToTextualField_IsError() {
@@ -228,11 +229,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LawnGnome.Manufacturer))              // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("is not a Relation");                        // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`LawnGnome` → Manufacturer")
+                .WithProblem("the property type `string` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToBooleanField_IsError() {
@@ -244,11 +245,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                     // source type
-                .WithMessageContaining(nameof(GovernmentShutdown.RepublicansInCharge))  // error location
-                .WithMessageContaining("[RelationTable]")                               // details / explanation
-                .WithMessageContaining("is not a Relation");                            // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`GovernmentShutdown` → RepublicansInCharge")
+                .WithProblem("the property type `bool` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToDateTimeField_IsError() {
@@ -260,11 +261,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CoalMine.LastCollapse))               // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("is not a Relation");                        // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`CoalMine` → LastCollapse")
+                .WithProblem("the property type `DateTime?` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToGuidField_IsError() {
@@ -276,11 +277,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LawnMower.ApplianceID))               // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("is not a Relation");                        // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`LawnMower` → ApplianceID")
+                .WithProblem("the property type `Guid` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToEnumerationField_IsError() {
@@ -292,11 +293,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Triplets.Zygosity))                   // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("is not a Relation");                        // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`Triplets` → Zygosity")
+                .WithProblem("the property type `Cardinality` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToAggregateField_IsError() {
@@ -308,11 +309,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Toothbrush.Electric))                 // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("is not a Relation");                        // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`Toothbrush` → Electric")
+                .WithProblem("the property type `Electricity?` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationTable_AppliedToReferenceField_IsError() {
@@ -324,11 +325,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Valet.Company))                       // error location
-                .WithMessageContaining("[RelationTable]")                           // details / explanation
-                .WithMessageContaining("is not a Relation");                        // details / explanation
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`Valet` → Company")
+                .WithProblem("the property type `Organization` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
         }
     }
 }

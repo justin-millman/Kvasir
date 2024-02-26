@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 using static UT.Kvasir.Translation.SignednessConstraints.IsPositive;
 using static UT.Kvasir.Translation.SignednessConstraints.IsNegative;
@@ -22,9 +20,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(GreekLetter.NumericValue), ComparisonOperator.GT, 0).And
-                .HaveConstraint(nameof(GreekLetter.Frequency), ComparisonOperator.GT, (decimal)0).And
-                .HaveConstraint(nameof(GreekLetter.Index), ComparisonOperator.GT, (byte)0).And
+                .HaveConstraint("NumericValue", ComparisonOperator.GT, 0).And
+                .HaveConstraint("Frequency", ComparisonOperator.GT, (decimal)0).And
+                .HaveConstraint("Index", ComparisonOperator.GT, (byte)0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -38,9 +36,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(MedicalSpecialty.Practitioners), ComparisonOperator.GT, 0UL).And
-                .HaveConstraint(nameof(MedicalSpecialty.AverageSalary), ComparisonOperator.GT, (decimal)0).And
-                .HaveConstraint(nameof(MedicalSpecialty.YearsSchool), ComparisonOperator.GT, (sbyte)0).And
+                .HaveConstraint("Practitioners", ComparisonOperator.GT, 0UL).And
+                .HaveConstraint("AverageSalary", ComparisonOperator.GT, (decimal)0).And
+                .HaveConstraint("YearsSchool", ComparisonOperator.GT, (sbyte)0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -53,13 +51,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FieldGoal.Kicker))                    // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FieldGoal` → Kicker")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_BooleanField_IsError() {
@@ -71,13 +67,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GolfHole.ContainsWaterHazard))        // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`GolfHole` → ContainsWaterHazard")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `bool`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_DateTimeField_IsError() {
@@ -89,13 +83,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Gymnast.Birthdate))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Gymnast` → Birthdate")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `DateTime`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_GuidField_IsError() {
@@ -107,13 +99,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Documentary.ID))                      // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Documentary` → ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_EnumerationField_IsError() {
@@ -125,13 +115,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mythbusting.Rating))                  // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Mythbusting.Resolution));             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Mythbusting` → Rating")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Resolution`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_AggregateNestedApplicableScalar() {
@@ -158,14 +146,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GoldenRaspberry.RunnerUp))            // error location
-                .WithMessageContaining("\"Movie\"")                                 // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`GoldenRaspberry` → RunnerUp")
+                .WithPath("Movie")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NestedAggregate_IsError() {
@@ -177,12 +163,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SudokuPuzzle.LowerLeft))              // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"Bottom\"");                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SudokuPuzzle` → LowerLeft")
+                .WithPath("Bottom")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Row`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_ReferenceNestedApplicableScalar() {
@@ -208,14 +194,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CaesareanSection.Doctor ))            // error location
-                .WithMessageContaining("\"LastName\"")                              // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CaesareanSection` → Doctor")
+                .WithPath("LastName")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NestedReference_IsError() {
@@ -227,12 +211,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Lamp.Power))                          // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"Unit\"");                                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Lamp` → Power")
+                .WithPath("Unit")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Unit`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_OriginalOnReferenceNestedScalar() {
@@ -273,14 +257,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Margarita.Ingredients))               // error location
-                .WithMessageContaining("\"ID\"")                                    // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Margarita` → <synthetic> `Ingredients`")
+                .WithPath("Item.ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NestedRelation_IsError() {
@@ -292,12 +274,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PulitzerPrize.AwardCommittee))        // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"Members\"");                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PulitzerPrize` → AwardCommittee")
+                .WithPath("Members")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_FieldWithNumericDataConversionTarget() {
@@ -310,7 +292,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(SwimmingPool.Classification), ComparisonOperator.GT, 0).And
+                .HaveConstraint("Classification", ComparisonOperator.GT, 0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -323,13 +305,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(WikipediaPage.Languages))             // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`WikipediaPage` → Languages")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_ScalarConstrainedMultipleTimes_Redundant() {
@@ -342,7 +322,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(BaseballCard.CardNumber), ComparisonOperator.GT, 0).And
+                .HaveConstraint("CardNumber", ComparisonOperator.GT, 0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -355,11 +335,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HotSpring.Elevation))                 // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsPositive]");                       // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`HotSpring` → Elevation")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_PathOnScalar_IsError() {
@@ -371,12 +351,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Canal.Length))                        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Canal` → Length")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NonExistentPathOnAggregate_IsError() {
@@ -388,12 +367,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SharkWeek.Info))                      // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`SharkWeek` → Info")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NoPathOnAggregate_IsError() {
@@ -405,11 +383,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Philosopher.Name))                    // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsPositive]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Philosopher` → Name")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Naming`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NonExistentPathOnReference_IsError() {
@@ -421,12 +399,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HappyHour.Location))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`HappyHour` → Location")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NonPrimaryKeyPathOnReference_IsError() {
@@ -438,12 +415,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Aquifer.DiscoveringGeologist))        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"Qualifications\"");                       // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Aquifer` → DiscoveringGeologist")
+                .WithProblem("the path \"Qualifications\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NoPathOnReference_IsError() {
@@ -455,11 +431,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FactCheck.Fact))                      // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsPositive]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FactCheck` → Fact")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Statement`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NonExistentPathOnRelation_IsError() {
@@ -471,12 +447,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Sukkah.Builders))                     // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Sukkah` → <synthetic> `Builders`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -488,12 +463,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Screenwriter.Scripts))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsPositive]")                        // details / explanation
-                .WithMessageContaining("\"WordCount\"");                            // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Screenwriter` → <synthetic> `Scripts`")
+                .WithProblem("the path \"Item.WordCount\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_NoPathOnRelation_IsError() {
@@ -505,11 +479,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Typewriter.MissingKeys))              // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsPositive]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Typewriter` → <synthetic> `MissingKeys`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<char>`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -521,13 +495,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ScoobyDooFilm.Runtime))               // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("-89")                                       // details / explanation
-                .WithMessageContaining("(0, +∞)");                                  // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`ScoobyDooFilm` → Runtime")
+                .WithProblem("the Field's default value of -89 does not pass the constraint")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsPositive_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -539,13 +511,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cyclops.Mention.Book))                // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("-9")                                        // details / explanation
-                .WithMessageContaining("(0, +∞)");                                  // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Cyclops` → FirstMentioned")
+                .WithPath("Book")
+                .WithProblem("the Field's default value of -9 does not pass the constraint")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
         }
     }
 
@@ -561,8 +532,8 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Acid.pH), ComparisonOperator.LT, 0f).And
-                .HaveConstraint(nameof(Acid.FreezingPoint), ComparisonOperator.LT, (short)0).And
+                .HaveConstraint("pH", ComparisonOperator.LT, 0f).And
+                .HaveConstraint("FreezingPoint", ComparisonOperator.LT, (short)0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -575,13 +546,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cereal.CaloriesPerServing))           // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("unsigned")                                  // details / explanation
-                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Cereal` → CaloriesPerServing")
+                .WithProblem("the annotation cannot be applied to a Field of unsigned numeric type `ushort`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_SignedNullableNumericFields() {
@@ -594,9 +563,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(ConcentrationCamp.Inmates), ComparisonOperator.LT, 0.0).And
-                .HaveConstraint(nameof(ConcentrationCamp.Casualties), ComparisonOperator.LT, 0L).And
-                .HaveConstraint(nameof(ConcentrationCamp.DaysOperational), ComparisonOperator.LT, (short)0).And
+                .HaveConstraint("Inmates", ComparisonOperator.LT, 0.0).And
+                .HaveConstraint("Casualties", ComparisonOperator.LT, 0L).And
+                .HaveConstraint("DaysOperational", ComparisonOperator.LT, (short)0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -609,13 +578,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(KeySignature.Note))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`KeySignature` → Note")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `char`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_BooleanField_IsError() {
@@ -627,13 +594,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SporcleQuiz.Published))               // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SporcleQuiz` → Published")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `bool`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_DateTimeField_IsError() {
@@ -645,13 +610,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Olympiad.OpeningCeremony))            // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Olympiad` → OpeningCeremony")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `DateTime`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_GuidField_IsError() {
@@ -663,13 +626,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(W2.FormID))                           // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`W2` → FormID")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_EnumerationField_IsError() {
@@ -681,13 +642,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SerialKiller.CurrentStatus))          // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(SerialKiller.Status));                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SerialKiller` → CurrentStatus")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Status`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_AggregateNestedApplicableScalar() {
@@ -713,14 +672,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TrolleyProblem.Pull))                 // error location
-                .WithMessageContaining("\"Label\"")                                 // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TrolleyProblem` → Pull")
+                .WithPath("Label")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NestedAggregate_IsError() {
@@ -732,12 +689,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pharaoh.Dynasty))                     // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"Kingdom\"");                              // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Pharaoh` → Dynasty")
+                .WithPath("Kingdom")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `EgyptianKingdom`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_ReferenceNestedApplicableScalar() {
@@ -763,14 +720,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(OceanCurrent.WhichOcean))             // error location
-                .WithMessageContaining("\"Name\"")                                  // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`OceanCurrent` → WhichOcean")
+                .WithPath("Name")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NestedReference_IsError() {
@@ -782,12 +737,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AirBNB.HouseAddress))                 // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"State\"");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`AirBNB` → HouseAddress")
+                .WithPath("State")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `State`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_OriginalOnReferenceNestedScalar() {
@@ -826,13 +781,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(LandMine.Casualties))                 // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LandMine` → <synthetic> `Casualties`")
+                .WithPath("Item")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NestedRelation_IsError() {
@@ -844,12 +798,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(YahtzeeGame.Player1))                 // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"Score\"");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`YahtzeeGame` → Player1")
+                .WithPath("Score")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<Category, byte>`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_FieldWithNumericDataConversionTarget() {
@@ -862,7 +816,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Boxer.TKOs), ComparisonOperator.LT, 0).And
+                .HaveConstraint("TKOs", ComparisonOperator.LT, 0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -875,13 +829,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Archangel.FirstAppearance))           // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Archangel` → FirstAppearance")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_ScalarConstrainedMultipleTimes_Redundant() {
@@ -894,7 +846,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Alkene.FreezingPoint), ComparisonOperator.LT, 0.0).And
+                .HaveConstraint("FreezingPoint", ComparisonOperator.LT, 0.0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -907,11 +859,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Climate.AverageLowTemperature))       // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsNegative]");                       // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Climate` → AverageLowTemperature")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_PathOnScalar_IsError() {
@@ -923,12 +875,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CircleOfHell.Level))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`CircleOfHell` → Level")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NonExistentPathOnAggregate_IsError() {
@@ -940,12 +891,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(VolleyballMatch.FourthSet))           // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`VolleyballMatch` → FourthSet")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NoPathOnAggregate_IsError() {
@@ -957,11 +907,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Yacht.Sails))                         // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNegative]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Yacht` → Sails")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `ShipSails`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NonExistentPathOnReference_IsError() {
@@ -973,12 +923,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pharmacy.HeadPharmacist))             // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Pharmacy` → HeadPharmacist")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NonPrimaryKeyPathOnReference_IsError() {
@@ -990,12 +939,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Popcorn.Topping))                     // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"Calories\"");                             // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Popcorn` → Topping")
+                .WithProblem("the path \"Calories\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NoPathOnReference_IsError() {
@@ -1007,11 +955,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(WinForm.SubmitButton))                // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNegative]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`WinForm` → SubmitButton")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Button`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NonExistentPathOnRelation_IsError() {
@@ -1023,12 +971,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RomanFestival.PossibleDates))         // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`RomanFestival` → <synthetic> `PossibleDates`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -1040,12 +987,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AmberAlert.VehicleDescription))       // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
-                .WithMessageContaining("\"EmergencyContactNumber\"");               // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`AmberAlert` → <synthetic> `VehicleDescription`")
+                .WithProblem("the path \"AmberAlert.EmergencyContactNumber\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_NoPathOnRelation_IsError() {
@@ -1057,11 +1003,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BoyBand.Members))                     // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNegative]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BoyBand` → <synthetic> `Members`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<Singer>`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -1073,13 +1019,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SuperPAC.TotalRaised))                // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("0")                                         // details / explanation
-                .WithMessageContaining("(-∞, 0)");                                  // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`SuperPAC` → TotalRaised")
+                .WithProblem("the Field's default value of 0 does not pass the constraint")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNegative_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -1091,13 +1035,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PressSecretary.Date.Year))            // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("1563")                                      // details / explanation
-                .WithMessageContaining("(-∞, 0)");                                  // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`PressSecretary` → EndDate")
+                .WithPath("Year")
+                .WithProblem("the Field's default value of 1563 does not pass the constraint")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
         }
     }
 
@@ -1113,9 +1056,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(RegularPolygon.NumEdges), ComparisonOperator.NE, (ushort)0).And
-                .HaveConstraint(nameof(RegularPolygon.NumVertices), ComparisonOperator.NE, (sbyte)0).And
-                .HaveConstraint(nameof(RegularPolygon.InternalAngle), ComparisonOperator.NE, 0.0).And
+                .HaveConstraint("NumEdges", ComparisonOperator.NE, (ushort)0).And
+                .HaveConstraint("NumVertices", ComparisonOperator.NE, (sbyte)0).And
+                .HaveConstraint("InternalAngle", ComparisonOperator.NE, 0.0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1129,9 +1072,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Skittles.Weight), ComparisonOperator.NE, 0.0).And
-                .HaveConstraint(nameof(Skittles.ServingSizeCalories), ComparisonOperator.NE, (short)0).And
-                .HaveConstraint(nameof(Skittles.PiecesPerBag), ComparisonOperator.NE, 0U).And
+                .HaveConstraint("Weight", ComparisonOperator.NE, 0.0).And
+                .HaveConstraint("ServingSizeCalories", ComparisonOperator.NE, (short)0).And
+                .HaveConstraint("PiecesPerBag", ComparisonOperator.NE, 0U).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1144,13 +1087,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Brassiere.CupSize))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Brassiere` → CupSize")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_BooleanField_IsError() {
@@ -1162,13 +1103,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FutharkRune.InYoungerFuthark))        // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FutharkRune` → InYoungerFuthark")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `bool`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_DateTimeField_IsError() {
@@ -1180,13 +1119,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FinalFour.ChampionshipGame))          // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FinalFour` → ChampionshipGame")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `DateTime`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_GuidField_IsError() {
@@ -1198,13 +1135,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Fractal.FractalID))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Fractal` → FractalID")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_EnumerationField_IsError() {
@@ -1216,13 +1151,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(IPO.PostingMethod))                   // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(IPO.Method));                         // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`IPO` → PostingMethod")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Method`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_AggregateNestedApplicableScalar() {
@@ -1252,14 +1185,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(IDE.Version))                         // error location
-                .WithMessageContaining("\"Released\"")                              // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`IDE` → Version")
+                .WithPath("Released")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `DateTime`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NestedAggregate_IsError() {
@@ -1271,12 +1202,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PregnancyTest.Product))               // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"Name\"");                                 // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PregnancyTest` → Product")
+                .WithPath("Name")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `MedicalName`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_ReferenceNestedApplicableScalar() {
@@ -1302,14 +1233,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pajamas.Retailer))                    // error location
-                .WithMessageContaining("\"ID\"")                                    // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Pajamas` → Retailer")
+                .WithPath("ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_OriginalOnReferenceNestedScalar() {
@@ -1334,12 +1263,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Galaxy.Discovery))                    // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"Astronomer\"");                           // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Galaxy` → Discovery")
+                .WithPath("Astronomer")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Person`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_RelationNestedApplicableScalar() {
@@ -1365,14 +1294,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(KosherAgency.CertifiedCompanies))     // error location
-                .WithMessageContaining("\"ID\"")                                    // nested path
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(Char));                               // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`KosherAgency` → <synthetic> `CertifiedCompanies`")
+                .WithPath("Item.ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `char`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NestedRelation_IsError() {
@@ -1384,12 +1311,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(CarpoolKaraoke.Guest))                // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"Songs\"");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CarpoolKaraoke` → Guest")
+                .WithPath("Songs")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_FieldWithNumericDataConversionTarget() {
@@ -1402,7 +1329,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Airline.ConsumerGrade), ComparisonOperator.NE, 0).And
+                .HaveConstraint("ConsumerGrade", ComparisonOperator.NE, 0).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1415,13 +1342,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Elevator.NumFloors))                  // error location
-                .WithMessageContaining("constraint is inapplicable")                // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("numeric")                                   // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Elevator` → NumFloors")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_ScalarConstrainedMultipleTimes_Redundant() {
@@ -1434,7 +1359,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Shoe.Mens), ComparisonOperator.NE, 0f).And
+                .HaveConstraint("Mens", ComparisonOperator.NE, 0f).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1447,11 +1372,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Igloo.NumIceBlocks))                  // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsNonZero]");                        // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Igloo` → NumIceBlocks")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_PathOnScalar_IsError() {
@@ -1463,12 +1388,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cryptocurrency.ExchangeRate))         // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Cryptocurrency` → ExchangeRate")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NonExistentPathOnAggregate_IsError() {
@@ -1480,12 +1404,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Encomienda.Location))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Encomienda` → Location")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NoPathOnAggregate_IsError() {
@@ -1497,11 +1420,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Smoothie.Base))                       // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNonZero]");                        // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Smoothie` → Base")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `SmoothieBase`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NonExistentPathOnReference_IsError() {
@@ -1513,12 +1436,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Antibiotic.Formula))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Antibiotic` → Formula")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NonPrimaryKeyPathOnReference_IsError() {
@@ -1530,12 +1452,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Chopsticks.Chopstick2))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"Weight\"");                               // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Chopsticks` → Chopstick2")
+                .WithProblem("the path \"Weight\" does not exist")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NoPathOnReference_IsError() {
@@ -1547,11 +1468,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TongueTwister.Word11))                // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNonZero]");                        // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TongueTwister` → Word11")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Word`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NonExistentPathOnRelation_IsError() {
@@ -1563,12 +1484,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HallPass.PermittedLocations))         // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`HallPass` → <synthetic> `PermittedLocations`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -1580,12 +1500,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Casserole.Ingredients))               // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
-                .WithMessageContaining("\"IdealPanDepth\"");                        // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Casserole` → <synthetic> `Ingredients`")
+                .WithProblem("the path \"Casserole.IdealPanDepth\" does not exist")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_NoPathOnRelation_IsError() {
@@ -1597,11 +1516,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GarbageTruck.RouteStops))             // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNonZero]");                        // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`GarbageTruck` → <synthetic> `RouteStops`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -1613,13 +1532,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pulley.RopeTension))                  // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("0.0")                                       // details / explanation
-                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Pulley` → RopeTension")
+                .WithProblem("the Field's default value of 0.0 does not pass the constraint")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNonZero_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -1631,13 +1548,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Ceviche.Citrus.Tablespoons))          // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("0.0")                                       // details / explanation
-                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Ceviche` → CitrusIngredient")
+                .WithPath("Tablespoons")
+                .WithProblem("the Field's default value of 0.0 does not pass the constraint")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
         }
     }
 }

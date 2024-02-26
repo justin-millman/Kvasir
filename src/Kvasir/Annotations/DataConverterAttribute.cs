@@ -2,6 +2,7 @@ using Ardalis.GuardClauses;
 using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Core;
+using Kvasir.Translation2;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -42,7 +43,7 @@ namespace Kvasir.Annotations {
 
             if (!converter.IsInstanceOf(typeof(IDataConverter))) {
                 converter_ = null;
-                UserError = $"{converter.FullName!} does not implement the {nameof(IDataConverter)} interface";
+                UserError = $"{converter.DisplayName()} does not implement the {typeof(IDataConverter).DisplayName()} interface";
                 return;
             }
 
@@ -51,12 +52,12 @@ namespace Kvasir.Annotations {
                 UserError = null;
             }
             catch (MissingMethodException) {
-                UserError = $"{converter.FullName!} does not have a default (i.e. no-parameter) constructor";
+                UserError = $"{converter.DisplayName()} does not have a default (i.e. no-parameter) constructor";
                 converter_ = null;
             }
             catch (TargetInvocationException ex) {
                 var reason = ex.InnerException?.Message ?? "<reason unknown>";
-                UserError = $"error constructing {converter.FullName!}: {reason}";
+                UserError = $"error constructing {converter.DisplayName()} ({reason})";
                 converter_ = null;
             }
         }

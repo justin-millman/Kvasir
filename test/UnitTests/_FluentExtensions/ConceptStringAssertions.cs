@@ -6,6 +6,7 @@ namespace FluentAssertions {
             return new ConceptStringAssertions<T>(self);
         }
 
+
         public class ConceptStringAssertions<T> : Primitives.StringAssertions where T : ConceptString<T> {
             public new ConceptString<T> Subject { get; }
             public ConceptStringAssertions(ConceptString<T> subject)

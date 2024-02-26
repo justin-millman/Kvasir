@@ -1,6 +1,7 @@
 ﻿using Kvasir.Annotations;
 using Kvasir.Relations;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using static UT.Kvasir.Translation.TestConstraints;
@@ -109,7 +110,7 @@ namespace UT.Kvasir.Translation {
         public class Eigenvector {
             [PrimaryKey] public Guid ID { get; set; }
             public float Eigenvalue { get; set; }
-            public List<float> Vector { get; set; } = new();
+            public ArrayList Vector { get; set; } = new();
         }
 
         // Test Scenario: Struct Type from the C# Standard Library (✓recognized✓)
@@ -117,7 +118,7 @@ namespace UT.Kvasir.Translation {
             [Flags] public enum Platform { iOS = 1, Android = 2, Slack = 4, Facebook = 8 }
 
             [PrimaryKey] public ulong UnicodeNumber { get; set; }
-            public (string Category, string Name) Identity { get; set; }
+            public Uri Identity { get; set; } = new("");
             public string Developer { get; set; } = "";
             public ulong Usages { get; set; }
             public DateTime Released { get; set; }
@@ -128,8 +129,9 @@ namespace UT.Kvasir.Translation {
         public class UUID {
             [PrimaryKey] public string Value { get; set; } = "";
             [PrimaryKey] public byte Version { get; set; }
-            public Optional.Option<string> Signature { get; set; }
+            public string Signature { get; set; } = "";
             public string Encoding { get; set; } = "";
+            public FluentAssertions.Execution.Continuation GenerationScope { get; set; } = null!;
         }
 
         // Test Scenario: User-Defined Interface (✗not permitted✗)
@@ -830,7 +832,7 @@ namespace UT.Kvasir.Translation {
 
         // Test Scenario: Public Properties with Non-Public Accessors Marked as [CodeOnly] (✓redundant✓)
         public class Mountain {
-            [PrimaryKey] public string Exoynym { get; set; } = "";
+            [PrimaryKey] public string Exonym { get; set; } = "";
             [CodeOnly] public string Endonym { private get; set; } = "";
             [CodeOnly] public long Height { protected get; set; }
             [CodeOnly] public ulong Isolation { internal get; set; }
@@ -1090,7 +1092,7 @@ namespace UT.Kvasir.Translation {
             public bool Covert { get; set; }
         }
 
-        // Test Scenario: Two Entities Given Same Primary Table Name (✗duplication✗)
+        // Test Scenario: Two Entities Given Same Principal Table Name (✗duplication✗)
         [Table("Miscellaneous")]
         public class Flight {
             [PrimaryKey] public Guid ID { get; set; }
@@ -1210,7 +1212,7 @@ namespace UT.Kvasir.Translation {
             [RelationTable("AuxiliaryVowelTable")] public RelationMap<char, char> Diacritics { get; set; } = new();
         }
 
-        // Test Scenario: Table Name Duplicated between Primary Table and Relation Table (✗duplication✗)
+        // Test Scenario: Table Name Duplicated between Principal Table and Relation Table (✗duplication✗)
         [Table("OfficialInfoVPN")]
         public class VPN {
             public enum Kind { Private, SiteToSite, Extranet, Other }
@@ -1791,18 +1793,6 @@ namespace UT.Kvasir.Translation {
             public int NumChildren { get; set; }
         }
 
-        // Test Scenario: Non-`null` Invalid Enumeration Default (✗invalid✗)
-        public class HallOfFame {
-            public enum Category { Sports, Entertainment, Journalism }
-
-            [PrimaryKey] public string For { get; set; } = "";
-            public uint Enshrinees { get; set; }
-            [Default((Category)185)] public Category Categorization { get; set; }
-            public float Latitude { get; set; }
-            public float Longitude { get; set; }
-            public DateTime Opened { get; set; }
-        }
-
         // Test Scenario: `null` Default for Nullable Scalar Field (✓valid✓)
         public class Pepper {
             [PrimaryKey] public string Genus { get; set; } = "";
@@ -2029,7 +2019,7 @@ namespace UT.Kvasir.Translation {
             public string Animal { get; set; } = "";
             public string? Name { get; set; }
             public bool BuildABear { get; set; }
-            [Default(136L, Path = "Stuffing")] public Construction Description { get; set; }
+            [Default(136L, Path = "Face")] public Construction Description { get; set; }
             public double Weight { get; set; }
         }
 
@@ -5616,7 +5606,7 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: Applied to Nested Relation (✗impermissible✗)
             public class Clown {
                 public enum Kind { Party, Jester, Demon, Circus, Rodeo, Other }
-                public record struct Outfit(decimal Nose, RelationList<string> Accountrement, double Shoes);
+                public record struct Outfit(decimal Nose, RelationList<string> Accoutrement, double Shoes);
 
                 [PrimaryKey] public Guid ClownID { get; set; }
                 public string Name { get; set; } = "";
@@ -5708,7 +5698,7 @@ namespace UT.Kvasir.Translation {
                 public string ImageURL { get; set; } = "";
                 public ushort Length { get; set; }
                 public ushort Width { get; set; }
-                [Check.IsGreaterThan("NEVER")] public DateTime FirstPublished { get; set; }
+                [Check.IsGreaterThan('N')] public DateTime FirstPublished { get; set; }
             }
 
             // Test Scenario: DateTime Anchor is Improperly Formatted (✗invalid✗)
@@ -7626,7 +7616,7 @@ namespace UT.Kvasir.Translation {
                 public double Length { get; set; }
                 public double Weight { get; set; }
                 public ushort NumFishCaught { get; set; }
-                [Check.IsNot(false, Path = "Manufacturer")] public Info ManfucaturingInfo { get; set; }
+                [Check.IsNot(false, Path = "Manufacturer")] public Info ManufacturingInfo { get; set; }
                 public Style RodType { get; set; }
             }
 
@@ -7720,12 +7710,15 @@ namespace UT.Kvasir.Translation {
             }
 
             // Test Scenario: `null` Anchor (✗invalid✗)
-            public class SecurityBug {
-                [PrimaryKey] public string CVEIdentifier { get; set; } = "";
-                public string LibraryAffected { get; set; } = "";
-                [Check.IsNot(null!)] public string? VersionPatched { get; set; }
-                public DateTime Discovered { get; set; }
-                public DateTime Patched { get; set; }
+            public class HallOfFame {
+                public enum Category { Sports, Entertainment, Journalism }
+
+                [PrimaryKey] public string For { get; set; } = "";
+                public uint Enshrinees { get; set; }
+                [Check.IsNot(null!)] public Category Categorization { get; set; }
+                public float Latitude { get; set; }
+                public float Longitude { get; set; }
+                public DateTime Opened { get; set; }
             }
 
             // Test Scenario: Decimal Anchor is Not a Double (✗invalid✗)
@@ -10273,7 +10266,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public int FDAID { get; set; }
                 public double Efficacy { get; set; }
                 public DateTime? FirstAttested { get; set; }
-                [Check.IsNot(false)] public bool ForWomen { get; set; }
+                [Check.IsNotOneOf(false)] public bool ForWomen { get; set; }
                 public bool Permanent { get; set; }
             }
 
@@ -10365,7 +10358,7 @@ namespace UT.Kvasir.Translation {
             }
 
             // Test Scenario: Applied to Nested Reference (✗impermissible✗)
-            public class NurseyRhyme {
+            public class NurseryRhyme {
                 public class Character {
                     [PrimaryKey] public string Name { get; set; } = "";
                     public sbyte Mentions { get; set; }
@@ -11352,7 +11345,7 @@ namespace UT.Kvasir.Translation {
         public class Locale {
             [PrimaryKey] public string Language { get; set; } = "";
             [PrimaryKey] public string Territory { get; set; } = "";
-            [PrimaryKey, Check.IsGreaterThan("UTF-7"), Check.IsLessOrEqualTo("ASCII")] public string CodeSet { get; set; } = "";
+            [PrimaryKey, Check.IsLessOrEqualTo("ASCII"), Check.IsGreaterThan("UTF-7")] public string CodeSet { get; set; } = "";
             [PrimaryKey] public string Modifier { get; set; } = "";
         }
 

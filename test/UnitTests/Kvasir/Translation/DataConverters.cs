@@ -1,9 +1,6 @@
 ﻿using FluentAssertions;
-using Kvasir.Core;
-using Kvasir.Exceptions;
-using Kvasir.Relations;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -23,11 +20,11 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Cenote.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Cenote.MaxDepth)).OfTypeSingle().BeingNonNullable().And
-                .HaveField(nameof(Cenote.IsKarst)).OfTypeBoolean().BeingNonNullable().And
-                .HaveField(nameof(Cenote.Latitude)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(Cenote.Longitude)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("MaxDepth").OfTypeSingle().BeingNonNullable().And
+                .HaveField("IsKarst").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Latitude").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("Longitude").OfTypeDecimal().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
         
@@ -41,13 +38,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Comet.AstronomicalIdentifier)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Comet.Aphelion)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Comet.Perihelion)).OfTypeInt64().BeingNonNullable().And
-                .HaveField(nameof(Comet.Eccentricity)).OfTypeInt64().BeingNonNullable().And
-                .HaveField(nameof(Comet.MassKg)).OfTypeUInt64().BeingNonNullable().And
-                .HaveField(nameof(Comet.Albedo)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Comet.OrbitalPeriod)).OfTypeSingle().BeingNonNullable().And
+                .HaveField("AstronomicalIdentifier").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Aphelion").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Perihelion").OfTypeInt64().BeingNonNullable().And
+                .HaveField("Eccentricity").OfTypeInt64().BeingNonNullable().And
+                .HaveField("MassKg").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Albedo").OfTypeDouble().BeingNonNullable().And
+                .HaveField("OrbitalPeriod").OfTypeSingle().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -61,10 +58,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(TitleOfYourSexTape.Title)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(TitleOfYourSexTape.CharacterSaying)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(TitleOfYourSexTape.CharacterReceiving)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(TitleOfYourSexTape.DayOfWeek)).OfTypeEnumeration(
+                .HaveField("Title").OfTypeText().BeingNonNullable().And
+                .HaveField("CharacterSaying").OfTypeText().BeingNonNullable().And
+                .HaveField("CharacterReceiving").OfTypeText().BeingNonNullable().And
+                .HaveField("DayOfWeek").OfTypeEnumeration(
                     DayOfWeek.Sunday,
                     DayOfWeek.Monday,
                     DayOfWeek.Tuesday,
@@ -73,9 +70,9 @@ namespace UT.Kvasir.Translation {
                     DayOfWeek.Friday,
                     DayOfWeek.Saturday
                 ).BeingNonNullable().And
-                .HaveField(nameof(TitleOfYourSexTape.Season)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(TitleOfYourSexTape.EpisodeNumber)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(TitleOfYourSexTape.Timestamp)).OfTypeDouble().BeingNonNullable().And
+                .HaveField("Season").OfTypeInt32().BeingNonNullable().And
+                .HaveField("EpisodeNumber").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Timestamp").OfTypeDouble().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -89,17 +86,17 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(VestigeOfDivergence.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(VestigeOfDivergence.Deity)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(VestigeOfDivergence.Wielder)).OfTypeText().BeingNullable().And
-                .HaveField(nameof(VestigeOfDivergence.IntroducedIn)).OfTypeEnumeration(
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Deity").OfTypeText().BeingNonNullable().And
+                .HaveField("Wielder").OfTypeText().BeingNullable().And
+                .HaveField("IntroducedIn").OfTypeEnumeration(
                     VestigeOfDivergence.Party.VoxMachina,
                     VestigeOfDivergence.Party.MightyNein,
                     VestigeOfDivergence.Party.BellsHells
                 ).BeingNullable().And
-                .HaveField(nameof(VestigeOfDivergence.AttackBonus)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(VestigeOfDivergence.AverageDamage)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(VestigeOfDivergence.CurrentState)).OfTypeEnumeration(
+                .HaveField("AttackBonus").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("AverageDamage").OfTypeInt32().BeingNonNullable().And
+                .HaveField("CurrentState").OfTypeEnumeration(
                     VestigeOfDivergence.State.Dormant,
                     VestigeOfDivergence.State.Awakened,
                     VestigeOfDivergence.State.Exalted
@@ -117,14 +114,14 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(HomeRunDerby.Year)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(HomeRunDerby.Victor)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(HomeRunDerby.TotalHomers)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(HomeRunDerby.LongestHomer)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(HomeRunDerby.CharityMoney)).OfTypeDecimal().BeingNonNullable().And
-                .HaveField(nameof(HomeRunDerby.Structure)).OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Year").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Victor").OfTypeText().BeingNonNullable().And
+                .HaveField("TotalHomers").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("LongestHomer").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("CharityMoney").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("Structure").OfTypeDateTime().BeingNonNullable().And
                 .HaveNoOtherFields().And
-                .HaveConstraint(nameof(HomeRunDerby.Structure), InclusionOperator.In,
+                .HaveConstraint("Structure", InclusionOperator.In,
                     new DateTime(2000, 1, 1),
                     new DateTime(2000, 1, 2),
                     new DateTime(2000, 1, 3),
@@ -143,39 +140,39 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Quarterback.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.ThrowingArm)).OfTypeInt8().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.DraftRound)).OfTypeInt16().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.QBStyle)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.CareerAchievements)).OfTypeInt64().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.Status)).OfTypeUInt8().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.HasBeenTraded)).OfTypeUInt16().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.FurthestPlayoffAdvancement)).OfTypeUInt32().BeingNonNullable().And
-                .HaveField(nameof(Quarterback.Leagues)).OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("ThrowingArm").OfTypeInt8().BeingNonNullable().And
+                .HaveField("DraftRound").OfTypeInt16().BeingNonNullable().And
+                .HaveField("QBStyle").OfTypeInt32().BeingNonNullable().And
+                .HaveField("CareerAchievements").OfTypeInt64().BeingNonNullable().And
+                .HaveField("Status").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("HasBeenTraded").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("FurthestPlayoffAdvancement").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Leagues").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields().And
-                .HaveConstraint(nameof(Quarterback.ThrowingArm), InclusionOperator.In,
+                .HaveConstraint("ThrowingArm", InclusionOperator.In,
                     (sbyte)0, (sbyte)1
                 ).And
-                .HaveConstraint(nameof(Quarterback.DraftRound), InclusionOperator.In,
+                .HaveConstraint("DraftRound", InclusionOperator.In,
                     (short)14, (short)188, (short)2, (short)-16, (short)19054, (short)-333, (short)0, (short)8
                 ).And
-                .HaveConstraint(nameof(Quarterback.QBStyle), InclusionOperator.In,
+                .HaveConstraint("QBStyle", InclusionOperator.In,
                     0, 1, 2, 3
                 ).And
-                .HaveConstraint(nameof(Quarterback.CareerAchievements), InclusionOperator.In,
+                .HaveConstraint("CareerAchievements", InclusionOperator.In,
                     1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L,
                     23L, 24L, 25L, 26L, 27L, 28L, 29L, 30L, 31L
                 ).And
-                .HaveConstraint(nameof(Quarterback.Status), InclusionOperator.In,
+                .HaveConstraint("Status", InclusionOperator.In,
                     (byte)0, (byte)1, (byte)2, (byte)3, (byte)4
                 ).And
-                .HaveConstraint(nameof(Quarterback.HasBeenTraded), InclusionOperator.In,
+                .HaveConstraint("HasBeenTraded", InclusionOperator.In,
                     (ushort)0, (ushort)1
                 ).And
-                .HaveConstraint(nameof(Quarterback.FurthestPlayoffAdvancement), InclusionOperator.In,
+                .HaveConstraint("FurthestPlayoffAdvancement", InclusionOperator.In,
                     0U, 1827412U, 44U, 949012U, 55U
                 ).And
-                .HaveConstraint(nameof(Quarterback.Leagues), InclusionOperator.In,
+                .HaveConstraint("Leagues", InclusionOperator.In,
                     2UL, 64UL, 66UL, 128UL, 130UL, 192UL, 194UL
                 ).And
                 .HaveNoOtherConstraints();
@@ -191,13 +188,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(EcumenicalCouncil.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(EcumenicalCouncil.Opening)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(EcumenicalCouncil.Closing)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(EcumenicalCouncil.RecognizedBy)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(EcumenicalCouncil.Attendance)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Opening").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Closing").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("RecognizedBy").OfTypeText().BeingNonNullable().And
+                .HaveField("Attendance").OfTypeUInt32().BeingNonNullable().And
                 .HaveNoOtherFields().And
-                .HaveConstraint(nameof(EcumenicalCouncil.RecognizedBy), InclusionOperator.In,
+                .HaveConstraint("RecognizedBy", InclusionOperator.In,
                     "CatholicChurch", "EasternOrthodoxChurch", "Unrecognized"
                 ).And
                 .HaveNoOtherConstraints();
@@ -212,12 +209,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Joust.KnightB))                       // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining(nameof(Joust.Person))                        // details / explanation
-                .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Joust` → KnightB")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Person`")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void ConverterOnReferenceField_IsError() {
@@ -229,12 +225,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Decathlon.Winner))                    // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining(nameof(Decathlon.Athlete))                   // details / explanation
-                .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Decathlon` → Winner")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Athlete`")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void ConverterOnRelationField_IsError() {
@@ -246,12 +241,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Bank.Accounts))                       // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining(nameof(RelationMap<ulong, decimal>))         // details / explanation
-                .WithMessageContaining("neither a scalar nor an enumeration");      // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Bank` → <synthetic> `Accounts`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<ulong, decimal>`")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void ConverterOnNullablePropertyHasNonNullableTargetType() {
@@ -264,10 +258,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(RoyalHouse.HouseName)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(RoyalHouse.Founded)).OfTypeDateTime().BeingNonNullable().And
-                .HaveField(nameof(RoyalHouse.CurrentHead)).OfTypeText().BeingNullable().And
-                .HaveField(nameof(RoyalHouse.TotalMonarchs)).OfTypeInt32().BeingNullable().And
+                .HaveField("HouseName").OfTypeText().BeingNonNullable().And
+                .HaveField("Founded").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("CurrentHead").OfTypeText().BeingNullable().And
+                .HaveField("TotalMonarchs").OfTypeInt32().BeingNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -281,13 +275,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Planeswalker.Name)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Planeswalker.MannaCost)).OfTypeInt8().BeingNonNullable().And
-                .HaveField(nameof(Planeswalker.InitialLoyalty)).OfTypeInt8().BeingNonNullable().And
-                .HaveField(nameof(Planeswalker.Ability1)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Planeswalker.Ability2)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Planeswalker.Ability3)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(Planeswalker.SerialNumber)).OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("MannaCost").OfTypeInt8().BeingNonNullable().And
+                .HaveField("InitialLoyalty").OfTypeInt8().BeingNonNullable().And
+                .HaveField("Ability1").OfTypeText().BeingNonNullable().And
+                .HaveField("Ability2").OfTypeText().BeingNonNullable().And
+                .HaveField("Ability3").OfTypeText().BeingNonNullable().And
+                .HaveField("SerialNumber").OfTypeUInt32().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 
@@ -300,12 +294,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Jedi.MiddleName))                     // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining(nameof(Boolean))                             // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Jedi` → MiddleName")
+                .WithProblem("a property of type `string` cannot use a Data Converter that expects `bool`")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void PropertyTypeIsConvertibleToSourceType_IsError() {
@@ -317,12 +310,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ConstitutionalAmendment.Number))      // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining(nameof(Int64))                               // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`ConstitutionalAmendment` → Number")
+                .WithProblem("a property of type `int` cannot use a Data Converter that expects `long`")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void TargetTypeIsNotSupported_IsError() {
@@ -334,12 +326,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SNLEpisode.AirDate))                  // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining("type*is not supported")                     // details / explanation
-                .WithMessageContaining(nameof(Exception));                          // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`SNLEpisode` → AirDate")
+                .WithProblem("the result type `Exception` of the Data Converter is not supported")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void DataConverterTypeDoesNotImplementInterface_IsError() {
@@ -351,13 +342,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MetraRoute.Line))                     // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining("does not implement")                        // details / explanation
-                .WithMessageContaining(nameof(Int32))                               // details / explanation
-                .WithMessageContaining(nameof(IDataConverter));                     // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`MetraRoute` → Line")
+                .WithProblem("`int` does not implement the `IDataConverter` interface")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void DataConverterTypeCannotBeDefaultConstructed_IsError() {
@@ -369,12 +358,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Paycheck.HoursWorked))                // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining("does not have a default*constructor")       // details / explanation
-                .WithMessageContaining(nameof(ChangeBase));                         // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Paycheck` → HoursWorked")
+                .WithProblem("`ChangeBase` does not have a default (i.e. no-parameter) constructor")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void DataConverterTypeThrowsOnConstruction_IsError() {
@@ -386,13 +374,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Sword.YearForged))                    // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining("error constructing")                        // details / explanation
-                .WithMessageContaining(nameof(Unconstructible<short>))              // details / explanation
-                .WithMessageContaining(CANNOT_CONSTRUCT_MSG);                       // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Sword` → YearForged")
+                .WithProblem($"error constructing `Unconstructible<short>` ({CANNOT_CONSTRUCT_MSG})")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
         }
 
         [TestMethod] public void DataConverterTypeThrowsOnConversion_IsError() {
@@ -404,13 +390,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Ligament.Classification))             // error location
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining("error converting")                          // details / explanation
-                .WithMessageContaining("Type.Articular")                            // details / explanation
-                .WithMessageContaining(CANNOT_CONVERT_MSG);                         // details / explanation
+            translate.Should().FailWith<FailedOperationException>()
+                .WithLocation("`Ligament` → Classification")
+                .WithProblem($"error converting value Type.Articular ({CANNOT_CONVERT_MSG})")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnBooleanField_IsError() {
@@ -422,12 +405,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pillow.IsThrowPillow))                // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(Boolean))                             // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Pillow` → IsThrowPillow")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `bool`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnTextualField_IsError() {
@@ -439,12 +421,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(VigenereCipher.Key))                  // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(String))                              // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`VigenereCipher` → Key")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `string`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnNumericField_IsError() {
@@ -456,12 +437,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Satellite.OrbitsCompleted))           // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(UInt64))                              // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Satellite` → OrbitsCompleted")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `ulong`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnDateTimeField_IsError() {
@@ -473,12 +453,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Symphony.PremiereDate))               // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Symphony` → PremiereDate")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `DateTime`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnGuidField_IsError() {
@@ -490,12 +469,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(WordSearch.PuzzleID))                 // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(Guid))                                // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`WordSearch` → PuzzleID")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `Guid`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnAggregateField_IsError() {
@@ -507,12 +485,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GolfCourse.Hole14))                   // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(GolfCourse.Hole))                     // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`GolfCourse` → Hole14")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `Hole`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnReferenceField_IsError() {
@@ -524,12 +501,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SlamBallMatch.Defeated))              // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(SlamBallMatch.SlamBallTeam))          // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`SlamBallMatch` → Defeated")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `SlamBallTeam`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericConverterOnRelationField_IsError() {
@@ -541,12 +517,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Wadi.MineralDeposits))                // error location
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining(nameof(RelationSet<string>))                 // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Wadi` → <synthetic> `MineralDeposits`")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `RelationSet<string>`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnBooleanField_IsError() {
@@ -558,12 +533,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BondGirl.SleptWithBond))              // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(Boolean))                             // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`BondGirl` → SleptWithBond")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `bool`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnTextualField_IsError() {
@@ -575,12 +549,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BatmanVillain.Grade))                 // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(Char))                                // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`BatmanVillain` → Grade")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `char`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnNumericField_IsError() {
@@ -592,12 +565,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cemetery.Latitude))                   // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(Double))                              // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Cemetery` → Latitude")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `double`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnDateTimeField_IsError() {
@@ -609,12 +581,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ImmaculateGrid.Date))                 // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`ImmaculateGrid` → Date")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `DateTime`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnGuidField_IsError() {
@@ -626,12 +597,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Eyeglasses.GlassesID))                // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(Guid))                                // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Eyeglasses` → GlassesID")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `Guid`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnAggregateField_IsError() {
@@ -643,12 +613,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Windmill.EnergyGenerated))            // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(Windmill.EnergyOutput))               // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Windmill` → EnergyGenerated")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `EnergyOutput`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnReferenceField_IsError() {
@@ -660,12 +629,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Chakra.AssociatedYogini))             // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(Chakra.Yogini))                       // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Chakra` → AssociatedYogini")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `Yogini`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void AsStringConverterOnRelationField_IsError() {
@@ -677,12 +645,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cryptogram.Solution))                 // error location
-                .WithMessageContaining("[AsString]")                                // details / explanation
-                .WithMessageContaining(nameof(RelationMap<char, char>))             // details / explanation
-                .WithMessageContaining("enumeration");                              // details / explanation
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Cryptogram` → <synthetic> `Solution`")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `RelationMap<char, char>`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void DataConverterAndNumeric_IsError() {
@@ -694,12 +661,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SecretHitlerGame.Player7))            // error location
-                .WithMessageContaining("mutually exclusive")                        // category
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining("[Numeric]");                                // details / explanation
+            translate.Should().FailWith<ConflictingAnnotationsException>()
+                .WithLocation("`SecretHitlerGame` → Player7")
+                .WithProblem("the two annotations are mutually exclusive")
+                .WithAnnotations("[DataConverter]", "[Numeric]")
+                .EndMessage();
         }
 
         [TestMethod] public void DataConverterAndAsString_IsError() {
@@ -711,12 +677,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mezuzah.MadeOf))                      // error location
-                .WithMessageContaining("mutually exclusive")                        // category
-                .WithMessageContaining("[DataConverter]")                           // details / explanation
-                .WithMessageContaining("[AsString]");                               // details / explanation
+            translate.Should().FailWith<ConflictingAnnotationsException>()
+                .WithLocation("`Mezuzah` → MadeOf")
+                .WithProblem("the two annotations are mutually exclusive")
+                .WithAnnotations("[DataConverter]", "[AsString]")
+                .EndMessage();
         }
 
         [TestMethod] public void NumericAndAsString_IsError() {
@@ -728,12 +693,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Atoll.Ocean))                         // error location
-                .WithMessageContaining("mutually exclusive")                        // category
-                .WithMessageContaining("[Numeric]")                                 // details / explanation
-                .WithMessageContaining("[AsString]");                               // details / explanation
+            translate.Should().FailWith<ConflictingAnnotationsException>()
+                .WithLocation("`Atoll` → Ocean")
+                .WithProblem("the two annotations are mutually exclusive")
+                .WithAnnotations("[AsString]", "[Numeric]")
+                .EndMessage();
         }
     }
 }

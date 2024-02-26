@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -21,13 +20,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(CoralReef.Longitude), InclusionOperator.In,
+                .HaveConstraint("Longitude", InclusionOperator.In,
                     0f, 30f, 45f, 75f, 90f
                 ).And
-                .HaveConstraint(nameof(CoralReef.Length), InclusionOperator.In,
+                .HaveConstraint("Length", InclusionOperator.In,
                     1000UL, 2000UL, 3000UL, 4000UL, 5000UL
                 ).And
-                .HaveConstraint(nameof(CoralReef.Area), InclusionOperator.In,
+                .HaveConstraint("Area", InclusionOperator.In,
                     17, 190841, 79512759, 857791
                 ).And
                 .HaveNoOtherConstraints();
@@ -43,10 +42,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Encyclopedia.Letter), InclusionOperator.In,
+                .HaveConstraint("Letter", InclusionOperator.In,
                     'A', 'B', 'C', 'D', 'E', 'F', 'G'
                 ).And
-                .HaveConstraint(nameof(Encyclopedia.Edition), InclusionOperator.In,
+                .HaveConstraint("Edition", InclusionOperator.In,
                     "First", "Second", "Third", "Fourth"
                 ).And
                 .HaveNoOtherConstraints();
@@ -62,7 +61,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Astronaut.WalkedOnMoon), InclusionOperator.In,
+                .HaveConstraint("WalkedOnMoon", InclusionOperator.In,
                     true, false
                 ).And
                 .HaveNoOtherConstraints();
@@ -78,7 +77,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(CiderMill.AnnualTonnage), InclusionOperator.In,
+                .HaveConstraint("AnnualTonnage", InclusionOperator.In,
                     (decimal)0, (decimal)100, (decimal)1000, (decimal)10000, (decimal)100000, (decimal)1000000
                 ).And
                 .HaveNoOtherConstraints();
@@ -94,7 +93,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Hospital.Opened), InclusionOperator.In,
+                .HaveConstraint("Opened", InclusionOperator.In,
                     new DateTime(2000, 1, 1), new DateTime(2000, 1, 2), new DateTime(2000, 1, 3)
                 ).And
                 .HaveNoOtherConstraints();
@@ -110,7 +109,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Tsunami.TsunamiID), ComparisonOperator.EQ, new Guid("b334ae4e-98c3-4f63-83f8-2bc076eae31b")).And
+                .HaveConstraint("TsunamiID", ComparisonOperator.EQ, new Guid("b334ae4e-98c3-4f63-83f8-2bc076eae31b")).And
                 .HaveNoOtherConstraints();
         }
 
@@ -124,12 +123,16 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Tooth.ToothID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Tooth.Origin)).OfTypeEnumeration(
-                    Tooth.Source.Animal, Tooth.Source.Human
+                .HaveField("ToothID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Origin").OfTypeEnumeration(
+                    Tooth.Source.Animal,
+                    Tooth.Source.Human
                 ).BeingNonNullable().And
-                .HaveField(nameof(Tooth.Type)).OfTypeEnumeration(
-                    Tooth.ToothType.Incisor, Tooth.ToothType.Bicuspid, Tooth.ToothType.Canine, Tooth.ToothType.Molar
+                .HaveField("Type").OfTypeEnumeration(
+                    Tooth.ToothType.Incisor,
+                    Tooth.ToothType.Bicuspid,
+                    Tooth.ToothType.Canine,
+                    Tooth.ToothType.Molar
                 ).BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherConstraints();
@@ -160,12 +163,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(nameof(PhoneticAlphabet.All))                            // source type
-                .WithMessageContaining(nameof(PhoneticAlphabet.All.ABCDEFGHIJKLMNOPQRS))        // error location
-                .WithMessageContaining("refers to a non-scalar")                                // category
-                .WithMessageContaining("[Check.IsOneOf]")                                       // details / explanation
-                .WithMessageContaining("\"ABCDEFGHIJK.GHIJK\"");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PhoneticAlphabet` → `All` (from \"Alphabet\") → ABCDEFGHIJKLMNOPQRS")
+                .WithPath("ABCDEFGHIJK.GHIJK")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `GHIJK`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_ReferenceNestedScalarField() {
@@ -193,12 +196,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pulsar.OBS))                          // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"Observatory\"");                          // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Pulsar` → FirstObservedAt")
+                .WithPath("Observatory")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Observatory`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_RelationNestedScalarField() {
@@ -211,8 +214,9 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Relations[0].Table.Should()
-                .HaveConstraint("Item", InclusionOperator.In, "Americas", "Eurasia", "Middle East", "Africa",
-                    "Australia", "Pacific Islands", "Arctic", "Antarctica", "Oceans"
+                .HaveConstraint("Item", InclusionOperator.In,
+                    "Americas", "Eurasia", "Middle East", "Africa", "Australia", "Pacific Islands", "Arctic",
+                    "Antarctica", "Oceans"
                 ).And
                 .HaveNoOtherConstraints();
         }
@@ -239,12 +243,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cheerleader.PrimaryCheer))            // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"Moves\"");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Cheerleader` → PrimaryCheer")
+                .WithPath("Moves")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<int, string>`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NullableFields() {
@@ -257,10 +261,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Wildfire.Cause), InclusionOperator.In,
+                .HaveConstraint("Cause", InclusionOperator.In,
                     "Lightning", "Arson", "Electrical"
                 ).And
-                .HaveConstraint(nameof(Wildfire.MaxTemperature), InclusionOperator.In,
+                .HaveConstraint("MaxTemperature", InclusionOperator.In,
                     5718.37, 1984.6, 279124.9
                 ).And
                 .HaveNoOtherConstraints();
@@ -276,7 +280,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(HealingPotion.DieType), InclusionOperator.In,
+                .HaveConstraint("DieType", InclusionOperator.In,
                     4u, 8u, 10u, 12u, 20u, 100u
                 ).And
                 .HaveNoOtherConstraints();
@@ -291,13 +295,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Battery.Voltage))                     // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining($"\"six\" of type {nameof(String)}")         // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Battery` → Voltage")
+                .WithProblem("value \"six\" is of type `string`, not `int` as expected")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_ConvertibleValue_IsError() {
@@ -309,13 +311,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(TennisMatch.Player1Score))            // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining($"0 of type {nameof(Byte)}")                 // details / explanation
-                .WithMessageContaining(nameof(SByte));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`TennisMatch` → Player1Score")
+                .WithProblem("value 0 is of type `byte`, not `sbyte` as expected")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_InvalidEnumerator_IsError() {
@@ -327,13 +327,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(SpeedLimit.TypeOfStreet))             // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("StreetType.40000")                          // details / explanation
-                .WithMessageContaining("enumerator is invalid");                    // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`SpeedLimit` → TypeOfStreet")
+                .WithProblem("enumerator StreetType.40000 is not valid")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_ArrayValue_IsError() {
@@ -345,13 +343,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Flashcard.IsLearned))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(Boolean));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Flashcard` → IsLearned")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NullValue_IsError() {
@@ -363,12 +359,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Prophet.HebrewName))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Prophet` → HebrewName")
+                .WithProblem("constraint cannot contain 'null'")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_DecimalValueIsNotDouble_IsError() {
@@ -380,14 +375,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Carousel.RoundDuration))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining($"0.4 of type {nameof(Single)}")             // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Carousel` → RoundDuration")
+                .WithProblem("value 0.4 is of type `float`, not `double` as expected")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_DecimalValueIsOutOfRange_IsError() {
@@ -399,14 +391,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Borate.MolarMass))                    // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining(double.MinValue.ToString())                  // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Borate` → MolarMass")
+                .WithProblem($"`double` {double.MinValue} is outside the supported range for `decimal`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_DateTimeValueIsNotString_IsError() {
@@ -418,14 +407,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(DalaiLama.Birthdate))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining($"1824 of type {nameof(UInt64)}")            // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`DalaiLama` → Birthdate")
+                .WithProblem("value 1824 is of type `ulong`, not `string` as expected")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_DateTimeValueIsMalformatted_IsError() {
@@ -437,14 +423,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Voicemail.When))                      // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"Thursday\"")                              // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Voicemail` → When")
+                .WithProblem("unable to parse `string` value \"Thursday\" as a `DateTime`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_DateTimeValueIsOutOfRange_IsError() {
@@ -456,14 +439,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(FinalJeopardy.AirDate))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"1299-08-45\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`FinalJeopardy` → AirDate")
+                .WithProblem("unable to parse `string` value \"1299-08-45\" as a `DateTime`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_GuidValueIsNotString_IsError() {
@@ -475,14 +455,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(BiologicalCycle.ID))                  // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining($"'c' of type {nameof(Char)}")               // details / explanation
-                .WithMessageContaining(nameof(Guid))                                // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`BiologicalCycle` → ID")
+                .WithProblem("value 'c' is of type `char`, not `string` as expected")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_GuidValueIsMalformatted_IsError() {
@@ -494,14 +471,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(WaterBottle.ProductID))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"A-G-U-I-D\"")                             // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`WaterBottle` → ProductID")
+                .WithProblem("unable to parse `string` value \"A-G-U-I-D\" as a `Guid`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_ValueMatchesDataConversionSourceType_IsError() {
@@ -513,13 +487,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Burrito.Protein))                     // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining($"\"Chicken\" of type {nameof(String)}")     // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Burrito` → Protein")
+                .WithProblem("value \"Chicken\" is of type `string`, not `int` as expected")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_ValueMatchesDataConversionTargetType() {
@@ -532,7 +504,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(WaterSlide.Type), InclusionOperator.In,
+                .HaveConstraint("Type", InclusionOperator.In,
                     "Straight", "Curly", "Funnel"
                 ).And
                 .HaveNoOtherConstraints();
@@ -548,7 +520,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Cannon.Capacity), InclusionOperator.In,
+                .HaveConstraint("Capacity", InclusionOperator.In,
                     7, 2, 4, 1, 6
                 ).And
                 .HaveNoOtherConstraints();
@@ -564,15 +536,15 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(Treehouse.ID)).OfTypeGuid().BeingNonNullable().And
-                .HaveField(nameof(Treehouse.MadeBy)).OfTypeEnumeration(
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("MadeBy").OfTypeEnumeration(
                     Treehouse.Manufacturing.Professional
                 ).BeingNonNullable().And
-                .HaveField(nameof(Treehouse.Elevation)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Treehouse.Height)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Treehouse.Length)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Treehouse.Width)).OfTypeDouble().BeingNonNullable().And
-                .HaveField(nameof(Treehouse.PrimaryWood)).OfTypeText().BeingNonNullable().And
+                .HaveField("Elevation").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Height").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Length").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Width").OfTypeDouble().BeingNonNullable().And
+                .HaveField("PrimaryWood").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherConstraints();
         }
@@ -586,11 +558,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Dragon.Species))                      // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Dragon` → Species")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_PathOnScalar_IsError() {
@@ -602,12 +574,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(HomericHymn.Lines))                   // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`HomericHymn` → Lines")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NonExistentPathOnAggregate_IsError() {
@@ -619,12 +590,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(MarbleLeague.Victor))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`MarbleLeague` → Victor")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NoPathOnAggregate_IsError() {
@@ -636,11 +606,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Artery.Name))                         // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Artery` → Name")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Naming`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NonExistentPathOnReference_IsError() {
@@ -652,12 +622,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Safari.Elephants))                    // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Safari` → Elephants")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NonPrimaryKeyPathOnReference_IsError() {
@@ -669,12 +638,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Adverb.WordSuffix))                   // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"PartOfSpeech\"");                         // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Adverb` → WordSuffix")
+                .WithProblem("the path \"PartOfSpeech\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NoPathOnReference_IsError() {
@@ -686,11 +654,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Swamp.PredominantTree))               // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Swamp` → PredominantTree")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Tree`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NonExistentPathOnRelation_IsError() {
@@ -702,12 +670,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PawnShop.Inventory))                  // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`PawnShop` → <synthetic> `Inventory`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -719,12 +686,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(DrinkingFountain.Inspections))        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsOneOf]")                           // details / explanation
-                .WithMessageContaining("\"WaterPressure\"");                        // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`DrinkingFountain` → <synthetic> `Inspections`")
+                .WithProblem("the path \"DrinkingFountain.WaterPressure\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_NoPathOnRelation_IsError() {
@@ -736,11 +702,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Hairstyle.Certifications))            // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsOneOf]");                          // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Hairstyle` → <synthetic> `Certifications`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<Guid, bool>`")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -752,13 +718,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Guillotine.Height))                   // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("13")                                        // details / explanation
-                .WithMessageContaining("{ 30, 60, 90, 120 }");                      // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Guillotine` → Height")
+                .WithProblem("the Field's default value of 113 does not pass the constraint")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsOneOf_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -770,13 +734,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(IKEAFurniture.CatalogEntry.Room))     // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("Group.Den")                                 // details / explanation
-                .WithMessageContaining("{ Group.Bedroom, Group.Bathroom }");        // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`IKEAFurniture` → CatalogEntry")
+                .WithPath("Room")
+                .WithProblem("the Field's default value of Group.Den does not pass the constraint")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
         }
     }
 
@@ -792,13 +755,13 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(NationalAnthem.WordCount), InclusionOperator.NotIn,
+                .HaveConstraint("WordCount", InclusionOperator.NotIn,
                     0U, 5U
                 ).And
-                .HaveConstraint(nameof(NationalAnthem.Length), InclusionOperator.NotIn,
+                .HaveConstraint("Length", InclusionOperator.NotIn,
                     1.3f, 1.6f, 1.9f, 2.2f, 2.5f, 2.8f, 3.1f, 3.4f
                 ).And
-                .HaveConstraint(nameof(NationalAnthem.Revision), InclusionOperator.NotIn,
+                .HaveConstraint("Revision", InclusionOperator.NotIn,
                     0L, 1L, 2L
                 ).And
                 .HaveNoOtherConstraints();
@@ -814,10 +777,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Taxi.Quality), InclusionOperator.NotIn,
+                .HaveConstraint("Quality", InclusionOperator.NotIn,
                     '1', '3', '5', '7', '9'
                 ).And
-                .HaveConstraint(nameof(Taxi.Company), InclusionOperator.NotIn,
+                .HaveConstraint("Company", InclusionOperator.NotIn,
                     "YellowCab", "Cash Cab", "Uber", "Lyft"
                 ).And
                 .HaveNoOtherConstraints();
@@ -833,7 +796,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(BirthControl.ForWomen), ComparisonOperator.NE, false).And
+                .HaveConstraint("ForWomen", ComparisonOperator.EQ, true).And
                 .HaveNoOtherConstraints();
         }
 
@@ -847,7 +810,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(HouseCommittee.Budget), InclusionOperator.NotIn,
+                .HaveConstraint("Budget", InclusionOperator.NotIn,
                     (decimal)0, (decimal)1000, (decimal)100000, (decimal)100000000
                 ).And
                 .HaveNoOtherConstraints();
@@ -863,7 +826,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(GamingConsole.Launched), InclusionOperator.NotIn,
+                .HaveConstraint("Launched", InclusionOperator.NotIn,
                     new DateTime(1973, 4, 30), new DateTime(1973, 5, 30)
                 ).And
                 .HaveNoOtherConstraints();
@@ -879,7 +842,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Podcast.ID), InclusionOperator.NotIn,
+                .HaveConstraint("ID", InclusionOperator.NotIn,
                     new Guid("70324253-a5df-4208-9939-44a11243ceb0"), new Guid("2e748258-29e6-4abd-a1e1-3e93262e4c04")
                 ).And
                 .HaveNoOtherConstraints();
@@ -895,13 +858,15 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveField(nameof(RorschachInkBlot.BlotNumber)).OfTypeInt32().BeingNonNullable().And
-                .HaveField(nameof(RorschachInkBlot.MostCommonAnswer)).OfTypeEnumeration(
-                    RorschachInkBlot.Object.Skin, RorschachInkBlot.Object.Bat, RorschachInkBlot.Object.Humans,
+                .HaveField("BlotNumber").OfTypeInt32().BeingNonNullable().And
+                .HaveField("MostCommonAnswer").OfTypeEnumeration(
+                    RorschachInkBlot.Object.Skin,
+                    RorschachInkBlot.Object.Bat,
+                    RorschachInkBlot.Object.Humans,
                     RorschachInkBlot.Object.Butterfly
                 ).BeingNonNullable().And
-                .HaveField(nameof(RorschachInkBlot.Commentary)).OfTypeText().BeingNonNullable().And
-                .HaveField(nameof(RorschachInkBlot.ImageURL)).OfTypeText().BeingNonNullable().And
+                .HaveField("Commentary").OfTypeText().BeingNonNullable().And
+                .HaveField("ImageURL").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveNoOtherConstraints();
         }
@@ -931,12 +896,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Tattoo.Ink))                          // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"Color\"");                                // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Tattoo` → Ink")
+                .WithPath("Color")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Color`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_ReferenceNestedScalarField() {
@@ -971,18 +936,18 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void IsNotOneOf_NestedReferenceProperty_IsError() {
             // Arrange
             var translator = new Translator();
-            var source = typeof(NurseyRhyme);
+            var source = typeof(NurseryRhyme);
 
             // Act
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(NurseyRhyme.MainCharacter))           // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"Character\"");                            // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`NurseryRhyme` → MainCharacter")
+                .WithPath("Character")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Character`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_RelationNestedScalarField() {
@@ -1010,12 +975,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PersonOfTheYear.TIME))                // error location
-                .WithMessageContaining("refers to a non-scalar")                    // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"Editions\"");                             // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PersonOfTheYear` → TIME")
+                .WithPath("Editions")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<uint>`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NullableFields() {
@@ -1028,10 +993,10 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(PIERoot.FrenchExample), InclusionOperator.NotIn,
+                .HaveConstraint("FrenchExample", InclusionOperator.NotIn,
                     "Manger", "Faire", "Avoir", "Parler"
                 ).And
-                .HaveConstraint(nameof(PIERoot.SpanishExample), InclusionOperator.NotIn,
+                .HaveConstraint("SpanishExample", InclusionOperator.NotIn,
                     "Comer", "Hacer", "Tener", "Hablar"
                 ).And
                 .HaveNoOtherConstraints();
@@ -1047,7 +1012,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Tweet.Grading), InclusionOperator.NotIn,
+                .HaveConstraint("Grading", InclusionOperator.NotIn,
                     'A', 'E', 'I', 'O', 'U'
                 ).And
                 .HaveNoOtherConstraints();
@@ -1062,13 +1027,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cancer.RegionAffected))               // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining($"17.3 of type {nameof(Single)}")            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Cancer` → RegionAffected")
+                .WithProblem("value 17.3 is of type `float`, not `string` as expected")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_ConvertibleValue_IsError() {
@@ -1080,13 +1043,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Avatar.DebutEpisode))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining($"8 of type {nameof(Byte)}")                 // details / explanation
-                .WithMessageContaining(nameof(UInt16));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Avatar` → DebutEpisode")
+                .WithProblem("value 8 is of type `byte`, not `ushort` as expected")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_InvalidEnumerator_IsError() {
@@ -1098,13 +1059,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Emotion.Connotation))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("EmotionType.-3")                            // details / explanation
-                .WithMessageContaining("enumerator is invalid");                    // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Emotion` → Connotation")
+                .WithProblem("enumerator EmotionType.-3 is not valid")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_ArrayValue_IsError() {
@@ -1116,13 +1075,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Wristwatch.Brand))                    // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("array")                                     // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Wristwatch` → Brand")
+                .WithProblem("value cannot be an array")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NullValue_IsError() {
@@ -1134,12 +1091,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Ballet.OpusNumber))                   // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("null");                                     // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Ballet` → OpusNumber")
+                .WithProblem("constraint cannot contain 'null'")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_DecimalValueIsNotDouble_IsError() {
@@ -1151,14 +1107,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(AmericanIdol.VoteShare))              // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining($"\"0.90\" of type {nameof(String)}")        // details / explanation
-                .WithMessageContaining(nameof(Decimal))                             // details / explanation
-                .WithMessageContaining(nameof(Double));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`AmericanIdol` → VoteShare")
+                .WithProblem("value \"0.90\" is of type `string`, not `double` as expected")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_DecimalValueIsOutOfRange_IsError() {
@@ -1170,14 +1123,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(RussianTsar.DaysReigned))             // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining(double.MaxValue.ToString())                  // details / explanation
-                .WithMessageContaining("could not convert")                         // details / explanation
-                .WithMessageContaining(nameof(Decimal));                            // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`RussianTsar` → DaysReigned")
+                .WithProblem($"`double` {double.MaxValue} is outside the supported range for `decimal`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_DateTimeValueIsNotString_IsError() {
@@ -1189,14 +1139,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mayor.TermEnd))                       // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining($"'T' of type {nameof(Char)}")               // details / explanation
-                .WithMessageContaining(nameof(DateTime))                            // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Mayor` → TermEnd")
+                .WithProblem("value 'T' is of type `char`, not `string` as expected")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_DateTimeValueIsMalformatted_IsError() {
@@ -1208,14 +1155,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Inator.Debut))                        // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"1875~06~22\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Inator` → Debut")
+                .WithProblem("unable to parse `string` value \"1875~06~22\" as a `DateTime`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_DateTimeValueIsOutOfRange_IsError() {
@@ -1227,14 +1171,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Museum.GrandOpening))                 // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"1375-49-14\"")                            // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(DateTime));                           // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Museum` → GrandOpening")
+                .WithProblem("unable to parse `string` value \"1375-49-14\" as a `DateTime`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_GuidValueIsNotString_IsError() {
@@ -1246,14 +1187,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Cruise.CruiseID))                     // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining($"'f' of type {nameof(Char)}")               // details / explanation
-                .WithMessageContaining(nameof(Guid))                                // details / explanation
-                .WithMessageContaining(nameof(String));                             // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Cruise` → CruiseID")
+                .WithProblem("value 'f' is of type `char`, not `string` as expected")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_GuidValueIsMalformatted_IsError() {
@@ -1265,14 +1203,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Union.UnionID))                       // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"b46cfa0c-545e-4279-93d6-d1236r373a2b\"")  // details / explanation
-                .WithMessageContaining("could not parse")                           // details / explanation
-                .WithMessageContaining(nameof(Guid));                               // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Union` → UnionID")
+                .WithProblem("unable to parse `string` value \"b46cfa0c-545e-4279-93d6-d1236r373a2b\" as a `Guid`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_ValueMatchesDataConversionSourceType_IsError() {
@@ -1284,13 +1219,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Guitar.Brand))                        // error location
-                .WithMessageContaining("user-provided value*is invalid")            // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining($"\"Cardboard\" of type {nameof(String)}")   // details / explanation
-                .WithMessageContaining(nameof(Int32));                              // details / explanation
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Guitar` → Brand")
+                .WithProblem("value \"Cardboard\" is of type `string`, not `int` as expected")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_ValueMatchesDataConversionTargetType() {
@@ -1303,7 +1236,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(SoccerTeam.WorldCupVictories), InclusionOperator.NotIn,
+                .HaveConstraint("WorldCupVictories", InclusionOperator.NotIn,
                     0, -3, 111
                 ).And
                 .HaveNoOtherConstraints();
@@ -1318,11 +1251,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Transformer.IsAutobot))               // error location
-                .WithMessageContaining("both true and false explicitly disallowed") // category
-                .WithMessageContaining("one or more [Check.xxx] constraints");      // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Transformer` → IsAutobot")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_AllEnumeratorsDisallowed_IsError() {
@@ -1334,11 +1266,10 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(ProgrammingLanguage.Type))            // error location
-                .WithMessageContaining("each of the allowed values*is disallowed")  // details / explanation
-                .WithMessageContaining("one or more [Check.xxx] constraints");      // details / explanation
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`ProgrammingLanguage` → Type")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_ScalarConstrainedMultipleTimes() {
@@ -1351,7 +1282,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint(nameof(Eurovision.Year), InclusionOperator.NotIn,
+                .HaveConstraint("Year", InclusionOperator.NotIn,
                     (ushort)0, (ushort)3
                 ).And
                 .HaveNoOtherConstraints();
@@ -1366,11 +1297,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Tuxedo.Size))                         // error location
-                .WithMessageContaining("path is null")                              // category
-                .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Tuxedo` → Size")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_PathOnScalar_IsError() {
@@ -1382,12 +1313,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Donut.Flavor))                        // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Donut` → Flavor")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NonExistentPathOnAggregate_IsError() {
@@ -1399,12 +1329,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Necktie.Measurements))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Necktie` → Measurements")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NoPathOnAggregate_IsError() {
@@ -1416,11 +1345,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Scattergories.Round))                 // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Scattergories` → Round")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Page`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NonExistentPathOnReference_IsError() {
@@ -1432,12 +1361,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pencil.Lead))                         // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Pencil` → Lead")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NonPrimaryKeyPathOnReference_IsError() {
@@ -1449,12 +1377,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Mitzvah.Commandment))                 // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"Hebrew\"");                               // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Mitzvah` → Commandment")
+                .WithProblem("the path \"Hebrew\" does not exist")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NoPathOnReference_IsError() {
@@ -1466,11 +1393,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Eunuch.Castrator))                    // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Eunuch` → Castrator")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Person`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NonExistentPathOnRelation_IsError() {
@@ -1482,12 +1409,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(PhoneBook.PhoneNumbers))              // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"---\"");                                  // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`PhoneBook` → <synthetic> `PhoneNumbers`")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NonAnchorPrimaryKeyPathOnRelation_IsError() {
@@ -1499,12 +1425,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Bakugan.AbilityCards))                // error location
-                .WithMessageContaining("path*does not exist")                       // category
-                .WithMessageContaining("[Check.IsNotOneOf]")                        // details / explanation
-                .WithMessageContaining("\"BakuganName\"");                          // details / explanation
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Bakugan` → <synthetic> `AbilityCards`")
+                .WithProblem("the path \"Bakugan.BakuganName\" does not exist")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_NoPathOnRelation_IsError() {
@@ -1516,11 +1441,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(QRCode.Vertical))                     // error location
-                .WithMessageContaining("path is required")                          // category
-                .WithMessageContaining("[Check.IsNotOneOf]");                       // details / explanation
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`QRCode` → <synthetic> `Vertical`")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<bool>`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
@@ -1532,13 +1457,11 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(Pie.Flavor))                          // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("\"Anise\"")                                 // details / explanation
-                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`Pie` → Flavor")
+                .WithProblem("the Field's default value of \"Anise\" does not pass the constraint")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
@@ -1550,13 +1473,12 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining(source.Name)                                 // source type
-                .WithMessageContaining(nameof(GirlScoutCookie.Label.Calories))      // error location
-                .WithMessageContaining("default*does not satisfy constraints")      // category
-                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
-                .WithMessageContaining("0.0")                                       // details / explanation
-                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
+            translate.Should().FailWith<InvalidatedDefaultException>()
+                .WithLocation("`GirlScoutCookie` → Label")
+                .WithPath("Calories")
+                .WithProblem("the Field's default value of 0.0 does not pass the constraint")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
     }
 }

@@ -729,6 +729,15 @@
               <see cref="P:Cybele.Core.DataConverter.ResultType"/> into instances of <see cref="P:Cybele.Core.DataConverter.SourceType"/>, if such a function is supported.
             </param>
         </member>
+        <member name="T:Cybele.Core.NoopDisposable">
+            <summary>
+              An <see cref="T:System.IDisposable"/> whose <see cref="M:System.IDisposable.Dispose"/> method does nothing, enabling the
+              null-object pattern.
+            </summary>
+        </member>
+        <member name="M:Cybele.Core.NoopDisposable.System#IDisposable#Dispose">
+            <inheritdoc/>
+        </member>
         <member name="T:Cybele.Core.PropertyChain">
             <summary>
               A chain of readable properties.

@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
-using Kvasir.Exceptions;
 using Kvasir.Schema;
-using Kvasir.Translation;
+using Kvasir.Translation2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.ReferenceCycles;
@@ -16,12 +15,12 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var translate = () => translator[source];
-            var cycle = "Constitution → Constitution";
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining("reference cycle detected")                  // category
-                .WithMessageContaining(cycle);                                      // details / explanation
+            translate.Should().FailWith<ReferenceCycleException>()
+                .WithLocation("`Constitution` → `Constitution` (from \"Precursor\")")
+                .WithProblem("reference cycle detected")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityReferenceChainLength2_IsError() {
@@ -31,12 +30,12 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var translate = () => translator[source];
-            var cycle = "Niqqud → Vowel → Niqqud";
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining("reference cycle detected")                  // category
-                .WithMessageContaining(cycle);                                      // details / explanation
+            translate.Should().FailWith<ReferenceCycleException>()
+                .WithLocation("`Niqqud` → `Vowel` (from \"Pronunciation\") → `Niqqud` (from \"HebrewSymbol\")")
+                .WithProblem("reference cycle detected")
+                .EndMessage();
         }
 
         [TestMethod] public void EntityReferenceCycleLength3OrMore_IsError() {
@@ -46,12 +45,12 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var translate = () => translator[source];
-            var cycle = "RefugeeCamp → Person → Country → CivilWar → RefugeeCamp";
 
             // Assert
-            translate.Should().ThrowExactly<KvasirException>()
-                .WithMessageContaining("reference cycle detected")                  // category
-                .WithMessageContaining(cycle);                                      // details / explanation
+            translate.Should().FailWith<ReferenceCycleException>()
+                .WithLocation("`RefugeeCamp` → `Person` (from \"Director\") → `Country` (from \"BirthCountry\") → `CivilWar` (from \"OngoingCivilWar\") → `RefugeeCamp` (from \"LargestRefugeeCamp\")")
+                .WithProblem("reference cycle detected")
+                .EndMessage();
         }
 
         [TestMethod] public void RelationReferenceCycle_DirectElement() {
