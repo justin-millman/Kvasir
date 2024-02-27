@@ -19,29 +19,6 @@ namespace Kvasir.Translation2 {
         }
 
         ///
-        public FieldDescriptor WithName(string name) {
-            Debug.Assert(name is not null && name != "");
-
-            var clone = Clone();
-            clone.name_ = name;
-            return clone;
-        }
-
-        ///
-        public FieldDescriptor AsNullable() {            
-            var clone = Clone();
-            clone.nullable_ = true;
-            return clone;
-        }
-
-        ///
-        public FieldDescriptor AsNonNullable() {
-            var clone = Clone();
-            clone.nullable_ = true;
-            return clone;
-        }
-
-        ///
         public FieldDescriptor WithColumn(int column) {
             Debug.Assert(column >= 0);
 
