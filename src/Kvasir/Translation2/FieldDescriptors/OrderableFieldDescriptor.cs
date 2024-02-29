@@ -7,21 +7,18 @@ namespace Kvasir.Translation2 {
         ///
         protected OrderableFieldDescriptor(OrderableFieldDescriptor source)
             : base(source) {
-        
-            lowerBound_ = source.lowerBound_;
-            upperBound_ = source.upperBound_;
+
+            comparisonConstraint_ = source.comparisonConstraint_;
         }
 
         ///
         protected OrderableFieldDescriptor(PropertyInfo source)
             : base(source) {
 
-            lowerBound_ = Option.None<Bound>();
-            upperBound_ = Option.None<Bound>();
+            comparisonConstraint_ = new Interval(Option.None<Bound>(), Option.None<Bound>());
         }
 
 
-        protected readonly Option<Bound> lowerBound_;
-        protected readonly Option<Bound> upperBound_;
+        protected readonly Interval comparisonConstraint_;
     }
 }

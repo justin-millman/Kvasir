@@ -10,8 +10,7 @@ namespace Kvasir.Translation2 {
             : base(source) {
 
             Debug.Assert(FieldType == typeof(string));
-            minimumLength_ = Option.None<Bound>();
-            maximumLength_ = Option.None<Bound>();
+            lengthConstraint_ = new Interval(Option.None<Bound>(), Option.None<Bound>());
         }
 
         ///
@@ -23,12 +22,11 @@ namespace Kvasir.Translation2 {
         private StringFieldDescriptor(StringFieldDescriptor source)
             : base(source) {
 
-            minimumLength_ = source.minimumLength_;
-            maximumLength_ = source.maximumLength_;
+            lengthConstraint_ = source.lengthConstraint_;
         }
 
 
-        private readonly Option<Bound> minimumLength_;
-        private readonly Option<Bound> maximumLength_;
+
+        private readonly Interval lengthConstraint_;
     }
 }

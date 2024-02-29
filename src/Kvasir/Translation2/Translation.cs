@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kvasir.Translation2 {
-    ///
-    internal sealed class Translation {
-
-    }
+    /// <summary>
+    ///   A translation of a single CLR type.
+    /// </summary>
+    /// 
+    /// <param name="CLRSource">The CLR <see cref="Type"/> that produced this <see cref="Translation"/></param>
+    /// <param name="Principal">The definition of the Principal Table</param>
+    /// <param name="Relations">The definitions of any Relation Tables</param>
+    internal sealed record class Translation(
+        Type CLRSource,
+        PrincipalTableDef Principal,
+        IReadOnlyList<RelationTableDef> Relations
+    );
 }
