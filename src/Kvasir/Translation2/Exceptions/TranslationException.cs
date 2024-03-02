@@ -1,0 +1,51 @@
+﻿using Cybele.Core;
+using Cybele.Extensions;
+using Kvasir.Exceptions;
+using System.Diagnostics;
+using System.Linq;
+
+namespace Kvasir.Translation2 {
+    /// <summary>
+    ///   The base class for all exceptions that can arise during Translation.
+    /// </summary>
+    internal abstract class TranslationException : KvasirException {
+        /// <summary>
+        ///   Constructs a new <see cref="TranslationException"/> that describes a problem.
+        /// </summary>
+        /// <param name="loc">
+        ///   The location at which the problem arose.
+        /// </param>
+        /// <param name="problem">
+        ///   The problem.
+        /// </param>
+        protected TranslationException(Location loc, Problem problem)
+            : base(MakeMessage($"Location: {loc}", $"Problem: {problem}"))
+        {}
+
+        /// <summary>
+        ///   Builds an error message for a <see cref="TranslationException"/> from one or more rows' information.
+        /// </summary>
+        /// <param name="msgs">
+        ///   The information that makes up the body of the error message.
+        /// </param>
+        /// <returns>
+        ///   A properly formatted error message based on <paramref name="msgs"/>.
+        /// </returns>
+        private static string MakeMessage(params string[] msgs) {
+            Debug.Assert(!msgs.IsEmpty());
+            Debug.Assert(msgs.None(m => m is null));
+
+            var header = "Error Performing Translation";
+            return header + "\n" + string.Join("\n", msgs.Select(m => $"  • {m}")) + "\n";
+        }
+
+        // These "strong string" types are used for overload resolution on constructors, since otherwise there would be
+        // no good way to discriminate. Technically we could just define the constructor to take a bunch of strings
+        // (e.g. `params string[] msgs`) but this is more self-documenting, ensures that we don't just get a bunch, and
+        // means that the derived classes don't have to include row headings manually. We do this instead on the helper
+        // function that builds up the full error message, since the constructors have already guarded us against
+        // abuse and can apply the row headers themselves.
+        protected sealed class Location : ConceptString<Location> { public Location(string msg) : base(msg) {} }
+        protected sealed class Problem : ConceptString<Problem> { public Problem(string msg) : base(msg) {} }
+    }
+}

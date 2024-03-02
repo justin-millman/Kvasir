@@ -7118,6 +7118,489 @@
               if <paramref name="sql"/> consists only of whitespace.
             </exception>
         </member>
+        <member name="T:Kvasir.Translation2.ReferenceCycleException">
+            <summary>
+              An exception that is raised when an impermissible referential cycle is detected.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.ReferenceCycleException.#ctor(Kvasir.Translation2.Context,System.Reflection.PropertyInfo)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.ReferenceCycleException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the reference cycle was detected.
+            </param>
+            <param name="finalLink">
+              The property that "completes" the reference cycle.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation2.TranslationException">
+            <summary>
+              The base class for all exceptions that can arise during Translation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.TranslationException.#ctor(Kvasir.Translation2.TranslationException.Location,Kvasir.Translation2.TranslationException.Problem)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.TranslationException"/> that describes a problem.
+            </summary>
+            <param name="loc">
+              The location at which the problem arose.
+            </param>
+            <param name="problem">
+              The problem.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.TranslationException.MakeMessage(System.String[])">
+            <summary>
+              Builds an error message for a <see cref="T:Kvasir.Translation2.TranslationException"/> from one or more rows' information.
+            </summary>
+            <param name="msgs">
+              The information that makes up the body of the error message.
+            </param>
+            <returns>
+              A properly formatted error message based on <paramref name="msgs"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Translation2.BoolFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.BoolFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.BoolFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.BoolFieldDescriptor.#ctor(Kvasir.Translation2.BoolFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.CharFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.CharFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.CharFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.CharFieldDescriptor.#ctor(Kvasir.Translation2.CharFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.DateTimeFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.DateTimeFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.DateTimeFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.DateTimeFieldDescriptor.#ctor(Kvasir.Translation2.DateTimeFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.DecimalFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.DecimalFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.DecimalFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.DecimalFieldDescriptor.#ctor(Kvasir.Translation2.DecimalFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.EnumFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.EnumFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.EnumFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.EnumFieldDescriptor.#ctor(Kvasir.Translation2.EnumFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.FieldDescriptor">
+            
+        </member>
+        <member name="P:Kvasir.Translation2.FieldDescriptor.FieldType">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.WithColumn(System.Int32)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(Kvasir.Translation2.FieldDescriptor)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.Clone">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.GuidFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.GuidFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.GuidFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.GuidFieldDescriptor.#ctor(Kvasir.Translation2.GuidFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.NonOrderableFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.NonOrderableFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.NonOrderableFieldDescriptor.#ctor(Kvasir.Translation2.NonOrderableFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.NumericFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.NumericFieldDescriptor.#ctor(Kvasir.Translation2.NumericFieldDescriptor)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.NumericFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.OrderableFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.OrderableFieldDescriptor.#ctor(Kvasir.Translation2.OrderableFieldDescriptor)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.OrderableFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.SignedFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.SignedFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.SignedFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.SignedFieldDescriptor.#ctor(Kvasir.Translation2.SignedFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.StringFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.StringFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.StringFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.StringFieldDescriptor.#ctor(Kvasir.Translation2.StringFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.UnignedFieldDescriptor">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.UnignedFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.UnignedFieldDescriptor.Clone">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.UnignedFieldDescriptor.#ctor(Kvasir.Translation2.UnignedFieldDescriptor)">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.PrincipalTableDef">
+            <summary>
+              The definition of a Principal Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Principal Table.</param>
+            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
+            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+        </member>
+        <member name="M:Kvasir.Translation2.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan)">
+            <summary>
+              The definition of a Principal Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Principal Table.</param>
+            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
+            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+        </member>
+        <member name="P:Kvasir.Translation2.PrincipalTableDef.Table">
+            <summary>The schema model for the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation2.PrincipalTableDef.Extractor">
+            <summary>The plan that can extract a row of data to be stored into the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation2.PrincipalTableDef.Reconstitutor">
+            <summary>The plan that can recreate a CLR object from a row of data stored in the Principal Table.</summary>
+        </member>
+        <member name="T:Kvasir.Translation2.RelationTableDef">
+            <summary>
+              The definition of a Relation Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Relation Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
+        </member>
+        <member name="M:Kvasir.Translation2.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationRepopulationPlan)">
+            <summary>
+              The definition of a Relation Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Relation Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
+        </member>
+        <member name="P:Kvasir.Translation2.RelationTableDef.Table">
+            <summary>The schema model for the Relation Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation2.RelationTableDef.Extractor">
+            <summary>The plan that can extract the element-specific data to be stored in the Relation Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation2.RelationTableDef.Repopulator">
+            <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</summary>
+        </member>
+        <member name="T:Kvasir.Translation2.Translation">
+            <summary>
+              A translation of a single CLR type.
+            </summary>
+            
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation2.Translation"/></param>
+            <param name="Principal">The definition of the Principal Table</param>
+            <param name="Relations">The definitions of any Relation Tables</param>
+        </member>
+        <member name="M:Kvasir.Translation2.Translation.#ctor(System.Type,Kvasir.Translation2.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation2.RelationTableDef})">
+            <summary>
+              A translation of a single CLR type.
+            </summary>
+            
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation2.Translation"/></param>
+            <param name="Principal">The definition of the Principal Table</param>
+            <param name="Relations">The definitions of any Relation Tables</param>
+        </member>
+        <member name="P:Kvasir.Translation2.Translation.CLRSource">
+            <summary>The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation2.Translation"/></summary>
+        </member>
+        <member name="P:Kvasir.Translation2.Translation.Principal">
+            <summary>The definition of the Principal Table</summary>
+        </member>
+        <member name="P:Kvasir.Translation2.Translation.Relations">
+            <summary>The definitions of any Relation Tables</summary>
+        </member>
+        <member name="T:Kvasir.Translation2.Translator">
+            <summary>
+              The Translator, which converts CLR Entity Types into schema models and data manipulation (e.g. extraction,
+              reconstitution, repopulation) plans.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation2.Translator.Item(System.Type)">
+            <summary>
+              Translates a CLR type, and any other type reference by it.
+            </summary>
+            <param name="source">
+              The CLR <see cref="T:System.Type"/> to be translated.
+            </param>
+            <returns>
+              [GET] The translation of <paramref name="source"/>.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if <paramref name="source"/> cannot be translated (for example, it contains an invalid annotation or
+              has a reference cycle); note that the translation error may occur on a different type that is being
+              translated due to a reference from <paramref name="source"/>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation2.Translator.#ctor">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.Translator.#ctor(Kvasir.Core.Settings)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
+            </summary>
+            <param name="settings">
+              The <see cref="T:Kvasir.Core.Settings"/> according to which to perform the translation.
+            </param>
+            <remarks>
+              Note that the settings are not currently used for anything; in fact, there are no traits available in the
+              <see cref="T:Kvasir.Core.Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
+              us to provide customization of behaviors in future without necessitating a significant redesign.
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Translation2.Bound">
+            <summary>
+              A boundary, which forms an endpoint of an <see cref="T:Kvasir.Translation2.Interval"/> that may be open or closed.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.Bound.#ctor(System.Object,System.Boolean)">
+            <summary>
+              A boundary, which forms an endpoint of an <see cref="T:Kvasir.Translation2.Interval"/> that may be open or closed.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.Bound.ClampUpper(Kvasir.Translation2.Bound,Kvasir.Translation2.Bound)">
+            <summary>
+              Determines which of two <see cref="T:Kvasir.Translation2.Bound">Bounds</see> subsumes the other, assuming both represent upper
+              bounds.
+            </summary>
+            <remarks>
+              The purpose of this method is to "clamp" two upper bounds that both apply to the more restrictive of the
+              two. For example, if a range is both "no more than 100" and "no more than 50," then the "clamp" will
+              produce the latter. If the endpoints are equal, the <see cref="T:Kvasir.Translation2.Bound"/> that is exclusive will be chosen.
+            </remarks>
+            <param name="lhs">
+              The first of the upper bounds.
+            </param>
+            <param name="rhs">
+              The second of the upper bounds.
+            </param>
+            <returns>
+              Whichever of <paramref name="lhs"/> and <paramref name="rhs"/> is a more restrictive upper bound.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation2.Bound.ClampLower(Kvasir.Translation2.Bound,Kvasir.Translation2.Bound)">
+            <summary>
+              Determines which of two <see cref="T:Kvasir.Translation2.Bound">Bounds</see> subsumes the other, assuming both represent lower
+              bounds.
+            </summary>
+            <remarks>
+              The purpose of this method is to "clamp" two lower bounds that both apply to the more restrictive of the
+              two. For example, if a range is both "no less than 100" and "no less than 50," then the "clamp" will
+              produce the former. If the endpoints are equal, the <see cref="T:Kvasir.Translation2.Bound"/> that is exclusive will be chosen.
+            </remarks>
+            <param name="lhs">
+              The first of the lower bounds.
+            </param>
+            <param name="rhs">
+              The second of the lower bounds.
+            </param>
+            <returns>
+              Whichever of <paramref name="lhs"/> and <paramref name="rhs"/> is a more restrictive lower bound.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Translation2.Context">
+            <summary>
+              A trace of the Translation process.
+            </summary>
+            <remarks>
+              This type is intended to be used as a resource handle, being extended at the beginning of a particular scope
+              and then unwounded automatically at the end of the scope. Its primary purpose is to detect impermissible
+              reference cycles and to enable contextualized error messages.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Translation2.Context.#ctor(System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.Context"/>.
+            </summary>
+            <param name="initial">
+              The initial <see cref="T:System.Type"/> whose translation will be tracked by the new <see cref="T:Kvasir.Translation2.Context"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.Context.Push(System.Type)">
+            <summary>
+              Indicates that translation is proceeding on to a new <see cref="T:System.Type"/>.
+            </summary>
+            <param name="next">
+              The new <see cref="T:System.Type"/> that is now being translated.
+            </param>
+            <returns>
+              A resource handle whose disposal will unwind the <see cref="T:Kvasir.Translation2.Context"/> by one stage, namely the stage
+              corresponding to the translation of <paramref name="next"/>.
+            </returns>
+            <exception cref="T:Kvasir.Translation2.ReferenceCycleException">
+              if <paramref name="next"/> is already in the backtrace of the <see cref="T:Kvasir.Translation2.Context"/>, either as the initial
+              translated <see cref="T:System.Type"/> or one that was <see cref="M:Kvasir.Translation2.Context.Push(System.Type)">pushed on</see>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation2.Context.Push(System.Reflection.PropertyInfo)">
+            <summary>
+              Indicates that translation is proceeding on to a new <see cref="T:System.Reflection.PropertyInfo">property</see>.
+            </summary>
+            <param name="next">
+              The new <see cref="T:System.Reflection.PropertyInfo">property</see> that is now being translated.
+            </param>
+            <returns>
+              A resource handle whose disposal will unwind the <see cref="T:Kvasir.Translation2.Context"/> by one stage, namely the stage
+              corresponding to the translation of <paramref name="next"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation2.Context.Pop">
+            <summary>
+              Pop the most recent stage of the <see cref="T:Kvasir.Translation2.Context"/>.
+            </summary>
+            <remarks>
+              Unwinding a Context happens for one of two reasons: either we have finished translating a Type, or we have
+              finished translating a Property. In the former case, we are necessarily returning to the translation of a
+              Property, namely the Property whose own type is the Type we just finished translating. In the latter case,
+              we are necessarily returning to the translation of a Type, namely the Type that owns the Property we just
+              finished translating.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Translation2.Context.ContextHandle.Context">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.Context.ContextHandle.System#IDisposable#Dispose">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.Interval">
+             <summary>
+               An interval, which may infinite, one-sided, partially open, or closed.
+             </summary>
+            
+             <param name="LowerBound">The endpoint that defines the lower boundary of the <see cref="T:Kvasir.Translation2.Interval"/></param>
+             <param name="UpperBound">The endpoint that defines the upper boundary of the <see cref="T:Kvasir.Translation2.Interval"/></param>
+        </member>
+        <member name="M:Kvasir.Translation2.Interval.#ctor(Optional.Option{Kvasir.Translation2.Bound},Optional.Option{Kvasir.Translation2.Bound})">
+             <summary>
+               An interval, which may infinite, one-sided, partially open, or closed.
+             </summary>
+            
+             <param name="LowerBound">The endpoint that defines the lower boundary of the <see cref="T:Kvasir.Translation2.Interval"/></param>
+             <param name="UpperBound">The endpoint that defines the upper boundary of the <see cref="T:Kvasir.Translation2.Interval"/></param>
+        </member>
+        <member name="P:Kvasir.Translation2.Interval.LowerBound">
+            <summary>The endpoint that defines the lower boundary of the <see cref="T:Kvasir.Translation2.Interval"/></summary>
+        </member>
+        <member name="P:Kvasir.Translation2.Interval.UpperBound">
+            <summary>The endpoint that defines the upper boundary of the <see cref="T:Kvasir.Translation2.Interval"/></summary>
+        </member>
+        <member name="M:Kvasir.Translation2.Interval.IsValid">
+            <summary>
+              Checks if the <see cref="T:Kvasir.Translation2.Interval"/> is valid.
+            </summary>
+            <remarks>
+              A valid Interval is one that is empty, assuming that there can be at least one value in between any two
+              distinct values. An infinite Interval is always valid, as is a one-sided Interval. A partially open
+              Interval and a closed Interval is valid if the Interval's lower boundary is less than its upper boundary.
+              For example, the Interval [1, 10] is obviously valid, as are [1, 10), (1, 10], and (1, 10). The Interval
+              [1, 1] is valid (it contains just a single value), but the Intervals [1, 1), (1, 1], and (1, 1) are all
+              invalid. Perhaps counterintuitively, the Interval (1, 2) is valid, even though it is mathematically empty;
+              this makes it so that we don't have to figure out epsilons, which don't exist for all orderable types
+              (e.g. strings).
+            </remarks>
+            <returns>
+              <see langword="true"/> if the <see cref="T:Kvasir.Translation2.Interval"/> is valid; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation2.Interval.Contains(System.Object)">
+            <summary>
+              Checks if a value is contained within the <see cref="T:Kvasir.Translation2.Interval"/>.
+            </summary>
+            <param name="value">
+              The probe value.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="value"/> is within the <see cref="T:Kvasir.Translation2.Interval"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Translation.Translator">
             <summary>
               The component responsible for reflecting over CLR Types and properties to create a data model.
