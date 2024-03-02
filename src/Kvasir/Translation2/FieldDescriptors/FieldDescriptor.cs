@@ -26,6 +26,34 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   Mark a Field as either nullable or non-nullable.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the [Nullable] or [NonNullable] annotation was translated via
+        ///   reflection.
+        /// </param>
+        /// <param name="nullable">
+        ///   <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
+        ///   non-nullable.
+        /// </param>
+        /// <exception cref="ConflictingAnnotationsException">
+        ///   if this Field has already been marked as nullable or non-nullable.
+        /// </exception>
+        public void MarkNullability(Context context, bool nullable) {
+            Debug.Assert(context is not null);
+
+            if (nullability_.HasFlag(Nullability.AnnotatedNullable) || nullability_.HasFlag(Nullability.AnnotatedNonNullable)) {
+                throw new ConflictingAnnotationsException(context, typeof(NullableAttribute), typeof(NonNullableAttribute));
+            }
+            else if (nullable) {
+                nullability_ = Nullability.AnnotatedNullable;
+            }
+            else {
+                nullability_ = Nullability.AnnotatedNonNullable;
+            }
+        }
+
+        /// <summary>
         ///   Constructs a new <see cref="FieldDescriptor"/> that is largely identical to another.
         /// </summary>
         /// <param name="source">
@@ -37,7 +65,7 @@ namespace Kvasir.Translation2 {
 
             source_ = source.source_;
             name_ = source.name_;
-            nullable_ = (Nullability)((int)source.nullable_ >> 2);
+            nullability_ = (Nullability)(((int)source.nullability_ - 1) % 2) + 1;       // (1,3) --> 1 ++ (2,4) --> 2
             converter_ = source.converter_;
             inPrimaryKey_ = source.inPrimaryKey_;
             keyMemberships_ = new HashSet<string>(source.keyMemberships_);
@@ -61,7 +89,7 @@ namespace Kvasir.Translation2 {
 
             source_ = source;
             name_ = source.Name;
-            nullable_ = (Nullability)(new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable ? 1 : 2);
+            nullability_ = (Nullability)(new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable ? 1 : 2);
             column_ = 0;
             converter_ = Option.None<DataConverter>();
             inPrimaryKey_ = false;
@@ -138,22 +166,22 @@ namespace Kvasir.Translation2 {
         // distinguish between the native nullability of a property and the nullability imposed by an annotation,
         // particularly for the purposes of identifying duplicate and conflicting annotations.
         [Flags] private enum Nullability : byte {
-            NativeNull = 0b0001,
-            NativeNonNull = 0b0010,
-            AnnotatedNull = 0b0100,
-            AnnotatedNonNull = 0b1000
+            NativeNullable = 0b0001,
+            NativeNonNullable = 0b0010,
+            AnnotatedNullable = 0b0100,
+            AnnotatedNonNullable = 0b1000
         }
 
 
-        private PropertyInfo source_;
+        private readonly PropertyInfo source_;
         private string name_;
-        private Nullability nullable_;
+        private Nullability nullability_;
         private int column_;
-        private Option<DataConverter> converter_;
+        private readonly Option<DataConverter> converter_;
         private bool inPrimaryKey_;
-        private IReadOnlySet<string> keyMemberships_;
-        private IReadOnlySet<object> allowedValues_;
-        private IReadOnlySet<object> disallowedValues_;
-        private IReadOnlyList<IConstraintGenerator> checks_;
+        private readonly HashSet<string> keyMemberships_;
+        private readonly HashSet<object> allowedValues_;
+        private readonly HashSet<object> disallowedValues_;
+        private readonly List<IConstraintGenerator> checks_;
     }
 }

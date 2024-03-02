@@ -7118,6 +7118,26 @@
               if <paramref name="sql"/> consists only of whitespace.
             </exception>
         </member>
+        <member name="T:Kvasir.Translation2.ConflictingAnnotationsException">
+            <summary>
+              An exception that is raised when two annotations that inherently contradictory are both applied to the same
+              property.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.ConflictingAnnotationsException.#ctor(Kvasir.Translation2.Context,System.Type,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.ConflictingAnnotationsException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="first">
+              The type of the first of the two conflicting annotations.
+            </param>
+            <param name="second">
+              The type of the second of the two conflicting annotations.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation2.InvalidDataConverterException">
             <summary>
               An exception that is raised when the contents of a <see cref="T:Kvasir.Annotations.DataConverterAttribute">[DataConverter]</see>
@@ -7210,6 +7230,23 @@
               The annotation that caused the problem.
             </param>
         </member>
+        <member name="M:Kvasir.Translation2.TranslationException.#ctor(Kvasir.Translation2.TranslationException.Location,Kvasir.Translation2.TranslationException.Problem,Kvasir.Translation2.TranslationException.Annotation,Kvasir.Translation2.TranslationException.Annotation)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.TranslationException"/> that describes a problem caused by two annotations.
+            </summary>
+            <param name="loc">
+              The location at which the problem arose.
+            </param>
+            <param name="problem">
+              The problem.
+            </param>
+            <param name="first">
+              The first of the two annotations that, collectively, caused the problem.
+            </param>
+            <param name="second">
+              The second of the two annotations that, collectively, caused the problem.
+            </param>
+        </member>
         <member name="M:Kvasir.Translation2.TranslationException.MakeMessage(System.String[])">
             <summary>
               Builds an error message for a <see cref="T:Kvasir.Translation2.TranslationException"/> from one or more rows' information.
@@ -7246,6 +7283,22 @@
             <summary>
               The CLR type of the Field, accounting for any data conversions.
             </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.MarkNullability(Kvasir.Translation2.Context,System.Boolean)">
+            <summary>
+              Mark a Field as either nullable or non-nullable.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the [Nullable] or [NonNullable] annotation was translated via
+              reflection.
+            </param>
+            <param name="nullable">
+              <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
+              non-nullable.
+            </param>
+            <exception cref="T:Kvasir.Translation2.ConflictingAnnotationsException">
+              if this Field has already been marked as nullable or non-nullable.
+            </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(Kvasir.Translation2.FieldDescriptor)">
             <summary>

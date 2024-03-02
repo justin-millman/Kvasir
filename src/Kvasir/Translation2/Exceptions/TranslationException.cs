@@ -19,7 +19,12 @@ namespace Kvasir.Translation2 {
         ///   The problem.
         /// </param>
         protected TranslationException(Location loc, Problem problem)
-            : base(MakeMessage($"Location: {loc}", $"Problem: {problem}"))
+            : base(
+                MakeMessage(
+                  $"Location: {loc}",
+                  $"Problem: {problem}"
+                )
+              )
         {}
 
         /// <summary>
@@ -36,7 +41,38 @@ namespace Kvasir.Translation2 {
         ///   The annotation that caused the problem.
         /// </param>
         protected TranslationException(Location loc, Problem problem, Annotation annotation)
-            : base(MakeMessage($"Location: {loc}", $"Annotation: {annotation}", $"Problem: {problem}"))
+            : base(
+                MakeMessage(
+                  $"Location: {loc}",
+                  $"Annotation: [{annotation}]",
+                  $"Problem: {problem}"
+                )
+              )
+        {}
+
+        /// <summary>
+        ///   Constructs a new <see cref="TranslationException"/> that describes a problem caused by two annotations.
+        /// </summary>
+        /// <param name="loc">
+        ///   The location at which the problem arose.
+        /// </param>
+        /// <param name="problem">
+        ///   The problem.
+        /// </param>
+        /// <param name="first">
+        ///   The first of the two annotations that, collectively, caused the problem.
+        /// </param>
+        /// <param name="second">
+        ///   The second of the two annotations that, collectively, caused the problem.
+        /// </param>
+        protected TranslationException(Location loc, Problem problem, Annotation first, Annotation second)
+            : base(
+                MakeMessage(
+                  $"Location: {loc}",
+                  $"Annotations: [{first}], [{second}]",
+                  $"Problem: {problem}"
+                )
+              )
         {}
 
         /// <summary>
