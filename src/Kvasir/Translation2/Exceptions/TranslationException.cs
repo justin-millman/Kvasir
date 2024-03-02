@@ -23,6 +23,23 @@ namespace Kvasir.Translation2 {
         {}
 
         /// <summary>
+        ///   Constructs a new <see cref="TranslationException"/> that describes a problem caused by a single
+        ///   annotation.
+        /// </summary>
+        /// <param name="loc">
+        ///   The location at which the problem arose.
+        /// </param>
+        /// <param name="problem">
+        ///   The problem.
+        /// </param>
+        /// <param name="annotation">
+        ///   The annotation that caused the problem.
+        /// </param>
+        protected TranslationException(Location loc, Problem problem, Annotation annotation)
+            : base(MakeMessage($"Location: {loc}", $"Annotation: {annotation}", $"Problem: {problem}"))
+        {}
+
+        /// <summary>
         ///   Builds an error message for a <see cref="TranslationException"/> from one or more rows' information.
         /// </summary>
         /// <param name="msgs">
@@ -45,6 +62,7 @@ namespace Kvasir.Translation2 {
         // means that the derived classes don't have to include row headings manually. We do this instead on the helper
         // function that builds up the full error message, since the constructors have already guarded us against
         // abuse and can apply the row headers themselves.
+        protected sealed class Annotation : ConceptString<Annotation> { public Annotation(string msg) : base(msg) {} }
         protected sealed class Location : ConceptString<Location> { public Location(string msg) : base(msg) {} }
         protected sealed class Problem : ConceptString<Problem> { public Problem(string msg) : base(msg) {} }
     }

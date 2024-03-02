@@ -1,12 +1,14 @@
-﻿using System.Diagnostics;
+﻿using Kvasir.Annotations;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Kvasir.Translation2 {
-    ///
-    internal sealed class UnignedFieldDescriptor : NumericFieldDescriptor {
-        ///
-        public UnignedFieldDescriptor(PropertyInfo source)
-            : base(source) {
+    /// <summary>
+    ///   The concrete base class for a <see cref="NumericFieldDescriptor"/> whose data type is unsigned.
+    /// </summary>
+    internal sealed class UnsignedFieldDescriptor : NumericFieldDescriptor {
+        public UnsignedFieldDescriptor(Context context, PropertyInfo source)
+            : base(context, source) {
 
             Debug.Assert(
                 FieldType == typeof(byte) ||
@@ -16,13 +18,22 @@ namespace Kvasir.Translation2 {
             );
         }
 
-        ///
-        protected sealed override UnignedFieldDescriptor Clone() {
-            return new UnignedFieldDescriptor(this);
+        public UnsignedFieldDescriptor(Context context, PropertyInfo source, DataConverterAttribute annotation)
+            : base(context, source, annotation) {
+
+            Debug.Assert(
+                FieldType == typeof(byte) ||
+                FieldType == typeof(ushort) ||
+                FieldType == typeof(uint) ||
+                FieldType == typeof(ulong)
+            );
         }
 
-        ///
-        private UnignedFieldDescriptor(UnignedFieldDescriptor source)
+        protected sealed override UnsignedFieldDescriptor Clone() {
+            return new UnsignedFieldDescriptor(this);
+        }
+
+        private UnsignedFieldDescriptor(UnsignedFieldDescriptor source)
             : base(source) {}
     }
 }

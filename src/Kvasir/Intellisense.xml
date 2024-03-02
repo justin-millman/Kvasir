@@ -7118,6 +7118,51 @@
               if <paramref name="sql"/> consists only of whitespace.
             </exception>
         </member>
+        <member name="T:Kvasir.Translation2.InvalidDataConverterException">
+            <summary>
+              An exception that is raised when the contents of a <see cref="T:Kvasir.Annotations.DataConverterAttribute">[DataConverter]</see>
+              annotation render it invalid for the property on which it is applied.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidDataConverterException.#ctor(Kvasir.Translation2.Context,System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidDataConverterException"/> describing a "user error," such as if the
+              type provided to the annotation was not actually a Data Converter.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="userError">
+              The user error string.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidDataConverterException.#ctor(Kvasir.Translation2.Context,System.Type,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidDataConverterException"/> describing an annotation where the property's
+              CLR type and the Data Converter's expected source type are not compatible.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the reference cycle was detected.
+            </param>
+            <param name="propertyType">
+              The CLR type of the property on which the annotation was placed.
+            </param>
+            <param name="converterSourceType">
+              The expected source type of the Data Converter.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidDataConverterException.#ctor(Kvasir.Translation2.Context,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidDataConverterException"/> describing an annotation where the Data
+              Converter's result type is not supported by Kvasir.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the reference cycle was detected.
+            </param>
+            <param name="unsupportedResultType">
+              The unsupported result type of the Data Converter.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation2.ReferenceCycleException">
             <summary>
               An exception that is raised when an impermissible referential cycle is detected.
@@ -7150,6 +7195,21 @@
               The problem.
             </param>
         </member>
+        <member name="M:Kvasir.Translation2.TranslationException.#ctor(Kvasir.Translation2.TranslationException.Location,Kvasir.Translation2.TranslationException.Problem,Kvasir.Translation2.TranslationException.Annotation)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.TranslationException"/> that describes a problem caused by a single
+              annotation.
+            </summary>
+            <param name="loc">
+              The location at which the problem arose.
+            </param>
+            <param name="problem">
+              The problem.
+            </param>
+            <param name="annotation">
+              The annotation that caused the problem.
+            </param>
+        </member>
         <member name="M:Kvasir.Translation2.TranslationException.MakeMessage(System.String[])">
             <summary>
               Builds an error message for a <see cref="T:Kvasir.Translation2.TranslationException"/> from one or more rows' information.
@@ -7161,158 +7221,131 @@
               A properly formatted error message based on <paramref name="msgs"/>.
             </returns>
         </member>
-        <member name="T:Kvasir.Translation2.BoolFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.BoolFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.BoolFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.BoolFieldDescriptor.#ctor(Kvasir.Translation2.BoolFieldDescriptor)">
-            
-        </member>
-        <member name="T:Kvasir.Translation2.CharFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.CharFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.CharFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.CharFieldDescriptor.#ctor(Kvasir.Translation2.CharFieldDescriptor)">
-            
-        </member>
         <member name="T:Kvasir.Translation2.DateTimeFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.DateTimeFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.DateTimeFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.DateTimeFieldDescriptor.#ctor(Kvasir.Translation2.DateTimeFieldDescriptor)">
-            
+            <summary>
+              The concrete class for an <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is <see cref="T:System.DateTime"/>.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.DecimalFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.DecimalFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.DecimalFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.DecimalFieldDescriptor.#ctor(Kvasir.Translation2.DecimalFieldDescriptor)">
-            
+            <summary>
+              The concrete base class for a <see cref="T:Kvasir.Translation2.NumericFieldDescriptor"/> whose data type is <see cref="T:System.Decimal"/>.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.EnumFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.EnumFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.EnumFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.EnumFieldDescriptor.#ctor(Kvasir.Translation2.EnumFieldDescriptor)">
-            
+            <summary>
+              The concrete class for a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> whose data type is an enumeration.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.FieldDescriptor">
-            
+            <summary>
+              The base class for the data state that manages the translation of a single Field in the back-end database,
+              derived from a single scalar (or enumeration) CLR property.
+            </summary>
         </member>
         <member name="P:Kvasir.Translation2.FieldDescriptor.FieldType">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.FieldDescriptor.WithColumn(System.Int32)">
-            
+            <summary>
+              The CLR type of the Field, accounting for any data conversions.
+            </summary>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(Kvasir.Translation2.FieldDescriptor)">
-            
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.FieldDescriptor"/> that is largely identical to another.
+            </summary>
+            <param name="source">
+              The source <see cref="T:Kvasir.Translation2.FieldDescriptor"/>.
+            </param>
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.Clone"/>
         </member>
-        <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
+        <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(Kvasir.Translation2.Context,System.Reflection.PropertyInfo)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.FieldDescriptor"/> that has no Data Converter.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the new <see cref="T:Kvasir.Translation2.FieldDescriptor"/> was created via translation.
+            </param>
+            <param name="source">
+              The <see cref="T:System.Reflection.PropertyInfo">property</see> that underlies the new <see cref="T:Kvasir.Translation2.FieldDescriptor"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(Kvasir.Translation2.Context,System.Reflection.PropertyInfo,Kvasir.Annotations.DataConverterAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.FieldDescriptor"/> that has a Data Converter.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the new <see cref="T:Kvasir.Translation2.FieldDescriptor"/> was created via translation.
+            </param>
+            <param name="source">
+              The <see cref="T:System.Reflection.PropertyInfo">property</see> that underlies the new <see cref="T:Kvasir.Translation2.FieldDescriptor"/>.
+            </param>
+            <param name="annotation">
+              The <see cref="T:Kvasir.Annotations.DataConverterAttribute">[DataConverter]</see> annotation applied to
+              <paramref name="source"/>.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InvalidDataConverterException">
+              if <paramref name="annotation"/> has a populated
+              <see cref="P:Kvasir.Annotations.DataConverterAttribute.UserError">user error</see>
+                --or--
+              if the CLR type of <paramref name="source"/> is incompatible with the
+              <see cref="P:Cybele.Core.DataConverter.SourceType">expected source type</see> of the Data Converter carried by
+              <paramref name="annotation"/>
+                --or--
+              if the <see cref="P:Cybele.Core.DataConverter.ResultType">result type</see> of the Data Converter carried by
+              <paramref name="annotation"/> is not supported by Kvasir
+            </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.Clone">
-            
+            <summary>
+              Clones this <see cref="T:Kvasir.Translation2.FieldDescriptor"/>.
+            </summary>
+            <remarks>
+              When a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> is cloned, the majority of the translation state is copied over to
+              the new instance verbatim. However, some state is slightly altered to reflect the fact that cloning occurs
+              when the scope of translation changes. In particular, the nullability of a <see cref="T:Kvasir.Translation2.FieldDescriptor"/>
+              will always be converted into the "native" equivalent of its current value if that value was imparted via
+              an annotation. This is to allow [Nullable] and [NonNullable] annotations on aggregates that won't induce
+              errors if there was already an annotation on the individual nested property
+            </remarks>
+            <returns>
+              A deep copy of this <see cref="T:Kvasir.Translation2.FieldDescriptor"/> as a brand new instance. Modifications to the returned
+              value will not affect the source instance, and vice-versa.
+            </returns>
         </member>
         <member name="T:Kvasir.Translation2.GuidFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.GuidFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.GuidFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.GuidFieldDescriptor.#ctor(Kvasir.Translation2.GuidFieldDescriptor)">
-            
-        </member>
-        <member name="T:Kvasir.Translation2.NonOrderableFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.NonOrderableFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.NonOrderableFieldDescriptor.#ctor(Kvasir.Translation2.NonOrderableFieldDescriptor)">
-            
+            <summary>
+              The concrete class for a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> whose data type is <see cref="T:System.Guid"/>.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.NumericFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.NumericFieldDescriptor.#ctor(Kvasir.Translation2.NumericFieldDescriptor)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.NumericFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
+            <summary>
+              The intermediate base class for an <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is numeric.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.OrderableFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.OrderableFieldDescriptor.#ctor(Kvasir.Translation2.OrderableFieldDescriptor)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.OrderableFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
+            <summary>
+              The intermediate base class for a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> whose data type supports ordering.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.SignedFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.SignedFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.SignedFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.SignedFieldDescriptor.#ctor(Kvasir.Translation2.SignedFieldDescriptor)">
-            
+            <summary>
+              The concrete base class for a <see cref="T:Kvasir.Translation2.NumericFieldDescriptor"/> whose data type is signed (but is not
+              <see cref="T:System.Decimal"/>.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.StringFieldDescriptor">
-            
+            <summary>
+              The concrete base class for an <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is <see cref="T:System.String"/>.
+            </summary>
         </member>
-        <member name="M:Kvasir.Translation2.StringFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
+        <member name="T:Kvasir.Translation2.UnsignedFieldDescriptor">
+            <summary>
+              The concrete base class for a <see cref="T:Kvasir.Translation2.NumericFieldDescriptor"/> whose data type is unsigned.
+            </summary>
         </member>
-        <member name="M:Kvasir.Translation2.StringFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.StringFieldDescriptor.#ctor(Kvasir.Translation2.StringFieldDescriptor)">
-            
-        </member>
-        <member name="T:Kvasir.Translation2.UnignedFieldDescriptor">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.UnignedFieldDescriptor.#ctor(System.Reflection.PropertyInfo)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.UnignedFieldDescriptor.Clone">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.UnignedFieldDescriptor.#ctor(Kvasir.Translation2.UnignedFieldDescriptor)">
-            
+        <member name="T:Kvasir.Translation2.VanillaFieldDescriptor">
+            <summary>
+              The concrete base class for a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> whose data type does not allow any additional
+              constraints or have any special value-parsing behaviors.
+            </summary>
         </member>
         <member name="T:Kvasir.Translation2.PrincipalTableDef">
             <summary>
@@ -7542,6 +7575,15 @@
               we are necessarily returning to the translation of a Type, namely the Type that owns the Property we just
               finished translating.
             </remarks>
+        </member>
+        <member name="M:Kvasir.Translation2.Context.ToString">
+            <summary>
+              Produces a human-readable string representation of the <see cref="T:Kvasir.Translation2.Context"/>.
+            </summary>
+            <returns>
+              A representation of the <see cref="T:Kvasir.Translation2.Context"/>, describing the initial <see cref="T:System.Type"/> and all
+              subsequent stages.
+            </returns>
         </member>
         <member name="P:Kvasir.Translation2.Context.ContextHandle.Context">
             

@@ -103,6 +103,35 @@ namespace Kvasir.Translation2 {
             Debug.Assert(false);
         }
 
+        /// <summary>
+        ///   Produces a human-readable string representation of the <see cref="Context"/>.
+        /// </summary>
+        /// <returns>
+        ///   A representation of the <see cref="Context"/>, describing the initial <see cref="Type"/> and all
+        ///   subsequent stages.
+        /// </returns>
+        public sealed override string ToString() {
+            static string Link(PropertyInfo property) { return $"{property.PropertyType.Name} (from '{property.Name}')"; }
+            var chain = string.Join(" → ", history_.Select(p => Link(p)));
+
+            if (current_.HasValue) {
+                if (history_.IsEmpty()) {
+                    return initialType_.Name + " → " + Link(current_.Unwrap());
+                }
+                else {
+                    return initialType_.Name + " → " + chain + " → " + Link(current_.Unwrap());
+                }
+            }
+            else {
+                if (history_.IsEmpty()) {
+                    return initialType_.Name;
+                }
+                else {
+                    return initialType_.Name + " → " + chain;
+                }
+            }
+        }
+
 
         // This is the type that actually serves as the resource handle. We need a type whose lifetime is separate from
         // that of the Context object; we could have the Push API clone and return a new Context instance, but that's

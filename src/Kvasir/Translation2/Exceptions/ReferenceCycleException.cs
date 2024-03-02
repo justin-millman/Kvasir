@@ -15,7 +15,10 @@ namespace Kvasir.Translation2 {
         ///   The property that "completes" the reference cycle.
         /// </param>
         public ReferenceCycleException(Context context, PropertyInfo finalLink)
-            : base(new Location(context.ToString()), new Problem($"reference cycle detected with '{finalLink.Name}'"))
+            : base(
+                new Location(context.ToString()),
+                new Problem($"reference cycle detected with '{finalLink.Name}'")
+              )
         {}
     }
 }
