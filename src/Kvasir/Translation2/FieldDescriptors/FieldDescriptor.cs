@@ -19,7 +19,7 @@ namespace Kvasir.Translation2 {
         /// <summary>
         ///   The CLR type of the Field, accounting for any data conversions.
         /// </summary>
-        public Type FieldType {
+        protected Type FieldType {
             get {
                 var type = converter_.Match(some: c => c.ResultType, none: () => source_.PropertyType);
                 return Nullable.GetUnderlyingType(type) ?? type;
@@ -43,14 +43,11 @@ namespace Kvasir.Translation2 {
         public void MarkNullability(Context context, bool nullable) {
             Debug.Assert(context is not null);
 
-            if (nullability_.HasFlag(Nullability.AnnotatedNullable) || nullability_.HasFlag(Nullability.AnnotatedNonNullable)) {
+            if (annotations_.HasFlag(Annotation.Nullability)) {
                 throw new ConflictingAnnotationsException(context, typeof(NullableAttribute), typeof(NonNullableAttribute));
             }
-            else if (nullable) {
-                nullability_ = Nullability.AnnotatedNullable;
-            }
             else {
-                nullability_ = Nullability.AnnotatedNonNullable;
+                isNullable_ = nullable;
             }
         }
 
@@ -66,7 +63,7 @@ namespace Kvasir.Translation2 {
 
             source_ = source.source_;
             name_ = source.name_;
-            nullability_ = (Nullability)(((int)source.nullability_ - 1) % 2) + 1;       // (1,3) --> 1 ++ (2,4) --> 2
+            isNullable_ = source.isNullable_;
             converter_ = source.converter_;
             default_ = source.default_;
             inPrimaryKey_ = source.inPrimaryKey_;
@@ -74,6 +71,7 @@ namespace Kvasir.Translation2 {
             allowedValues_ = new HashSet<object>(source.allowedValues_);
             disallowedValues_ = new HashSet<object>(source.disallowedValues_);
             checks_ = new List<IConstraintGenerator>(source.checks_);
+            annotations_ = Annotation.None;
         }
 
         /// <summary>
@@ -91,7 +89,7 @@ namespace Kvasir.Translation2 {
 
             source_ = source;
             name_ = source.Name;
-            nullability_ = (Nullability)(new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable ? 1 : 2);
+            isNullable_ = new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable;
             column_ = 0;
             converter_ = Option.None<DataConverter>();
             default_ = Option.None<object?>();
@@ -214,21 +212,19 @@ namespace Kvasir.Translation2 {
         }
 
 
-        // The different "kinds" of nullability. Yes, there are a lot of different representations of this (we have the
-        // enumeration in the Schema, and there's the C# nullability markings), but we need something specifically to
-        // distinguish between the native nullability of a property and the nullability imposed by an annotation,
-        // particularly for the purposes of identifying duplicate and conflicting annotations.
-        [Flags] private enum Nullability : byte {
-            NativeNullable = 0b0001,
-            NativeNonNullable = 0b0010,
-            AnnotatedNullable = 0b0100,
-            AnnotatedNonNullable = 0b1000
+        // The different annotations (or, in some cases, groups of annotations) for which only one is allowed per Field
+        // at a given time. In most cases, it is permissible for multiple annotations of the same type to be applied to
+        // a single Field from different locations in the aggregation hierarchy, so the tracking of which annotations
+        // have been applied gets cleared when the FieldDescriptor is "cloned."
+        [Flags] private enum Annotation {
+            None = 0,
+            Nullability = 1
         }
 
 
         private readonly PropertyInfo source_;
         private string name_;
-        private Nullability nullability_;
+        private bool isNullable_;
         private int column_;
         private readonly Option<DataConverter> converter_;
         private Option<object?> default_;
@@ -237,5 +233,6 @@ namespace Kvasir.Translation2 {
         private readonly HashSet<object> allowedValues_;
         private readonly HashSet<object> disallowedValues_;
         private readonly List<IConstraintGenerator> checks_;
+        private Annotation annotations_;
     }
 }
