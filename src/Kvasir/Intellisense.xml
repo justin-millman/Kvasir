@@ -7158,6 +7158,23 @@
               The <see cref="T:System.Type"/> of the duplicated annotation.
             </param>
         </member>
+        <member name="T:Kvasir.Translation2.InvalidColumnIndexException">
+            <summary>
+              An exception that is raised when the column index provided to a <see cref="T:Kvasir.Annotations.ColumnAttribute">[Column]</see>
+              annotation is not valid.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidColumnIndexException.#ctor(Kvasir.Translation2.Context,System.Int32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidColumnIndexException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="index">
+              The invalid column index.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation2.InvalidDataConverterException">
             <summary>
               An exception that is raised when the contents of a <see cref="T:Kvasir.Annotations.DataConverterAttribute">[DataConverter]</see>
@@ -7354,30 +7371,33 @@
               valid when additional constraints are imposed.
             </remarks>
         </member>
-        <member name="M:Kvasir.Translation2.FieldDescriptor.MarkNullability(Kvasir.Translation2.Context,System.Boolean)">
+        <member name="M:Kvasir.Translation2.FieldDescriptor.SetColumn(Kvasir.Translation2.Context,System.Int32)">
             <summary>
-              Mark a Field as either nullable or non-nullable.
+              Sets the column index for the Field within its immediate grouping (that is, relative to the index offset
+              of whatever construct directly encapsulated the Field).
             </summary>
             <param name="context">
-              The <see cref="T:Kvasir.Translation2.Context"/> in which the [Nullable] or [NonNullable] annotation was translated via
-              reflection. (This parameter is not used, but is kept for symmetry with other methods and as a forward
-              compatibility mechanism.)
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.ColumnAttribute">[Column]</see> annotation was
+              translated via reflection.
             </param>
-            <param name="nullable">
-              <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
-              non-nullable.
+            <param name="index">
+              The column index.
             </param>
+            <exception cref="T:Kvasir.Translation2.InvalidColumnIndexException">
+              if <paramref name="index"/> is negative.
+            </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.SetDefault(Kvasir.Translation2.Context,Kvasir.Annotations.DefaultAttribute)">
             <summary>
-              Set the default value for the Field.
+              Sets the default value for the Field.
             </summary>
             <remarks>
               If the Field already has a default value, it will be overwritten. This is only permissible if the original
               default value and the new default value come from different annotations at different translation scopes.
             </remarks>
             <param name="context">
-              The <see cref="T:Kvasir.Translation2.Context"/> in which the [Default] annotation was translated via reflection.
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.DefaultAttribute">[Default]</see> annotation was
+              translated via reflection.
             </param>
             <param name="annotation">
               The <see cref="T:Kvasir.Annotations.DefaultAttribute">[Default]</see> annotation.
@@ -7390,6 +7410,21 @@
               if the value carried by <paramref name="annotation"/> is not valid for the current Field (e.g. it is
               <see langword="null"/> but the Field is not nullable, the value is not of the correct type, etc.).
             </exception>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.SetNullability(Kvasir.Translation2.Context,System.Boolean)">
+            <summary>
+              Sets the nullability or non-nullability of a Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.NullableAttribute">[Nullable]</see> or
+              <see cref="T:Kvasir.Annotations.NonNullableAttribute">[NonNullable]</see> annotation was translated via reflection. (This
+              parameter is not used, but is kept for symmetry with other methods and as a forward compatibility
+              mechanism.)
+            </param>
+            <param name="nullable">
+              <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
+              non-nullable.
+            </param>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(Kvasir.Translation2.FieldDescriptor)">
             <summary>

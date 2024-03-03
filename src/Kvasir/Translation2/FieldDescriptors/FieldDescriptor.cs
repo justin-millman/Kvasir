@@ -40,33 +40,39 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
-        ///   Mark a Field as either nullable or non-nullable.
+        ///   Sets the column index for the Field within its immediate grouping (that is, relative to the index offset
+        ///   of whatever construct directly encapsulated the Field).
         /// </summary>
         /// <param name="context">
-        ///   The <see cref="Context"/> in which the [Nullable] or [NonNullable] annotation was translated via
-        ///   reflection. (This parameter is not used, but is kept for symmetry with other methods and as a forward
-        ///   compatibility mechanism.)
+        ///   The <see cref="Context"/> in which the <see cref="ColumnAttribute">[Column]</see> annotation was
+        ///   translated via reflection.
         /// </param>
-        /// <param name="nullable">
-        ///   <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
-        ///   non-nullable.
+        /// <param name="index">
+        ///   The column index.
         /// </param>
-        public void MarkNullability(Context context, bool nullable) {
+        /// <exception cref="InvalidColumnIndexException">
+        ///   if <paramref name="index"/> is negative.
+        /// </exception>
+        public void SetColumn(Context context, int index) {
             Debug.Assert(context is not null);
-            Debug.Assert(nullable || !default_.HasValue);
+            Debug.Assert(column_ == 0);
 
-            isNullable_ = nullable;
+            if (index < 0) {
+                throw new InvalidColumnIndexException(context, index);
+            }
+            column_ = index;
         }
 
         /// <summary>
-        ///   Set the default value for the Field.
+        ///   Sets the default value for the Field.
         /// </summary>
         /// <remarks>
         ///   If the Field already has a default value, it will be overwritten. This is only permissible if the original
         ///   default value and the new default value come from different annotations at different translation scopes.
         /// </remarks>
         /// <param name="context">
-        ///   The <see cref="Context"/> in which the [Default] annotation was translated via reflection.
+        ///   The <see cref="Context"/> in which the <see cref="DefaultAttribute">[Default]</see> annotation was
+        ///   translated via reflection.
         /// </param>
         /// <param name="annotation">
         ///   The <see cref="DefaultAttribute">[Default]</see> annotation.
@@ -106,6 +112,26 @@ namespace Kvasir.Translation2 {
                 default_ = Option.Some(value);
                 annotations_ |= Annotation.Default;
             }
+        }
+
+        /// <summary>
+        ///   Sets the nullability or non-nullability of a Field.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the <see cref="NullableAttribute">[Nullable]</see> or
+        ///   <see cref="NonNullableAttribute">[NonNullable]</see> annotation was translated via reflection. (This
+        ///   parameter is not used, but is kept for symmetry with other methods and as a forward compatibility
+        ///   mechanism.)
+        /// </param>
+        /// <param name="nullable">
+        ///   <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
+        ///   non-nullable.
+        /// </param>
+        public void SetNullability(Context context, bool nullable) {
+            Debug.Assert(context is not null);
+            Debug.Assert(nullable || !default_.HasValue);
+
+            isNullable_ = nullable;
         }
 
         /// <summary>
@@ -204,7 +230,9 @@ namespace Kvasir.Translation2 {
 
             // If the CLR type of the property is an enumeration but the result of the Data Converter is not, then there
             // won't be a restricted image; instead, the enumerators are fed through the Data Converter and the results
-            // become the set of allowed values, as if via a [Check.IsOneOf] constraint
+            // become the set of allowed values, as if via a [Check.IsOneOf] constraint. This correctly deals with
+            // [Numeric] and [AsString] annotations, since those are transformed during Translation into equivalent
+            // [DataConverter] annotations.
             if (conv.SourceType.IsEnum && !conv.ResultType.IsEnum) {
                 allowedValues_ = conv.SourceType.ValidValues().Select(e => conv.Convert(e)!).ToHashSet();
             }
@@ -310,10 +338,10 @@ namespace Kvasir.Translation2 {
 
         private readonly PropertyInfo source_;
         private string name_;
-        private bool isNullable_;
-        private int column_;
-        private readonly Option<DataConverter> converter_;
-        private Option<object?> default_;
+        private bool isNullable_; // ................................ handled
+        private int column_; // ..................................... handled
+        private readonly Option<DataConverter> converter_; // ....... handled
+        private Option<object?> default_; // ........................ handled
         private bool inPrimaryKey_;
         private readonly HashSet<string> keyMemberships_;
         private readonly HashSet<object> allowedValues_;
