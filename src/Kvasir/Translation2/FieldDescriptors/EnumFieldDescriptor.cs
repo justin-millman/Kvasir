@@ -48,6 +48,10 @@ namespace Kvasir.Translation2 {
             return coercion;
         }
 
+        protected sealed override bool IsValidValue(object? value) {
+            return base.IsValidValue(value) && (value is null || restrictedImage_.Contains(value));
+        }
+
         private EnumFieldDescriptor(EnumFieldDescriptor source)
             : base(source) {
 

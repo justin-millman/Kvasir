@@ -1,15 +1,15 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Optional;
-using System;
 using System.Diagnostics;
 using System.Reflection;
 
 namespace Kvasir.Translation2 {
     /// <summary>
-    ///   The concrete base class for a <see cref="NumericFieldDescriptor"/> whose data type is <see cref="decimal"/>.
+    ///   The concrete base class for an <see cref="OrderableFieldDescriptor"/> whose data type is
+    ///   <see cref="decimal"/>.
     /// </summary>
-    internal sealed class DecimalFieldDescriptor : NumericFieldDescriptor {
+    internal sealed class DecimalFieldDescriptor : OrderableFieldDescriptor {
         public DecimalFieldDescriptor(Context context, PropertyInfo source)
             : base(context, source) {
 

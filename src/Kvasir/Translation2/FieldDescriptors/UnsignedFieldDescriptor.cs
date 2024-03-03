@@ -4,9 +4,9 @@ using System.Reflection;
 
 namespace Kvasir.Translation2 {
     /// <summary>
-    ///   The concrete base class for a <see cref="NumericFieldDescriptor"/> whose data type is unsigned.
+    ///   The concrete base class for an <see cref="OrderableFieldDescriptor"/> whose data type is an unsigned numeric.
     /// </summary>
-    internal sealed class UnsignedFieldDescriptor : NumericFieldDescriptor {
+    internal sealed class UnsignedFieldDescriptor : OrderableFieldDescriptor {
         public UnsignedFieldDescriptor(Context context, PropertyInfo source)
             : base(context, source) {
 

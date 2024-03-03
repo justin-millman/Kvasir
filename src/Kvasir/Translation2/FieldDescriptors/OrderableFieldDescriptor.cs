@@ -25,7 +25,11 @@ namespace Kvasir.Translation2 {
             comparisonConstraint_ = new Interval(Option.None<Bound>(), Option.None<Bound>());
         }
 
+        protected override bool IsValidValue(object? value) {
+            return base.IsValidValue(value) && (value is null || comparisonConstraint_.Contains(value));
+        }
 
-        protected Interval comparisonConstraint_;
+
+        private Interval comparisonConstraint_;
     }
 }

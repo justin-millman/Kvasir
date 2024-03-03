@@ -211,6 +211,34 @@ namespace Kvasir.Translation2 {
             }
         }
 
+        /// <summary>
+        ///   Determines if a user-provided value, guaranteed to be of the correct type, is a valid value for the Field,
+        ///   accounting for nullability and any active constraints.
+        /// </summary>
+        /// <param name="value">
+        ///   The proposed value.
+        /// </param>
+        /// <returns>
+        ///   <see langword="true"/> if <paramref name="value"/> is a valid value for this Field; otherwise,
+        ///   <see langword="false"/>.
+        /// </returns>
+        protected virtual bool IsValidValue(object? value) {
+            Debug.Assert(value is null || value.GetType() == FieldType);
+
+            if (value is null) {
+                return isNullable_;
+            }
+            else if (!allowedValues_.IsEmpty()) {
+                return allowedValues_.Contains(value);
+            }
+            else if (!disallowedValues_.IsEmpty()) {
+                return !disallowedValues_.Contains(value);
+            }
+            else {
+                return true;
+            }
+        }
+
 
         // The different annotations (or, in some cases, groups of annotations) for which only one is allowed per Field
         // at a given time. In most cases, it is permissible for multiple annotations of the same type to be applied to

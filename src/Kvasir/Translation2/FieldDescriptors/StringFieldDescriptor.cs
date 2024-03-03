@@ -26,6 +26,10 @@ namespace Kvasir.Translation2 {
             return new StringFieldDescriptor(this);
         }
 
+        protected sealed override bool IsValidValue(object? value) {
+            return base.IsValidValue(value) && (value is null || lengthConstraint_.Contains(((string)value).Length));
+        }
+
         private StringFieldDescriptor(StringFieldDescriptor source)
             : base(source) {
 

@@ -4,10 +4,10 @@ using System.Reflection;
 
 namespace Kvasir.Translation2 {
     /// <summary>
-    ///   The concrete base class for a <see cref="NumericFieldDescriptor"/> whose data type is signed (but is not
-    ///   <see cref="decimal"/>.
+    ///   The concrete base class for a <see cref="OrderableFieldDescriptor"/> whose data type is a signed numeric (but
+    ///   is not <see cref="decimal"/>.
     /// </summary>
-    internal sealed class SignedFieldDescriptor : NumericFieldDescriptor {
+    internal sealed class SignedFieldDescriptor : OrderableFieldDescriptor {
         public SignedFieldDescriptor(Context context, PropertyInfo source)
             : base(context, source) {
 
