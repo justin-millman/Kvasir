@@ -27,27 +27,84 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   The default value for the Field.
+        /// </summary>
+        /// <remarks>
+        ///   This may be needed by derived classes to ensure that any default value already set on the Field is still
+        ///   valid when additional constraints are imposed.
+        /// </remarks>
+        protected Option<object?> DefaultValue {
+            get {
+                return default_;
+            }
+        }
+
+        /// <summary>
         ///   Mark a Field as either nullable or non-nullable.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which the [Nullable] or [NonNullable] annotation was translated via
-        ///   reflection.
+        ///   reflection. (This parameter is not used, but is kept for symmetry with other methods and as a forward
+        ///   compatibility mechanism.)
         /// </param>
         /// <param name="nullable">
         ///   <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
         ///   non-nullable.
         /// </param>
-        /// <exception cref="ConflictingAnnotationsException">
-        ///   if this Field has already been marked as nullable or non-nullable.
-        /// </exception>
         public void MarkNullability(Context context, bool nullable) {
             Debug.Assert(context is not null);
+            Debug.Assert(nullable || !default_.HasValue);
 
-            if (annotations_.HasFlag(Annotation.Nullability)) {
-                throw new ConflictingAnnotationsException(context, typeof(NullableAttribute), typeof(NonNullableAttribute));
+            isNullable_ = nullable;
+        }
+
+        /// <summary>
+        ///   Set the default value for the Field.
+        /// </summary>
+        /// <remarks>
+        ///   If the Field already has a default value, it will be overwritten. This is only permissible if the original
+        ///   default value and the new default value come from different annotations at different translation scopes.
+        /// </remarks>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the [Default] annotation was translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The <see cref="DefaultAttribute">[Default]</see> annotation.
+        /// </param>
+        /// <exception cref="DuplicateAnnotationException">
+        ///   if this Field has already been annotated with a <see cref="DefaultAttribute">[Default]</see> attribute  in
+        ///   the translation scope described by <paramref name="context"/>.
+        /// </exception>
+        /// <exception cref="InvalidDefaultException">
+        ///   if the value carried by <paramref name="annotation"/> is not valid for the current Field (e.g. it is
+        ///   <see langword="null"/> but the Field is not nullable, the value is not of the correct type, etc.).
+        /// </exception>
+        public void SetDefault(Context context, DefaultAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+
+            if (annotations_.HasFlag(Annotation.Default)) {
+                throw new DuplicateAnnotationException(context, annotation.Path, typeof(DefaultAttribute));
+            }
+
+            var value = CoerceUserValue(annotation.Value).Match(
+                some: v => v,
+                none: msg => throw new InvalidDefaultException(context, annotation.Path, msg)
+            );
+
+            if (!IsValidValue(value)) {
+                if (value is null) {
+                    var msg = $"default value {value.ForDisplay()} is invalid because Field is non-nullable";
+                    throw new InvalidDefaultException(context, annotation.Path, msg);
+                }
+                else {
+                    var msg = $"default value {value.ForDisplay()} is invalid because it violates one or more constraints";
+                    throw new InvalidDefaultException(context, annotation.Path, msg);
+                }
             }
             else {
-                isNullable_ = nullable;
+                default_ = Option.Some(value);
+                annotations_ |= Annotation.Default;
             }
         }
 
@@ -64,6 +121,7 @@ namespace Kvasir.Translation2 {
             source_ = source.source_;
             name_ = source.name_;
             isNullable_ = source.isNullable_;
+            column_ = source.column_;
             converter_ = source.converter_;
             default_ = source.default_;
             inPrimaryKey_ = source.inPrimaryKey_;
@@ -192,7 +250,7 @@ namespace Kvasir.Translation2 {
         ///   A <c>NONE</c> instance containing a string explaining why <paramref name="raw"/> could not be coerced
         /// </returns>
         protected virtual Option<object?, string> CoerceUserValue(object? raw) {
-            if (raw is null) {
+            if (raw is null || raw == DBNull.Value) {
                 return Option.Some<object?, string>(null);
             }
             else if (raw.GetType() == FieldType) {
@@ -246,7 +304,7 @@ namespace Kvasir.Translation2 {
         // have been applied gets cleared when the FieldDescriptor is "cloned."
         [Flags] private enum Annotation {
             None = 0,
-            Nullability = 1
+            Default = 1
         }
 
 

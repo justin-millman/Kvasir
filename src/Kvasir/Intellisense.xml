@@ -7138,6 +7138,26 @@
               The type of the second of the two conflicting annotations.
             </param>
         </member>
+        <member name="T:Kvasir.Translation2.DuplicateAnnotationException">
+            <summary>
+              An exception that is raised when two or more of a single annotation are concurrently applied to the same
+              property from the same translation scope.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.DuplicateAnnotationException.#ctor(Kvasir.Translation2.Context,System.String,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.DuplicateAnnotationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="path">
+              The path to which the duplicated annotations are applied.
+            </param>
+            <param name="annotationType">
+              The <see cref="T:System.Type"/> of the duplicated annotation.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation2.InvalidDataConverterException">
             <summary>
               An exception that is raised when the contents of a <see cref="T:Kvasir.Annotations.DataConverterAttribute">[DataConverter]</see>
@@ -7181,6 +7201,26 @@
             </param>
             <param name="unsupportedResultType">
               The unsupported result type of the Data Converter.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation2.InvalidDefaultException">
+            <summary>
+              An exception that is raised when the value provided to a <see cref="T:Kvasir.Annotations.DefaultAttribute"/> is not valid for the
+              property to which the annotation applies.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidDefaultException.#ctor(Kvasir.Translation2.Context,System.String,System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidDefaultException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="path">
+              The path to which the problematic <see cref="T:Kvasir.Annotations.DefaultAttribute"/> applies.
+            </param>
+            <param name="reason">
+              An explanation as to why the default value is invalid.
             </param>
         </member>
         <member name="T:Kvasir.Translation2.ReferenceCycleException">
@@ -7230,6 +7270,26 @@
               The annotation that caused the problem.
             </param>
         </member>
+        <member name="M:Kvasir.Translation2.TranslationException.#ctor(Kvasir.Translation2.TranslationException.Location,Kvasir.Translation2.TranslationException.Path,Kvasir.Translation2.TranslationException.Problem,Kvasir.Translation2.TranslationException.Annotation)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.TranslationException"/> that describes a problem caused by a single
+              annotation that may apply to a nested property.
+            </summary>
+            <param name="loc">
+              The location at which the problem arose.
+            </param>
+            <param name="path">
+              The path to the nested property to which <paramref name="annotation"/> applies; if this is the empty
+              string, then the annotation is understood to apply to the property described by <paramref name="loc"/>
+              directly.
+            </param>
+            <param name="problem">
+              The problem.
+            </param>
+            <param name="annotation">
+              The annotation that caused the problem.
+            </param>
+        </member>
         <member name="M:Kvasir.Translation2.TranslationException.#ctor(Kvasir.Translation2.TranslationException.Location,Kvasir.Translation2.TranslationException.Problem,Kvasir.Translation2.TranslationException.Annotation,Kvasir.Translation2.TranslationException.Annotation)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation2.TranslationException"/> that describes a problem caused by two annotations.
@@ -7265,7 +7325,8 @@
         </member>
         <member name="T:Kvasir.Translation2.DecimalFieldDescriptor">
             <summary>
-              The concrete base class for a <see cref="T:Kvasir.Translation2.NumericFieldDescriptor"/> whose data type is <see cref="T:System.Decimal"/>.
+              The concrete base class for an <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is
+              <see cref="T:System.Decimal"/>.
             </summary>
         </member>
         <member name="T:Kvasir.Translation2.EnumFieldDescriptor">
@@ -7284,20 +7345,50 @@
               The CLR type of the Field, accounting for any data conversions.
             </summary>
         </member>
+        <member name="P:Kvasir.Translation2.FieldDescriptor.DefaultValue">
+            <summary>
+              The default value for the Field.
+            </summary>
+            <remarks>
+              This may be needed by derived classes to ensure that any default value already set on the Field is still
+              valid when additional constraints are imposed.
+            </remarks>
+        </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.MarkNullability(Kvasir.Translation2.Context,System.Boolean)">
             <summary>
               Mark a Field as either nullable or non-nullable.
             </summary>
             <param name="context">
               The <see cref="T:Kvasir.Translation2.Context"/> in which the [Nullable] or [NonNullable] annotation was translated via
-              reflection.
+              reflection. (This parameter is not used, but is kept for symmetry with other methods and as a forward
+              compatibility mechanism.)
             </param>
             <param name="nullable">
               <see langword="true"/> to mark the Field as nullable, <see langword="false"/> to mark the Field as
               non-nullable.
             </param>
-            <exception cref="T:Kvasir.Translation2.ConflictingAnnotationsException">
-              if this Field has already been marked as nullable or non-nullable.
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.SetDefault(Kvasir.Translation2.Context,Kvasir.Annotations.DefaultAttribute)">
+            <summary>
+              Set the default value for the Field.
+            </summary>
+            <remarks>
+              If the Field already has a default value, it will be overwritten. This is only permissible if the original
+              default value and the new default value come from different annotations at different translation scopes.
+            </remarks>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the [Default] annotation was translated via reflection.
+            </param>
+            <param name="annotation">
+              The <see cref="T:Kvasir.Annotations.DefaultAttribute">[Default]</see> annotation.
+            </param>
+            <exception cref="T:Kvasir.Translation2.DuplicateAnnotationException">
+              if this Field has already been annotated with a <see cref="T:Kvasir.Annotations.DefaultAttribute">[Default]</see> attribute  in
+              the translation scope described by <paramref name="context"/>.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.InvalidDefaultException">
+              if the value carried by <paramref name="annotation"/> is not valid for the current Field (e.g. it is
+              <see langword="null"/> but the Field is not nullable, the value is not of the correct type, etc.).
             </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.#ctor(Kvasir.Translation2.FieldDescriptor)">
@@ -7363,14 +7454,46 @@
               value will not affect the source instance, and vice-versa.
             </returns>
         </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.CoerceUserValue(System.Object)">
+            <summary>
+              Takes a user-provided value from an annotation (e.g. [Default]) and coerces it into a value that is
+              consistent with the type of the Field.
+            </summary>
+            <remarks>
+              Derived classes are encouraged to override this method to impose additional restrictions on user-provided
+              values or to allow the source value to be a different type than the <see cref="P:Kvasir.Translation2.FieldDescriptor.FieldType"/>, which the
+              default implementation considers to be invalid.
+            </remarks>
+            <param name="raw">
+              The raw value, as provided by the user.
+            </param>
+            <returns>
+              If <paramref name="raw"/> is <see langword="null"/>, a <c>SOME</c> instance containing
+              <see langword="null"/>
+                --else--
+              If <paramref name="raw"/> can be coerced into a valid value for a Field of type <see cref="P:Kvasir.Translation2.FieldDescriptor.FieldType"/>,
+              a <c>SOME</c> instance containing that coercion, which may or may not just be <paramref name="raw"/>
+              directly
+                --else--
+              A <c>NONE</c> instance containing a string explaining why <paramref name="raw"/> could not be coerced
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.IsValidValue(System.Object)">
+            <summary>
+              Determines if a user-provided value, guaranteed to be of the correct type, is a valid value for the Field,
+              accounting for nullability and any active constraints.
+            </summary>
+            <param name="value">
+              The proposed value.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="value"/> is a valid value for this Field; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Translation2.GuidFieldDescriptor">
             <summary>
               The concrete class for a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> whose data type is <see cref="T:System.Guid"/>.
-            </summary>
-        </member>
-        <member name="T:Kvasir.Translation2.NumericFieldDescriptor">
-            <summary>
-              The intermediate base class for an <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is numeric.
             </summary>
         </member>
         <member name="T:Kvasir.Translation2.OrderableFieldDescriptor">
@@ -7380,8 +7503,8 @@
         </member>
         <member name="T:Kvasir.Translation2.SignedFieldDescriptor">
             <summary>
-              The concrete base class for a <see cref="T:Kvasir.Translation2.NumericFieldDescriptor"/> whose data type is signed (but is not
-              <see cref="T:System.Decimal"/>.
+              The concrete base class for a <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is a signed numeric (but
+              is not <see cref="T:System.Decimal"/>.
             </summary>
         </member>
         <member name="T:Kvasir.Translation2.StringFieldDescriptor">
@@ -7391,7 +7514,7 @@
         </member>
         <member name="T:Kvasir.Translation2.UnsignedFieldDescriptor">
             <summary>
-              The concrete base class for a <see cref="T:Kvasir.Translation2.NumericFieldDescriptor"/> whose data type is unsigned.
+              The concrete base class for an <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is an unsigned numeric.
             </summary>
         </member>
         <member name="T:Kvasir.Translation2.VanillaFieldDescriptor">

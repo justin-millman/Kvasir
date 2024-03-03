@@ -56,7 +56,7 @@ namespace Kvasir.Translation2 {
         /// <param name="unsupportedResultType">
         ///   The unsupported result type of the Data Converter.
         /// </param>
-        public InvalidDataConverterException(Context context,Type unsupportedResultType)
+        public InvalidDataConverterException(Context context, Type unsupportedResultType)
             : base(
                 new Location(context.ToString()),
                 new Problem($"result type {unsupportedResultType} of Data Converter is not supported"),
