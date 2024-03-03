@@ -7,6 +7,7 @@ using Optional;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation2 {
@@ -67,6 +68,7 @@ namespace Kvasir.Translation2 {
             name_ = source.name_;
             nullability_ = (Nullability)(((int)source.nullability_ - 1) % 2) + 1;       // (1,3) --> 1 ++ (2,4) --> 2
             converter_ = source.converter_;
+            default_ = source.default_;
             inPrimaryKey_ = source.inPrimaryKey_;
             keyMemberships_ = new HashSet<string>(source.keyMemberships_);
             allowedValues_ = new HashSet<object>(source.allowedValues_);
@@ -92,6 +94,7 @@ namespace Kvasir.Translation2 {
             nullability_ = (Nullability)(new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable ? 1 : 2);
             column_ = 0;
             converter_ = Option.None<DataConverter>();
+            default_ = Option.None<object?>();
             inPrimaryKey_ = false;
             keyMemberships_ = new HashSet<string>();
             allowedValues_ = new HashSet<object>();
@@ -140,7 +143,15 @@ namespace Kvasir.Translation2 {
             }
 
             Debug.Assert(annotation.DataConverter.IsBidirectional);
-            converter_ = Option.Some(annotation.DataConverter);
+            var conv = annotation.DataConverter;
+            converter_ = Option.Some(conv);
+
+            // If the CLR type of the property is an enumeration but the result of the Data Converter is not, then there
+            // won't be a restricted image; instead, the enumerators are fed through the Data Converter and the results
+            // become the set of allowed values, as if via a [Check.IsOneOf] constraint
+            if (conv.SourceType.IsEnum && !conv.ResultType.IsEnum) {
+                allowedValues_ = conv.SourceType.ValidValues().Select(e => conv.Convert(e)!).ToHashSet();
+            }
         }
 
         /// <summary>
@@ -160,6 +171,48 @@ namespace Kvasir.Translation2 {
         /// </returns>
         protected abstract FieldDescriptor Clone();
 
+        /// <summary>
+        ///   Takes a user-provided value from an annotation (e.g. [Default]) and coerces it into a value that is
+        ///   consistent with the type of the Field.
+        /// </summary>
+        /// <remarks>
+        ///   Derived classes are encouraged to override this method to impose additional restrictions on user-provided
+        ///   values or to allow the source value to be a different type than the <see cref="FieldType"/>, which the
+        ///   default implementation considers to be invalid.
+        /// </remarks>
+        /// <param name="raw">
+        ///   The raw value, as provided by the user.
+        /// </param>
+        /// <returns>
+        ///   If <paramref name="raw"/> is <see langword="null"/>, a <c>SOME</c> instance containing
+        ///   <see langword="null"/>
+        ///     --else--
+        ///   If <paramref name="raw"/> can be coerced into a valid value for a Field of type <see cref="FieldType"/>,
+        ///   a <c>SOME</c> instance containing that coercion, which may or may not just be <paramref name="raw"/>
+        ///   directly
+        ///     --else--
+        ///   A <c>NONE</c> instance containing a string explaining why <paramref name="raw"/> could not be coerced
+        /// </returns>
+        protected virtual Option<object?, string> CoerceUserValue(object? raw) {
+            if (raw is null) {
+                return Option.Some<object?, string>(null);
+            }
+            else if (raw.GetType() == FieldType) {
+                // Since we know that `raw` comes from an annotation, we know that it must be `null`, a string, a
+                // primitive value (int, bool, char, etc.), an enumerator, or an array thereof. As such, we don't need
+                // to do any nullable-unwrapping or instance-of checking.
+                return Option.Some<object?, string>(raw);
+            }
+            else if (raw.GetType().IsArray) {
+                var msg = "value cannot be an array";
+                return Option.None<object?, string>(msg);
+            }
+            else {
+                var msg = $"value {raw.ForDisplay()} is of type {raw.GetType().Name}, not {FieldType.Name} as expected";
+                return Option.None<object?, string>(msg);
+            }
+        }
+
 
         // The different "kinds" of nullability. Yes, there are a lot of different representations of this (we have the
         // enumeration in the Schema, and there's the C# nullability markings), but we need something specifically to
@@ -178,6 +231,7 @@ namespace Kvasir.Translation2 {
         private Nullability nullability_;
         private int column_;
         private readonly Option<DataConverter> converter_;
+        private Option<object?> default_;
         private bool inPrimaryKey_;
         private readonly HashSet<string> keyMemberships_;
         private readonly HashSet<object> allowedValues_;

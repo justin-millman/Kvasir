@@ -1,5 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Optional;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -21,11 +23,29 @@ namespace Kvasir.Translation2 {
             : base(context, source, annotation) {
 
             Debug.Assert(FieldType.IsEnum);
-            restrictedImage_ = FieldType.ValidValues().Cast<object>().ToHashSet();
+            
+            // If there's a Data Converter and we still have an Enum Field, that means the result type of the data
+            // conversion is an enumeration. If the source type is also an enumeration, then we form the restricted
+            // image by feeding each of the original enumerators through the Data Converter. But if the source type is
+            // not an enumeration, then we simply assume that each of the enumerators of the result type are possible
+            // (even if the Data Converter, for example, maps all inputs to a single value).
+            if (source.PropertyType.IsEnum) {
+                var conv = annotation.DataConverter;
+                restrictedImage_ = source.PropertyType.ValidValues().Select(e => conv.Convert(e)!).ToHashSet();
+            }
+            else {
+                restrictedImage_ = FieldType.ValidValues().Cast<object>().ToHashSet();
+            }
         }
 
         protected sealed override EnumFieldDescriptor Clone() {
             return new EnumFieldDescriptor(this);
+        }
+
+        protected sealed override Option<object?, string> CoerceUserValue(object? raw) {
+            var coercion = base.CoerceUserValue(raw);
+            coercion.Filter(v => v is not null && !((Enum)v).IsValid(), $"enumerator {raw.ForDisplay()} is not valid");
+            return coercion;
         }
 
         private EnumFieldDescriptor(EnumFieldDescriptor source)
@@ -35,6 +55,6 @@ namespace Kvasir.Translation2 {
         }
 
 
-        private readonly IReadOnlySet<object> restrictedImage_;
+        private readonly HashSet<object> restrictedImage_;
     }
 }
