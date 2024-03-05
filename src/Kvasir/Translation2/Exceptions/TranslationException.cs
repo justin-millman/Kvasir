@@ -87,6 +87,64 @@ namespace Kvasir.Translation2 {
         {}
 
         /// <summary>
+        ///   Constructs a new <see cref="TranslationException"/> that describes a problem caused by a single
+        ///   annotation that may apply to a nested property and may affect a further nested property.
+        /// </summary>
+        /// <param name="loc">
+        ///   The location at which the problem arose.
+        /// </param>
+        /// <param name="path">
+        ///   The path to the nested property to which <paramref name="annotation"/> applies; if this is the empty
+        ///   string, then the annotation is understood to apply to the property described by <paramref name="loc"/>
+        ///   directly.
+        /// </param>
+        /// <param name="cascade">
+        ///   The path to the nested property that <paramref name="annotation"/> actually affects, relative to
+        ///   <paramref name="path"/>; if this is the empty string, then the annotation is understood to affect the
+        ///   property indicated by <paramref name="path"/>.
+        /// </param>
+        /// <param name="problem">
+        ///   The problem.
+        /// </param>
+        /// <param name="annotation">
+        ///   The annotation that caused the problem.
+        /// </param>
+        protected TranslationException(Location loc, Path path, Cascade cascade, Problem problem, Annotation annotation)
+            : base(
+                path.ToString() != "" && cascade.ToString() != "" ?
+                  MakeMessage(
+                    $"Location: {loc}",
+                    $"Annotation: [{annotation}]",
+                    $"Applied To: nested property @ \"{path}\"",
+                    $"Affecting: further nested property @ \"{cascade}\"",
+                    $"Problem: {problem}"
+                  )
+                /* else */ :
+                path.ToString() != "" ?
+                  MakeMessage(
+                    $"Location: {loc}",
+                    $"Annotation: [{annotation}]",
+                    $"Affecting: nested property @ \"{cascade}\"",
+                    $"Problem: {problem}"
+                  )
+                /* else */ :
+                cascade.ToString() != "" ?
+                  MakeMessage(
+                    $"Location: {loc}",
+                    $"Annotation: [{annotation}]",
+                    $"Applied To: nested property @ \"{path}\"",
+                    $"Problem: {problem}"
+                  )
+                /* else */ :
+                  MakeMessage(
+                    $"Location: {loc}",
+                    $"Annotation: [{annotation}]",
+                    $"Problem: {problem}"
+                  )
+              )
+        {}
+
+        /// <summary>
         ///   Constructs a new <see cref="TranslationException"/> that describes a problem caused by two annotations.
         /// </summary>
         /// <param name="loc">
@@ -135,6 +193,7 @@ namespace Kvasir.Translation2 {
         // function that builds up the full error message, since the constructors have already guarded us against
         // abuse and can apply the row headers themselves.
         protected sealed class Annotation : ConceptString<Annotation> { public Annotation(string msg) : base(msg) {} }
+        protected sealed class Cascade : ConceptString<Cascade> { public Cascade(string msg) : base(msg) {} }
         protected sealed class Location : ConceptString<Location> { public Location(string msg) : base(msg) {} }
         protected sealed class Path : ConceptString<Path> { public Path(string msg) : base(msg) {} }
         protected sealed class Problem : ConceptString<Problem> { public Problem(string msg) : base(msg) {} }

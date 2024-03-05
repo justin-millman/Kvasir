@@ -115,6 +115,45 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   Marks the Field as being part of the primary key of the Entity that owns it.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the <see cref="PrimaryKeyAttribute">[PrimaryKey]</see> annotation was
+        ///   translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The <see cref="PrimaryKeyAttribute">[PrimaryKey]</see> annotation.
+        /// </param>
+        /// <param name="cascadePath">
+        ///   The access path in between the property to which <paramref name="annotation"/> applies, accounting for a
+        ///   possible <see cref="PrimaryKeyAttribute.Path">nested path</see>, and the Field. This parameter defaults to
+        ///   the empty string and should be non-empty when <paramref name="annotation"/> applies to an Aggregate.
+        /// </param>
+        /// <exception cref="InvalidPrimaryKeyFieldException">
+        ///   if the depth of <paramref name="context"/> is not <c>0</c>, indicating that the annotation was placed
+        ///   on a property nested within an Aggregate
+        ///     --or--
+        ///   if the Field is nullable
+        /// </exception>
+        public void SetInPrimaryKey(Context context, PrimaryKeyAttribute annotation, string cascadePath = "") {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+            Debug.Assert(cascadePath is not null);
+
+            if (context.Depth != 0) {
+                var msg = "nested properties cannot be directly annotated as part of an Entity's primary key";
+                throw new InvalidPrimaryKeyFieldException(context, annotation.Path, cascadePath, msg);
+            }
+            else if (isNullable_) {
+                var msg = "a nullable Field cannot be part of an Entity's primary key";
+                throw new InvalidPrimaryKeyFieldException(context, annotation.Path, cascadePath, msg);
+            }
+            else {
+                inPrimaryKey_ = true;
+            }
+        }
+
+        /// <summary>
         ///   Sets the nullability or non-nullability of a Field.
         /// </summary>
         /// <param name="context">
@@ -129,7 +168,8 @@ namespace Kvasir.Translation2 {
         /// </param>
         public void SetNullability(Context context, bool nullable) {
             Debug.Assert(context is not null);
-            Debug.Assert(nullable || !default_.HasValue);
+            Debug.Assert(nullable || !default_.HasValue);       // Nullability must be processed before [Default]
+            Debug.Assert(!inPrimaryKey_);                       // Nullability must be processed before [PrimaryKey]
 
             isNullable_ = nullable;
         }
@@ -336,17 +376,17 @@ namespace Kvasir.Translation2 {
         }
 
 
-        private readonly PropertyInfo source_;
+        private readonly PropertyInfo source_; // ................... handled
         private string name_;
         private bool isNullable_; // ................................ handled
         private int column_; // ..................................... handled
         private readonly Option<DataConverter> converter_; // ....... handled
         private Option<object?> default_; // ........................ handled
-        private bool inPrimaryKey_;
+        private bool inPrimaryKey_; // .............................. handled
         private readonly HashSet<string> keyMemberships_;
         private readonly HashSet<object> allowedValues_;
         private readonly HashSet<object> disallowedValues_;
         private readonly List<IConstraintGenerator> checks_;
-        private Annotation annotations_;
+        private Annotation annotations_; // ......................... handled
     }
 }

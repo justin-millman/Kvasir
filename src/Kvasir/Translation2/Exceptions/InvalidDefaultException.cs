@@ -2,8 +2,8 @@
 
 namespace Kvasir.Translation2 {
     /// <summary>
-    ///   An exception that is raised when the value provided to a <see cref="DefaultAttribute"/> is not valid for the
-    ///   property to which the annotation applies.
+    ///   An exception that is raised when the value provided to a <see cref="DefaultAttribute">[Default]</see>
+    ///   annotation is not valid for the property to which the annotation applies.
     /// </summary>
     internal sealed class InvalidDefaultException : TranslationException {
         /// <summary>
