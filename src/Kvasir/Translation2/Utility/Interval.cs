@@ -11,6 +11,45 @@ namespace Kvasir.Translation2 {
     /// <param name="UpperBound">The endpoint that defines the upper boundary of the <see cref="Interval"/></param>
     internal readonly record struct Interval(Option<Bound> LowerBound, Option<Bound> UpperBound) {
         /// <summary>
+        ///   Checks if a value is contained within the <see cref="Interval"/>.
+        /// </summary>
+        /// <param name="value">
+        ///   The probe value.
+        /// </param>
+        /// <returns>
+        ///   <see langword="true"/> if <paramref name="value"/> is within the <see cref="Interval"/>; otherwise,
+        ///   <see langword="false"/>.
+        /// </returns>
+        public bool Contains(object value) {
+            Debug.Assert(value is not null);
+            Debug.Assert(!LowerBound.Exists(b => b.Value.GetType() != value.GetType()));
+            Debug.Assert(!UpperBound.Exists(b => b.Value.GetType() != value.GetType()));
+
+            // We have to use the `CompareTo` method, since there are no binary ordering operators defined for `string`.
+            // The use of `dynamic` makes it so that we don't have to use reflection to find the `CompareTo` method or
+            // to instantiate a default `IComparer` object.
+
+            if (LowerBound.HasValue) {
+                var lower = LowerBound.Unwrap();
+                var comp = (lower.Value as dynamic).CompareTo(value as dynamic);
+
+                if (comp > 0 || (comp == 0 && !lower.IsInclusive)) {
+                    return false;
+                }
+            }
+            if (UpperBound.HasValue) {
+                var upper = UpperBound.Unwrap();
+                var comp = (upper.Value as dynamic).CompareTo(value as dynamic);
+
+                if (comp < 0 || (comp == 0 && !upper.IsInclusive)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         ///   Checks if the <see cref="Interval"/> is valid.
         /// </summary>
         /// <remarks>
@@ -56,42 +95,16 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
-        ///   Checks if a value is contained within the <see cref="Interval"/>.
+        ///   Produces a human-readable string representation of the <see cref="Interval"/>.
         /// </summary>
-        /// <param name="value">
-        ///   The probe value.
-        /// </param>
         /// <returns>
-        ///   <see langword="true"/> if <paramref name="value"/> is within the <see cref="Interval"/>; otherwise,
-        ///   <see langword="false"/>.
+        ///   A representation of the <see cref="Interval"/> in mathematical notation, with an absent endpoint being
+        ///   indicated by the infinity symbol.
         /// </returns>
-        public bool Contains(object value) {
-            Debug.Assert(value is not null);
-            Debug.Assert(!LowerBound.Exists(b => b.Value.GetType() != value.GetType()));
-            Debug.Assert(!UpperBound.Exists(b => b.Value.GetType() != value.GetType()));
-
-            // We have to use the `CompareTo` method, since there are no binary ordering operators defined for `string`.
-            // The use of `dynamic` makes it so that we don't have to use reflection to find the `CompareTo` method or
-            // to instantiate a default `IComparer` object.
-
-            if (LowerBound.HasValue) {
-                var lower = LowerBound.Unwrap();
-                var comp = (lower.Value as dynamic).CompareTo(value as dynamic);
-
-                if (comp > 0 || (comp == 0 && !lower.IsInclusive)) {
-                    return false;
-                }
-            }
-            if (UpperBound.HasValue) {
-                var upper = UpperBound.Unwrap();
-                var comp = (upper.Value as dynamic).CompareTo(value as dynamic);
-                
-                if (comp < 0 || (comp == 0 && !upper.IsInclusive)) {
-                    return false;
-                }
-            }
-
-            return true;
+        public override string ToString() {
+            var lower = LowerBound.Match(some: b => (b.IsInclusive ? "[" : "(") + b.Value.ForDisplay(), none: () => "(∞");
+            var upper = UpperBound.Match(some: b => (b.IsInclusive ? "]" : ")") + b.Value.ForDisplay(), none: () => "∞)");
+            return $"{lower}, {upper}";
         }
     }
 }

@@ -27,16 +27,33 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
-        ///   The default value for the Field.
+        ///   Applies a <see cref="Check.IsNonEmptyAttribute">[Check.IsNonEmpty]</see>,
+        ///   <see cref="Check.LengthIsAtLeastAttribute">[Check.LengthIsAtLeast</see>,
+        ///   <see cref="Check.LengthIsAtMostAttribute">[Check.LengthIsAtMost</see>, or
+        ///   <see cref="Check.LengthIsBetweenAttribute"/> constraint to the Field.
         /// </summary>
-        /// <remarks>
-        ///   This may be needed by derived classes to ensure that any default value already set on the Field is still
-        ///   valid when additional constraints are imposed.
-        /// </remarks>
-        protected Option<object?> DefaultValue {
-            get {
-                return default_;
-            }
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the string length constraint annotation was translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The string length constraint annotation.
+        /// </param>
+        /// <exception cref="InapplicableConstraintException">
+        ///   if the Field's <see cref="FieldType">type</see> is not <see cref="string"/>.
+        /// </exception>
+        /// <exception cref="UnsatisfiableConstraintException">
+        ///   if the Field has at least one discretely allowed value, and all such values are disallowed by
+        ///   <paramref name="annotation"/>.
+        /// </exception>
+        /// <exception cref="InvalidatedDefaultException">
+        ///   if the Field has a default value that is disallowed by <paramref name="annotation"/>.
+        /// </exception>
+        public void ApplyConstraint(Context context, Check.StringLengthAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+
+            DoApplyConstraint(context, annotation);
+            PostProcessConstraint(context, annotation);
         }
 
         /// <summary>
@@ -100,11 +117,11 @@ namespace Kvasir.Translation2 {
 
             if (!IsValidValue(value)) {
                 if (value is null) {
-                    var msg = $"default value {value.ForDisplay()} is invalid because Field is non-nullable";
+                    var msg = $"default value is {value.ForDisplay()}, but the Field is non-nullable";
                     throw new InvalidDefaultException(context, annotation.Path, msg);
                 }
                 else {
-                    var msg = $"default value {value.ForDisplay()} is invalid because it violates one or more constraints";
+                    var msg = $"default value {value.ForDisplay()} fails does not pass all the Field's constraints";
                     throw new InvalidDefaultException(context, annotation.Path, msg);
                 }
             }
@@ -337,6 +354,12 @@ namespace Kvasir.Translation2 {
             }
         }
 
+        /// <seealso cref="ApplyConstraint(Context, Check.StringLengthAttribute)"/>
+        /// <remarks>Intended to be overridden by derived classes for which the constraint is applicable.</remarks>
+        protected virtual void DoApplyConstraint(Context context, Check.StringLengthAttribute annotation) {
+            throw new InapplicableConstraintException(context, annotation, FieldType);
+        }
+
         /// <summary>
         ///   Determines if a user-provided value, guaranteed to be of the correct type, is a valid value for the Field,
         ///   accounting for nullability and any active constraints.
@@ -362,6 +385,34 @@ namespace Kvasir.Translation2 {
             }
             else {
                 return true;
+            }
+        }
+
+        /// <summary>
+        ///   Updates the allowed/disallowed value and performs additional consistency checking after a constraint has
+        ///   been applied.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the constraint annotation was translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The constraint annotation that was just applied.
+        /// </param>
+        /// <exception cref="UnsatisfiableConstraintException">
+        ///   if the Field currently has at least one discretely allowed value, and all such values are no longer valid.
+        /// </exception>
+        /// <exception cref="InvalidatedDefaultException">
+        ///   if the Field has a default value that is no longer valid.
+        /// </exception>
+        private void PostProcessConstraint(Context context, INestableAnnotation annotation) {
+            disallowedValues_.RemoveWhere(v => !IsValidValue(v));
+
+            if (allowedValues_.RemoveWhere(v => !IsValidValue(v)) > 0 && allowedValues_.IsEmpty()) {
+                throw new UnsatisfiableConstraintException(context, annotation);
+            }
+
+            if (default_.Exists(v => !IsValidValue(v))) {
+                throw new InvalidatedDefaultException(context, default_.Unwrap(), annotation);
             }
         }
 

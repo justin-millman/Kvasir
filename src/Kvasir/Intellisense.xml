@@ -7158,6 +7158,159 @@
               The <see cref="T:System.Type"/> of the duplicated annotation.
             </param>
         </member>
+        <member name="T:Kvasir.Translation2.InapplicableConstraintException">
+            <summary>
+              An exception that is raised when a constraint is placed on a property for which it is inapplicable.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InapplicableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation,System.Type,Kvasir.Translation2.AggregateTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InapplicableConstraintException"/> caused by an annotation being placed on an
+              Aggregate property.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the inapplicable constraint was encountered.
+            </param>
+            <param name="annotation">
+              The inapplicable constraint.
+            </param>
+            <param name="fieldType">
+              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
+              conversions.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InapplicableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation,System.Type,Kvasir.Translation2.ReferenceTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InapplicableConstraintException"/> caused by an annotation being placed on an
+              Reference property.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the inapplicable constraint was encountered.
+            </param>
+            <param name="annotation">
+              The inapplicable constraint.
+            </param>
+            <param name="fieldType">
+              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
+              conversions.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InapplicableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation,System.Type,Kvasir.Translation2.RelationTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InapplicableConstraintException"/> caused by an annotation being placed on an
+              Relation property.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the inapplicable constraint was encountered.
+            </param>
+            <param name="annotation">
+              The inapplicable constraint.
+            </param>
+            <param name="fieldType">
+              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
+              conversions.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InapplicableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.Check.ComparisonAttribute,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InapplicableConstraintException"/> caused by a
+              <see cref="T:Kvasir.Annotations.Check.ComparisonAttribute">comparison constraint annotation</see> being placed on a scalar
+              property corresponding to a non-orderable Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the inapplicable constraint was encountered.
+            </param>
+            <param name="annotation">
+              The inapplicable constraint.
+            </param>
+            <param name="fieldType">
+              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
+              conversions.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InapplicableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.Check.SignednessAttribute,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InapplicableConstraintException"/> caused by a
+              <see cref="T:Kvasir.Annotations.Check.SignednessAttribute">signedness constraint annotation</see> being placed on a scalar
+              property corresponding to a non-numeric Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the inapplicable constraint was encountered.
+            </param>
+            <param name="annotation">
+              The inapplicable constraint.
+            </param>
+            <param name="fieldType">
+              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
+              conversions.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InapplicableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.Check.SignednessAttribute,System.Type,Kvasir.Translation2.UnsignedTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InapplicableConstraintException"/> caused by a
+              <see cref="T:Kvasir.Annotations.Check.IsNegativeAttribute">[Check.IsNegative] annotation</see> being placed on a scalar
+              property corresponding to an unsigned numeric Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the inapplicable constraint was encountered.
+            </param>
+            <param name="annotation">
+              The inapplicable constraint.
+            </param>
+            <param name="fieldType">
+              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
+              conversions.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InapplicableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.Check.StringLengthAttribute,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InapplicableConstraintException"/> caused by a
+              <see cref="T:Kvasir.Annotations.Check.StringLengthAttribute">string length constraint annotation</see> being placed on a scalar
+              property corresponding to a non-string Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the inapplicable constraint was encountered.
+            </param>
+            <param name="annotation">
+              The inapplicable constraint.
+            </param>
+            <param name="fieldType">
+              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
+              conversions.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation2.InvalidatedDefaultException">
+            <summary>
+              An exception that is raised when a constraint annotation is applied to a Field that causes its default value
+              to no longer be valid.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidatedDefaultException.#ctor(Kvasir.Translation2.Context,System.Object,Kvasir.Annotations.INestableAnnotation)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidatedDefaultException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which <paramref name="annotation"/> was encountered.
+            </param>
+            <param name="defaultValue">
+              The default value that has been invalidated.
+            </param>
+            <param name="annotation">
+              The constraint annotation that invalidated <paramref name="defaultValue"/>.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation2.InvalidColumnIndexException">
             <summary>
               An exception that is raised when the column index provided to a <see cref="T:Kvasir.Annotations.ColumnAttribute">[Column]</see>
@@ -7222,8 +7375,8 @@
         </member>
         <member name="T:Kvasir.Translation2.InvalidDefaultException">
             <summary>
-              An exception that is raised when the value provided to a <see cref="T:Kvasir.Annotations.DefaultAttribute"/> is not valid for the
-              property to which the annotation applies.
+              An exception that is raised when the value provided to a <see cref="T:Kvasir.Annotations.DefaultAttribute">[Default]</see>
+              annotation is not valid for the property to which the annotation applies.
             </summary>
         </member>
         <member name="M:Kvasir.Translation2.InvalidDefaultException.#ctor(Kvasir.Translation2.Context,System.String,System.String)">
@@ -7238,6 +7391,31 @@
             </param>
             <param name="reason">
               An explanation as to why the default value is invalid.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation2.InvalidPrimaryKeyFieldException">
+            <summary>
+              An exception that is raised when a <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute">[PrimaryKey]</see> annotation is applied,
+              directly or indirectly, to an invalid Field.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidPrimaryKeyFieldException.#ctor(Kvasir.Translation2.Context,System.String,System.String,System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidPrimaryKeyFieldException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="path">
+              The path to which the invalid annotation was applied.
+            </param>
+            <param name="cascadePath">
+              The path that the invalid annotation affects. This parameter should be used when the annotation is placed
+              on an Aggregate or applies to an Aggregate via the <paramref name="path"/>, and that Aggregate itself
+              contains a Field that cannot be in an Entity's primary key.
+            </param>
+            <param name="reason">
+              The reason that the <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute">[PrimaryKey]</see> annotation is invalid.
             </param>
         </member>
         <member name="T:Kvasir.Translation2.ReferenceCycleException">
@@ -7307,6 +7485,31 @@
               The annotation that caused the problem.
             </param>
         </member>
+        <member name="M:Kvasir.Translation2.TranslationException.#ctor(Kvasir.Translation2.TranslationException.Location,Kvasir.Translation2.TranslationException.Path,Kvasir.Translation2.TranslationException.Cascade,Kvasir.Translation2.TranslationException.Problem,Kvasir.Translation2.TranslationException.Annotation)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.TranslationException"/> that describes a problem caused by a single
+              annotation that may apply to a nested property and may affect a further nested property.
+            </summary>
+            <param name="loc">
+              The location at which the problem arose.
+            </param>
+            <param name="path">
+              The path to the nested property to which <paramref name="annotation"/> applies; if this is the empty
+              string, then the annotation is understood to apply to the property described by <paramref name="loc"/>
+              directly.
+            </param>
+            <param name="cascade">
+              The path to the nested property that <paramref name="annotation"/> actually affects, relative to
+              <paramref name="path"/>; if this is the empty string, then the annotation is understood to affect the
+              property indicated by <paramref name="path"/>.
+            </param>
+            <param name="problem">
+              The problem.
+            </param>
+            <param name="annotation">
+              The annotation that caused the problem.
+            </param>
+        </member>
         <member name="M:Kvasir.Translation2.TranslationException.#ctor(Kvasir.Translation2.TranslationException.Location,Kvasir.Translation2.TranslationException.Problem,Kvasir.Translation2.TranslationException.Annotation,Kvasir.Translation2.TranslationException.Annotation)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation2.TranslationException"/> that describes a problem caused by two annotations.
@@ -7335,6 +7538,21 @@
               A properly formatted error message based on <paramref name="msgs"/>.
             </returns>
         </member>
+        <member name="T:Kvasir.Translation2.UnsatisfiableConstraintException">
+            <summary>
+              An exception that is raised when the combination of one or more constraints leaves no valid values for a
+              Field.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.UnsatisfiableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.UnsatisfiableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation,Kvasir.Translation2.Interval)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.UnsatisfiableConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation,System.String)">
+            
+        </member>
         <member name="T:Kvasir.Translation2.DateTimeFieldDescriptor">
             <summary>
               The concrete class for an <see cref="T:Kvasir.Translation2.OrderableFieldDescriptor"/> whose data type is <see cref="T:System.DateTime"/>.
@@ -7362,14 +7580,29 @@
               The CLR type of the Field, accounting for any data conversions.
             </summary>
         </member>
-        <member name="P:Kvasir.Translation2.FieldDescriptor.DefaultValue">
+        <member name="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.StringLengthAttribute)">
             <summary>
-              The default value for the Field.
+              Applies a <see cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute">[Check.IsNonEmpty]</see>,
+              <see cref="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute">[Check.LengthIsAtLeast</see>,
+              <see cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute">[Check.LengthIsAtMost</see>, or
+              <see cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/> constraint to the Field.
             </summary>
-            <remarks>
-              This may be needed by derived classes to ensure that any default value already set on the Field is still
-              valid when additional constraints are imposed.
-            </remarks>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the string length constraint annotation was translated via reflection.
+            </param>
+            <param name="annotation">
+              The string length constraint annotation.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InapplicableConstraintException">
+              if the Field's <see cref="P:Kvasir.Translation2.FieldDescriptor.FieldType">type</see> is not <see cref="T:System.String"/>.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.UnsatisfiableConstraintException">
+              if the Field has at least one discretely allowed value, and all such values are disallowed by
+              <paramref name="annotation"/>.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.InvalidatedDefaultException">
+              if the Field has a default value that is disallowed by <paramref name="annotation"/>.
+            </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.SetColumn(Kvasir.Translation2.Context,System.Int32)">
             <summary>
@@ -7409,6 +7642,29 @@
             <exception cref="T:Kvasir.Translation2.InvalidDefaultException">
               if the value carried by <paramref name="annotation"/> is not valid for the current Field (e.g. it is
               <see langword="null"/> but the Field is not nullable, the value is not of the correct type, etc.).
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.SetInPrimaryKey(Kvasir.Translation2.Context,Kvasir.Annotations.PrimaryKeyAttribute,System.String)">
+            <summary>
+              Marks the Field as being part of the primary key of the Entity that owns it.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute">[PrimaryKey]</see> annotation was
+              translated via reflection.
+            </param>
+            <param name="annotation">
+              The <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute">[PrimaryKey]</see> annotation.
+            </param>
+            <param name="cascadePath">
+              The access path in between the property to which <paramref name="annotation"/> applies, accounting for a
+              possible <see cref="P:Kvasir.Annotations.PrimaryKeyAttribute.Path">nested path</see>, and the Field. This parameter defaults to
+              the empty string and should be non-empty when <paramref name="annotation"/> applies to an Aggregate.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InvalidPrimaryKeyFieldException">
+              if the depth of <paramref name="context"/> is not <c>0</c>, indicating that the annotation was placed
+              on a property nested within an Aggregate
+                --or--
+              if the Field is nullable
             </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.SetNullability(Kvasir.Translation2.Context,System.Boolean)">
@@ -7513,6 +7769,10 @@
               A <c>NONE</c> instance containing a string explaining why <paramref name="raw"/> could not be coerced
             </returns>
         </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.DoApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.StringLengthAttribute)">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.StringLengthAttribute)"/>
+            <remarks>Intended to be overridden by derived classes for which the constraint is applicable.</remarks>
+        </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.IsValidValue(System.Object)">
             <summary>
               Determines if a user-provided value, guaranteed to be of the correct type, is a valid value for the Field,
@@ -7525,6 +7785,24 @@
               <see langword="true"/> if <paramref name="value"/> is a valid value for this Field; otherwise,
               <see langword="false"/>.
             </returns>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.PostProcessConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation)">
+            <summary>
+              Updates the allowed/disallowed value and performs additional consistency checking after a constraint has
+              been applied.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the constraint annotation was translated via reflection.
+            </param>
+            <param name="annotation">
+              The constraint annotation that was just applied.
+            </param>
+            <exception cref="T:Kvasir.Translation2.UnsatisfiableConstraintException">
+              if the Field currently has at least one discretely allowed value, and all such values are no longer valid.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.InvalidatedDefaultException">
+              if the Field has a default value that is no longer valid.
+            </exception>
         </member>
         <member name="T:Kvasir.Translation2.GuidFieldDescriptor">
             <summary>
@@ -7739,6 +8017,17 @@
               reference cycles and to enable contextualized error messages.
             </remarks>
         </member>
+        <member name="P:Kvasir.Translation2.Context.Depth">
+            <summary>
+              The depth of the <see cref="T:Kvasir.Translation2.Context"/>.
+            </summary>
+            <remarks>
+              A depth of <c>0</c> indicates that the <see cref="T:Kvasir.Translation2.Context"/> represents translation of the initial type or
+              a property defined directly on the initial type. A depth of <c>N > 0</c> indicates that the
+              <see cref="T:Kvasir.Translation2.Context"/> represents translation of a type <c>N</c> levels nested within the initial type or
+              a property defined on such a nested type.
+            </remarks>
+        </member>
         <member name="M:Kvasir.Translation2.Context.#ctor(System.Type)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation2.Context"/>.
@@ -7824,6 +8113,18 @@
         <member name="P:Kvasir.Translation2.Interval.UpperBound">
             <summary>The endpoint that defines the upper boundary of the <see cref="T:Kvasir.Translation2.Interval"/></summary>
         </member>
+        <member name="M:Kvasir.Translation2.Interval.Contains(System.Object)">
+            <summary>
+              Checks if a value is contained within the <see cref="T:Kvasir.Translation2.Interval"/>.
+            </summary>
+            <param name="value">
+              The probe value.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="value"/> is within the <see cref="T:Kvasir.Translation2.Interval"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
         <member name="M:Kvasir.Translation2.Interval.IsValid">
             <summary>
               Checks if the <see cref="T:Kvasir.Translation2.Interval"/> is valid.
@@ -7842,16 +8143,13 @@
               <see langword="true"/> if the <see cref="T:Kvasir.Translation2.Interval"/> is valid; otherwise, <see langword="false"/>.
             </returns>
         </member>
-        <member name="M:Kvasir.Translation2.Interval.Contains(System.Object)">
+        <member name="M:Kvasir.Translation2.Interval.ToString">
             <summary>
-              Checks if a value is contained within the <see cref="T:Kvasir.Translation2.Interval"/>.
+              Produces a human-readable string representation of the <see cref="T:Kvasir.Translation2.Interval"/>.
             </summary>
-            <param name="value">
-              The probe value.
-            </param>
             <returns>
-              <see langword="true"/> if <paramref name="value"/> is within the <see cref="T:Kvasir.Translation2.Interval"/>; otherwise,
-              <see langword="false"/>.
+              A representation of the <see cref="T:Kvasir.Translation2.Interval"/> in mathematical notation, with an absent endpoint being
+              indicated by the infinity symbol.
             </returns>
         </member>
         <member name="T:Kvasir.Translation.Translator">
