@@ -27,6 +27,69 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   Applies a <see cref="Check.IsNotAttribute">[Check.IsNot]</see>,
+        ///   <see cref="Check.IsLessThanAttribute">[Check.IsLessThan]</see>,
+        ///   <see cref="Check.IsGreaterThanAttribute">[Check.IsGreaterThan]</see>,
+        ///   <see cref="Check.IsLessOrEqualToAttribute">[Check.IsLessOrEqualTo]</see>, or
+        ///   <see cref="Check.IsGreaterOrEqualToAttribute">[Check.IsGreaterOrEqualTo</see> constraint to the Field.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the comparison constraint annotation was translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The comparison constraint annotation.
+        /// </param>
+        /// <exception cref="InapplicableConstraintException">
+        ///   if the Field's <see cref="FieldType">type</see> is not orderable.
+        /// </exception>
+        /// <exception cref="InvalidConstraintValueException">
+        ///   if the anchor value of <paramref name="annotation"/> is invalid.
+        /// </exception>
+        /// <exception cref="UnsatisfiableConstraintException">
+        ///   if the Field has at least one discretely allowed value, and all such values are disallowed by
+        ///   <paramref name="annotation"/>.
+        /// </exception>
+        /// <exception cref="InvalidatedDefaultException">
+        ///   if the Field has a default value that is disallowed by <paramref name="annotation"/>.
+        /// </exception>
+        public void ApplyConstraint(Context context, Check.ComparisonAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+
+            DoApplyConstraint(context, annotation);
+            PostProcessConstraint(context, annotation);
+        }
+
+        /// <summary>
+        ///   Applies a <see cref="Check.IsNonZeroAttribute">[Check.IsNonZero]</see>,
+        ///   <see cref="Check.IsNegativeAttribute">[Check.IsNegative]</see>, or
+        ///   <see cref="Check.IsPositiveAttribute">[Check.IsPositive]</see> constraint to the Field.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the signedness constraint annotation was translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The signedness constraint annotation.
+        /// </param>
+        /// <exception cref="InapplicableConstraintException">
+        ///   if the Field's <see cref="FieldType">type</see> is not numeric.
+        /// </exception>
+        /// <exception cref="UnsatisfiableConstraintException">
+        ///   if the Field has at least one discretely allowed value, and all such values are disallowed by
+        ///   <paramref name="annotation"/>.
+        /// </exception>
+        /// <exception cref="InvalidatedDefaultException">
+        ///   if the Field has a default value that is disallowed by <paramref name="annotation"/>.
+        /// </exception>
+        public void ApplyConstraint(Context context, Check.SignednessAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+
+            DoApplyConstraint(context, annotation);
+            PostProcessConstraint(context, annotation);
+        }
+
+        /// <summary>
         ///   Applies a <see cref="Check.IsNonEmptyAttribute">[Check.IsNonEmpty]</see>,
         ///   <see cref="Check.LengthIsAtLeastAttribute">[Check.LengthIsAtLeast</see>,
         ///   <see cref="Check.LengthIsAtMostAttribute">[Check.LengthIsAtMost</see>, or
@@ -352,6 +415,18 @@ namespace Kvasir.Translation2 {
                 var msg = $"value {raw.ForDisplay()} is of type {raw.GetType().Name}, not {FieldType.Name} as expected";
                 return Option.None<object?, string>(msg);
             }
+        }
+
+        /// <seealso cref="ApplyConstraint(Context, Check.ComparisonAttribute)"/>
+        /// <remarks>Intended to be overridden by derived classes for which the constraint is applicable.</remarks>
+        protected virtual void DoApplyConstraint(Context context, Check.ComparisonAttribute annotation) {
+            throw new InapplicableConstraintException(context, annotation, FieldType);
+        }
+
+        /// <seealso cref="ApplyConstraint(Context, Check.SignednessAttribute)"/>
+        /// <remarks>Intended to be overridden by derived classes for which the constraint is applicable.</remarks>
+        protected virtual void DoApplyConstraint(Context context, Check.SignednessAttribute annotation) {
+            throw new InapplicableConstraintException(context, annotation, FieldType);
         }
 
         /// <seealso cref="ApplyConstraint(Context, Check.StringLengthAttribute)"/>

@@ -1,4 +1,6 @@
 ﻿using Kvasir.Annotations;
+using Kvasir.Schema;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -31,6 +33,23 @@ namespace Kvasir.Translation2 {
 
         protected sealed override UnsignedFieldDescriptor Clone() {
             return new UnsignedFieldDescriptor(this);
+        }
+
+        protected sealed override void DoApplyConstraint(Context context, Check.SignednessAttribute annotation) {
+            var zero = Convert.ChangeType(0, FieldType);
+
+            switch (annotation.Operator) {
+                case ComparisonOperator.LT:
+                    throw new InapplicableConstraintException(context, annotation, FieldType, new UnsignedTag());
+                case ComparisonOperator.GT:
+                    DoApplyConstraint(context, new Check.IsGreaterThanAttribute(zero));
+                    break;
+                case ComparisonOperator.NE:
+                    DoApplyConstraint(context, new Check.IsNotAttribute(0));
+                    break;
+                default:
+                    throw new ApplicationException($"Switch statement over {nameof(ComparisonOperator)} exhausted");
+            }
         }
 
         private UnsignedFieldDescriptor(UnsignedFieldDescriptor source)
