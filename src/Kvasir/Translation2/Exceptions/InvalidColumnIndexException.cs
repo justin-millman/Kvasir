@@ -18,7 +18,7 @@ namespace Kvasir.Translation2 {
         public InvalidColumnIndexException(Context context, int index)
             : base(
                 new Location(context.ToString()),
-                new Problem($"column index {index} is negative"),
+                new Problem($"the column index {index} is negative"),
                 new Annotation(nameof(ColumnAttribute)[..^9])
               )
         {}

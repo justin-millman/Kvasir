@@ -41,7 +41,7 @@ namespace Kvasir.Translation2 {
         public InvalidDataConverterException(Context context, Type propertyType, Type converterSourceType)
             : base(
                 new Location(context.ToString()),
-                new Problem($"property of type {propertyType} cannot use a Data Converter that expects {converterSourceType}"),
+                new Problem($"a property of type {propertyType} cannot use a Data Converter that expects {converterSourceType}"),
                 new Annotation(nameof(DataConverterAttribute)[..^9])
               )
         {}
@@ -59,7 +59,7 @@ namespace Kvasir.Translation2 {
         public InvalidDataConverterException(Context context, Type unsupportedResultType)
             : base(
                 new Location(context.ToString()),
-                new Problem($"result type {unsupportedResultType} of Data Converter is not supported"),
+                new Problem($"the result type {unsupportedResultType} of the Data Converter is not supported"),
                 new Annotation(nameof(DataConverterAttribute)[..^9])
               )
         {}

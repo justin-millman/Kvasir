@@ -28,7 +28,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"annotation cannot be applied to a property of Aggregate type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a property of Aggregate type {fieldType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -54,7 +54,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"annotation cannot be applied to a property of Reference type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a property of Reference type {fieldType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -80,7 +80,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"annotation cannot be applied to a property of Relation type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a property of Relation type {fieldType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -104,7 +104,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"annotation cannot be applied to Field of non-orderable type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a Field of non-orderable type {fieldType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -128,7 +128,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"annotation cannot be applied to Field of non-numeric type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a Field of non-numeric type {fieldType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -155,7 +155,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"annotation cannot be applied to Field of unsigned numeric type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a Field of unsigned numeric type {fieldType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {
@@ -181,7 +181,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"annotation cannot be applied to Field of non-string type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a Field of non-string type {fieldType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}

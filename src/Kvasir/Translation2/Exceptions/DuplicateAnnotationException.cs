@@ -22,7 +22,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(path),
-                new Problem("duplicate annotation (only one is allowed)"),
+                new Problem("only one copy of the annotation can be applied to a given Field at a time"),
                 new Annotation(annotationType.Name[..^9])
               )
         {}

@@ -117,11 +117,11 @@ namespace Kvasir.Translation2 {
 
             if (!IsValidValue(value)) {
                 if (value is null) {
-                    var msg = $"default value is {value.ForDisplay()}, but the Field is non-nullable";
+                    var msg = $"the default value is {value.ForDisplay()}, but the Field is non-nullable";
                     throw new InvalidDefaultException(context, annotation.Path, msg);
                 }
                 else {
-                    var msg = $"default value {value.ForDisplay()} fails does not pass all the Field's constraints";
+                    var msg = $"the default value {value.ForDisplay()} does not pass all the Field's constraints";
                     throw new InvalidDefaultException(context, annotation.Path, msg);
                 }
             }

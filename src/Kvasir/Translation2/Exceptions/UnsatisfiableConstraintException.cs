@@ -6,7 +6,16 @@ namespace Kvasir.Translation2 {
     ///   Field.
     /// </summary>
     internal sealed class UnsatisfiableConstraintException : TranslationException {
-        ///
+        /// <summary>
+        ///   Constructs a <see cref="UnsatisfiableConstraintException"/> that arises when a constraint causes each of
+        ///   the explicitly allowed values of a Field to be invalid.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="annotation"/> was encountered.
+        /// </param>
+        /// <param name="annotation">
+        ///   The annotation that invalidated all of the explicitly allowed value.
+        /// </param>
         public UnsatisfiableConstraintException(Context context, INestableAnnotation annotation)
             : base(
                 new Location(context.ToString()),
@@ -16,7 +25,19 @@ namespace Kvasir.Translation2 {
               )
         {}
 
-        ///
+        /// <summary>
+        ///   Constructs a <see cref="UnsatisfiableConstraintException"/> that arises when a constraint produces an
+        ///   empty interval.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="annotation"/> was encountered.
+        /// </param>
+        /// <param name="annotation">
+        ///   The annotation that produced <paramref name="interval"/>.
+        /// </param>
+        /// <param name="interval">
+        ///   The empty interval.
+        /// </param>
         public UnsatisfiableConstraintException(Context context, INestableAnnotation annotation, Interval interval)
             : base(
                 new Location(context.ToString()),
@@ -30,7 +51,18 @@ namespace Kvasir.Translation2 {
               )
         {}
 
-        ///
+        /// <summary>
+        ///   Constructs a <see cref="UnsatisfiableConstraintException"/> that arises for an arbitrary reason.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="annotation"/> was encountered.
+        /// </param>
+        /// <param name="annotation">
+        ///   The annotation.
+        /// </param>
+        /// <param name="reason">
+        ///   The reason that <paramref name="annotation"/> is unsatisfiable.
+        /// </param>
         public UnsatisfiableConstraintException(Context context, INestableAnnotation annotation, string reason)
             : base(
                 new Location(context.ToString()),

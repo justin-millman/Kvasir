@@ -21,7 +21,7 @@ namespace Kvasir.Translation2 {
         public ConflictingAnnotationsException(Context context, Type first, Type second)
             : base(
                 new Location(context.ToString()),
-                new Problem("annotations are mutually exclusive"),
+                new Problem("the two annotations are mutually exclusive"),
                 new Annotation(first.Name[..^9]),
                 new Annotation(second.Name[..^9])
               )

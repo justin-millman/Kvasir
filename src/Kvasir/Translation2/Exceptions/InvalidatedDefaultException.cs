@@ -23,7 +23,7 @@ namespace Kvasir.Translation2 {
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"default value {defaultValue.ForDisplay()} does not pass the constraint"),
+                new Problem($"the Field's default value of {defaultValue.ForDisplay()} does not pass the constraint"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
