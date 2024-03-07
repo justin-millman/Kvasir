@@ -2,7 +2,6 @@
 using Kvasir.Annotations;
 using Optional;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -16,7 +15,9 @@ namespace Kvasir.Translation2 {
             : base(context, source) {
 
             Debug.Assert(FieldType.IsEnum);
-            restrictedImage_ = FieldType.ValidValues().Cast<object>().ToHashSet();
+
+            var enumerators = FieldType.ValidValues().Cast<object>().ToArray();
+            DoApplyConstraint(context, new Check.IsOneOfAttribute(enumerators[0], enumerators[1..]));
         }
 
         public EnumFieldDescriptor(Context context, PropertyInfo source, DataConverterAttribute annotation)
@@ -31,10 +32,12 @@ namespace Kvasir.Translation2 {
             // (even if the Data Converter, for example, maps all inputs to a single value).
             if (source.PropertyType.IsEnum) {
                 var conv = annotation.DataConverter;
-                restrictedImage_ = source.PropertyType.ValidValues().Select(e => conv.Convert(e)!).ToHashSet();
+                var enumerators = source.PropertyType.ValidValues().Select(e => conv.Convert(e)!).ToArray();
+                DoApplyConstraint(context, new Check.IsOneOfAttribute(enumerators[0], enumerators[1..]));
             }
             else {
-                restrictedImage_ = FieldType.ValidValues().Cast<object>().ToHashSet();
+                var enumerators = FieldType.ValidValues().Cast<object>().ToArray();
+                DoApplyConstraint(context, new Check.IsOneOfAttribute(enumerators[0], enumerators[1..]));
             }
         }
 
@@ -48,17 +51,7 @@ namespace Kvasir.Translation2 {
             return coercion;
         }
 
-        protected sealed override bool IsValidValue(object? value) {
-            return base.IsValidValue(value) && (value is null || restrictedImage_.Contains(value));
-        }
-
         private EnumFieldDescriptor(EnumFieldDescriptor source)
-            : base(source) {
-
-            restrictedImage_ = new HashSet<object>(source.restrictedImage_);
-        }
-
-
-        private readonly HashSet<object> restrictedImage_;
+            : base(source) {}
     }
 }

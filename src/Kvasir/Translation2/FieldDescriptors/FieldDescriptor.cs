@@ -61,6 +61,34 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   Applies a <see cref="Check.IsOneOfAttribute">[Check.IsOneOf]</see> or
+        ///   <see cref="Check.IsNotOneOfAttribute">[Check.IsNotOneOf]</see> constraint to the Field.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the comparison constraint annotation was translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The comparison constraint annotation.
+        /// </param>
+        /// <exception cref="InvalidConstraintValueException">
+        ///   if any of the values of <paramref name="annotation"/> is invalid.
+        /// </exception>
+        /// <exception cref="UnsatisfiableConstraintException">
+        ///   if the Field has at least one discretely allowed value, and all such values are disallowed by
+        ///   <paramref name="annotation"/>.
+        /// </exception>
+        /// <exception cref="InvalidatedDefaultException">
+        ///   if the Field has a default value that is disallowed by <paramref name="annotation"/>.
+        /// </exception>
+        public void ApplyConstraint(Context context, Check.InclusionAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+
+            DoApplyConstraint(context, annotation);
+            PostProcessConstraint(context, annotation);
+        }
+
+        /// <summary>
         ///   Applies a <see cref="Check.IsNonZeroAttribute">[Check.IsNonZero]</see>,
         ///   <see cref="Check.IsNegativeAttribute">[Check.IsNegative]</see>, or
         ///   <see cref="Check.IsPositiveAttribute">[Check.IsPositive]</see> constraint to the Field.
@@ -423,6 +451,38 @@ namespace Kvasir.Translation2 {
             throw new InapplicableConstraintException(context, annotation, FieldType);
         }
 
+        /// <seealso cref="ApplyConstraint(Context, Check.InclusionAttribute)"/>
+        /// <remarks>Separated from the public API to enable translation of [Check.IsNot] constraints.</remarks>
+        /// <remarks>Non-virtual because there's no custom handling, protected for managing enumerators.</remarks>
+        protected void DoApplyConstraint(Context context, Check.InclusionAttribute annotation) {
+            // The [Check.IsOneOf] and [Check.IsNotOneOf] constructors enforce that at least one value be provided, so
+            // it's impossible for the anchor list to be empty
+
+            if (annotation.Anchor.Any(v => v is null)) {
+                object? n = null;
+                throw new InvalidConstraintValueException(context, annotation, $"constraint cannot contain {n.ForDisplay()}");
+            }
+
+            var values = annotation.Anchor.Select(
+                v => CoerceUserValue(v).Match(
+                    some: v => v!,
+                    none: msg => throw new InvalidConstraintValueException(context, annotation, msg)
+                )
+            );
+
+            if (annotation.Operator == InclusionOperator.In) {
+                allowedValues_.UnionWith(values);
+            }
+            else {
+                disallowedValues_.UnionWith(values);
+            }
+
+            // If a value is disallowed, we have to remove it from the set of allowed values. Note that we don't clear
+            // the set of disallowed values just because we have at least one allowed value, because that could lead to
+            // future [Check.IsOneOf] constraints re-introducing the allowed value.
+            allowedValues_.ExceptWith(disallowedValues_);
+        }
+
         /// <seealso cref="ApplyConstraint(Context, Check.SignednessAttribute)"/>
         /// <remarks>Intended to be overridden by derived classes for which the constraint is applicable.</remarks>
         protected virtual void DoApplyConstraint(Context context, Check.SignednessAttribute annotation) {
@@ -502,17 +562,17 @@ namespace Kvasir.Translation2 {
         }
 
 
-        private readonly PropertyInfo source_; // ................... handled
+        private readonly PropertyInfo source_;
         private string name_;
-        private bool isNullable_; // ................................ handled
-        private int column_; // ..................................... handled
-        private readonly Option<DataConverter> converter_; // ....... handled
-        private Option<object?> default_; // ........................ handled
-        private bool inPrimaryKey_; // .............................. handled
+        private bool isNullable_;
+        private int column_;
+        private readonly Option<DataConverter> converter_;
+        private Option<object?> default_;
+        private bool inPrimaryKey_;
         private readonly HashSet<string> keyMemberships_;
         private readonly HashSet<object> allowedValues_;
         private readonly HashSet<object> disallowedValues_;
         private readonly List<IConstraintGenerator> checks_;
-        private Annotation annotations_; // ......................... handled
+        private Annotation annotations_;
     }
 }
