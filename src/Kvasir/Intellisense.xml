@@ -7660,6 +7660,28 @@
               if the Field has a default value that is disallowed by <paramref name="annotation"/>.
             </exception>
         </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.InclusionAttribute)">
+            <summary>
+              Applies a <see cref="T:Kvasir.Annotations.Check.IsOneOfAttribute">[Check.IsOneOf]</see> or
+              <see cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute">[Check.IsNotOneOf]</see> constraint to the Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the comparison constraint annotation was translated via reflection.
+            </param>
+            <param name="annotation">
+              The comparison constraint annotation.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InvalidConstraintValueException">
+              if any of the values of <paramref name="annotation"/> is invalid.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.UnsatisfiableConstraintException">
+              if the Field has at least one discretely allowed value, and all such values are disallowed by
+              <paramref name="annotation"/>.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.InvalidatedDefaultException">
+              if the Field has a default value that is disallowed by <paramref name="annotation"/>.
+            </exception>
+        </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.SignednessAttribute)">
             <summary>
               Applies a <see cref="T:Kvasir.Annotations.Check.IsNonZeroAttribute">[Check.IsNonZero]</see>,
@@ -7875,6 +7897,11 @@
         <member name="M:Kvasir.Translation2.FieldDescriptor.DoApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.ComparisonAttribute)">
             <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.ComparisonAttribute)"/>
             <remarks>Intended to be overridden by derived classes for which the constraint is applicable.</remarks>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.DoApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.InclusionAttribute)">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.InclusionAttribute)"/>
+            <remarks>Separated from the public API to enable translation of [Check.IsNot] constraints.</remarks>
+            <remarks>Non-virtual because there's no custom handling, protected for managing enumerators.</remarks>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.DoApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.SignednessAttribute)">
             <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.SignednessAttribute)"/>
@@ -8200,6 +8227,27 @@
             
         </member>
         <member name="M:Kvasir.Translation2.Context.ContextHandle.System#IDisposable#Dispose">
+            
+        </member>
+        <member name="T:Kvasir.Translation2.FieldName">
+            
+        </member>
+        <member name="P:Kvasir.Translation2.FieldName.SchemaName">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldName.#ctor(System.String)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldName.#ctor(Kvasir.Translation2.FieldName)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldName.SetNamePart(System.String)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldName.SetPrefixPart(System.String)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldName.ToString">
             
         </member>
         <member name="T:Kvasir.Translation2.Interval">

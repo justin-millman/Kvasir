@@ -262,7 +262,57 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
-        ///   Sets the nullability or non-nullability of a Field.
+        ///   Sets the name of the Field.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the <see cref="NameAttribute">[Name]</see> annotation was translated
+        ///   via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The <see cref="NameAttribute">[Name]</see> annotation.
+        /// </param>
+        /// <exception cref="DuplicateAnnotationException">
+        ///   if the name of the Field has already been set.
+        /// </exception>
+        /// <exception cref="InvalidNameException">
+        ///   if the name imparted by <paramref name="annotation"/> is either <see langword="null"/> or the empty
+        ///   string.
+        /// </exception>
+        public void SetName(Context context, NameAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+
+            if (annotations_.HasFlag(Annotation.Name)) {
+                throw new DuplicateAnnotationException(context, annotation.Path, typeof(NameAttribute));
+            }
+            else if (annotation.Name is null || annotation.Name == "") {
+                throw new InvalidNameException(context, annotation);
+            }
+
+            name_.SetNamePart(annotation.Name);
+            annotations_ |= Annotation.Name;
+        }
+
+        /// <summary>
+        ///   Sets the name prefix of the Field.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="prefix"/> was determined. (This parameter is not used,
+        ///   but is kept for symmetry with other methods and as a forward compatibility mechanism.)
+        /// </param>
+        /// <param name="prefix">
+        ///   The suffix of the name's prefix.
+        /// </param>
+        public void SetNamePrefix(Context context, IReadOnlyList<string> prefix) {
+            Debug.Assert(context is not null);
+            Debug.Assert(prefix is not null && !prefix.IsEmpty());
+            Debug.Assert(prefix.None(s => s is null || s == ""));
+
+            name_.SetPrefixPart(prefix);
+        }
+
+        /// <summary>
+        ///   Sets the nullability or non-nullability of the Field.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which the <see cref="NullableAttribute">[Nullable]</see> or
@@ -293,7 +343,7 @@ namespace Kvasir.Translation2 {
             Debug.Assert(source is not null);
 
             source_ = source.source_;
-            name_ = source.name_;
+            name_ = new FieldName(source.name_);
             isNullable_ = source.isNullable_;
             column_ = source.column_;
             converter_ = source.converter_;
@@ -320,7 +370,7 @@ namespace Kvasir.Translation2 {
             Debug.Assert(context is not null);
 
             source_ = source;
-            name_ = source.Name;
+            name_ = new FieldName(source.Name);
             isNullable_ = new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable;
             column_ = 0;
             converter_ = Option.None<DataConverter>();
@@ -558,12 +608,13 @@ namespace Kvasir.Translation2 {
         // have been applied gets cleared when the FieldDescriptor is "cloned."
         [Flags] private enum Annotation {
             None = 0,
-            Default = 1
+            Default = 1,
+            Name = 2
         }
 
 
         private readonly PropertyInfo source_;
-        private string name_;
+        private FieldName name_;
         private bool isNullable_;
         private int column_;
         private readonly Option<DataConverter> converter_;
