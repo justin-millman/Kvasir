@@ -27,6 +27,29 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   Applies a <see cref="CheckAttribute">[Check]</see> annotation to the Field.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the <see cref="CheckAttribute">[Check]</see> annotation was translated
+        ///   via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The <see cref="CheckAttribute">[Check]</see> annotation.
+        /// </param>
+        /// <exception cref="InvalidCustomConstraintException">
+        ///   if <paramref name="annotation"/> has a populated <see cref="CheckAttribute.UserError">user error</see>.
+        /// </exception>
+        public void ApplyConstraint(Context context, CheckAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+
+            if (annotation.UserError is not null) {
+                throw new InvalidCustomConstraintException(context, annotation);
+            }
+            checks_.Add(annotation.ConstraintGenerator);
+        }
+
+        /// <summary>
         ///   Applies a <see cref="Check.IsNotAttribute">[Check.IsNot]</see>,
         ///   <see cref="Check.IsLessThanAttribute">[Check.IsLessThan]</see>,
         ///   <see cref="Check.IsGreaterThanAttribute">[Check.IsGreaterThan]</see>,
@@ -614,7 +637,7 @@ namespace Kvasir.Translation2 {
 
 
         private readonly PropertyInfo source_;
-        private FieldName name_;
+        private readonly FieldName name_;
         private bool isNullable_;
         private int column_;
         private readonly Option<DataConverter> converter_;
