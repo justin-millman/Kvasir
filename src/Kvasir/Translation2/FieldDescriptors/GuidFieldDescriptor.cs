@@ -22,7 +22,7 @@ namespace Kvasir.Translation2 {
             Debug.Assert(FieldType == typeof(Guid));
         }
 
-        protected sealed override GuidFieldDescriptor Clone() {
+        public sealed override GuidFieldDescriptor Clone() {
             return new GuidFieldDescriptor(this);
         }
 

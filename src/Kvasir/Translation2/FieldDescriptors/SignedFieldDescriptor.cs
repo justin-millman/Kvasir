@@ -36,7 +36,7 @@ namespace Kvasir.Translation2 {
             );
         }
 
-        protected sealed override SignedFieldDescriptor Clone() {
+        public sealed override SignedFieldDescriptor Clone() {
             return new SignedFieldDescriptor(this);
         }
 

@@ -41,7 +41,7 @@ namespace Kvasir.Translation2 {
             }
         }
 
-        protected sealed override EnumFieldDescriptor Clone() {
+        public sealed override EnumFieldDescriptor Clone() {
             return new EnumFieldDescriptor(this);
         }
 

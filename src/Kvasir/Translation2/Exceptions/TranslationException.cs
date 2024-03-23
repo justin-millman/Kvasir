@@ -119,7 +119,7 @@ namespace Kvasir.Translation2 {
                     $"Affecting: further nested property @ \"{cascade}\"",
                     $"Problem: {problem}"
                   )
-                /* else */ :
+                /* else if */ :
                 path.ToString() != "" ?
                   MakeMessage(
                     $"Location: {loc}",
@@ -127,7 +127,7 @@ namespace Kvasir.Translation2 {
                     $"Affecting: nested property @ \"{cascade}\"",
                     $"Problem: {problem}"
                   )
-                /* else */ :
+                /* else if */ :
                 cascade.ToString() != "" ?
                   MakeMessage(
                     $"Location: {loc}",

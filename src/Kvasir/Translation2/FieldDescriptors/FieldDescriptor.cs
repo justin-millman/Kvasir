@@ -171,6 +171,23 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   Clones this <see cref="FieldDescriptor"/>.
+        /// </summary>
+        /// <remarks>
+        ///   When a <see cref="FieldDescriptor"/> is cloned, the majority of the translation state is copied over to
+        ///   the new instance verbatim. However, some state is slightly altered to reflect the fact that cloning occurs
+        ///   when the scope of translation changes. In particular, the nullability of a <see cref="FieldDescriptor"/>
+        ///   will always be converted into the "native" equivalent of its current value if that value was imparted via
+        ///   an annotation. This is to allow [Nullable] and [NonNullable] annotations on aggregates that won't induce
+        ///   errors if there was already an annotation on the individual nested property
+        /// </remarks>
+        /// <returns>
+        ///   A deep copy of this <see cref="FieldDescriptor"/> as a brand new instance. Modifications to the returned
+        ///   value will not affect the source instance, and vice-versa.
+        /// </returns>
+        public abstract FieldDescriptor Clone();
+
+        /// <summary>
         ///   Sets the column index for the Field within its immediate grouping (that is, relative to the index offset
         ///   of whatever construct directly encapsulated the Field).
         /// </summary>
@@ -246,6 +263,47 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   Marks the Field as being part of a candidate key.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the <see cref="UniqueAttribute">[Unique]</see> annotation was
+        ///   translated via reflection.
+        /// </param>
+        /// <param name="annotation">
+        ///   The <see cref="UniqueAttribute">[Unique]</see> annotation.
+        /// </param>
+        /// <exception cref="InvalidNameException">
+        ///   if the name of <paramref name="annotation"/> is <see langword="null"/> or the empty string
+        ///     --or--
+        ///   if the name of <paramref name="annotation"/> begins with the prefix reserved by Kvasir for anonymous
+        ///   candidate keys, but <paramref name="annotation"/> is not itself anonymous.
+        /// </exception>
+        public void SetInCandidateKey(Context context, UniqueAttribute annotation) {
+            Debug.Assert(context is not null);
+            Debug.Assert(annotation is not null);
+            var ANONYMOUS_PREFIX = UniqueAttribute.ANONYMOUS_PREFIX;
+
+            if (annotation.Name is null || annotation.Name == "") {
+                throw new InvalidNameException(context, annotation);
+            }
+            if (!annotation.IsAnonymous && annotation.Name.StartsWith(ANONYMOUS_PREFIX)) {
+                throw new InvalidNameException(context, annotation);
+            }
+            else if (!annotation.IsAnonymous) {
+                keyMemberships_.Add(annotation.Name);
+            }
+            else {
+                // A Field can only be in one anonymous Candidate Key; all the rest are redundant. When a Field is
+                // placed into multiple, either directly or indirectly, we take the key whose name is lexicographically
+                // later (for determinism).
+                var existingAnonymous = keyMemberships_.FirstOrDefault(k => k.StartsWith(ANONYMOUS_PREFIX)) ?? annotation.Name;
+                var comp = StringComparer.Ordinal.Compare(existingAnonymous, annotation.Name);
+                var key = comp >= 0 ? existingAnonymous : annotation.Name;
+                keyMemberships_.Add(key);
+            }
+        }
+
+        /// <summary>
         ///   Marks the Field as being part of the primary key of the Entity that owns it.
         /// </summary>
         /// <param name="context">
@@ -258,7 +316,8 @@ namespace Kvasir.Translation2 {
         /// <param name="cascadePath">
         ///   The access path in between the property to which <paramref name="annotation"/> applies, accounting for a
         ///   possible <see cref="PrimaryKeyAttribute.Path">nested path</see>, and the Field. This parameter defaults to
-        ///   the empty string and should be non-empty when <paramref name="annotation"/> applies to an Aggregate.
+        ///   the empty string and should be non-empty when <paramref name="annotation"/> applies to an Aggregate. This
+        ///   argument is only used for contextualizing error messages.
         /// </param>
         /// <exception cref="InvalidPrimaryKeyFieldException">
         ///   if the depth of <paramref name="context"/> is not <c>0</c>, indicating that the annotation was placed
@@ -458,23 +517,6 @@ namespace Kvasir.Translation2 {
                 allowedValues_ = conv.SourceType.ValidValues().Select(e => conv.Convert(e)!).ToHashSet();
             }
         }
-
-        /// <summary>
-        ///   Clones this <see cref="FieldDescriptor"/>.
-        /// </summary>
-        /// <remarks>
-        ///   When a <see cref="FieldDescriptor"/> is cloned, the majority of the translation state is copied over to
-        ///   the new instance verbatim. However, some state is slightly altered to reflect the fact that cloning occurs
-        ///   when the scope of translation changes. In particular, the nullability of a <see cref="FieldDescriptor"/>
-        ///   will always be converted into the "native" equivalent of its current value if that value was imparted via
-        ///   an annotation. This is to allow [Nullable] and [NonNullable] annotations on aggregates that won't induce
-        ///   errors if there was already an annotation on the individual nested property
-        /// </remarks>
-        /// <returns>
-        ///   A deep copy of this <see cref="FieldDescriptor"/> as a brand new instance. Modifications to the returned
-        ///   value will not affect the source instance, and vice-versa.
-        /// </returns>
-        protected abstract FieldDescriptor Clone();
 
         /// <summary>
         ///   Takes a user-provided value from an annotation (e.g. [Default]) and coerces it into a value that is

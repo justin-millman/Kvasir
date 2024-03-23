@@ -22,7 +22,7 @@ namespace Kvasir.Translation2 {
             Debug.Assert(FieldType == typeof(DateTime));
         }
 
-        protected sealed override DateTimeFieldDescriptor Clone() {
+        public sealed override DateTimeFieldDescriptor Clone() {
             return new DateTimeFieldDescriptor(this);
         }
 

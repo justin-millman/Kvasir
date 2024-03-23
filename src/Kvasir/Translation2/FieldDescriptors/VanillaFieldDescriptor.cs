@@ -20,7 +20,7 @@ namespace Kvasir.Translation2 {
             Debug.Assert(FieldType == typeof(bool) || FieldType == typeof(char));
         }
 
-        protected sealed override VanillaFieldDescriptor Clone() {
+        public sealed override VanillaFieldDescriptor Clone() {
             return new VanillaFieldDescriptor(this);
         }
 

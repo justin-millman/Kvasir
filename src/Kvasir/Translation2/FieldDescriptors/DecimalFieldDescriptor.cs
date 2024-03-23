@@ -22,7 +22,7 @@ namespace Kvasir.Translation2 {
             Debug.Assert(FieldType == typeof(decimal));
         }
 
-        protected sealed override DecimalFieldDescriptor Clone() {
+        public sealed override DecimalFieldDescriptor Clone() {
             return new DecimalFieldDescriptor(this);
         }
 

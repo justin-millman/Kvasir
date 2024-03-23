@@ -22,7 +22,7 @@ namespace Kvasir.Translation2 {
             lengthConstraint_ = new Interval(Option.None<Bound>(), Option.None<Bound>());
         }
 
-        protected sealed override StringFieldDescriptor Clone() {
+        public sealed override StringFieldDescriptor Clone() {
             return new StringFieldDescriptor(this);
         }
 
