@@ -103,13 +103,13 @@ namespace Kvasir.Translation2 {
         }
 
         /// <seealso cref="FieldDescriptor.SetDefault(Context, DefaultAttribute)"/>
-        protected abstract void SetDefault(Context context, Nested<DefaultAttribute> annotaton);
+        protected abstract void SetDefault(Context context, Nested<DefaultAttribute> annotation);
 
         /// <seealso cref="FieldDescriptor.SetInCandidateKey(Context, UniqueAttribute)"/>
-        protected abstract void SetInCandidateKey(Context context, Nested<UniqueAttribute> annotaton);
+        protected abstract void SetInCandidateKey(Context context, Nested<UniqueAttribute> annotation);
 
         /// <seealso cref="FieldDescriptor.SetInPrimaryKey(Context, PrimaryKeyAttribute, string)"/>
-        protected abstract void SetInPrimaryKey(Context context, Nested<PrimaryKeyAttribute> annotaton);
+        protected abstract void SetInPrimaryKey(Context context, Nested<PrimaryKeyAttribute> annotation);
 
         /// <seealso cref="FieldDescriptor.SetName(Context, NameAttribute)"/>
         protected abstract void SetName(Context context, Nested<NameAttribute> annotation);
@@ -150,9 +150,9 @@ namespace Kvasir.Translation2 {
         /// <param name="group">
         ///   The <see cref="FieldGroup"/> to act upon.
         /// </param>
-        /// <exception cref="TranslationException">
-        ///   (in various derived forms) if any of the annotations applied to the property backing
-        ///   <paramref name="group"/> are invalid, conflicting, contradictory, or otherwise inapplicable.
+        /// <exception cref="InvalidPathException">
+        ///   if the path of a "nestable" annotation applied to the property backing <paramref name="group"/> is
+        ///   <see langword="null"/>.
         /// </exception>
         protected static void ProcessAnnotations(Context context, FieldGroup group) {
             Debug.Assert(!group.processed_);
@@ -167,6 +167,7 @@ namespace Kvasir.Translation2 {
 
             // [Name]
             foreach (var nameAnnotation in group.source_.GetCustomAttributes<NameAttribute>()) {
+                var _ = nameAnnotation.Path ?? throw new InvalidPathException(context, nameAnnotation);
                 group.SetName(context, nameAnnotation);
             }
 
@@ -193,36 +194,43 @@ namespace Kvasir.Translation2 {
 
             // [PrimaryKey]
             foreach (var pkAnnotation in group.source_.GetCustomAttributes<PrimaryKeyAttribute>()) {
+                var _ = pkAnnotation.Path ?? throw new InvalidPathException(context, pkAnnotation);
                 group.SetInPrimaryKey(context, pkAnnotation);
             }
 
             // [Unique]
             foreach (var ckAnnotation in group.source_.GetCustomAttributes<UniqueAttribute>()) {
+                var _ = ckAnnotation.Path ?? throw new InvalidPathException(context, ckAnnotation);
                 group.SetInCandidateKey(context, ckAnnotation);
             }
 
             // [Check]
             foreach (var checkAnnotation in group.source_.GetCustomAttributes<CheckAttribute>()) {
+                var _ = checkAnnotation.Path ?? throw new InvalidPathException(context, checkAnnotation);
                 group.ApplyConstraint(context, checkAnnotation);
             }
 
             // [Check] Signedness
             foreach (var signednessAnnotation in group.source_.GetCustomAttributes<Check.SignednessAttribute>()) {
+                var _ = signednessAnnotation.Path ?? throw new InvalidPathException(context, signednessAnnotation);
                 group.ApplyConstraint(context, signednessAnnotation);
             }
 
             // [Check] Comparison
             foreach (var comparisonAnnotation in group.source_.GetCustomAttributes<Check.ComparisonAttribute>()) {
+                var _ = comparisonAnnotation.Path ?? throw new InvalidPathException(context, comparisonAnnotation);
                 group.ApplyConstraint(context, comparisonAnnotation);
             }
 
             // [Check] String Length
-            foreach (var stringLenghtAnnotation in group.source_.GetCustomAttributes<Check.StringLengthAttribute>()) {
-                group.ApplyConstraint(context, stringLenghtAnnotation);
+            foreach (var stringLengthAnnotation in group.source_.GetCustomAttributes<Check.StringLengthAttribute>()) {
+                var _ = stringLengthAnnotation.Path ?? throw new InvalidPathException(context, stringLengthAnnotation);
+                group.ApplyConstraint(context, stringLengthAnnotation);
             }
 
             // [Check] Discreteness
             foreach (var discretenessAnnotation in group.source_.GetCustomAttributes<Check.InclusionAttribute>()) {
+                var _ = discretenessAnnotation.Path ?? throw new InvalidPathException(context, discretenessAnnotation);
                 group.ApplyConstraint(context, discretenessAnnotation);
             }
 
