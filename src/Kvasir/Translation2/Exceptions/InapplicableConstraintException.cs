@@ -9,7 +9,7 @@ namespace Kvasir.Translation2 {
     internal sealed class InapplicableConstraintException : TranslationException {
         /// <summary>
         ///   Constructs a new <see cref="InapplicableConstraintException"/> caused by an annotation being placed on an
-        ///   Aggregate property.
+        ///   Aggregate property, a Reference property, or a Relation property.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which the inapplicable constraint was encountered.
@@ -20,64 +20,14 @@ namespace Kvasir.Translation2 {
         /// <param name="propertyType">
         ///   The type of the property to which <paramref name="annotation"/> was applied.
         /// </param>
-        /// <param name="_">
-        ///   <i>overload discriminator</i>
+        /// <param name="kind">
+        ///   The kind of property on which the annotation was erroneously placed.
         /// </param>
-        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type propertyType, AggregateTag _)
+        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type propertyType, MultiKind kind)
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"the annotation cannot be applied to a property of Aggregate type {propertyType}"),
-                new Annotation(annotation.GetType().Name[..^9])
-              )
-        {}
-
-        /// <summary>
-        ///   Constructs a new <see cref="InapplicableConstraintException"/> caused by an annotation being placed on an
-        ///   Reference property.
-        /// </summary>
-        /// <param name="context">
-        ///   The <see cref="Context"/> in which the inapplicable constraint was encountered.
-        /// </param>
-        /// <param name="annotation">
-        ///   The inapplicable constraint.
-        /// </param>
-        /// <param name="propertyType">
-        ///   The type of the property to which <paramref name="annotation"/> was applied.
-        /// </param>
-        /// <param name="_">
-        ///   <i>overload discriminator</i>
-        /// </param>
-        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type propertyType, ReferenceTag _)
-            : base(
-                new Location(context.ToString()),
-                new Path(annotation.Path),
-                new Problem($"the annotation cannot be applied to a property of Reference type {propertyType}"),
-                new Annotation(annotation.GetType().Name[..^9])
-              )
-        {}
-
-        /// <summary>
-        ///   Constructs a new <see cref="InapplicableConstraintException"/> caused by an annotation being placed on an
-        ///   Relation property.
-        /// </summary>
-        /// <param name="context">
-        ///   The <see cref="Context"/> in which the inapplicable constraint was encountered.
-        /// </param>
-        /// <param name="annotation">
-        ///   The inapplicable constraint.
-        /// </param>
-        /// <param name="propertyType">
-        ///   The type of the property to which <paramref name="annotation"/> was applied.
-        /// </param>
-        /// <param name="_">
-        ///   <i>overload discriminator</i>
-        /// </param>
-        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type propertyType, RelationTag _)
-            : base(
-                new Location(context.ToString()),
-                new Path(annotation.Path),
-                new Problem($"the annotation cannot be applied to a property of Relation type {propertyType}"),
+                new Problem($"the annotation cannot be applied to a property of {kind} type {propertyType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -185,9 +135,7 @@ namespace Kvasir.Translation2 {
     }
 
 
-    // Overload dispatch types
-    internal readonly struct AggregateTag {}
-    internal readonly struct ReferenceTag {}
-    internal readonly struct RelationTag {}
+    // Discrimination types
+    internal enum MultiKind { Aggregate, Reference, Relation }
     internal readonly struct UnsignedTag {}
 }

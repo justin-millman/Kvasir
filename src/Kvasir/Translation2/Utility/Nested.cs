@@ -44,6 +44,9 @@ namespace Kvasir.Translation2 {
         /// <summary>
         ///   Advance the <see cref="Nested{TAttribute}"/> to the next portion of its application path.
         /// </summary>
+        /// <returns>
+        ///   A new <see cref="Nested{TAttribute}"/> that has discarded its <see cref="NextPath">"next path"</see>.
+        /// </returns>
         public Nested<TAttribute> Step() {
             Debug.Assert(NextPath != CURRENT_PROPERTY);
             return new Nested<TAttribute>(Annotation, restPath_);

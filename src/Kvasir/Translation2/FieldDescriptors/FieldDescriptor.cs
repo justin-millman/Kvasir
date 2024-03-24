@@ -27,6 +27,11 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
+        ///   <see langword="true"/> if the Field is nullable, otherwise <see langword="false"/>.
+        /// </summary>
+        public bool IsNullable => isNullable_;
+
+        /// <summary>
         ///   Applies a <see cref="CheckAttribute">[Check]</see> annotation to the Field.
         /// </summary>
         /// <param name="context">
@@ -340,7 +345,7 @@ namespace Kvasir.Translation2 {
             Debug.Assert(context is not null);
             Debug.Assert(annotation is not null);
 
-            if (annotations_.HasFlag(Annotation.Name)) {
+            if (annotations_.HasFlag(Annotation.Name) && annotation.Name != name_.SchemaName.ToString()) {
                 throw new DuplicateAnnotationException(context, annotation.Path, typeof(NameAttribute));
             }
             else if (annotation.Name is null || annotation.Name == "") {

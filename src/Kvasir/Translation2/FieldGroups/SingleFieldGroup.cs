@@ -11,9 +11,12 @@ namespace Kvasir.Translation2 {
     ///   The intermediate base class for a <see cref="FieldGroup"/> backed by a scalar or enumeration CLR property,
     ///   and therefore corresponding to exactly one Field.
     /// </summary>
-    internal abstract class SingleFieldGroup : FieldGroup {
+    internal sealed class SingleFieldGroup : FieldGroup {
         /// <inheritdoc/>
         public sealed override int Size => 1;
+
+        /// <inheritdoc/>
+        public sealed override bool AllNullable => field_.IsNullable;
 
         /// <summary>
         ///   Constructs a new <see cref="SingleFieldGroup"/>.
@@ -25,12 +28,14 @@ namespace Kvasir.Translation2 {
         /// <param name="source">
         ///   The CLR property backing the new <see cref="SingleFieldGroup"/>.
         /// </param>
-        protected SingleFieldGroup(Context context, PropertyInfo source)
+        public SingleFieldGroup(Context context, PropertyInfo source)
             : base(source) {
 
             Debug.Assert(context is not null);
+            Debug.Assert(source is not null);
+
             field_ = MakeField(context, source);
-            ProcessAnnotations(context, this);
+            ProcessAnnotations(context);
         }
 
         /// <summary>
@@ -40,14 +45,19 @@ namespace Kvasir.Translation2 {
         ///   The source <see cref="SingleFieldGroup"/>.
         /// </param>
         /// <seealso cref="FieldGroup.Clone"/>
-        protected SingleFieldGroup(SingleFieldGroup source)
+        private SingleFieldGroup(SingleFieldGroup source)
             : base(source) {
 
             field_ = source.field_.Clone();
         }
 
         /// <inheritdoc/>
-        protected sealed override void ApplyConstraint(Context context, Nested<CheckAttribute> annotation) {
+        public sealed override SingleFieldGroup Clone() {
+            return new SingleFieldGroup(this);
+        }
+
+        /// <inheritdoc/>
+        public sealed override void ApplyConstraint(Context context, Nested<CheckAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -58,7 +68,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void ApplyConstraint(Context context, Nested<Check.ComparisonAttribute> annotation) {
+        public sealed override void ApplyConstraint(Context context, Nested<Check.ComparisonAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -69,7 +79,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void ApplyConstraint(Context context, Nested<Check.InclusionAttribute> annotation) {
+        public sealed override void ApplyConstraint(Context context, Nested<Check.InclusionAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -80,7 +90,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void ApplyConstraint(Context context, Nested<Check.SignednessAttribute> annotation) {
+        public sealed override void ApplyConstraint(Context context, Nested<Check.SignednessAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -91,7 +101,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void ApplyConstraint(Context context, Nested<Check.StringLengthAttribute> annotation) {
+        public sealed override void ApplyConstraint(Context context, Nested<Check.StringLengthAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -102,7 +112,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void SetDefault(Context context, Nested<DefaultAttribute> annotation) {
+        public sealed override void SetDefault(Context context, Nested<DefaultAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -113,7 +123,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void SetInCandidateKey(Context context, Nested<UniqueAttribute> annotation) {
+        public sealed override void SetInCandidateKey(Context context, Nested<UniqueAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -124,7 +134,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void SetInPrimaryKey(Context context, Nested<PrimaryKeyAttribute> annotation) {
+        public sealed override void SetInPrimaryKey(Context context, Nested<PrimaryKeyAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -135,7 +145,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void SetName(Context context, Nested<NameAttribute> annotation) {
+        public sealed override void SetName(Context context, Nested<NameAttribute> annotation) {
             Debug.Assert(context is not null);
             Debug.Assert(annotation.Annotation is not null);
 
@@ -146,7 +156,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void SetNamePrefix(Context context, IEnumerable<string> prefix) {
+        public sealed override void SetNamePrefix(Context context, IEnumerable<string> prefix) {
             Debug.Assert(context is not null);
             Debug.Assert(prefix is not null && !prefix.IsEmpty());
             Debug.Assert(prefix.None(s => s is null || s == ""));
@@ -155,7 +165,7 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void SetNullability(Context context, bool nullable) {
+        public sealed override void SetNullability(Context context, bool nullable) {
             Debug.Assert(context is not null);
             field_.SetNullability(context, nullable);
         }
