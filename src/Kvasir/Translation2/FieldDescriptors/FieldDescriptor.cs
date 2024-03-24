@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace Kvasir.Translation2 {
     /// <summary>
-    ///   The base class for the data state that manages the translation of a single Field in the back-end database,
+    ///   The base class for the data state that manages the translation of a single Field in a back-end database,
     ///   derived from a single scalar (or enumeration) CLR property.
     /// </summary>
     internal abstract class FieldDescriptor {
@@ -21,7 +21,7 @@ namespace Kvasir.Translation2 {
         /// </summary>
         protected Type FieldType {
             get {
-                var type = converter_.Match(some: c => c.ResultType, none: () => source_.PropertyType);
+                var type = converter_.Match(some: c => c.ResultType, none: () => clrType_);
                 return Nullable.GetUnderlyingType(type) ?? type;
             }
         }
@@ -186,30 +186,6 @@ namespace Kvasir.Translation2 {
         ///   value will not affect the source instance, and vice-versa.
         /// </returns>
         public abstract FieldDescriptor Clone();
-
-        /// <summary>
-        ///   Sets the column index for the Field within its immediate grouping (that is, relative to the index offset
-        ///   of whatever construct directly encapsulated the Field).
-        /// </summary>
-        /// <param name="context">
-        ///   The <see cref="Context"/> in which the <see cref="ColumnAttribute">[Column]</see> annotation was
-        ///   translated via reflection.
-        /// </param>
-        /// <param name="index">
-        ///   The column index.
-        /// </param>
-        /// <exception cref="InvalidColumnIndexException">
-        ///   if <paramref name="index"/> is negative.
-        /// </exception>
-        public void SetColumn(Context context, int index) {
-            Debug.Assert(context is not null);
-            Debug.Assert(column_ == 0);
-
-            if (index < 0) {
-                throw new InvalidColumnIndexException(context, index);
-            }
-            column_ = index;
-        }
 
         /// <summary>
         ///   Sets the default value for the Field.
@@ -424,10 +400,9 @@ namespace Kvasir.Translation2 {
         protected FieldDescriptor(FieldDescriptor source) {
             Debug.Assert(source is not null);
 
-            source_ = source.source_;
+            clrType_ = source.clrType_;
             name_ = new FieldName(source.name_);
             isNullable_ = source.isNullable_;
-            column_ = source.column_;
             converter_ = source.converter_;
             default_ = source.default_;
             inPrimaryKey_ = source.inPrimaryKey_;
@@ -451,10 +426,9 @@ namespace Kvasir.Translation2 {
             Debug.Assert(source is not null);
             Debug.Assert(context is not null);
 
-            source_ = source;
+            clrType_ = source.PropertyType;
             name_ = new FieldName(source.Name);
             isNullable_ = new NullabilityInfoContext().Create(source).ReadState == NullabilityState.Nullable;
-            column_ = 0;
             converter_ = Option.None<DataConverter>();
             default_ = Option.None<object?>();
             inPrimaryKey_ = false;
@@ -678,10 +652,9 @@ namespace Kvasir.Translation2 {
         }
 
 
-        private readonly PropertyInfo source_;
+        private readonly Type clrType_;
         private readonly FieldName name_;
         private bool isNullable_;
-        private int column_;
         private readonly Option<DataConverter> converter_;
         private Option<object?> default_;
         private bool inPrimaryKey_;

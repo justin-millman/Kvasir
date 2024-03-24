@@ -17,18 +17,17 @@ namespace Kvasir.Translation2 {
         /// <param name="annotation">
         ///   The inapplicable constraint.
         /// </param>
-        /// <param name="fieldType">
-        ///   The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
-        ///   conversions.
+        /// <param name="propertyType">
+        ///   The type of the property to which <paramref name="annotation"/> was applied.
         /// </param>
         /// <param name="_">
         ///   <i>overload discriminator</i>
         /// </param>
-        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type fieldType, AggregateTag _)
+        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type propertyType, AggregateTag _)
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"the annotation cannot be applied to a property of Aggregate type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a property of Aggregate type {propertyType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -43,18 +42,17 @@ namespace Kvasir.Translation2 {
         /// <param name="annotation">
         ///   The inapplicable constraint.
         /// </param>
-        /// <param name="fieldType">
-        ///   The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
-        ///   conversions.
+        /// <param name="propertyType">
+        ///   The type of the property to which <paramref name="annotation"/> was applied.
         /// </param>
         /// <param name="_">
         ///   <i>overload discriminator</i>
         /// </param>
-        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type fieldType, ReferenceTag _)
+        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type propertyType, ReferenceTag _)
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"the annotation cannot be applied to a property of Reference type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a property of Reference type {propertyType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}
@@ -69,18 +67,17 @@ namespace Kvasir.Translation2 {
         /// <param name="annotation">
         ///   The inapplicable constraint.
         /// </param>
-        /// <param name="fieldType">
-        ///   The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
-        ///   conversions.
+        /// <param name="propertyType">
+        ///   The type of the property to which <paramref name="annotation"/> was applied.
         /// </param>
         /// <param name="_">
         ///   <i>overload discriminator</i>
         /// </param>
-        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type fieldType, RelationTag _)
+        public InapplicableConstraintException(Context context, INestableAnnotation annotation, Type propertyType, RelationTag _)
             : base(
                 new Location(context.ToString()),
                 new Path(annotation.Path),
-                new Problem($"the annotation cannot be applied to a property of Relation type {fieldType}"),
+                new Problem($"the annotation cannot be applied to a property of Relation type {propertyType}"),
                 new Annotation(annotation.GetType().Name[..^9])
               )
         {}

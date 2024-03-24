@@ -7348,6 +7348,25 @@
               An explanation as to why the default value is invalid.
             </param>
         </member>
+        <member name="T:Kvasir.Translation2.InvalidCustomConstraintException">
+            <summary>
+              An exception that is raised when a <see cref="T:Kvasir.Annotations.CheckAttribute">[Check]</see> or
+              <see cref="T:Kvasir.Annotations.Check.ComplexAttribute">[Check.Complex]</see> annotation is invalid.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidCustomConstraintException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.CheckAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidCustomConstraintException"/> describing a "user error" on a
+              <see cref="T:Kvasir.Annotations.CheckAttribute">[Check]</see> annotation, such as if the type provided to the annotation is not
+              actually an IConstraintGenerator.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="annotation">
+              The <see cref="T:Kvasir.Annotations.CheckAttribute">[Check]</see> annotation that carries a "user error."
+            </param>
+        </member>
         <member name="T:Kvasir.Translation2.InvalidDataConverterException">
             <summary>
               An exception that is raised when the contents of a <see cref="T:Kvasir.Annotations.DataConverterAttribute">[DataConverter]</see>
@@ -7411,6 +7430,72 @@
             </param>
             <param name="reason">
               An explanation as to why the default value is invalid.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation2.InvalidNameException">
+            <summary>
+              An exception that is raised when a user-provided name is invalid.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidNameException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.NameAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidNameException"/> caused by an invalid Field name.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which <paramref name="annotation"/> was encountered.
+            </param>
+            <param name="annotation">
+              The invalid <see cref="T:Kvasir.Annotations.NameAttribute">[Name]</see> annotation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidNameException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.TableAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidNameException"/> caused by an invalid Principal Table name.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which <paramref name="annotation"/> was encountered.
+            </param>
+            <param name="annotation">
+              The invalid <see cref="T:Kvasir.Annotations.TableAttribute">[Table]</see> annotation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidNameException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.RelationTableAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidNameException"/> caused by an invalid Relation Table name.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which <paramref name="annotation"/> was encountered.
+            </param>
+            <param name="annotation">
+              The invalid <see cref="T:Kvasir.Annotations.RelationTableAttribute">[RelationTable]</see> annotation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidNameException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.UniqueAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidNameException"/> caused by an invalid Candidate Key name.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which <paramref name="annotation"/> was encountered.
+            </param>
+            <param name="annotation">
+              The invalid <see cref="T:Kvasir.Annotations.UniqueAttribute">[Unique]</see> annotation.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation2.InvalidPathException">
+            <summary>
+              An exception that is raised when the path of a nestable annotation is invalid, either because it is
+              <see langword="null"/> or because the no property in the data model exists at that path.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.InvalidPathException.#ctor(Kvasir.Translation2.Context,Kvasir.Annotations.INestableAnnotation)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.InvalidPathException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the annotation with an invalid path was encountered.
+            </param>
+            <param name="annotation">
+              The annotation with an invalid path.
             </param>
         </member>
         <member name="T:Kvasir.Translation2.InvalidPrimaryKeyFieldException">
@@ -7623,7 +7708,7 @@
         </member>
         <member name="T:Kvasir.Translation2.FieldDescriptor">
             <summary>
-              The base class for the data state that manages the translation of a single Field in the back-end database,
+              The base class for the data state that manages the translation of a single Field in a back-end database,
               derived from a single scalar (or enumeration) CLR property.
             </summary>
         </member>
@@ -7631,6 +7716,21 @@
             <summary>
               The CLR type of the Field, accounting for any data conversions.
             </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.CheckAttribute)">
+            <summary>
+              Applies a <see cref="T:Kvasir.Annotations.CheckAttribute">[Check]</see> annotation to the Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.CheckAttribute">[Check]</see> annotation was translated
+              via reflection.
+            </param>
+            <param name="annotation">
+              The <see cref="T:Kvasir.Annotations.CheckAttribute">[Check]</see> annotation.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InvalidCustomConstraintException">
+              if <paramref name="annotation"/> has a populated <see cref="P:Kvasir.Annotations.CheckAttribute.UserError">user error</see>.
+            </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.ComparisonAttribute)">
             <summary>
@@ -7729,21 +7829,22 @@
               if the Field has a default value that is disallowed by <paramref name="annotation"/>.
             </exception>
         </member>
-        <member name="M:Kvasir.Translation2.FieldDescriptor.SetColumn(Kvasir.Translation2.Context,System.Int32)">
+        <member name="M:Kvasir.Translation2.FieldDescriptor.Clone">
             <summary>
-              Sets the column index for the Field within its immediate grouping (that is, relative to the index offset
-              of whatever construct directly encapsulated the Field).
+              Clones this <see cref="T:Kvasir.Translation2.FieldDescriptor"/>.
             </summary>
-            <param name="context">
-              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.ColumnAttribute">[Column]</see> annotation was
-              translated via reflection.
-            </param>
-            <param name="index">
-              The column index.
-            </param>
-            <exception cref="T:Kvasir.Translation2.InvalidColumnIndexException">
-              if <paramref name="index"/> is negative.
-            </exception>
+            <remarks>
+              When a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> is cloned, the majority of the translation state is copied over to
+              the new instance verbatim. However, some state is slightly altered to reflect the fact that cloning occurs
+              when the scope of translation changes. In particular, the nullability of a <see cref="T:Kvasir.Translation2.FieldDescriptor"/>
+              will always be converted into the "native" equivalent of its current value if that value was imparted via
+              an annotation. This is to allow [Nullable] and [NonNullable] annotations on aggregates that won't induce
+              errors if there was already an annotation on the individual nested property
+            </remarks>
+            <returns>
+              A deep copy of this <see cref="T:Kvasir.Translation2.FieldDescriptor"/> as a brand new instance. Modifications to the returned
+              value will not affect the source instance, and vice-versa.
+            </returns>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.SetDefault(Kvasir.Translation2.Context,Kvasir.Annotations.DefaultAttribute)">
             <summary>
@@ -7769,6 +7870,24 @@
               <see langword="null"/> but the Field is not nullable, the value is not of the correct type, etc.).
             </exception>
         </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.SetInCandidateKey(Kvasir.Translation2.Context,Kvasir.Annotations.UniqueAttribute)">
+            <summary>
+              Marks the Field as being part of a candidate key.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.UniqueAttribute">[Unique]</see> annotation was
+              translated via reflection.
+            </param>
+            <param name="annotation">
+              The <see cref="T:Kvasir.Annotations.UniqueAttribute">[Unique]</see> annotation.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InvalidNameException">
+              if the name of <paramref name="annotation"/> is <see langword="null"/> or the empty string
+                --or--
+              if the name of <paramref name="annotation"/> begins with the prefix reserved by Kvasir for anonymous
+              candidate keys, but <paramref name="annotation"/> is not itself anonymous.
+            </exception>
+        </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.SetInPrimaryKey(Kvasir.Translation2.Context,Kvasir.Annotations.PrimaryKeyAttribute,System.String)">
             <summary>
               Marks the Field as being part of the primary key of the Entity that owns it.
@@ -7783,7 +7902,8 @@
             <param name="cascadePath">
               The access path in between the property to which <paramref name="annotation"/> applies, accounting for a
               possible <see cref="P:Kvasir.Annotations.PrimaryKeyAttribute.Path">nested path</see>, and the Field. This parameter defaults to
-              the empty string and should be non-empty when <paramref name="annotation"/> applies to an Aggregate.
+              the empty string and should be non-empty when <paramref name="annotation"/> applies to an Aggregate. This
+              argument is only used for contextualizing error messages.
             </param>
             <exception cref="T:Kvasir.Translation2.InvalidPrimaryKeyFieldException">
               if the depth of <paramref name="context"/> is not <c>0</c>, indicating that the annotation was placed
@@ -7792,9 +7912,40 @@
               if the Field is nullable
             </exception>
         </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.SetName(Kvasir.Translation2.Context,Kvasir.Annotations.NameAttribute)">
+            <summary>
+              Sets the name of the Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.NameAttribute">[Name]</see> annotation was translated
+              via reflection.
+            </param>
+            <param name="annotation">
+              The <see cref="T:Kvasir.Annotations.NameAttribute">[Name]</see> annotation.
+            </param>
+            <exception cref="T:Kvasir.Translation2.DuplicateAnnotationException">
+              if the name of the Field has already been set.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.InvalidNameException">
+              if the name imparted by <paramref name="annotation"/> is either <see langword="null"/> or the empty
+              string.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldDescriptor.SetNamePrefix(Kvasir.Translation2.Context,System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+              Sets the name prefix of the Field.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which <paramref name="prefix"/> was determined. (This parameter is not used,
+              but is kept for symmetry with other methods and as a forward compatibility mechanism.)
+            </param>
+            <param name="prefix">
+              The suffix of the name's prefix.
+            </param>
+        </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.SetNullability(Kvasir.Translation2.Context,System.Boolean)">
             <summary>
-              Sets the nullability or non-nullability of a Field.
+              Sets the nullability or non-nullability of the Field.
             </summary>
             <param name="context">
               The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.NullableAttribute">[Nullable]</see> or
@@ -7852,23 +8003,6 @@
               if the <see cref="P:Cybele.Core.DataConverter.ResultType">result type</see> of the Data Converter carried by
               <paramref name="annotation"/> is not supported by Kvasir
             </exception>
-        </member>
-        <member name="M:Kvasir.Translation2.FieldDescriptor.Clone">
-            <summary>
-              Clones this <see cref="T:Kvasir.Translation2.FieldDescriptor"/>.
-            </summary>
-            <remarks>
-              When a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> is cloned, the majority of the translation state is copied over to
-              the new instance verbatim. However, some state is slightly altered to reflect the fact that cloning occurs
-              when the scope of translation changes. In particular, the nullability of a <see cref="T:Kvasir.Translation2.FieldDescriptor"/>
-              will always be converted into the "native" equivalent of its current value if that value was imparted via
-              an annotation. This is to allow [Nullable] and [NonNullable] annotations on aggregates that won't induce
-              errors if there was already an annotation on the individual nested property
-            </remarks>
-            <returns>
-              A deep copy of this <see cref="T:Kvasir.Translation2.FieldDescriptor"/> as a brand new instance. Modifications to the returned
-              value will not affect the source instance, and vice-versa.
-            </returns>
         </member>
         <member name="M:Kvasir.Translation2.FieldDescriptor.CoerceUserValue(System.Object)">
             <summary>
@@ -7973,6 +8107,106 @@
               The concrete base class for a <see cref="T:Kvasir.Translation2.FieldDescriptor"/> whose data type does not allow any additional
               constraints or have any special value-parsing behaviors.
             </summary>
+        </member>
+        <member name="T:Kvasir.Translation2.FieldGroup">
+            <summary>
+              The base class for the data state that manages the translation of one or more Fields in a back-end database,
+              each derived from the same CLR property and those thereunder nested.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation2.FieldGroup.Size">
+            <summary>
+              The number of Fields in the <see cref="T:Kvasir.Translation2.FieldGroup"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation2.FieldGroup.Column">
+            <summary>
+              The starting column index of the <see cref="T:Kvasir.Translation2.FieldGroup"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.FieldGroup"/>.
+            </summary>
+            <param name="source">
+              The CLR property from which the new <see cref="T:Kvasir.Translation2.FieldGroup"/> is derived.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.#ctor(Kvasir.Translation2.FieldGroup)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.FieldGroup"/> that is largely identical to another.
+            </summary>
+            <param name="source">
+              The source <see cref="T:Kvasir.Translation2.FieldGroup"/>.
+            </param>
+            <seealso cref="M:Kvasir.Translation2.FieldGroup.Clone"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.CheckAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.ComparisonAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.ComparisonAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.ComparisonAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.InclusionAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.InclusionAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.SignednessAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.SignednessAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.StringLengthAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Annotations.Check.StringLengthAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.Clone">
+            <summary>
+              Clones this <see cref="T:Kvasir.Translation2.FieldGroup"/>.
+            </summary>
+            <returns>
+              A deep copy of this <see cref="T:Kvasir.Translation2.FieldGroup"/> as a brand new instance. Modifications to the returned value
+              will not affect the source instance, and vice-versa.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetColumn(Kvasir.Translation2.Context,System.Int32)">
+            <summary>
+              Sets the column index for the group.
+            </summary>
+            <remarks>
+              The Fields that make up a FieldGroup are guaranteed to be contiguous. The column index of a FieldGroup is
+              therefore the index of the first of its Fields.
+            </remarks>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.ColumnAttribute">[Column]</see> annotation was
+              translated via reflection.
+            </param>
+            <param name="index">
+              The column index.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InvalidColumnIndexException">
+              if <paramref name="index"/> is negative.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetDefault(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.DefaultAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.SetDefault(Kvasir.Translation2.Context,Kvasir.Annotations.DefaultAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetInCandidateKey(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.UniqueAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.SetInCandidateKey(Kvasir.Translation2.Context,Kvasir.Annotations.UniqueAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetInPrimaryKey(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.PrimaryKeyAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.SetInPrimaryKey(Kvasir.Translation2.Context,Kvasir.Annotations.PrimaryKeyAttribute,System.String)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetName(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.NameAttribute})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.SetName(Kvasir.Translation2.Context,Kvasir.Annotations.NameAttribute)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetNamePrefix(Kvasir.Translation2.Context,System.Collections.Generic.IReadOnlyList{System.String})">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.SetNamePrefix(Kvasir.Translation2.Context,System.Collections.Generic.IReadOnlyList{System.String})"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetNullability(Kvasir.Translation2.Context,System.Boolean)">
+            <seealso cref="M:Kvasir.Translation2.FieldDescriptor.SetNullability(Kvasir.Translation2.Context,System.Boolean)"/>
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.SetRelationTableName(Kvasir.Translation2.Context,System.String)">
+            
+        </member>
+        <member name="M:Kvasir.Translation2.FieldGroup.ProcessAnnotations(Kvasir.Translation2.Context,Kvasir.Translation2.FieldGroup)">
+            
         </member>
         <member name="T:Kvasir.Translation2.PrincipalTableDef">
             <summary>
@@ -8230,25 +8464,56 @@
             
         </member>
         <member name="T:Kvasir.Translation2.FieldName">
-            
+            <summary>
+              The name of a Field or a Field Group, as tracked throughout the process of translating a property and the
+              types that enclose it.
+            </summary>
+            <remarks>
+              A Field's name consists of two parts: the "Name Part" and the "Prefix Part." By default the "Name Part" is the
+              name of the CLR source property, but that can be changed by a <c>[Name]</c> annotation placed directly on the
+              property or applying to the property via a path. The "Prefix Part" is the dot-separated names of the access
+              path from a given scope to the property. When a <c>[Name]</c> annotation is applied to a non-scalar, it alters
+              the value that particular property contributes to the "Prefix Part" of any nested Fields. When the "Name Part"
+              is set via annotation, the "Prefix Part" is cleared out.
+            </remarks>
         </member>
         <member name="P:Kvasir.Translation2.FieldName.SchemaName">
-            
+            <summary>
+              The <see cref="T:Kvasir.Translation2.FieldName"/>, converted into a schema-applicable <see cref="T:Kvasir.Schema.FieldName"/>.
+            </summary>
         </member>
         <member name="M:Kvasir.Translation2.FieldName.#ctor(System.String)">
-            
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.FieldName"/> with a given Name Part.
+            </summary>
+            <param name="name">
+              The Name Part.
+            </param>
         </member>
         <member name="M:Kvasir.Translation2.FieldName.#ctor(Kvasir.Translation2.FieldName)">
-            
+            <summary>
+              Constructs a <see cref="T:Kvasir.Translation2.FieldName"/> that is a deep copy of another.
+            </summary>
+            <param name="source">
+              The source <see cref="T:Kvasir.Translation2.FieldName"/>.
+            </param>
         </member>
         <member name="M:Kvasir.Translation2.FieldName.SetNamePart(System.String)">
-            
+            <summary>
+              Sets the Name Part of the <see cref="T:Kvasir.Translation2.FieldName"/>, overwriting whatever Name Part is currently set and
+              clearing out the entirety of the Prefix Part.
+            </summary>
+            <param name="name">
+              The new Name Part.
+            </param>
         </member>
-        <member name="M:Kvasir.Translation2.FieldName.SetPrefixPart(System.String)">
-            
-        </member>
-        <member name="M:Kvasir.Translation2.FieldName.ToString">
-            
+        <member name="M:Kvasir.Translation2.FieldName.SetPrefixPart(System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+              Sets the Prefix Part of the <see cref="T:Kvasir.Translation2.FieldName"/>.
+            </summary>
+            <param name="prefix">
+              The suffix of the new Prefix Part.
+            </param>
         </member>
         <member name="T:Kvasir.Translation2.Interval">
              <summary>
@@ -8310,6 +8575,69 @@
               A representation of the <see cref="T:Kvasir.Translation2.Interval"/> in mathematical notation, with an absent endpoint being
               indicated by the infinity symbol.
             </returns>
+        </member>
+        <member name="T:Kvasir.Translation2.Nested`1">
+            <summary>
+              A wrapper around a "nestable" annotation can track the applied-to path as translation descends.
+            </summary>
+            <remarks>
+              The <see cref="T:Kvasir.Translation2.Nested`1"/> serves as kind of façade over a "nestable" annotation. A "nestable"
+              annotation carries with it a dot-separated path that describes the property to which it ultimately applies.
+              Rather than attempt to resolve the entire path at once, it is easier (for both processing and error checking)
+              to "step" one nested property at a time. The API of the <see cref="T:Kvasir.Translation2.Nested`1"/> class allows for this
+              pattern, exposing only the next portion of the overall application path.
+            </remarks>
+        </member>
+        <member name="P:Kvasir.Translation2.Nested`1.AppliesHere">
+            <summary>
+              Whether or not the annotation applies to the current scope.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation2.Nested`1.NextPath">
+            <summary>
+              The next path to which the annotation applies.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation2.Nested`1.Annotation">
+            <summary>
+              The "nestable" annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.Nested`1.op_Implicit(`0)~Kvasir.Translation2.Nested{`0}">
+            <summary>
+              Implicitly creates a <see cref="T:Kvasir.Translation2.Nested`1"/> from a <typeparamref name="TAttribute"/>"/>.
+            </summary>
+            <param name="annotation">
+              The "nestable" annotation.
+            </param>
+            <returns>
+              A new <see cref="T:Kvasir.Translation2.Nested`1"/> wrapping <paramref name="annotation"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation2.Nested`1.Step">
+            <summary>
+              Advance the <see cref="T:Kvasir.Translation2.Nested`1"/> to the next portion of its application path.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.Nested`1.#ctor(`0)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.Nested`1"/>.
+            </summary>
+            <param name="annotation">
+              The "nestable" annotation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.Nested`1.#ctor(`0,System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.Nested`1"/>, which behaves as if the path on the "nestable"
+              annotation it represents were a specific value.
+            </summary>
+            <param name="annotation">
+              The "nestable" annotation.
+            </param>
+            <param name="path">
+              The value to use as the <see cref="P:Kvasir.Annotations.INestableAnnotation.Path">path</see> of <paramref name="annotation"/>.
+            </param>
         </member>
         <member name="T:Kvasir.Translation.Translator">
             <summary>
