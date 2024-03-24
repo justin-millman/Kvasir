@@ -115,7 +115,7 @@ namespace Kvasir.Translation2 {
         protected abstract void SetName(Context context, Nested<NameAttribute> annotation);
 
         /// <seealso cref="FieldDescriptor.SetNamePrefix(Context, IReadOnlyList{string})"/>
-        protected abstract void SetNamePrefix(Context context, IReadOnlyList<string> prefix);
+        protected abstract void SetNamePrefix(Context context, IEnumerable<string> prefix);
 
         /// <seealso cref="FieldDescriptor.SetNullability(Context, bool)"/>
         protected abstract void SetNullability(Context context, bool nullable);
@@ -239,6 +239,6 @@ namespace Kvasir.Translation2 {
 
 
         private readonly PropertyInfo source_;
-        private bool processed_;
+        private bool processed_;                        // for defensive assertions only
     }
 }

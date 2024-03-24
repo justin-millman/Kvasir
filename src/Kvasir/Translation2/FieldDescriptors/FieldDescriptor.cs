@@ -439,7 +439,8 @@ namespace Kvasir.Translation2 {
         }
 
         /// <summary>
-        ///   Constructs a new <see cref="FieldDescriptor"/> that has a Data Converter.
+        ///   Constructs a new <see cref="FieldDescriptor"/> that has a Data Converter defined by a
+        ///   <c>[DataConverter]</c> annotation.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which the new <see cref="FieldDescriptor"/> was created via translation.
@@ -471,24 +472,57 @@ namespace Kvasir.Translation2 {
             if (annotation.UserError is not null) {
                 throw new InvalidDataConverterException(context, annotation.UserError);
             }
-            else if (FieldType.IsInstanceOf(annotation.DataConverter.SourceType)) {
+
+            Debug.Assert(annotation.DataConverter.IsBidirectional);
+            var conv = annotation.DataConverter;
+            converter_ = Option.Some(conv);
+
+            if (FieldType.IsInstanceOf(annotation.DataConverter.SourceType)) {
                 throw new InvalidDataConverterException(context, FieldType, annotation.DataConverter.SourceType);
             }
             else if (!DBType.IsSupported(annotation.DataConverter.ResultType)) {
                 throw new InvalidDataConverterException(context, annotation.DataConverter.ResultType);
             }
 
-            Debug.Assert(annotation.DataConverter.IsBidirectional);
-            var conv = annotation.DataConverter;
-            converter_ = Option.Some(conv);
+            // If the CLR type of the property is an enumeration but the result of the Data Converter is not, then there
+            // won't be a restricted image; instead, the enumerators are fed through the Data Converter and the results
+            // become the set of allowed values, as if via a [Check.IsOneOf] constraint
+            if (conv.SourceType.IsEnum && !conv.ResultType.IsEnum) {
+                allowedValues_ = conv.SourceType.ValidValues().Select(e => conv.Convert(e)!).ToHashSet();
+            }
+        }
+
+        /// <summary>
+        ///   Constructs a new <see cref="FieldDescriptor"/> that has a Data Converter defined by something other than
+        ///   a <c>[DataConveter]</c> annotation.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the new <see cref="FieldDescriptor"/> was created via translation.
+        /// </param>
+        /// <param name="source">
+        ///   The <see cref="PropertyInfo">property</see> that underlies the new <see cref="FieldDescriptor"/>.
+        /// </param>
+        /// <param name="converter">
+        ///   The <see cref="DataConverter"/> for the new <see cref="FieldDescriptor"/>. This must be a bidirectional
+        ///   Data Converter that converts from a type compatible with <paramref name="source"/> into a type supported
+        ///   by Kvasir.
+        /// </param>
+        protected FieldDescriptor(Context context, PropertyInfo source, DataConverter converter)
+            : this(context, source) {
+
+            Debug.Assert(converter is not null);
+            Debug.Assert(!converter_.HasValue);
+            Debug.Assert(converter.IsBidirectional);
+
+            converter_ = Option.Some(converter);
+            Debug.Assert(FieldType.IsInstanceOf(converter.SourceType));
+            Debug.Assert(DBType.IsSupported(converter.ResultType));
 
             // If the CLR type of the property is an enumeration but the result of the Data Converter is not, then there
             // won't be a restricted image; instead, the enumerators are fed through the Data Converter and the results
-            // become the set of allowed values, as if via a [Check.IsOneOf] constraint. This correctly deals with
-            // [Numeric] and [AsString] annotations, since those are transformed during Translation into equivalent
-            // [DataConverter] annotations.
-            if (conv.SourceType.IsEnum && !conv.ResultType.IsEnum) {
-                allowedValues_ = conv.SourceType.ValidValues().Select(e => conv.Convert(e)!).ToHashSet();
+            // become the set of allowed values, as if via a [Check.IsOneOf] constraint
+            if (converter.SourceType.IsEnum && !converter.ResultType.IsEnum) {
+                allowedValues_ = converter.SourceType.ValidValues().Select(e => converter.Convert(e)!).ToHashSet();
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Cybele.Extensions;
+﻿using Cybele.Core;
+using Cybele.Extensions;
 using Kvasir.Annotations;
 using Optional;
 using System;
@@ -33,6 +34,26 @@ namespace Kvasir.Translation2 {
             if (source.PropertyType.IsEnum) {
                 var conv = annotation.DataConverter;
                 var enumerators = source.PropertyType.ValidValues().Select(e => conv.Convert(e)!).ToArray();
+                DoApplyConstraint(context, new Check.IsOneOfAttribute(enumerators[0], enumerators[1..]));
+            }
+            else {
+                var enumerators = FieldType.ValidValues().Cast<object>().ToArray();
+                DoApplyConstraint(context, new Check.IsOneOfAttribute(enumerators[0], enumerators[1..]));
+            }
+        }
+
+        public EnumFieldDescriptor(Context context, PropertyInfo source, DataConverter converter)
+            : base(context, source, converter) {
+
+            Debug.Assert(FieldType.IsEnum);
+
+            // If there's a Data Converter and we still have an Enum Field, that means the result type of the data
+            // conversion is an enumeration. If the source type is also an enumeration, then we form the restricted
+            // image by feeding each of the original enumerators through the Data Converter. But if the source type is
+            // not an enumeration, then we simply assume that each of the enumerators of the result type are possible
+            // (even if the Data Converter, for example, maps all inputs to a single value).
+            if (source.PropertyType.IsEnum) {
+                var enumerators = source.PropertyType.ValidValues().Select(e => converter.Convert(e)!).ToArray();
                 DoApplyConstraint(context, new Check.IsOneOfAttribute(enumerators[0], enumerators[1..]));
             }
             else {

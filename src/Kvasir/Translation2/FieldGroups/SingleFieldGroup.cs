@@ -1,5 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -21,20 +23,13 @@ namespace Kvasir.Translation2 {
         ///   should not include that property.
         /// </param>
         /// <param name="source">
-        ///   The CLR property backing <paramref name="field"/>.
+        ///   The CLR property backing the new <see cref="SingleFieldGroup"/>.
         /// </param>
-        /// <param name="field">
-        ///   The single constituent Field of the new <paramref name="field"/>. This must be created by the derived
-        ///   class to account for <c>[AsString]</c> and <c>[Numeric]</c> annotations only being applicable to
-        ///   enumeration-type Fields.
-        /// </param>
-        protected SingleFieldGroup(Context context, PropertyInfo source, FieldDescriptor field)
+        protected SingleFieldGroup(Context context, PropertyInfo source)
             : base(source) {
 
             Debug.Assert(context is not null);
-            Debug.Assert(field is not null);
-
-            field_ = field;
+            field_ = MakeField(context, source);
             ProcessAnnotations(context, this);
         }
 
@@ -151,18 +146,136 @@ namespace Kvasir.Translation2 {
         }
 
         /// <inheritdoc/>
-        protected sealed override void SetNamePrefix(Context context, IReadOnlyList<string> prefix) {
+        protected sealed override void SetNamePrefix(Context context, IEnumerable<string> prefix) {
             Debug.Assert(context is not null);
             Debug.Assert(prefix is not null && !prefix.IsEmpty());
             Debug.Assert(prefix.None(s => s is null || s == ""));
 
-            field_.SetNamePrefix(context, prefix);
+            field_.SetNamePrefix(context, new List<string>(prefix));
         }
 
         /// <inheritdoc/>
         protected sealed override void SetNullability(Context context, bool nullable) {
             Debug.Assert(context is not null);
             field_.SetNullability(context, nullable);
+        }
+
+        /// <summary>
+        ///   Make a <see cref="FieldDescriptor"/> of the correct derived type from a property.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="source"/> was accessed via reflection. This context
+        ///   should not include that property.
+        /// </param>
+        /// <param name="source">
+        ///   The CLR property from which to create a <see cref="FieldDescriptor"/>.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="FieldDescriptor"/> based on <paramref name="source"/>, accounting only for annotations that
+        ///   impart data conversions.
+        /// </returns>
+        /// <exception cref="InvalidDataConverterException">
+        ///   if <paramref name="source"/> is annotated with either <see cref="AsStringAttribute">[AsString]</see> or
+        ///   <see cref="NumericAttribute">[Numeric]</see> but is not of enumeration type.
+        /// </exception>
+        /// <exception cref="ConflictingAnnotationsException">
+        ///   if <paramref name="source"/> is annotated with at least 2 of
+        ///   <see cref="AsStringAttribute">[AsString]</see>, <see cref="DataConverterAttribute">[DataConverter]</see>,
+        ///   and <see cref="NumericAttribute">[Numeric]</see>.
+        /// </exception>
+        private static FieldDescriptor MakeField(Context context, PropertyInfo source) {
+            Debug.Assert(context is not null);
+            Debug.Assert(source is not null);
+            using var guard = context.Push(source);
+
+            var propertyType = Nullable.GetUnderlyingType(source.PropertyType) ?? source.PropertyType;
+            var dataConverterAnnotation = source.GetCustomAttribute<DataConverterAttribute>();
+            var asStringAnnotation = source.GetCustomAttribute<AsStringAttribute>();
+            var numericAnnotation = source.GetCustomAttribute<NumericAttribute>();
+
+            // Error Conditions
+            if (asStringAnnotation is not null && !propertyType.IsEnum) {
+                throw new InvalidDataConverterException(context, propertyType, asStringAnnotation);
+            }
+            else if (numericAnnotation is not null && !propertyType.IsEnum) {
+                throw new InvalidDataConverterException(context, propertyType, numericAnnotation);
+            }
+            else if (asStringAnnotation is not null && numericAnnotation is not null) {
+                throw new ConflictingAnnotationsException(context, typeof(AsStringAttribute), typeof(NumericAttribute));
+            }
+            else if (dataConverterAnnotation is not null && asStringAnnotation is not null) {
+                throw new ConflictingAnnotationsException(context, typeof(DataConverterAttribute), typeof(AsStringAttribute));
+            }
+            else if (dataConverterAnnotation is not null && numericAnnotation is not null) {
+                throw new ConflictingAnnotationsException(context, typeof(DataConverterAttribute), typeof(NumericAttribute));
+            }
+
+            // Enumeration-type Property with [Numeric]
+            else if (numericAnnotation is not null) {
+                var converter = new EnumToNumericConverter(propertyType);
+                return new EnumFieldDescriptor(context, source, converter.ConverterImpl);
+            }
+
+            // Enumeration-type Property with [AsString]
+            else if (asStringAnnotation is not null) {
+                var converter = new EnumToStringConverter(propertyType);
+                return new EnumFieldDescriptor(context, source, converter.ConverterImpl);
+            }
+
+            // Enumeration-type Property, with or without [DataConverter]
+            else if (propertyType.IsEnum) {
+                return dataConverterAnnotation is null ?
+                    new EnumFieldDescriptor(context, source) :
+                    new EnumFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+
+            // Bool / Char / DateTime / Decimal / Guid / String, with or without [DataConverter]
+            else if (propertyType == typeof(bool)) {
+                return dataConverterAnnotation is null ?
+                    new BooleanFieldDescriptor(context, source) :
+                    new BooleanFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+            else if (propertyType == typeof(char)) {
+                return dataConverterAnnotation is null ?
+                    new CharFieldDescriptor(context, source) :
+                    new CharFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+            else if (propertyType == typeof(DateTime)) {
+                return dataConverterAnnotation is null ?
+                    new DateTimeFieldDescriptor(context, source) :
+                    new DateTimeFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+            else if (propertyType == typeof(decimal)) {
+                return dataConverterAnnotation is null ?
+                    new DecimalFieldDescriptor(context, source) :
+                    new DecimalFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+            else if (propertyType == typeof(Guid)) {
+                return dataConverterAnnotation is null ?
+                    new GuidFieldDescriptor(context, source) :
+                    new GuidFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+            else if (propertyType == typeof(string)) {
+                return dataConverterAnnotation is null ?
+                    new StringFieldDescriptor(context, source) :
+                    new StringFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+
+            // Unsigned Numeric-type Property, with or without [DataConverter]
+            else if (propertyType == typeof(byte) || propertyType == typeof(ushort) ||
+                     propertyType == typeof(uint) || propertyType == typeof(ulong)) {
+
+                return dataConverterAnnotation is null ?
+                    new UnsignedFieldDescriptor(context, source) :
+                    new UnsignedFieldDescriptor(context, source, dataConverterAnnotation);
+            }
+
+            // Signed Numeric-type Property, with or without [DataConverter]
+            else {
+                return dataConverterAnnotation is null ?
+                    new SignedFieldDescriptor(context, source) :
+                    new SignedFieldDescriptor(context, source, dataConverterAnnotation);
+            }
         }
 
 

@@ -7174,9 +7174,8 @@
             <param name="annotation">
               The inapplicable constraint.
             </param>
-            <param name="fieldType">
-              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
-              conversions.
+            <param name="propertyType">
+              The type of the property to which <paramref name="annotation"/> was applied.
             </param>
             <param name="_">
               <i>overload discriminator</i>
@@ -7193,9 +7192,8 @@
             <param name="annotation">
               The inapplicable constraint.
             </param>
-            <param name="fieldType">
-              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
-              conversions.
+            <param name="propertyType">
+              The type of the property to which <paramref name="annotation"/> was applied.
             </param>
             <param name="_">
               <i>overload discriminator</i>
@@ -7212,9 +7210,8 @@
             <param name="annotation">
               The inapplicable constraint.
             </param>
-            <param name="fieldType">
-              The data type of the Field to which <paramref name="annotation"/> was applied, accounting for any data
-              conversions.
+            <param name="propertyType">
+              The type of the property to which <paramref name="annotation"/> was applied.
             </param>
             <param name="_">
               <i>overload discriminator</i>
@@ -7521,6 +7518,26 @@
             </param>
             <param name="reason">
               The reason that the <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute">[PrimaryKey]</see> annotation is invalid.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation2.NotRelationException">
+            <summary>
+              An exception that is raised when an annotation that is only applicable to Relations is applied to a property
+              that is not a Relation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation2.NotRelationException.#ctor(Kvasir.Translation2.Context,System.Type,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.NotRelationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the annotation applicable only to Relations was encountered.
+            </param>
+            <param name="propertyType">
+              The type of the property to which the annotation was applied.
+            </param>
+            <param name="annotationType">
+              The type of the improperly applied annotation.
             </param>
         </member>
         <member name="T:Kvasir.Translation2.ReferenceCycleException">
@@ -8203,10 +8220,106 @@
             <seealso cref="M:Kvasir.Translation2.FieldDescriptor.SetNullability(Kvasir.Translation2.Context,System.Boolean)"/>
         </member>
         <member name="M:Kvasir.Translation2.FieldGroup.SetRelationTableName(Kvasir.Translation2.Context,System.String)">
-            
+            <summary>
+              Sets the name of the Relation Table defined by the Fields in this <see cref="T:Kvasir.Translation2.FieldGroup"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the <see cref="T:Kvasir.Annotations.RelationTableAttribute">[RelationTable]</see> annotation
+              was encountered via reflection.
+            </param>
+            <param name="name">
+              The name of the Relation Table imparted by the annotation.
+            </param>
+            <exception cref="T:Kvasir.Translation2.NotRelationException">
+              if this <see cref="T:Kvasir.Translation2.FieldGroup"/> does not correspond to a Relation.
+            </exception>
+            <exception cref="T:Kvasir.Translation2.InvalidNameException">
+              if <paramref name="name"/> is <see langword="null"/> or is the empty string.
+            </exception>
         </member>
         <member name="M:Kvasir.Translation2.FieldGroup.ProcessAnnotations(Kvasir.Translation2.Context,Kvasir.Translation2.FieldGroup)">
-            
+            <summary>
+              Processes all of the annotations applied to the property backing a particular <see cref="T:Kvasir.Translation2.FieldGroup"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which the property backing <paramref name="group"/> was accessed via
+              reflection. This context should not include that property.
+            </param>
+            <param name="group">
+              The <see cref="T:Kvasir.Translation2.FieldGroup"/> to act upon.
+            </param>
+            <exception cref="T:Kvasir.Translation2.InvalidPathException">
+              if the path of a "nestable" annotation applied to the property backing <paramref name="group"/> is
+              <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="T:Kvasir.Translation2.SingleFieldGroup">
+            <summary>
+              The intermediate base class for a <see cref="T:Kvasir.Translation2.FieldGroup"/> backed by a scalar or enumeration CLR property,
+              and therefore corresponding to exactly one Field.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation2.SingleFieldGroup.Size">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.#ctor(Kvasir.Translation2.Context,System.Reflection.PropertyInfo,Kvasir.Translation2.FieldDescriptor)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.SingleFieldGroup"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation2.Context"/> in which <paramref name="source"/> was accessed via reflection. This context
+              should not include that property.
+            </param>
+            <param name="source">
+              The CLR property backing <paramref name="field"/>.
+            </param>
+            <param name="field">
+              The single constituent Field of the new <paramref name="field"/>. This must be created by the derived
+              class to account for <c>[AsString]</c> and <c>[Numeric]</c> annotations only being applicable to
+              enumeration-type Fields.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.#ctor(Kvasir.Translation2.SingleFieldGroup)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation2.SingleFieldGroup"/> that is largely identical to another.
+            </summary>
+            <param name="source">
+              The source <see cref="T:Kvasir.Translation2.SingleFieldGroup"/>.
+            </param>
+            <seealso cref="M:Kvasir.Translation2.FieldGroup.Clone"/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.CheckAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.ComparisonAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.InclusionAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.SignednessAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.ApplyConstraint(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.Check.StringLengthAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.SetDefault(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.DefaultAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.SetInCandidateKey(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.UniqueAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.SetInPrimaryKey(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.PrimaryKeyAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.SetName(Kvasir.Translation2.Context,Kvasir.Translation2.Nested{Kvasir.Annotations.NameAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.SetNamePrefix(Kvasir.Translation2.Context,System.Collections.Generic.IReadOnlyList{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation2.SingleFieldGroup.SetNullability(Kvasir.Translation2.Context,System.Boolean)">
+            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Translation2.PrincipalTableDef">
             <summary>

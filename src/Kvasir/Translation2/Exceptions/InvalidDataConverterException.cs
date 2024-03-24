@@ -30,7 +30,7 @@ namespace Kvasir.Translation2 {
         ///   CLR type and the Data Converter's expected source type are not compatible.
         /// </summary>
         /// <param name="context">
-        ///   The <see cref="Context"/> in which the reference cycle was detected.
+        ///   The <see cref="Context"/> in which the invalid annotation was encountered.
         /// </param>
         /// <param name="propertyType">
         ///   The CLR type of the property on which the annotation was placed.
@@ -51,7 +51,7 @@ namespace Kvasir.Translation2 {
         ///   Converter's result type is not supported by Kvasir.
         /// </summary>
         /// <param name="context">
-        ///   The <see cref="Context"/> in which the reference cycle was detected.
+        ///   The <see cref="Context"/> in which the invalid annotation was encountered.
         /// </param>
         /// <param name="unsupportedResultType">
         ///   The unsupported result type of the Data Converter.
@@ -61,6 +61,27 @@ namespace Kvasir.Translation2 {
                 new Location(context.ToString()),
                 new Problem($"the result type {unsupportedResultType} of the Data Converter is not supported"),
                 new Annotation(nameof(DataConverterAttribute)[..^9])
+              )
+        {}
+
+        /// <summary>
+        ///   Constructs a new <see cref="InvalidDataConverterException"/> describing an annotation placed on a
+        ///   non-enumeration-type property that affects a data conversion that requires an enumerator source.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="annotation"/> was encountered.
+        /// </param>
+        /// <param name="propertyType">
+        ///   The type of the property on which <paramref name="annotation"/> was placed.
+        /// </param>
+        /// <param name="annotation">
+        ///   The invalid annotation.
+        /// </param>
+        public InvalidDataConverterException(Context context, Type propertyType, Attribute annotation)
+            : base(
+                new Location(context.ToString()),
+                new Problem($"the annotation cannot be applied to a property of non-enumeration type {propertyType.Name}"),
+                new Annotation(annotation.GetType().Name[..^9])
               )
         {}
     }
