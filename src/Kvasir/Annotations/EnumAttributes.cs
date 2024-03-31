@@ -11,16 +11,8 @@ namespace Kvasir.Annotations {
     ///   enumeration support. The <see cref="NumericAttribute"/> can be used to override the default storage behavior
     ///   and insist that the storage be a numeric type instead.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class NumericAttribute : Attribute, INestableAnnotation {
-        /// <inheritdoc/>
-        public string Path { get; init; } = "";
-
-        /// <inheritdoc/>
-        INestableAnnotation INestableAnnotation.WithPath(string path) {
-            return new NumericAttribute() { Path = path };
-        }
-    }
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public sealed class NumericAttribute : Attribute {}
 
     /// <summary>
     ///   An annotation that specifies that the type of the Field backing a particular property should correspond to the
@@ -32,14 +24,6 @@ namespace Kvasir.Annotations {
     ///   enumeration support. the <see cref="AsStringAttribute"/> can be used to override the default storage behavior
     ///   and insist that the storage be a string type even if enumeration support is available.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed class AsStringAttribute : Attribute, INestableAnnotation {
-        /// <inheritdoc/>
-        public string Path { get; init; } = "";
-
-        /// <inheritdoc/>
-        INestableAnnotation INestableAnnotation.WithPath(string path) {
-            return new AsStringAttribute() { Path = path };
-        }
-    }
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public sealed class AsStringAttribute : Attribute {}
 }

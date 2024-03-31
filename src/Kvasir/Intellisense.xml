@@ -739,12 +739,6 @@
               and insist that the storage be a numeric type instead.
             </remarks>
         </member>
-        <member name="P:Kvasir.Annotations.NumericAttribute.Path">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Annotations.NumericAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
-            <inheritdoc/>
-        </member>
         <member name="T:Kvasir.Annotations.AsStringAttribute">
             <summary>
               An annotation that specifies that the type of the Field backing a particular property should correspond to the
@@ -756,12 +750,6 @@
               enumeration support. the <see cref="T:Kvasir.Annotations.AsStringAttribute"/> can be used to override the default storage behavior
               and insist that the storage be a string type even if enumeration support is available.
             </remarks>
-        </member>
-        <member name="P:Kvasir.Annotations.AsStringAttribute.Path">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Annotations.AsStringAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
-            <inheritdoc/>
         </member>
         <member name="T:Kvasir.Annotations.CodeOnlyAttribute">
             <summary>

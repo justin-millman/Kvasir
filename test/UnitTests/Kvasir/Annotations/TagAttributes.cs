@@ -124,28 +124,11 @@ namespace UT.Kvasir.Annotations {
 
         [TestMethod] public void Numeric_Construct() {
             // Arrange
-            var path = "Nested.Path";
 
             // Act
-            var direct = new NumericAttribute();
-            var nested = new NumericAttribute() { Path = path };
+            _ = new NumericAttribute();
 
             // Assert
-            direct.Path.Should().BeEmpty();
-            nested.Path.Should().Be(path);
-        }
-
-        [TestMethod] public void Numeric_DuplicateWithPath() {
-            // Arrange
-            var path = "Nested.Path";
-            var original = new NumericAttribute();
-
-            // Act
-            var attr = (original as INestableAnnotation).WithPath(path);
-
-            // Assert
-            attr.Should().BeOfType<NumericAttribute>();
-            attr.Path.Should().Be(path);
         }
 
         [TestMethod] public void Numeric_UniqueId() {
@@ -201,28 +184,11 @@ namespace UT.Kvasir.Annotations {
 
         [TestMethod] public void AsString_Construct() {
             // Arrange
-            var path = "Nested.Path";
 
             // Act
-            var direct = new AsStringAttribute();
-            var nested = new AsStringAttribute() { Path = path };
+            _ = new AsStringAttribute();
 
             // Assert
-            direct.Path.Should().BeEmpty();
-            nested.Path.Should().Be(path);
-        }
-
-        [TestMethod] public void AsString_DuplicateWithPath() {
-            // Arrange
-            var path = "Nested.Path";
-            var original = new AsStringAttribute();
-
-            // Act
-            var attr = (original as INestableAnnotation).WithPath(path);
-
-            // Assert
-            attr.Should().BeOfType<AsStringAttribute>();
-            attr.Path.Should().Be(path);
         }
 
         [TestMethod] public void AsString_UniqueId() {
