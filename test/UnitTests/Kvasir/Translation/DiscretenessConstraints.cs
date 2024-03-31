@@ -217,6 +217,19 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsOneOf_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PullRequest);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsOneOf_NestedRelationProperty_IsError() {
             // Arrange
             var translator = new Translator();
@@ -747,6 +760,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("13")                                        // details / explanation
                 .WithMessageContaining("{ 30, 60, 90, 120 }");                      // details / explanation
         }
+
+        [TestMethod] public void IsOneOf_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(IKEAFurniture);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(IKEAFurniture.CatalogEntry.Room))     // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("Group.Den")                                 // details / explanation
+                .WithMessageContaining("{ Group.Bedroom, Group.Bathroom }");        // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - Discreteness")]
@@ -921,6 +952,19 @@ namespace UT.Kvasir.Translation {
                 .HaveConstraint("FirstJob.PoolNumber", InclusionOperator.NotIn,
                     7U, 17U, 27U, 37U
                 ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNotOneOf_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SearchWarrant);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
                 .HaveNoOtherConstraints();
         }
 
@@ -1494,6 +1538,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("default*does not satisfy constraints")      // category
                 .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
                 .WithMessageContaining("\"Anise\"")                                 // details / explanation
+                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
+        }
+
+        [TestMethod] public void IsNotOneOf_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(GirlScoutCookie);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(GirlScoutCookie.Label.Calories))      // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("0.0")                                       // details / explanation
                 .WithMessageContaining("value is explicitly disallowed");           // details / explanation
         }
     }

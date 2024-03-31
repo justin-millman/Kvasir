@@ -689,5 +689,82 @@ namespace UT.Kvasir.Translation {
                 ).And
                 .HaveNoOtherConstraints();
         }
+
+        [TestMethod] public void AlteredComparisonsOnNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(TribeOfIsrael);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("FirstMentioned.Book", ComparisonOperator.GTE, "Bible").And
+                .HaveConstraint("FirstMentioned.Book", ComparisonOperator.LTE, "Qur'an").And
+                .HaveConstraint("FirstMentioned.Chapter", InclusionOperator.In,
+                    (byte)1, (byte)2, (byte)3
+                ).And
+                .HaveConstraint("FirstMentioned.Verse", ComparisonOperator.GT, 0L).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void AlteredSignednessOnNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SecretPolice);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Statistics.Arrests", InclusionOperator.NotIn,
+                    0, 7, 196, 4410905
+                ).And
+                .HaveConstraint("Statistics.Murders", ComparisonOperator.GT, 0.0).And
+                .HaveConstraint("Statistics.Murders", ComparisonOperator.LT, 195385.96).And
+                .HaveConstraint("Statistics.Bribes", ComparisonOperator.GT, (decimal)0).And
+                .HaveConstraint("Statistics.Bribes", ComparisonOperator.NE, (decimal)80.0).And
+                .HaveConstraint("Statistics.YearsActive", InclusionOperator.In,
+                    (sbyte)10, (sbyte)20, (sbyte)30
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void AlteredLengthsOnNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SearchEngine);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("LandingPage.Domain", InclusionOperator.In,
+                    "com", "tv", "gov", "net"
+                ).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void AlteredDiscretenessOnNestedField() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BeninBronze);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Dimensions.Length", InclusionOperator.In,
+                    4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0
+                ).And
+                .HaveConstraint("Dimensions.Width", InclusionOperator.NotIn,
+                    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0
+                ).And
+                .HaveNoOtherConstraints();
+        }
     }
 }

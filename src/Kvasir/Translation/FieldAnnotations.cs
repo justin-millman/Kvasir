@@ -59,11 +59,14 @@ namespace Kvasir.Translation {
                     throw Error.InvalidName(context, annotation, annotation.Name);
                 }
 
-                // It is an error for multiple [Name] attributes on a single property to apply to the same Path, though
-                // it is legal for a [Name] attribute at an outer scope to override that of one applied at an inner
-                // scope
+                // It is an error for multiple [Name] attributes on a single property to apply to the same Path, unless
+                // the name being applied is the same (making the second annotation redundant). It is, however, legal
+                // for a [Name] attribute at an outer scope to override that of one applied at an inner scope
                 if (!processed.Add(annotation.Path)) {
-                    throw Error.DuplicateAnnotation(context, annotation);
+                    if (!state.Fields[annotation.Path].Name.SequenceEqual(Enumerable.Repeat(annotation.Name, 1))) {
+                        throw Error.DuplicateAnnotation(context, annotation);
+                    }
+                    continue;
                 }
 
                 // If the Path on a [Name] attribute refers to a concrete Field (it would be a scalar or an enumeration)

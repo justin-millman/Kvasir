@@ -215,6 +215,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(Influenza.Outbreak));                 // details / explanation
         }
 
+        [TestMethod] public void IsGreaterThan_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PapalBull);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsGreaterThan_NestedReference_IsError() {
             // Arrange
             var translator = new Translator();
@@ -713,6 +726,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("0")                                         // details / explanation
                 .WithMessageContaining("is not in interval (0, +∞)");               // details / explanation
         }
+
+        [TestMethod] public void IsGreaterThan_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Madrasa);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Madrasa.ID.Class))                    // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("'s'")                                       // details / explanation
+                .WithMessageContaining("is not in interval ('w', +∞)");             // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - Comparison")]
@@ -914,6 +945,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsLessThan]")                        // details / explanation
                 .WithMessageContaining("totally ordered")                           // details / explanation
                 .WithMessageContaining(nameof(Cartel.CommodityType));               // details / explanation
+        }
+
+        [TestMethod] public void IsLessThan_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CVE);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsLessThan_NestedReference_IsError() {
@@ -1415,6 +1459,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("15.0")                                      // details / explanation
                 .WithMessageContaining("is not in interval (-∞, 10.0)");            // details / explanation
         }
+
+        [TestMethod] public void IsLessThan_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ContactLens);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(ContactLens.HexQuad.B))               // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("197")                                       // details / explanation
+                .WithMessageContaining("is not in interval (-∞, 101)");             // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - Comparison")]
@@ -1614,6 +1676,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsGreaterOrEqualTo]")                // details / explanation
                 .WithMessageContaining("totally ordered")                           // details / explanation
                 .WithMessageContaining(nameof(SlumberParty.RoadType));              // details / explanation
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Spa);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsGreaterOrEqualTo_NestedReference_IsError() {
@@ -2109,6 +2184,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("1E-05")                                     // details / explanation
                 .WithMessageContaining("is not in interval [1.3, +∞)");             // details / explanation
         }
+
+        [TestMethod] public void IsGreaterOrEqualTo_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(SlapBet);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(SlapBet.Terms.Slaps))                 // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("1")                                         // details / explanation
+                .WithMessageContaining("is not in interval [3, +∞)");               // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - Comparison")]
@@ -2308,6 +2401,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsLessOrEqualTo]")                   // details / explanation
                 .WithMessageContaining("totally ordered")                           // details / explanation
                 .WithMessageContaining(nameof(Knife.Category));                     // details / explanation
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(WhiteWalker);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsLessOrEqualTo_NestedReference_IsError() {
@@ -2801,6 +2907,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("23")                                        // details / explanation
                 .WithMessageContaining("is not in interval (-∞, 10]");              // details / explanation
         }
+
+        [TestMethod] public void IsLessOrEqualTo_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Defenestration);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Defenestration.Window.Width))         // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("178.916")                                   // details / explanation
+                .WithMessageContaining("is not in interval (-∞, 8.9]");             // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - Comparison")]
@@ -2968,6 +3092,19 @@ namespace UT.Kvasir.Translation {
                     StanleyCup.Conf.Eastern,
                     StanleyCup.Conf.Western
                 );
+        }
+
+        [TestMethod] public void IsNot_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Diet);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsNot_NestedReference_IsError() {
@@ -3451,6 +3588,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
                 .WithMessageContaining("153")                                       // details / explanation
                 .WithMessageContaining("is explicitly disallowed");                 // details / explanation
+        }
+
+        [TestMethod] public void IsNot_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HearthstoneMinion);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(HearthstoneMinion.Statistics.Health)) // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("-69")                                       // details / explanation
+                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
         }
     }
 }

@@ -517,7 +517,7 @@ namespace UT.Kvasir.Translation {
                 .HavePrimaryKey().OfFields(nameof(Polyhedron.Name));
         }
 
-        [TestMethod] public void ScalarMarkedPrimaryKeyMultipleTimes_Redundant() {
+        [TestMethod] public void ScalarMarkedPrimaryKeyMultipleTimesDirectly_Redundant() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Airport);
@@ -528,6 +528,24 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey().OfFields(nameof(Airport.IATA));
+        }
+
+        [TestMethod] public void ScalarMarkedPrimaryKeyMultipleTimesIndirectly_Redundant() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(CompressionFormat);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    nameof(CompressionFormat.Suffix),
+                    "LastStableRelease.Major",
+                    "LastStableRelease.Minor",
+                    "LastStableRelease.Patch"
+                );
         }
 
         [TestMethod] public void NullableScalarMarkedPrimaryKey_IsError() {

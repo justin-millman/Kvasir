@@ -355,7 +355,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void IncludeInModel_ExplicitInterfaceImplementation() {
+        [TestMethod] public void IncludeInModel_ExplicitInterfaceImplementationScalar() {
             // Arrange
             var translator = new Translator();
             var source = typeof(BasicDiceRoll);
@@ -371,6 +371,26 @@ namespace UT.Kvasir.Translation {
                 .HaveField(nameof(IDiceRoll.Plus)).OfTypeInt32().BeingNonNullable().And
                 .HaveField(nameof(IDiceRoll.Advantage)).OfTypeBoolean().BeingNonNullable().And
                 .HaveField(nameof(IDiceRoll.Disadvantage)).OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void IncludeInModel_ExplicitInterfaceImplementationAggregate() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Wrestler);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(IAthlete.InternationalAthleteIdentifier)).OfTypeGuid().BeingNonNullable().And
+                .HaveField(nameof(Wrestler.BirthName)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Wrestler.RingName)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Wrestler.WWETitles)).OfTypeInt32().BeingNonNullable().And
+                .HaveField("Bio.Height").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Bio.Weight").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Bio.DOB").OfTypeDateTime().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 

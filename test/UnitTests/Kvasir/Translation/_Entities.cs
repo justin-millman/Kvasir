@@ -749,7 +749,7 @@ namespace UT.Kvasir.Translation {
             [IncludeInModel] public override string? LowestKey { get; set; }
         }
 
-        // Test Scenario: Explicit Interface Implementation Property Marked as [IncludeInModel] (✓included✓)
+        // Test Scenario: Explicit Interface Implementation Scalar Property Marked as [IncludeInModel] (✓included✓)
         public interface IDiceRoll {
             int NumDice { get; set; }
             int DiceSides { get; set; }
@@ -764,6 +764,21 @@ namespace UT.Kvasir.Translation {
             [IncludeInModel] int IDiceRoll.Plus { get; set; }
             [IncludeInModel] bool IDiceRoll.Advantage { get; set; }
             [IncludeInModel] bool IDiceRoll.Disadvantage { get; set; }
+        }
+
+        // Test Scenario: Explicit Interface Implementation Aggregate Property Marked as [IncludeInModel] (✓included✓)
+        public interface IAthlete {
+            public record struct Measurements(double Height, double Weight, DateTime DOB);
+
+            Guid InternationalAthleteIdentifier { get; set; }
+            Measurements Bio { get; set; }
+        }
+        public class Wrestler : IAthlete {
+            [IncludeInModel, PrimaryKey] Guid IAthlete.InternationalAthleteIdentifier { get; set; }
+            public string BirthName { get; set; } = "";
+            public string RingName { get; set; } = "";
+            public int WWETitles { get; set; }
+            [IncludeInModel] IAthlete.Measurements IAthlete.Bio { get; set; }
         }
 
         // Test Scenario: Public Property Declared by an Interface Marked as [CodeOnly] (✓redundant✓)
@@ -1487,6 +1502,19 @@ namespace UT.Kvasir.Translation {
             public string Title { get; set; } = "";
         }
 
+        // Test Scenario: Name Collision from Explicit Interface Implementation (✗duplication✗)
+        public interface IProtein {
+            int CaloriesPerGram { get; set; }
+        }
+        public class GroundMeat : IProtein {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Kind { get; set; } = "";
+            public double PercentFat { get; set; }
+            [IncludeInModel] int IProtein.CaloriesPerGram { get; set; }
+            public ushort CaloriesPerGram { get; set; }
+            public bool IsSausage { get; set; }
+        }
+
         // Test Scenario: Change Field Name to Existing Value (✗duplication✗)
         public class ComputerLock {
             [PrimaryKey] public string Name { get; set; } = "";
@@ -1503,11 +1531,32 @@ namespace UT.Kvasir.Translation {
             public byte Points { get; set; }
         }
 
-        // Test Scenario: Scalar Property with Multiple [Name] Changes (✗cardinality✗)
+        // Test Scenario: Scalar Property with Multiple Identical [Name] Changes (✓de-duplicated✓)
+        public class Antiparticle {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public double Spin { get; set; }
+            public int Charge { get; set; }
+            [Name("Counterpart"), Name("Counterpart")] public string Particle { get; set; } = "";
+            public decimal Mass { get; set; }
+            public string? DiscoveredBy { get; set; }
+        }
+
+        // Test Scenario: Scalar Property with Multiple Different [Name] Changes (✗cardinality✗)
         public class BankAccount {
             public string Bank { get; set; } = "";
             [PrimaryKey] public string AccountNumber { get; set; } = "";
             [Name("Route"), Name("RoutingNumber")] public ulong RoutingNumber { get; set; }
+        }
+
+        // Test Scenario: Scalar Property with Redundant and Non-Redundant [Name] Changes (✗cardinality✗)
+        public class Billionaire {
+            [PrimaryKey] public Guid BillionaireID { get; set; }
+            public decimal NetWorth { get; set; }
+            public double PercentCash { get; set; }
+            public double PercentStock { get; set; }
+            public double PercentAssets { get; set; }
+            [Name("FirstReached"), Name("When?")] public DateTime FirstReached { get; set; }
+            public uint WorldRanking { get; set; }
         }
 
         // Test Scenario: Aggregate-Nested [Name] Change on Field that Already Has [Name] Change (✓renamed✓)
@@ -1874,7 +1923,7 @@ namespace UT.Kvasir.Translation {
             [Default(Style.Logical, Path = "PuzzleType")] public Puzzle FinalPuzzle { get; set; } = new();
         }
 
-        // Test Scenario: Original Default on Relation-Nested Field (✓maybe propagated✓)
+        // Test Scenario: Original Default on Relation-Nested Field (✓propagated✓)
         public class DockerContainer {
             public struct Directory {
                 public string Path { get; set; }
@@ -2365,7 +2414,7 @@ namespace UT.Kvasir.Translation {
             public bool Mobile { get; set; }
         }
 
-        // Test Scenario: Two Scalar Fields Ordered to Same Index (✗duplication✗)
+        // Test Scenario: Two Scalar Fields Ordered to Same Index in Entity (✗duplication✗)
         public class Pizza {
             [PrimaryKey] public Guid ID { get; set; }
             public float Diamater { get; set; }
@@ -2376,6 +2425,19 @@ namespace UT.Kvasir.Translation {
             [Column(5)] public string? Veggie1 { get; set; }
             [Column(7)] public string? Veggie2 { get; set; }
             public string? Veggie3 { get; set; }
+        }
+
+        // Test Scenario: Two Scalar Fields Ordered to Same Index in Aggregate (✗duplication✗)
+        public class BiblicalPlague {
+            public struct Translation {
+                public string English { get; set; }
+                [Column(1)] public string Hebrew { get; set; }
+                [Column(1)] public string Greek { get; set; }
+                public string Latin { get; set; }
+            }
+
+            [PrimaryKey] public byte Index { get; set; }
+            public Translation Terminology { get; set; }
         }
 
         // Test Scenario: Two Nested Fields Ordered to Same Index (✗duplication✗)
@@ -2802,13 +2864,24 @@ namespace UT.Kvasir.Translation {
             public decimal? DihedralAngle { get; set; }
         }
 
-        // Test Scenario: Scalar Property is Marked as [PrimaryKey] Multiple Times (✓redundant✓)
+        // Test Scenario: Scalar Property is Marked as [PrimaryKey] Multiple Times Directly (✓redundant✓)
         public class Airport {
             [PrimaryKey, PrimaryKey] public string IATA { get; set; } = "";
             public string Name { get; set; } = "";
             public string City { get; set; } = "";
             public DateTime Opening { get; set; }
             public float AveragePassengers { get; set; }
+        }
+
+        // Test Scenario: Scalar Property is Marked as [PrimaryKey] Multiple Times Indirectly (✓redundant✓)
+        public class CompressionFormat {
+            public record struct Version(byte Major, byte Minor, byte Patch);
+
+            public string FormatName { get; set; } = "";
+            [PrimaryKey] public string Suffix { get; set; } = "";
+            public bool IsLossless { get; set; }
+            [PrimaryKey, PrimaryKey(Path = "Major")] public Version LastStableRelease { get; set; }
+            public string Developers { get; set; } = "";
         }
 
         // Test Scenario: Nullable Scalar Field is Marked as [PrimaryKey] (✗illegal✗)
@@ -3127,11 +3200,27 @@ namespace UT.Kvasir.Translation {
             [Unique("Another"), Unique("Third")] public string RoyalHouse { get; set; } = "";
         }
 
-        // Test Scenario: Duplicate Unnamed Candidate Keys (✓de-duplicated✓)
+        // Test Scenario: Duplicate Unnamed Candidate Keys Directly (✓de-duplicated✓)
         public class Pigment {
             [PrimaryKey] public string Name { get; set; } = "";
             public string DominantColor { get; set; } = "";
             [Unique, Unique] public string ChemicalFormula { get; set; } = "";
+        }
+
+        // Test Scenario: Duplicate Unnamed Candidate Keys Indirectly (✓de-duplicated✓)
+        public class Octopus {
+            [Flags] public enum Region { Ocean = 1, CoralReef = 2, PelagicZone = 4, Intertidal = 8, Abyssal = 16 }
+            public struct Taxonomy {
+                [Unique] public string Family { get; set; }
+                public string Genus { get; set; }
+                public string Species { get; set; }
+            }
+
+            [PrimaryKey] public string CommonName { get; set; } = "";
+            [Unique(Path = "Family")] public Taxonomy Nomenclature { get; set; }
+            public bool CanCamouflage { get; set; }
+            public double AverageWeight { get; set; }
+            public Region Habitat { get; set; }
         }
 
         // Test Scenario: Duplicate Named Candidate Keys (✓de-duplicated✓)
@@ -4205,6 +4294,22 @@ namespace UT.Kvasir.Translation {
                 [Check.IsPositive(Path = "Unit")] public Output Power { get; set; }
             }
 
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class Lycanthrope {
+                public enum Kind { OnDemand, Emotional, Lunar }
+
+                public class Shapeshifting {
+                    [PrimaryKey, Check.IsPositive] public int ID { get; set; }
+                    public string Shape { get; set; } = "";
+                    public Kind Variety { get; set; }
+                    public double Strength { get; set; }
+                }
+
+                [PrimaryKey] public int ID { get; set; }
+                public string Name { get; set; } = "";
+                public Shapeshifting Powers { get; set; } = new();
+            }
+
             // Test Scenario: Applied to Relation-Nested Numeric Scalar (✓constrained✓)
             public class ArtificialIntelligence {
                 public enum Type { General, Generative, Recommendatory, Classification, Search, Other }
@@ -4423,6 +4528,22 @@ namespace UT.Kvasir.Translation {
                 public string VoiceOfShaggy { get; set; } = "";
                 public string VoiceOfScooby { get; set; } = "";
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Cyclops {
+                public struct Mention {
+                    public string Title { get; set; }
+                    [Default(-9)] public int Book { get; set; }
+                    public int Chapter { get; set; }
+                    public int Verse { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public byte NumEyes { get; set; }
+                [Check.IsPositive(Path = "Book")] public Mention FirstMentioned { get; set; }
+                public double Height { get; set; }
+                public bool FatheredByPoseidon { get; set; }
+            }
         }
 
         public static class IsNegative {
@@ -4601,6 +4722,23 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNegative(Path = "State")] public Address HouseAddress { get; set; }
                 public decimal PerNight { get; set; }
                 public Guid OwnerID { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class DragonRider {
+                public class Dragon {
+                    [PrimaryKey, Check.IsNegative] public short ID { get; set; }
+                    public string Name { get; set; } = "";
+                    public string Color { get; set; } = "";
+                    public double EldunariWeight { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public uint Age { get; set; }
+                public string FirstChapterAppearance { get; set; } = "";
+                public string LastChapterAppearance { get; set; } = "";
+                public bool IsDead { get; set; }
+                public Dragon DragonRidden { get; set; } = new();
             }
 
             // Test Scenario: Applied to Relation-Nested Numeric Scalar (✓constrained✓)
@@ -4819,6 +4957,22 @@ namespace UT.Kvasir.Translation {
                 public DateTime Established { get; set; }
                 public bool IsProDemocrat { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class PressSecretary {
+                public struct Date {
+                    public byte Month { get; set; }
+                    public byte Day { get; set; }
+                    [Default((short)1563)] public short Year { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Boss { get; set; } = "";
+                public ulong TotalQuestionsAnswered { get; set; }
+                public Date StartDate { get; set; }
+                [Check.IsNegative(Path = "Year")] public Date EndDate { get; set; }
+                public string FavoredNetwork { get; set; } = "";
+            }
         }
 
         public static class IsNonZero {
@@ -4988,6 +5142,24 @@ namespace UT.Kvasir.Translation {
                 public double ApparentMagnitude { get; set; }
                 public ulong SizeKiloParsecs { get; set; }
                 [Check.IsNonZero(Path = "Astronomer")] public DiscoveryData Discovery { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class NewsAnchor {
+                public class Network {
+                    [PrimaryKey] public string Name { get; set; } = "";
+                    [PrimaryKey, Check.IsNonZero] public ushort Channel { get; set; }
+                    public ulong Viewership { get; set; }
+                    public double Ratings { get; set; }
+                    public decimal Budget { get; set; }
+                }
+
+                [PrimaryKey] public Guid ReporterID { get; set; }
+                public string Name { get; set; } = "";
+                public Network Station { get; set; } = new();
+                public decimal Salary { get; set; }
+                public byte NewscastsPerWeek { get; set; }
+                public uint PeabodyAwards { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested Numeric Scalar (✓constrained✓)
@@ -5211,6 +5383,24 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public byte NumWheels { get; set; }
                 [PrimaryKey] public bool Moveable { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Ceviche {
+                public enum Fruit { Lemon, Lime, Grapefruit, Pomelo, Orange, Citron, Kumquat, Other }
+
+                public struct Citrus {
+                    public Fruit Variety { get; set; }
+                    [Default(0.0f)] public float Tablespoons { get; set; }
+                    public bool Zest { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Fish1 { get; set; } = "";
+                public string Fish2 { get; set; } = "";
+                public string Fish3 { get; set; } = "";
+                [Check.IsNonZero(Path = "Tablespoons")] public Citrus CitrusIngredient { get; set; }
+                public uint TotalCalories { get; set; }
+            }
         }
     }
 
@@ -5375,6 +5565,22 @@ namespace UT.Kvasir.Translation {
                 public ulong Donors { get; set; }
                 public double BloodCollected { get; set; }
                 public double PlasmaCollected { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class PapalBull {
+                public class Pope {
+                    [PrimaryKey] public string PapalName { get; set; } = "";
+                    [PrimaryKey, Check.IsGreaterOrEqualTo("C")] public string RegnalNumber { get; set; } = "";
+                    public string BirthName { get; set; } = "";
+                    public DateTime PontificateBegin { get; set; }
+                    public DateTime? PontificatEnd { get; set; }
+                }
+
+                [PrimaryKey] public string Title { get; set; } = "";
+                public uint WordCount { get; set; }
+                public DateTime IssuedOn { get; set; }
+                public Pope IssuedBy { get; set; } = new();
             }
 
             // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
@@ -5725,6 +5931,23 @@ namespace UT.Kvasir.Translation {
                 public string Selector { get; set; } = "";
                 public string Selection { get; set; } = "";
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Madrasa {
+                public enum Branch { Sunni, Shia, Sufi, Druze, Twelver, Other }
+
+                public struct SchoolIdentifier {
+                    [Default('s')] public char Class { get; set; }
+                    public int Number { get; set; }
+                    public int SubGroup { get; set; }
+                }
+
+                [PrimaryKey, Check.IsGreaterThan('w', Path = "Class")] public SchoolIdentifier ID { get; set; }
+                public string Name { get; set; } = "";
+                public Branch BranchOfIslam { get; set; }
+                public string Country { get; set; } = "";
+                public ulong Enrollment { get; set; }
+            }
         }
 
         public static class IsLessThan {
@@ -5894,6 +6117,23 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessThan(0UL, Path = "Drug")] public Explanation Reason { get; set; }
                 public bool Fatal { get; set; }
                 public double Duration { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class CVE {
+                public class Product {
+                    [PrimaryKey] public string Name { get; set; } = "";
+                    [PrimaryKey, Check.IsLessThan("3199-11-05")] public DateTime Debut { get; set; }
+                    public string Vendor { get; set; } = "";
+                    public string URL { get; set; } = "";
+                }
+
+                [PrimaryKey] public string Key { get; set; } = "";
+                public DateTime Disclosed { get; set; }
+                public byte Severity { get; set; }
+                public Product AffectedSoftware { get; set; } = new();
+                public bool Patched { get; set; }
+                public string DiscoveredBy { get; set; } = "";
             }
 
             // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
@@ -6206,6 +6446,23 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessThan(10.00), Default(15.00)] public double CostPerHour { get; set; }
                 public bool AllowsOvernight { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class ContactLens {
+                public struct HexQuad {
+                    public byte R { get; set; }
+                    public byte G { get; set; }
+                    [Default((byte)197)] public byte B { get; set; }
+                    public byte A { get; set; }
+                }
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public bool IsRight { get; set; }
+                [Check.IsLessThan((byte)101, Path = "B")] public HexQuad Color { get; set; }
+                public double Perscription { get; set; }
+                public bool IsHardLens { get; set; }
+                public bool IsOrthokeratology { get; set; }
+            }
         }
 
         public static class IsGreaterOrEqualTo {
@@ -6373,6 +6630,26 @@ namespace UT.Kvasir.Translation {
                 public float Height { get; set; }
                 [Check.IsGreaterOrEqualTo(11.3f, Path = "Boyfriend.Ken")] public Family Relationships { get; set; } = new();
                 public bool AppearedInMovie { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class Spa {
+                public enum MassageType { Acupressure, Shiatsu, DeepTissue, Erotic, Reflexology, Sports, Other }
+
+                public class Masseuse {
+                    [PrimaryKey, Check.IsGreaterOrEqualTo(100000000L)] public long SSN { get; set; }
+                    public string Name { get; set; } = "";
+                    public DateTime DOB { get; set; }
+                    public MassageType Specialty { get; set; }
+                    public double Rating { get; set; }
+                }
+
+                [PrimaryKey] public Guid SpaID { get; set; }
+                public string Country { get; set; } = "";
+                public ulong NumHotPools { get; set; }
+                public bool IsNatural { get; set; }
+                public Masseuse HeadMassageTherapist { get; set; } = new();
+                public bool ISBWACertified { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
@@ -6696,6 +6973,20 @@ namespace UT.Kvasir.Translation {
                 public double LensRadius { get; set; }
                 public bool HasFlash { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class SlapBet {
+                public struct Terms {
+                    public DateTime Evaluation { get; set; }
+                    [Default(1)] public int Slaps { get; set; }
+                    public string Alternative { get; set; }
+                }
+
+                [PrimaryKey] public string Bettor1 { get; set; } = "";
+                [PrimaryKey] public string Bettor2 { get; set; } = "";
+                [PrimaryKey] public DateTime BetDate { get; set; }
+                [Check.IsGreaterOrEqualTo(3, Path = "Slaps")] public Terms Wager { get; set; }
+            }
         }
 
         public static class IsLessOrEqualTo {
@@ -6852,6 +7143,25 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessOrEqualTo('_', Path = "Ransom")] public Demand Extortion { get; set; } = new();
                 public decimal Damage { get; set; }
                 public bool RansomPaid { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class WhiteWalker {
+                public class Sword {
+                    [PrimaryKey, Check.IsLessOrEqualTo("Yearnling")] public string Name { get; set; } = "";
+                    public double Length { get; set; }
+                    public string AncestralHouse { get; set; } = "";
+                    public string Wielder { get; set; } = "";
+                    public bool IsValyrianSteel { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Sword? SlainBy { get; set; }
+                public string? FirstBookAppearance { get; set; }
+                public double? FirstTelevisionAppearance { get; set; }
+                public double Height { get; set; }
+                public bool IsNightKing { get; set; }
+                public ulong WightsCreated { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested Orderable Scalar (✓constrained✓)
@@ -7165,6 +7475,21 @@ namespace UT.Kvasir.Translation {
                 public byte FirstThrowPins { get; set; }
                 [Check.IsLessOrEqualTo((byte)10), Default((byte)23)] public byte? SecondThrowPins { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Defenestration {
+                public struct Window {
+                    public double Height { get; set; }
+                    [Default(178.916)] public double Width { get; set; }
+                    public bool BoardedUp { get; set; }
+                }
+
+                [PrimaryKey] public Guid DefenestrationID { get; set; }
+                public DateTime Date { get; set; }
+                public string? KnownAs { get; set; }
+                public ushort Victims { get; set; }
+                [Check.IsLessOrEqualTo(8.9, Path = "Width")] public Window ThrownFrom { get; set; }
+            }
         }
 
         public static class IsNot {
@@ -7303,6 +7628,29 @@ namespace UT.Kvasir.Translation {
                 public ushort NumFishCaught { get; set; }
                 [Check.IsNot(false, Path = "Manufacturer")] public Info ManfucaturingInfo { get; set; }
                 public Style RodType { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class Diet {
+                public class Cookbook {
+                    [PrimaryKey, Check.IsNot("471fd196-4866-41b8-b652-41e6bef562b2")] public Guid ID { get; set; }
+                    public string Title { get; set; } = "";
+                    public string Author { get; set; } = "";
+                    public ushort NumPages { get; set; }
+                    public ushort NumRecipes { get; set; }
+                    public DateTime PublicationDate { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ulong RecommendedMinCalories { get; set; }
+                public ulong RecommendedMaxCalories { get; set; }
+                public Cookbook BestSellingCookbook { get; set; } = new();
+                public bool CanEatGrains { get; set; }
+                public bool CanEatRedMeat { get; set; }
+                public bool CanEatFruit { get; set; }
+                public bool CanEatVegetables { get; set; }
+                public bool CanEatFish { get; set; }
+                public bool CanEatDairy { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
@@ -7611,6 +7959,25 @@ namespace UT.Kvasir.Translation {
                 public bool IsOasis { get; set; }
                 public bool TruckCompatible { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class HearthstoneMinion {
+                public enum MinionClass { DeathKnight, DemonHunter, Druid, Hunter, Mage, Paladin, Priest, Rogue, Shaman, Warlock, Warrior, Neutral, Dream }
+                public enum MinionType { Beast, Demon, Dragon, Elemental, Mech, Murloc, Naga, Pirate, Quilboar, Totem, Undead }
+
+                public struct Stats {
+                    public sbyte ManaCost { get; set; }
+                    public sbyte Attack { get; set; }
+                    [Default((sbyte)-69)] public sbyte Health { get; set; }
+                }
+
+                [PrimaryKey] public Guid CardID { get; set; }
+                public string Set { get; set; } = "";
+                public string Name { get; set; } = "";
+                [Check.IsNot((sbyte)-69, Path = "Health")] public Stats Statistics { get; set; }
+                public MinionClass Class { get; set; }
+                public MinionType Type { get; set; }
+            }
         }
     }
 
@@ -7782,6 +8149,30 @@ namespace UT.Kvasir.Translation {
                 public string Emperor { get; set; } = "";
                 public double NetVolume { get; set; }
                 [Check.IsNonEmpty(Path = "Caldarium")] public Daria Rooms { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class PornStar {
+                public enum Category { Professional, OnlyFans, CamModel, Playboy, Other }
+                public enum Identity { Male, Female, Transgender, Genderfluid, Other }
+
+                public class Film {
+                    [PrimaryKey, Check.IsNonEmpty] public string Title { get; set; } = "";
+                    [PrimaryKey] public DateTime Release { get; set; }
+                    public ushort Runtime { get; set; }
+                    public bool Hardcore { get; set; }
+                }
+
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string BirthName { get; set; } = "";
+                public string ScreenName { get; set; } = "";
+                public Category Industry { get; set; }
+                public Identity GenderIdentity { get; set; }
+                public Film? FirstFilm { get; set; }
+                public ulong NumFilms { get; set; }
+                public decimal Earnings { get; set; }
+                public bool Active { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
@@ -7992,6 +8383,24 @@ namespace UT.Kvasir.Translation {
                 public string Domain { get; set; } = "";
                 public uint CodexAppearances { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Lollipop {
+                public enum TasteProfile { Salty, Sweet, Sout, Bitter, Umami }
+                public enum Variety { Pinwheel, TootsiePop, ChupaChup, DumDum, Other }
+
+                public struct Flavor {
+                    [Default("")] public string Name { get; set; }
+                    public TasteProfile Taste { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public double Radius { get; set; }
+                public Variety Kind { get; set; }
+                [Check.IsNonEmpty(Path = "Name")] public Flavor LollipopFlavor { get; set; }
+                public ulong LicksRequired { get; set; }
+                public ushort Calories { get; set; }
+            }
         }
 
         internal static class LengthIsAtLeast {
@@ -8157,6 +8566,24 @@ namespace UT.Kvasir.Translation {
                 [Check.LengthIsAtLeast(60, Path = "CentralStar")] public Asterism? MainAsterism { get; set; }
                 public double Declination { get; set; }
                 public string? MeteorShower { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class Circus {
+                public class Circusmaster {
+                    [PrimaryKey, Check.LengthIsAtLeast(11)] public string SSN { get; set; } = "";
+                    public string Name { get; set; } = "";
+                    public DateTime DOB { get; set; }
+                    public bool WearsTopHat { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public Circusmaster Master { get; set; } = new();
+                public bool IsTraveling { get; set; }
+                public ushort NumAnimals { get; set; }
+                public ushort NumClowns { get; set; }
+                public decimal PriceOfPeanuts { get; set; }
+                public byte NumTents { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
@@ -8380,6 +8807,24 @@ namespace UT.Kvasir.Translation {
                 public string Identity { get; set; } = "";
                 public byte SongsPerformed { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Briefcase {
+                public struct Hue {
+                    public byte R { get; set; }
+                    public byte G { get; set; }
+                    public byte B { get; set; }
+                    [Default("unknown")] public string PantoneName { get; set; }
+                }
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public double Height { get; set; }
+                public double Width { get; set; }
+                public double Length { get; set; }
+                public decimal Price { get; set; }
+                [Check.LengthIsAtLeast(15, Path = "PantoneName")] public Hue Color { get; set; }
+                public byte NumHinges { get; set; }
+            }
         }
 
         internal static class LengthIsAtMost {
@@ -8547,6 +8992,26 @@ namespace UT.Kvasir.Translation {
                 public Manner Method { get; set; }
                 public double LiquidVolume { get; set; }
                 public bool ResultedInConception { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class Bust {
+                public enum SculptingMaterial { Granite, Marble, Bronze, Steel, Clay, Limestone, Soapstone, Concrete, Other }
+
+                public class Sculptor {
+                    [PrimaryKey, Check.LengthIsAtMost(28)] public string FirstName { get; set; } = "";
+                    [PrimaryKey, Check.LengthIsAtMost(106)] public string LastName { get; set; } = "";
+                    public DateTime DateOfBirth { get; set; }
+                    public DateTime? DateOfDeath { get; set; }
+                    public string Nationality { get; set; } = "";
+                }
+
+                [PrimaryKey] public Guid ArtworkNumber { get; set; }
+                public double Weight { get; set; }
+                public SculptingMaterial Material { get; set; }
+                public string? Depicting { get; set; }
+                public bool Completed { get; set; }
+                public string? Museum { get; set; } = "";
             }
 
             // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
@@ -8771,6 +9236,32 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public ushort Level { get; set; }
                 public bool IsStarter { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Speakeasy {
+                public enum NESW { North, South, East, West }
+                public enum StreetKind { Street, Avenue, Road, Boulevard, Court, Terrace, Way, Circle }
+
+                public struct Location {
+                    public ushort Number { get; set; }
+                    public NESW? Direction { get; set; }
+                    [Default("Main First Prime")] public string StreetName { get; set; }
+                    public StreetKind StreetSuffix { get; set; }
+                    public ushort? ApartmentNumber { get; set; }
+                    public string City { get; set; }
+                    public string? Subnational { get; set; }
+                    public string Country { get; set; }
+                    public uint ZipCode { get; set; }
+                }
+
+                [PrimaryKey] public Guid SpeakeasyID { get; set; }
+                public string Name { get; set; } = "";
+                [Check.LengthIsAtMost(14, Path = "StreetName")] public Location Address { get; set; }
+                public string? Proprietor { get; set; }
+                public ulong DrinksServed { get; set; }
+                public bool CopsOnPayroll { get; set; }
+                public DateTime OperationalDate { get; set; }
+            }
         }
 
         internal static class LengthIsBetween {
@@ -8937,6 +9428,28 @@ namespace UT.Kvasir.Translation {
                 public ulong CareerLosses { get; set; }
                 public double MaxWeight { get; set; }
                 public bool Yokozuna { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class Lagoon {
+                public enum Landform { Isthmus, Reef, BarrierIsland, Atoll, Manmade }
+
+                public class Country {
+                    [PrimaryKey] public string Name { get; set; } = "";
+                    [PrimaryKey, Check.LengthIsBetween(18, 196)] public string Capital { get; set; } = "";
+                    public ulong Population { get; set; }
+                    public ulong Area { get; set; }
+                    public string HeadOfState { get; set; } = "";
+                }
+
+                [PrimaryKey] public string LagoonName { get; set; } = "";
+                public double Latitude { get; set; }
+                public double Longitude { get; set; }
+                public double Depth { get; set; }
+                public ulong SurfaceArea { get; set; }
+                public double Volume { get; set; }
+                public float Salinity { get; set; }
+                public Landform Separator { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
@@ -9176,6 +9689,25 @@ namespace UT.Kvasir.Translation {
                 public bool IsSmooth { get; set; }
                 public bool IsNatural { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class Kebab {
+                public enum Protein { Chicken, Lamb, Beef, Pork, Goat, Duck, Turkey, Pheasant, Hen, Rabbit, Alligator, Chorizo}
+                public enum Stick { Wood, Steel, Spaghetti, Lemongrass, Paper, Plastic, Other }
+
+                public struct StreetVendor {
+                    [Default("Ezekiel's Meat-on-a-Stick Emporium")] public string Name { get; set; }
+                    public string Location { get; set; }
+                    public bool FoodTruck { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Protein Meat { get; set; }
+                public Stick StickMaterial { get; set; }
+                public string? Sauce { get; set; }
+                [Check.LengthIsBetween(13, 21, Path = "Name")] public StreetVendor? Vendor { get; set; }
+                public decimal Price { get; set; }
+            }
         }
     }
     
@@ -9317,6 +9849,28 @@ namespace UT.Kvasir.Translation {
                 public double Declination { get; set; }
                 public ulong Distance { get; set; }
                 public double SpinRate { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class PullRequest {
+                public enum BranchType { Main, Development, Release, Bugfix, Hotfix, Support, Feature, Docs }
+                public enum Result { InProgress, Approved, Merged, Declined, ChangesRequested }
+
+                public class Branch {
+                    [PrimaryKey] public string BranchName { get; set; } = "";
+                    [Check.IsOneOf(true, false)] public bool Visibile { get; set; }
+                    public BranchType Type { get; set; }
+                    public string TopCommit { get; set; } = "";
+                    public uint NumTags { get; set; }
+                }
+
+                [PrimaryKey] public Branch TargetBranch { get; set; } = new();
+                public Branch SourceBranch { get; set; } = new();
+                public ulong RequestNumber { get; set; }
+                public string Author { get; set; } = "";
+                public Result Status { get; set; }
+                public string Description { get; set; } = "";
+                public DateTime Opened { get; set; } 
             }
 
             // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
@@ -9674,6 +10228,23 @@ namespace UT.Kvasir.Translation {
                 public ulong Decapitations { get; set; }
                 [Check.IsOneOf(30U, 60U, 90U, 120U), Default(113U)] public uint Height { get; set; }
             }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class IKEAFurniture {
+                public enum Group { Bedroom, Bathroom, Kitchen, LivingRoom, Office, Den, GameRoom, Lobby, Other }
+
+                public struct Listing {
+                    public Guid ListingNumber { get; set; }
+                    [Default(Group.Den)] public Group Room { get; set; }
+                    public decimal Price { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsOneOf(Group.Bedroom, Group.Bathroom, Path = "Room")] public Listing CatalogEntry { get; set; }
+                public uint NumPieces { get; set; }
+                public uint NumScrews { get; set; }
+            }
         }
 
         internal static class IsNotOneOf {
@@ -9807,6 +10378,24 @@ namespace UT.Kvasir.Translation {
                 public byte LowerAg { get; set; }
                 public byte UpperAge { get; set; }
                 public bool MotherGoose { get; set; }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class SearchWarrant {
+                public class Judge {
+                    [PrimaryKey, Check.IsNotOneOf("Anderson", "Cardoza")] public string Name { get; set; } = "";
+                    public string LawSchool { get; set; } = "";
+                    public sbyte YearsExperience { get; set; }
+                    public uint CasesOverseen { get; set; }
+                    public bool IsFederalJudge { get; set; }
+                    public bool IsElected { get; set; }
+                }
+
+                [PrimaryKey] public Guid WarrantID { get; set; }
+                public string Subject { get; set; } = "";
+                public Judge IssuedBy { get; set; } = new();
+                public DateTime IssuedOn { get; set; }
+                public bool IsFISA { get; set; }
             }
 
             // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
@@ -10161,6 +10750,25 @@ namespace UT.Kvasir.Translation {
                 public float Diameter { get; set; }
                 public bool IsSweet { get; set; }
                 public string CrustIngredient { get; set; } = "";
+            }
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            public class GirlScoutCookie {
+                public struct Nutrition {
+                    [Default(0.0f)] public float Calories { get; set; }
+                    public double Carbohydrates { get; set; }
+                    public double Sodium { get; set; }
+                    public double SaturatedFat { get; set; }
+                    public double Potassium { get; set; }
+                    public double Fiber { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Variety { get; set; } = "";
+                public DateTime Expiration { get; set; }
+                public Guid PackageID { get; set; }
+                public uint SoldByBadgeNumber { get; set; }
+                [Check.IsNotOneOf(0.0f, Path = "Calories")] public Nutrition Label { get; set; }
             }
         }
     }
@@ -11038,6 +11646,71 @@ namespace UT.Kvasir.Translation {
             [Check.IsNotOneOf("Winter", "Spring", "Fall", "Year-Round"), AsString] public Season SignSeason { get; set; }
             public char ZodiacSymbol { get; set; }
             public string HinduSolarEquivalent { get; set; } = "";
+        }
+
+        // Test Scenario: <Comparison> on Nested Field is Altered (✓former, evaluated against latter✓)
+        public class TribeOfIsrael {
+            public struct Citation {
+                [Check.IsGreaterOrEqualTo("Bible")] public string Book { get; set; }
+                [Check.IsLessThan((byte)100)] public byte Chapter { get; set; }
+                [Check.IsGreaterThan(0L)] public long Verse { get; set; }
+            }
+
+            public sbyte Index { get; set; }
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string Hebrew { get; set; } = "";
+            public string Arabic { get; set; } = "";
+            [Check.IsLessOrEqualTo("Qur'an", Path = "Book"), Check.IsOneOf((byte)1, (byte)2, (byte)3, (byte)153, Path = "Chapter")] public Citation FirstMentioned { get; set; }
+            public bool Priests { get; set; }
+            public ulong LandArea { get; set; }
+        }
+
+        // Test Scenario: <Signedness> on Nested Field is Altered (✓former, evaluated against latter✓)
+        public class SecretPolice {
+            public struct Record {
+                [Check.IsNonZero] public int Arrests { get; set; }
+                [Check.IsPositive] public double Murders { get; set; }
+                [Check.IsPositive] public decimal Bribes { get; set; }
+                [Check.IsNonZero] public sbyte YearsActive { get; set; }
+            }
+
+            [PrimaryKey] public string Endonym { get; set; } = "";
+            public string Exonym { get; set; } = "";
+            public string CreatedBy { get; set; } = "";
+            [Check.IsNotOneOf(7, 196, 4410905, Path = "Arrests"), Check.IsLessThan(195385.96, Path = "Murders"), Check.IsNot(80.0, Path = "Bribes"), Check.IsOneOf((sbyte)10, (sbyte)20, (sbyte)30, Path = "YearsActive")] public Record Statistics { get; set; }
+            public bool Wartime { get; set; }
+        }
+
+        // Test Scenario: <Lengths> on Nested Field is Altered (✓former, evaluated against latter✓)
+        public class SearchEngine {
+            public struct URL {
+                public string Scheme { get; set; }
+                public string Path { get; set; }
+                [Check.LengthIsBetween(1, 3)] public string Domain { get; set; }
+            }
+
+            [PrimaryKey, Check.IsOneOf("com", "tv", "gov", "net", "arpa", Path = "Domain")] public URL LandingPage { get; set; }
+            public bool UsesCookies { get; set; }
+            public ulong RequestsPerDay { get; set; }
+            public float AverageResponseTime { get; set; }
+            public bool SupportsMobile { get; set; }
+        }
+
+        // Test Scenario: <Discreteness> on Nested Field is Altered (✓former, evaluated against latter✓)
+        public class BeninBronze {
+            public enum Unit { Inches, Centimeters }
+
+            public struct Dimension {
+                [Check.IsOneOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)] public double Length { get; set; }
+                public Unit LengthUnit { get; set; }
+                [Check.IsNotOneOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)] public double Width { get; set; }
+                public Unit WidthUnit { get; set; }
+            }
+
+            [PrimaryKey] public uint Number { get; set; }
+            public string? Title { get; set; }
+            public bool Repatriated { get; set; }
+            [Check.IsGreaterOrEqualTo(3.75, Path = "Length"), Check.IsNotOneOf(11.0, 12.0, 13.0, Path = "Width")] public Dimension Dimensions { get; set; }
         }
     }
 

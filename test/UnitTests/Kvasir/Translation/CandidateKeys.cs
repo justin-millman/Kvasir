@@ -65,7 +65,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherCandidateKeys();
         }
 
-        [TestMethod] public void MultipleIdenticalUnnamedCandidateKeys() {
+        [TestMethod] public void MultipleDirectIdenticalUnnamedCandidateKeys() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Pigment);
@@ -76,6 +76,20 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveAnonymousCandidateKey().OfFields(nameof(Pigment.ChemicalFormula)).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void MultipleIndirectIdenticalUnnamedCandidateKeys() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Octopus);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveAnonymousCandidateKey().OfFields("Nomenclature.Family").And
                 .HaveNoOtherCandidateKeys();
         }
 
