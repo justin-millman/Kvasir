@@ -136,7 +136,18 @@ namespace Kvasir.Translation {
                     Default = Option.None<object?>(),
                     InPrimaryKey = false,
                     CandidateKeyMemberships = new HashSet<string>(),
-                    ForeignReference = Option.Some(type)
+                    ForeignReference = Option.Some(type),
+                    Constraints = new ConstraintBucket(
+                        RelativeToZero: Option.None<ComparisonOperator>(),
+                        LowerBound: Option.None<Bound>(),
+                        UpperBound: Option.None<Bound>(),
+                        MinimumLength: Option.None<Bound>(),
+                        MaximumLength: Option.None<Bound>(),
+                        AllowedValues: new HashSet<object>(),
+                        DisallowedValues: new HashSet<object>(),
+                        RestrictedImage: new HashSet<object>(descriptor.Constraints.RestrictedImage),
+                        CHECKs: new List<CheckGen>()
+                    )
                 };
             }
 

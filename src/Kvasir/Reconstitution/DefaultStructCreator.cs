@@ -20,7 +20,7 @@ namespace Kvasir.Reconstitution {
         /// <summary>
         ///   Create a new <see cref="DefaultStructCreator"/>.
         /// </summary>
-        /// <param name="resultType">
+        /// <param name="type">
         ///   The <see cref="ResultType"/> of the new <see cref="DefaultStructCreator"/>.
         /// </param>
         public DefaultStructCreator(Type type) {

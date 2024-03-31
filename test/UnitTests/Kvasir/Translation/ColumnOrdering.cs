@@ -166,7 +166,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void TwoScalarFieldsOrderedToSameIndex_IsError() {
+        [TestMethod] public void TwoScalarFieldsOrderedToSameIndexInEntity_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Pizza);
@@ -175,11 +175,25 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            // Assert
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining("two Fields pinned to column index")         // category
                 .WithMessageContaining("7");                                        // details / explanation
+        }
+
+        [TestMethod] public void TwoScalarFieldsOrderedToSameIndexInAggregate_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BiblicalPlague);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(nameof(BiblicalPlague.Translation))          // source type
+                .WithMessageContaining("two Fields pinned to column index")         // category
+                .WithMessageContaining("1");                                        // details / explanation
         }
 
         [TestMethod] public void TwoNestedFieldsOrderedToSameIndex_IsError() {

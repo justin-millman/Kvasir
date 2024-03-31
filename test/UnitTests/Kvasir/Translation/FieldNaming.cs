@@ -308,6 +308,22 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void NameConflictWithExplicitInterfaceImplementation_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(GroundMeat);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining("two or more Fields with name")              // category
+                .WithMessageContaining("\"CaloriesPerGram\"");                      // details / explanation
+        }
+
         [TestMethod] public void ChangeToNameOfExistingField_IsError() {
             // Arrange
             var translator = new Translator();
@@ -339,7 +355,26 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"Destination\"");                          // details / explanation
         }
 
-        [TestMethod] public void MultipleNameChangesOnScalarProperty_IsError() {
+        [TestMethod] public void MultipleIdenticalNameChangesOnScalarProperty() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Antiparticle);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField(nameof(Antiparticle.Name)).OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Antiparticle.Spin)).OfTypeDouble().BeingNonNullable().And
+                .HaveField(nameof(Antiparticle.Charge)).OfTypeInt32().BeingNonNullable().And
+                .HaveField("Counterpart").OfTypeText().BeingNonNullable().And
+                .HaveField(nameof(Antiparticle.Mass)).OfTypeDecimal().BeingNonNullable().And
+                .HaveField(nameof(Antiparticle.DiscoveredBy)).OfTypeText().BeingNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void MultipleDifferentNameChangesOnScalarProperty_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(BankAccount);
@@ -351,6 +386,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(BankAccount.RoutingNumber))           // error location
+                .WithMessageContaining("duplicated")                                // category
+                .WithMessageContaining("[Name]");                                   // details / explanation
+        }
+
+        [TestMethod] public void RedundantAndImpactfulNameChangesOnScalarProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Billionaire);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Billionaire.FirstReached))            // error location
                 .WithMessageContaining("duplicated")                                // category
                 .WithMessageContaining("[Name]");                                   // details / explanation
         }

@@ -28,6 +28,7 @@ Animation (PowerPoint)
 Antari
 Antibiotic
 Antihistamine
+Antiparticle
 Antipope
 Apocalypse
 Apostle
@@ -89,10 +90,13 @@ Bay
 Beach
 Belt
 Ben 10 Alien
+Benin Bronze
 Bestiary
+Biblical Plague
 Bicycle
 Big Block of Cheese Day
 Billiard Ball
+Billionaire
 Binary Test
 Bingo Card
 Biography
@@ -124,9 +128,11 @@ Boycott
 Brassiere
 Bread
 Bridge
+Briefcase
 Brothel
 Bug Spray
 Burrito
+Bust
 Butterfly
 Button (UI)
 C++ Header File
@@ -170,6 +176,7 @@ Cemetery
 Cenote
 Census
 Cereal
+Ceviche
 Chakra
 Character (text)
 Check
@@ -193,6 +200,7 @@ CinemaSins
 Circle
 Circle Dance
 Circle of Hell
+Circus
 Civilization VI City State
 Civilization VI District
 Civilization VI Military Unit
@@ -215,6 +223,7 @@ ComicCon
 Command (terminal)
 Commercial
 Compiler Warning
+Compression Format
 Computer Virus
 Concentration Camp
 Concert
@@ -223,6 +232,7 @@ Condiment
 Confidence Interval
 Conlang
 Connecting Wall
+Contact Lens
 Constellation
 Constitution
 Constitutional Amendment
@@ -242,7 +252,9 @@ Cryptocurrency
 Cryptogram
 Cult
 Currency
+CVE
 Cybersite
+Cyclops
 D&D Character
 D&D Monster
 D&D Spell
@@ -255,12 +267,14 @@ Date
 Dating App
 Debit Card
 Decathlon
+Defenestration
 Delicatessen
 Denarian
 Dentist
 Desert
 Diamond
 Dice Roll
+Diet
 Dinosaur
 Directory (file system)
 Discworld Guild
@@ -276,6 +290,7 @@ Domino
 Donut
 Draft Pick
 Dragon
+Dragon Rider (Eragon)
 Dream
 Dreidel
 Drinking Fountain
@@ -362,6 +377,7 @@ Geocache
 Geologic Epoch
 Geyser
 Ghost (Danny Phantom)
+Girl Scout Cookie
 Git Commit
 Git Hook
 Gold Rush
@@ -375,6 +391,7 @@ Grand Prix
 Great Old One
 Greek God
 Greek Letter
+Ground Meat
 Guillotine
 Guitar
 Gulag
@@ -427,6 +444,7 @@ Ice Age
 Ice Cream Sundae
 IDE
 Igloo
+IKEA Furniture
 Imaginary Friend
 Immaculate Grid
 Immortal (Highlander)
@@ -461,6 +479,7 @@ Kaiju
 Kami
 Kanji
 Kayak
+Kebab
 Kentucky Derby
 Key Signature
 Keystroke
@@ -475,6 +494,7 @@ Knock-Knock Joke
 Kosher Agency
 Labor of Heracles
 Lagerstätte
+Lagoon
 Lake
 Lamp
 Land Card (MTG)
@@ -504,14 +524,17 @@ Locale (computing)
 Localization
 Lock (computing)
 Log-In Credentials
+Lollipop
 Longbow
 Lottery Ticket
 Luau
 Lunar Crater
 Lunar Eclipse
+Lycanthrope
 Lyric
 Madden NFL
 Madonna (painting)
+Madrasa
 Mafia Family
 Magazine
 Magic System
@@ -539,6 +562,7 @@ Mezuzah
 Military Base
 Milkshake
 Mime
+Minion (Hearthstone)
 Mint (currency)
 Mirror
 Missile
@@ -571,6 +595,7 @@ Nebula
 Necktie
 Neurotoxin
 Neurotransmitter
+News Anchor
 Newscast
 Newspaper
 Niqqud
@@ -587,6 +612,7 @@ Obi
 Ocean Current
 Oceanic Trench
 Oceanid
+Octopus
 Oil (cooking)
 Oil Field
 Oil Spill
@@ -608,6 +634,7 @@ Pagoda
 Painting
 Pajamas
 Panegyric
+Papal Bull
 Parabola
 Parashah
 Parking Garage
@@ -663,11 +690,13 @@ Pond
 Pop Tart
 Popcorn
 Pope
+Porn Star
 Post Office
 Potato
 Pregnancy Test
 Prescription
 Presidential Election
+Press Secretary
 Printer
 Prison
 Prisoner Exchange
@@ -681,6 +710,7 @@ Pseudonym
 Pterosaur
 Pub Crawl
 Pulitzer Prize
+Pull Request
 Pulley
 Pulsar
 Puppet Show
@@ -734,8 +764,11 @@ Screenwriter
 Screwdriver
 SCUBA Dive
 Sculpture
+Search Engine
+Search Warrant
 Season
 Secret Hitler Game
+Secret Police
 Secret Society
 Seder Plate
 Senator
@@ -761,6 +794,7 @@ Skydiver
 Skyscraper
 Slack Channel
 SlamBall Match
+Slap Bet
 Slave Revolt
 Slot Machine
 Slumber Party
@@ -776,7 +810,9 @@ Song
 Sonnet
 Sorority
 Soup
+Spa
 Space Shuttle
+Speakeasy
 Speed Limit
 Speedometer
 Spider-Man
@@ -859,6 +895,7 @@ Treasury Bond
 Treehouse
 Treehouse of Horror
 Triangle
+Tribe of Israel
 Trilogy
 Triplets
 Triptych
@@ -903,6 +940,7 @@ Web Browser
 Weekend Update
 Werewolf
 Where's Waldo?
+White Walker
 Wikipedia Page
 Wildfire
 Windmill
@@ -915,6 +953,7 @@ Wordle
 World Cup
 World Heritage Site
 Wormhole
+Wrestler
 Wristwatch
 xkcd Comic
 Yacht

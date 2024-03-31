@@ -235,6 +235,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"Unit\"");                                 // details / explanation
         }
 
+        [TestMethod] public void IsPositive_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Lycanthrope);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsPositive_RelationNestedApplicableScalar() {
             // Arrange
             var translator = new Translator();
@@ -516,6 +529,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("-89")                                       // details / explanation
                 .WithMessageContaining("(0, +∞)");                                  // details / explanation
         }
+
+        [TestMethod] public void IsPositive_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cyclops);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Cyclops.Mention.Book))                // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("-9")                                        // details / explanation
+                .WithMessageContaining("(0, +∞)");                                  // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - Signedness")]
@@ -757,6 +788,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("refers to a non-scalar")                    // category
                 .WithMessageContaining("[Check.IsNegative]")                        // details / explanation
                 .WithMessageContaining("\"State\"");                                // details / explanation
+        }
+
+        [TestMethod] public void IsNegative_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DragonRider);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsNegative_RelationNestedApplicableScalar() {
@@ -1037,6 +1081,24 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("0")                                         // details / explanation
                 .WithMessageContaining("(-∞, 0)");                                  // details / explanation
         }
+
+        [TestMethod] public void IsNegative_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PressSecretary);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(PressSecretary.Date.Year))            // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("1563")                                      // details / explanation
+                .WithMessageContaining("(-∞, 0)");                                  // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - Signedness")]
@@ -1248,6 +1310,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.IsNonZero]")                         // details / explanation
                 .WithMessageContaining("numeric")                                   // details / explanation
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(NewsAnchor);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsNonZero_NestedReference_IsError() {
@@ -1541,6 +1616,24 @@ namespace UT.Kvasir.Translation {
             translate.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining(source.Name)                                 // source type
                 .WithMessageContaining(nameof(Pulley.RopeTension))                  // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("0.0")                                       // details / explanation
+                .WithMessageContaining("value is explicitly disallowed");           // details / explanation
+        }
+
+        [TestMethod] public void IsNonZero_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Ceviche);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Ceviche.Citrus.Tablespoons))          // error location
                 .WithMessageContaining("default*does not satisfy constraints")      // category
                 .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
                 .WithMessageContaining("0.0")                                       // details / explanation

@@ -1585,7 +1585,7 @@
             <summary>
               Create a new <see cref="T:Kvasir.Reconstitution.DefaultStructCreator"/>.
             </summary>
-            <param name="resultType">
+            <param name="type">
               The <see cref="P:Kvasir.Reconstitution.DefaultStructCreator.ResultType"/> of the new <see cref="T:Kvasir.Reconstitution.DefaultStructCreator"/>.
             </param>
         </member>

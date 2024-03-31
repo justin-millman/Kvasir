@@ -234,6 +234,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining(nameof(UInt32));                             // details / explanation
         }
 
+        [TestMethod] public void IsNonEmpty_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PornStar);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsNonEmpty_NestedReference_IsError() {
             // Arrange
             var translator = new Translator();
@@ -531,6 +544,25 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("length is 0")                               // details / explanation
                 .WithMessageContaining("is not in interval [1, +∞)");               // details / explanation
         }
+
+        [TestMethod] public void LengthIsNonEmpty_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Lollipop);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Lollipop.LollipopFlavor.Name))        // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("\"\"")                                      // details / explanation
+                .WithMessageContaining("length is 0")                               // details / explanation
+                .WithMessageContaining("is not in interval [1, +∞)");               // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - String Length")]
@@ -753,6 +785,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.LengthIsAtLeast]")                   // details / explanation
                 .WithMessageContaining(nameof(String))                              // details / explanation
                 .WithMessageContaining(nameof(UInt64));                             // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtLeast_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Circus);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void LengthIsAtLeast_NestedReference_IsError() {
@@ -1086,6 +1131,25 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("length is 7")                               // details / explanation
                 .WithMessageContaining("is not in interval [289, +∞)");             // details / explanation
         }
+
+        [TestMethod] public void LengthIsAtLeast_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Briefcase);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Briefcase.Color.PantoneName))         // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("\"unknown\"")                               // details / explanation
+                .WithMessageContaining("length is 7")                               // details / explanation
+                .WithMessageContaining("is not in interval [15, +∞)");              // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - String Length")]
@@ -1310,6 +1374,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.LengthIsAtMost]")                    // details / explanation
                 .WithMessageContaining(nameof(String))                              // details / explanation
                 .WithMessageContaining(nameof(Guid));                               // details / explanation
+        }
+
+        [TestMethod] public void LengthIsAtMost_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Bust);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void LengthIsAtMost_NestedReference_IsError() {
@@ -1641,6 +1718,25 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("length is 5")                               // details / explanation
                 .WithMessageContaining("is not in interval [0, 3]");                // details / explanation
         }
+
+        [TestMethod] public void LengthIsAtMost_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Speakeasy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Speakeasy.Address.StreetName))        // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("\"Main First Prime\"")                      // details / explanation
+                .WithMessageContaining("length is 16")                              // details / explanation
+                .WithMessageContaining("is not in interval [0, 14]");               // details / explanation
+        }
     }
 
     [TestClass, TestCategory("Constraints - String Length")]
@@ -1921,6 +2017,19 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("[Check.LengthIsBetween]")                   // details / explanation
                 .WithMessageContaining(nameof(String))                              // details / explanation
                 .WithMessageContaining(nameof(Single));                             // details / explanation
+        }
+
+        [TestMethod] public void LengthIsBetween_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Lagoon);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void LengthIsBetween_NestedRelation_IsError() {
@@ -2236,6 +2345,25 @@ namespace UT.Kvasir.Translation {
                 .WithMessageContaining("\"Smucker's\"")                             // details / explanation
                 .WithMessageContaining("length is 9")                               // details / explanation
                 .WithMessageContaining("is not in interval [4, 8]");                // details / explanation
+        }
+
+        [TestMethod] public void LengthIsBetween_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Kebab);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining(source.Name)                                 // source type
+                .WithMessageContaining(nameof(Kebab.StreetVendor.Name))             // error location
+                .WithMessageContaining("default*does not satisfy constraints")      // category
+                .WithMessageContaining("one or more [Check.xxx] constraints")       // details / explanation
+                .WithMessageContaining("\"Ezekiel's Meat-on-a-Stick Emporium\"")    // details / explanation
+                .WithMessageContaining("length is 34")                              // details / explanation
+                .WithMessageContaining("is not in interval [13, 21]");              // details / explanation
         }
     }
 }
