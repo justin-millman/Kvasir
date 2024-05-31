@@ -62,7 +62,14 @@ namespace Cybele.Extensions {
             }
             else if (self.GetType() == typeof(float) || self.GetType() == typeof(double) || self.GetType() == typeof(decimal)) {
                 var str = self.ToString()!;
-                if (!str.Contains('.')) {
+                if (str.StartsWith("1E")) {
+                    return str;
+                }
+                else if (str.EndsWith("∞") || str.EndsWith("Infinity")) {
+                    // The representation of various infinities is different on Windows vs. Ubuntu
+                    return str;
+                }
+                else if (!str.Contains('.')) {
                     return $"{str}.0";
                 }
                 else {
