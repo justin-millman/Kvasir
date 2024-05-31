@@ -102,6 +102,34 @@ namespace UT.Cybele.Extensions {
             floatDisplay.Should().Be(floatNumber.ToString() + ".0");
         }
 
+        [TestMethod] public void DisplayInfinity() {
+            // Arrange
+            var posInfinity = double.PositiveInfinity;
+            var negInfinity = double.NegativeInfinity;
+
+            // Act
+            var posInfinityDisplay = posInfinity.ForDisplay();
+            var negInfinityDisplay = negInfinity.ForDisplay();
+
+            // Assert
+            posInfinityDisplay.Should().Be(posInfinity.ToString());
+            negInfinityDisplay.Should().Be(negInfinity.ToString());
+        }
+
+        [TestMethod] public void DisplayScientificNotation() {
+            // Arrange
+            var scientificSmall = 0.0000001f;
+            var scientificLarge = 10000000000000f;
+
+            // Act
+            var scientificSmallDisplay = scientificSmall.ForDisplay();
+            var scientificLargeDisplay = scientificLarge.ForDisplay();
+
+            // Assert
+            scientificSmallDisplay.Should().Be("1E-07");
+            scientificLargeDisplay.Should().Be("1E+13");
+        }
+
         [TestMethod] public void DisplayCharacter() {
             // Arrange
             var character = '&';
