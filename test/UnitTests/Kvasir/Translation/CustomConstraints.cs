@@ -3,7 +3,7 @@ using Cybele.Core;
 using FluentAssertions;
 using Kvasir.Core;
 using Kvasir.Schema;
-using Kvasir.Translation2;
+using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System.Collections.Generic;

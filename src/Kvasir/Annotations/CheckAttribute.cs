@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using Cybele.Extensions;
 using Kvasir.Core;
-using Kvasir.Translation2;
+using Kvasir.Translation;
 using System;
 using System.Diagnostics;
 using System.Linq;
