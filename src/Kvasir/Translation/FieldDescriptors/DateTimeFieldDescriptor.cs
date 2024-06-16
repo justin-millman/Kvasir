@@ -10,6 +10,8 @@ namespace Kvasir.Translation {
     ///   The concrete class for an <see cref="OrderableFieldDescriptor"/> whose data type is <see cref="DateTime"/>.
     /// </summary>
     internal sealed class DateTimeFieldDescriptor : OrderableFieldDescriptor {
+        protected sealed override Type UserValueType => typeof(string);
+
         public DateTimeFieldDescriptor(Context context, PropertyInfo source)
             : base(context, source) {
 
@@ -31,26 +33,19 @@ namespace Kvasir.Translation {
         }
 
         protected sealed override Option<object?, string> CoerceUserValue(object? raw) {
-            if (raw is null || raw == DBNull.Value) {
-                return Option.Some<object?, string>(null);
+            var value = base.CoerceUserValue(raw);
+            if (value.Exists(v => v is not null)) {
+                value = value.FlatMap(v => {
+                    // We rely on the DateTime lass's parsing logic to deal with formatting, acceptable dates, leap day
+                    // calculations, etc.
+                    if (!DateTime.TryParse((string)v!, out DateTime coercion)) {
+                        var msg = $"unable to parse {typeof(string).DisplayName()} value {v.ForDisplay()} as a {typeof(DateTime).DisplayName()}";
+                        return Option.None<object?, string>(msg);
+                    }
+                    return Option.Some<object?, string>(coercion);
+                });
             }
-            else if (raw.GetType() == typeof(string)) {
-                // Values for a DateTime must be strings that can be parsed into a DateTime; we rely on the DateTime
-                // class's parsing logic to deal with formatting, acceptable dates, leap day calculations, etc.
-                if (!DateTime.TryParse((string)raw, out DateTime coercion)) {
-                    var msg = $"unable to parse {typeof(string).DisplayName()} value {raw.ForDisplay()} as a {typeof(DateTime).DisplayName()}";
-                    return Option.None<object?, string>(msg);
-                }
-                return Option.Some<object?, string>(coercion);
-            }
-            else if (raw.GetType().IsArray) {
-                var msg = "value cannot be an array";
-                return Option.None<object?, string>(msg);
-            }
-            else {
-                var msg = $"value {raw.ForDisplay()} is of type {raw.GetType().DisplayName()}, not {typeof(string).DisplayName()} as expected";
-                return Option.None<object?, string>(msg);
-            }
+            return value;
         }
 
         private DateTimeFieldDescriptor(DateTimeFieldDescriptor source)

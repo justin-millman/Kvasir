@@ -17,17 +17,6 @@ namespace Kvasir.Translation {
     /// </remarks>
     internal sealed class Context {
         /// <summary>
-        ///   The depth of the <see cref="Context"/>.
-        /// </summary>
-        /// <remarks>
-        ///   A depth of <c>0</c> indicates that the <see cref="Context"/> represents translation of the initial type or
-        ///   a property defined directly on the initial type. A depth of <c>N > 0</c> indicates that the
-        ///   <see cref="Context"/> represents translation of a type <c>N</c> levels nested within the initial type or
-        ///   a property defined on such a nested type.
-        /// </remarks>
-        public int Depth => history_.Count;
-
-        /// <summary>
         ///   Whether or not the <see cref="Context"/> refers to the translation of an Entity, rather than an Aggregate.
         /// </summary>
         public bool TranslatingEntity { get; private set; }

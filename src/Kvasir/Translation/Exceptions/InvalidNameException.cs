@@ -41,7 +41,8 @@ namespace Kvasir.Translation {
         {}
 
         /// <summary>
-        ///   Constructs a new <see cref="InvalidNameException"/> caused by an invalid Principal Table name.
+        ///   Constructs a new <see cref="InvalidNameException"/> caused by an invalid Principal Table name, as defined
+        ///   by a <see cref="TableAttribute">[Table]</see> annotation.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which <paramref name="annotation"/> was encountered.
@@ -54,6 +55,25 @@ namespace Kvasir.Translation {
                 new Location(context.ToString()),
                 new Problem("the name of a Primary Table cannot be " + (annotation.Name is null ? "'null'" : "empty")),
                 new Annotation(Display.AnnotationDisplayName(typeof(TableAttribute)))
+              )
+        {}
+
+        /// <summary>
+        ///   Constructs a new <see cref="InvalidNameException"/> caused by an invalid Principal Table name resulting
+        ///   from the interplay between a <see cref="TableAttribute">[Table]</see> annotation and an
+        ///   <see cref="ExcludeNamespaceFromNameAttribute">[ExcludeNamespaceFromName]</see> annotation.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="annotation"/> was encountered.
+        /// </param>
+        /// <param name="annotation">
+        ///   The invalid <see cref="ExcludeNamespaceFromNameAttribute">[ExcludeNamespaceFromName]</see> annotation.
+        /// </param>
+        public InvalidNameException(Context context, ExcludeNamespaceFromNameAttribute annotation)
+            : base(
+                new Location(context.ToString()),
+                new Problem("the name of a Primary Table cannot be empty"),
+                new Annotation(Display.AnnotationDisplayName(annotation.GetType()))
               )
         {}
 

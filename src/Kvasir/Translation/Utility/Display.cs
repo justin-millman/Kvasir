@@ -84,6 +84,19 @@ namespace Kvasir.Translation {
                 return "`char`";
             }
 
+            // Array
+            else if (self.IsArray) {
+                var x = self.GetElementType();
+                var element = self.GetElementType()!.DisplayName()[1..^1];
+                return $"`{element}[]`";
+            }
+
+            // Pointers
+            else if (self.IsPointer) {
+                var referent = self.GetElementType()!.DisplayName()[1..^1];
+                return $"`{referent}*`";
+            }
+
             // Generics
             else if (self.IsGenericType) {
                 var args = self.GenericTypeArguments.Select(t => t.DisplayName()[1..^1]);

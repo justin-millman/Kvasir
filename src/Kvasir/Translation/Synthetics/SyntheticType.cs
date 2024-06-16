@@ -68,6 +68,16 @@ namespace Kvasir.Translation {
             Debug.Assert(properties_.Count >= 2);
         }
 
+        /// <inheritdoc/>
+        protected sealed override bool IsArrayImpl() {
+            return false;
+        }
+
+        /// <inheritdoc/>
+        protected sealed override bool IsPointerImpl() {
+            return false;
+        }
+
         /// <summary>
         ///   Creates a new <see cref="SyntheticType"/>.
         /// </summary>
@@ -95,44 +105,50 @@ namespace Kvasir.Translation {
             // We will build up the properties' metadata so that we can then write a single constructor call for the
             // SyntheticType, where we'll leverage LINQ to transform the metadata elements into SyntheticProperty
             // instances
-            var props = new List<(string Name, Type Type, bool Nullable, bool Unique)>();
+            var props = new List<(string Name, Type Type, Metadata Flags)>();
+
+            // Just a helper function to go from the internal Roslyn nullability APIs to the `Metadata` flags
+            Metadata nullabilityOf(int index) {
+                var flag = nullability.GenericTypeArguments[index].ReadState;
+                return flag == NullabilityState.Nullable ? Metadata.Nullable : Metadata.None;
+            }
 
             if (interfaces.Contains(typeof(IReadOnlyRelationList<>))) {
                 // Entity
-                props.Add((entity.Name, entity, false, false));
+                props.Add((entity.Name, entity, Metadata.ColumnZero));
                 // Item
-                var itemNullable = nullability.GenericTypeArguments[0].ReadState == NullabilityState.Nullable;
-                props.Add(("Item", elementType, itemNullable, false));
+                var itemNullable = nullabilityOf(0);
+                props.Add(("Item", elementType, itemNullable));
             }
             else if (interfaces.Contains(typeof(IReadOnlySet<>))) {
                 // Entity
-                props.Add((entity.Name, entity, false, true));
+                props.Add((entity.Name, entity, Metadata.ColumnZero | Metadata.Unique));
                 // Item
-                var itemNullable = nullability.GenericTypeArguments[0].ReadState == NullabilityState.Nullable;
-                props.Add(("Item", elementType, itemNullable, true));
+                var itemNullable = nullabilityOf(0);
+                props.Add(("Item", elementType, itemNullable | Metadata.Unique));
             }
             else if (interfaces.Contains(typeof(IReadOnlyRelationOrderedList<>))) {
                 // Entity
-                props.Add((entity.Name, entity, false, true));
+                props.Add((entity.Name, entity, Metadata.ColumnZero | Metadata.Unique));
                 // Index
                 var indexType = elementType.GetProperty("Key", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
-                props.Add(("Index", indexType, false, true));
+                props.Add(("Index", indexType, Metadata.Unique));
                 // Item
-                var itemNullable = nullability.GenericTypeArguments[0].ReadState == NullabilityState.Nullable;
+                var itemNullable = nullabilityOf(0);
                 var itemType = elementType.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
-                props.Add(("Item", itemType, itemNullable, false));
+                props.Add(("Item", itemType, itemNullable));
             }
             else if (interfaces.Contains(typeof(IReadOnlyRelationMap<,>))) {
                 // Entity
-                props.Add((entity.Name, entity, false, true));
+                props.Add((entity.Name, entity, Metadata.ColumnZero | Metadata.Unique));
                 // Index
-                var keyNullable = nullability.GenericTypeArguments[0].ReadState == NullabilityState.Nullable;
+                var keyNullable = nullabilityOf(0);
                 var keyType = elementType.GetProperty("Key", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
-                props.Add(("Key", keyType, keyNullable, true));
+                props.Add(("Key", keyType, keyNullable | Metadata.Unique));
                 // Item
-                var valueNullable = nullability.GenericTypeArguments[1].ReadState == NullabilityState.Nullable;
+                var valueNullable = nullabilityOf(1);
                 var valueType = elementType.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
-                props.Add(("Value", valueType, valueNullable, false));
+                props.Add(("Value", valueType, valueNullable));
             }
             else {
                 throw new ApplicationException($"If block over {nameof(IRelation)} interfaces exhausted");
@@ -154,25 +170,18 @@ namespace Kvasir.Translation {
                 assmebly: entity.Assembly,
                 properties: t => props.Select(p => {
                     IEnumerable<Attribute> annotations = tracker.AnnotationsFor(p.Name);
-                    if (p.Nullable) {
+                    if (p.Flags.HasFlag(Metadata.Nullable)) {
                         annotations = annotations.Append(new NullableAttribute());
                     }
-                    if (p.Unique) {
+                    if (p.Flags.HasFlag(Metadata.Unique)) {
                         annotations = annotations.Append(new UniqueAttribute('\0'));
+                    }
+                    if (p.Flags.HasFlag(Metadata.ColumnZero)) {
+                        annotations = annotations.Append(new ColumnAttribute(0));
                     }
                     return new SyntheticPropertyInfo(p.Name, t, p.Type, annotations);
                 })
             );
-        }
-
-        /// <inheritdoc/>
-        public sealed override object[] GetCustomAttributes(bool inherit) {
-            return Array.Empty<object>();
-        }
-
-        /// <inheritdoc/>
-        public sealed override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-            return Array.Empty<object>();
         }
 
         /// <inheritdoc/>
@@ -198,24 +207,9 @@ namespace Kvasir.Translation {
             return TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
         }
 
-        /// <inheritdoc/>
-        protected sealed override PropertyInfo? GetPropertyImpl(string name, BindingFlags bindingAttr, Binder? binder,
-            Type? returnType, Type[]? types, ParameterModifier[]? modifiers) {
-
-            Debug.Assert(name is not null && name != "");
-            Debug.Assert(bindingAttr.HasFlag(BindingFlags.Public) && bindingAttr.HasFlag(BindingFlags.NonPublic));
-            Debug.Assert(bindingAttr.HasFlag(BindingFlags.Instance) && bindingAttr.HasFlag(BindingFlags.Static));
-
-            return properties_.FirstOrDefault(p => p.Name == name);
-        }
-
-        /// <inheritdoc/>
-        protected sealed override bool IsPrimitiveImpl() {
-            return false;
-        }
-
 
         private readonly IReadOnlyList<SyntheticPropertyInfo> properties_;
+        [Flags] private enum Metadata { None = 0, Nullable = 1, Unique = 2, ColumnZero = 4 }
     }
 
     // The functions implemented in this partial definition unconditionally throw NotSupportedExceptions, as they are
@@ -249,6 +243,18 @@ namespace Kvasir.Translation {
         [ExcludeFromCodeCoverage]
         public sealed override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr) {
             throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(GetConstructors)}");
+        }
+
+        /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
+        public sealed override object[] GetCustomAttributes(bool inherit) {
+            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(GetCustomAttributes)}");
+        }
+
+        /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
+        public sealed override object[] GetCustomAttributes(Type attributeType, bool inherit) {
+            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(GetCustomAttributes)}");
         }
 
         /// <inheritdoc/>
@@ -344,14 +350,16 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
-        protected sealed override bool HasElementTypeImpl() {
-            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(HasElementTypeImpl)}");
+        protected sealed override PropertyInfo? GetPropertyImpl(string name, BindingFlags bindingAttr, Binder? binder,
+            Type? returnType, Type[]? types, ParameterModifier[]? modifiers) {
+
+            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(GetPropertyImpl)}");
         }
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
-        protected sealed override bool IsArrayImpl() {
-            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(IsArrayImpl)}");
+        protected sealed override bool HasElementTypeImpl() {
+            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(HasElementTypeImpl)}");
         }
 
         /// <inheritdoc/>
@@ -368,8 +376,8 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
-        protected sealed override bool IsPointerImpl() {
-            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(IsPointerImpl)}");
+        protected sealed override bool IsPrimitiveImpl() {
+            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(IsPrimitiveImpl)}");
         }
     }
 }

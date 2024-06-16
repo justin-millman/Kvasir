@@ -37,7 +37,9 @@ namespace Kvasir.Translation {
             IEnumerable<RelationTracker> trackers)
                 : base(context, source, fields, trackers) {
 
-            Debug.Assert(!fields.IsEmpty());
+            // No debug check for at least 1 Field here because there may, in fact, be 0 Fields: this happens if there
+            // is an Aggregate that contains only Relation-type Fields. Such an AggregateGroup will be excluded from the
+            // ongoing Translation.
         }
 
         /// <summary>

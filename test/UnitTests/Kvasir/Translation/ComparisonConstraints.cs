@@ -3138,6 +3138,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsOneOf_GuidValueIsNotString_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(RainDelay);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`RainDelay` → ID")
+                .WithProblem("value 85819205 is of type `ulong`, not `string` as expected")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsOneOf_GuidValueIsMalformatted_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Wiretap);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidConstraintValueException>()
+                .WithLocation("`Wiretap` → WiretapID")
+                .WithProblem("unable to parse `string` value \"This is an INVALID GUID\" as a `Guid`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNot_AnchorMatchesDataConversionSourceType_IsError() {
             // Arrange
             var translator = new Translator();

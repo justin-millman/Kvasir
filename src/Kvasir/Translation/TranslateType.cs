@@ -118,8 +118,16 @@ namespace Kvasir.Translation {
                             throw new NotEnoughFieldsException(context, 1, 0);
                         }
                         nestedGuard.Dispose();
-                        translation.Add(new AggregateFieldGroup(context, property, fields, trackers));
+                        var aggregate = new AggregateFieldGroup(context, property, fields, trackers);
                         relationTrackers.AddRange(trackers);
+
+                        // If an Aggregate contains only Relation-type Fields, we still need to do a Translation of it
+                        // so that we can process any annotations on the original Aggregate property. However, we don't
+                        // want to actually add such a FieldGroup to the Translation, since it doesn't contribute
+                        // anything to the data model.
+                        if (aggregate.Size > 0) {
+                            translation.Add(aggregate);
+                        }
                     }
                     else {
                         throw new InvalidPropertyInDataModelException(context, propType, typeCategory);

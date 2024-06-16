@@ -46,11 +46,6 @@ namespace Kvasir.Translation {
         public bool IsNullable => isNullable_;
 
         /// <summary>
-        ///   The current name of the Field.
-        /// </summary>
-        public Schema.FieldName Name => name_.SchemaName;
-
-        /// <summary>
         ///   The CLR type of the Field, accounting for any data conversions.
         /// </summary>
         protected Type FieldType {
@@ -59,6 +54,11 @@ namespace Kvasir.Translation {
                 return Nullable.GetUnderlyingType(type) ?? type;
             }
         }
+
+        /// <summary>
+        ///   The CLR type expected of any values provided by users in annotations
+        /// </summary>
+        protected virtual Type UserValueType => FieldType;
 
         /// <summary>
         ///   Whether or not the Field has a <c>CHECK</c> constraint restricting its domain.
@@ -311,14 +311,11 @@ namespace Kvasir.Translation {
             );
 
             if (!IsValidValue(value)) {
-                if (value is null) {
-                    var msg = $"the default value is {value.ForDisplay()}, but the Field is non-nullable";
-                    throw new InvalidDefaultException(context, annotation.Path, msg);
-                }
-                else {
-                    var msg = $"the default value {value.ForDisplay()} does not pass all the Field's constraints";
-                    throw new InvalidDefaultException(context, annotation.Path, msg);
-                }
+                // [Default] will always be processed before constraints (and isn't Path-aware), so the only way that
+                // the default could be invalid at this point is if it's `null` for a non-nullable Field.
+                Debug.Assert(value is null);
+                var msg = $"the default value is {value.ForDisplay()}, but the Field is non-nullable";
+                throw new InvalidDefaultException(context, annotation.Path, msg);
             }
             else {
                 default_ = Option.Some(value);
@@ -354,9 +351,6 @@ namespace Kvasir.Translation {
                 throw new InvalidNameException(context, annotation);
             }
             else if (!annotation.IsAnonymous) {
-                if (annotation.Name is null || annotation.Name == "") {
-                    throw new InvalidNameException(context, annotation);
-                }
                 keyMemberships_.Add(new KeyName(annotation.Name));
             }
             else {
@@ -687,7 +681,7 @@ namespace Kvasir.Translation {
             if (raw is null || raw == DBNull.Value) {
                 return Option.Some<object?, string>(null);
             }
-            else if (raw.GetType() == FieldType) {
+            else if (raw.GetType() == UserValueType) {
                 // Since we know that `raw` comes from an annotation, we know that it must be `null`, a string, a
                 // primitive value (int, bool, char, etc.), an enumerator, or an array thereof. As such, we don't need
                 // to do any nullable-unwrapping or instance-of checking.
@@ -698,7 +692,7 @@ namespace Kvasir.Translation {
                 return Option.None<object?, string>(msg);
             }
             else {
-                var msg = $"value {raw.ForDisplay()} is of type {raw.GetType().DisplayName()}, not {FieldType.DisplayName()} as expected";
+                var msg = $"value {raw.ForDisplay()} is of type {raw.GetType().DisplayName()}, not {UserValueType.DisplayName()} as expected";
                 return Option.None<object?, string>(msg);
             }
         }
@@ -901,7 +895,7 @@ namespace Kvasir.Translation {
         protected void SetDomain(IEnumerable<object> domain) {
             Debug.Assert(domain is not null);
             Debug.Assert(!domain.IsEmpty());
-            Debug.Assert(domain.All(v => v is not null && v != DBNull.Value && v.GetType() == FieldType));
+            Debug.Assert(domain.All(v => v is not null && v.GetType() == FieldType));
             Debug.Assert(restrictedDomain_.IsEmpty());
 
             foreach (var element in domain) {

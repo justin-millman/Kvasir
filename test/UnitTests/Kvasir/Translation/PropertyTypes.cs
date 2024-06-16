@@ -264,6 +264,36 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void PropertyTypeIsArray_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MeritBadge);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`MeritBadge` → PointsRequired")
+                .WithProblem("type `uint[]` is an array (even of an otherwise supported type) and cannot be the backing type of a property")
+                .EndMessage();
+        }
+
+        [TestMethod] public void PropertyTypeIsPointer_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Assassination);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Assassination` → Witnesses")
+                .WithProblem("type `ushort*` is a pointer type and cannot be the backing type of a property")
+                .EndMessage();
+        }
+
         [TestMethod] public void CodeOnly_PropertyOfUnsupportedType() {
             // Arrange
             var translator = new Translator();
@@ -551,7 +581,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherForeignKeys();
         }
 
-        [TestMethod] public void ReferencesNestedWithinReferences() {
+        [TestMethod] public void ReferencesNestedWithinReferencesNonPrimaryKey() {
             // Arrange
             var translator = new Translator();
             var source = typeof(DannyPhantomGhost);
@@ -575,6 +605,35 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields().And
                 .HaveForeignKey("Debut.Overall")
                     .Against(translator[typeof(DannyPhantomGhost.Episode)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void ReferencesNestedWithinReferencesPrimaryKey() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Arson);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("When").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Arsonist.Who.ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Variety").OfTypeEnumeration(
+                    Arson.Type.Nature,
+                    Arson.Type.Building,
+                    Arson.Type.Vehicle,
+                    Arson.Type.Creature
+                ).BeingNonNullable().And
+                .HaveField("WaterRequired").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Accelerated").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Damage").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("MaxTemperature").OfTypeSingle().BeingNonNullable().And
+                .HaveForeignKey("Arsonist.Who.ID")
+                    .Against(translator[typeof(Arson.Criminal)].Principal.Table)
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
@@ -857,6 +916,47 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Perfume` → PatentNumbers")
                 .WithProblem("type `IRelation` is the `IRelation` interface and cannot be the backing type of a property")
                 .EndMessage();
+        }
+
+        [TestMethod] public void AggregateConsistingOnlyOfRelations() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Loch);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Area").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Depth").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Volume").OfTypeDouble().BeingNonNullable().And
+                .HaveField("HomeToNessie").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Islands").OfTypeUInt16().BeingNonNullable().And
+                .HaveNoOtherFields();
+            translation.Relations.Count.Should().Be(2);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+Loch.Location.CoordinatesTable").And
+                .HaveField("Loch.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Key").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("Value").OfTypeSingle().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Loch.Name")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[1].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+Loch.Location.ShiresTable").And
+                .HaveField("Loch.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Item").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Loch.Name")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
         }
     }
 }

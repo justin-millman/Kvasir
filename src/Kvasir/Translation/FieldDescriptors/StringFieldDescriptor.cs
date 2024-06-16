@@ -93,15 +93,13 @@ namespace Kvasir.Translation {
                 if (lengthConstraint_.LowerBound.HasValue) {
                     var bound = lengthConstraint_.LowerBound.Unwrap();
                     var expr = new FieldExpression(FieldFunction.LengthOf, field);
-                    var op = bound.IsInclusive ? ComparisonOperator.GTE : ComparisonOperator.GT;
-                    var clause = new ConstantClause(expr, op, DBValue.Create(bound.Value));
+                    var clause = new ConstantClause(expr, ComparisonOperator.GTE, DBValue.Create(bound.Value));
                     yield return new CheckConstraint(clause);
                 }
                 if (lengthConstraint_.UpperBound.HasValue) {
                     var bound = lengthConstraint_.UpperBound.Unwrap();
                     var expr = new FieldExpression(FieldFunction.LengthOf, field);
-                    var op = bound.IsInclusive ? ComparisonOperator.LTE : ComparisonOperator.LT;
-                    var clause = new ConstantClause(expr, op, DBValue.Create(bound.Value));
+                    var clause = new ConstantClause(expr, ComparisonOperator.LTE, DBValue.Create(bound.Value));
                     yield return new CheckConstraint(clause);
                 }
             }

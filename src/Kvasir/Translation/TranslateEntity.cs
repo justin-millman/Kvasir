@@ -199,16 +199,16 @@ namespace Kvasir.Translation {
             Debug.Assert(source is not null);
 
             var annotation = source.GetCustomAttribute<TableAttribute>();
-            var excluseNS = source.HasAttribute<ExcludeNamespaceFromNameAttribute>();
+            var excludeNS = source.HasAttribute<ExcludeNamespaceFromNameAttribute>();
 
             if (annotation is not null && (annotation.Name is null || annotation.Name == "")) {
                 throw new InvalidNameException(context, annotation);
             }
 
             if (annotation is null) {
-                return new TableName((excluseNS ? source.Name : source.FullName!) + "Table");
+                return new TableName((excludeNS ? source.Name : source.FullName!) + "Table");
             }
-            else if (!excluseNS) {
+            else if (!excludeNS) {
                 return new TableName(annotation.Name);
             }
             else {
@@ -216,6 +216,10 @@ namespace Kvasir.Translation {
                 var annotatedName = annotation.Name;
                 var ns = source.FullName![..^source.Name.Length];
                 var name = annotatedName.StartsWith(ns) ? annotatedName[ns.Length..] : annotatedName;
+
+                if (name == "") {
+                    throw new InvalidNameException(context, new ExcludeNamespaceFromNameAttribute());
+                }
                 return new TableName(name);
             }
         }

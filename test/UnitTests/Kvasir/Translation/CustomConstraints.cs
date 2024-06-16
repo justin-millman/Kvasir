@@ -293,6 +293,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void Check_ConstraintGeneratorNoViableDefaultConstructor_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Seizure);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`Seizure` → SufferedBy")
+                .WithProblem("`PrivateCheck` cannot be constructed from arguments {<none>}")
+                .WithAnnotations("[Check]")
+                .EndMessage();
+        }
+        
         [TestMethod] public void Check_ConstraintGeneratorNoViableArgumentsConstructor_IsError() {
             // Arrange
             var translator = new Translator();
@@ -305,6 +321,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InvalidCustomConstraintException>()
                 .WithLocation("`Transistor` → Dopant")
                 .WithProblem("`PrivateCheck` cannot be constructed from arguments {\"Dopant\", 4}")
+                .WithAnnotations("[Check]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void Check_ConstraintGeneratorDefaultConstructorThrows_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Buffet);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidCustomConstraintException>()
+                .WithLocation("`Buffet` → Cuisine")
+                .WithProblem($"error constructing `UnconstructibleCheck` from arguments {{<none>}} ({CANNOT_CONSTRUCT_MSG})")
                 .WithAnnotations("[Check]")
                 .EndMessage();
         }

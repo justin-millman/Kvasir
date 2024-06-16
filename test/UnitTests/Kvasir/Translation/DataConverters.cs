@@ -40,8 +40,8 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should()
                 .HaveField("AstronomicalIdentifier").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Aphelion").OfTypeDouble().BeingNonNullable().And
-                .HaveField("Perihelion").OfTypeInt64().BeingNonNullable().And
-                .HaveField("Eccentricity").OfTypeInt64().BeingNonNullable().And
+                .HaveField("Perihelion").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Eccentricity").OfTypeUInt64().BeingNonNullable().And
                 .HaveField("MassKg").OfTypeUInt64().BeingNonNullable().And
                 .HaveField("Albedo").OfTypeDouble().BeingNonNullable().And
                 .HaveField("OrbitalPeriod").OfTypeSingle().BeingNonNullable().And
@@ -278,10 +278,11 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Name").OfTypeText().BeingNonNullable().And
                 .HaveField("MannaCost").OfTypeInt8().BeingNonNullable().And
                 .HaveField("InitialLoyalty").OfTypeInt8().BeingNonNullable().And
+                .HaveField("SetIcon").OfTypeCharacter().BeingNonNullable().And
                 .HaveField("Ability1").OfTypeText().BeingNonNullable().And
                 .HaveField("Ability2").OfTypeText().BeingNonNullable().And
                 .HaveField("Ability3").OfTypeText().BeingNonNullable().And
-                .HaveField("SerialNumber").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("SerialNumber").OfTypeGuid().BeingNonNullable().And
                 .HaveNoOtherFields();
         }
 

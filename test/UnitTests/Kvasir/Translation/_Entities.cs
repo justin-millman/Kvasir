@@ -163,6 +163,28 @@ namespace UT.Kvasir.Translation {
             public Flower? OfficialFlower { get; set; }
         }
 
+        // Test Scenario: Array (✗not permitted✗)
+        public class MeritBadge {
+            [Flags] public enum Group { BoyScouts = 1, GirlScouts = 2, CubScouts = 4 }
+
+            [PrimaryKey] public Guid BadgeID { get; set; }
+            public string Name { get; set; } = "";
+            public Group AwardedBy { get; set; }
+            public uint[] PointsRequired { get; set; } = new uint[] {};
+            public double PercentAcquired { get; set; }
+            public DateTime Introduced { get; set; }
+        }
+
+        // Test Scenario: Pointer (✗not permitted✗)
+        public class Assassination {
+            [PrimaryKey] public string Victim { get; set; } = "";
+            public string Perpetrator { get; set; } = "";
+            public DateTime Date { get; set; }
+            public unsafe ushort* Witnesses { get; set; }
+            public bool Political { get; set; }
+            public bool StateSanctioned { get; set; }
+        }
+
         // Test Scenario: Property with Unsupported Type Marked as [CodeOnly] (✓excluded✓)
         public interface IArmor {}
         public class CustomBackground<T> {}
@@ -301,7 +323,7 @@ namespace UT.Kvasir.Translation {
             public sbyte NumJokes { get; set; }
         }
 
-        // Test Scenario: References Nested Within References (✓recognized✓)
+        // Test Scenario: References Nested Within References as Non-Primary-Key (✓recognized✓)
         public class DannyPhantomGhost {
             public enum Ability { Intangibiblity, Blast, Overshadowing, Duplication, Telekinesis }
 
@@ -321,6 +343,33 @@ namespace UT.Kvasir.Translation {
             public Ability Powers { get; set; }
             public int Appearances { get; set; }
             public Episode Debut { get; set; } = new();
+        }
+
+        // Test Scenario: Reference Nested Within References as Primary Key (✓recognized✓)
+        public class Arson {
+            public enum Type { Nature, Building, Vehicle, Creature }
+
+            public class Person {
+                [PrimaryKey] public Guid ID { get; set; }
+                public ulong SSN { get; set; }
+                public string FirstName { get; set; } = "";
+                public char? MiddleInitial { get; set; }
+                public string? LastName { get; set; }
+            }
+            public class Criminal {
+                [PrimaryKey] public Person Who { get; set; } = new();
+                public string Name { get; set; } = "";
+                public bool Incarcerated { get; set; }
+                public decimal TotalCrimeCost { get; set; }
+            }
+
+            [PrimaryKey] public DateTime When { get; set; }
+            [PrimaryKey] public Criminal Arsonist { get; set; } = new();
+            public Type Variety { get; set; }
+            public ulong WaterRequired { get; set; }
+            public bool Accelerated { get; set; }
+            public decimal Damage { get; set; }
+            public float MaxTemperature { get; set; }
         }
 
         // Test Scenario: Non-Nullable Relations of Non-Nullable Elements (✓recognized✓)
@@ -432,6 +481,19 @@ namespace UT.Kvasir.Translation {
             public DateTime Launched { get; set; }
             public bool ForWomen { get; set; }
             public IRelation PatentNumbers { get; set; } = new RelationSet<ulong>();
+        }
+
+        // Test Scenario: Aggregate Consisting of Only Relations (✓recognized✓)
+        public class Loch {
+            public record struct Geography(RelationMap<char, float> Coordinates, IReadOnlyRelationSet<string> Shires);
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public double Area { get; set; }
+            public double Depth { get; set; }
+            public double Volume { get; set; }
+            public Geography Location { get; set; }
+            public bool HomeToNessie { get; set; }
+            public ushort Islands { get; set; }
         }
     }
 
@@ -1062,7 +1124,7 @@ namespace UT.Kvasir.Translation {
     }
 
     internal static class TableNaming {
-        // Test Scenario: New Name (✓renamed✓)
+        // Test Scenario: New Principal Table Name (✓renamed✓)
         [Table("DeckOfCards")]
         public class PlayingCard {
             [PrimaryKey] public byte Suit { get; set; }
@@ -1140,7 +1202,17 @@ namespace UT.Kvasir.Translation {
             public string Password { get; set; } = "";
         }
 
-        // Test Scenario: Type with Unchanged Name Marked with [Table] and [ExcludeNamespaceFromName] (✓renamed✓)
+        // Test Scenario: Principal Table Name Change and [ExcludeNamespaceFromName], Equivalent (✗illegal✗)
+        [Table("UT.Kvasir.Translation.TableNaming+"), ExcludeNamespaceFromName]
+        public class Umbrella {
+            [PrimaryKey] public Guid ProductID { get; set; }
+            public double WaterResistance { get; set; }
+            public bool ButtonActivated { get; set; }
+            public float Height { get; set; }
+            public float Span { get; set; }
+        }
+
+        // Test Scenario: Principal Table Name Change and [ExcludeNamespaceFromName], Prefixed (✓renamed and removed✓)
         [Table("UT.Kvasir.Translation.TableNaming+BlenderTable"), ExcludeNamespaceFromName]
         public class Blender {
             [PrimaryKey] public Guid ProductID { get; set; }
@@ -1149,12 +1221,47 @@ namespace UT.Kvasir.Translation {
             public byte NumBlades { get; set; }
         }
 
-        // Test Scenario: Type with Changed Name Marked with [Table] and [ExcludeNamespaceFromName] (✓redundant✓)
+        // Test Scenario: Principal Table Name Change and [ExcludeNamespaceFromName], Infixed (✓latter redundant✓)
+        [Table("Database.UT.Kvasir.Translation.TableNaming+BoardingSchoolTable"), ExcludeNamespaceFromName]
+        public class BoardingSchool {
+            [PrimaryKey] public Guid SchoolID { get; set; }
+            public string Name { get; set; } = "";
+            public ulong Enrollment { get; set; }
+            public bool BoysOnly { get; set; }
+            public bool MilitaryStyle { get; set; }
+            public decimal Tuition { get; set; }
+            public string Address { get; set; } = "";
+            public byte UpperAge { get; set; }
+        }
+
+        // Test Scenario: Principal Table Name Change and [ExcludeNamespaceFromName], Suffixed (✓latter redundant✓)
+        [Table("Polygraph.UT.Kvasir.Translation.TableNaming+"), ExcludeNamespaceFromName]
+        public class PolygraphTest {
+            [PrimaryKey] public DateTime Date { get; set; }
+            [PrimaryKey] public string Subject { get; set; } = "";
+            public string Administrator { get; set; } = "";
+            public double Duration { get; set; }
+            public uint QuestionsAsked { get; set; }
+            public uint Truths { get; set; }
+            public bool AdmissibleInCourt { get; set; }
+        }
+
+        // Test Scenario: Principal Table Name Change and [ExcludeNamespaceFromName], No Overlap (✓latter redundant✓)
         [Table("SomeTable"), ExcludeNamespaceFromName]
         public class Encryption {
             [PrimaryKey] public string Scheme { get; set; } = "";
             public ulong PublicKey { get; set; }
             public ulong PrivateKey { get; set; }
+        }
+
+        // Test Scenario: New Relation Table Name (✓renamed✓)
+        public class MagicalPreserve {
+            [PrimaryKey] public string Name { get; set; } = "";
+            [RelationTable("CreaturesTable")] public RelationMap<string, int> Population { get; set; } = new();
+            public string SecretArtifact { get; set; } = "";
+            public DateTime? Founding { get; set; }
+            public string PrimaryCaretaker { get; set; } = "";
+            public double Area { get; set; }
         }
 
         // Test Scenario: Relation Table Name Unchanged via [RelationTable] (✓redundant✓)
@@ -1167,7 +1274,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string School { get; set; } = "";
             [PrimaryKey] public ushort Year { get; set; }
-            [RelationTable("UT.Kvasir.Translation.PropertyTypes+PacerTest.LapsCompletedTable")] public RelationMap<Student, byte> LapsCompleted { get; set; } = new();
+            [RelationTable("UT.Kvasir.Translation.TableNaming+PacerTest.LapsCompletedTable")] public RelationMap<Student, byte> LapsCompleted { get; set; } = new();
             public DateTime AdministeredOn { get; set; }
         }
 
@@ -1517,7 +1624,7 @@ namespace UT.Kvasir.Translation {
             public bool IsSausage { get; set; }
         }
 
-        // Test Scenario: Change Field Name to Existing Value (✗duplication✗)
+        // Test Scenario: Change Field Name to Existing Value in Principal Table (✗duplication✗)
         public class ComputerLock {
             [PrimaryKey] public string Name { get; set; } = "";
             public bool IsReentrant { get; set; }
@@ -1526,11 +1633,48 @@ namespace UT.Kvasir.Translation {
             public ushort? WritersPermitted { get; set; }
         }
 
-        // Test Scenario: Change Two Field Names to Same Value (✗duplication✗)
+        // Test Scenario: Change Two Field Names to Same Value in Principal Table (✗duplication✗)
         public class Ticket2RideRoute {
             [PrimaryKey, Name("Destination")] public string City1 { get; set; } = "";
             [PrimaryKey, Name("Destination")] public string City2 { get; set; } = "";
             public byte Points { get; set; }
+        }
+
+        // Test Scenario: Change Field Name to Existing Value in Relation Table (✗duplication✗)
+        public class Cookbook {
+            public class Recipe {
+                public record struct Measure(double Value, string Unit);
+                
+                [PrimaryKey] public Guid RecipeID { get; set; }
+                public string DishName { get; set; } = "";
+                public ushort PrepTime { get; set; }
+                public ushort CookTime { get; set; }
+                public RelationMap<string, Measure> Ingredients { get; set; } = new();
+                public RelationOrderedList<string> Steps { get; set; } = new();
+            }
+
+            [PrimaryKey] public string ISBN { get; set; } = "";
+            public string Title { get; set; } = "";
+            public string Author { get; set; } = "";
+            public DateTime PublicationDate { get; set; }
+            public string AmazonURL { get; set; } = "";
+            [Name("Cookbook.ISBN", Path = "Item.RecipeID")] public RelationList<Recipe> Recipes { get; set; } = new();
+        }
+
+        // Test Scenario: Change Two Field Names to Same Value in Relation Table (✗duplication✗)
+        public class HostageSituation {
+            public class Person {
+                [PrimaryKey] public uint SSN { get; set; }
+                public string FirstName { get; set; } = "";
+                public string? MiddleName { get; set; }
+                public string? LastName { get; set; }
+            }
+
+            [PrimaryKey] public Guid IncidentID { get; set; }
+            public string Location { get; set; } = "";
+            public Person HostageTaker { get; set; } = new();
+            [Name("Value", Path = "HostageSituation.IncidentID"), Name("Value", Path = "Item.SSN")] public RelationList<Person> Hostages { get; set; } = new();
+            public ushort Casualties { get; set; }
         }
 
         // Test Scenario: Scalar Property with Multiple Identical [Name] Changes (✓de-duplicated✓)
@@ -1559,6 +1703,144 @@ namespace UT.Kvasir.Translation {
             public double PercentAssets { get; set; }
             [Name("FirstReached"), Name("When?")] public DateTime FirstReached { get; set; }
             public uint WorldRanking { get; set; }
+        }
+
+        // Test Scenario: Aggregate Property with Multiple Identical [Name] Changes (✓de-duplicated✓)
+        public class Militia {
+            public record struct Personnel(int Generals, int Colonels, int Lieutenants, int Privates, int Corporals);
+
+            [PrimaryKey] public Guid MilitiaID { get; set; }
+            public string? Name { get; set; }
+            public DateTime Created { get; set; }
+            public DateTime? Disbanded { get; set; }
+            [Name("Members"), Name("Members")] public Personnel Roster { get; set; }
+            public bool WellRegulated { get; set; }
+        }
+
+        // Test Scenario: Aggregate Property with Multiple Different [Name] Changes (✗cardinality✗)
+        public class Walkabout {
+            public record struct Coordinate(float Latitude, float Longitude);
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Participant { get; set; } = "";
+            public string AboriginalGroup { get; set; } = "";
+            public DateTime Start { get; set; }
+            public DateTime? End { get; set; }
+            [Name("StartLoc"), Name("StartingLoc")] public Coordinate InitialLocation { get; set; }
+            public Coordinate EndingLocation { get; set; }
+        }
+
+        // Test Scenario: Aggregate Property with Redundant and Non-Redundant [Name] Changes (✗cardinality✗)
+        public class Treadmill {
+            public record struct Company(string ShortName, string LongName);
+
+            [PrimaryKey] public Guid ProductID { get; set; }
+            [Name("Manufacturer"), Name("ManufacturingCompany")] public Company Manufacturer { get; set; }
+            public double MaxSpeed { get; set; }
+            public double MaxIncline { get; set; }
+            public DateTime WarrantyExpiration { get; set; }
+            public ulong HoursUsed { get; set; }
+            public bool CanReverse { get; set; }
+        }
+
+        // Test Scenario: Reference Property with Multiple Identical [Name] Changes (✓de-duplicated✓)
+        public class MongolKhan {
+            public class City {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public float Latitude { get; set; }
+                public float Longitude { get; set; }
+                public bool StillStanding { get; set; }
+            }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateTime ReignStart { get; set; }
+            public DateTime ReignEnd { get; set; }
+            public ushort Children { get; set; }
+            public ulong LivingDescendants { get; set; }
+            [Name("CapitalCity"), Name("CapitalCity")] public City Capital { get; set; } = new();
+        }
+
+        // Test Scenario: Reference Property with Multiple Different [Name] Changes (✗cardinality✗)
+        public class QuizBowlProtest {
+            public enum Type { Short, Tossup, Bonus, Lightning }
+
+            public class Question {
+                [PrimaryKey] public Guid QuestionID { get; set; }
+                public ushort WriterID { get; set; }
+                public string Category { get; set; } = "";
+                public string AnswerLine { get; set; } = "";
+                public Type QuestionType { get; set; }
+            }
+
+            public record struct PacketQuestion(string Tournament, Question Question, byte Packet, byte Number);
+
+            [PrimaryKey] public Guid ProtetID { get; set; }
+            [Name("Q", Path = "Question"), Name("Which?", Path = "Question")] public PacketQuestion ProtestedQuestion { get; set; }
+            public DateTime TimeLodged { get; set; }
+            public string Argument { get; set; } = "";
+            public DateTime? TimeAdjudicated { get; set; }
+            public bool Rejected { get; set; }
+            public bool Moot { get; set; }
+        }
+
+        // Test Scenario: Reference Property with Redundant and Non-Redundant [Name] Changes (✗cardinality✗)
+        public class Grassland {
+            public class Grass {
+                [PrimaryKey] public string Genus { get; set; } = "";
+                [PrimaryKey] public string Species { get; set; } = "";
+            }
+
+            [PrimaryKey] public Guid GrasslandID { get; set; }
+            public string? Name { get; set; }
+            [Name("DominantGrass"), Name("MainGrass")] public Grass DominantGrass { get; set; } = new();
+            public double BiodiversityRating { get; set; }
+            public ulong NativeAnimalSpecies { get; set; }
+            public ulong NativePlantSpecies { get; set; }
+            public double AverageTemperature { get; set; }
+            public double AverageRainfall { get; set; }
+        }
+
+        // Test Scenario: Relation Property with Multiple Identical [Name] Changes (✓de-duplicated✓)
+        public class Necromancer {
+            public enum AlignedAs { LawfulGood, LawfulEvil, LawfulNeutral, TrueGood, TrueEvil, TrueNeutral, ChaoticGood, ChaoticEvil, ChaoticNeutral }
+
+            public class Spell {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Incantation { get; set; } = "";
+                public RelationSet<string> Components { get; set; } = new();
+                public bool TimeSensitive { get; set; }
+            }
+
+            [PrimaryKey] public Guid MagicUserID { get; set; }
+            public string? Name { get; set; }
+            public AlignedAs Alignment { get; set; }
+            [Name("Spellbook"), Name("Spellbook")] public RelationSet<Spell> Spells { get; set; } = new();
+            public ulong Resurrections { get; set; }
+            public byte Level { get; set; }
+        }
+
+        // Test Scenario: Relation Property with Multiple Different [Name] Changes (✗cardinality✗)
+        public class Genocide {
+            public enum Event { Start, End }
+
+            [PrimaryKey] public Guid GenocideID { get; set; }
+            public string Identifier { get; set; } = "";
+            public string EthnicGroup { get; set; } = "";
+            public ulong DeathCount { get; set; }
+            [Name("TimelineOfEvents"), Name("Calendar")] public RelationMap<DateTime, Event> Timeline { get; set; } = new();
+            public ushort ICCIndictments { get; set; }
+        }
+
+        // Test Scenario: Relation Property with Redundant and Non-Redundant [Name] Changes (✗cardinality✗)
+        public class PrideParade {
+            [Flags] public enum Group { Lesbian = 1, Gay = 2, Bisexual = 4, Transgender = 8, Queer = 16, Asexual = 32, Intersex = 64, TwoSpirit = 128, Questioning = 256, Straight = 512 }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public DateTime Date { get; set; }
+            [Name("Participants"), Name("Paraders")] public IReadOnlyRelationSet<string> Participants { get; set; } = new RelationSet<string>();
+            public bool Protested { get; set; }
+            public uint RainbowFlags { get; set; }
+            public Group Representation { get; set; }
         }
 
         // Test Scenario: Aggregate-Nested [Name] Change on Field that Already Has [Name] Change (✓renamed✓)
@@ -1592,6 +1874,55 @@ namespace UT.Kvasir.Translation {
             public string Country { get; set; } = "";
             public ulong Age { get; set; }
             [Name("TotalArea", Path = "Item.TotalSpace")] public RelationSet<PointOfInterest> Ruins { get; set; } = new();
+        }
+
+        // Test Scenario: [Name] Change on Nested Aggregate that Already Has [Name] Change (✓renamed✓)
+        public class Sarcophagus {
+            public record struct Measurements(float Height, float Width, float Length);
+            public struct BioDetails {
+                [Name("Dim")] public Measurements Dimensions { get; set; }
+                public DateTime Discovered { get; set; }
+                public float Weight { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Entombed { get; set; } = "";
+            [Name("Measure", Path = "Dimensions")] public BioDetails Details { get; set; }
+            public string StoneType { get; set; } = "";
+        }
+
+        // Test Scenario: [Name] Change on Nested Reference that Already Has [Name] Change (✓renamed✓)
+        public class MariachiBand {
+            public class Song {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string? Album { get; set; }
+                public double Duration { get; set; }
+            }
+
+            public struct Songs {
+                [Name("One")] public Song NumberOne { get; set; }
+                [Name("#2")] public Song NumberTwo { get; set; }
+                [Name("#3")] public Song NumberThree { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            [Name("#1", Path = "NumberOne")] public Songs Repertoire { get; set; }
+            public ushort Members { get; set; }
+            public bool UsesVihuelas { get; set; }
+            public bool UsesGuitars { get; set; }
+            public string HomeCity { get; set; } = "";
+        }
+
+        // Test Scenario: [Name] Change on Nested Relation that Already Has [Name] Change (✓affects name of Table✓)
+        public class PolarVortex {
+            public struct Temps {
+                [Name("HighTemps")] public RelationMap<DateTime, double> Highs { get; set; }
+                [Name("LowTemps")] public RelationMap<DateTime, double> Lows { get; set; }
+            }
+
+            [PrimaryKey] public Guid VortexID { get; set; }
+            [Name("HIGHS", Path = "Highs"), Name("LOWS", Path = "Lows")] public Temps Temperatures { get; set; }
+            public ushort AttributableDeaths { get; set; }
         }
 
         // Test Scenario: Nested Property with Multiple [Name] Changes (✗cardinality✗)
@@ -3653,7 +3984,7 @@ namespace UT.Kvasir.Translation {
             public float MaxDepth { get; set; }
             [DataConverter(typeof(Invert))] public bool IsKarst { get; set; }
             public decimal Latitude { get; set; }
-            public decimal Longitude { get; set; }
+            [DataConverter(typeof(Identity<decimal>))] public decimal Longitude { get; set; }
         }
 
         // Test Scenario: Data Conversion Changes Field's Type to Scalar (✓applied✓)
@@ -3800,10 +4131,11 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public sbyte MannaCost { get; set; }
             public sbyte InitialLoyalty { get; set; }
+            [DataConverter(typeof(Nullify<char>))] public char SetIcon { get; set; }
             [DataConverter(typeof(Nullify<string>))] public string Ability1 { get; set; } = "";
             [DataConverter(typeof(Nullify<string>))] public string Ability2 { get; set; } = "";
             [DataConverter(typeof(Nullify<string>))] public string Ability3 { get; set; } = "";
-            [DataConverter(typeof(Nullify<uint>))] public uint SerialNumber { get; set; }
+            [DataConverter(typeof(Nullify<Guid>))] public Guid SerialNumber { get; set; }
         }
 
         // Test Scenario: CLR Type is Inconvertible to Data Conversion Source Type (✗invalid✗)
@@ -4971,6 +5303,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey, Check.IsNonZero] public ushort NumEdges { get; set; }
                 [Check.IsNonZero] public sbyte NumVertices { get; set; }
                 [Check.IsNonZero] public double InternalAngle { get; set; }
+                [Check.IsNonZero] public decimal ExternalAngle { get; set; }
                 public bool IsConvex { get; set; }
             }
 
@@ -7769,6 +8102,28 @@ namespace UT.Kvasir.Translation {
                 public DateTime EndDate { get; set; }
                 public decimal MonthlyRent { get; set; }
                 public bool ContainsOptOut { get; set; }
+            }
+
+            // Test Scenario: Guid Disallowed Value is Not a String (✗invalid✗)
+            public class RainDelay {
+                public enum Sport { Baseball, Football, Tennis, Rugby, Soccer, Track, Volleyball, Other }
+
+                [PrimaryKey, Check.IsNot(85819205UL)] public Guid ID { get; set; }
+                public DateTime When { get; set; }
+                public Sport SportingEvent { get; set; }
+                public uint DurationMinutes { get; set; }
+                public bool PrePlanned { get; set; }
+                public bool Lightning { get; set; }
+            }
+
+            // Test Scenario: Guid Disallowed Value is Improperly Formatted (✗invalid✗)
+            public class Wiretap {
+                public enum Agency { CIA, FBI, NSA, LocalPolice, Military, PrivateSecurity, Other }
+
+                [PrimaryKey, Check.IsNot("This is an INVALID GUID")] public Guid WiretapID { get; set; }
+                public string IssuingJudge { get; set; } = "";
+                public Agency IssuingAgency { get; set; }
+                public bool Active { get; set; }
             }
 
             // Test Scenario: Anchor of Source Type on Data-Converted Property (✗invalid✗)
@@ -10919,7 +11274,18 @@ namespace UT.Kvasir.Translation {
             [Check(typeof(NonSerializedAttribute))] public decimal Tier3 { get; set; }
         }
 
-        // Test Scenario: Constraint Generator Cannot Be Constructed (✗illegal✗)
+        // Test Scenario: Constraint Generator Cannot Be Default-Constructed (✗illegal✗)
+        public class Seizure {
+            [Flags] public enum Category { Epilleptic, GrandMal, Focal, Absence, Myoclonic, Partial }
+
+            [PrimaryKey] public Guid SeizureID { get; set; }
+            public double Duration { get; set; }
+            [Check(typeof(PrivateCheck))] public string SufferedBy { get; set; } = "";
+            public Category Kind { get; set; }
+            public bool Fatal { get; set; }
+        }
+
+        // Test Scenario: Constraint Generator Cannot Be Complex-Constructed (✗illegal✗)
         public class Transistor {
             [PrimaryKey] public Guid ID { get; set; }
             public string Model { get; set; } = "";
@@ -10928,7 +11294,18 @@ namespace UT.Kvasir.Translation {
             public int OperatingTemperature { get; set; }
         }
 
-        // Test Scenario: Constraint Generator Throws Error upon Construction (✗propagated✗)
+        // Test Scenario: Constraint Generator Throws Error upon Default Construction (✗propagated✗)
+        public class Buffet {
+            public enum Ethnicity { American, Chinese, Italian, Indian, German, Greek, Japanese, Korean, Mexican, Thai }
+
+            [PrimaryKey] public Guid BuffetID { get; set; }
+            public string Restaurant { get; set; } = "";
+            [Check(typeof(UnconstructibleCheck))] public Ethnicity Cuisine { get; set; }
+            public bool AllYouCanEat { get; set; }
+            public decimal CostPerPerson { get; set; }
+        }
+
+        // Test Scenario: Constraint Generator Throws Error upon Complex Construction (✗propagated✗)
         public class BasketballPlayer {
             [PrimaryKey] public string Name { get; set; } = "";
             public ulong Points { get; set; }

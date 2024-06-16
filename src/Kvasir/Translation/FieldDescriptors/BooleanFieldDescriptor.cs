@@ -18,9 +18,7 @@ namespace Kvasir.Translation {
             : base(context, source, annotation) {
 
             Debug.Assert(FieldType == typeof(bool));
-
-            var converter = annotation.DataConverter;
-            SetDomain(new object[] { converter.Convert(true)!, converter.Convert(false)! });
+            SetDomain(new object[] { true, false });
         }
 
         public sealed override BooleanFieldDescriptor Clone() {

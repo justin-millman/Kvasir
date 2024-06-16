@@ -17,6 +17,10 @@ namespace UT.Kvasir.Translation {
             public E Convert(T source) { return (E)new EnumToNumericConverter(typeof(E)).ConverterImpl.Revert(source)!; }
             public T Revert(E result) { return (T)new EnumToNumericConverter(typeof(E)).ConverterImpl.Convert(result)!; }
         }
+        public class Identity<T> : IDataConverter<T, T> {
+            public T Convert(T source) { return source; }
+            public T Revert(T result) { return result; }
+        }
         public class Invert : IDataConverter<bool, bool> {
             public bool Convert(bool source) { return !source; }
             public bool Revert(bool result) { return !result; }
@@ -45,9 +49,9 @@ namespace UT.Kvasir.Translation {
             public T? Convert(T source) { return source; }
             public T Revert(T? result) { return result!; }
         }
-        public class RoundDown : IDataConverter<double, long> {
-            public long Convert(double source) { return (long)source; }
-            public double Revert(long result) { return (double)result + 0.25; }
+        public class RoundDown : IDataConverter<double, ulong> {
+            public ulong Convert(double source) { return (ulong)source; }
+            public double Revert(ulong result) { return (double)result + 0.25; }
         }
         public class SwapEnums<A, B> : IDataConverter<A, B> where A : notnull, Enum where B : Enum {
             public B Convert(A source) { return (B)System.Convert.ChangeType(source, typeof(int)); }
