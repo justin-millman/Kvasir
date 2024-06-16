@@ -53,11 +53,6 @@ namespace Kvasir.Translation {
         }
 
         /// <inheritdoc/>
-        public sealed override object[] GetCustomAttributes(bool inherit) {
-            return annotations_.ToArray();
-        }
-
-        /// <inheritdoc/>
         public sealed override object[] GetCustomAttributes(Type attributeType, bool inherit) {
             // This is caused by the inability to cast between an array of `T` and an Enumerable of `D` where `D`
             // derives from `T`. To be able to work within the reflection system, we have to return an array of objects
@@ -125,6 +120,12 @@ namespace Kvasir.Translation {
         [ExcludeFromCodeCoverage]
         public sealed override MethodInfo[] GetAccessors(bool nonPublic) {
             throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(GetAccessors)}");
+        }
+
+        /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
+        public sealed override object[] GetCustomAttributes(bool inherit) {
+            throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(GetCustomAttributes)}");
         }
 
         /// <inheritdoc/>

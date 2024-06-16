@@ -45,11 +45,6 @@ namespace Kvasir.Translation {
         public sealed override MethodInfo GetBaseDefinition() {
             return this;
         }
-
-        /// <inheritdoc/>
-        public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
-            return new List<CustomAttributeData>();
-        }
     }
 
     // The functions implemented in this partial definition unconditionally throw NotSupportedExceptions, as they are
@@ -81,16 +76,24 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
+        public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
+            throw new NotSupportedException($"{nameof(SyntheticMethodInfo)}.{nameof(GetCustomAttributesData)}");
+        }
+
+        /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override MethodImplAttributes GetMethodImplementationFlags() {
             throw new NotSupportedException($"{nameof(SyntheticMethodInfo)}.{nameof(GetMethodImplementationFlags)}");
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override object[] GetCustomAttributes(bool inherit) {
             throw new NotSupportedException($"{nameof(SyntheticMethodInfo)}.{nameof(GetCustomAttributes)}");
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override object[] GetCustomAttributes(Type attributeType, bool inherit) {
             throw new NotSupportedException($"{nameof(SyntheticMethodInfo)}.{nameof(GetCustomAttributes)}");
         }

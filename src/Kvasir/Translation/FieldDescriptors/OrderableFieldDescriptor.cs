@@ -45,7 +45,7 @@ namespace Kvasir.Translation {
         }
 
         protected sealed override void DoApplyConstraint(Context context, Check.ComparisonAttribute annotation) {
-            if (annotation.Anchor is null || annotation.Anchor.Equals(DBNull.Value)) {
+            if (annotation.Anchor is null || annotation.Anchor == DBNull.Value) {
                 object? n = null;
                 throw new InvalidConstraintValueException(context, annotation, $"the constraint boundary cannot be {n.ForDisplay()}");
             }

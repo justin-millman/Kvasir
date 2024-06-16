@@ -47,22 +47,5 @@ namespace Kvasir.Translation {
                 )
               )
         {}
-
-        /// <summary>
-        ///   Constructs a new <see cref="DuplicateNameException"/> caused by a Table name being duplicated when it is
-        ///   already in use by an Relation Table.
-        /// </summary>
-        /// <param name="context">
-        ///   The <see cref="Context"/> in which the duplicate Table name was encountered.
-        /// </param>
-        /// <param name="name">
-        ///   The duplicated Table name.
-        /// </param>
-        public DuplicateNameException(Context context, TableName name)
-            : base(
-                new Location(context.ToString()),
-                new Problem($"Table name \"{name}\" is already in use for a Relation Table")
-              )
-        {}
     }
 }

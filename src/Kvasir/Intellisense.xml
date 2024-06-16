@@ -7465,17 +7465,6 @@
               reference cycles and to enable contextualized error messages.
             </remarks>
         </member>
-        <member name="P:Kvasir.Translation.Context.Depth">
-            <summary>
-              The depth of the <see cref="T:Kvasir.Translation.Context"/>.
-            </summary>
-            <remarks>
-              A depth of <c>0</c> indicates that the <see cref="T:Kvasir.Translation.Context"/> represents translation of the initial type or
-              a property defined directly on the initial type. A depth of <c>N > 0</c> indicates that the
-              <see cref="T:Kvasir.Translation.Context"/> represents translation of a type <c>N</c> levels nested within the initial type or
-              a property defined on such a nested type.
-            </remarks>
-        </member>
         <member name="P:Kvasir.Translation.Context.TranslatingEntity">
             <summary>
               Whether or not the <see cref="T:Kvasir.Translation.Context"/> refers to the translation of an Entity, rather than an Aggregate.
@@ -7708,18 +7697,6 @@
             <param name="otherType">
               The Entity or Synthetic type that has already claimed <paramref name="name"/> for its Principal or
               Relation Table.
-            </param>
-        </member>
-        <member name="M:Kvasir.Translation.DuplicateNameException.#ctor(Kvasir.Translation.Context,Kvasir.Schema.TableName)">
-            <summary>
-              Constructs a new <see cref="T:Kvasir.Translation.DuplicateNameException"/> caused by a Table name being duplicated when it is
-              already in use by an Relation Table.
-            </summary>
-            <param name="context">
-              The <see cref="T:Kvasir.Translation.Context"/> in which the duplicate Table name was encountered.
-            </param>
-            <param name="name">
-              The duplicated Table name.
             </param>
         </member>
         <member name="T:Kvasir.Translation.FailedOperationException">
@@ -8105,13 +8082,27 @@
         </member>
         <member name="M:Kvasir.Translation.InvalidNameException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.TableAttribute)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Translation.InvalidNameException"/> caused by an invalid Principal Table name.
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidNameException"/> caused by an invalid Principal Table name, as defined
+              by a <see cref="T:Kvasir.Annotations.TableAttribute">[Table]</see> annotation.
             </summary>
             <param name="context">
               The <see cref="T:Kvasir.Translation.Context"/> in which <paramref name="annotation"/> was encountered.
             </param>
             <param name="annotation">
               The invalid <see cref="T:Kvasir.Annotations.TableAttribute">[Table]</see> annotation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidNameException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.ExcludeNamespaceFromNameAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidNameException"/> caused by an invalid Principal Table name resulting
+              from the interplay between a <see cref="T:Kvasir.Annotations.TableAttribute">[Table]</see> annotation and an
+              <see cref="T:Kvasir.Annotations.ExcludeNamespaceFromNameAttribute">[ExcludeNamespaceFromName]</see> annotation.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which <paramref name="annotation"/> was encountered.
+            </param>
+            <param name="annotation">
+              The invalid <see cref="T:Kvasir.Annotations.ExcludeNamespaceFromNameAttribute">[ExcludeNamespaceFromName]</see> annotation.
             </param>
         </member>
         <member name="M:Kvasir.Translation.InvalidNameException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.RelationTableAttribute)">
@@ -8535,14 +8526,14 @@
               <see langword="true"/> if the Field is currently nullable, otherwise <see langword="false"/>.
             </summary>
         </member>
-        <member name="P:Kvasir.Translation.FieldDescriptor.Name">
-            <summary>
-              The current name of the Field.
-            </summary>
-        </member>
         <member name="P:Kvasir.Translation.FieldDescriptor.FieldType">
             <summary>
               The CLR type of the Field, accounting for any data conversions.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.FieldDescriptor.UserValueType">
+            <summary>
+              The CLR type expected of any values provided by users in annotations
             </summary>
         </member>
         <member name="P:Kvasir.Translation.FieldDescriptor.HasAllowedValues">
@@ -9866,9 +9857,6 @@
         <member name="M:Kvasir.Translation.SyntheticMethodInfo.GetBaseDefinition">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticMethodInfo.GetCustomAttributesData">
-            <inheritdoc/>
-        </member>
         <member name="P:Kvasir.Translation.SyntheticMethodInfo.MethodHandle">
             <inheritdoc/>
         </member>
@@ -9876,6 +9864,9 @@
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.SyntheticMethodInfo.ReturnTypeCustomAttributes">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticMethodInfo.GetCustomAttributesData">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticMethodInfo.GetMethodImplementationFlags">
@@ -9938,9 +9929,6 @@
               The set of <see cref="T:System.Attribute">annotations</see> applied to the property, in any order.
             </param>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetCustomAttributes(System.Boolean)">
-            <inheritdoc/>
-        </member>
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetCustomAttributes(System.Type,System.Boolean)">
             <inheritdoc/>
         </member>
@@ -9966,6 +9954,9 @@
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetAccessors(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetCustomAttributes(System.Boolean)">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetValue(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
@@ -10020,6 +10011,12 @@
             </param>
             <seealso cref="M:Kvasir.Translation.SyntheticType.MakeSyntheticType(System.Type,Kvasir.Translation.RelationTracker)"/>
         </member>
+        <member name="M:Kvasir.Translation.SyntheticType.IsArrayImpl">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticType.IsPointerImpl">
+            <inheritdoc/>
+        </member>
         <member name="M:Kvasir.Translation.SyntheticType.MakeSyntheticType(System.Type,Kvasir.Translation.RelationTracker)">
             <summary>
               Creates a new <see cref="T:Kvasir.Translation.SyntheticType"/>.
@@ -10031,12 +10028,6 @@
               The <see cref="T:Kvasir.Translation.RelationTracker"/> containing the metadata for the property that forms the rest of the
               <see cref="T:Kvasir.Translation.SyntheticType"/>.
             </param>
-        </member>
-        <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Boolean)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Type,System.Boolean)">
-            <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributesData">
             <inheritdoc/>
@@ -10050,12 +10041,6 @@
         <member name="M:Kvasir.Translation.SyntheticType.GetAttributeFlagsImpl">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticType.GetPropertyImpl(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Type,System.Type[],System.Reflection.ParameterModifier[])">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Translation.SyntheticType.IsPrimitiveImpl">
-            <inheritdoc/>
-        </member>
         <member name="P:Kvasir.Translation.SyntheticType.AssemblyQualifiedName">
             <inheritdoc/>
         </member>
@@ -10066,6 +10051,12 @@
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetConstructors(System.Reflection.BindingFlags)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Type,System.Boolean)">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetElementType">
@@ -10110,10 +10101,10 @@
         <member name="M:Kvasir.Translation.SyntheticType.GetMethodImpl(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Reflection.CallingConventions,System.Type[],System.Reflection.ParameterModifier[])">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticType.HasElementTypeImpl">
+        <member name="M:Kvasir.Translation.SyntheticType.GetPropertyImpl(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Type,System.Type[],System.Reflection.ParameterModifier[])">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticType.IsArrayImpl">
+        <member name="M:Kvasir.Translation.SyntheticType.HasElementTypeImpl">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.IsByRefImpl">
@@ -10122,7 +10113,7 @@
         <member name="M:Kvasir.Translation.SyntheticType.IsCOMObjectImpl">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticType.IsPointerImpl">
+        <member name="M:Kvasir.Translation.SyntheticType.IsPrimitiveImpl">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Translation.PrincipalTableDef">

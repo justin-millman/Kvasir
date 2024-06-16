@@ -327,7 +327,7 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void ChangeToNameOfExistingField_IsError() {
+        [TestMethod] public void ChangeToNameOfExistingField_PrincipalTable_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(ComputerLock);
@@ -343,7 +343,7 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void TwoFieldsNamesChangedToSameName_IsError() {
+        [TestMethod] public void TwoFieldsNamesChangedToSameName_PrincipalTable_IsError() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Ticket2RideRoute);
@@ -355,6 +355,37 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<DuplicateNameException>()
                 .WithLocation("`Ticket2RideRoute`")
                 .WithProblem("there are two or more Fields with the name \"Destination\"")
+                .EndMessage();
+        }
+
+        [TestMethod] public void ChangeToNameOfExistingField_RelationTable_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Cookbook);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`Cookbook` → <synthetic> `Recipes`")
+                .WithProblem("there are two or more Fields with the name \"Cookbook.ISBN\"")
+                .EndMessage();
+        }
+
+        [TestMethod] public void TwoFieldsNamesChangedToSameName_RelationTable_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(HostageSituation);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`HostageSituation` → <synthetic> `Hostages`")
+                .WithProblem("there are two or more Fields with the name \"Value\"")
                 .EndMessage();
         }
 
@@ -409,7 +440,172 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void NameChangeOnAggregateOverridesOriginalNameChange() {
+        [TestMethod] public void MultipleIdenticalNameChangesOnAggregateProperty() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Militia);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("MilitiaID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNullable().And
+                .HaveField("Created").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Disbanded").OfTypeDateTime().BeingNullable().And
+                .HaveField("Members.Generals").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Members.Colonels").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Members.Lieutenants").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Members.Privates").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Members.Corporals").OfTypeInt32().BeingNonNullable().And
+                .HaveField("WellRegulated").OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void MultipleDifferentNameChangesOnAggregateProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Walkabout);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`Walkabout` → InitialLocation")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RedundantAndImpactfulNameChangesOnAggregateProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Treadmill);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`Treadmill` → Manufacturer")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void MultipleIdenticalNameChangesOnReferenceProperty() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MongolKhan);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("ReignStart").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("ReignEnd").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Children").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("LivingDescendants").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("CapitalCity.Name").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void MultipleDifferentNameChangesOnReferenceProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(QuizBowlProtest);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`QuizBowlProtest` → ProtestedQuestion")
+                .WithPath("Question")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RedundantAndImpactfulNameChangesOnReferenceProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Grassland);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`Grassland` → DominantGrass")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void MultipleIdenticalNameChangesOnRelationProperty() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Necromancer);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+Necromancer.SpellbookTable").And
+                .HaveField("Necromancer.MagicUserID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item.Name").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Necromancer.MagicUserID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveForeignKey("Item.Name")
+                    .Against(translator[typeof(Necromancer.Spell)].Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void MultipleDifferentNameChangesOnRelationProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Genocide);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`Genocide` → <synthetic> `Timeline`")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RedundantAndImpactfulNameChangesOnRelationProperty_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PrideParade);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateAnnotationException>()
+                .WithLocation("`PrideParade` → <synthetic> `Participants`")
+                .WithProblem("only one copy of the annotation can be applied to a given Field at a time")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NameChangeOnAggregateNestedFieldOverridesOriginalNameChange() {
             // Arrange
             var translator = new Translator();
             var source = typeof(HashMap);
@@ -433,7 +629,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void NameChangeOnRelationOverridesOriginalNameChange() {
+        [TestMethod] public void NameChangeOnRelationNestedFieldOverridesOriginalNameChange() {
             // Arrange
             var translator = new Translator();
             var source = typeof(ArchaeologicalSite);
@@ -452,6 +648,82 @@ namespace UT.Kvasir.Translation {
                 .HaveField("TotalArea").OfTypeDouble().BeingNonNullable().And
                 .HaveNoOtherFields().And
                 .HaveForeignKey("ArchaeologicalSite.SiteID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void NameChangeOnNestedAggregateOverridesOriginalNameChange() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Sarcophagus);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Entombed").OfTypeText().BeingNonNullable().And
+                .HaveField("Details.Measure.Height").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Details.Measure.Width").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Details.Measure.Length").OfTypeSingle().BeingNonNullable().And
+                .HaveField("Details.Discovered").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Details.Weight").OfTypeSingle().BeingNonNullable().And
+                .HaveField("StoneType").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NameChangeOnNestedReferenceOverridesOriginalNameChange() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MariachiBand);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Repertoire.#1.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Repertoire.#2.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Repertoire.#3.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Members").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("UsesVihuelas").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("UsesGuitars").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("HomeCity").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void NameChangeOnNestedRelationOverridesOriginalNameChange() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PolarVortex);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Count.Should().Be(2);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+PolarVortex.HIGHSTable").And
+                .HaveField("PolarVortex.VortexID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Key").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Value").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("PolarVortex.VortexID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+            translation.Relations[1].Table.Should()
+                .HaveName("UT.Kvasir.Translation.FieldNaming+PolarVortex.LOWSTable").And
+                .HaveField("PolarVortex.VortexID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Key").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Value").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("PolarVortex.VortexID")
                     .Against(translation.Principal.Table)
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And

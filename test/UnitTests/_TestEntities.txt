@@ -44,9 +44,11 @@ Aria
 Armada
 Aron Kodesh
 Arrondissement
+Arson
 Arthurian Knight
 Artificial Intelligence
 Artiodactyl
+Assassination
 Asteroid
 Astronaut
 Atmospheric Layer
@@ -111,6 +113,7 @@ Blockade
 Blockbuster Store
 Blood Drive
 Blood Type
+Boarding School
 Bodhisattva
 Bond Girl
 Bone
@@ -130,6 +133,7 @@ Bread
 Bridge
 Briefcase
 Brothel
+Buffet
 Bug Spray
 Burrito
 Bust
@@ -236,6 +240,7 @@ Contact Lens
 Constellation
 Constitution
 Constitutional Amendment
+Cookbook
 Coral Reef
 Country
 County
@@ -373,6 +378,7 @@ Gelateria
 Gene
 Generation
 Genie
+Genocide
 Geocache
 Geologic Epoch
 Geyser
@@ -388,6 +394,7 @@ Golf Hole
 Government Shutdown
 Grammatical Case
 Grand Prix
+Grasslands
 Great Old One
 Greek God
 Greek Letter
@@ -431,6 +438,7 @@ Honest Trailer
 Horcrux
 Hormone
 Hospital
+Hostage Situation
 Hot Air Balloon
 Hot Spring
 Hot Tub
@@ -522,6 +530,7 @@ Liquor Store
 Literary Trope
 Locale (computing)
 Localization
+Loch
 Lock (computing)
 Log-In Credentials
 Lollipop
@@ -538,10 +547,12 @@ Madrasa
 Mafia Family
 Magazine
 Magic System
+Magical Preserve (Fablehaven)
 Mall Santa
 Marathon
 Marble League
 Margarita
+Mariachi Band
 Marian Apparition
 Marijuana Strain
 Mark-Up Symbol
@@ -556,10 +567,12 @@ Medal of Honor
 Medical Specialty
 Meme
 Memory Buffer
+Merit Badge
 Mesopotamian God
 Metra Route
 Mezuzah
 Military Base
+Militia
 Milkshake
 Mime
 Minion (Hearthstone)
@@ -568,6 +581,7 @@ Mirror
 Missile
 Mitzvah
 Monad
+Mongol Khan
 Monopoly Property
 Month
 Moon of Jupiter
@@ -593,6 +607,7 @@ Native American Tribe
 Nazca Line
 Nebula
 Necktie
+Necromancer
 Neurotoxin
 Neurotransmitter
 News Anchor
@@ -682,9 +697,11 @@ Podcast
 Poet Laurete
 Pokémon
 Poker Hand
+Polar Vortex
 Police Officer
 Poll
 Polygon
+Polygraph Test
 Polyhedron
 Pond
 Pop Tart
@@ -697,6 +714,7 @@ Pregnancy Test
 Prescription
 Presidential Election
 Press Secretary
+Pride Parade
 Printer
 Prison
 Prisoner Exchange
@@ -704,6 +722,7 @@ Process (computing)
 Programming Language
 Prophecy
 Prophet
+Protest (Quiz Bowl)
 Proto-Indo-European Root
 Psalm
 Pseudonym
@@ -722,6 +741,7 @@ Rabbi
 Racehorse
 Racetrack (auto racing)
 Radio Station
+Rain Delay
 Rainforest
 Random Number Generator
 Ransomware
@@ -754,6 +774,7 @@ Sabermetric
 Safari
 Saint
 Salsa
+Sarcophagus
 Satellite
 Scattergories Round
 Scholarship
@@ -771,6 +792,7 @@ Secret Hitler Game
 Secret Police
 Secret Society
 Seder Plate
+Seizure
 Senator
 Serial Killer
 Sermon
@@ -890,6 +912,7 @@ Tour de France
 Tournament
 Transformer (robot)
 Transistor
+Treadmill
 Treasure Map
 Treasury Bond
 Treehouse
@@ -905,6 +928,7 @@ Tsunami
 Tuxedo
 Tweet
 Typewriter
+Umbrella
 Umpire
 UN Resolution
 UN Secretary General
@@ -931,6 +955,7 @@ VPN
 Vulgarity
 W2 Tax Form
 Wadi
+Walkabout
 Waffle
 Water Bottle
 Water Slide
@@ -946,6 +971,7 @@ Wildfire
 Windmill
 WinForm
 Winter Storm
+Wiretap
 Witch Hunt
 Wizard
 Word Search

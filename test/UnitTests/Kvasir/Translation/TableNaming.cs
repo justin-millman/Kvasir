@@ -105,7 +105,23 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_LatterEnforced() {
+        [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_Equivalent_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Umbrella);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`Umbrella`")
+                .WithProblem("the name of a Primary Table cannot be empty")
+                .WithAnnotations("[ExcludeNamespaceFromName]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_Prefixed_LatterEnforced() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Blender);
@@ -117,7 +133,31 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Name.Should().Be("BlenderTable");
         }
 
-        [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_LatterRedundant() {
+        [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_Infixed_LatterRedundant() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(BoardingSchool);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should().HaveName("Database.UT.Kvasir.Translation.TableNaming+BoardingSchoolTable");
+        }
+
+        [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_Suffixed_LatterRedundant() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(PolygraphTest);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should().HaveName("Polygraph.UT.Kvasir.Translation.TableNaming+");
+        }
+
+        [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_NoOverlap_LatterRedundant() {
             // Arrange
             var translator = new Translator();
             var source = typeof(Encryption);
@@ -127,6 +167,19 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Name.Should().Be("SomeTable");
+        }
+
+        [TestMethod] public void RelationTableRenamedToBrandNewName() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MagicalPreserve);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should().HaveName("CreaturesTable");
         }
 
         [TestMethod] public void RelationTable_NameIsUnchanged_Redundant() {
@@ -139,7 +192,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Relations.Should().HaveCount(1);
-            translation.Relations[0].Table.Should().HaveName("UT.Kvasir.Translation.PropertyTypes+PacerTest.LapsCompletedTable");
+            translation.Relations[0].Table.Should().HaveName("UT.Kvasir.Translation.TableNaming+PacerTest.LapsCompletedTable");
         }
 
         [TestMethod] public void RelationTable_NameChangedToNull_IsError() {

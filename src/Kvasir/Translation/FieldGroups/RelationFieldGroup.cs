@@ -6,6 +6,7 @@ using Optional;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -56,16 +57,19 @@ namespace Kvasir.Translation {
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override RelationFieldGroup Clone() {
             throw new NotSupportedException($"Logically, a {nameof(RelationFieldGroup)} should never be cloned!");
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override Option<FieldGroup> Filter(IEnumerable<FieldDescriptor> constituents) {
             throw new NotSupportedException($"Logically, a {nameof(RelationFieldGroup)} should never be filtered!");
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public sealed override RelationFieldGroup Reset() {
             throw new NotSupportedException($"Logically, a {nameof(RelationFieldGroup)} should never be reset!");
         }

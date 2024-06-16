@@ -12,6 +12,8 @@ namespace Kvasir.Translation {
     ///   <see cref="decimal"/>.
     /// </summary>
     internal sealed class DecimalFieldDescriptor : OrderableFieldDescriptor {
+        protected sealed override Type UserValueType => typeof(double);
+
         public DecimalFieldDescriptor(Context context, PropertyInfo source)
             : base(context, source) {
 
@@ -33,27 +35,18 @@ namespace Kvasir.Translation {
         }
 
         protected sealed override Option<object?, string> CoerceUserValue(object? raw) {
-            if (raw is null || raw == DBNull.Value) {
-                return Option.Some<object?, string>(null);
+            var value = base.CoerceUserValue(raw);
+            if (value.Exists(v => v is not null)) {
+                value = value.FlatMap(v => {
+                    var dbl = (double)v!;
+                    if (dbl < (double)decimal.MinValue || dbl > (double)decimal.MaxValue) {
+                        var msg = $"{typeof(double).DisplayName()} {v.ForDisplay()} is outside the supported range for {typeof(decimal).DisplayName()}";
+                        return Option.None<object?, string>(msg);
+                    }
+                    return Option.Some<object?, string>((decimal)dbl);
+                });
             }
-            else if (raw.GetType() == typeof(double)) {
-                // Values for a decimal must be doubles that can be converted into a decimal, which has a larger range
-                // of supported values than does decimal
-                var dbl = (double)raw;
-                if (dbl < (double)decimal.MinValue || dbl > (double)decimal.MaxValue) {
-                    var msg = $"{typeof(double).DisplayName()} {raw.ForDisplay()} is outside the supported range for {typeof(decimal).DisplayName()}";
-                    return Option.None<object?, string>(msg);
-                }
-                return Option.Some<object?, string>((decimal)dbl);
-            }
-            else if (raw.GetType().IsArray) {
-                var msg = "value cannot be an array";
-                return Option.None<object?, string>(msg);
-            }
-            else {
-                var msg = $"value {raw.ForDisplay()} is of type {raw.GetType().DisplayName()}, not {typeof(double).DisplayName()} as expected";
-                return Option.None<object?, string>(msg);
-            }
+            return value;
         }
 
         protected sealed override void DoApplyConstraint(Context context, Check.SignednessAttribute annotation) {

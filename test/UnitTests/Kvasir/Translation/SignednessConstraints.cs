@@ -1059,6 +1059,7 @@ namespace UT.Kvasir.Translation {
                 .HaveConstraint("NumEdges", ComparisonOperator.NE, (ushort)0).And
                 .HaveConstraint("NumVertices", ComparisonOperator.NE, (sbyte)0).And
                 .HaveConstraint("InternalAngle", ComparisonOperator.NE, 0.0).And
+                .HaveConstraint("ExternalAngle", ComparisonOperator.NE, (decimal)0).And
                 .HaveNoOtherConstraints();
         }
 
