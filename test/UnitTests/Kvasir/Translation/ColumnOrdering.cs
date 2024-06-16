@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Kvasir.Translation2;
+using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.ColumnOrdering;

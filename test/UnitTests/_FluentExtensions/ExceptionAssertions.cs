@@ -1,7 +1,7 @@
 using Cybele.Extensions;
 using FluentAssertions.Execution;
 using FluentAssertions.Specialized;
-using Kvasir.Translation2;
+using Kvasir.Translation;
 using System;
 using System.Collections.Generic;
 using System.Linq;

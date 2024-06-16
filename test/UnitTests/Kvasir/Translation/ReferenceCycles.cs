@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Kvasir.Schema;
-using Kvasir.Translation2;
+using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.ReferenceCycles;
