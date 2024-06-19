@@ -185,6 +185,17 @@ namespace UT.Kvasir.Translation {
             public bool StateSanctioned { get; set; }
         }
 
+        // Test Scenario: By-Ref Property (✗not permitted✗)
+        public class Spider {
+            [PrimaryKey] public string Genus { get; set; } = "";
+            [PrimaryKey] public string Species { get; set; } = "";
+            public string CommonName { get; set; } = "";
+            public ref bool Venomous { get { return ref venomous_; } }
+            public ushort NumEyes { get; set; }
+
+            private bool venomous_;
+        }
+
         // Test Scenario: Property with Unsupported Type Marked as [CodeOnly] (✓excluded✓)
         public interface IArmor {}
         public class CustomBackground<T> {}

@@ -22,6 +22,9 @@ namespace Kvasir.Translation {
         public static TypeCategory TranslationCategory(this Type self) {
             self = Nullable.GetUnderlyingType(self) ?? self;
 
+            if (self.IsByRef) {
+                return TypeCategory.ByRef;
+            }
             if (self == typeof(IRelation)) {
                 return TypeCategory.IRelation;
             }
@@ -120,6 +123,7 @@ namespace Kvasir.Translation {
     internal readonly struct TypeCategory : IEquatable<TypeCategory> {
         public static TypeCategory AbstractClass { get; } = new TypeCategory("an abstract class");
         public static TypeCategory Array { get; } = new TypeCategory("an array (even of an otherwise supported type)");
+        public static TypeCategory ByRef { get; } = new TypeCategory("a type by-ref");
         public static TypeCategory Class { get; } = new TypeCategory("a class or a record class");
         public static TypeCategory ClosedGeneric { get; } = new TypeCategory("a closed generic type");
         public static TypeCategory Delegate { get; } = new TypeCategory("a delegate");

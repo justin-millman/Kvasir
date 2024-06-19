@@ -10014,6 +10014,9 @@
         <member name="M:Kvasir.Translation.SyntheticType.IsArrayImpl">
             <inheritdoc/>
         </member>
+        <member name="M:Kvasir.Translation.SyntheticType.IsByRefImpl">
+            <inheritdoc/>
+        </member>
         <member name="M:Kvasir.Translation.SyntheticType.IsPointerImpl">
             <inheritdoc/>
         </member>
@@ -10105,9 +10108,6 @@
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.HasElementTypeImpl">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Translation.SyntheticType.IsByRefImpl">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.IsCOMObjectImpl">

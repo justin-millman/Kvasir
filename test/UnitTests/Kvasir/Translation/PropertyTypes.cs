@@ -294,6 +294,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void PropertyTypeIsByRef_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(Spider);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Spider` → Venomous")
+                .WithProblem("type `ref bool` is a type by-ref and cannot be the backing type of a property")
+                .EndMessage();
+        }
+
         [TestMethod] public void CodeOnly_PropertyOfUnsupportedType() {
             // Arrange
             var translator = new Translator();
