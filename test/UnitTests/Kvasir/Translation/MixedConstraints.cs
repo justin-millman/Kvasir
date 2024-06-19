@@ -619,6 +619,21 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void NumericConversionWithIsOneOfNoOverlap_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(DSM);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`DSM` → Edition")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
+        }
+
         [TestMethod] public void AsStringConversionWithComparisons() {
             // Arrange
             var translator = new Translator();
@@ -665,6 +680,21 @@ namespace UT.Kvasir.Translation {
                     "Summer", "Autumn"
                 ).And
                 .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void AsStringConversionWithIsOneOfNoOverlap_IsError() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(ParkingTicket);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`ParkingTicket` → Reason")
+                .WithProblem("all of the explicitly allowed values fail at least one other constraint")
+                .EndMessage();
         }
 
         [TestMethod] public void AlteredComparisonsOnNestedField() {

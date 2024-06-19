@@ -130,6 +130,26 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void BooleanToUnrelatedType() {
+            // Arrange
+            var translator = new Translator();
+            var source = typeof(MathematicalConjecture);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("IsMillenniumPrize").OfTypeBoolean().And
+                .HaveField("Solved").OfTypeInt32().And
+                .HaveField("Equation").OfTypeText().BeingNullable().And
+                .HaveField("FirstPosited").OfTypeDateTime().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveConstraint("Solved", InclusionOperator.In, 0, 1).And
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void EnumerationToNumericBackingType() {
             // Arrange
             var translator = new Translator();

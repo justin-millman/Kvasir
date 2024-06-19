@@ -4036,6 +4036,15 @@ namespace UT.Kvasir.Translation {
             [DataConverter(typeof(MakeDate<Variety>))] public Variety Structure { get; set; }
         }
 
+        // Test Scenario: Custom Data Conversion for Boolean Field (✓applied✓)
+        public class MathematicalConjecture {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public bool IsMillenniumPrize { get; set; }
+            [DataConverter(typeof(ToInt<bool>))] public bool Solved { get; set; }
+            public string? Equation { get; set; }
+            public DateTime FirstPosited { get; set; }
+        }
+
         // Test Scenario: [Numeric] Data Conversion for Enumeration Field (✓applied✓)
         public class Quarterback {
             public enum Throws : sbyte { Left, Right }
@@ -8139,9 +8148,10 @@ namespace UT.Kvasir.Translation {
             public class RingOfPower {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public string? Holder { get; set; }
-                [DataConverter(typeof(ToInt<bool>)), Check.IsNot(7)] public bool Destroyed { get; set; }
+                public bool Destroyed { get; set; }
                 public DateTime Forged { get; set; }
                 public string CentralStone { get; set; } = "";
+                [DataConverter(typeof(ToInt<ushort>)), Check.IsNot(7)] public ushort NumPossessors { get; set; }
             }
 
             // Test Scenario: Scalar Property Constrained Multiple Times with Same Anchor (✓de-duplicated✓)
@@ -11985,6 +11995,18 @@ namespace UT.Kvasir.Translation {
             [Check.IsOneOf(0, 1, 2, 4, 8, 6, 10, 17, 186, 222), Numeric] public Variety Kind { get; set; }
         }
 
+        // Test Scenario: [Numeric] + [IsOneOf] Allowing Only Non-Domain Values (✗unsatisfiable✗)
+        public class DSM {
+            public enum Number { One, Two, Three, Four, Five }
+
+            [PrimaryKey] public ulong ISBN { get; set; }
+            public DateTime Published { get; set; }
+            [Numeric, Check.IsOneOf(6, 7, 8, 9)] public Number Edition { get; set; } 
+            public ushort DisordersCatalogued { get; set; }
+            public bool APA_Approved { get; set; }
+            public ulong WordCount { get; set; }
+        }
+
         // Test Scenario: [AsString] + <Comparisons> (✓former, evaluated against latter✓)
         public class Casino {
             public enum Game { Blackjack, Poker, Craps, Roulette, Slots, Baccarat, Pachinko, Bingo, SportsBetting }
@@ -12016,6 +12038,19 @@ namespace UT.Kvasir.Translation {
             [Check.IsNotOneOf("Winter", "Spring", "Fall", "Year-Round"), AsString] public Season SignSeason { get; set; }
             public char ZodiacSymbol { get; set; }
             public string HinduSolarEquivalent { get; set; } = "";
+        }
+
+        // Test Scenario: [AsString] + [IsOneOf] Allowing Only Non-Domain Values (✗unsatisfiable✗)
+        public class ParkingTicket {
+            public enum Classification { PermitOnly, FireHydrant, MeterExpired, DoubleParked, Weather }
+
+            [PrimaryKey] public uint TicketNumber { get; set; }
+            public Guid IssuingOfficerBadgeNumber { get; set; }
+            [AsString, Check.IsOneOf("Missing Sticker", "Flashing Lights")] public Classification Reason { get; set; }
+            public decimal Fine { get; set; }
+            public string LicensePlate { get; set; } = "";
+            public DateTime DateOfInfraction { get; set; }
+            public bool CourtDateRequired { get; set; }
         }
 
         // Test Scenario: <Comparison> on Nested Field is Altered (✓former, evaluated against latter✓)

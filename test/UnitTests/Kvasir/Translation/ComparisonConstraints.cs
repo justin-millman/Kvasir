@@ -3196,7 +3196,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint("Destroyed", ComparisonOperator.NE, 7).And
+                .HaveConstraint("NumPossessors", ComparisonOperator.NE, 7).And
                 .HaveNoOtherConstraints();
         }
 
