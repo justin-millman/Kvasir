@@ -619,6 +619,13 @@ namespace Kvasir.Translation {
             if (conv.SourceType.IsEnum && !conv.ResultType.IsEnum) {
                 restrictedDomain_ = conv.SourceType.ValidValues().Select(e => conv.TryConvert(e, context)!).ToHashSet();
             }
+
+            // Similarly, if the CLR type of the property is `bool` but the result of the Data Converter is not, then
+            // we have to pass { true, false } through the Data Converter for the results to become the set of allowed
+            // values.
+            else if (conv.SourceType == typeof(bool) && conv.ResultType != typeof(bool)) {
+                restrictedDomain_ = new bool[] { true, false }.Select(b => conv.TryConvert(b, context)!).ToHashSet();
+            }
         }
 
         /// <summary>
@@ -653,6 +660,9 @@ namespace Kvasir.Translation {
             if (converter.SourceType.IsEnum && !converter.ResultType.IsEnum) {
                 restrictedDomain_ = converter.SourceType.ValidValues().Select(e => converter.TryConvert(e, context)!).ToHashSet();
             }
+
+            // No need for a Boolean check here, because the only annotations that can trigger this constructor are
+            // [Numeric] or [AsString], neither of which is applicable to Boolean-type properties/Fields.
         }
 
         /// <summary>
