@@ -84,9 +84,14 @@ namespace Kvasir.Translation {
                 return "`char`";
             }
 
+            // By-Ref
+            else if (self.IsByRef) {
+                var underlying = self.GetElementType()!.DisplayName()[1..^1];
+                return $"`ref {underlying}`";
+            }
+
             // Array
             else if (self.IsArray) {
-                var x = self.GetElementType();
                 var element = self.GetElementType()!.DisplayName()[1..^1];
                 return $"`{element}[]`";
             }

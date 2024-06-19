@@ -74,6 +74,11 @@ namespace Kvasir.Translation {
         }
 
         /// <inheritdoc/>
+        protected sealed override bool IsByRefImpl() {
+            return false;
+        }
+
+        /// <inheritdoc/>
         protected sealed override bool IsPointerImpl() {
             return false;
         }
@@ -360,12 +365,6 @@ namespace Kvasir.Translation {
         [ExcludeFromCodeCoverage]
         protected sealed override bool HasElementTypeImpl() {
             throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(HasElementTypeImpl)}");
-        }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        protected sealed override bool IsByRefImpl() {
-            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(IsByRefImpl)}");
         }
 
         /// <inheritdoc/>
