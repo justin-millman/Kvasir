@@ -1,9 +1,14 @@
 ﻿using Kvasir.Core;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace UT.Kvasir.Translation {
     internal static class TestConverters {
+        public class AllCaps : IDataConverter<string, string> {
+            public string Convert(string source) { return source.ToUpper(); }
+            public string Revert(string result) { return new CultureInfo("en-US", false).TextInfo.ToTitleCase(result); }
+        }
         public class ChangeBase : IDataConverter<int, int> {
             public ChangeBase(int _) {}
             public int Convert(int source) { return source; }

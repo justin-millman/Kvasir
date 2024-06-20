@@ -1,5 +1,6 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Extraction;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -41,6 +42,9 @@ namespace Kvasir.Translation {
                 throw new ApplicationException("This should be algorithmically unreachable code!");
             }
         }
+
+        /// <inheritdoc/>
+        public sealed override IMultiExtractor Extractor { get; }
 
         /// <summary>
         ///   The "kind" of the backing property (i.e. Aggregate vs. Reference vs. Relation).
@@ -104,6 +108,15 @@ namespace Kvasir.Translation {
             trackers_ = trackers.ToDictionary(t => t.Property.Name.Split('.')[^1], t => t);
             SetNamePrefix(context, new List<string>() {});
             ProcessAnnotations(context);
+
+            // The if-block is only skipped if we have an Aggregate consisting of only Relations, in which case it will
+            // be filtered out before anyone can try to read the group's Extractor. Therefore, setting the value to
+            // `null` here and potentially not changing it is fine.
+            Extractor = null!;
+            if (!fields.IsEmpty()) {
+                Extractor = CreateExtractor(fields);
+            }
+            Debug.Assert(Extractor is not null || Kind == MultiKind.Aggregate);
         }
 
         /// <summary>
@@ -121,6 +134,7 @@ namespace Kvasir.Translation {
             nullabilityAnnotated_ = false;
             fields_ = source.fields_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Clone());
             trackers_ = source.trackers_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Extractor = source.Extractor;
         }
 
         /// <summary>
@@ -142,6 +156,7 @@ namespace Kvasir.Translation {
             nullabilityAnnotated_ = false;
             fields_ = source.fields_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Reset());
             trackers_ = source.trackers_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Extractor = source.Extractor;
         }
 
         /// <summary>
@@ -166,6 +181,7 @@ namespace Kvasir.Translation {
             nullabilityAnnotated_ = false;
             fields_ = fields.ToDictionary(f => f.Source.Name, f => f);
             trackers_ = source.trackers_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Extractor = CreateExtractor(fields);
         }
 
         /// <inheritdoc/>
@@ -484,6 +500,27 @@ namespace Kvasir.Translation {
                 var annotation = Source.GetCustomAttribute<NumericAttribute>()!;
                 throw new InvalidDataConverterException(context, CLRType, annotation);
             }
+        }
+
+        /// <summary>
+        ///   Create a <see cref="Extractor"/> for the multi-field group.
+        /// </summary>
+        /// <param name="fields">
+        ///   The constituent <see cref="FieldGroup">FieldGroups</see>. These are not necessarily ordered.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="IMultiExtractor"/> that, when executed, produces the recursively nested value contained by
+        ///   the Fields represented by <paramref name="fields"/>.
+        /// </returns>
+        protected virtual IMultiExtractor CreateExtractor(IEnumerable<FieldGroup> fields) {
+            Debug.Assert(fields is not null && !fields.IsEmpty());
+            Debug.Assert(fields.All(f => f.Column.HasValue));
+
+            // Extraction for a MultiFieldGroup consists of two parts: reading the value out of the source property, and
+            // then executing each of the constituent groups' Extractors on that value.
+            var readProperty = new ReadPropertyExtractor(Source);
+            var decompose = new DecomposingExtractor(fields.OrderBy(f => f.Column.Unwrap()).Select(f => f.Extractor));
+            return new CurryingExtractor(readProperty, decompose);
         }
 
 

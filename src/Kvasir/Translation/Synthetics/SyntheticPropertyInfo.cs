@@ -13,6 +13,9 @@ namespace Kvasir.Translation {
     /// </summary>
     internal sealed partial class SyntheticPropertyInfo : PropertyInfo {
         /// <inheritdoc/>
+        public sealed override bool CanRead => true;
+
+        /// <inheritdoc/>
         public sealed override Type? DeclaringType { get; }
 
         /// <inheritdoc/>
@@ -84,6 +87,39 @@ namespace Kvasir.Translation {
             return null;
         }
 
+        /// <inheritdoc/>
+        public sealed override object? GetValue(object? obj, BindingFlags invokeAttr, Binder? binder, object?[]? index,
+            CultureInfo? culture) {
+
+            // Hard-coding the way we handle the various names here isn't the best, but I really don't feel like
+            // figuring out the dependency injection right now. This is good enough. (We also only have to handle the
+            // element properties and not the Entity properties because Extraction on Relations only pulls out the
+            // former.)
+            if (obj is null) {
+                return null;
+            }
+            else if (Name == "Key" || Name == "Index") {
+                var prop = obj.GetType().GetProperty("Key", BindingFlags.Public | BindingFlags.Instance)!;
+                return prop.GetValue(obj);
+            }
+            else if (Name == "Value") {
+                var prop = obj.GetType().GetProperty("Value", BindingFlags.Public | BindingFlags.Instance)!;
+                return prop.GetValue(obj);
+            }
+            else {
+                Debug.Assert(Name == "Item");
+                if (obj.GetType().IsGenericType) {
+                    // "Item" is the value in a RelationOrderedList
+                    var prop = obj.GetType().GetProperty("Value", BindingFlags.Public | BindingFlags.Instance)!;
+                    return prop.GetValue(obj);
+                }
+                else {
+                    // "Item" is the value in a RelationList or RelationSet
+                    return obj;
+                }
+            }
+        }
+
 
         private readonly SyntheticMethodInfo getter_;
         private readonly IReadOnlyList<Attribute> annotations_;
@@ -97,14 +133,6 @@ namespace Kvasir.Translation {
         public sealed override PropertyAttributes Attributes {
             get {
                 throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(Attributes)}");
-            }
-        }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public sealed override bool CanRead {
-            get {
-                throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(CanRead)}");
             }
         }
 
@@ -126,14 +154,6 @@ namespace Kvasir.Translation {
         [ExcludeFromCodeCoverage]
         public sealed override object[] GetCustomAttributes(bool inherit) {
             throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(GetCustomAttributes)}");
-        }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public sealed override object? GetValue(object? obj, BindingFlags invokeAttr, Binder? binder, object?[]? index,
-            CultureInfo? culture) {
-
-            throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(GetValue)}");
         }
 
         /// <inheritdoc/>

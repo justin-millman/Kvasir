@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Core;
+using Kvasir.Extraction;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -105,7 +106,8 @@ namespace Kvasir.Translation {
             }
 
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
-            principal = new PrincipalTableDef(table, null!, null!);
+            var extractor = new DataExtractionPlan(fieldGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
+            principal = new PrincipalTableDef(table, extractor, null!);
 
             principalTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);
@@ -168,8 +170,12 @@ namespace Kvasir.Translation {
                     throw new DuplicateNameException(context, tableName, match);
                 }
 
+                var extractRelationProperty = new ReadPropertyExtractor(property);
+                var elementExtractor = new DataExtractionPlan(Enumerable.Repeat(relationGroup.Extractor, 1));
+
                 var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
-                var def = new RelationTableDef(table, null!, null!);
+                var extractor = new RelationExtractionPlan(extractRelationProperty, elementExtractor);
+                var def = new RelationTableDef(table, extractor, null!);
 
                 tableNameCache_.Add(tableName, syntheticType);
                 relationTables.Add(def);
