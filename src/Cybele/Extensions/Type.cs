@@ -47,7 +47,9 @@ namespace Cybele.Extensions {
             Guard.Against.Null(ancestorType, nameof(ancestorType));
             Guard.Against.Null(derivedType, nameof(derivedType));
 
-            if (ancestorType == derivedType) {
+            if (ancestorType.Equals(derivedType) || derivedType.Equals(ancestorType)) {
+                // Use `.Equals` in case someone has derived from `Type` and overridden the function; the `operator==`
+                // cannot be overridden that way. The symmetric check is for the same reason.
                 return true;
             }
             else if (ancestorType.IsGenericType && ancestorType.GetGenericTypeDefinition() == typeof(Nullable<>)) {

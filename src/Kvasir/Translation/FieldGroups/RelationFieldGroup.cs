@@ -1,5 +1,6 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Extraction;
 using Kvasir.Relations;
 using Kvasir.Schema;
 using Optional;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -139,6 +141,18 @@ namespace Kvasir.Translation {
             // Native nullability is fully IGNORED by Relations. If a Relation is natively non-nullable, there's nothing
             // to do anyway. If a Relation is natively nullable, we treat a Relation with the value `null` as being
             // identical to the last state it was in (which is "empty" if we've never looked at it before).
+        }
+
+        /// <inheritdoc/>
+        protected sealed override IMultiExtractor CreateExtractor(IEnumerable<FieldGroup> fields) {
+            Debug.Assert(fields is not null);
+            Debug.Assert(fields.Count() >= 2 && fields.Count() <= 3);
+
+            // The Extractor for a RelationFieldGroup should only extract the _element_ values, not the owning Entity
+            // values; this is an optimization to avoid running the reflection over the owning Entity multiple times for
+            // a single Relation or across Relations. The owning Entity will always be represented by the first
+            // FieldGroup, which is why we skip it.
+            return new DecomposingExtractor(fields.OrderBy(g => g.Column.Unwrap()).Skip(1).Select(f => f.Extractor));
         }
 
 

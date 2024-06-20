@@ -1,5 +1,6 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Extraction;
 using Optional;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,6 +41,11 @@ namespace Kvasir.Translation {
         ///   The column index, which must be non-negative and strictly less than the <see cref="Size"/> of the group.
         /// </param>
         public abstract string this[int column] { get; }
+
+        /// <summary>
+        ///   The <see cref="IMultiExtractor"/> for this group.
+        /// </summary>
+        public abstract IMultiExtractor Extractor { get; }
 
         /// <summary>
         ///   Clones this <see cref="FieldGroup"/>.

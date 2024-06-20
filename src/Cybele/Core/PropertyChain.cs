@@ -309,7 +309,7 @@ namespace Cybele.Core {
             if (source is null) {
                 throw new ArgumentNullException(nameof(source));
             }
-            else if (!ReflectedType.IsInstanceOfType(source)) {
+            else if (!source.GetType().IsInstanceOf(ReflectedType)) {
                 var msg = $"{nameof(PropertyChain)} cannot read from object of type {source.GetType().Name}, an " +
                     $"object of type {ReflectedType.Name} is expected";
                 throw new ArgumentException(msg, nameof(source));

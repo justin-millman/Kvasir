@@ -53,19 +53,38 @@ namespace Kvasir.Translation {
         ///   properties. (This is a function because of the circular definition: the SyntheticType needs to know its
         ///   properties, and each SyntheticProperty needs to know its owning SyntheticType.)
         /// </param>
+        /// <param name="equalTo">
+        ///   The <see cref="Type"/> that the new <see cref="SyntheticType"/> should compare equal to. This is required
+        ///   to "lie" to the type system when performing Extraction and Reconstitution, as those subsystems expect the
+        ///   runtime types of arguments to match the reflected types of properties. However, for Relations, the two
+        ///   will not line up: the former will be a scalar or a key-value pair, while the latter will be the Synthetic
+        ///   Type. The "equality façade" allows us to hijack the equality comparisons to pass all the checks.
+        /// </param>
         /// <seealso cref="MakeSyntheticType(Type, RelationTracker)"/>
-        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties) {
+        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties, Type equalTo) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(ns is not null && ns != "");
             Debug.Assert(assmebly is not null);
             Debug.Assert(properties is not null);
+            Debug.Assert(equalTo is not null && equalTo is not SyntheticType);
 
             Name = name;
             Namespace = ns;
             Assembly = assmebly;
             properties_ = properties(this).ToList();
+            equalityFacade_ = equalTo;
 
             Debug.Assert(properties_.Count >= 2);
+        }
+
+        /// <inheritdoc/>
+        public sealed override bool Equals(Type? rhs) {
+            if (rhs == equalityFacade_) {
+                return true;
+            }
+            else {
+                return base.Equals(rhs);
+            }
         }
 
         /// <inheritdoc/>
@@ -185,7 +204,8 @@ namespace Kvasir.Translation {
                         annotations = annotations.Append(new ColumnAttribute(0));
                     }
                     return new SyntheticPropertyInfo(p.Name, t, p.Type, annotations);
-                })
+                }),
+                equalTo: elementType
             );
         }
 
@@ -214,6 +234,7 @@ namespace Kvasir.Translation {
 
 
         private readonly IReadOnlyList<SyntheticPropertyInfo> properties_;
+        private readonly Type equalityFacade_;
         [Flags] private enum Metadata { None = 0, Nullable = 1, Unique = 2, ColumnZero = 4 }
     }
 

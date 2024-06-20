@@ -9147,6 +9147,11 @@
               The column index, which must be non-negative and strictly less than the <see cref="P:Kvasir.Translation.FieldGroup.Size"/> of the group.
             </param>
         </member>
+        <member name="P:Kvasir.Translation.FieldGroup.Extractor">
+            <summary>
+              The <see cref="T:Kvasir.Extraction.IMultiExtractor"/> for this group.
+            </summary>
+        </member>
         <member name="M:Kvasir.Translation.FieldGroup.Clone">
             <summary>
               Clones this <see cref="T:Kvasir.Translation.FieldGroup"/>.
@@ -9329,6 +9334,9 @@
         <member name="P:Kvasir.Translation.MultiFieldGroup.Item(System.Int32)">
             <inheritdoc/>
         </member>
+        <member name="P:Kvasir.Translation.MultiFieldGroup.Extractor">
+            <inheritdoc/>
+        </member>
         <member name="P:Kvasir.Translation.MultiFieldGroup.Kind">
             <summary>
               The "kind" of the backing property (i.e. Aggregate vs. Reference vs. Relation).
@@ -9485,6 +9493,18 @@
               <see cref="T:Kvasir.Annotations.NumericAttribute">[Numeric]</see> annotation is encountered.
             </exception>
         </member>
+        <member name="M:Kvasir.Translation.MultiFieldGroup.CreateExtractor(System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup})">
+            <summary>
+              Create a <see cref="P:Kvasir.Translation.MultiFieldGroup.Extractor"/> for the multi-field group.
+            </summary>
+            <param name="fields">
+              The constituent <see cref="T:Kvasir.Translation.FieldGroup">FieldGroups</see>. These are not necessarily ordered.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Extraction.IMultiExtractor"/> that, when executed, produces the recursively nested value contained by
+              the Fields represented by <paramref name="fields"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Translation.ReferenceFieldGroup">
             <summary>
               A <see cref="T:Kvasir.Translation.MultiFieldGroup"/> backed by an Reference property (i.e. one that is an Entity).
@@ -9617,6 +9637,9 @@
         <member name="M:Kvasir.Translation.RelationFieldGroup.ProcessNativeNullability(Kvasir.Translation.Context)">
             <inheritdoc/>
         </member>
+        <member name="M:Kvasir.Translation.RelationFieldGroup.CreateExtractor(System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup})">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Translation.SingleFieldGroup">
             <summary>
               A <see cref="T:Kvasir.Translation.FieldGroup"/> backed by a scalar or enumeration CLR property, and therefore corresponding to
@@ -9630,6 +9653,9 @@
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.SingleFieldGroup.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SingleFieldGroup.Extractor">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SingleFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo)">
@@ -9900,6 +9926,9 @@
               The reflection representation of a property on a <see cref="T:Kvasir.Translation.SyntheticType"/>.
             </summary>
         </member>
+        <member name="P:Kvasir.Translation.SyntheticPropertyInfo.CanRead">
+            <inheritdoc/>
+        </member>
         <member name="P:Kvasir.Translation.SyntheticPropertyInfo.DeclaringType">
             <inheritdoc/>
         </member>
@@ -9944,10 +9973,10 @@
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetSetMethod(System.Boolean)">
             <inheritdoc/>
         </member>
-        <member name="P:Kvasir.Translation.SyntheticPropertyInfo.Attributes">
+        <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetValue(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
             <inheritdoc/>
         </member>
-        <member name="P:Kvasir.Translation.SyntheticPropertyInfo.CanRead">
+        <member name="P:Kvasir.Translation.SyntheticPropertyInfo.Attributes">
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.SyntheticPropertyInfo.CanWrite">
@@ -9957,9 +9986,6 @@
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetCustomAttributes(System.Boolean)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetValue(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.IsDefined(System.Type,System.Boolean)">
@@ -9991,7 +10017,7 @@
         <member name="P:Kvasir.Translation.SyntheticType.UnderlyingSystemType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticType.#ctor(System.String,System.String,System.Reflection.Assembly,System.Func{Kvasir.Translation.SyntheticType,System.Collections.Generic.IEnumerable{Kvasir.Translation.SyntheticPropertyInfo}})">
+        <member name="M:Kvasir.Translation.SyntheticType.#ctor(System.String,System.String,System.Reflection.Assembly,System.Func{Kvasir.Translation.SyntheticType,System.Collections.Generic.IEnumerable{Kvasir.Translation.SyntheticPropertyInfo}},System.Type)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.SyntheticType"/>.
             </summary>
@@ -10009,7 +10035,17 @@
               properties. (This is a function because of the circular definition: the SyntheticType needs to know its
               properties, and each SyntheticProperty needs to know its owning SyntheticType.)
             </param>
+            <param name="equalTo">
+              The <see cref="T:System.Type"/> that the new <see cref="T:Kvasir.Translation.SyntheticType"/> should compare equal to. This is required
+              to "lie" to the type system when performing Extraction and Reconstitution, as those subsystems expect the
+              runtime types of arguments to match the reflected types of properties. However, for Relations, the two
+              will not line up: the former will be a scalar or a key-value pair, while the latter will be the Synthetic
+              Type. The "equality façade" allows us to hijack the equality comparisons to pass all the checks.
+            </param>
             <seealso cref="M:Kvasir.Translation.SyntheticType.MakeSyntheticType(System.Type,Kvasir.Translation.RelationTracker)"/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticType.Equals(System.Type)">
+            <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.IsArrayImpl">
             <inheritdoc/>

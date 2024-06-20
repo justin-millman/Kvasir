@@ -42,6 +42,7 @@ Archangel
 Archbishop
 Aria
 Armada
+Armory
 Aron Kodesh
 Arrondissement
 Arson
@@ -55,6 +56,7 @@ Atmospheric Layer
 Atoll
 Attribute (C#)
 Auction Lot
+Aurora
 Auto-da-Fé
 Avatar
 Avocado
@@ -242,6 +244,7 @@ Constitution
 Constitutional Amendment
 Cookbook
 Coral Reef
+Corn Maze
 Country
 County
 Coup d'État
@@ -256,10 +259,12 @@ Cryptid
 Cryptocurrency
 Cryptogram
 Cult
+Curling Match
 Currency
 CVE
 Cybersite
 Cyclops
+Cytonic
 D&D Character
 D&D Monster
 D&D Spell
@@ -321,6 +326,7 @@ Encryption
 Encyclopedia
 Engagement Ring
 Enumeration
+Enzyme
 Episode
 Escalator
 Escape Room
@@ -330,6 +336,7 @@ Etiology
 Eunuch
 Eurovision Song Contest
 Excel Range
+Existentialist
 Exorcism
 Experiment
 Expiration
@@ -403,6 +410,7 @@ Ground Meat
 Guillotine
 Guitar
 Gulag
+Guy's Grocery Game
 Gymnast
 Haiku
 Hairstyle
@@ -438,6 +446,7 @@ Hominin
 Honest Trailer
 Horcrux
 Hormone
+Horoscope
 Hospital
 Hostage Situation
 Hot Air Balloon
@@ -457,7 +466,9 @@ IKEA Furniture
 Imaginary Friend
 Immaculate Grid
 Immortal (Highlander)
+Impeachment
 Impractical Joke
+Improv Troupe
 Inator
 Indictment
 Infinity Stone
@@ -474,6 +485,7 @@ Intern
 Internet Craze
 Interview
 Intifada
+Iowa Caucus
 IP Address
 iPhone
 IPO
@@ -500,6 +512,7 @@ King of England
 Kite
 Knife
 Knock-Knock Joke
+Knot
 Kosher Agency
 Labor of Heracles
 Lagerstätte
@@ -515,12 +528,15 @@ Lawn Gnome
 Lawn Mower
 Lazarus Pit
 Lease
+Lego Set
 Legume
 Lens
 Leprechaun
+Library (books)
 License Plate
 Lifeguard
 Ligament
+Lighthouse
 Limbo Competition
 Limerick
 Linker
@@ -550,12 +566,14 @@ Magazine
 Magic System
 Magical Preserve (Fablehaven)
 Mall Santa
+Maori God
 Marathon
 Marble League
 Margarita
 Mariachi Band
 Marian Apparition
 Marijuana Strain
+Mario Kart Racetrack
 Mark-Up Symbol
 Mars Rover
 Masked Singer
@@ -587,6 +605,7 @@ Mongol Khan
 Monopoly Property
 Month
 Moon of Jupiter
+Morgue
 Mosque
 Motorcycle
 Mountain
@@ -610,6 +629,7 @@ Nazca Line
 Nebula
 Necktie
 Necromancer
+Ned's Declassified School Survival Guide Tip
 Neurotoxin
 Neurotransmitter
 News Anchor
@@ -620,6 +640,7 @@ Nobel Prize
 Norse God
 Norse World
 Nuclear Power Plant
+Nucleobase
 NuGet Package
 Nursery Rhyme
 Nymph
@@ -630,11 +651,13 @@ Ocean Current
 Oceanic Trench
 Oceanid
 Octopus
+Ode
 Oil (cooking)
 Oil Field
 Oil Spill
 Ointment
 Olympiad
+Olympian Boon (Hades)
 Onomatopoeia
 Opera
 Opioid
@@ -643,6 +666,7 @@ Organ Procurement Organization
 Orgasm
 Origami
 Orisha
+Orogene
 Orphanage
 Overnight Camp
 PACER Test
@@ -652,6 +676,7 @@ Painting
 Pajamas
 Panegyric
 Papal Bull
+Papal Conclave
 Parabola
 Parashah
 Parking Garage
@@ -688,6 +713,7 @@ Pigment (biology)
 Pillow
 Ping
 Pirate
+Pirate Ship
 Pizza
 Plane of Existence (D&D)
 Planeswalker
@@ -717,6 +743,7 @@ Pregnancy Test
 Prescription
 Presidential Election
 Press Secretary
+Pretzel
 Pride Parade
 Printer
 Prison
@@ -736,6 +763,7 @@ Pull Request
 Pulley
 Pulsar
 Puppet Show
+Python Interpreter
 QR Code
 Quadratic Equation
 Quarterback
@@ -828,6 +856,8 @@ Smoothie
 Smurf
 Snake
 SNL Episode
+Snowball Fight
+Soap Opera
 Soccer Team
 Solar Eclipse
 Solicitor General
@@ -840,6 +870,7 @@ Space Shuttle
 Speakeasy
 Speed Limit
 Speedometer
+Spelling Bee
 Spider
 Spider-Man
 Sporcle Quiz
@@ -855,6 +886,7 @@ Stanley Cup
 Star
 Star-Crossed Lovers
 State of the Union
+State Quarter
 Steak
 Step Pyramid
 Stock
@@ -892,8 +924,10 @@ TED Talk
 Telescope
 Tendon
 Tennis Match
+Teppanyaki
 Tepui
 Terminator
+Territory (Pendragon)
 Terrorist Organization
 Therapist
 Thesis
@@ -905,6 +939,7 @@ Time Traveler
 Time Zone
 Timestamp
 "Title of Your Sex Tape" Joke
+Tlatoani
 Tongue Twister
 Tooth
 Toothbrush
@@ -936,6 +971,7 @@ Umbrella
 Umpire
 UN Resolution
 UN Secretary General
+Underworld
 Union
 University
 Upanishad
@@ -970,6 +1006,7 @@ Weekend Update
 Werewolf
 Where's Waldo?
 White Walker
+Who Wants to Be a Millionaire? Question
 Wikipedia Page
 Wildfire
 Windmill

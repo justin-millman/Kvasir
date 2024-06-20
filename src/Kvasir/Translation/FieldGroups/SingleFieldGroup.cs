@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Core;
+using Kvasir.Extraction;
 using Optional;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,9 @@ namespace Kvasir.Translation {
             }
         }
 
+        /// <inheritdoc/>
+        public sealed override ISingleExtractor Extractor { get; }
+
         /// <summary>
         ///   Constructs a new <see cref="SingleFieldGroup"/>.
         /// </summary>
@@ -47,6 +51,16 @@ namespace Kvasir.Translation {
 
             field_ = MakeField(context, source);
             ProcessAnnotations(context);
+
+            // Extraction for a SingleFieldGroup consists of two parts: reading the value out of the source property,
+            // and then applying any data conversion to it. If the Field has an Enumeration type, we have to
+            // additionally convert the post-conversion result into a string, since Enumerations cannot be stored
+            // directly.
+            Extractor = new ConvertingExtractor(new ReadPropertyExtractor(source), field_.Converter);
+            if (field_.Converter.ResultType.IsEnum) {
+                var toString = new EnumToStringConverter(field_.Converter.ResultType);
+                Extractor = new ConvertingExtractor(Extractor, toString.ConverterImpl);
+            }
         }
 
         /// <summary>
@@ -60,6 +74,7 @@ namespace Kvasir.Translation {
             : base(source) {
 
             field_ = source.field_.Clone();
+            Extractor = source.Extractor;
         }
 
         /// <summary>
@@ -77,6 +92,7 @@ namespace Kvasir.Translation {
             : base(source) {
 
             field_ = source.field_.Reset();
+            Extractor = source.Extractor;
         }
 
         /// <inheritdoc/>
