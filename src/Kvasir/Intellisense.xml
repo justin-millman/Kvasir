@@ -48,23 +48,9 @@
         </member>
         <member name="T:Kvasir.Annotations.CheckAttribute">
             <summary>
-              An annotation that imposes a <c>CHECK</c> constraint on the Field backing a particular property.
+              A non-generic view of a <see cref="T:Kvasir.Annotations.CheckAttribute`1"/>.
             </summary>
-            <seealso cref="T:Kvasir.Annotations.Check.IsNotAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsLessThanAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterThanAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsNonZeroAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsPositiveAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsNegativeAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.Check.ComplexAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.CheckAttribute`1"/>
         </member>
         <member name="P:Kvasir.Annotations.CheckAttribute.Path">
             <inheritdoc/>
@@ -76,53 +62,24 @@
         </member>
         <member name="P:Kvasir.Annotations.CheckAttribute.UserError">
             <summary>
-              The error message explaining why a viable <see cref="T:Kvasir.Core.IConstraintGenerator"/> could not be created from the
-              user input provided to the <see cref="T:Kvasir.Annotations.CheckAttribute"/> constructor. (This value will be
-              <see langword="null"/> if no such error occurred.)
+              The error message explaining why the <see cref="P:Kvasir.Annotations.CheckAttribute.ConstraintGenerator"/> specified in the annotation is
+              invalid, for example if it throws an error during construction. (This value will be <see langword="null"/>
+              if the <see cref="P:Kvasir.Annotations.CheckAttribute.ConstraintGenerator"/> is, in fact, valid.)
             </summary>
         </member>
-        <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(System.Type)">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute"/> class.
-            </summary>
-            <param name="constraint">
-              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
-              clause for this annotation.
-            </param>
-        </member>
-        <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(System.Type,System.Object[])">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute"/> class.
-            </summary>
-            <param name="constraint">
-              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
-              clause for this annotation.
-            </param>
-            <param name="args">
-              The parameterization of the <c>CHECK</c> constraint.
-            </param>
-        </member>
-        <member name="M:Kvasir.Annotations.CheckAttribute.#ctor(Kvasir.Core.IConstraintGenerator)">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute"/> class.
-            </summary>
-            <param name="generator">
-              The already-constructed <see cref="T:Kvasir.Core.IConstraintGenerator"/> to be used to produce the <c>CHECK</c>
-              constraint clause for this annotation.
-            </param>
+        <member name="M:Kvasir.Annotations.CheckAttribute.WithPath(System.String)">
+            <see cref="M:Kvasir.Annotations.INestableAnnotation.WithPath(System.String)"/>
         </member>
         <member name="M:Kvasir.Annotations.CheckAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
             <inheritdoc/>
         </member>
-        <member name="T:Kvasir.Annotations.Check">
+        <member name="T:Kvasir.Annotations.CheckAttribute`1">
             <summary>
-              A pseudo-namespace within which annotations in which specific, predefined constraints are defined.
+              An annotation that imposes a <c>CHECK</c> constraint on the Field backing a particular property.
             </summary>
-        </member>
-        <member name="T:Kvasir.Annotations.Check.ComplexAttribute">
-            <summary>
-              An annotation that imposes a <c>CHECK</c> constraint on the Fields backing a particular set of property.
-            </summary>
+            <typeparam name="TConstraintGenerator">
+              The type of <see cref="T:Kvasir.Core.IConstraintGenerator"/>.
+            </typeparam>
             <seealso cref="T:Kvasir.Annotations.Check.IsNotAttribute"/>
             <seealso cref="T:Kvasir.Annotations.Check.IsLessThanAttribute"/>
             <seealso cref="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute"/>
@@ -137,7 +94,52 @@
             <seealso cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/>
             <seealso cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/>
             <seealso cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute"/>
-            <seealso cref="T:Kvasir.Annotations.CheckAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.ComplexAttribute`1"/>
+        </member>
+        <member name="P:Kvasir.Annotations.CheckAttribute`1.Path">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Annotations.CheckAttribute`1.ConstraintGenerator">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Annotations.CheckAttribute`1.UserError">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute`1.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute`1"/> class.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute`1.#ctor(System.Object[])">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute`1"/> class.
+            </summary>
+            <param name="args">
+              The parameterization of the <c>CHECK</c> constraint.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute`1.#ctor(Kvasir.Core.IConstraintGenerator)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.CheckAttribute`1"/> class.
+            </summary>
+            <param name="generator">
+              The already-constructed <see cref="T:Kvasir.Core.IConstraintGenerator"/> to be used to produce the <c>CHECK</c>
+              constraint clause for this annotation.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.CheckAttribute`1.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Annotations.Check">
+            <summary>
+              A pseudo-namespace within which annotations in which specific, predefined constraints are defined.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Annotations.Check.ComplexAttribute">
+            <summary>
+              A non-generic view of a <see cref="T:Kvasir.Annotations.Check.ComplexAttribute`1"/>.
+            </summary>
+            <seealso cref="T:Kvasir.Annotations.Check.ComplexAttribute`1"/>
         </member>
         <member name="P:Kvasir.Annotations.Check.ComplexAttribute.FieldNames">
             <summary>
@@ -151,32 +153,56 @@
         </member>
         <member name="P:Kvasir.Annotations.Check.ComplexAttribute.UserError">
             <summary>
-              The error message explaining why a viable <see cref="T:Kvasir.Core.IConstraintGenerator"/> could not be created from the
-              user input provided to the <see cref="T:Kvasir.Annotations.CheckAttribute"/> constructor. (This value will be
-              <see langword="null"/> if no such error occurred.)
+              The error message explaining why the <see cref="P:Kvasir.Annotations.Check.ComplexAttribute.ConstraintGenerator"/> specified in the annotation is
+              invalid, for example if it throws an error during construction. (This value will be
+              <see langword="null"/> if the <see cref="P:Kvasir.Annotations.Check.ComplexAttribute.ConstraintGenerator"/> is, in fact, valid.)
             </summary>
         </member>
-        <member name="M:Kvasir.Annotations.Check.ComplexAttribute.#ctor(System.Type,System.String[])">
+        <member name="T:Kvasir.Annotations.Check.ComplexAttribute`1">
             <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.ComplexAttribute"/> class.
+              An annotation that imposes a <c>CHECK</c> constraint on the Fields backing a particular set of property.
             </summary>
-            <param name="constraint">
-              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
-              clause for this annotation.
-            </param>
+            <typeparam name="TConstraintGenerator">
+              The type of <see cref="T:Kvasir.Core.IConstraintGenerator"/>.
+            </typeparam>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNotAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsLessThanAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsLessOrEqualToAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterThanAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsGreaterOrEqualToAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNonZeroAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsPositiveAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNegativeAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsOneOfAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.Check.IsNotOneOfAttribute"/>
+            <seealso cref="T:Kvasir.Annotations.CheckAttribute`1"/>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComplexAttribute`1.FieldNames">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComplexAttribute`1.ConstraintGenerator">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Annotations.Check.ComplexAttribute`1.UserError">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.ComplexAttribute`1.#ctor(System.String[])">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.ComplexAttribute`1"/> class.
+            </summary>
             <param name="fieldNames">
               The names of the backing Fields (<i>NOT</i> the C# properties) to which the <c>CHECK</c> constraint
               imposed by this annotation applies.
             </param>
         </member>
-        <member name="M:Kvasir.Annotations.Check.ComplexAttribute.#ctor(System.Type,System.String[],System.Object[])">
+        <member name="M:Kvasir.Annotations.Check.ComplexAttribute`1.#ctor(System.String[],System.Object[])">
             <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.ComplexAttribute"/> class.
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.ComplexAttribute`1"/> class.
             </summary>
-            <param name="constraint">
-              The <see cref="T:System.Type"/> of the constraint generator to be used to produce the <c>CHECK</c> constraint
-              clause for this annotation.
-            </param>
             <param name="fieldNames">
               The names of the backing Fields (<i>NOT</i> the C# properties) to which the <c>CHECK</c> constraint
               imposed by this annotation applies.
@@ -670,9 +696,9 @@
         </member>
         <member name="T:Kvasir.Annotations.DataConverterAttribute">
             <summary>
-              An annotation that defines the data converter to be used to convert between C# values for a particular
-              property and values of the backing Field.
+              A non-generic view of a <see cref="T:Kvasir.Annotations.DataConverterAttribute`1"/>.
             </summary>
+            <seealso cref="T:Kvasir.Annotations.DataConverterAttribute`1"/>.
         </member>
         <member name="P:Kvasir.Annotations.DataConverterAttribute.DataConverter">
             <summary>
@@ -681,19 +707,30 @@
         </member>
         <member name="P:Kvasir.Annotations.DataConverterAttribute.UserError">
             <summary>
-              The error message explaining why a viable <see cref="P:Kvasir.Annotations.DataConverterAttribute.DataConverter"/> could not be created from the user
-              input provided to the <see cref="T:Kvasir.Annotations.DataConverterAttribute"/> constructor. (This value will be
-              <see langword="null"/> if no such error occurred.)
+              The error message explaining why the <see cref="P:Kvasir.Annotations.DataConverterAttribute.DataConverter"/> specified in the annotation is invalid,
+              for example if it throws an error during construction. (This value will be <see langword="null"/> if the
+              <see cref="P:Kvasir.Annotations.DataConverterAttribute.DataConverter"/> is, in fact, valid.)
             </summary>
         </member>
-        <member name="M:Kvasir.Annotations.DataConverterAttribute.#ctor(System.Type)">
+        <member name="T:Kvasir.Annotations.DataConverterAttribute`1">
             <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Annotations.DataConverterAttribute"/> class.
-            </summary>
-            <param name="converter">
-              The <see cref="T:System.Type"/> of the data converter to be used to convert between C# values of the annotated
+              An annotation that defines the data converter to be used to convert between C# values for a particular
               property and values of the backing Field.
-            </param>
+            </summary>
+            <typeparam name="TConverter">
+              The type of <see cref="T:Kvasir.Core.IDataConverter"/>.
+            </typeparam>
+        </member>
+        <member name="P:Kvasir.Annotations.DataConverterAttribute`1.DataConverter">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Annotations.DataConverterAttribute`1.UserError">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Annotations.DataConverterAttribute`1.#ctor">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.DataConverterAttribute`1"/> class.
+            </summary>
         </member>
         <member name="T:Kvasir.Annotations.DefaultAttribute">
             <summary>

@@ -2491,7 +2491,7 @@ namespace UT.Kvasir.Translation {
         // Test Scenario: Default of Source Type on Data-Converted Property (✗invalid✗)
         public class CrosswordClue {
             [PrimaryKey] public Guid PuzzleID { get; set; }
-            [DataConverter(typeof(ToInt<char>)), Default('A')] public char AcrossOrDown { get; set; }
+            [DataConverter<ToInt<char>>, Default('A')] public char AcrossOrDown { get; set; }
             public ushort Number { get; set; }
             public byte NumLetters { get; set; }
             public string ClueText { get; set; } = "";
@@ -2501,7 +2501,7 @@ namespace UT.Kvasir.Translation {
         public class Coupon {
             [PrimaryKey] public Guid Barcode { get; set; }
             public string? Code { get; set; }
-            [DataConverter(typeof(ToInt<bool>)), Default(0)] public bool IsBOGO { get; set; }
+            [DataConverter<ToInt<bool>>, Default(0)] public bool IsBOGO { get; set; }
             public double? DiscountPercentage { get; set; }
             public float? MinimumPurchase { get; set; }
             public DateTime? ExpirationDate { get; set; }
@@ -3994,17 +3994,17 @@ namespace UT.Kvasir.Translation {
         public class Cenote {
             [PrimaryKey] public string Name { get; set; } = "";
             public float MaxDepth { get; set; }
-            [DataConverter(typeof(Invert))] public bool IsKarst { get; set; }
+            [DataConverter<Invert>] public bool IsKarst { get; set; }
             public decimal Latitude { get; set; }
-            [DataConverter(typeof(Identity<decimal>))] public decimal Longitude { get; set; }
+            [DataConverter<Identity<decimal>>] public decimal Longitude { get; set; }
         }
 
         // Test Scenario: Data Conversion Changes Field's Type to Scalar (✓applied✓)
         public class Comet {
             [PrimaryKey] public Guid AstronomicalIdentifier { get; set; }
             public double Aphelion { get; set; }
-            [DataConverter(typeof(RoundDown))] public double Perihelion { get; set; }
-            [DataConverter(typeof(RoundDown))] public double Eccentricity { get; set; }
+            [DataConverter<RoundDown>] public double Perihelion { get; set; }
+            [DataConverter<RoundDown>] public double Eccentricity { get; set; }
             public ulong MassKg { get; set; }
             public double Albedo { get; set; }
             public float OrbitalPeriod { get; set; }
@@ -4015,7 +4015,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Title { get; set; } = "";
             public string CharacterSaying { get; set; } = "";
             public string CharacterReceiving { get; set; } = "";
-            [DataConverter(typeof(Enumify<int, DayOfWeek>))] public int DayOfWeek { get; set; }
+            [DataConverter<Enumify<int, DayOfWeek>>] public int DayOfWeek { get; set; }
             public int Season { get; set; }
             public int EpisodeNumber { get; set; }
             public double Timestamp { get; set; }
@@ -4030,7 +4030,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public string Deity { get; set; } = "";
             public string? Wielder { get; set; }
-            [DataConverter(typeof(SwapEnums<Campaign, Party>))] public Campaign? IntroducedIn { get; set; }
+            [DataConverter<SwapEnums<Campaign, Party>>] public Campaign? IntroducedIn { get; set; }
             public byte AttackBonus { get; set; }
             public int AverageDamage { get; set; }
             public State CurrentState { get; set; }
@@ -4045,14 +4045,14 @@ namespace UT.Kvasir.Translation {
             public ushort TotalHomers { get; set; }
             public ushort LongestHomer { get; set; }
             public decimal CharityMoney { get; set; }
-            [DataConverter(typeof(MakeDate<Variety>))] public Variety Structure { get; set; }
+            [DataConverter<MakeDate<Variety>>] public Variety Structure { get; set; }
         }
 
         // Test Scenario: Custom Data Conversion for Boolean Field (✓applied✓)
         public class MathematicalConjecture {
             [PrimaryKey] public string Name { get; set; } = "";
             public bool IsMillenniumPrize { get; set; }
-            [DataConverter(typeof(ToInt<bool>))] public bool Solved { get; set; }
+            [DataConverter<ToInt<bool>>] public bool Solved { get; set; }
             public string? Equation { get; set; }
             public DateTime FirstPosited { get; set; }
         }
@@ -4097,7 +4097,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid JoustID { get; set; }
             public string Tourney { get; set; } = "";
             public Person KnightA { get; set; }
-            [DataConverter(typeof(ToInt<Person>))] public Person KnightB { get; set; }
+            [DataConverter<ToInt<Person>>] public Person KnightB { get; set; }
             public double Odds { get; set; }
             public bool Fatal { get; set; }
         }
@@ -4113,7 +4113,7 @@ namespace UT.Kvasir.Translation {
             }
 
             [PrimaryKey] public Guid RaceID { get; set; }
-            [DataConverter(typeof(ToInt<Athlete>))] public Athlete Winner { get; set; } = new();
+            [DataConverter<ToInt<Athlete>>] public Athlete Winner { get; set; } = new();
             public double BestMeters110 { get; set; }
             public double BestLongJump { get; set; }
             public double BestShotPut { get; set; }
@@ -4130,7 +4130,7 @@ namespace UT.Kvasir.Translation {
         public class Bank {
             [PrimaryKey] public uint FDICNumber { get; set; }
             public string Name { get; set; } = "";
-            [DataConverter(typeof(ToInt<RelationMap<ulong, decimal>>))] public RelationMap<ulong, decimal> Accounts { get; set; } = new();
+            [DataConverter<ToInt<RelationMap<ulong, decimal>>>] public RelationMap<ulong, decimal> Accounts { get; set; } = new();
             public string VaultModel { get; set; } = "";
             public sbyte NumTellers { get; set; }
             public decimal CashOnHand { get; set; }
@@ -4143,8 +4143,8 @@ namespace UT.Kvasir.Translation {
         public class RoyalHouse {
             [PrimaryKey] public string HouseName { get; set; } = "";
             public DateTime Founded { get; set; }
-            [DataConverter(typeof(DeNullify<string>))] public string? CurrentHead { get; set; }
-            [DataConverter(typeof(DeNullify<int>))] public int? TotalMonarchs { get; set; }
+            [DataConverter<DeNullify<string>>] public string? CurrentHead { get; set; }
+            [DataConverter<DeNullify<int>>] public int? TotalMonarchs { get; set; }
         }
 
         // Test Scenario: Data Conversion Source Type is Nullable on Non-Nullable Field (✓applied✓)
@@ -4152,18 +4152,18 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public sbyte MannaCost { get; set; }
             public sbyte InitialLoyalty { get; set; }
-            [DataConverter(typeof(Nullify<char>))] public char SetIcon { get; set; }
-            [DataConverter(typeof(Nullify<string>))] public string Ability1 { get; set; } = "";
-            [DataConverter(typeof(Nullify<string>))] public string Ability2 { get; set; } = "";
-            [DataConverter(typeof(Nullify<string>))] public string Ability3 { get; set; } = "";
-            [DataConverter(typeof(Nullify<Guid>))] public Guid SerialNumber { get; set; }
+            [DataConverter<Nullify<char>>] public char SetIcon { get; set; }
+            [DataConverter<Nullify<string>>] public string Ability1 { get; set; } = "";
+            [DataConverter<Nullify<string>>] public string Ability2 { get; set; } = "";
+            [DataConverter<Nullify<string>>] public string Ability3 { get; set; } = "";
+            [DataConverter<Nullify<Guid>>] public Guid SerialNumber { get; set; }
         }
 
         // Test Scenario: CLR Type is Inconvertible to Data Conversion Source Type (✗invalid✗)
         public class Jedi {
             [PrimaryKey] public int WookiepediaID { get; set; }
             public string FirstName { get; set; } = "";
-            [DataConverter(typeof(DeNullify<bool>))] public string? MiddleName { get; set; }
+            [DataConverter<DeNullify<bool>>] public string? MiddleName { get; set; }
             public string? LastName { get; set; }
             public string LightsaberColor { get; set; } = "";
             public double Height { get; set; }
@@ -4174,7 +4174,7 @@ namespace UT.Kvasir.Translation {
 
         // Test Scenario: CLR Type is Convertible to Data Conversion Source Type (✗invalid✗)
         public class ConstitutionalAmendment {
-            [PrimaryKey, DataConverter(typeof(Nullify<long>))] public int Number { get; set; }
+            [PrimaryKey, DataConverter<Nullify<long>>] public int Number { get; set; }
             public DateTime Ratified { get; set; }
             public double RatificationPercentage { get; set; }
             public string Text { get; set; } = "";
@@ -4186,32 +4186,8 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public byte EpisodeNumber { get; set; }
             public string Host { get; set; } = "";
             public string MusicalGuest { get; set; } = "";
-            [DataConverter(typeof(ToError<DateTime>))] public DateTime AirDate { get; set; }
+            [DataConverter<ToError<DateTime>>] public DateTime AirDate { get; set; }
             public ushort WeekendUpdateDuration { get; set; }
-        }
-
-        // Test Scenario: Data Converter is not an `IDataConverter` (✗illegal✗)
-        public class MetraRoute {
-            [PrimaryKey] public int RouteID { get; set; }
-            public string Name { get; set; } = "";
-            public string SourceStation { get; set; } = "";
-            public string Destination { get; set; } = "";
-            [DataConverter(typeof(int))] public string Line { get; set; } = "";
-            public ushort DepartureTime { get; set; }
-        }
-
-        // Test Scenario: Data Converter Cannot be Default Constructed (✗illegal✗)
-        public class Paycheck {
-            [PrimaryKey] public ulong Employee { get; set; }
-            [PrimaryKey] public DateTime Period { get; set; }
-            [DataConverter(typeof(ChangeBase))] public int HoursWorked { get; set; }
-            public double RatePerHour { get; set; }
-            public decimal Net { get; set; }
-            public decimal FederalIncomeTax { get; set; }
-            public decimal StateIncomeTax { get; set; }
-            public decimal SocialSecurity { get; set; }
-            public decimal OtherWithholdings { get; set; }
-            public decimal Gross { get; set; }
         }
 
         // Test Scenario: Data Converter Throws Error upon Construction (✗propagated✗)
@@ -4221,7 +4197,7 @@ namespace UT.Kvasir.Translation {
             public float Length { get; set; }
             public float Weight { get; set; }
             public int Kills { get; set; }
-            [DataConverter(typeof(Unconstructible<short>))] public short YearForged { get; set; }
+            [DataConverter<Unconstructible<short>>] public short YearForged { get; set; }
         }
 
         // Test Scenario: Data Converter Throws upon Execution (✗propagated✗)
@@ -4230,7 +4206,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string MeSH { get; set; } = "";
             public string Name { get; set; } = "";
-            [DataConverter(typeof(Unconvertible<Type>))] public Type Classification { get; set; }
+            [DataConverter<Unconvertible<Type>>] public Type Classification { get; set; }
             public float Length { get; set; }
             public string From { get; set; } = "";
             public string To { get; set; } = "";
@@ -4432,7 +4408,7 @@ namespace UT.Kvasir.Translation {
             public Role Player4 { get; set; }
             public Role Player5 { get; set; }
             public Role? Player6 { get; set; }
-            [DataConverter(typeof(ToString<Role>)), Numeric] public Role? Player7 { get; set; }
+            [DataConverter<ToString<Role>>, Numeric] public Role? Player7 { get; set; }
             public byte LiberalPolicies { get; set; }
             public byte FascistPolicies { get; set; }
             public bool HitlerElectedChancellor { get; set; }
@@ -4447,7 +4423,7 @@ namespace UT.Kvasir.Translation {
             public double Weight { get; set; }
             public double Length { get; set; }
             public decimal? RetailPrice { get; set; }
-            [DataConverter(typeof(ToInt<Material>)), AsString] public Material MadeOf { get; set; }
+            [DataConverter<ToInt<Material>>, AsString] public Material MadeOf { get; set; }
             public bool CurrentlyAffixed { get; set; }
         }
 
@@ -4702,7 +4678,7 @@ namespace UT.Kvasir.Translation {
             public class SwimmingPool {
                 [PrimaryKey] public uint Depth { get; set; }
                 [PrimaryKey] public uint Length { get; set; }
-                [PrimaryKey, DataConverter(typeof(ToInt<char>)), Check.IsPositive] public char Classification { get; set; }
+                [PrimaryKey, DataConverter<ToInt<char>>, Check.IsPositive] public char Classification { get; set; }
                 public bool HasDivingBoard { get; set; }
             }
 
@@ -4711,7 +4687,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string URL { get; set; } = "";
                 public DateTime LastEdited { get; set; }
                 public ulong WordCount { get; set; }
-                [DataConverter(typeof(ToString<ushort>)), Check.IsPositive] public ushort Languages { get; set; }
+                [DataConverter<ToString<ushort>>, Check.IsPositive] public ushort Languages { get; set; }
                 public ulong OutboundLinks { get; set; }
                 public ulong InboundLinks { get; set; }
                 public short Citations { get; set; }
@@ -5128,7 +5104,7 @@ namespace UT.Kvasir.Translation {
                 public ushort Weight { get; set; }
                 public int Wins { get; set; }
                 public int Losses { get; set; }
-                [DataConverter(typeof(ToInt<string>)), Check.IsNegative] public string TKOs { get; set; } = "";
+                [DataConverter<ToInt<string>>, Check.IsNegative] public string TKOs { get; set; } = "";
             }
 
             // Test Scenario: Applied to Field Data-Converted from Numeric Type (✗impermissible✗)
@@ -5137,7 +5113,7 @@ namespace UT.Kvasir.Translation {
                 public ulong OldTestamentMentions { get; set; }
                 public ulong NewTestamentMentions { get; set; }
                 public ulong ApocryphaMentions { get; set; }
-                [DataConverter(typeof(ToString<float>)), Check.IsNegative] public float FirstAppearance { get; set; }
+                [DataConverter<ToString<float>>, Check.IsNegative] public float FirstAppearance { get; set; }
                 public DateTime FeastDay { get; set; }
             }
 
@@ -5553,7 +5529,7 @@ namespace UT.Kvasir.Translation {
                 public ulong FleetSize { get; set; }
                 public ulong YearlyPassengers { get; set; }
                 public ulong Employees { get; set; }
-                [DataConverter(typeof(ToInt<char>)), Check.IsNonZero] public char ConsumerGrade { get; set; }
+                [DataConverter<ToInt<char>>, Check.IsNonZero] public char ConsumerGrade { get; set; }
             }
 
             // Test Scenario: Applied to Field Data-Converted from Numeric Type (✗impermissible✗)
@@ -5561,7 +5537,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ProductNumber { get; set; }
                 public DateTime LastInspected { get; set; }
                 public float MaxLoad { get; set; }
-                [Check.IsNonZero, DataConverter(typeof(ToString<int>))] public int NumFloors { get; set; }
+                [Check.IsNonZero, DataConverter<ToString<int>>] public int NumFloors { get; set; }
             }
 
             // Test Scenario: Scalar Property Constrained Multiple Times (✓redundant✓)
@@ -6079,7 +6055,7 @@ namespace UT.Kvasir.Translation {
             public class Azeotrope {
                 [PrimaryKey] public string Liquid1 { get; set; } = "";
                 [PrimaryKey] public string Liquid2 { get; set; } = "";
-                [DataConverter(typeof(ToString<float>)), Check.IsGreaterThan(-237.44f)] public float BoilingPoint { get; set; }
+                [DataConverter<ToString<float>>, Check.IsGreaterThan(-237.44f)] public float BoilingPoint { get; set; }
             }
 
             // Test Scenario: Anchor of Target Type on Data-Converted Property (✓valid✓)
@@ -6098,7 +6074,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public int CellR3C2 { get; set; }
                 [PrimaryKey] public int CellR3C4 { get; set; }
                 [PrimaryKey] public int CellR3C5 { get; set; }
-                [PrimaryKey, DataConverter(typeof(ToString<int>)), Check.IsGreaterThan("-1")] public int CellR4C1 { get; set; }
+                [PrimaryKey, DataConverter<ToString<int>>, Check.IsGreaterThan("-1")] public int CellR4C1 { get; set; }
                 [PrimaryKey] public int CellR4C2 { get; set; }
                 [PrimaryKey] public int CellR4C3 { get; set; }
                 [PrimaryKey] public int CellR4C4 { get; set; }
@@ -6633,7 +6609,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Genus { get; set; } = "";
                 [PrimaryKey] public string Species { get; set; } = "";
                 public string? CommonName { get; set; }
-                [DataConverter(typeof(ToInt<byte>)), Check.IsLessThan((byte)8)] public byte NumToes { get; set; }
+                [DataConverter<ToInt<byte>>, Check.IsLessThan((byte)8)] public byte NumToes { get; set; }
             }
 
             // Test Scenario: Anchor of Target Type on Data-Converted Property (✓valid✓)
@@ -6641,7 +6617,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid DSMID { get; set; }
                 public string FullName { get; set; } = "";
                 public string FearOf { get; set; } = "";
-                [DataConverter(typeof(ToString<double>)), Check.IsLessThan("100.00001")] public double Prevalence { get; set; }
+                [DataConverter<ToString<double>>, Check.IsLessThan("100.00001")] public double Prevalence { get; set; }
             }
 
             // Test Scenario: Scalar Property Constrained Multiple Times (✓minimized✓)
@@ -7151,7 +7127,7 @@ namespace UT.Kvasir.Translation {
                 public string? CommonName { get; set; }
                 public string? PsychedelicID { get; set; }
                 public bool IsPoisonousToHumans { get; set; }
-                [DataConverter(typeof(ToInt<double>)), Check.IsGreaterOrEqualTo(-18.0933)] public double AverageWeight { get; set; }
+                [DataConverter<ToInt<double>>, Check.IsGreaterOrEqualTo(-18.0933)] public double AverageWeight { get; set; }
             }
 
             // Test Scenario: Anchor of Target Type on Data-Converted Property (✓valid✓)
@@ -7160,7 +7136,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Recipient { get; set; } = "";
                 [PrimaryKey] public DateTime Sent { get; set; }
                 public string Subject { get; set; } = "";
-                [DataConverter(typeof(ToInt<string>)), Check.IsGreaterOrEqualTo(73)] public string CC { get; set; } = "";
+                [DataConverter<ToInt<string>>, Check.IsGreaterOrEqualTo(73)] public string CC { get; set; } = "";
                 public string BCC { get; set; } = "";
                 public bool IsJunk { get; set; }
             }
@@ -7658,7 +7634,7 @@ namespace UT.Kvasir.Translation {
                 public string Vessel { get; set; } = "";
                 public string Intent { get; set; } = "";
                 public string Investiture { get; set; } = "";
-                [DataConverter(typeof(ToInt<bool>)), Check.IsLessOrEqualTo(false)] public bool Splintered { get; set; }
+                [DataConverter<ToInt<bool>>, Check.IsLessOrEqualTo(false)] public bool Splintered { get; set; }
             }
 
             // Test Scenario: Anchor of Target Type on Data-Converted Property (✓valid✓)
@@ -7668,7 +7644,7 @@ namespace UT.Kvasir.Translation {
                 public bool Hidden { get; set; }
                 public string? InnerHTML { get; set; }
                 public string? InlineStyle { get; set; }
-                [DataConverter(typeof(ToString<uint>)), Check.IsLessOrEqualTo("400000")] public uint NumChildren { get; set; }
+                [DataConverter<ToString<uint>>, Check.IsLessOrEqualTo("400000")] public uint NumChildren { get; set; }
             }
 
             // Test Scenario: Scalar Property Constrained Multiple Times (✓minimized✓)
@@ -8153,7 +8129,7 @@ namespace UT.Kvasir.Translation {
                 public string Author { get; set; } = "";
                 public string OriginalLanguage { get; set; } = "";
                 public bool BrothersGrimm { get; set; }
-                [DataConverter(typeof(ToString<bool>)), Check.IsNot(false)] public bool Disneyfied { get; set; }
+                [DataConverter<ToString<bool>>, Check.IsNot(false)] public bool Disneyfied { get; set; }
             }
 
             // Test Scenario: Anchor of Target Type on Data-Converted Property (✓valid✓)
@@ -8163,7 +8139,7 @@ namespace UT.Kvasir.Translation {
                 public bool Destroyed { get; set; }
                 public DateTime Forged { get; set; }
                 public string CentralStone { get; set; } = "";
-                [DataConverter(typeof(ToInt<ushort>)), Check.IsNot(7)] public ushort NumPossessors { get; set; }
+                [DataConverter<ToInt<ushort>>, Check.IsNot(7)] public ushort NumPossessors { get; set; }
             }
 
             // Test Scenario: Scalar Property Constrained Multiple Times with Same Anchor (✓de-duplicated✓)
@@ -8594,7 +8570,7 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
             public class Hourglass {
                 [PrimaryKey] public Guid ID { get; set; }
-                [DataConverter(typeof(ToString<ushort>)), Check.IsNonEmpty] public ushort Duration { get; set; }
+                [DataConverter<ToString<ushort>>, Check.IsNonEmpty] public ushort Duration { get; set; }
                 public double Weight { get; set; }
                 public double Height { get; set; }
             }
@@ -8603,7 +8579,7 @@ namespace UT.Kvasir.Translation {
             public class FoodChain {
                 [PrimaryKey] public string Producer { get; set; } = "";
                 [PrimaryKey] public string PrimaryConsumer { get; set; } = "";
-                [PrimaryKey, DataConverter(typeof(ToInt<string>)), Check.IsNonEmpty] public string SecondaryConsumer { get; set; } = "";
+                [PrimaryKey, DataConverter<ToInt<string>>, Check.IsNonEmpty] public string SecondaryConsumer { get; set; } = "";
                 [PrimaryKey] public string Decomposer { get; set; } = "";
             }
 
@@ -8993,7 +8969,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Who { get; set; } = "";
                 public string From { get; set; } = "";
                 public string To { get; set; } = "";
-                [DataConverter(typeof(ToString<DateTime>)), Check.LengthIsAtLeast(10)] public DateTime Assumed { get; set; }
+                [DataConverter<ToString<DateTime>>, Check.LengthIsAtLeast(10)] public DateTime Assumed { get; set; }
                 public DateTime Terminated { get; set; }
             }
 
@@ -9003,7 +8979,7 @@ namespace UT.Kvasir.Translation {
                 public DateTime Started { get; set; }
                 public DateTime? Fizzled { get; set; }
                 public double Temperature { get; set; }
-                [DataConverter(typeof(ToInt<string>)), Check.LengthIsAtLeast(4)] public string WoodType { get; set; } = "";
+                [DataConverter<ToInt<string>>, Check.LengthIsAtLeast(4)] public string WoodType { get; set; } = "";
             }
 
             // Test Scenario: Anchor is 0 (✓redundant✓)
@@ -9426,7 +9402,7 @@ namespace UT.Kvasir.Translation {
             public class OilSpill {
                 [PrimaryKey] public Guid ID { get; set; }
                 public DateTime When { get; set; }
-                [DataConverter(typeof(ToString<float>)), Check.LengthIsAtMost(14)] public float Volume { get; set; }
+                [DataConverter<ToString<float>>, Check.LengthIsAtMost(14)] public float Volume { get; set; }
                 public decimal CleanupCost { get; set; }
                 public string? ResponsibleParty { get; set; }
             }
@@ -9435,7 +9411,7 @@ namespace UT.Kvasir.Translation {
             public class RandomNumberGenerator {
                 [PrimaryKey] public Guid ID { get; set; }
                 public ulong Seed { get; set; }
-                [DataConverter(typeof(ToInt<string>)), Check.LengthIsAtMost(40)] public string Algorithm { get; set; } = "";
+                [DataConverter<ToInt<string>>, Check.LengthIsAtMost(40)] public string Algorithm { get; set; } = "";
                 public long FirstValue { get; set; }
                 public bool IsCryptographicallySafe { get; set; }
             }
@@ -9867,12 +9843,12 @@ namespace UT.Kvasir.Translation {
                 public bool IsAlive { get; set; }
                 public ushort Mentions { get; set; }
                 public float Power { get; set; }
-                [Check.LengthIsBetween(1, 15), DataConverter(typeof(ToString<int>))] public int? Ajah { get; set; }
+                [Check.LengthIsBetween(1, 15), DataConverter<ToString<int>>] public int? Ajah { get; set; }
             }
 
             // Test Scenario: Applied to Field Data-Converted from String Type (✗impermissible✗)
             public class AtmosphericLayer {
-                [PrimaryKey, DataConverter(typeof(ToInt<string>)), Check.LengthIsBetween(12, 29)] public string Name { get; set; } = "";
+                [PrimaryKey, DataConverter<ToInt<string>>, Check.LengthIsBetween(12, 29)] public string Name { get; set; } = "";
                 public ulong StartingHeight { get; set; }
                 public ulong EndingHeight { get; set; }
                 public double Temperature { get; set; }
@@ -10409,7 +10385,7 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: Allowed Value of Source Type on Data-Converted Property (✗invalid✗)
             public class Burrito {
                 [PrimaryKey] public string Description { get; set; } = "";
-                [DataConverter(typeof(ToInt<string>)), Check.IsOneOf("Chicken", "Steak", "Carnitas", "Barbacoa", "Chorizo")] public string Protein { get; set; } = "";
+                [DataConverter<ToInt<string>>, Check.IsOneOf("Chicken", "Steak", "Carnitas", "Barbacoa", "Chorizo")] public string Protein { get; set; } = "";
                 public bool HasCheese { get; set; }
                 public bool HasSalsa { get; set; }
                 public bool HasLettuce { get; set; }
@@ -10427,7 +10403,7 @@ namespace UT.Kvasir.Translation {
                 public ushort Length { get; set; }
                 public float HeightMinimum { get; set; }
                 public double WeightMaximum { get; set; }
-                [DataConverter(typeof(ToString<int>)), Check.IsOneOf("Straight", "Curly", "Funnel")] public int Type { get; set; }
+                [DataConverter<ToString<int>>, Check.IsOneOf("Straight", "Curly", "Funnel")] public int Type { get; set; }
                 public bool IsTubeSlide { get; set; }
             }
 
@@ -10935,7 +10911,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ID { get; set; }
                 public decimal MarketValue { get; set; }
                 public bool IsElectric { get; set; }
-                [DataConverter(typeof(ToInt<string>)), Check.IsNotOneOf("Cardboard", 14, "Vend-O-Matic", "Allyzom")] public string Brand { get; set; } = "";
+                [DataConverter<ToInt<string>>, Check.IsNotOneOf("Cardboard", 14, "Vend-O-Matic", "Allyzom")] public string Brand { get; set; } = "";
                 public byte NumStrings { get; set; }
             }
 
@@ -10945,7 +10921,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Location { get; set; } = "";
                 [PrimaryKey] public string Nickname { get; set; } = "";
                 public ushort RosterSize { get; set; }
-                [DataConverter(typeof(ToInt<short>)), Check.IsNotOneOf(0, -3, 111)] public short WorldCupVictories { get; set; }
+                [DataConverter<ToInt<short>>, Check.IsNotOneOf(0, -3, 111)] public short WorldCupVictories { get; set; }
                 public string CurrentCoach { get; set; } = "";
                 public string CurrentGoalie { get; set; } = "";
             }
@@ -11149,7 +11125,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public uint Appearances { get; set; }
             public uint StakesUsed { get; set; }
-            [Check(typeof(CustomCheck))] public ushort Deaths { get; set; }
+            [Check<CustomCheck>] public ushort Deaths { get; set; }
             public bool ActivatedByScythe { get; set; }
         }
 
@@ -11158,7 +11134,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string SongTitle { get; set; } = "";
             [PrimaryKey] public int LineNumber { get; set; }
             public string Lyrics { get; set; } = "";
-            [Check(typeof(CustomCheck), 13, false, "ABC", null)] public bool IsSpoken { get; set; }
+            [Check<CustomCheck>(13, false, "ABC", null)] public bool IsSpoken { get; set; }
             public bool IsChorus { get; set; }
         }
 
@@ -11167,11 +11143,11 @@ namespace UT.Kvasir.Translation {
             public struct OrbitalDescription {
                 public double Aphelion { get; set; }
                 public double Perihelion { get; set; }
-                [Check(typeof(CustomCheck))] public float Eccentricity { get; set; }
+                [Check<CustomCheck>] public float Eccentricity { get; set; }
             }
 
             [PrimaryKey] public string Name { get; set; } = "";
-            [Check(typeof(CustomCheck), Path = "Aphelion")] public OrbitalDescription Orbit { get; set; }
+            [Check<CustomCheck>(Path = "Aphelion")] public OrbitalDescription Orbit { get; set; }
             public DateTime Discovered { get; set; }
             public double Length { get; set; }
             public double Width { get; set; }
@@ -11188,7 +11164,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public string Owner { get; set; } = "";
             public ulong Acreage { get; set; }
-            [Check(typeof(CustomCheck), Path = "Vintage")] public Bottling SignatureWine { get; set; }
+            [Check<CustomCheck>(Path = "Vintage")] public Bottling SignatureWine { get; set; }
             public decimal AnnualRevenue { get; set; }
             public string Country { get; set; } = "";
         }
@@ -11208,7 +11184,7 @@ namespace UT.Kvasir.Translation {
             public Listing? Chicago { get; set; }
             public Listing? NewYork { get; set; }
             public Listing? London { get; set; }
-            [Check(typeof(CustomCheck), Path = "Exchange.ExchangeID")] public Listing? Sydney { get; set; }
+            [Check<CustomCheck>(Path = "Exchange.ExchangeID")] public Listing? Sydney { get; set; }
             public Listing? HongKong { get; set; }
         }
 
@@ -11225,7 +11201,7 @@ namespace UT.Kvasir.Translation {
             public record struct Curse(Lycanthropy Source, DateTime Afflicted);
 
             [PrimaryKey] public string Name { get; set; } = "";
-            [Check(typeof(CustomCheck), Path = "Source")] public Curse Lycan { get; set; }
+            [Check<CustomCheck>(Path = "Source")] public Curse Lycan { get; set; }
             public ushort Weight { get; set; }
             public ulong Kills { get; set; }
         }
@@ -11235,7 +11211,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Bear { get; set; } = "";
             public string Color { get; set; } = "";
             public char TummySymbol { get; set; }
-            [Check(typeof(CustomCheck), Path = "Item")] public RelationSet<string> MediaAppearances { get; set; } = new();
+            [Check<CustomCheck>(Path = "Item")] public RelationSet<string> MediaAppearances { get; set; } = new();
             public string LeadDesigner { get; set; } = "";
         }
 
@@ -11249,7 +11225,7 @@ namespace UT.Kvasir.Translation {
             public string River { get; set; } = "";
             public uint NumShops { get; set; }
             public uint NumRestaurants { get; set; }
-            [Check(typeof(CustomCheck), Path = "HolidaysClosed")] public Schedule Hours { get; set; }
+            [Check<CustomCheck>(Path = "HolidaysClosed")] public Schedule Hours { get; set; }
             public decimal AnnualRevenue { get; set; }
             public ulong WalkLength { get; set; }
         }
@@ -11258,7 +11234,7 @@ namespace UT.Kvasir.Translation {
         public class TarotCard {
             [PrimaryKey] public int DeckID { get; set; }
             [PrimaryKey] public ushort CardNumber { get; set; }
-            [Check(typeof(CustomCheck)), Check(typeof(CustomCheck), -14, '%')] public byte Pips { get; set; }
+            [Check<CustomCheck>, Check<CustomCheck>(-14, '%')] public byte Pips { get; set; }
             public string Character { get; set; } = "";
         }
 
@@ -11267,7 +11243,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public string SearchBigO { get; set; } = "";
             public string InsertBigO { get; set; } = "";
-            [DataConverter(typeof(ToInt<string>)), Check(typeof(CustomCheck))] public string RemoveBigO { get; set; } = "";
+            [DataConverter<ToInt<string>>, Check<CustomCheck>] public string RemoveBigO { get; set; } = "";
             public bool IsOrdered { get; set; }
             public bool IsAssociative { get; set; }
             public bool IsContiguous { get; set; }
@@ -11283,17 +11259,8 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public Guid ArkID { get; set; }
             public ushort NumTorahs { get; set; }
-            [Name("HeightOf", Path = "Height"), Check(typeof(CustomCheck), Path = "Height")] public Door LeftDoor { get; set; }
+            [Name("HeightOf", Path = "Height"), Check<CustomCheck>(Path = "Height")] public Door LeftDoor { get; set; }
             public Door RightDoor { get; set; }
-        }
-
-        // Test Scenario: Constraint Generator is not an `IConstraintGenerator` (✗illegal✗)
-        public class Patreon {
-            [PrimaryKey] public string URL { get; set; } = "";
-            public string Creator { get; set; } = "";
-            public decimal Tier1 { get; set; }
-            public decimal Tier2 { get; set; }
-            [Check(typeof(NonSerializedAttribute))] public decimal Tier3 { get; set; }
         }
 
         // Test Scenario: Constraint Generator Cannot Be Default-Constructed (✗illegal✗)
@@ -11302,7 +11269,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public Guid SeizureID { get; set; }
             public double Duration { get; set; }
-            [Check(typeof(PrivateCheck))] public string SufferedBy { get; set; } = "";
+            [Check<PrivateCheck>] public string SufferedBy { get; set; } = "";
             public Category Kind { get; set; }
             public bool Fatal { get; set; }
         }
@@ -11311,7 +11278,7 @@ namespace UT.Kvasir.Translation {
         public class Transistor {
             [PrimaryKey] public Guid ID { get; set; }
             public string Model { get; set; } = "";
-            [Check(typeof(PrivateCheck), "Dopant", 4)] public string? Dopant { get; set; }
+            [Check<PrivateCheck>("Dopant", 4)] public string? Dopant { get; set; }
             public float Transconductance { get; set; }
             public int OperatingTemperature { get; set; }
         }
@@ -11322,7 +11289,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public Guid BuffetID { get; set; }
             public string Restaurant { get; set; } = "";
-            [Check(typeof(UnconstructibleCheck))] public Ethnicity Cuisine { get; set; }
+            [Check<UnconstructibleCheck>] public Ethnicity Cuisine { get; set; }
             public bool AllYouCanEat { get; set; }
             public decimal CostPerPerson { get; set; }
         }
@@ -11332,7 +11299,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public ulong Points { get; set; }
             public float Pct3Pointer { get; set; }
-            [Check(typeof(UnconstructibleCheck), false, 17UL)] public ulong Rebounds { get; set; }
+            [Check<UnconstructibleCheck>(false, 17UL)] public ulong Rebounds { get; set; }
             public ulong Steals { get; set; }
             public ulong Assists { get; set; }
         }
@@ -11342,7 +11309,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string AquariumName { get; set; } = "";
             public ulong NumSpecies { get; set; }
             public ulong TotalGallonsWater { get; set; }
-            [Check(typeof(UnusableCheck))] public bool HasDolphins { get; set; }
+            [Check<UnusableCheck>] public bool HasDolphins { get; set; }
             public decimal AdmissionPrice { get; set; }
             public bool AZA { get; set; }
         }
@@ -11351,7 +11318,7 @@ namespace UT.Kvasir.Translation {
         public class Trilogy {
             [PrimaryKey] public string Title { get; set; } = "";
             public string Entry1 { get; set; } = "";
-            [Check(typeof(CustomCheck), Path = null!)] public string Entry2 { get; set; } = "";
+            [Check<CustomCheck>(Path = null!)] public string Entry2 { get; set; } = "";
             public string Entry3 { get; set; } = "";
         }
 
@@ -11359,7 +11326,7 @@ namespace UT.Kvasir.Translation {
         public class TarPits {
             [PrimaryKey] public string TarPitsName { get; set; } = "";
             public float Area { get; set; }
-            [Check(typeof(CustomCheck), Path = "---")] public string FirstFossil { get; set; } = "";
+            [Check<CustomCheck>(Path = "---")] public string FirstFossil { get; set; } = "";
             public bool IsNationalArea { get; set; }
             public double Latitude { get; set; }
             public double Longitude { get; set; }
@@ -11371,7 +11338,7 @@ namespace UT.Kvasir.Translation {
             public record struct Name(string FirstName, char MiddleInitial, string LastName);
 
             public Name Lover1 { get; set; }
-            [Check(typeof(CustomCheck), Path = "---")] public Name Lover2 { get; set; }
+            [Check<CustomCheck>(Path = "---")] public Name Lover2 { get; set; }
             [PrimaryKey] public string SourceMaterial { get; set; } = "";
             public Feud SeparationReason { get; set; }
         }
@@ -11386,7 +11353,7 @@ namespace UT.Kvasir.Translation {
             public Kind ZombieType { get; set; }
             public Necrotization Head { get; set; }
             public Necrotization Torso { get; set; }
-            [Check(typeof(CustomCheck))] public Necrotization Legs { get; set; }
+            [Check<CustomCheck>] public Necrotization Legs { get; set; }
             public Necrotization Arms { get; set; }
         }
 
@@ -11407,7 +11374,7 @@ namespace UT.Kvasir.Translation {
             public ulong Weight { get; set; }
             public byte BlackKeys { get; set; }
             public byte WhiteKeys { get; set; }
-            [Check(typeof(Company), Path = "---")] public Company Manufacturer { get; set; } = new();
+            [Check<CustomCheck>(Path = "---")] public Company Manufacturer { get; set; } = new();
             public decimal MarketValue { get; set; }
             public bool IsReligious { get; set; }
         }
@@ -11426,7 +11393,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Possessed { get; set; } = "";
             [PrimaryKey] public string Exorciser { get; set; } = "";
             [PrimaryKey] public DateTime When { get; set; }
-            [Check(typeof(CustomCheck), Path = "Incipience")] public Possession Target { get; set; } = new();
+            [Check<CustomCheck>(Path = "Incipience")] public Possession Target { get; set; } = new();
             public bool Successful { get; set; }
             public bool Fatal { get; set; }
         }
@@ -11445,7 +11412,7 @@ namespace UT.Kvasir.Translation {
             public double AmountPondScum { get; set; }
             public ushort NumDucks { get; set; }
             public ushort NumFishes { get; set; }
-            [Check(typeof(CustomCheck))] public Coordinate Location { get; set; } = new();
+            [Check<CustomCheck>] public Coordinate Location { get; set; } = new();
         }
 
         // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
@@ -11463,7 +11430,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string Name { get; set; } = "";
             public Kind Classification { get; set; }
-            [Check(typeof(CustomCheck), Path = "---")] public RelationList<City> Cities { get; set; } = new();
+            [Check<CustomCheck>(Path = "---")] public RelationList<City> Cities { get; set; } = new();
             public string PostalCode { get; set; } = "";
             public Language OfficialLanguages { get; set; }
             public Reps Representation { get; set; }
@@ -11477,14 +11444,14 @@ namespace UT.Kvasir.Translation {
             public string Name { get; set; } = "";
             public double Height { get; set; }
             public double Weight { get; set; }
-            [Check(typeof(CustomCheck), Path = "Skydiver.Height")] public RelationMap<DateTime, long> Dives { get; set; } = new();
+            [Check<CustomCheck>(Path = "Skydiver.Height")] public RelationMap<DateTime, long> Dives { get; set; } = new();
             public Vehicle HasJumpedFrom { get; set; }
         }
 
         // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
         public class Spring {
             [PrimaryKey] public Guid ID { get; set; }
-            [Check(typeof(CustomCheck))] public RelationSet<string> ConstituentMetals { get; set; } = new();
+            [Check<CustomCheck>] public RelationSet<string> ConstituentMetals { get; set; } = new();
             public double SpringConstant { get; set; }
             public ushort NumCoils { get; set; }
         }
@@ -11492,7 +11459,7 @@ namespace UT.Kvasir.Translation {
 
     internal static class ComplexCheckConstraints {
         // Test Scenario: No Constructor Arguments (✓constrained✓)
-        [Check.Complex(typeof(CustomCheck), new[] { "FirstLine" })]
+        [Check.Complex<CustomCheck>(new[] { "FirstLine" })]
         public class CanterburyTale {
             [PrimaryKey] public int Index { get; set; }
             public string Whose { get; set; } = "";
@@ -11501,7 +11468,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Constructor Arguments (✓constrained✓)
-        [Check.Complex(typeof(CustomCheck), new[] { "ConclaveRounds" }, -93, true, 'X')]
+        [Check.Complex<CustomCheck>(new[] { "ConclaveRounds" }, -93, true, 'X')]
         public class Pope {
             [PrimaryKey] public string PapalName { get; set; } = "";
             [PrimaryKey] public uint PapalNumber { get; set; }
@@ -11512,7 +11479,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Zero Fields (✗illegal✗)
-        [Check.Complex(typeof(CustomCheck), new string[] {})]
+        [Check.Complex<CustomCheck>(new string[] {})]
         public class Terminator {
             [PrimaryKey] public string Model { get; set; } = "";
             [PrimaryKey] public ushort Number { get; set; }
@@ -11522,7 +11489,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Multiple Distinct Fields (✓constrained✓)
-        [Check.Complex(typeof(CustomCheck), new[] { "Major", "Minor", "Patch" })]
+        [Check.Complex<CustomCheck>(new[] { "Major", "Minor", "Patch" })]
         public class LinuxDistribution {
             [PrimaryKey] public string Name { get; set; } = "";
             [PrimaryKey] public ulong Major { get; set; }
@@ -11534,7 +11501,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Single Field Multiple Times (✓constrained✓)
-        [Check.Complex(typeof(CustomCheck), new[] { "Name", "Name", "Name", "Name" })]
+        [Check.Complex<CustomCheck>(new[] { "Name", "Name", "Name", "Name" })]
         public class Muppet {
             [PrimaryKey] public string Name { get; set; } = "";
             public DateTime Debut { get; set; }
@@ -11544,7 +11511,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Name-Swapped Fields (✓constrained✓)
-        [Check.Complex(typeof(CustomCheck), new[] { "Cuisine", "ContainsTomatoes" })]
+        [Check.Complex<CustomCheck>(new[] { "Cuisine", "ContainsTomatoes" })]
         public class PastaSauce {
             [PrimaryKey] public string Name { get; set; } = "";
             public bool IsMotherSauce { get; set; }
@@ -11556,7 +11523,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Name-Changed Field with Original Name (✗illegal✗)
-        [Check.Complex(typeof(CustomCheck), new string[] { "Width" })]
+        [Check.Complex<CustomCheck>(new string[] { "Width" })]
         public class Dam {
             [PrimaryKey] public Guid ID { get; set; }
             public string Name { get; set; } = "";
@@ -11568,7 +11535,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Unrecognized Field (✗illegal✗)
-        [Check.Complex(typeof(CustomCheck), new string[] { "Belligerents" })]
+        [Check.Complex<CustomCheck>(new string[] { "Belligerents" })]
         public class PeaceTreaty {
             [PrimaryKey] public string TreatyName { get; set; } = "";
             public DateTime Signed { get; set; }
@@ -11578,18 +11545,18 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Data-Converted Field (✓constrained✓)
-        [Check.Complex(typeof(CustomCheck), new[] { "When", "Casualties", "When" })]
+        [Check.Complex<CustomCheck>(new[] { "When", "Casualties", "When" })]
         public class Massacre {
             [PrimaryKey] public string Name { get; set; } = "";
             public ulong Casualties { get; set; }
             public bool WarCrime { get; set; }
-            [DataConverter(typeof(Nullify<DateTime>))] public DateTime When { get; set; }
+            [DataConverter<Nullify<DateTime>>] public DateTime When { get; set; }
         }
 
         // Test Scenario: Applied to Single Entity Type Multiple Times (✓constrained✓)
-        [Check.Complex(typeof(CustomCheck), new[] { "LengthMinutes" })]
-        [Check.Complex(typeof(CustomCheck), new[] { "SungThrough" })]
-        [Check.Complex(typeof(CustomCheck), new[] { "SungThrough" })]
+        [Check.Complex<CustomCheck>(new[] { "LengthMinutes" })]
+        [Check.Complex<CustomCheck>(new[] { "SungThrough" })]
+        [Check.Complex<CustomCheck>(new[] { "SungThrough" })]
         public class Musical {
             [PrimaryKey] public string Title { get; set; } = "";
             public bool SungThrough { get; set; }
@@ -11598,23 +11565,8 @@ namespace UT.Kvasir.Translation {
             public ushort TonyAwards { get; set; }
         }
 
-        // Test Scenario: Constraint Generator is not an `IConstraintGenerator` (✗illegal✗)
-        [Check.Complex(typeof(AssemblyLoadEventArgs), new[] { "Invisibility", "FirstIssue" })]
-        public class Mutant {
-            [PrimaryKey] public string CodeName { get; set; } = "";
-            public string BirthName { get; set; } = "";
-            public string Description { get; set; } = "";
-            public bool Invisibility { get; set; }
-            public bool Flight { get; set; }
-            public bool Telekinesis { get; set; }
-            public bool ElementalPowers { get; set; }
-            public bool SuperSpeed { get; set; }
-            public DateTime FirstIssue { get; set; }
-            public uint Appearances { get; set; }
-        }
-
         // Test Scenario: Constraint Generator Cannot Be Constructed (✗illegal✗)
-        [Check.Complex(typeof(PrivateCheck), new[] { "Omega3s", "Omega6s" }, 'O', 'I', 'L', '!')]
+        [Check.Complex<PrivateCheck>(new[] { "Omega3s", "Omega6s" }, 'O', 'I', 'L', '!')]
         public class CookingOil {
             [PrimaryKey] public string Type { get; set; } = "";
             public decimal SmokePoint { get; set; }
@@ -11624,7 +11576,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Constraint Generator Throws Error upon Construction (✗propagated✗)
-        [Check.Complex(typeof(UnconstructibleCheck), new[] { "Born", "Died" }, "Lifespan", 2918.01f, true)]
+        [Check.Complex<UnconstructibleCheck>(new[] { "Born", "Died" }, "Lifespan", 2918.01f, true)]
         public class Pirate {
             [PrimaryKey] public string PirateName { get; set; } = "";
             [PrimaryKey] public string LandName { get; set; } = "";
@@ -11636,7 +11588,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Constraint Generator Throws Error when Creating Constraint (✗propagated✗)
-        [Check.Complex(typeof(UnusableCheck), new[] { "Namespace", "ClassName" })]
+        [Check.Complex<UnusableCheck>(new[] { "Namespace", "ClassName" })]
         public class Attribute {
             [PrimaryKey] public string Namespace { get; set; } = "";
             [PrimaryKey] public string ClassName { get; set; } = "";
@@ -12364,8 +12316,8 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public string Civilization { get; set; } = "";
             [Column(2)] public string Lord { get; set; } = "";
-            [Column(3), DataConverter(typeof(Invert))] public bool ForMortals { get; set; }
-            [Column(4), DataConverter(typeof(MakeDate<int>))] public int GoogleResults { get; set; }
+            [Column(3), DataConverter<Invert>] public bool ForMortals { get; set; }
+            [Column(4), DataConverter<MakeDate<int>>] public int GoogleResults { get; set; }
         }
 
         // Scenario: [Numeric] Applied to Enumeration Property (✓converted values extracted✓)
@@ -12500,8 +12452,8 @@ namespace UT.Kvasir.Translation {
         // Scenario: Data Conversion Applied to Aggregate-Nested Fields (✓converted values extracted✓)
         public class GroceryGame {
             public struct Episode {
-                [Column(0), DataConverter(typeof(ToInt<byte>))] public byte Season { get; set; }
-                [Column(1), DataConverter(typeof(ToInt<byte>))] public byte Number { get; set; }
+                [Column(0), DataConverter<ToInt<byte>>] public byte Season { get; set; }
+                [Column(1), DataConverter<ToInt<byte>>] public byte Number { get; set; }
                 [Column(2)] public string Judge1 { get; set; }
                 [Column(3)] public string Judge2 { get; set; }
                 [Column(4)] public string Judge3 { get; set; }
@@ -12584,7 +12536,7 @@ namespace UT.Kvasir.Translation {
         // Scenario: Data Conversion Applied to Reference-Nested Field (✓converted values extracted✓)
         public class CurlingMatch {
             public class OlympicOrganization {
-                [PrimaryKey, DataConverter(typeof(AllCaps)), Column(0)] public string Code { get; set; } = "";
+                [PrimaryKey, DataConverter<AllCaps>, Column(0)] public string Code { get; set; } = "";
                 [Column(1)] public string Country { get; set; } = "";
                 [Column(2)] public short Recognized { get; set; }
             }
@@ -12746,10 +12698,10 @@ namespace UT.Kvasir.Translation {
 
             public struct Listing {
                 [Column(0)] public string Prediction { get; set; }
-                [Column(1), DataConverter(typeof(ToInt<char>))] public char Sex { get; set; }
-                [Column(2), DataConverter(typeof(ToInt<char>))] public char Hustle { get; set; }
-                [Column(3), DataConverter(typeof(ToInt<char>))] public char Vibe { get; set; }
-                [Column(4), DataConverter(typeof(ToInt<char>))] public char Success { get; set; }
+                [Column(1), DataConverter<ToInt<char>>] public char Sex { get; set; }
+                [Column(2), DataConverter<ToInt<char>>] public char Hustle { get; set; }
+                [Column(3), DataConverter<ToInt<char>>] public char Vibe { get; set; }
+                [Column(4), DataConverter<ToInt<char>>] public char Success { get; set; }
             }
 
             [PrimaryKey, Column(0)] public Zodiac Sign { get; set; }

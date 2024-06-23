@@ -21,10 +21,16 @@ namespace Kvasir.Translation {
         public static string AnnotationDisplayName(Type type) {
             Debug.Assert(type.IsInstanceOf(typeof(Attribute)));
 
-            if (type.FullName!.Contains(".Check+")) {
+            if (type.Name.StartsWith("CheckAttribute")) {
+                return "Check";
+            }
+            else if (type.Name.Contains("ComplexAttribute")) {
+                return "Check.Complex";
+            }
+            else if (type.FullName!.Contains(".Check+")) {
                 return "Check." + type.Name[..^9];
             }
-            else {
+            else { 
                 return type.Name[..^9];
             }
         }

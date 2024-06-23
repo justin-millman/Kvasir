@@ -11,26 +11,12 @@ using System.Linq;
 namespace UT.Kvasir.Annotations {
     [TestClass, TestCategory("Check Attributes")]
     public class CheckAttributeTests : AnnotationTestBase {
-        [TestMethod] public void Check_TypeNotConstraintGenerator() {
-            // Arrange
-            var constraintType = typeof(int);
-
-            // Act
-            var attr = new CheckAttribute(constraintType);
-
-            // Assert
-            attr.UserError.Should()
-                .Match($"*int*").And
-                .Match($"*{nameof(IConstraintGenerator)}*").And
-                .Match("*does not implement*");
-        }
-
         [TestMethod] public void Check_ErrorConstructingGenerator() {
             // Arrange
             var constraintType = typeof(ErrorConstraint);
 
             // Act
-            var attr = new CheckAttribute(constraintType);
+            var attr = new CheckAttribute<ErrorConstraint>();
 
             // Assert
             attr.UserError.Should()
@@ -45,7 +31,7 @@ namespace UT.Kvasir.Annotations {
             var constraintType = typeof(SimpleConstraint);
 
             // Act
-            var attr = new CheckAttribute(constraintType);
+            var attr = new CheckAttribute<SimpleConstraint>();
 
             // Assert
             attr.Path.Should().BeEmpty();
@@ -59,7 +45,7 @@ namespace UT.Kvasir.Annotations {
             var constraintType = typeof(SimpleConstraint);
 
             // Act
-            var attr = new CheckAttribute(typeof(SimpleConstraint)) { Path = path };
+            var attr = new CheckAttribute<SimpleConstraint>() { Path = path };
 
             // Assert
             attr.Path.Should().Be(path);
@@ -72,7 +58,7 @@ namespace UT.Kvasir.Annotations {
             var constraintType = typeof(ComplexConstraint);
 
             // Act
-            var attr = new CheckAttribute(constraintType);
+            var attr = new CheckAttribute<ComplexConstraint>();
 
             // Assert
             attr.UserError.Should()
@@ -86,7 +72,7 @@ namespace UT.Kvasir.Annotations {
             var constraintType = typeof(ComplexConstraint);
 
             // Act
-            var attr = new CheckAttribute(constraintType, ComplexConstraint.Argument);
+            var attr = new CheckAttribute<ComplexConstraint>(ComplexConstraint.Argument);
 
             // Assert
             attr.Path.Should().BeEmpty();
@@ -100,7 +86,7 @@ namespace UT.Kvasir.Annotations {
             var constraintType = typeof(ComplexConstraint);
 
             // Act
-            var attr = new CheckAttribute(constraintType, ComplexConstraint.Argument) { Path = path };
+            var attr = new CheckAttribute<ComplexConstraint>(ComplexConstraint.Argument) { Path = path };
 
             // Assert
             attr.Path.Should().Be(path);
@@ -114,7 +100,7 @@ namespace UT.Kvasir.Annotations {
             var args = new object[] { 100, "Aloha", 'u' };
 
             // Act
-            var attr = new CheckAttribute(constraintType, args);
+            var attr = new CheckAttribute<ComplexConstraint>(args);
 
             // Assert
             attr.UserError.Should()
@@ -127,21 +113,22 @@ namespace UT.Kvasir.Annotations {
             // Arrange
             var path = "Nested.Path";
             var constraintType = typeof(ComplexConstraint);
-            var original = new CheckAttribute(constraintType, ComplexConstraint.Argument);
+            var original = new CheckAttribute<ComplexConstraint>(ComplexConstraint.Argument);
 
             // Act
             var attr = (original as INestableAnnotation).WithPath(path);
 
             // Assert
-            attr.Should().BeOfType<CheckAttribute>();
+            attr.Should().BeOfType<CheckAttribute<ComplexConstraint>>();
             attr.Path.Should().Be(path);
-            (attr as CheckAttribute)!.UserError.Should().BeNull();
-            (attr as CheckAttribute)!.ConstraintGenerator.Should().Be(original.ConstraintGenerator);
+            (attr as CheckAttribute<ComplexConstraint>)!.UserError.Should().BeNull();
+            (attr as CheckAttribute<ComplexConstraint>)!.ConstraintGenerator.Should().BeOfType(constraintType);
+            (attr as CheckAttribute<ComplexConstraint>)!.ConstraintGenerator.Should().Be(original.ConstraintGenerator);
         }
 
         [TestMethod] public void Check_UniqueId() {
             // Arrange
-            var attr = new CheckAttribute(typeof(SimpleConstraint));
+            var attr = new CheckAttribute<SimpleConstraint>();
 
             // Act
             var isUnique = ids_.Add(attr.TypeId);
@@ -150,26 +137,12 @@ namespace UT.Kvasir.Annotations {
             isUnique.Should().BeTrue();
         }
 
-        [TestMethod] public void CheckComplex_TypeNotConstraintGenerator() {
-            // Arrange
-            var constraintType = typeof(AnnotationTestBase);
-
-            // Act
-            var attr = new Check.ComplexAttribute(constraintType, new string[] { "F0", "F1" });
-
-            // Assert
-            attr.UserError.Should()
-                .Match($"*{constraintType.Name}*").And
-                .Match($"*{nameof(IConstraintGenerator)}*").And
-                .Match("*does not implement*");
-        }
-
         [TestMethod] public void CheckComplex_ErrorConstructingGenerator() {
             // Arrange
             var constraintType = typeof(ErrorConstraint);
 
             // Act
-            var attr = new Check.ComplexAttribute(constraintType, new string[] { "F0", "F1" });
+            var attr = new Check.ComplexAttribute<ErrorConstraint>(new string[] { "F0", "F1" });
 
             // Assert
             attr.UserError.Should()
@@ -185,7 +158,7 @@ namespace UT.Kvasir.Annotations {
             var fields = new string[] { "F0", "F1" };
 
             // Act
-            var attr = new Check.ComplexAttribute(constraintType, fields);
+            var attr = new Check.ComplexAttribute<SimpleConstraint>(fields);
 
             // Assert
             attr.FieldNames.Should().BeEquivalentTo(fields.Select(n => new FieldName(n)));
@@ -198,7 +171,7 @@ namespace UT.Kvasir.Annotations {
             var fields = new string[] { "F0", "F1" };
 
             // Act
-            var attr = new Check.ComplexAttribute(constraintType, fields);
+            var attr = new Check.ComplexAttribute<ComplexConstraint>(fields);
 
             // Assert
             attr.UserError.Should()
@@ -213,7 +186,7 @@ namespace UT.Kvasir.Annotations {
             var fields = new string[] { "F0", "F1" };
 
             // Act
-            var attr = new Check.ComplexAttribute(constraintType, fields, ComplexConstraint.Argument);
+            var attr = new Check.ComplexAttribute<ComplexConstraint>(fields, ComplexConstraint.Argument);
 
             // Assert
             attr.FieldNames.Should().BeEquivalentTo(fields.Select(n => new FieldName(n)));
@@ -227,7 +200,7 @@ namespace UT.Kvasir.Annotations {
             var fields = new string[] { "F0", "F1" };
 
             // Act
-            var attr = new Check.ComplexAttribute(constraintType, fields, args);
+            var attr = new Check.ComplexAttribute<SimpleConstraint>(fields, args);
 
             // Assert
             attr.UserError.Should()
@@ -239,7 +212,7 @@ namespace UT.Kvasir.Annotations {
         [TestMethod] public void CheckComplex_UniqueId() {
             // Arrange
             var fields = new string[] { "F0", "F1" };
-            var attr = new Check.ComplexAttribute(typeof(SimpleConstraint), fields);
+            var attr = new Check.ComplexAttribute<SimpleConstraint>(fields);
 
             // Act
             var isUnique = ids_.Add(attr.TypeId);
