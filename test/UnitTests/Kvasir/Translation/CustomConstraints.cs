@@ -277,22 +277,6 @@ namespace UT.Kvasir.Translation {
             );
         }
 
-        [TestMethod] public void Check_ConstraintGeneratorDoesNotImplementInterface_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(Patreon);
-
-            // Act
-            var translate = () => translator[source];
-
-            // Assert
-            translate.Should().FailWith<InvalidCustomConstraintException>()
-                .WithLocation("`Patreon` → Tier3")
-                .WithProblem("`NonSerializedAttribute` does not implement the `IConstraintGenerator` interface")
-                .WithAnnotations("[Check]")
-                .EndMessage();
-        }
-
         [TestMethod] public void Check_ConstraintGeneratorNoViableDefaultConstructor_IsError() {
             // Arrange
             var translator = new Translator();
@@ -774,22 +758,6 @@ namespace UT.Kvasir.Translation {
                 Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 1),
                 Settings.Default
             );
-        }
-
-        [TestMethod] public void ComplexCheck_ConstraintGeneratorDoesNotImplementInterface_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(Mutant);
-
-            // Act
-            var translate = () => translator[source];
-
-            // Assert
-            translate.Should().FailWith<InvalidCustomConstraintException>()
-                .WithLocation("`Mutant`")
-                .WithProblem("`AssemblyLoadEventArgs` does not implement the `IConstraintGenerator` interface")
-                .WithAnnotations("[Check.Complex]")
-                .EndMessage();
         }
 
         [TestMethod] public void ComplexCheck_ConstraintGeneratorNoViableArgumentsConstructor_IsError() {

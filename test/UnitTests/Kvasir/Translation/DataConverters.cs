@@ -354,38 +354,6 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void DataConverterTypeDoesNotImplementInterface_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(MetraRoute);
-
-            // Act
-            var translate = () => translator[source];
-
-            // Assert
-            translate.Should().FailWith<InvalidDataConverterException>()
-                .WithLocation("`MetraRoute` → Line")
-                .WithProblem("`int` does not implement the `IDataConverter` interface")
-                .WithAnnotations("[DataConverter]")
-                .EndMessage();
-        }
-
-        [TestMethod] public void DataConverterTypeCannotBeDefaultConstructed_IsError() {
-            // Arrange
-            var translator = new Translator();
-            var source = typeof(Paycheck);
-
-            // Act
-            var translate = () => translator[source];
-
-            // Assert
-            translate.Should().FailWith<InvalidDataConverterException>()
-                .WithLocation("`Paycheck` → HoursWorked")
-                .WithProblem("`ChangeBase` does not have a default (i.e. no-parameter) constructor")
-                .WithAnnotations("[DataConverter]")
-                .EndMessage();
-        }
-
         [TestMethod] public void DataConverterTypeThrowsOnConstruction_IsError() {
             // Arrange
             var translator = new Translator();

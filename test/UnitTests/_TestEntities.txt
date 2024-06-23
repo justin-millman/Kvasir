@@ -589,7 +589,6 @@ Meme
 Memory Buffer
 Merit Badge
 Mesopotamian God
-Metra Route
 Mezuzah
 Military Base
 Militia
@@ -619,7 +618,6 @@ Museum
 Mushroom
 Musical
 Mustache
-Mutant (X-Men)
 Mythbusting
 National Anthem
 National Monument
@@ -684,9 +682,7 @@ Parking Ticket
 Passport
 Pasta Sauce
 Patent
-Patreon
 Pawn Shop
-Paycheck
 Peace Treaty
 Peanut Butter
 Peerage

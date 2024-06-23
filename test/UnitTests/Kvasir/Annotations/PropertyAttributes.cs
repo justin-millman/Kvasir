@@ -92,40 +92,12 @@ namespace UT.Kvasir.Annotations {
 
         [TestMethod] public void DataConverter_Direct() {
             // Arrange
-            var type = typeof(GoodConverter);
 
             // Act
-            var attr = new DataConverterAttribute(type);
+            var attr = new DataConverterAttribute<GoodConverter>();
 
             // Assert
             attr.DataConverter.Should().BeOfType<DataConverter>();
-        }
-
-        [TestMethod] public void DataConverter_WrongInterface() {
-            // Arrange
-            var type = typeof(string);
-
-            // Act
-            var attr = new DataConverterAttribute(type);
-
-            // Assert
-            attr.UserError.Should()
-                .Match($"*string*").And
-                .Match($"*{nameof(IDataConverter)}*").And
-                .Match("*does not implement*");
-        }
-
-        [TestMethod] public void DataConverter_NotDefaultConstructible() {
-            // Arrange
-            var type = typeof(BadConverter);
-
-            // Act
-            var attr = new DataConverterAttribute(type);
-
-            // Assert
-            attr.UserError.Should()
-                .Match($"*{type.Name}*").And
-                .Match("*default*constructor*");
         }
 
         [TestMethod] public void DataConverter_ErrorConstructingConverter() {
@@ -133,7 +105,7 @@ namespace UT.Kvasir.Annotations {
             var type = typeof(ErrorConverter);
 
             // Act
-            var attr = new DataConverterAttribute(type);
+            var attr = new DataConverterAttribute<ErrorConverter>();
 
             // Assert
             attr.UserError.Should()
@@ -144,7 +116,7 @@ namespace UT.Kvasir.Annotations {
 
         [TestMethod] public void DataConverter_UniqueId() {
             // Arrange
-            var attr = new DataConverterAttribute(typeof(GoodConverter));
+            var attr = new DataConverterAttribute<GoodConverter>();
 
             // Act
             var isUnique = ids_.Add(attr.TypeId);
