@@ -7470,15 +7470,18 @@
               translated due to a reference from <paramref name="source"/>.
             </exception>
         </member>
-        <member name="M:Kvasir.Translation.Translator.#ctor">
+        <member name="M:Kvasir.Translation.Translator.#ctor(System.Func{System.Type,System.Collections.Generic.IEnumerable{System.Object}})">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Translation.Translator.#ctor(Kvasir.Core.Settings)">
+        <member name="M:Kvasir.Translation.Translator.#ctor(System.Func{System.Type,System.Collections.Generic.IEnumerable{System.Object}},Kvasir.Core.Settings)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
+            <param name="entityLookup">
+              The function used to lookup the collection of existing Entities for a given <see cref="T:System.Type"/>.
+            </param>
             <param name="settings">
               The <see cref="T:Kvasir.Core.Settings"/> according to which to perform the translation.
             </param>

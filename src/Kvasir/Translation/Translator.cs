@@ -37,8 +37,8 @@ namespace Kvasir.Translation {
         /// <summary>
         ///   Constructs a new <see cref="Translator"/> that uses default <see cref="Settings"/>.
         /// </summary>
-        public Translator()
-            : this(Settings.Default) {
+        public Translator(EntityLookup entityLookup)
+            : this(entityLookup, Settings.Default) {
 
             // Need to reset this because the constructor delegation causes the "calling assembly" to actually be the
             // one of the Translator itself, but we need it to be the assembly that initially called into the Translator
@@ -48,6 +48,9 @@ namespace Kvasir.Translation {
         /// <summary>
         ///   Constructs a new <see cref="Translator"/> that uses custom <see cref="Settings"/>.
         /// </summary>
+        /// <param name="entityLookup">
+        ///   The function used to lookup the collection of existing Entities for a given <see cref="Type"/>.
+        /// </param>
         /// <param name="settings">
         ///   The <see cref="Settings"/> according to which to perform the translation.
         /// </param>
@@ -56,11 +59,13 @@ namespace Kvasir.Translation {
         ///   <see cref="Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
         ///   us to provide customization of behaviors in the future without necessitating a significant redesign.
         /// </remarks>
-        public Translator(Settings settings) {
+        public Translator(EntityLookup entityLookup, Settings settings) {
+            Debug.Assert(entityLookup is not null);
             Debug.Assert(settings is not null);
 
             settings_ = settings;
             callingAssembly_ = Assembly.GetCallingAssembly();
+            entityLookup_ = entityLookup;
             typeCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
             principalTableCache_ = new Dictionary<Type, PrincipalTableDef>();
             tableNameCache_ = new Dictionary<TableName, Type>();
@@ -71,6 +76,7 @@ namespace Kvasir.Translation {
 
         private readonly Settings settings_;
         private readonly Assembly callingAssembly_;
+        private readonly EntityLookup entityLookup_;
         private readonly Dictionary<Type, IReadOnlyList<FieldGroup>> typeCache_;
         private readonly Dictionary<Type, PrincipalTableDef> principalTableCache_;
         private readonly Dictionary<TableName, Type> tableNameCache_;

@@ -3,6 +3,7 @@ using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.ReferenceCycles;
 
 namespace UT.Kvasir.Translation {
@@ -10,7 +11,7 @@ namespace UT.Kvasir.Translation {
     public class ReferenceCycleTests {
         [TestMethod] public void SelfReferentialEntity_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Constitution);
 
             // Act
@@ -25,7 +26,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void EntityReferenceChainLength2_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Niqqud);
 
             // Act
@@ -40,7 +41,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void EntityReferenceCycleLength3OrMore_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(RefugeeCamp);
 
             // Act
@@ -55,7 +56,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationReferenceCycle_DirectElement() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(SoftwarePackage);
 
             // Act
@@ -111,7 +112,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationReferenceCycle_AggregateElement() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Indictment);
 
             // Act
@@ -146,7 +147,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationReferenceCycle_ReferenceElement() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(StackFrame);
 
             // Act
@@ -173,7 +174,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void SystemReferenceCycle_ReferenceRelation() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Filibuster);
 
             // Act

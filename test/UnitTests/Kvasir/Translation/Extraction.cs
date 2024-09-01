@@ -5,6 +5,7 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
+using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.DataExtraction;
 using static UT.Kvasir.Translation.TestConverters;
 
@@ -24,7 +25,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Morgue)];
             var data = translation.Principal.Extractor.ExtractFrom(morgue);
 
@@ -51,7 +52,7 @@ namespace UT.Kvasir.Translation {
             PythonInterpreter.BackEndLanguage = PythonInterpreter.Language.CPP;
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(PythonInterpreter)];
             var data = translation.Principal.Extractor.ExtractFrom(interpreter);
 
@@ -78,7 +79,7 @@ namespace UT.Kvasir.Translation {
             ship.SetNumCannons(30);
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(PirateShip)];
             var data = translation.Principal.Extractor.ExtractFrom(ship);
 
@@ -105,7 +106,7 @@ namespace UT.Kvasir.Translation {
             Enzyme.FirstDiscovered = new DateTime(1906, 7, 22);
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Enzyme)];
             var data = translation.Principal.Extractor.ExtractFrom(enzyme);
 
@@ -132,7 +133,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Ode)];
             var data = translation.Principal.Extractor.ExtractFrom(ode);
 
@@ -158,7 +159,7 @@ namespace UT.Kvasir.Translation {
             (tlatoani as IWorldLeader).Name = "Montezuma II";
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Tlatoani)];
             var data = translation.Principal.Extractor.ExtractFrom(tlatoani);
 
@@ -183,7 +184,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(StateQuarter)];
             var data = translation.Principal.Extractor.ExtractFrom(quarter);
 
@@ -206,7 +207,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Aurora)];
             var data = translation.Principal.Extractor.ExtractFrom(aurora);
 
@@ -229,7 +230,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Underworld)];
             var data = translation.Principal.Extractor.ExtractFrom(underworld);
 
@@ -254,7 +255,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(CornMaze)];
             var data = translation.Principal.Extractor.ExtractFrom(maze);
 
@@ -280,7 +281,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(MarioKartRacetrack)];
             var data = translation.Principal.Extractor.ExtractFrom(racetrack);
 
@@ -303,7 +304,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Lighthouse)];
             var data = translation.Principal.Extractor.ExtractFrom(lighthouse);
 
@@ -325,7 +326,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Nucleobase)];
             var data = translation.Principal.Extractor.ExtractFrom(nucleobase);
 
@@ -353,7 +354,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(LegoSet)];
             var data = translation.Principal.Extractor.ExtractFrom(legos);
 
@@ -385,7 +386,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(SnowballFight)];
             var data = translation.Principal.Extractor.ExtractFrom(fight);
 
@@ -410,7 +411,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Knot)];
             var data = translation.Principal.Extractor.ExtractFrom(knot);
 
@@ -433,7 +434,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(); ;
+            var translator = new Translator(NO_ENTITIES); ;
             var translation = translator[typeof(Armory)];
             var data = translation.Principal.Extractor.ExtractFrom(armory);
 
@@ -482,7 +483,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(MillionaireQuestion)];
             var data = translation.Principal.Extractor.ExtractFrom(question);
 
@@ -525,7 +526,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(GroceryGame)];
             var data = translation.Principal.Extractor.ExtractFrom(game);
 
@@ -560,7 +561,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(PapalConclave)];
             var data = translation.Principal.Extractor.ExtractFrom(conclave);
 
@@ -589,7 +590,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Cytonic)];
             var data = translation.Principal.Extractor.ExtractFrom(cytonic);
 
@@ -617,7 +618,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(SoapOpera)];
             var data = translation.Principal.Extractor.ExtractFrom(soapOpera);
 
@@ -644,7 +645,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Library)];
             var data = translation.Principal.Extractor.ExtractFrom(library);
 
@@ -680,7 +681,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(CurlingMatch)];
             var data = translation.Principal.Extractor.ExtractFrom(match);
 
@@ -707,7 +708,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Pretzel)];
             var data = translation.Relations[0].Extractor.ExtractFrom(pretzel);
 
@@ -742,7 +743,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Teppanyaki)];
             var setData = translation.Relations[0].Extractor.ExtractFrom(teppanyaki);
             var listData = translation.Relations[1].Extractor.ExtractFrom(teppanyaki);
@@ -781,7 +782,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(SpellingBee)];
             var data = translation.Relations[0].Extractor.ExtractFrom(spellingBee);
 
@@ -813,7 +814,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(ImprovTroupe)];
             var data = translation.Relations[0].Extractor.ExtractFrom(troupe);
 
@@ -844,7 +845,7 @@ namespace UT.Kvasir.Translation {
             (tip.For as IRelation).Canonicalize();
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(NedsDeclassifiedTip)];
             var data = translation.Relations[0].Extractor.ExtractFrom(tip);
 
@@ -870,7 +871,7 @@ namespace UT.Kvasir.Translation {
             territory.Travellers[1] = "Osa";
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(PendragonTerritory)];
             var data = translation.Relations[0].Extractor.ExtractFrom(territory);
 
@@ -902,7 +903,7 @@ namespace UT.Kvasir.Translation {
             caucus.DelegatesEarned.Remove("uncommitted");
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(IowaCaucus)];
             var data = translation.Relations[0].Extractor.ExtractFrom(caucus);
 
@@ -924,7 +925,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Existentialist)];
             var data = translation.Relations[0].Extractor.ExtractFrom(existentialist);
 
@@ -950,7 +951,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Orogene)];
             var _ = translation.Relations[0].Extractor.ExtractFrom(orogene);
             orogene.Appearances = null;
@@ -978,7 +979,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(OlympianBoon)];
             var data = translation.Relations[0].Extractor.ExtractFrom(boon);
 
@@ -1027,7 +1028,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Impeachment)];
             var data = translation.Relations[0].Extractor.ExtractFrom(impeachment);
 
@@ -1052,7 +1053,7 @@ namespace UT.Kvasir.Translation {
             god.Family[god] = MaoriGod.Relation.Self;
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(MaoriGod)];
             var data = translation.Relations[0].Extractor.ExtractFrom(god);
 
@@ -1084,7 +1085,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Horoscope)];
             var data = translation.Relations[0].Extractor.ExtractFrom(horoscope);
 
