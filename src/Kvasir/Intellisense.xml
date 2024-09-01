@@ -1032,6 +1032,39 @@
         <member name="M:Kvasir.Annotations.UniqueAttribute.Kvasir#Annotations#INestableAnnotation#WithPath(System.String)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Core.EntityDepot">
+            <summary>
+              A collection of Entities, indexable by <see cref="T:System.Type"/>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Core.EntityDepot.Item(System.Type)">
+            <summary>
+              Get all the (untyped) Entities of a particular <see cref="T:System.Type"/> that have been stored.
+            </summary>
+            <param name="type">
+              [GET] The <see cref="T:System.Type"/> of Entity.
+            </param>
+            <seealso cref="M:Kvasir.Core.EntityDepot.GetEntities``1"/>
+        </member>
+        <member name="M:Kvasir.Core.EntityDepot.#ctor">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Core.EntityDepot"/> with no stored Entities.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Core.EntityDepot.GetEntities``1">
+            <summary>
+              Get all the (typed) Entities of a particular <see cref="T:System.Type"/> that have been stored.
+            </summary>
+            <seealso cref="P:Kvasir.Core.EntityDepot.Item(System.Type)"/>
+        </member>
+        <member name="M:Kvasir.Core.EntityDepot.StoreEntity(System.Object)">
+            <summary>
+              Store a new Entity.
+            </summary>
+            <param name="entity">
+              The Entity to store.
+            </param>
+        </member>
         <member name="T:Kvasir.Core.EnumToNumericConverter">
             <summary>
               A built-in <see cref="T:Kvasir.Core.IDataConverter"/> that bidirectionally converts between enumerations and their
