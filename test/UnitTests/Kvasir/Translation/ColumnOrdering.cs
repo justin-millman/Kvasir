@@ -2,6 +2,7 @@
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.ColumnOrdering;
 
 namespace UT.Kvasir.Translation {
@@ -9,7 +10,7 @@ namespace UT.Kvasir.Translation {
     public class ColumnOrderingTests {
         [TestMethod] public void AllFieldsOrdered() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Fraction);
 
             // Act
@@ -25,7 +26,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void SomeScalarFieldsOrdered() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Parashah);
 
             // Act
@@ -43,7 +44,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void AggregateFieldsOrdered() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Armada);
 
             // Act
@@ -69,7 +70,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ReferenceFieldsOrdered() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(EdibleArrangement);
 
             // Act
@@ -92,7 +93,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationTableOrdering() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(DebitCard);
 
             // Act
@@ -116,7 +117,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationFieldsOrdered_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Tapestry);
 
             // Act
@@ -132,7 +133,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ReferencePrimaryKeysAreNonSequential() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(MassExtinction);
 
             // Act
@@ -151,7 +152,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationAnchorPrimaryKeysAreNonSequential() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(DuoPush);
 
             // Act
@@ -167,7 +168,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void TwoScalarFieldsOrderedToSameIndexInEntity_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Pizza);
 
             // Act
@@ -182,7 +183,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void TwoScalarFieldsOrderedToSameIndexInAggregate_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(BiblicalPlague);
 
             // Act
@@ -197,7 +198,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void TwoNestedFieldsOrderedToSameIndex_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Coup);
 
             // Act
@@ -213,7 +214,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ScalarAndNestedFieldOrderedToSameIndex_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Bread);
 
             // Act
@@ -228,7 +229,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ColumnOrderingOfScalarsLeavesGaps_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(PhoneNumber);
 
             // Act
@@ -243,7 +244,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ColumnOrderingOfAggregatesLeavesGaps_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Verb);
 
             // Act
@@ -258,7 +259,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ColumnOrderingOfReferencesLeavesGaps_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Origami);
 
             // Act
@@ -273,7 +274,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NegativeColumnIndex_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(NationalPark);
 
             // Act

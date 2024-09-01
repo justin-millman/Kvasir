@@ -2,6 +2,7 @@
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.FieldClusivity;
 
 namespace UT.Kvasir.Translation {
@@ -9,7 +10,7 @@ namespace UT.Kvasir.Translation {
     public class FieldClusivityTests {
         [TestMethod] public void EntityHasZeroFields_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Nothing);
 
             // Act
@@ -24,7 +25,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void EntityHasOneField_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Integer);
 
             // Act
@@ -39,7 +40,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void AggregateHasZeroFields_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(TotemPole);
 
             // Act
@@ -54,7 +55,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NonPublicPropertiesAreExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Animal);
 
             // Act
@@ -69,7 +70,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void PublicWriteOnlyPropertiesAreExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(ScrabbleTile);
 
             // Act
@@ -84,7 +85,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void PublicPropertiesWithNonPublicAccessorsAreExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(ChemicalElement);
 
             // Act
@@ -99,7 +100,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void PublicStaticPropertiesAreExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Circle);
 
             // Act
@@ -115,7 +116,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void PublicIndexerPropertiesAreExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(BattingOrder);
 
             // Act
@@ -130,7 +131,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_PublicReadableInstanceProperty() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(QuadraticEquation);
 
             // Act
@@ -146,7 +147,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_RelationProperty() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(LazarusPit);
 
             // Act
@@ -158,7 +159,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void FirstDefinedVirtualPropertyIsIncluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(GreekGod);
 
             // Act
@@ -174,7 +175,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void InterfacePropertiesAreExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Movie);
 
             // Act
@@ -191,7 +192,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void InheritedClassPropertiesAreExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Holiday);
 
             // Act
@@ -206,7 +207,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void VirtualPropertyOverrideIsExcluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(POBox);
 
             // Act
@@ -221,7 +222,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void HidingPropertiesAreIncluded() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(FighterJet);
 
             // Act
@@ -238,7 +239,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_PublicIndexer_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Language);
 
             // Act
@@ -253,7 +254,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_PublicWriteOnlyProperty_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(HebrewPrayer);
 
             // Act
@@ -268,7 +269,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_PublicStaticProperty() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(ChessPiece);
 
             // Act
@@ -285,7 +286,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_NonPublicProperties() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Song);
 
             // Act
@@ -305,7 +306,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_PublicPropertiesWithNonPublicAccessors() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Country);
 
             // Act
@@ -324,7 +325,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_InterfaceProperty() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Book);
 
             // Act
@@ -339,7 +340,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_VirtualPropertyOverride() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Drum);
 
             // Act
@@ -355,7 +356,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_ExplicitInterfaceImplementationScalar() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(BasicDiceRoll);
 
             // Act
@@ -374,7 +375,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_ExplicitInterfaceImplementationAggregate() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Wrestler);
 
             // Act
@@ -394,7 +395,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_InterfaceProperty_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(IPAddress);
 
             // Act
@@ -409,7 +410,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_VirtualPropertyOverride_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Submarine);
 
             // Act
@@ -428,7 +429,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_PublicWriteOnlyProperty_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(CourtCase);
 
             // Act
@@ -445,7 +446,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_NonPublicProperties_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Lake);
 
             // Act
@@ -461,7 +462,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_PublicPropertiesWithNonPublicAccessors_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Mountain);
 
             // Act
@@ -478,7 +479,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_PublicStaticProperty_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Tossup);
 
             // Act
@@ -496,7 +497,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CodeOnly_PublicIndexer_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(University);
 
             // Act
@@ -514,7 +515,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IncludeInModel_PublicReadableInstanceProperty_Redundant() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(Haiku);
 
             // Act
@@ -532,7 +533,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CombinedAnnotation_CodeOnlyAndIncludeInModel_IsError() {
             // Arrange
-            var translator = new Translator();
+            var translator = new Translator(NO_ENTITIES);
             var source = typeof(CreditCard);
 
             // Act
