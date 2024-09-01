@@ -143,6 +143,9 @@ namespace UT.Kvasir.Reconstitution {
             pair.GetPrivateValue().Should().Be("");
             Pair.Value3.Should().Be(value);
             creator.Received().CreateFrom(row);
+
+            // Reset (for parallel tests)
+            Pair.Value3 = "";
         }
 
 
