@@ -1651,12 +1651,17 @@
         <member name="P:Kvasir.Reconstitution.DefaultStructCreator.ResultType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Reconstitution.DefaultStructCreator.#ctor(System.Type)">
+        <member name="M:Kvasir.Reconstitution.DefaultStructCreator.#ctor(System.Type,System.Boolean)">
             <summary>
               Create a new <see cref="T:Kvasir.Reconstitution.DefaultStructCreator"/>.
             </summary>
             <param name="type">
               The <see cref="P:Kvasir.Reconstitution.DefaultStructCreator.ResultType"/> of the new <see cref="T:Kvasir.Reconstitution.DefaultStructCreator"/>.
+            </param>
+            <param name="allowAllNulls">
+              If <see langword="true"/>, then a new non-<see langword="null"/> CLR object will be constructed even if
+              each of the <see cref="T:Kvasir.Schema.DBValue">database values</see> provided is <see cref="P:Kvasir.Schema.DBValue.NULL"/>. If
+              <see langword="false"/>, then such a set of values will result in a <see langword="null"/> object.
             </param>
         </member>
         <member name="M:Kvasir.Reconstitution.DefaultStructCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">

@@ -434,13 +434,57 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var row = new DBValue[] { DBValue.Create("Cologne"), DBValue.Create("Siem Reap") };
-            var creator = new DefaultStructCreator(type);
+            var creator = new DefaultStructCreator(type, false);
             var value = creator.CreateFrom(row);
 
             // Assert
             creator.ResultType.Should().Be(type);
             value.Should().BeOfType<Point>();
             ((Point)value!).IsEmpty.Should().BeTrue();
+        }
+
+        [TestMethod] public void ConstructFromSomeNulls() {
+            // Arrange
+            var type = typeof(Point);
+
+            // Act
+            var row = new DBValue[] { DBValue.Create("Chittagong"), DBValue.NULL };
+            var creator = new DefaultStructCreator(type, false);
+            var value = creator.CreateFrom(row);
+
+            // Assert
+            creator.ResultType.Should().Be(type);
+            value.Should().BeOfType<Point>();
+            ((Point)value!).IsEmpty.Should().BeTrue();
+        }
+
+        [TestMethod] public void ConstructFromAllNullRowAllowed() {
+            // Arrange
+            var type = typeof(Point);
+
+            // Act
+            var row = new DBValue[] { DBValue.NULL, DBValue.NULL };
+            var creator = new DefaultStructCreator(type, true);
+            var value = creator.CreateFrom(row);
+
+            // Assert
+            creator.ResultType.Should().Be(type);
+            value.Should().BeOfType<Point>();
+            ((Point)value!).IsEmpty.Should().BeTrue();
+        }
+
+        [TestMethod] public void ConstructFromAllNullRowDisallowed() {
+            // Arrange
+            var type = typeof(Point);
+
+            // Act
+            var row = new DBValue[] { DBValue.NULL, DBValue.NULL };
+            var creator = new DefaultStructCreator(type, false);
+            var value = creator.CreateFrom(row);
+
+            // Assert
+            creator.ResultType.Should().Be(type);
+            value.Should().BeNull();
         }
     }
 
