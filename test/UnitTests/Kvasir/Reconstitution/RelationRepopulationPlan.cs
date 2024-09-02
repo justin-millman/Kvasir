@@ -19,7 +19,7 @@ namespace UT.Kvasir.Reconstitution {
             extractor.ResultType.Returns(typeof(IRelation));
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
-            var reconstitutor = new DataReconstitutionPlan(creator, Array.Empty<IMutator>());
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act
@@ -43,7 +43,7 @@ namespace UT.Kvasir.Reconstitution {
             extractor.ExtractFrom(Arg.Any<object?>()).Returns(relation);
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
-            var reconstitutor = new DataReconstitutionPlan(creator, Array.Empty<IMutator>());
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act
@@ -68,7 +68,7 @@ namespace UT.Kvasir.Reconstitution {
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
             creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(elements[0]);
-            var reconstitutor = new DataReconstitutionPlan(creator, Array.Empty<IMutator>());
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act
@@ -93,7 +93,7 @@ namespace UT.Kvasir.Reconstitution {
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
             creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(elements[0], elements[1..]);
-            var reconstitutor = new DataReconstitutionPlan(creator, Array.Empty<IMutator>());
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act

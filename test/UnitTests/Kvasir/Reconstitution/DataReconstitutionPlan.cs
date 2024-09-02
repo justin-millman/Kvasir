@@ -19,7 +19,7 @@ namespace UT.Kvasir.Reconstitution {
             // Act
             var row = new DBValue[] { DBValue.Create(18124.0f), DBValue.Create(false), DBValue.NULL };
             var mutators = Array.Empty<IMutator>();
-            var plan = new DataReconstitutionPlan(creator, mutators);
+            var plan = new DataReconstitutionPlan(new ReconstitutingCreator(creator, mutators));
             var value = plan.ReconstituteFrom(row);
 
             // Assert
@@ -39,7 +39,7 @@ namespace UT.Kvasir.Reconstitution {
             // Act
             var row = new DBValue[] { DBValue.Create(long.MinValue), DBValue.Create(DateTime.Now) };
             var mutators = new IMutator[] { mutator };
-            var plan = new DataReconstitutionPlan(creator, mutators);
+            var plan = new DataReconstitutionPlan(new ReconstitutingCreator(creator, mutators));
             var value = plan.ReconstituteFrom(row);
 
             // Assert
@@ -68,7 +68,7 @@ namespace UT.Kvasir.Reconstitution {
             // Act
             var row = new DBValue[] { DBValue.Create(new Guid()) };
             var mutators = new IMutator[] { mutator0, mutator1, mutator2, mutator3, mutator4 };
-            var plan = new DataReconstitutionPlan(creator, mutators);
+            var plan = new DataReconstitutionPlan(new ReconstitutingCreator(creator, mutators));
             var value = plan.ReconstituteFrom(row);
 
             // Assert
