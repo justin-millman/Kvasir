@@ -294,7 +294,7 @@ namespace UT.Kvasir.Translation {
             data[4].Datum.Should().Be(racetrack.AvailableOnline);
         }
 
-        [TestMethod] public void Calculated() {
+        [TestMethod] public void CalculatedScalar() {
             // Arrange
             var lighthouse = new Lighthouse() {
                 Name = "Pemaquid Point Lighthouse",
@@ -1064,6 +1064,76 @@ namespace UT.Kvasir.Translation {
             data.Deletions.Should().BeEmpty();
         }
 
+        [TestMethod] public void AggregateNestedRelation() {
+            // Arrange
+            var center = new DataCenter() {
+                ID = Guid.NewGuid(),
+                LiquidCooled = true,
+                Statistics = new DataCenter.Stats() {
+                    CO2 = 17895.233,
+                    Electricity = 380,
+                    Dimensions = new() {
+                        { "Length", 800 },
+                        { "Height", 300 },
+                        { "Width", 475 },
+                    },
+                    Machines = new DataCenter.Computers() {
+                        NumCabinets = 50,
+                        RacksPerCabinet = 25,
+                        Brands = new() {
+                            "Apple",
+                            "Microsoft",
+                            "Lenovo",
+                            "Dell"
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(DataCenter)];
+            var data0 = translation.Relations[0].Extractor.ExtractFrom(center);
+            var data1 = translation.Relations[1].Extractor.ExtractFrom(center);
+
+            // Assert
+            data0.Insertions.Should().HaveCount(3);
+            data0.Insertions.Should().ContainRow("Length", 800.0);
+            data0.Insertions.Should().ContainRow("Height", 300.0);
+            data0.Insertions.Should().ContainRow("Width", 475.0);
+            data0.Modifications.Should().BeEmpty();
+            data0.Deletions.Should().BeEmpty();
+            data1.Insertions.Should().HaveCount(4);
+            data1.Insertions.Should().ContainRow("Apple");
+            data1.Insertions.Should().ContainRow("Microsoft");
+            data1.Insertions.Should().ContainRow("Lenovo");
+            data1.Insertions.Should().ContainRow("Dell");
+            data1.Modifications.Should().BeEmpty();
+            data1.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void CalculatedRelation() {
+            // Arrange
+            var chameleon = new Chameleon() {
+                ReptileID = new Guid(),
+                TimesChangedColor = 8719287581,
+                Genus = "Furcifer",
+                Species = "Pardalis"
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Chameleon)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(chameleon);
+
+            // Assert
+            data.Insertions.Should().HaveCount(2);
+            data.Insertions.Should().ContainRow(0U, chameleon.Eyes[0].ConeDensity, chameleon.Eyes[0].RodDensity, chameleon.Eyes[0].VisionRange);
+            data.Insertions.Should().ContainRow(1U, chameleon.Eyes[1].ConeDensity, chameleon.Eyes[1].RodDensity, chameleon.Eyes[1].VisionRange);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+        
         [TestMethod] public void RelationNestedDataConversion() {
             // Arrange
             var horoscope = new Horoscope() {

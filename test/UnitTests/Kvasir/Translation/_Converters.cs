@@ -58,6 +58,10 @@ namespace UT.Kvasir.Translation {
             public ulong Convert(double source) { return (ulong)source; }
             public double Revert(ulong result) { return (double)result + 0.25; }
         }
+        public class Stars : IDataConverter<string, int> {
+            public int Convert(string source) { return source.Length; }
+            public string Revert(int result) { return new string('*', result); }
+        }
         public class SwapEnums<A, B> : IDataConverter<A, B> where A : notnull, Enum where B : Enum {
             public B Convert(A source) { return (B)System.Convert.ChangeType(source, typeof(int)); }
             public A Revert(B result) { return (A)System.Convert.ChangeType(result, typeof(int)); }

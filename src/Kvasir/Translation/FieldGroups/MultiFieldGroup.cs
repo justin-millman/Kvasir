@@ -1,6 +1,8 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Extraction;
+using Kvasir.Reconstitution;
+using Optional;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +20,12 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         public sealed override bool AllNullable => fields_.Values.All(g => g.AllNullable);
+
+        /// <inheritdoc/>
+        public sealed override bool IsNativelyNullable => isNativelyNullable_;
+
+        /// <inheritdoc/>
+        public sealed override string ReconstitutionArgumentName => reconstitutionArgumentName_;
 
         /// <summary>
         ///   The nullable-stripped CLR type of the <see cref="FieldGroup.Source">source</see> property.
@@ -46,10 +54,18 @@ namespace Kvasir.Translation {
         /// <inheritdoc/>
         public sealed override IMultiExtractor Extractor { get; }
 
+        /// <inheritdoc/>
+        public sealed override Option<ICreator> Creator { get; protected init; }
+
         /// <summary>
         ///   The "kind" of the backing property (i.e. Aggregate vs. Reference vs. Relation).
         /// </summary>
         protected abstract MultiKind Kind { get; }
+
+        /// <summary>
+        ///   Whether of not the group is annotated as being <c>[Calculated]</c>.
+        /// </summary>
+        protected bool IsCalculated { get; }
 
         /// <summary>
         ///   Constructs a new <see cref="MultiFieldGroup"/> that has no nested Relations.
@@ -102,10 +118,13 @@ namespace Kvasir.Translation {
             Debug.Assert(trackers is not null);
 
             name_ = source.Name.Split('.')[^1];
+            reconstitutionArgumentName_ = name_;
+            isNativelyNullable_ = false;
             nullabilityAnnotated_ = false;
             nameAnnotated_ = false;
             fields_ = fields.ToDictionary(f => f.Source.Name.Split('.')[^1], f => f);
             trackers_ = trackers.ToDictionary(t => t.Property.Name.Split('.')[^1], t => t);
+            IsCalculated = source.HasAttribute<CalculatedAttribute>();
             SetNamePrefix(context, new List<string>() {});
             ProcessAnnotations(context);
 
@@ -117,6 +136,9 @@ namespace Kvasir.Translation {
                 Extractor = CreateExtractor(fields);
             }
             Debug.Assert(Extractor is not null || Kind == MultiKind.Aggregate);
+
+            // Creator has to be set in derived class based on full set of Fields (if not [Calculated])
+            Creator = Option.None<ICreator>();
         }
 
         /// <summary>
@@ -130,11 +152,15 @@ namespace Kvasir.Translation {
             : base(source) {
 
             name_ = source.name_;
+            reconstitutionArgumentName_ = source.reconstitutionArgumentName_;
+            isNativelyNullable_ = source.isNativelyNullable_;
             nameAnnotated_ = false;
             nullabilityAnnotated_ = false;
             fields_ = source.fields_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Clone());
             trackers_ = source.trackers_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             Extractor = source.Extractor;
+            Creator = source.Creator;
+            IsCalculated = source.IsCalculated;
         }
 
         /// <summary>
@@ -152,11 +178,15 @@ namespace Kvasir.Translation {
             : base(source) {
 
             name_ = source.name_;
+            reconstitutionArgumentName_ = source.reconstitutionArgumentName_;
+            isNativelyNullable_ = source.isNativelyNullable_;
             nameAnnotated_ = false;
             nullabilityAnnotated_ = false;
             fields_ = source.fields_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Reset());
             trackers_ = source.trackers_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             Extractor = source.Extractor;
+            Creator = source.Creator;
+            IsCalculated = source.IsCalculated;
         }
 
         /// <summary>
@@ -177,11 +207,14 @@ namespace Kvasir.Translation {
             Debug.Assert(source.Size >= fields.Count());
 
             name_ = source.name_;
+            reconstitutionArgumentName_ = source.reconstitutionArgumentName_;
             nameAnnotated_ = false;
             nullabilityAnnotated_ = false;
             fields_ = fields.ToDictionary(f => f.Source.Name, f => f);
             trackers_ = source.trackers_.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             Extractor = CreateExtractor(fields);
+            Creator = source.Creator;               // irrelevant, this ctor is only used to extract PKs
+            IsCalculated = source.IsCalculated;
         }
 
         /// <inheritdoc/>
@@ -397,6 +430,11 @@ namespace Kvasir.Translation {
                         group.SetNamePrefix(context, Enumerable.Repeat(name_, 1));
                     }
                 }
+
+                // only update the Reconstitution Argument Name if the [Name] annotation is directly applied
+                if (annotation.Annotation.Path == "") {
+                    reconstitutionArgumentName_ = annotation.Annotation.Name;
+                }
             }
             else if (trackers_.TryGetValue(annotation.NextPath, out var tracker)) {
                 tracker.AttachAnnotation(context, annotation.Step());
@@ -459,6 +497,7 @@ namespace Kvasir.Translation {
             // comment in SetNullability
 
             if (nullabilityAnnotated_) {
+                isNativelyNullable_ = Source.HasAttribute<NullableAttribute>();
                 return;
             }
             var nullable = new NullabilityInfoContext().Create(Source).ReadState == NullabilityState.Nullable;
@@ -470,6 +509,7 @@ namespace Kvasir.Translation {
                 foreach (var group in fields_.Values) {
                     group.SetNullability(context, true);
                 }
+                isNativelyNullable_ = true;
             }
         }
 
@@ -525,6 +565,8 @@ namespace Kvasir.Translation {
 
 
         private string name_;
+        private string reconstitutionArgumentName_;
+        private bool isNativelyNullable_;
         private bool nullabilityAnnotated_;
         private bool nameAnnotated_;
         private readonly IReadOnlyDictionary<string, FieldGroup> fields_;

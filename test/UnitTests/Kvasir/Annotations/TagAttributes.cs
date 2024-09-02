@@ -201,5 +201,25 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
+
+        [TestMethod] public void ReconstituteThrough_Construct() {
+            // Arrange
+
+            // Act
+            _ = new ReconstituteThroughAttribute();
+
+            // Assert
+        }
+
+        [TestMethod] public void ReconstituteThrough_UniqueId() {
+            // Arrange
+            var attr = new ReconstituteThroughAttribute();
+
+            // Act
+            var isUnique = ids_.Add(attr.TypeId);
+
+            // Assert
+            isUnique.Should().BeTrue();
+        }
     }
 }

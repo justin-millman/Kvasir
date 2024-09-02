@@ -926,6 +926,11 @@
               The name of the Primary Key.
             </param>
         </member>
+        <member name="T:Kvasir.Annotations.ReconstituteThroughAttribute">
+            <summary>
+              An annotation that directs Kvasir to use a particular constructor for reconstitution.
+            </summary>
+        </member>
         <member name="T:Kvasir.Annotations.TableAttribute">
             <summary>
               An annotation that specifies the name of the Table backing a particular class.
@@ -8344,6 +8349,60 @@
               The type of the improperly applied annotation.
             </param>
         </member>
+        <member name="T:Kvasir.Translation.ReconstitutionNotPossibleException">
+            <summary>
+              An exception that is raised when a type cannot be Reconstituted.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.ReconstitutionNotPossibleException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.ReconstitutionNotPossibleException"/> caused by a type not having any viable
+              constructors.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid annotation was encountered.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.ReconstitutionNotPossibleException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.ReconstituteThroughAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.ReconstitutionNotPossibleException"/> cased by a
+              <see cref="T:Kvasir.Annotations.ReconstituteThroughAttribute">[ReconstituteThrough] annotation</see> being placed on a
+              non-viable constructor.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="annotation">
+              A <see cref="T:Kvasir.Annotations.ReconstituteThroughAttribute">[ReconstituteThrough] annotation</see>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.ReconstitutionNotPossibleException.#ctor(Kvasir.Translation.Context,System.Int32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.ReconstitutionNotPossibleException"/> caused by two or more constructors all
+              being viable and having equivalent highest precedence.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="numViableConstructors">
+              The number of constructors that are equally the most viable.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.ReconstitutionNotPossibleException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.ReconstituteThroughAttribute,System.Int32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.ReconstitutionNotPossibleException"/> caused by two or more constructors
+              (viable or non-viable) being annotated with
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="annotation">
+              A <see cref="T:Kvasir.Annotations.ReconstituteThroughAttribute">[ReconstituteThrough] annotation</see>.
+            </param>
+            <param name="numAnnotations">
+              The number of constructors that are annotated.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.ReferenceCycleException">
             <summary>
               An exception that is raised when an impermissible referential cycle is detected.
@@ -9197,6 +9256,12 @@
               The number of Fields in the <see cref="T:Kvasir.Translation.FieldGroup"/>.
             </summary>
         </member>
+        <member name="P:Kvasir.Translation.FieldGroup.IsNativelyNullable">
+            <summary>
+              <see langword="true"/> if the property that backs the <see cref="T:Kvasir.Translation.FieldGroup"/> is nullable (accounting for
+              any annotations); otherwise, <see langword="false"/>.
+            </summary>
+        </member>
         <member name="P:Kvasir.Translation.FieldGroup.AllNullable">
             <summary>
               <see langword="true"/> if all the Fields in the <see cref="T:Kvasir.Translation.FieldGroup"/> are nullable, otherwise
@@ -9213,6 +9278,12 @@
               The property that backs the <see cref="T:Kvasir.Translation.FieldGroup"/>
             </summary>
         </member>
+        <member name="P:Kvasir.Translation.FieldGroup.ReconstitutionArgumentName">
+            <summary>
+              The (unnormalized) name of the constructor argument that would be a match for the <see cref="T:Kvasir.Translation.FieldGroup"/>
+              when determining viability for Reconstitution.
+            </summary>
+        </member>
         <member name="P:Kvasir.Translation.FieldGroup.Item(System.Int32)">
             <summary>
               The dot-separated access path of the single Field within the group at a given column index.
@@ -9224,6 +9295,12 @@
         <member name="P:Kvasir.Translation.FieldGroup.Extractor">
             <summary>
               The <see cref="T:Kvasir.Extraction.IMultiExtractor"/> for this group.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.FieldGroup.Creator">
+            <summary>
+              The <see cref="T:Kvasir.Reconstitution.ICreator"/> for this group. If the group represents a <c>[Calculated]</c> property, this
+              value will be a <c>NONE</c> instance.
             </summary>
         </member>
         <member name="M:Kvasir.Translation.FieldGroup.Clone">
@@ -9400,6 +9477,12 @@
         <member name="P:Kvasir.Translation.MultiFieldGroup.AllNullable">
             <inheritdoc/>
         </member>
+        <member name="P:Kvasir.Translation.MultiFieldGroup.IsNativelyNullable">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.MultiFieldGroup.ReconstitutionArgumentName">
+            <inheritdoc/>
+        </member>
         <member name="P:Kvasir.Translation.MultiFieldGroup.CLRType">
             <summary>
               The nullable-stripped CLR type of the <see cref="P:Kvasir.Translation.FieldGroup.Source">source</see> property.
@@ -9411,9 +9494,17 @@
         <member name="P:Kvasir.Translation.MultiFieldGroup.Extractor">
             <inheritdoc/>
         </member>
+        <member name="P:Kvasir.Translation.MultiFieldGroup.Creator">
+            <inheritdoc/>
+        </member>
         <member name="P:Kvasir.Translation.MultiFieldGroup.Kind">
             <summary>
               The "kind" of the backing property (i.e. Aggregate vs. Reference vs. Relation).
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.MultiFieldGroup.IsCalculated">
+            <summary>
+              Whether of not the group is annotated as being <c>[Calculated]</c>.
             </summary>
         </member>
         <member name="M:Kvasir.Translation.MultiFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo,System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup})">
@@ -9587,7 +9678,7 @@
         <member name="P:Kvasir.Translation.ReferenceFieldGroup.Kind">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.ReferenceFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo,System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup})">
+        <member name="M:Kvasir.Translation.ReferenceFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo,System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup},Kvasir.Reconstitution.KeyMatcher)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.ReferenceFieldGroup"/>.
             </summary>
@@ -9602,6 +9693,10 @@
               The collection of constituent <see cref="T:Kvasir.Translation.FieldGroup">FieldGroups</see> that comprise the new
               <see cref="T:Kvasir.Translation.ReferenceFieldGroup"/>. The order is irrelevant. The Fields should be in a position to be
               directly modified (i.e. already <see cref="M:Kvasir.Translation.FieldGroup.Reset">reset</see>).
+            </param>
+            <param name="keyMatcher">
+              The <see cref="T:Kvasir.Reconstitution.KeyMatcher"/> to use when performing look-ups to Reconstitute data extracted from the new
+              <see cref="T:Kvasir.Translation.ReferenceFieldGroup"/>.
             </param>
         </member>
         <member name="M:Kvasir.Translation.ReferenceFieldGroup.#ctor(Kvasir.Translation.ReferenceFieldGroup)">
@@ -9726,10 +9821,19 @@
         <member name="P:Kvasir.Translation.SingleFieldGroup.AllNullable">
             <inheritdoc/>
         </member>
+        <member name="P:Kvasir.Translation.SingleFieldGroup.IsNativelyNullable">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SingleFieldGroup.ReconstitutionArgumentName">
+            <inheritdoc/>
+        </member>
         <member name="P:Kvasir.Translation.SingleFieldGroup.Item(System.Int32)">
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.SingleFieldGroup.Extractor">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SingleFieldGroup.Creator">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SingleFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo)">
@@ -9842,6 +9946,46 @@
               and <see cref="T:Kvasir.Annotations.NumericAttribute">[Numeric]</see>.
             </exception>
         </member>
+        <member name="T:Kvasir.Translation.ReconstitutionHelper">
+            <summary>
+              A helper class for evaluating a type's constructors for usability in Reconstitution.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.ReconstitutionHelper.MakeCreator(Kvasir.Translation.Context,System.Type,System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup},System.Boolean)">
+            <summary>
+              Create the <see cref="T:Kvasir.Reconstitution.ICreator"/> for a particular type, whose data model consists of a set of Fields.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the translation of <paramref name="source"/> is occurring.
+            </param>
+            <param name="source">
+              The <see cref="T:System.Type"/> for which to make a <see cref="T:Kvasir.Reconstitution.ICreator"/> (based on its available constructors).
+            </param>
+            <param name="fields">
+              The Fields that make up the data model of <paramref name="source"/>.
+            </param>
+            <param name="forNullableField">
+              If <see langword="false"/>, then a new non-<see langword="null"/> CLR object will be constructed even if
+              each of the <see cref="T:Kvasir.Schema.DBValue">database values</see> provided is <see cref="P:Kvasir.Schema.DBValue.NULL"/>. If
+              <see langword="false"/>, then such a set of values will result in a <see langword="null"/> object.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.ReconstitutionHelper.AreCompatible(System.Reflection.ParameterInfo,Kvasir.Translation.FieldGroup)">
+            <summary>
+              Determines if a constructor parameter is a viable match for a property during Reconstitution.
+            </summary>
+            <param name="parameter">
+              The constructor parameter.
+            </param>
+            <param name="argument">
+              The <see cref="T:Kvasir.Translation.FieldGroup"/> representing the <see langword="property"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if the types of <paramref name="parameter"/> and <paramref name="argument"/> are
+              same, or if the type of <paramref name="parameter"/> is the nullable version of
+              <paramref name="argument"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Translation.RelationTracker">
             <summary>
               A utility for tracking annotations applied to Aggregate-nested Relation-type properties.
@@ -9924,6 +10068,72 @@
               application is exactly <paramref name="fieldPath"/> or is nested thereunder.
             </returns>
         </member>
+        <member name="T:Kvasir.Translation.SyntheticConstructorInfo">
+            <summary>
+              The reflection representation of the constructor of a <see cref="T:Kvasir.Translation.SyntheticType"/>, or of the default
+              constructor present on all structs.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.SyntheticConstructorInfo.Attributes">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SyntheticConstructorInfo.DeclaringType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SyntheticConstructorInfo.ReflectedType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.GetCustomAttributes(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.#ctor(System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.SyntheticConstructorInfo"/> representing the implicit default constructor for
+              a struct.
+            </summary>
+            <param name="type">
+              The <see cref="T:System.Type"/> of the struct.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.#ctor(Kvasir.Translation.SyntheticType,System.Collections.Generic.IEnumerable{Kvasir.Translation.SyntheticPropertyInfo})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.SyntheticConstructorInfo"/> for <see cref="T:Kvasir.Translation.SyntheticType"/>.
+            </summary>
+            <param name="type">
+              The <see cref="T:Kvasir.Translation.SyntheticType"/> for which the new <see cref="T:Kvasir.Translation.SyntheticConstructorInfo"/> serves.
+            </param>
+            <param name="properties">
+              The properties of the <see cref="T:Kvasir.Translation.SyntheticType"/> for which the new <see cref="T:Kvasir.Translation.SyntheticConstructorInfo"/> is
+              being defined. Each property corresponds to exactly one argument in the constructor.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.GetCustomAttributesData">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.GetParameters">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.Invoke(System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SyntheticConstructorInfo.MethodHandle">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SyntheticConstructorInfo.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.GetCustomAttributes(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.GetMethodImplementationFlags">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.IsDefined(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticConstructorInfo.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Translation.SyntheticMethodInfo">
             <summary>
               The reflection representation of the <c>GET</c> method of a <see cref="T:Kvasir.Translation.SyntheticPropertyInfo">Synthetic
@@ -9989,8 +10199,22 @@
         </member>
         <member name="T:Kvasir.Translation.SyntheticParameterInfo">
             <summary>
-              The reflection representation of the return value of a <see cref="T:Kvasir.Translation.SyntheticMethodInfo">Synthetic Method</see>.
+              The reflection representation of an argument to a <see cref="T:Kvasir.Translation.SyntheticConstructorInfo"/>.
             </summary>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticParameterInfo.#ctor(Kvasir.Translation.SyntheticConstructorInfo,System.String,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.SyntheticParameterInfo"/>.
+            </summary>
+            <param name="constructor">
+              The <see cref="T:Kvasir.Translation.SyntheticConstructorInfo"/> in which the parameter exists.
+            </param>
+            <param name="name">
+              The <see cref="P:System.Reflection.ParameterInfo.Name">name</see> of the new parameter.
+            </param>
+            <param name="type">
+              The <see cref="P:System.Reflection.ParameterInfo.ParameterType">type</see> of the new parameter.
+            </param>
         </member>
         <member name="M:Kvasir.Translation.SyntheticParameterInfo.GetCustomAttributesData">
             <inheritdoc/>
@@ -10001,6 +10225,9 @@
             </summary>
         </member>
         <member name="P:Kvasir.Translation.SyntheticPropertyInfo.CanRead">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.SyntheticPropertyInfo.CanWrite">
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.SyntheticPropertyInfo.DeclaringType">
@@ -10053,9 +10280,6 @@
         <member name="P:Kvasir.Translation.SyntheticPropertyInfo.Attributes">
             <inheritdoc/>
         </member>
-        <member name="P:Kvasir.Translation.SyntheticPropertyInfo.CanWrite">
-            <inheritdoc/>
-        </member>
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.GetAccessors(System.Boolean)">
             <inheritdoc/>
         </member>
@@ -10068,9 +10292,22 @@
         <member name="M:Kvasir.Translation.SyntheticPropertyInfo.SetValue(System.Object,System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Translation.SyntheticReturnInfo">
+            <summary>
+              The reflection representation of the return value of a <see cref="T:Kvasir.Translation.SyntheticMethodInfo">Synthetic Method</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticReturnInfo.GetCustomAttributesData">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Translation.SyntheticType">
             <summary>
               The reflection representation that models the element of a Relation.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.SyntheticType.ActualType">
+            <summary>
+              The <see cref="T:System.Type"/> that the <see cref="T:Kvasir.Translation.SyntheticType"/> is masquerading as.
             </summary>
         </member>
         <member name="P:Kvasir.Translation.SyntheticType.Assembly">
@@ -10109,14 +10346,13 @@
               properties. (This is a function because of the circular definition: the SyntheticType needs to know its
               properties, and each SyntheticProperty needs to know its owning SyntheticType.)
             </param>
-            <param name="equalTo">
-              The <see cref="T:System.Type"/> that the new <see cref="T:Kvasir.Translation.SyntheticType"/> should compare equal to. This is required
-              to "lie" to the type system when performing Extraction and Reconstitution, as those subsystems expect the
-              runtime types of arguments to match the reflected types of properties. However, for Relations, the two
-              will not line up: the former will be a scalar or a key-value pair, while the latter will be the Synthetic
-              Type. The "equality façade" allows us to hijack the equality comparisons to pass all the checks.
+            <param name="actualType">
+              The <see cref="T:System.Type"/> that the new <see cref="T:Kvasir.Translation.SyntheticType"/> is a façade for.
             </param>
             <seealso cref="M:Kvasir.Translation.SyntheticType.MakeSyntheticType(System.Type,Kvasir.Translation.RelationTracker)"/>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticType.GetConstructors(System.Reflection.BindingFlags)">
+            <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.Equals(System.Type)">
             <inheritdoc/>
@@ -10161,9 +10397,6 @@
             <inheritdoc/>
         </member>
         <member name="P:Kvasir.Translation.SyntheticType.Module">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Translation.SyntheticType.GetConstructors(System.Reflection.BindingFlags)">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Boolean)">

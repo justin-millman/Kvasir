@@ -442,7 +442,11 @@ namespace UT.Kvasir.Translation {
 
         // Test Scenario: Relations Nested Within Aggregates (✓recognized✓)
         public class Gelateria {
-            public record struct Owning(DateTime Since, IReadOnlyRelationSet<string> People, decimal LifetimeRevenue);
+            public struct Owning {
+                public DateTime Since { get; set; }
+                public IReadOnlyRelationSet<string> People { get; set; }
+                public decimal LifetimeRevenue { get; set; }
+            }
 
             [PrimaryKey] public Guid GelateriaID { get; set; }
             public Owning Owners { get; set; }
@@ -1604,7 +1608,11 @@ namespace UT.Kvasir.Translation {
         public class Gulag {
             public enum Org { Cheka, GPU, OGPU, KNVD, InternalAffairs, StalinsPersonalGuard }
             public record struct Naming(string English, string Russian);
-            public record struct Personnel(string Commandant, RelationList<string> Overseers, Org AdministeredBy);
+            public struct Personnel {
+                public string Commandant { get; set; }
+                public RelationList<string> Overseers { get; set; }
+                public Org Administeredby { get; set; }
+            }
 
             [PrimaryKey] public Guid GulagID { get; set; }
             public Naming Name { get; set; }
@@ -4632,7 +4640,10 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: Applied to Relation-Nested Numeric Scalar (✓constrained✓)
             public class ArtificialIntelligence {
                 public enum Type { General, Generative, Recommendatory, Classification, Search, Other }
-                public record struct Support(double LatestVersions, RelationSet<double> SupportedVersions);
+                public struct Support {
+                    public double LatestVersions { get; set; }
+                    public RelationSet<double> SupportedVersions { get; set; }
+                }
 
                 [PrimaryKey] public string Name { get; set; } = "";
                 public Type Category { get; set; }
@@ -6999,7 +7010,10 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: Applied to Nested Relation (✗impermissible✗)
             public class WheresWaldo {
                 public record struct Coordinate(float X, float Y);
-                public record struct Quadrant(byte Number, RelationList<Coordinate> Decoys);
+                public struct Quadrant {
+                    public byte Number { get; set; }
+                    public RelationList<Coordinate> Decoys { get; set; }
+                }
 
                 [PrimaryKey] public Guid PuzzleID { get; set; }
                 public string PuzzleTheme { get; set; } = "";
@@ -8556,7 +8570,11 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: Applied to Nested Relation (✗impermissible✗)
             public class ConnectingWall {
                 public enum Wall { Lion, Water }
-                public record struct Category(uint Color, string Connection, RelationList<string> Squares);
+                public struct Category {
+                    public uint Color { get; set; }
+                    public string Connection { get; set; }
+                    public RelationList<string> Squares { get; set; }
+                }
 
                 [PrimaryKey] public sbyte Season { get; set; }
                 [PrimaryKey] public sbyte Episode { get; set; }
@@ -12692,6 +12710,47 @@ namespace UT.Kvasir.Translation {
             [Column(3)] public bool EncounteredMaui { get; set; }
         }
 
+        // Scenario: Aggregate-Nested Relation Property (✓values extracted✓)
+        public class DataCenter {
+            public struct Computers {
+                [Column(0)] public ushort NumCabinets { get; set; }
+                [Column(1)] public ushort RacksPerCabinet { get; set; }
+                public RelationSet<string> Brands { get; set; }
+            }
+            public struct Stats {
+                [Column(0)] public double CO2 { get; set; }
+                [Column(1)] public ushort Electricity { get; set; }
+                public RelationMap<string, double> Dimensions { get; set; }
+                [Column(2)] public Computers Machines { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public bool LiquidCooled { get; set; }
+            [Column(2)] public Stats Statistics { get; set; }
+            [Column(6)] public string Operator { get; set; } = "";
+        }
+
+        // Scenario: [Calculated] Relation (✓values extracted✓)
+        public class Chameleon {
+            public struct Eye {
+                [Column(0)] public ushort ConeDensity { get; set; }
+                [Column(1)] public ushort RodDensity { get; set; }
+                [Column(2)] public double VisionRange { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid ReptileID { get; set; }
+            [Column(1)] public ulong TimesChangedColor { get; set; }
+            [Column(2)] public string Genus { get; set; } = "";
+            [Column(3)] public string Species { get; set; } = "";
+            [Calculated] public RelationOrderedList<Eye> Eyes { get; set; }
+
+            public Chameleon() {
+                Eyes = new RelationOrderedList<Eye>();
+                Eyes.Add(new Eye() { ConeDensity = 8571, RodDensity = 4409, VisionRange = 360 });
+                Eyes.Add(new Eye() { ConeDensity = 12099, RodDensity = 6776, VisionRange = 360 });
+            }
+        }
+
         // Scenario: Data Conversion Applied to Relation-Nested Field (✓converted values extracted✓)
         public class Horoscope {
             public enum Zodiac { Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Saggitarius, Capricorn, Aquarius, Pisces }
@@ -12708,6 +12767,1183 @@ namespace UT.Kvasir.Translation {
             public RelationMap<DateTime, Listing> Readings { get; set; } = new();
             [Column(1)] public DateTime RangeLower { get; set; }
             [Column(2)] public DateTime RangeUpper { get; set; }
+        }
+    }
+
+    internal static class Reconstitution {
+        // Scenario: Non-Null, Public, Instance Writeable Scalar and Enumeration Properties (✓values reconstituted✓)
+        public class Garden {
+            public enum Type { Bontaical, Zen, Community, Chinese, Japanese, Hanging, Bonsai, Flower, Other }
+
+            [PrimaryKey, Column(0)] public Guid GardenID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public Type Kind { get; set; }
+            [Column(3)] public double Acreage { get; set; }
+            [Column(4)] public int NumFlowers { get; set; }
+            [Column(5)] public bool OpenToThePublic { get; set; }
+        }
+
+        // Scenario: Non-Null, Public, Static Writeable Scalar an Enumeration Properties (✓values reconstituted✓)
+        public class Dormitory {
+            [Flags] public enum Feature { Coed = 1, PetFriendly = 2, DrugFree = 4, Smoking = 8, Honors = 16, Dining = 32 }
+
+            [PrimaryKey, Column(0)] public string School { get; set; } = "";
+            [PrimaryKey, Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public Feature Features { get; set; }
+            [IncludeInModel, Column(3)] public static bool IsBuilding { get; set; }
+            [Column(4)] public ushort Capacity { get; set; }
+            [IncludeInModel, Column(5)] public static sbyte GradeBits { get; set; }
+        }
+
+        // Scenario: Non-Null, Non-Public, Instance Writeable Scalar and Enumeration Properties (✓values reconstituted✓)
+        public class KingOfFrance {
+            [PrimaryKey, Column(0)] public string RegnalName { get; private set; } = "";
+            [PrimaryKey, Column(1)] public uint RegnalNumber { get; private set; }
+            [IncludeInModel, Column(2)] protected string Religion { get; set; } = "";
+            [IncludeInModel, Column(3)] internal DateTime Coronation { get; set; }
+            [Column(4)] public string RoyalHouse { get; protected internal set; } = "";
+            [Column(5)] public bool PreRevolution { get; set; }
+
+            public string GetReligion() => Religion;
+        }
+
+        // Scenario: Non-Null, Non-Public, Static Writeable Scalar and Enumeration Properties (✓values reconstituted✓)
+        public class MathematicalProof {
+            public enum Method { Direct, Exhaustion, Contradiction, Contraposition, Induction, Construction }
+
+            [PrimaryKey, Column(0)] public Guid ProofID { get; set; }
+            [Column(1)] public string MathematicianName { get; set; } = "";
+            [IncludeInModel, Column(2)] protected static ushort MaxAllowedSteps { get; set; }
+            [IncludeInModel, Column(3)] public static Method MostPopularMethod { get; internal set; }
+            [IncludeInModel, Column(4)] protected internal static bool ComputersAllowed { get; set; }
+            [IncludeInModel, Column(5)] private static decimal PrizeMoneyEarned { get; set; }
+
+            public static ushort GetMaxAllowedSteps() => MaxAllowedSteps;
+            public static decimal GetPrizeMoneyEarned() => PrizeMoneyEarned;
+        }
+
+        // Scenario: Null Writeable Scalar and Enumeration Properties (✓values reconstituted✓)
+        public class Banshee {
+            public enum Nationality { Irish, Scottish, Manx, Cornish, Welsh }
+
+            [PrimaryKey, Column(0)] public Guid MonsterID { get; set; }
+            [Column(1)] public string? Name { get; set; }
+            [Column(2)] public double WailDecibels { get; set; }
+            [Column(3)] public uint? Victims { get; set; }
+            [Column(4)] public bool Female { get; set; }
+            [Column(5)] public Nationality? Origin { get; set; }
+        }
+
+        // Scenario: Init-Only Scalar and Enumeration Properties (✓values reconstituted✓)
+        public class Neighborhood {
+            [PrimaryKey, Column(0)] public Guid ID { get; init; }
+            [Column(1)] public string Name { get; init; } = "";
+            [Column(2)] public string City { get; init; } = "";
+            [Column(3)] public ushort NumHouses { get; init; }
+            [Column(4)] public ulong Population { get; init; }
+            [Column(5)] public decimal? AverageRent { get; init; }
+            [Column(6)] public double AverageSqFt { get; init; }
+        }
+
+        // Scenario: [Calculated] Scalar Properties (✓values skipped✓)
+        public class Patreon {
+            [PrimaryKey, Column(0)] public string URL { get; set; } = "";
+            [Column(1)] public string Creator { get; set; } = "";
+            [Column(2)] public decimal Tier0 { get; set; }
+            [Column(3)] public decimal Tier1 { get; set; }
+            [Column(4)] public decimal Tier2 { get; set; }
+            [Calculated, Column(5)] public decimal AverageTier => (Tier0 + Tier1 + Tier2) / 3;
+        }
+
+        // Scenario: [Calculated] Aggregate Properties (✓values skipped✓)
+        public class EmergencyRoom {
+            public struct Staffing {
+                [Column(0)] public int NumDoctors { get; set; }
+                [Column(1)] public int NumNurses { get; set; }
+                [Column(2)] public int NumOther { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid BuildingID { get; set; }
+            [Column(1)] public ushort Capacity { get; set; }
+            [Calculated, Column(2)] public Staffing Staff => new Staffing() { NumDoctors = Capacity / 15, NumNurses = Capacity / 9, NumOther = Capacity / 23 };
+            [Column(5)] public sbyte TraumaLevel { get; set; }
+            [Column(6)] public bool IsUrgentCare { get; set; }
+        }
+
+        // Scenario: [Calculated] Reference Properties (✓values skipped✓)
+        public class Accountant {
+            public class AccountingFirm {
+                [PrimaryKey, Column(0)] public string Name { get; set; } = "Klippity Accounting Co.";
+                [PrimaryKey, Column(1)] public string State { get; set; } = "Montana";
+                [Column(2)] public ulong Employees { get; set; } = 1870;
+                [Column(3)] public bool IndividualAccounting { get; set; } = true;
+                [Column(4)] public decimal Revenue { get; set; } = 50000000;
+            }
+
+            [PrimaryKey, Column(0)] public string SSN { get; set; } = "";
+            [Column(1)] public string Name { get; set; } = "";
+            [Calculated, Column(2)] public AccountingFirm CurrentFirm { get; } = new();
+            [Column(4)] public int NumAccounts { get; set; }
+        }
+
+        // Scenario: [Calculated] Relation Properties (✓values skipped✓)
+        public class Prenup {
+            [Column(0)] public Guid ContractID { get; set; }
+            [Column(1)] public string Spouse1 { get; set; } = "";
+            [Column(2)] public string Spouse2 { get; set; } = "";
+            [Calculated] public RelationSet<DateTime> VestingSchedule {
+                get {
+                    return new RelationSet<DateTime>() {
+                        new DateTime(2035, 1, 1),
+                        new DateTime(2036, 1, 1),
+                        new DateTime(2037, 1, 1),
+                        new DateTime(2038, 1, 1),
+                        new DateTime(2039, 1, 1),
+                    };
+                }
+            }
+            [Column(3)] public decimal TotalNetWorth { get; set; }
+            [Column(4)] public string Notary { get; set; } = "";
+            [Column(5)] public string StateEnforced { get; set; } = "";
+        }
+
+        // Scenario: Writeable Explicit Interface Implementation Property (✓values reconstituted✓)
+        public interface IBird {
+            bool CanFly { get; set; }
+            double WingspanCm { get; set; }
+            double TopSpeedKph { get; set; }
+        }
+        public class Penguin : IBird {
+            [PrimaryKey, Column(0)] public string Genus { get; set; } = "";
+            [PrimaryKey, Column(1)] public string Species { get; set; } = "";
+            [Column(2)] public string CommonName { get; set; } = "";
+            [IncludeInModel, Column(3)] bool IBird.CanFly { get; set; }
+            [Column(4)] public double AverageWeightKg { get; set; }
+            [IncludeInModel, Column(5)] double IBird.WingspanCm { get; set; }
+            [IncludeInModel, Column(6)] double IBird.TopSpeedKph { get; set; }
+        }
+
+        // Scenario: Writeable Virtual Property (✓values reconstituted into most-derived✓)
+        public abstract class BouncingObject {
+            public abstract double MaxHeight { get; set; }
+            public virtual float WeightLimit { get; set; }
+        }
+        public class Trampoline : BouncingObject {
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [IncludeInModel, Column(1)] public override double MaxHeight { get; set; }
+            [Column(2)] public int NumScrews { get; set; }
+            [IncludeInModel, Column(3)] public override float WeightLimit { get; set; }
+        }
+
+        // Scenario: Writeable Hiding Property (✓values reconstituted into hider✓)
+        public class Blanket {
+            public Guid ID { get; set; }
+            public double Length { get; set; }
+            public double Width { get; set; }
+        }
+        public class Quilt : Blanket {
+            [PrimaryKey, Column(0)] public new Guid ID { get; set; }
+            [Column(1)] public uint NumSquares { get; set; }
+            [Column(2)] public DateTime CreationDate { get; set; }
+            [Column(3)] public new double Length { get; set; }
+            [Column(4)] public new double Width { get; set; }
+        }
+
+        // Scenario: [DataConverter] Applied to Scalar Property (✓converted values reconstituted✓)
+        public class MetraRoute {
+            [PrimaryKey, DataConverter<AllCaps>, Column(0)] public string Line { get; set; } = "";
+            [Column(1)] public string CityEndpoint { get; set; } = "";
+            [Column(2)] public string SuburbEndpoint { get; set; } = "";
+            [DataConverter<ToInt<ushort>>, Column(3)] public ushort NumStations { get; set; }
+            [Column(4)] public uint Ridership { get; set; }
+            [Column(5)] public double TrackLength { get; set; }
+        }
+
+        // Scenario: [Numeric] Applied to Enumeration Property (✓converted values reconstituted✓)
+        public class Loa {
+            public enum Month : byte { JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEP, OCT, NOV, DEC }
+            [Flags] public enum Tradition { Haitian = 1, Louisiana = 2, FolkCatholicism = 4, Santeria = 8, Candomble = 16 }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Numeric, Column(1)] public Month FeastMonth { get; set; }
+            [Numeric, Column(2)] public Tradition Traditions { get; set; }
+            [Column(3)] public string Domain { get; set; } = "";
+            [Column(4)] public bool InvolvedWithZombies { get; set; }
+        }
+
+        // Scenario: [AsString] Applied to Enumeration Property (✓converted values reconstituted✓)
+        public class LED {
+            public enum Color { White, Blue, Green, Red }
+
+            [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
+            [AsString, Column(1)] public Color EmittedColor { get; set; }
+            [Column(2)] public double PowerConsumption { get; set; }
+        }
+
+        // Scenario: Non-Null Writeable Aggregate Property with Single Scalar/Enumeration Nested Fields (✓values reconstituted✓)
+        public class ConspiracyTheory {
+            public enum Industry { Government, Science, Entertainment, Athletics, Finances, Religion, Aliens }
+
+            public record struct Person(string Name);
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public Person Theorist { get; set; }
+            [Column(2)] public Industry About { get; set; }
+            [Column(3)] public uint Believers { get; set; }
+            [Column(4)] public bool FormallyDebunked { get; set; }
+            [Column(5)] public string? WikipediaURL { get; set; }
+        }
+
+        // Scenario: Non-Null Writeable Aggregate Property with Multiple Scalar/Enumeration Nested Fields (✓values reconstituted✓)
+        public class Mermaid {
+            public struct Color {
+                [Column(0)] public byte R { get; set; }
+                [Column(1)] public byte G { get; set; }
+                [Column(2)] public byte B { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid MermaidID { get; set; }
+            [Column(1)] public ushort HeightCm { get; set; }
+            [Column(2)] public bool IsSiren { get; set; }
+            [Column(3)] public Color HairColor { get; set; }
+            [Column(6)] public Color BraColor { get; set; }
+            [Column(9)] public Color TailColor { get; set; }
+        }
+
+        // Scenario: Non-Null Writeable Aggregate Property with All Null Nested Fields (✓null values reconstituted✓)
+        public class Cheese {
+            public enum Style { Slices, Shredded, Cubes, Wedges, Wheel, Sauce }
+
+            public struct Nutrition {
+                [Column(0)] public ushort? Calories { get; set; }
+                [Column(1)] public ushort? GramsFat { get; set; }
+                [Column(2)] public ushort? MgSodium { get; set; }
+                [Column(3)] public ushort? MgCholesterol { get; set; }
+                [Column(4)] public ushort? GramsCarbs { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string CountryOfOrigin { get; set; } = "";
+            [Column(2)] public Nutrition NutritionalValue { get; set; }
+            [Column(7)] public Style? BestServedAs { get; set; }
+        }
+
+        // Scenario: Null Writeable Aggregate Property with One Nested Field (✓null values reconstituted✓)
+        public class EpiPen {
+            public record struct Dosage(double Dose);
+
+            [PrimaryKey, Column(0)] public Guid MedicalID { get; set; }
+            [Column(1)] public string PrescribingDoctor { get; set; } = "";
+            [Column(2)] public Dosage? Dose { get; set; }
+            [Column(3)] public string Manufacturer { get; set; } = "";
+        }
+
+        // Scenario: Null Writeable Aggregate Property with Multiple Nested Fields (✓null values reconstituted✓)
+        public class Hacker {
+            public enum Hat { White, Black, Unknown }
+
+            public struct Terminal {
+                [Column(0)] public string Name { get; set; }
+                [Column(1)] public sbyte FontSize { get; set; }
+                [Column(2)] public bool DarkMode { get; set; }
+                [Column(3)] public uint HistoryLimit { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public Hat Role { get; set; }
+            [Column(2)] public Terminal? PreferredTerminal { get; set; }
+            [Column(6)] public decimal RansomExtorted { get; set; }
+            [Column(7)] public bool InAnonymous { get; set; }
+            [Column(8)] public bool StateSponsored { get; set; }
+            [Column(9)] public long DevicesCompromised { get; set; }
+        }
+
+        // Scenario: Nested Writeable Aggregate Property (✓values reconstituted✓)
+        public class Iconoclast {
+            public struct Timeline {
+                [Column(0)] public DateTime Start { get; set; }
+                [Column(1)] public DateTime? End { get; set; }
+            }
+            public struct Statistics {
+                [Column(0)] public uint IconsDestroyed { get; set; }
+                [Column(1)] public int PaintingsBurned { get; set; }
+                [Column(2)] public decimal PreciousMetalsCollected { get; set; }
+            }
+            public struct Career {
+                [Column(0)] public Timeline Activity { get; set; }
+                [Column(2)] public Statistics Stats { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid IconoclastID { get; set; }
+            [Column(1)] public bool IsByzantine { get; set; }
+            [Column(2)] public Career History { get; set; }
+            [Column(7)] public string Name { get; set; } = "";
+        }
+
+        // Scenario: Data Conversion Applied to Aggregate-Nested Fields (✓converted values reconstituted✓)
+        public class AlphaMonster {
+            public enum Hunter { Sam, Dean, Bobby, Castiel, Charlie, Rowena, Ketch, Donna, Jody, Other }
+
+            public struct Episode {
+                [Column(0), DataConverter<ToInt<short>>] public short SeasonNumber { get; set; }
+                [Column(1), DataConverter<ToInt<float>>] public float EpisodeNumber { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Monster { get; set; } = "";
+            [Column(1)] public string? Actor { get; set; }
+            [Column(2)] public Hunter? Killer { get; set; }
+            [Column(3)] public Episode FirstAppearance { get; set; }
+            [Column(5)] public uint NumAppearances { get; set; }
+        }
+
+        // Scenario: Calculated and Non-Calculated Fields of Same Aggregate Type (✓handled appropriately✓)
+        public class Empanada {
+            public struct Filling {
+                [Column(0)] public string Contents { get; set; }
+                [Calculated, Column(1)] public double Percentage => 100.0;
+            }
+
+            [PrimaryKey, Column(0)] public Guid EmpanadaID { get; set; }
+            [Column(1)] public decimal Price { get; set; }
+            [Column(2)] public ushort Calories { get; set; }
+            [Column(3)] public Filling MainFilling { get; set; }
+            [Calculated, Column(5)] public Filling? SecondaryFilling { get; } = null;
+            [Column(7)] public bool DeepFried { get; set; }
+        }
+
+        // Scenario: Non-Null Writeable Reference Property with Single-Field Primary Key (✓values reconstituted✓)
+        public class Cockfight {
+            public enum Result { Win1, Win2, Draw, Suspended }
+
+            public class Rooster {
+                [PrimaryKey, Column(0)] public Guid AnimalID { get; set; }
+                [Column(1)] public string? Name { get; set; }
+                [Column(2)] public double Height { get; set; }
+                [Column(3)] public double Weight { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid FightID { get; set; }
+            [Column(1)] public Rooster CompetitorA { get; set; } = new();
+            [Column(2)] public Rooster CompetitorB { get; set; } = new();
+            [Column(3)] public Result Outcome { get; set; }
+            [Column(4)] public decimal Pot { get; set; }
+            [Column(5)] public double FightDuration { get; set; }
+        }
+
+        // Scenario: Non-Null Writeable Reference Property with Multi-Field Primary Key (✓values reconstituted✓)
+        public class Glacier {
+            public enum Continent { NorthAmerica, SouthAmerica, Europe, Asia, Oceania, Africa, Antarctica, Arctic }
+
+            public class MountainRange {
+                [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+                [PrimaryKey, Column(1)] public Continent HomeContinent { get; set; }
+                [PrimaryKey, Column(2)] public ushort Discriminator { get; set; }
+                [Column(3)] public ulong Length { get; set; }
+                [Column(4)] public ulong MaxElevation { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public double Length { get; set; }
+            [Column(2)] public MountainRange Range { get; set; } = new();
+            [Column(5)] public bool HasMushroomRock { get; set; }
+        }
+
+        // Scenario: Null Writeable Reference Property with Single-Field Primary Key (✓null values reconstituted✓)
+        public class Allegory {
+            public enum Kind { Literature, Music, Art, Philosophy }
+
+            public class Work {
+                [PrimaryKey, Column(0)] public Guid ID { get; set; }
+                [Column(1)] public string Title { get; set; } = "";
+                [Column(2)] public string? Creator { get; set; }
+                [Column(3)] public Kind TypeOfWork { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public Work? Source { get; set; }
+            [Column(2)] public string ComparisonSource { get; set; } = "";
+            [Column(3)] public string ComparisonTarget { get; set; } = "";
+            [Column(4)] public bool WellUnderstood { get; set; }
+        }
+
+        // Scenario: Null Writeable Reference Property with Multi-Field Primary Key (✓null values reconstituted✓)
+        public class StripClub {
+            public class Person {
+                [PrimaryKey, Column(0)] public string FirstName { get; set; } = "";
+                [PrimaryKey, Column(1)] public string LastName { get; set; } = "";
+                [Column(2)] public DateTime DateOfBirth { get; set; }
+                [Column(3)] public string CountryOfOrigin { get; set; } = "";
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public DateTime Opened { get; set; }
+            [Column(2)] public DateTime? Closed { get; set; }
+            [Column(3)] public Person Proprietor { get; set; } = new();
+            [Column(5)] public decimal AnnualRevenue { get; set; }
+            [Column(6)] public Person? PrimaryStripper { get; set; }
+            [Column(8)] public ushort NumEmployees { get; set; }
+            [Column(9)] public bool HasPrivateRoom { get; set; }
+        }
+
+        // Scenario: Data Conversion Applied to Reference-Nested Field (✓converted values reconstituted✓)
+        public class Fresco {
+            public enum Surface { Wall, Door, Ceiling, Floor, Canvas, Other }
+
+            public class Painter {
+                [PrimaryKey, Column(0), DataConverter<AllCaps>] public string Name { get; set; } = "";
+                [Column(1)] public DateTime DateOfBirth { get; set; }
+                [Column(2)] public string Country { get; set; } = "";
+                [Column(3)] public bool DisplayedInTheLouvre { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid PaintingID { get; set; }
+            [Column(1)] public string Title { get; set; } = "";
+            [Column(2)] public Painter Artist { get; set; } = new();
+            [Column(3)] public float Length { get; set; }
+            [Column(4)] public float Width { get; set; }
+            [Column(5)] public Surface PaintedOn { get; set; }
+        }
+
+        // Scenario: Calculated and Non-Calculated Fields of Same Reference Type (✓handled appropriately✓)
+        public class GoKart {
+            public class Company {
+                [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+                [Column(1)] public ulong Employees { get; set; }
+                [Column(2)] public string? TickerSymbol { get; set; }
+                [Column(3)] public DateTime Incorporated { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid GoKartID { get; set; }
+            [Column(1)] public ushort TopSpeed { get; set; }
+            [Calculated, Column(2)] public Company Manufacturer => Operator;
+            [Column(3)] public Company Operator { get; set; } = new();
+            [Column(4)] public bool DriverOnLeft { get; set; }
+            [Column(5)] public byte NumWheels { get; set; }
+        }
+
+        // Scenario: Zero Relation Elements (✓no values reconstituted✓)
+        public class CharcuterieBoard {
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public string BoardMaterial { get; set; } = "";
+            [Column(2)] public double BoardArea { get; set; }
+            public RelationList<string> Cheeses { get; set; } = new();
+            public RelationSet<string> Meats { get; set; } = new();
+            public RelationOrderedList<string> Sauces { get; set; } = new();
+            public RelationMap<DateTime, uint> Usages { get; set; } = new();
+        }
+
+        // Scenario: List/Set Relation Elements (✓values reconstituted per element✓)
+        public class Mutant {
+            [PrimaryKey, Column(0)] public string CodeName { get; set; } = "";
+            [Column(1)] public string BirthName { get; set; } = "";
+            public RelationList<string> Powers { get; set; } = new();
+            public RelationSet<DateTime> Appearances { get; set; } = new();
+            [Column(2)] public bool InXMenMovies { get; set; }
+        }
+
+        // Scenario: Map Relation Elements (✓values reconstituted per element✓)
+        public class WaterPark {
+            public enum Customer { General, Infant, Child, Adult, Senior, Student, Veteran }
+
+            [PrimaryKey, Column(0)] public Guid WaterParkID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            public RelationMap<string, double> WaterSlides { get; set; } = new();
+            [Column(2)] public bool LazyRiver { get; set; }
+            [Column(3)] public ulong GallonsWater { get; set; }
+            public RelationMap<Customer, decimal> AdmissionPrices { get; set; } = new();
+        }
+
+        // Scenario: Ordered List Relation Elements (✓values reconstituted per element✓)
+        public class Seance {
+            [PrimaryKey, Column(0)] public DateTime Timestamp { get; set; }
+            [PrimaryKey, Column(1)] public string Medium { get; set; } = "";
+            public RelationOrderedList<string> SpiritsContacted { get; set; } = new();
+            [Column(2)] public decimal PriceTag { get; set; }
+            [Column(3)] public ushort NumCandles { get; set; }
+        }
+
+        // Scenario: Read-Only Relations (✓values reconstituted per element✓)
+        public class Dermatologist {
+            public enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
+            public enum Degree { GED, HighSchoolDiploma, Bachelors, Masters, Doctorate }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public DateTime DateOfBirth { get; set; }
+            [Column(2)] public string OfficeAddress { get; set; } = "";
+            [Column(3)] public bool OwnsPractice { get; set; }
+            public IReadOnlyRelationMap<Degree, string> AlmaMaters { get; set; } = new RelationMap<Degree, string>();
+            public IReadOnlyRelationSet<string> Patients { get; set; } = new RelationSet<string>();
+            public IReadOnlyRelationOrderedList<decimal> SalaryHistory { get; set; } = new RelationOrderedList<decimal>();
+            public IReadOnlyRelationList<Day> Workdays { get; set; } = new RelationList<Day>();
+        }
+
+        // Scenario: Null Relation (✓no reconstitution [should be impossible unless empty]✓)
+        public class FriedChicken {
+            public enum ChickenPart { Leg, Wing, Breast, Thigh, Tender, Giblet, Foot, Liver, Gizzard }
+
+            [PrimaryKey, Column(0)] public string Restaurant { get; set; } = "";
+            [PrimaryKey, Column(1)] public ChickenPart Part { get; set; }
+            [PrimaryKey, Column(2)] public byte SpiceLevel { get; set; }
+            [Column(3)] public decimal Price { get; set; }
+            [Column(4)] public string Breading { get; set; } = "";
+            [Column(5)] public bool ButtermilkMarinated { get; set; }
+            public RelationSet<string> Spices { get; set; } = null!;
+            public RelationList<string> RecommendedSauces { get; set; } = null!;
+        }
+
+        // Scenario: Relation Nested in Non-Null Aggregate (✓values reconstituted per element✓)
+        public class Limousine {
+            [Flags] public enum Feature { Tinted = 1, HandRolled = 2, Bulletproof = 4 }
+
+            public struct Personnel {
+                [Column(0)] public string Owner { get; set; } = "";
+                public RelationSet<string> LicensedDrivers { get; set; }
+                [Column(1)] public string Mechanic { get; set; } = "";
+                [Column(2)] public string? DecalMaker { get; set; }
+
+                public Personnel() {
+                    LicensedDrivers = new RelationSet<string>();
+                }
+            }
+
+            [PrimaryKey, Column(0)] public string LicensePlate { get; set; } = "";
+            [Column(1)] public float Length { get; set; }
+            [Column(2)] public byte Capacity { get; set; }
+            [Column(3)] public Personnel People { get; set; }
+            [Column(6)] public Feature WindowFeatures { get; set; }
+        }
+
+        // Scenario: Relation Nested in Null Aggregate (✓no reconstitution [should be impossible unless empty]✓)
+        public class Xenomorph {
+            public struct Victims {
+                [Column(0)] public uint ConfirmedKills { get; set; }
+                public RelationMap<string, bool> Impregnations { get; set; }
+                [Column(1)] public bool Suicide { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid AlienID { get; set; }
+            [Column(1)] public double Height { get; set; }
+            [Column(2)] public bool StillAlive { get; set; }
+            [Column(3)] public Victims? AlienMurders { get; set; }
+            [Column(5)] public string FirstFilmAppearance { get; set; } = "";
+        }
+
+        // Scenario: Relation-Nested Aggregate Elements (✓values reconstituted per element✓)
+        public class EpicPoem {
+            public struct Section {
+                [Column(0)] public string Name { get; set; }
+                [Column(1)] public string? Theme { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+            [Column(1)] public string Author { get; set; } = "";
+            [Column(2)] public DateTime Published { get; set; }
+            [Column(3)] public uint StanzaCount { get; set; }
+            public RelationOrderedList<Section> Sections { get; set; } = new();
+            [Column(4)] public string Language { get; set; } = "";
+        }
+
+        // Scenario: Relation-Nested Reference Elements (✓values reconstituted per element✓)
+        public class TrafficStop {
+            public class PoliceOfficer {
+                [PrimaryKey, Column(0)] public string PoliceForce { get; set; } = "";
+                [PrimaryKey, Column(1)] public ulong BadgeNumber { get; set; }
+                [Column(2)] public string Name { get; set; } = "";
+                [Column(3)] public bool HasK9 { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public DateTime Timestamp { get; set; }
+            [Column(1)] public string Driver { get; set; } = "";
+            public RelationList<PoliceOfficer> Officers { get; set; } = new();
+            [Column(2)] public bool TicketIssued { get; set; }
+            [Column(3)] public bool ArrestMade { get; set; }
+        }
+
+        // Scenario: Owning Entity in Relation Elements (✓values reconstituted per element✓)
+        public class Poacher {
+            [Flags] public enum Continent { NorthAmerica = 1, SouthAmerica = 2, Asia = 4, Africa = 8, Europe = 16, Oceania = 32, Antarctica = 64, Arctic = 128 }
+            [Flags] public enum AnimalType { Mammal = 1, Bird = 2, Reptile = 4, Insect = 8, Arachnid = 16, Fish = 32, Amphibian = 64, Mollusk = 128 }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public Continent ActiveLocations { get; set; }
+            [Column(2)] public AnimalType Targets { get; set; }
+            public RelationSet<Poacher> PoachingGroup { get; set; } = new();
+            [Column(3)] public decimal Income { get; set; }
+        }
+
+        // Scenario: Data Conversion Applied to Relation-Nested Field (✓converted values reconstituted per element✓)
+        public class MichelinGuide {
+            public struct Rating {
+                [Column(0), DataConverter<Stars>] public string Stars { get; set; }
+                [Column(1)] public char Grade { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public ushort Year { get; set; }
+            [Column(1)] public uint PageCount { get; set; }
+            public RelationMap<string, Rating> Restaurants { get; set; } = new();
+            [Column(2)] public bool IsGreenGuide { get; set; }
+        }
+
+        // Scenario: Single Viable Public Default Constructor (✓reconstituted✓)
+        public class Stove {
+            public enum Fuel { Electricity, Gas, Charcoal, Wood }
+
+            [PrimaryKey, Column(0)] public Guid DeviceID { get; set; }
+            [Column(1)] public Fuel PoweredBy { get; set; }
+            [Column(2)] public byte NumBurners { get; set; }
+            [Column(3)] public bool IsInduction { get; set; }
+            [Column(4)] public string Brand { get; set; } = "";
+            [Column(5)] public string Model { get; set; } = "";
+
+            public Stove() { constructorCalled_ = true; }
+            public bool ConstructorCalled() { return constructorCalled_; }
+            private readonly bool constructorCalled_ = false;
+        }
+
+        // Scenario: Single Viable Public Partial Constructor (✓reconstituted✓)
+        public class Cannibal {
+            [PrimaryKey, Column(0)] public string FullName { get; }
+            [Column(1)] public ushort NumVictims { get; }
+            [Column(2)] public bool Imprisoned { get; set; }
+            [Column(3)] public string Hometown {
+                get { return hometown_; }
+                set { throw new InvalidOperationException(); }
+            }
+            [Column(4)] public bool Filial { get; set; }
+
+            public Cannibal(string fullName, string hometown, ushort numVictims) {
+                FullName = fullName;
+                hometown_ = hometown;
+                NumVictims = numVictims;
+            }
+            private readonly string hometown_;
+        }
+
+        // Scenario: Single Viable Public Full Constructor (✓reconstituted✓)
+        public class Menorah {
+            [PrimaryKey, Column(0)] public Guid ProductID { get; }
+            [Column(1)] public sbyte CandleHolders { get; }
+            [Column(2)] public float Weight { get; }
+            [Column(3)] public bool IsChannukiah { get; }
+            [Column(4)] public decimal PriceTag { get; }
+            [Column(5)] public bool DishwasherSafe { get; }
+
+            public Menorah(Guid productID, bool isChannukiah, decimal priceTag, float weight, sbyte candleHolders, bool dishwasherSafe) {
+                ProductID = productID;
+                IsChannukiah = isChannukiah;
+                PriceTag = priceTag;
+                Weight = weight;
+                CandleHolders = candleHolders;
+                DishwasherSafe = dishwasherSafe;
+            }
+        }
+
+        // Scenario: Single Viable Non-Public Constructor (✓reconstituted✓)
+        public class Wedding {
+            [PrimaryKey, Column(0)] public string Partner1 { get; }
+            [PrimaryKey, Column(1)] public string Partner2 { get; }
+            [Column(2)] public DateTime Date { get; }
+            [Column(3)] public string Venue { get; }
+            [Column(4)] public ushort Attendance { get; }
+            [Column(5)] public bool Outdoor { get; }
+
+            private Wedding(string partner1, string partner2, DateTime date, string venue, ushort attendance, bool outdoor) {
+                Partner1 = partner1;
+                Partner2 = partner2;
+                Date = date;
+                Venue = venue;
+                Attendance = attendance;
+                Outdoor = outdoor;
+            }
+        }
+
+        // Scenario: Single Viable Primary Record Constructor (✓reconstituted✓)
+        public record class GoFundMe(
+            string URL,
+            string? Beneficiary,
+            decimal? AmountRaised,
+            decimal? Goal,
+            DateTime? DateOpened,
+            DateTime? DateClosed
+        );
+
+        // Scenario: No Viable Constructor and All Properties are Writeable (✗cannot reconstitute✗)
+        public class Tractor {
+            [PrimaryKey, Column(0)] public Guid VehicleID { get; set; }
+            [Column(1)] public string LicensePlate { get; set; } = "";
+            [Column(2)] public byte NumWheels { get; set; }
+            [Column(3)] public bool Agricultural { get; set; }
+            [Column(4)] public ulong Horsepower { get; set; }
+
+            public Tractor(Guid vehicleID, string licensePlate, byte numWheels, int extraArgument) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: No Constructor and At Least One Read-Only Property (✗cannot reconstitute✗)
+        public class Deposition {
+            [PrimaryKey, Column(0)] public string Deponent { get; set; } = "";
+            [PrimaryKey, Column(1)] public string Questioner { get; set; } = "";
+            [Column(2)] public DateTime Date { get; }
+            [Column(3)] public double Length { get; set; }
+            [Column(4)] public ushort NumQuestions { get; set; }
+            [Column(5)] public decimal Cost { get; set; }
+            [Column(6)] public bool Videotaped { get; }
+        }
+
+        // Scenario: No Viable Constructor and At Least One Read-Only Property (✗cannot reconstitute✗)
+        public class Hypnotist {
+            [PrimaryKey, Column(0)] public string Name { get; }
+            [Column(1)] public byte Level { get; set; }
+            [Column(2)] public ulong PeopleHypnotized { get; set; }
+            [Column(3)] public bool Medical { get; }
+            [Column(4)] public float AverageTimeToPutSomeoneUnder { get; }
+
+            public Hypnotist(string name, byte level, ulong peopleHypnotized) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+            public Hypnotist(string name, byte level, ulong peopleHypnotized, bool medical, int extra, float averageTimeToPutSomeoneUnder) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Constructor would be Viable but Argument is Convertible Type (✗cannot reconstitute✗)
+        public class Paycheck {
+            [PrimaryKey, Column(0)] public ulong Employee { get; }
+            [PrimaryKey, Column(1)] public DateTime Period { get;}
+            [Column(2)] public int HoursWorked { get; }
+            [Column(3)] public double RatePerHour { get; }
+            [Column(4)] public decimal Net { get; }
+            [Column(5)] public decimal FederalIncomeTax { get; }
+            [Column(6)] public decimal StateIncomeTax { get; }
+            [Column(7)] public decimal SocialSecurity { get; }
+            [Column(8)] public decimal OtherWithholdings { get; }
+            [Column(9)] public decimal Gross { get; }
+
+            public Paycheck(uint employee, DateTime period, int hoursWorked, double ratePerHour, decimal net,
+                decimal federalIncomeTax, decimal stateIncomeTax, decimal socialSecurity, decimal otherWitholdings,
+                decimal gross) {
+
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Constructor would be Viable but Argument is Unconvertible Type (✗cannot reconstitute✗)
+        public class Disneyland {
+            [PrimaryKey, Column(0)] public string Name { get; }
+            [Column(1)] public DateTime Opened { get; }
+            [Column(2)] public ulong AnnualAttendance { get; }
+            [Column(3)] public decimal AverageTicketePrice { get; }
+            [Column(4)] public ushort NumImagineersEmployed { get; }
+            [Column(5)] public ulong Area { get; }
+            [Column(6)] public sbyte NumRollercoasters { get; }
+
+            public Disneyland(string name, char opened, ulong annualAttendance, decimal averageTicketPrice,
+                ushort numImagineersEmployed, ulong area, sbyte numRollercoasters) {
+
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Constructor would be Viable but Argument for Nullable Field is Not Nullable (✗cannot reconstitute✗)
+        public class Bakery {
+            [PrimaryKey, Column(0)] public string BakeryName { get; set; } = "";
+            [Column(1)] public string? Address { get; }
+            [Column(2)] public byte? NumEmployees { get; }
+            [Column(3)] public decimal AverageBagelCost { get; set; }
+            [Column(4)] public decimal AverageMuffinCost { get; set; }
+            [Column(5)] public decimal AverageCookieCost { get; set; }
+            [Column(6)] public decimal AverageCakeCost { get; set; }
+            [Column(7)] public DateTime GrandOpening { get; set; }
+            [Column(8), Nullable] public bool ServesCoffee { get; set; }
+
+            public Bakery(string address, byte? numEmployees, bool? servesCoffee) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+            public Bakery(string? address, byte numEmployees, bool? servesCoffee) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+            public Bakery(string? address, byte? numEmployees, bool servesCoffee) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Constructor Not Viable because Multiple Arguments match Same Field (✗cannot reconstitute✗)
+        public class ParticleAccelerator {
+            [PrimaryKey, Column(0)] public string Name { get; }
+            [Column(1)] public double MaxEnergy { get; }
+            [Column(2)] public double MaxLuminosity { get; }
+            [Column(3)] public bool DiscoveredHiggsBoson { get; set; }
+
+            public ParticleAccelerator(string name, double maxEnergy, double maxLuminosity, double MAXENERGY) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Viable Constructor with Nullable Argument for Non-Nullable Field (✓reconstituted✓)
+        public class CovalentBond {
+            [Column(0)] public string CommonName { get; set; } = "";
+            [PrimaryKey, Column(1)] public string Anion { get; } = "";
+            [PrimaryKey, Column(2), NonNullable] public string? Cation { get; } = "";
+            [Column(3)] public double MolecularWeight { get; }
+
+            public CovalentBond(string? anion, string? cation, double? molecularWeight) {
+                Anion = anion!;
+                Cation = cation;
+                MolecularWeight = molecularWeight!.Value;
+            }
+        }
+
+        // Scenario: Multiple Viable Public Constructors of Differing Arity (✓reconstituted✓)
+        public class AmericanGirlDoll {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public ushort YearReleased { get; }
+            [Column(2)] public string HomeCity { get; set; } = "";
+            [Column(3)] public DateTime? Birthdate { get; }
+            [Column(4)] public ulong DollsSold { get; set; }
+            [Column(5)] public decimal RetailPrice { get; }
+
+            public AmericanGirlDoll(ushort yearReleased, DateTime? birthdate, decimal retailPrice) {
+                throw new InvalidOperationException("WRONG VIABLE CONSTRUCTOR");
+            }
+            public AmericanGirlDoll(string name, ushort yearReleased, DateTime? birthdate, decimal retailPrice) {
+                throw new InvalidOperationException("WRONG VIABLE CONSTRUCTOR");
+            }
+            public AmericanGirlDoll(ushort yearReleased, DateTime? birthdate, string homeCity, decimal retailPrice, ulong dollsSold) {
+                YearReleased = yearReleased;
+                HomeCity = homeCity;
+                Birthdate = birthdate;
+                DollsSold = dollsSold;
+                RetailPrice = retailPrice;
+            }
+        }
+
+        // Scenario: Multiple Viable Public Constructors of Equal Arity for Same Fields (✗ambiguous✗)
+        public class Ambulance {
+            [PrimaryKey, Column(0)] public Guid VehicleID { get; set; }
+            [Column(1)] public ulong PatientsTransported { get; }
+            [Column(2)] public bool MedicalHelicopter { get; }
+            [Column(3)] public string PrimaryHospital { get; set; } = "";
+            [Column(4)] public bool RedCross { get; }
+
+            public Ambulance(ulong patientsTransported, bool medicalHelicopter, bool redCross) {
+                throw new InvalidOperationException("AMBIGUOUS CONSTRUCTOR");
+            }
+            public Ambulance(bool redCross, ulong patientsTransported, bool medicalHelicopter) {
+                throw new InvalidOperationException("AMBIGUOUS CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Multiple Viable Public Constructors of Equal Arity for Different Fields (✗ambiguous✗)
+        public class CustomerServiceLine {
+            [PrimaryKey, Column(0)] public string PhoneNumber { get; }
+            [Column(1)] public string Company { get; set; }
+            [Column(2)] public byte InitialMenuOptions { get; set; }
+            [Column(3)] public bool SpanishAvailable { get; }
+            [Column(4)] public double AverageWaitTime { get; set; }
+
+            public CustomerServiceLine(string phoneNumber, bool spanishAvailable, double averageWaitTime) {
+                throw new InvalidOperationException("AMBIGUOUS CONSTRUCTOR");
+            }
+            public CustomerServiceLine(string phoneNumber, bool spanishAvailable, byte initialMenuOptions) {
+                throw new InvalidOperationException("AMBIGUOUS CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Public and Non-Public Constructor where Latter Has Larger Arity (✓reconstituted via public✓)
+        public class Winery {
+            [PrimaryKey, Column(0)] public Guid WineryID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public string? LeadSommelier { get; }
+            [Column(3)] public ulong NumReds { get; set; }
+            [Column(4)] public ulong NumWhites { get; set; }
+            [Column(5)] public ulong NumRoses { get; set; }
+            [Column(6)] public Guid LiquorLicense { get; set; }
+
+            public Winery(string? leadSommelier) {
+                LeadSommelier = leadSommelier;
+            }
+            private Winery(string? leadSommelier, ulong numReds, ulong numWhites, ulong numRoses) {
+                throw new InvalidOperationException("WRONG VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Viable Constructor in Partial Class (✓reconstituted✓)
+        public partial class Constructor {
+            public enum AccessModifier { Public, Private, Protected, Internal, InternalProtected };
+
+            [PrimaryKey, Column(0)] public string Type { get; }
+            [PrimaryKey, Column(1)] public byte Index { get; }
+            [Column(2)] public AccessModifier Visibility { get; }
+            [Column(3)] public int Arity { get; set; }
+            [Column(4)] public bool CanThrowException { get; set; }
+            [Column(5)] public bool IsExplicit { get; set; }
+        }
+        public partial class Constructor {
+            public Constructor(string type, byte index, AccessModifier visibility) {
+                Type = type;
+                Index = index;
+                Visibility = visibility;
+            }
+        }
+
+        // Scenario: Viable Constructor with Fields Renamed (✓reconstituted✓)
+        public class Petroglyph {
+            [PrimaryKey, Column(0), Name("Identifier")] public Guid ArchaeologicalIdentifer { get; }
+            [Column(1)] public float Latitude { get; set; }
+            [Column(2)] public float Longtiude { get; set; }
+            [Column(3), Name("Rock")] public string Location { get; }
+            [Column(4)] public double Height { get; set; }
+            [Column(5)] public string TypeOfRock { get; set; } = "";
+
+            public Petroglyph(Guid identifier, string rock) {
+                ArchaeologicalIdentifer = identifier;
+                Location = rock;
+            }
+            public Petroglyph(Guid archaeologicalIdentifier, float latitude, float longitude, string location, double height, string typeOfRock) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Viable Constructor with [Calculated] Fields (✓reconstituted✓)
+        public class PaintballGun {
+            [PrimaryKey, Column(0)] public Guid ProductID { get; }
+            [Column(1)] public ushort PaintballCapacity { get; }
+            [Column(2)] public double DispatchSpeed { get; }
+            [Calculated, Column(3)] public bool ProLegal => PaintballCapacity <= 100 && DispatchSpeed > 0.05;
+            [Column(4)] public bool Semiautomatic { get; }
+
+            public PaintballGun(Guid productID, ushort paintballCapacity, double dispatchSpeed, bool semiautomatic) {
+                ProductID = productID;
+                PaintballCapacity = paintballCapacity;
+                DispatchSpeed = dispatchSpeed;
+                Semiautomatic = semiautomatic;
+            }
+        }
+
+        // Scenario: Viable Constructor for Aggregate (✓reconstituted✓)
+        public class BaobabTree {
+            public readonly struct Coordinate {
+                [Column(0)] public float Latitude { get; }
+                [Column(1)] public float Longitude { get; }
+
+                public Coordinate(float longitude, float latitude) {
+                    Latitude = latitude;
+                    Longitude = longitude;
+                }
+            }
+
+            [PrimaryKey, Column(0)] public Guid TreeID { get; set; }
+            [Column(1)] public ulong Height { get; set; }
+            [Column(2)] public ulong RootCoverage { get; set; }
+            [Column(3)] public string? Forest { get; set; }
+            [Column(4)] public Coordinate ExactLocation { get; set; }
+            [Column(6)] public ushort Age { get; set; }
+        }
+
+        // Scenario: Viable Constructor for Aggregate with Fields Renamed in Entity (✓reconstituted✓)
+        public class GPU {
+            public enum Field { Gaming, CloudGaming, Workstation, CloudWorkstation, AI, DriverlessCars, Other }
+
+            public struct Spec {
+                [Column(0)] public Field PrimaryField { get; }
+                [Column(1)] public ushort MegaHertz { get; }
+                [Column(2)] public ushort GigaBytes { get; }
+
+                public Spec(ushort megahertz, ushort gigabytes, Field primaryField) {
+                    PrimaryField = primaryField;
+                    MegaHertz = megahertz;
+                    GigaBytes = gigabytes;
+                }
+            }
+
+            [PrimaryKey, Column(0)] public Guid ChipID { get; set; }
+            [Column(1)] public string Manufacturer { get; set; } = "";
+            [Column(2)] public string Model { get; set; } = "";
+            [Column(3), Name("ClockSpeed", Path = "MegaHertz"), Name("Memory", Path ="GigaBytes")] public Spec Specification { get; set; }
+            [Column(6)] public bool HasVideoCard { get; set; }
+            [Column(7)] public bool Discontinued { get; set; }
+        }
+
+        // Scenario: No Viable Constructor for Aggregate and All Properties are Writeable (✗cannot reconstitute✗)
+        public class Gargoyle {
+            public struct Rock {
+                [Column(0)] public string Name { get; set; }
+                [Column(1)] public double Hardnes { get; set; }
+                [Column(2)] public double Weight { get; set; }
+
+                public Rock(Guid rockID) {
+                    throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+                }
+            }
+
+            [PrimaryKey, Column(0)] public Guid GargoyleID { get; set; }
+            [Column(1)] public Rock Material { get; set; }
+            [Column(2)] public string Shape { get; set; } = "";
+            [Column(3)] public string Location { get; set; } = "";
+            [Column(4)] public bool FullyIntact { get; set; }
+        }
+
+        // Scenario: No Viable Constructor for Aggregate and At Least One Read-Only Property (✗cannot reconstitute✗)
+        public class SecurityClearance {
+            public enum SecurityLevel { Secret, TopSecret, Confidential, L, Q }
+            [Flags] public enum Agency { CIA = 1, NSA = 2, FBI = 4, JSOC = 8, EOP = 16 }
+
+            public struct Position {
+                [Column(0)] public string Department { get; }
+                [Column(1)] public string Role { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Individual { get; set; } = "";
+            [PrimaryKey, Column(1)] public SecurityLevel Level { get; set; }
+            [Column(2)] public Position GovernmentPosition { get; set; }
+            [Column(4)] public bool IsActive { get; set; }
+            [Column(5)] public Agency IssuingAgency { get; set; }
+        }
+
+        // Scenario: Viable Constructor for Relation-Nested Aggregate (✓reconstituted✓)
+        public class IllithidPower {
+            public enum Act { Act1, Act2, Act3 }
+            public enum Kind { PassiveAction, ClassAbility, ToggleablePassiveFeature, Reaction }
+
+            public readonly struct Feature {
+                [Column(0)] public string Trigger { get; }
+                [Column(1)] public string Modifier { get; }
+                [Column(2)] public ulong Value { get; }
+
+                public Feature(string trigger, string modifier, ulong value) {
+                    Trigger = trigger;
+                    Modifier = modifier;
+                    Value = value;
+                }
+            }
+
+            [PrimaryKey, Column(0)] public string PowerName { get; set; } = "";
+            [Column(1)] public Act ActUnlocked { get; set; }
+            [Column(2)] public Kind KindOfPower { get; set; }
+            public RelationList<Feature> Features { get; } = new RelationList<Feature>();
+        }
+
+        // Scenario: No Viable Constructor for Aggregate Type Backing only [Calculated] Properties (✓reconstituted✓)
+        public class Requiem {
+            public readonly struct TimeSignature {
+                [Column(0)] public int Top { get; }
+                [Column(1)] public int Bottom { get; }
+
+                public TimeSignature(string signature) {
+                    Top = int.Parse(signature.Split("/")[0]);
+                    Bottom = int.Parse(signature.Split("/")[1]);
+                }
+            }
+
+            [PrimaryKey, Column(0)] public string Composer { get; set; } = "";
+            [PrimaryKey, Column(1)] public int OpusNumber { get; set; }
+            [Calculated, Column(2)] public TimeSignature Signature { get; } = new TimeSignature("4/4");
+            [Column(4)] public double Length { get; set; }
+            [Column(5)] public DateTime? Premiered { get; set; }
+        }
+
+        // Scenario: [ReconstituteThrough] on Viable Public Constructor (✓reconstituted✓)
+        public class Beekeeper {
+            public enum Classification { Commercial, Hobby, Sideline, Poaching }
+
+            [PrimaryKey, Column(0)] public Guid BeekeeperID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public ulong BeesKept { get; }
+            [Column(3)] public ulong NumTimesStung { get; }
+            [Column(4)] public Classification Kind { get; set; }
+            [Column(5)] public int GallonsHoneyProduced { get; set; }
+
+            public Beekeeper(Guid beekeeperId, string name, ulong beesKept, ulong numTimesStung, Classification kind, int gallonsHoneyProduced) {
+                throw new InvalidOperationException("WRONG CONSTRUCTOR");
+            }
+
+            [ReconstituteThrough]
+            public Beekeeper(ulong beesKept, ulong numTimesStung) {
+                BeesKept = beesKept;
+                NumTimesStung = numTimesStung;
+            }
+        }
+
+        // Scenario: [ReconstituteThrough] on Viable Non-Public Constructor (✓reconstituted✓)
+        public class Nightclub {
+            [PrimaryKey, Column(0)] public string ClubName { get; } = "";
+            [PrimaryKey, Column(1)] public string ClubCity { get; } = "";
+            [Column(2)] public uint Capacity { get; set; }
+            [Column(3)] public decimal Cover { get; set; }
+            [Column(4)] public Guid? LiquorLicense { get; set; }
+            [Column(5)] public sbyte NumBouncers { get; }
+
+            public Nightclub(string clubName, string clubCity, sbyte numBouncers) {
+                throw new InvalidOperationException("WRONG CONSTRUCTOR");
+            }
+
+            [ReconstituteThrough]
+            private Nightclub(string clubCity, sbyte numBouncers, string clubName) {
+                ClubCity = clubCity;
+                NumBouncers = numBouncers;
+                ClubName = clubName;
+            }
+        }
+
+        // Scenario: [ReconstituteThrough] on Non-Viable Constructor (✗impermissible✗)
+        public class Condom {
+            [PrimaryKey, Column(0)] public Guid ProductID { get; }
+            [Column(1)] public string Brand { get; }
+            [Column(2)] public string Size { get; }
+            [Column(3)] public bool IsLatex { get; }
+            [Column(4)] public bool IsFlavored { get; }
+            [Column(5)] public bool IsUsed { get; }
+
+            [ReconstituteThrough]
+            public Condom(Guid productId, string size, bool isUsed, bool isLatex) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: Multiple Constructors Marked as [ReconstituteThrough] (✗cardinality✗)
+        public class AntColony {
+            public enum Relationship { Monogyny, Polygyny, Oligogyny, Haplometrosis, Pleometrosis, Monodomy, Polydomy }
+
+            public record struct Species(string Genus, string SpeciesName);
+
+            [PrimaryKey, Column(0)] public Guid ColonyID { get; }
+            [Column(1)] public ulong Population { get; }
+            [Column(2)] public Species AntSpecies { get; }
+            [Column(4)] public ulong NumMounds { get; }
+            [Column(5)] public Relationship Organization { get; }
+
+            [ReconstituteThrough]
+            public AntColony() {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+
+            [ReconstituteThrough]
+            public AntColony(Guid colonyId, ulong population, Species species, ulong numMounds, Relationship organization) {
+                throw new InvalidOperationException("NON-VIABLE CONSTRUCTOR");
+            }
+        }
+
+        // Scenario: [ReconsituteThrough] for an Aggregate (✓reconstituted✓)
+        public class Aphrodisiac {
+            public struct MakeUp {
+                [Column(0)] public string Formula { get; }
+                [Column(1)] public bool IsAromatic { get; set; }
+
+                public MakeUp(string formula, bool isAromatic) {
+                    throw new InvalidOperationException("WRONG CONSTRUCTOR");
+                }
+
+                [ReconstituteThrough]
+                public MakeUp(string formula) {
+                    Formula = formula;
+                }
+            }
+
+            [PrimaryKey, Column(0)] public string Identifier { get; set; } = "";
+            [Column(1)] public double Strength { get; set; }
+            [Column(2)] public MakeUp? ChemicalStructure { get; set; }
+            [Column(4)] public string? DiscoveringCivilization { get; set; }
         }
     }
 }
