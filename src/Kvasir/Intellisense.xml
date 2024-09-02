@@ -1613,16 +1613,12 @@
               The <see cref="T:System.Type"/> of CLR object reconstituted by this <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/>.
             </summary>
         </member>
-        <member name="M:Kvasir.Reconstitution.DataReconstitutionPlan.#ctor(Kvasir.Reconstitution.ICreator,System.Collections.Generic.IEnumerable{Kvasir.Reconstitution.IMutator})">
+        <member name="M:Kvasir.Reconstitution.DataReconstitutionPlan.#ctor(Kvasir.Reconstitution.ReconstitutingCreator)">
             <summary>
               Construct a new <see cref="T:Kvasir.Reconstitution.DataReconstitutionPlan"/>.
             </summary>
             <param name="creator">
-              The <see cref="T:Kvasir.Reconstitution.ICreator"/> with which to create the bare CLR object.
-            </param>
-            <param name="mutators">
-              Zero or more <see cref="T:Kvasir.Reconstitution.IMutator"/> to be applied to the CLR object produced by <paramref name="creator"/>
-              in the given order.
+              The <see cref="T:Kvasir.Reconstitution.ReconstitutingCreator"/> with which to create the bare CLR object.
             </param>
         </member>
         <member name="M:Kvasir.Reconstitution.DataReconstitutionPlan.ReconstituteFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">

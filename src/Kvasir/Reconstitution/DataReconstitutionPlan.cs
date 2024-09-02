@@ -20,20 +20,12 @@ namespace Kvasir.Reconstitution {
         ///   Construct a new <see cref="DataReconstitutionPlan"/>.
         /// </summary>
         /// <param name="creator">
-        ///   The <see cref="ICreator"/> with which to create the bare CLR object.
+        ///   The <see cref="ReconstitutingCreator"/> with which to create the bare CLR object.
         /// </param>
-        /// <param name="mutators">
-        ///   Zero or more <see cref="IMutator"/> to be applied to the CLR object produced by <paramref name="creator"/>
-        ///   in the given order.
-        /// </param>
-        public DataReconstitutionPlan(ICreator creator, IEnumerable<IMutator> mutators) {
+        public DataReconstitutionPlan(ReconstitutingCreator creator) {
             Debug.Assert(creator is not null);
-            Debug.Assert(mutators is not null);
-            Debug.Assert(mutators.AllSame(m => m.SourceType));
-            Debug.Assert(mutators.IsEmpty() || creator.ResultType.IsInstanceOf(mutators.First().SourceType));
 
             creator_ = creator;
-            mutators_ = new List<IMutator>(mutators);
             ResultType = creator_.ResultType;
         }
 
@@ -50,16 +42,12 @@ namespace Kvasir.Reconstitution {
         /// </returns>
         public object ReconstituteFrom(IReadOnlyList<DBValue> dbValues) {
             Debug.Assert(dbValues is not null && !dbValues.IsEmpty());
+            Debug.Assert(!dbValues.All(v => v == DBValue.NULL));
 
-            var reconstitution = creator_.CreateFrom(dbValues)!;
-            foreach (var mutator in mutators_) {
-                mutator.Mutate(reconstitution, dbValues);
-            }
-            return reconstitution;
+            return creator_.CreateFrom(dbValues)!;
         }
 
 
-        private readonly ICreator creator_;
-        private readonly IReadOnlyList<IMutator> mutators_;
+        private readonly ReconstitutingCreator creator_;
     }
 }
