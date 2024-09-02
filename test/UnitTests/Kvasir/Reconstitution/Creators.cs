@@ -652,6 +652,24 @@ namespace UT.Kvasir.Reconstitution {
             keyExtractor.Received(1).ExtractFrom(options[1]);
             keyExtractor.Received(1).ExtractFrom(options[2]);
         }
+
+        [TestMethod] public void LookupNullKey() {
+            // Arrange
+            var options = new List<string>() { "Lelydorp", "Shizuoka", "Trieste", "Mississauga" };
+            var keyExtractor = Substitute.For<IMultiExtractor>();
+            var keyPlan = new DataExtractionPlan(new IMultiExtractor[] { keyExtractor });
+
+            // Act
+            var matcher = new KeyMatcher(() => options, keyPlan);
+            var creator = new KeyLookupCreator(matcher);
+            var value = creator.CreateFrom(new List<DBValue>() { DBValue.NULL, DBValue.NULL });
+
+            // Assert
+            matcher.ResultType.Should().Be(keyPlan.SourceType);
+            creator.ResultType.Should().Be(matcher.ResultType);
+            value.Should().BeNull();
+            keyExtractor.DidNotReceive().ExtractFrom(Arg.Any<object?>());
+        }
     }
 
     [TestClass, TestCategory("CreatorFacade")]

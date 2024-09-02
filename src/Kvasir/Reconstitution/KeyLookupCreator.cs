@@ -29,8 +29,12 @@ namespace Kvasir.Reconstitution {
         }
 
         /// <inheritdoc/>
-        public object CreateFrom(IReadOnlyList<DBValue> dbValues) {
+        public object? CreateFrom(IReadOnlyList<DBValue> dbValues) {
             Debug.Assert(dbValues is not null && !dbValues.IsEmpty());
+
+            if (dbValues.Any(v => v == DBValue.NULL)) {
+                return null;
+            }
             return lookup_.Lookup(dbValues);
         }
 
