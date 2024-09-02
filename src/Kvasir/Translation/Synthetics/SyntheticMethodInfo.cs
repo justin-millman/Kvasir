@@ -37,7 +37,7 @@ namespace Kvasir.Translation {
             Debug.Assert(source is not null);
 
             DeclaringType = source.DeclaringType;
-            ReturnParameter = new SyntheticParameterInfo();
+            ReturnParameter = new SyntheticReturnInfo();
             ReturnType = source.PropertyType;
         }
 

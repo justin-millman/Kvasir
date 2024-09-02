@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Extraction;
+using Kvasir.Reconstitution;
 using Optional;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,12 @@ namespace Kvasir.Translation {
         public abstract int Size { get; }
 
         /// <summary>
+        ///   <see langword="true"/> if the property that backs the <see cref="FieldGroup"/> is nullable (accounting for
+        ///   any annotations); otherwise, <see langword="false"/>.
+        /// </summary>
+        public abstract bool IsNativelyNullable { get; }
+
+        /// <summary>
         ///   <see langword="true"/> if all the Fields in the <see cref="FieldGroup"/> are nullable, otherwise
         ///   <see langword="false"/>.
         /// </summary>
@@ -35,6 +42,12 @@ namespace Kvasir.Translation {
         public PropertyInfo Source { get; private set; }
 
         /// <summary>
+        ///   The (unnormalized) name of the constructor argument that would be a match for the <see cref="FieldGroup"/>
+        ///   when determining viability for Reconstitution.
+        /// </summary>
+        public abstract string ReconstitutionArgumentName { get; }
+
+        /// <summary>
         ///   The dot-separated access path of the single Field within the group at a given column index.
         /// </summary>
         /// <param name="column">
@@ -46,6 +59,12 @@ namespace Kvasir.Translation {
         ///   The <see cref="IMultiExtractor"/> for this group.
         /// </summary>
         public abstract IMultiExtractor Extractor { get; }
+
+        /// <summary>
+        ///   The <see cref="ICreator"/> for this group. If the group represents a <c>[Calculated]</c> property, this
+        ///   value will be a <c>NONE</c> instance.
+        /// </summary>
+        public abstract Option<ICreator> Creator { get; protected init; }
 
         /// <summary>
         ///   Clones this <see cref="FieldGroup"/>.

@@ -1,7 +1,9 @@
-﻿using Cybele.Extensions;
+﻿using Cybele.Core;
+using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Extraction;
+using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -99,6 +101,7 @@ namespace Kvasir.Translation {
             var pkDescriptors = schemas.Where(s => primaryKey.Fields.Contains(s.Field)).Select(s => s.Descriptor);
             var pkGroups = fieldGroups.Select(g => g.Filter(pkDescriptors)).Where(o => o.HasValue).Select(o => o.Unwrap());
             pkCache_[source] = pkGroups.ToList();
+            var pkExtractor = new DataExtractionPlan(pkGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
 
             var tableName = GetTableName(context, source);
             if (tableNameCache_.TryGetValue(tableName, out Type? match)) {
@@ -107,10 +110,12 @@ namespace Kvasir.Translation {
 
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
             var extractor = new DataExtractionPlan(fieldGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
-            principal = new PrincipalTableDef(table, extractor, null!);
+            var creator = new DataReconstitutionPlan(ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false));
+            principal = new PrincipalTableDef(table, extractor, creator);
 
             principalTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);
+            keyMatchers_.Add(source, new KeyMatcher(() => entityLookup_(source), pkExtractor));
             return principal;
         }
 
@@ -149,6 +154,15 @@ namespace Kvasir.Translation {
                 var syntheticType = SyntheticType.MakeSyntheticType(source, tracker);
                 var context = new Context(syntheticType);
 
+                var accessChainPaths = tracker.Path.Split('.');
+                var accessChain = new PropertyChain(source, accessChainPaths[0]);
+                for (int idx = 1; idx < accessChainPaths.Length; ++idx) {
+                    if (Nullable.GetUnderlyingType(accessChain.PropertyType) is not null) {
+                        accessChain = accessChain.Append("Value");
+                    }
+                    accessChain = accessChain.Append(accessChainPaths[idx]);
+                }
+
                 var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, false));
                 var schemas = relationGroup.Select(d => d.MakeSchema(settings_)).ToList();
                 var fields = schemas.Select(s => s.Field).ToList();
@@ -170,13 +184,19 @@ namespace Kvasir.Translation {
                     throw new DuplicateNameException(context, tableName, match);
                 }
 
-                var extractRelationProperty = new ReadPropertyExtractor(property);
+                var extractRelationProperty = new ReadPropertyExtractor(accessChain);
                 var elementExtractor = new DataExtractionPlan(Enumerable.Repeat(relationGroup.Extractor, 1));
-
                 var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
                 var extractor = new RelationExtractionPlan(extractRelationProperty, elementExtractor);
-                var def = new RelationTableDef(table, extractor, null!);
 
+                RelationRepopulationPlan? repopulator = null;
+                if (relationGroup.Creator.HasValue) {
+                    var elementCreator = (relationGroup.Creator.Unwrap() as ReconstitutingCreator)!;
+                    var elementReconstitutor = new DataReconstitutionPlan(elementCreator);
+                    repopulator = new RelationRepopulationPlan(extractRelationProperty, elementReconstitutor, new DirectRepopulator());
+                }
+
+                var def = new RelationTableDef(table, extractor, repopulator);
                 tableNameCache_.Add(tableName, syntheticType);
                 relationTables.Add(def);
             }

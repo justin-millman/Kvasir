@@ -1,4 +1,5 @@
 ﻿using Kvasir.Core;
+using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -71,6 +72,7 @@ namespace Kvasir.Translation {
             tableNameCache_ = new Dictionary<TableName, Type>();
             pkCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
             relationTrackersCache_ = new Dictionary<Type, IReadOnlyList<RelationTracker>>();
+            keyMatchers_ = new Dictionary<Type, KeyMatcher>();
         }
 
 
@@ -82,5 +84,6 @@ namespace Kvasir.Translation {
         private readonly Dictionary<TableName, Type> tableNameCache_;
         private readonly Dictionary<Type, IReadOnlyList<FieldGroup>> pkCache_;
         private readonly Dictionary<Type, IReadOnlyList<RelationTracker>> relationTrackersCache_;
+        private readonly Dictionary<Type, KeyMatcher> keyMatchers_;
     }
 }

@@ -104,7 +104,7 @@ namespace Kvasir.Translation {
                         TranslatePrincipalTable(context, propType);
                         nestedGuard.Dispose();
                         var pk = pkCache_[propType].Select(g => g.Reset()).ToList();
-                        translation.Add(new ReferenceFieldGroup(context, property, pk));
+                        translation.Add(new ReferenceFieldGroup(context, property, pk, keyMatchers_[propType]));
                     }
                     else if (typeCategory.Equals(TypeCategory.Struct)) {
                         // The `nestedGuard` variable is manually disposed because we want it to be active only for the

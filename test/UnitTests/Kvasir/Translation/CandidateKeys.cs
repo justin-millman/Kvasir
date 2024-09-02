@@ -323,14 +323,12 @@ namespace UT.Kvasir.Translation {
             var translation = translator[source];
 
             // Assert
-            if (false) {
-                translation.Relations[0].Table.Should()
-                    .HaveCandidateKey("X").OfFields(
-                        "BigBlockOfCheeseDay.Episode",
-                        "Key.Organization"
-                    ).And
-                    .HaveNoOtherCandidateKeys();
-            }
+            translation.Relations[0].Table.Should()
+                .HaveCandidateKey("X").OfFields(
+                    "BigBlockOfCheeseDay.Episode",
+                    "Key.Organization"
+                ).And
+                .HaveNoOtherCandidateKeys();
         }
 
         [TestMethod] public void NestedRelationsInCandidateKey_IsError() {

@@ -1,5 +1,6 @@
 # This document lists the Entity concepts that have been used in unit tests for Kvasir Translation.
 
+Accountant
 Achaean Naval Contingent
 Acid
 ACT
@@ -14,22 +15,28 @@ Airplane
 Airport
 Alarm
 Alkene
+Allegory
 Allomancy
 Almanac
+Alpha Monster
 Alphabet
 Amazon Service
 Ambassador
 Amber Alert
+Ambulance
+American Girl Doll
 American Idol
 Amino Acid
 Amusement Park
 Animal
 Animation (PowerPoint)
+Ant Colony
 Antari
 Antibiotic
 Antihistamine
 Antiparticle
 Antipope
+Aphrodisiac
 Apocalypse
 Apostle
 Aquarium
@@ -68,6 +75,7 @@ Bachelorette
 Backyard Baseball Player
 Bacterium
 Bagel
+Bakery
 Bakugan
 Balk
 Ballerina
@@ -77,6 +85,8 @@ Bank
 Bank Account
 Bank Robber
 Bankruptcy
+Banshee
+Baobab Tree
 Bar Graph
 Barbecue Sauce
 Barbie
@@ -92,6 +102,7 @@ Battle
 Battleship
 Bay
 Beach
+Beekeeper
 Belt
 Ben 10 Alien
 Benin Bronze
@@ -157,6 +168,7 @@ Canal
 Cancer
 Candle
 Candy Bar
+Cannibal
 Cannon
 Canterbury Tale
 Canton of Switzerland
@@ -184,9 +196,12 @@ Census
 Cereal
 Ceviche
 Chakra
+Chameleon
 Character (text)
+Charcuterie Board
 Check
 Cheerleader
+Cheese
 Chemical Element
 Chess Piece
 Chewing Gum
@@ -218,6 +233,7 @@ Clue(do) Game
 CMake Target
 Coal Mine
 Coat of Arms
+Cockfight
 Cocoa Farm
 Codon
 Coin
@@ -235,13 +251,16 @@ Concentration Camp
 Concert
 Concert Tour
 Condiment
+Condom
 Confidence Interval
 Conlang
 Connecting Wall
 Contact Lens
+Conspiracy Theory
 Constellation
 Constitution
 Constitutional Amendment
+Constructor
 Cookbook
 Coral Reef
 Corn Maze
@@ -250,6 +269,7 @@ County
 Coup d'État
 Coupon
 Court Case
+Covalent Bond
 Credit Card
 Crossword Clue
 Cruise
@@ -261,6 +281,7 @@ Cryptogram
 Cult
 Curling Match
 Currency
+Customer Service Line
 CVE
 Cybersite
 Cyclops
@@ -271,6 +292,7 @@ D&D Spell
 D&D Weapon
 Dalai Lama
 Dam
+Data Center
 Data Structure
 Database Field
 Date
@@ -281,6 +303,8 @@ Defenestration
 Delicatessen
 Denarian
 Dentist
+Deposition
+Dermatologist
 Desert
 Diamond
 Dice Roll
@@ -288,6 +312,7 @@ Diet
 Dinosaur
 Directory (file system)
 Discworld Guild
+Disneyland
 Distribution (probability)
 District Attorney
 DLL
@@ -298,6 +323,7 @@ Documentary
 Dog Show
 Domino
 Donut
+Dormitory
 Draft Pick
 Dragon
 Dragon Rider (Eragon)
@@ -319,14 +345,18 @@ Egyptian God
 Egyptian Pyramid
 Eigenvector
 Elevator
+Emergency Room
 Emoji
 Emotion
+Empanada
 Encomienda
 Encryption
 Encyclopedia
 Engagement Ring
 Enumeration
 Enzyme
+Epic Poem
+EpiPen
 Episode
 Escalator
 Escape Room
@@ -375,11 +405,15 @@ Fountain
 Fractal
 Fraction
 Fraternity
+Fresco
+Fried Chicken
 Function (programming)
 Galaxy
 Gaming Console
 Garage Sale
 Garbage Truck
+Garden
+Gargoyle
 Gas Station
 Gatorade
 Gelateria
@@ -394,12 +428,16 @@ Ghost (Danny Phantom)
 Girl Scout Cookie
 Git Commit
 Git Hook
+Glacier
+Go-Kart
+GoFundMe Campaign
 Gold Rush
 Golden Raspberry
 Golem
 Golf Course
 Golf Hole
 Government Shutdown
+GPU
 Grammatical Case
 Grand Prix
 Grasslands
@@ -412,8 +450,10 @@ Guitar
 Gulag
 Guy's Grocery Game
 Gymnast
+Hacker
 Haiku
 Hairstyle
+Haitian Loa
 Hall of Fame
 Hall Pass
 Happy Hour
@@ -458,11 +498,14 @@ House Committee
 HTML Element
 HTTP Error
 Hurricane
+Hypnotist
 Ice Age
 Ice Cream Sundae
+Iconoclast
 IDE
 Igloo
 IKEA Furniture
+Illithid Power (BG3)
 Imaginary Friend
 Immaculate Grid
 Immortal (Highlander)
@@ -509,6 +552,7 @@ Kid Next Door
 Kidney Stone
 Kinesis
 King of England
+King of France
 Kite
 Knife
 Knock-Knock Joke
@@ -528,6 +572,7 @@ Lawn Gnome
 Lawn Mower
 Lazarus Pit
 Lease
+LED
 Lego Set
 Legume
 Lens
@@ -539,6 +584,7 @@ Ligament
 Lighthouse
 Limbo Competition
 Limerick
+Limousine
 Linker
 Linux Distribution
 Lipstick
@@ -581,15 +627,20 @@ Mass Extinction
 Massacre
 MasterClass
 Mathematical Conjecture
+Mathematical Proof
 Mausoleum
 Mayor
 Medal of Honor
 Medical Specialty
+Menorah
 Meme
 Memory Buffer
 Merit Badge
+Mermaid
 Mesopotamian God
+Metra Route
 Mezuzah
+Michelin Guide
 Military Base
 Militia
 Milkshake
@@ -628,11 +679,13 @@ Nebula
 Necktie
 Necromancer
 Ned's Declassified School Survival Guide Tip
+Neighborhood
 Neurotoxin
 Neurotransmitter
 News Anchor
 Newscast
 Newspaper
+Nightclub
 Niqqud
 Nobel Prize
 Norse God
@@ -670,6 +723,7 @@ Overnight Camp
 PACER Test
 Package (software)
 Pagoda
+Paintball Gun
 Painting
 Pajamas
 Panegyric
@@ -679,20 +733,25 @@ Parabola
 Parashah
 Parking Garage
 Parking Ticket
+Particle Accelerator
 Passport
 Pasta Sauce
 Patent
+Patreon
 Pawn Shop
+Paycheck
 Peace Treaty
 Peanut Butter
 Peerage
 Penalty (NFL)
 Pencil
+Penguin
 Peninsula
 PEP
 Pepper
 Perfume
 Person of the Year (Time)
+Petroglyph
 Pharaoh
 Pharmacy
 Phase Diagram
@@ -718,6 +777,7 @@ Platonic Dialogue
 Playing Card
 Playlist
 PO Box
+Poacher
 Podcast
 Poet Laurete
 Pokémon
@@ -736,6 +796,7 @@ Porn Star
 Post Office
 Potato
 Pregnancy Test
+Prenuptial Agreement
 Prescription
 Presidential Election
 Press Secretary
@@ -764,6 +825,7 @@ QR Code
 Quadratic Equation
 Quarterback
 Quatrain
+Quilt
 Rabbi
 Racehorse
 Racetrack (auto racing)
@@ -779,6 +841,7 @@ Register (computing)
 Rental Car
 Repository
 Representative
+Requiem
 Resistor
 Rest Stop
 Restaurant
@@ -812,12 +875,14 @@ Screenwriter
 Screwdriver
 SCUBA Dive
 Sculpture
+Séance
 Search Engine
 Search Warrant
 Season
 Secret Hitler Game
 Secret Police
 Secret Society
+Security Clearance
 Seder Plate
 Seizure
 Senator
@@ -886,8 +951,10 @@ State Quarter
 Steak
 Step Pyramid
 Stock
+Stove
 Stratego Piece
 Strike (labor)
+Strip Club
 Stuffed Animal
 Submarine
 Subreddit
@@ -945,6 +1012,9 @@ Tossup Question
 Totem Pole
 Tour de France
 Tournament
+Tractor
+Traffic Stop
+Trampoline
 Transformer (robot)
 Transistor
 Treadmill
@@ -994,10 +1064,12 @@ Wadi
 Walkabout
 Waffle
 Water Bottle
+Water Park
 Water Slide
 Waterbending Discipline
 Waterfall
 Web Browser
+Wedding
 Weekend Update
 Werewolf
 Where's Waldo?
@@ -1006,6 +1078,7 @@ Who Wants to Be a Millionaire? Question
 Wikipedia Page
 Wildfire
 Windmill
+Winery
 WinForm
 Winter Storm
 Wiretap
@@ -1018,6 +1091,8 @@ World Heritage Site
 Wormhole
 Wrestler
 Wristwatch
+X-Men Mutant
+Xenomorph
 xkcd Comic
 Yacht
 Yahtzee Game

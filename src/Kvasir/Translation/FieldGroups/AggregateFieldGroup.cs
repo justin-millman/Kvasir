@@ -1,7 +1,8 @@
 ﻿using Cybele.Extensions;
+using Kvasir.Reconstitution;
 using Optional;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -40,6 +41,12 @@ namespace Kvasir.Translation {
             // No debug check for at least 1 Field here because there may, in fact, be 0 Fields: this happens if there
             // is an Aggregate that contains only Relation-type Fields. Such an AggregateGroup will be excluded from the
             // ongoing Translation.
+
+            if (!IsCalculated && Size > 0) {
+                using var guard = context.Push(Nullable.GetUnderlyingType(source.PropertyType) ?? source.PropertyType);
+                var creator = ReconstitutionHelper.MakeCreator(context, source.PropertyType, fields, IsNativelyNullable);
+                Creator = Option.Some<ICreator>(creator);
+            }
         }
 
         /// <summary>

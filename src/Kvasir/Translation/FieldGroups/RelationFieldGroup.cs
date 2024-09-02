@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Extraction;
+using Kvasir.Reconstitution;
 using Kvasir.Relations;
 using Kvasir.Schema;
 using Optional;
@@ -50,6 +51,17 @@ namespace Kvasir.Translation {
             : base(context, source, fields) {
 
             Debug.Assert(!fields.IsEmpty());
+
+            if (!IsCalculated && Size > 0) {
+                // The Creator for a RelationFieldGroup should only extract the _element_ values, not the owning Entity
+                // values; this is an optimization to avoid running the reflection over the owning Entity multiple times
+                // for a single Relation or across Relations. The owning Entity will always be represented by the first
+                // FieldGroup, which is why we skip it.
+                var elementFields = fields.OrderBy(g => g.Column.Unwrap()).Skip(1);
+                var syntheticSource = elementFields.First().Source.ReflectedType!;
+                var creator = ReconstitutionHelper.MakeCreator(context, syntheticSource, elementFields, false);
+                Creator = Option.Some<ICreator>(creator);
+            }
 
             // We are relying on the `relationTable_` member being a struct whose default/zero initialization is to put
             // in in the <NONE> state. Annotation processing is done when we construct the base class, at which point

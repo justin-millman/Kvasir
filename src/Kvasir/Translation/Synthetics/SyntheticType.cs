@@ -18,6 +18,11 @@ namespace Kvasir.Translation {
     ///   The reflection representation that models the element of a Relation.
     /// </summary>
     internal sealed partial class SyntheticType : Type {
+        /// <summary>
+        ///   The <see cref="Type"/> that the <see cref="SyntheticType"/> is masquerading as.
+        /// </summary>
+        public Type ActualType { get; }
+
         /// <inheritdoc/>
         public sealed override Assembly Assembly { get; }
 
@@ -53,33 +58,38 @@ namespace Kvasir.Translation {
         ///   properties. (This is a function because of the circular definition: the SyntheticType needs to know its
         ///   properties, and each SyntheticProperty needs to know its owning SyntheticType.)
         /// </param>
-        /// <param name="equalTo">
-        ///   The <see cref="Type"/> that the new <see cref="SyntheticType"/> should compare equal to. This is required
-        ///   to "lie" to the type system when performing Extraction and Reconstitution, as those subsystems expect the
-        ///   runtime types of arguments to match the reflected types of properties. However, for Relations, the two
-        ///   will not line up: the former will be a scalar or a key-value pair, while the latter will be the Synthetic
-        ///   Type. The "equality façade" allows us to hijack the equality comparisons to pass all the checks.
+        /// <param name="actualType">
+        ///   The <see cref="Type"/> that the new <see cref="SyntheticType"/> is a façade for.
         /// </param>
         /// <seealso cref="MakeSyntheticType(Type, RelationTracker)"/>
-        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties, Type equalTo) {
+        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties, Type actualType) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(ns is not null && ns != "");
             Debug.Assert(assmebly is not null);
             Debug.Assert(properties is not null);
-            Debug.Assert(equalTo is not null && equalTo is not SyntheticType);
+            Debug.Assert(actualType is not null && actualType is not SyntheticType);
 
             Name = name;
             Namespace = ns;
+            ActualType = actualType;
             Assembly = assmebly;
             properties_ = properties(this).ToList();
-            equalityFacade_ = equalTo;
+
+            // We want to be able to construct a SyntheticType, conceptually, from just the element; the first property
+            // is always that of the owning Entity
+            constructors_ = new ConstructorInfo[] { new SyntheticConstructorInfo(this, properties_.Skip(1)) };
 
             Debug.Assert(properties_.Count >= 2);
         }
 
         /// <inheritdoc/>
+        public sealed override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr) {
+            return constructors_;
+        }
+
+        /// <inheritdoc/>
         public sealed override bool Equals(Type? rhs) {
-            if (rhs == equalityFacade_) {
+            if (rhs == ActualType) {
                 return true;
             }
             else {
@@ -205,7 +215,7 @@ namespace Kvasir.Translation {
                     }
                     return new SyntheticPropertyInfo(p.Name, t, p.Type, annotations);
                 }),
-                equalTo: elementType
+                actualType: elementType
             );
         }
 
@@ -234,7 +244,7 @@ namespace Kvasir.Translation {
 
 
         private readonly IReadOnlyList<SyntheticPropertyInfo> properties_;
-        private readonly Type equalityFacade_;
+        private readonly ConstructorInfo[] constructors_;
         [Flags] private enum Metadata { None = 0, Nullable = 1, Unique = 2, ColumnZero = 4 }
     }
 
@@ -263,12 +273,6 @@ namespace Kvasir.Translation {
             get {
                 throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(Module)}");
             }
-        }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public sealed override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr) {
-            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(GetConstructors)}");
         }
 
         /// <inheritdoc/>

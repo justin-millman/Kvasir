@@ -26,6 +26,6 @@ namespace Kvasir.Translation {
     internal sealed record class RelationTableDef(
         ITable Table,
         RelationExtractionPlan Extractor,
-        RelationRepopulationPlan Repopulator
+        RelationRepopulationPlan? Repopulator
     );
 }

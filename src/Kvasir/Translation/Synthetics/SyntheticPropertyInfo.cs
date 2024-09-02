@@ -16,6 +16,9 @@ namespace Kvasir.Translation {
         public sealed override bool CanRead => true;
 
         /// <inheritdoc/>
+        public sealed override bool CanWrite => false;
+
+        /// <inheritdoc/>
         public sealed override Type? DeclaringType { get; }
 
         /// <inheritdoc/>
@@ -133,14 +136,6 @@ namespace Kvasir.Translation {
         public sealed override PropertyAttributes Attributes {
             get {
                 throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(Attributes)}");
-            }
-        }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public sealed override bool CanWrite {
-            get {
-                throw new NotSupportedException($"{nameof(SyntheticPropertyInfo)}.{nameof(CanWrite)}");
             }
         }
 

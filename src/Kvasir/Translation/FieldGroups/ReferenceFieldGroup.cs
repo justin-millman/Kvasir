@@ -1,4 +1,5 @@
 ﻿using Cybele.Extensions;
+using Kvasir.Reconstitution;
 using Optional;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,10 +28,20 @@ namespace Kvasir.Translation {
         ///   <see cref="ReferenceFieldGroup"/>. The order is irrelevant. The Fields should be in a position to be
         ///   directly modified (i.e. already <see cref="FieldGroup.Reset">reset</see>).
         /// </param>
-        public ReferenceFieldGroup(Context context, PropertyInfo source, IEnumerable<FieldGroup> fields)
+        /// <param name="keyMatcher">
+        ///   The <see cref="KeyMatcher"/> to use when performing look-ups to Reconstitute data extracted from the new
+        ///   <see cref="ReferenceFieldGroup"/>.
+        /// </param>
+        public ReferenceFieldGroup(Context context, PropertyInfo source, IEnumerable<FieldGroup> fields, KeyMatcher keyMatcher)
             : base(context, source, fields) {
 
             Debug.Assert(!fields.IsEmpty());
+            Debug.Assert(keyMatcher is not null);
+            Debug.Assert(keyMatcher.ResultType == source.PropertyType);
+
+            if (!IsCalculated) {
+                Creator = Option.Some<ICreator>(new KeyLookupCreator(keyMatcher));
+            }
         }
 
         /// <summary>

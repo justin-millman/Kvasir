@@ -2,6 +2,7 @@
 using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Extraction;
+using Kvasir.Reconstitution;
 using Optional;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,12 @@ namespace Kvasir.Translation {
         public sealed override bool AllNullable => field_.IsNullable;
 
         /// <inheritdoc/>
+        public sealed override bool IsNativelyNullable { get; }
+
+        /// <inheritdoc/>
+        public sealed override string ReconstitutionArgumentName => reconstitutionArgumentName_;
+
+        /// <inheritdoc/>
         public sealed override string this[int column] {
             get {
                 Debug.Assert(column == 0);
@@ -32,6 +39,9 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         public sealed override ISingleExtractor Extractor { get; }
+
+        /// <inheritdoc/>
+        public sealed override Option<ICreator> Creator { get; protected init; }
 
         /// <summary>
         ///   Constructs a new <see cref="SingleFieldGroup"/>.
@@ -50,7 +60,9 @@ namespace Kvasir.Translation {
             Debug.Assert(source is not null);
 
             field_ = MakeField(context, source);
+            reconstitutionArgumentName_ = source.Name;
             ProcessAnnotations(context);
+            IsNativelyNullable = field_.IsNullable;
 
             // Extraction for a SingleFieldGroup consists of two parts: reading the value out of the source property,
             // and then applying any data conversion to it. If the Field has an Enumeration type, we have to
@@ -60,6 +72,23 @@ namespace Kvasir.Translation {
             if (field_.Converter.ResultType.IsEnum) {
                 var toString = new EnumToStringConverter(field_.Converter.ResultType);
                 Extractor = new ConvertingExtractor(Extractor, toString.ConverterImpl);
+            }
+
+            // Creation for a SingleFieldGroup is the reverse of Extraction. If the Field has an Enumeration type, we
+            // have to first revert the original value from a string, since Enumerations cannot be stored directly.
+            // Then we apply any additional data reversion before finishing with our value. If the source property is
+            // annotated as being [Calculated], though, we skip everything.
+            Creator = Option.None<ICreator>();
+            if (!Source.HasAttribute<CalculatedAttribute>()) {
+                if (field_.Converter.ResultType.IsEnum) {
+                    var toString = new EnumToStringConverter(field_.Converter.ResultType);
+                    var baseCreator = new RevertingCreator(new IdentityCreator(typeof(string)), toString.ConverterImpl);
+                    Creator = Option.Some<ICreator>(new RevertingCreator(baseCreator, field_.Converter));
+                }
+                else {
+                    var baseCreator = new IdentityCreator(field_.Converter.ResultType);
+                    Creator = Option.Some<ICreator>(new RevertingCreator(baseCreator, field_.Converter));
+                }
             }
         }
 
@@ -74,7 +103,10 @@ namespace Kvasir.Translation {
             : base(source) {
 
             field_ = source.field_.Clone();
+            reconstitutionArgumentName_ = source.reconstitutionArgumentName_;
+            IsNativelyNullable = source.IsNativelyNullable;
             Extractor = source.Extractor;
+            Creator = source.Creator;
         }
 
         /// <summary>
@@ -92,7 +124,10 @@ namespace Kvasir.Translation {
             : base(source) {
 
             field_ = source.field_.Reset();
+            reconstitutionArgumentName_ = source.reconstitutionArgumentName_;
+            IsNativelyNullable = source.IsNativelyNullable;
             Extractor = source.Extractor;
+            Creator = source.Creator;
         }
 
         /// <inheritdoc/>
@@ -222,6 +257,11 @@ namespace Kvasir.Translation {
                 throw new InvalidPathException(context, annotation.Annotation);
             }
             field_.SetName(context, annotation.Annotation);
+
+            // only update the Reconstitution Argument Name if the [Name] annotation is directly applied
+            if (annotation.Annotation.Path == "") {
+                reconstitutionArgumentName_ = annotation.Annotation.Name;
+            }
         }
 
         /// <inheritdoc/>
@@ -231,6 +271,7 @@ namespace Kvasir.Translation {
             Debug.Assert(prefix.None(s => s is null || s == ""));
 
             field_.SetNamePrefix(context, new List<string>(prefix));
+            // changing the name prefix is only done for nested fields, so it doesn't affect the Reconstitution argument
         }
 
         /// <inheritdoc/>
@@ -392,5 +433,6 @@ namespace Kvasir.Translation {
 
 
         private readonly FieldDescriptor field_;
+        private string reconstitutionArgumentName_;
     }
 }
