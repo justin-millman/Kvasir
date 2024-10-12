@@ -52,7 +52,7 @@ namespace Kvasir.Schema {
         /// <param name="onUpdate">
         ///   The <see cref="OnUpdate"><c>ON UPDATE</c> behavior</see> of the new Foreign Key.
         /// </param>
-        internal ForeignKey(ITable reference, FieldSeq fields, OnDelete onDelete, OnUpdate onUpdate)
+        internal ForeignKey(ITable reference, IEnumerable<IField> fields, OnDelete onDelete, OnUpdate onUpdate)
             : this(Option.None<FKName>(), reference, fields, onDelete, onUpdate) {}
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Kvasir.Schema {
         /// <param name="onUpdate">
         ///   The <see cref="OnUpdate"><c>ON UPDATE</c> behavior</see> of the new Foreign Key.
         /// </param>
-        internal ForeignKey(FKName name, ITable reference, FieldSeq fields, OnDelete onDelete, OnUpdate onUpdate)
+        internal ForeignKey(FKName name, ITable reference, IEnumerable<IField> fields, OnDelete onDelete, OnUpdate onUpdate)
             : this(Option.Some(name), reference, fields, onDelete, onUpdate) {}
 
         /* Because ForeignKey is record type, the following methods are synthesized automatically by the compiler:
@@ -91,9 +91,9 @@ namespace Kvasir.Schema {
         ///   cannot be modified by the iteration.
         /// </summary>
         /// <remarks>
-        ///   The <see cref="ForeignKey"/> class does not implement the <see cref="FieldSeq"/> interface, preventing
-        ///   Foreign Keys from interoperating with LINQ. The <see cref="GetEnumerator"/> method exists to allow
-        ///   iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+        ///   The <see cref="ForeignKey"/> class does not implement the <see cref="IEnumerable{IField}"/> interface,
+        ///   preventing Foreign Keys from interoperating with LINQ. The <see cref="GetEnumerator"/> method exists to
+        ///   allow iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
         ///   expression.
         /// </remarks>
         /// <returns>
@@ -156,7 +156,7 @@ namespace Kvasir.Schema {
         ///   the same as the number of fields in the Primary Key of <paramref name="reference"/>, and that Fields in
         ///   <paramref name="fields"/> have the same data type as the corresponding referenced Field.
         /// </pre>
-        private ForeignKey(Option<FKName> name, ITable reference, FieldSeq fields, OnDelete onDelete, OnUpdate onUpdate) {
+        private ForeignKey(Option<FKName> name, ITable reference, IEnumerable<IField> fields, OnDelete onDelete, OnUpdate onUpdate) {
             Debug.Assert(!name.Exists(n => n is null));
             Debug.Assert(reference is not null);
             Debug.Assert(fields is not null);

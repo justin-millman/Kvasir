@@ -1,5 +1,7 @@
 using Cybele.Extensions;
+using Kvasir.Schema;
 using Kvasir.Transcription;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kvasir.Schema {
@@ -54,7 +56,7 @@ namespace Kvasir.Schema {
         }
 
         /// <inheritdoc/>
-        public sealed override FieldSeq GetDependentFields() {
+        public sealed override IEnumerable<IField> GetDependentFields() {
             yield return LHS.Field;
         }
 

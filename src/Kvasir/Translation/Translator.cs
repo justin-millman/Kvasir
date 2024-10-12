@@ -38,7 +38,10 @@ namespace Kvasir.Translation {
         /// <summary>
         ///   Constructs a new <see cref="Translator"/> that uses default <see cref="Settings"/>.
         /// </summary>
-        public Translator(EntityLookup entityLookup)
+        /// <param name="entityLookup">
+        ///   The function used to look up the collection of existing Entities for a given <see cref="Type"/>.
+        /// </param>
+        public Translator(Func<Type, IEnumerable<object>> entityLookup)
             : this(entityLookup, Settings.Default) {
 
             // Need to reset this because the constructor delegation causes the "calling assembly" to actually be the
@@ -50,7 +53,7 @@ namespace Kvasir.Translation {
         ///   Constructs a new <see cref="Translator"/> that uses custom <see cref="Settings"/>.
         /// </summary>
         /// <param name="entityLookup">
-        ///   The function used to lookup the collection of existing Entities for a given <see cref="Type"/>.
+        ///   The function used to look up the collection of existing Entities for a given <see cref="Type"/>.
         /// </param>
         /// <param name="settings">
         ///   The <see cref="Settings"/> according to which to perform the translation.
@@ -60,7 +63,7 @@ namespace Kvasir.Translation {
         ///   <see cref="Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
         ///   us to provide customization of behaviors in the future without necessitating a significant redesign.
         /// </remarks>
-        public Translator(EntityLookup entityLookup, Settings settings) {
+        public Translator(Func<Type, IEnumerable<object>> entityLookup, Settings settings) {
             Debug.Assert(entityLookup is not null);
             Debug.Assert(settings is not null);
 
@@ -78,7 +81,7 @@ namespace Kvasir.Translation {
 
         private readonly Settings settings_;
         private readonly Assembly callingAssembly_;
-        private readonly EntityLookup entityLookup_;
+        private readonly Func<Type, IEnumerable<object>> entityLookup_;
         private readonly Dictionary<Type, IReadOnlyList<FieldGroup>> typeCache_;
         private readonly Dictionary<Type, PrincipalTableDef> principalTableCache_;
         private readonly Dictionary<TableName, Type> tableNameCache_;
