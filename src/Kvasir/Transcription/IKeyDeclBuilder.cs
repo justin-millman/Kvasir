@@ -1,4 +1,5 @@
 using Kvasir.Schema;
+using System.Collections.Generic;
 
 namespace Kvasir.Transcription {
     /// <summary>
@@ -32,7 +33,7 @@ namespace Kvasir.Transcription {
         ///     --and--
         ///   <paramref name="fields"/> contains at least one element.
         /// </pre>
-        void SetFields(FieldSeq fields);
+        void SetFields(IEnumerable<IField> fields);
 
         /// <summary>
         ///   Marks the declaration being built as one for a Primary Key rather than a Candidate Key.
@@ -44,7 +45,7 @@ namespace Kvasir.Transcription {
         ///   <see cref="IKeyDeclBuilder{TDecl}"/>.
         /// </summary>
         /// <pre>
-        ///   <see cref="SetFields(FieldSeq)"/> has been called at least once.
+        ///   <see cref="SetFields(IEnumerable{IField})"/> has been called at least once.
         /// </pre>
         /// <returns>
         ///   A <typeparamref name="TDecl"/> declaring a single Primary Key or a single Candidate Key.

@@ -21,7 +21,7 @@ namespace Kvasir.Schema {
         /// <param name="fields">
         ///   The <see cref="Fields">Fields</see> that make up the new <see cref="PrimaryKey"/>.
         /// </param>
-        internal PrimaryKey(FieldSeq fields) {
+        internal PrimaryKey(IEnumerable<IField> fields) {
             impl_ = new CandidateKey(fields);
         }
 
@@ -34,7 +34,7 @@ namespace Kvasir.Schema {
         /// <param name="fields">
         ///   The <see cref="Fields">Fields</see> that make up the new <see cref="PrimaryKey"/>.
         /// </param>
-        internal PrimaryKey(KeyName name, FieldSeq fields) {
+        internal PrimaryKey(KeyName name, IEnumerable<IField> fields) {
             impl_ = new CandidateKey(name, fields);
         }
 

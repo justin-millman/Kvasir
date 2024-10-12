@@ -6063,9 +6063,9 @@
               cannot be modified by the iteration.
             </summary>
             <remarks>
-              The <see cref="T:Kvasir.Schema.ForeignKey"/> class does not implement the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface, preventing
-              Foreign Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ForeignKey.GetEnumerator"/> method exists to allow
-              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+              The <see cref="T:Kvasir.Schema.ForeignKey"/> class does not implement the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
+              preventing Foreign Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ForeignKey.GetEnumerator"/> method exists to
+              allow iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
               expression.
             </remarks>
             <returns>
@@ -6273,9 +6273,10 @@
               modified by the iteration.
             </summary>
             <remarks>
-              The <see cref="T:Kvasir.Schema.IKey"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface, preventing Keys
-              from interoperating with LINQ. The <see cref="M:Kvasir.Schema.IKey.GetEnumerator"/> method exists to allow iteration with a
-              <c>foreach</c> loop, which the compiler implicitly converts into an enumerator expression.
+              The <see cref="T:Kvasir.Schema.IKey"/> interface does not implement the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
+              preventing Keys from interoperating with LINQ. The <see cref="M:Kvasir.Schema.IKey.GetEnumerator"/> method exists to allow
+              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+              expression.
             </remarks>
             <returns>
               An enumerator that iterates over the Fields in this Key.
@@ -6425,9 +6426,10 @@
               those Fields cannot be modified by the iteration.
             </summary>
             <remarks>
-              The <see cref="T:Kvasir.Schema.ITable"/> interface does not compose the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface, preventing
-              Tables from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ITable.GetEnumerator"/> method exists to allow iteration
-              with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator expression.
+              The <see cref="T:Kvasir.Schema.ITable"/> interface does not implement the <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface,
+              preventing Tables from interoperating with LINQ. The <see cref="M:Kvasir.Schema.ITable.GetEnumerator"/> method exists to allow
+              iteration with a <c>foreach</c> loop, which the compiler implicitly converts into an enumerator
+              expression.
             </remarks>
             <returns>
               An enumerator that iterates over the Fields in this Table in columnar order.
@@ -7561,13 +7563,16 @@
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
+            <param name="entityLookup">
+              The function used to look up the collection of existing Entities for a given <see cref="T:System.Type"/>.
+            </param>
         </member>
         <member name="M:Kvasir.Translation.Translator.#ctor(System.Func{System.Type,System.Collections.Generic.IEnumerable{System.Object}},Kvasir.Core.Settings)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
             <param name="entityLookup">
-              The function used to lookup the collection of existing Entities for a given <see cref="T:System.Type"/>.
+              The function used to look up the collection of existing Entities for a given <see cref="T:System.Type"/>.
             </param>
             <param name="settings">
               The <see cref="T:Kvasir.Core.Settings"/> according to which to perform the translation.

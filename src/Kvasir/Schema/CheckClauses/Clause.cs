@@ -1,4 +1,6 @@
+using Kvasir.Schema;
 using Kvasir.Transcription;
+using System.Collections.Generic;
 
 namespace Kvasir.Schema {
     /// <summary>
@@ -85,7 +87,7 @@ namespace Kvasir.Schema {
         /// <returns>
         ///   A list of the Fields on whose values this <see cref="Clause"/> is dependent.
         /// </returns>
-        public abstract FieldSeq GetDependentFields();
+        public abstract IEnumerable<IField> GetDependentFields();
 
         /// <summary>
         ///   Adds this <see cref="Clause"/> to an ongoing declaration.
