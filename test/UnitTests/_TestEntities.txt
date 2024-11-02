@@ -128,6 +128,7 @@ Blood Drive
 Blood Type
 Boarding School
 Bodhisattva
+Bond
 Bond Girl
 Bone
 Book
@@ -184,6 +185,7 @@ Carnival
 Carousel
 Carpool Karaoke
 Cartel
+Cash Register
 Casino
 Casserole
 Castle
@@ -356,6 +358,7 @@ Engagement Ring
 Enumeration
 Enzyme
 Epic Poem
+Epic Rap Battle of History
 EpiPen
 Episode
 Escalator
@@ -375,6 +378,7 @@ Facebook Post
 Fact Check
 Fairy Godparent
 Fairy Tale
+Farmer
 Family Tree
 Federal Law
 Ferris Wheel
@@ -436,6 +440,7 @@ Golden Raspberry
 Golem
 Golf Course
 Golf Hole
+Gondola
 Government Shutdown
 GPU
 Grammatical Case
@@ -444,6 +449,7 @@ Grasslands
 Great Old One
 Greek God
 Greek Letter
+Grilled Cheese
 Ground Meat
 Guillotine
 Guitar
@@ -534,6 +540,7 @@ iPhone
 IPO
 ISO Standard
 Isthmus
+Jack-o-Lantern
 Japanese Emperor
 Jedi
 Jigsaw Puzzle
@@ -628,6 +635,7 @@ Massacre
 MasterClass
 Mathematical Conjecture
 Mathematical Proof
+Matrix
 Mausoleum
 Mayor
 Medal of Honor
@@ -661,6 +669,7 @@ Motorcycle
 Mountain
 Movie
 Movie Ticket
+Muffin
 Multiple Choice Question
 Mummy
 Muppet
@@ -784,6 +793,7 @@ Pokémon
 Poker Hand
 Polar Vortex
 Police Officer
+Political Rally
 Poll
 Polygon
 Polygraph Test
@@ -869,6 +879,7 @@ Satellite
 Scattergories Round
 Scholarship
 Scooby-Doo Movie
+Scooter
 Scorpion
 Scrabble Tile
 Screenwriter
@@ -1098,6 +1109,7 @@ Yacht
 Yahtzee Game
 Yeshiva
 Yoga Position
+Yogurt
 YouTube Video
 Yu-Gi-Oh Monster
 Ziggurat
