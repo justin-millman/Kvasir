@@ -12,14 +12,14 @@ using System.Linq;
 
 namespace FluentAssertions {
     internal static partial class AssertionExtensions {
-        public static TranslationAssertions Should(this Func<Translation> self) {
+        public static TranslationAssertions Should(this Func<EntityTranslation> self) {
             return new TranslationAssertions(self);
         }
 
 
-        public class TranslationAssertions : FunctionAssertions<Translation> {
-            public new Func<Translation> Subject { get; }
-            public TranslationAssertions(Func<Translation> subject)
+        public class TranslationAssertions : FunctionAssertions<EntityTranslation> {
+            public new Func<EntityTranslation> Subject { get; }
+            public TranslationAssertions(Func<EntityTranslation> subject)
                 : base(subject, new AggregateExceptionExtractor()) {
 
                 Subject = subject;

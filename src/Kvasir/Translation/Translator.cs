@@ -26,12 +26,19 @@ namespace Kvasir.Translation {
         ///   has a reference cycle); note that the translation error may occur on a different type that is being
         ///   translated due to a reference from <paramref name="source"/>.
         /// </exception>
-        public Translation this[Type source] {
+        public EntityTranslation this[Type source] {
             get {
+                if (translationCache_.TryGetValue(source, out var translation)) {
+                    return translation;
+                }
+
                 var context = new Context(source);
                 var principal = TranslatePrincipalTable(context, source);
                 var relations = TranslateRelationTables(source);
-                return new Translation(CLRSource: source, Principal: principal, Relations: relations);
+
+                var result = new EntityTranslation(CLRSource: source, Principal: principal, Relations: relations);
+                translationCache_[source] = result;
+                return result;
             }
         }
 
@@ -71,6 +78,7 @@ namespace Kvasir.Translation {
             callingAssembly_ = Assembly.GetCallingAssembly();
             entityLookup_ = entityLookup;
             typeCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
+            translationCache_ = new Dictionary<Type, EntityTranslation>();
             principalTableCache_ = new Dictionary<Type, PrincipalTableDef>();
             tableNameCache_ = new Dictionary<TableName, Type>();
             pkCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
@@ -83,6 +91,7 @@ namespace Kvasir.Translation {
         private readonly Assembly callingAssembly_;
         private readonly Func<Type, IEnumerable<object>> entityLookup_;
         private readonly Dictionary<Type, IReadOnlyList<FieldGroup>> typeCache_;
+        private readonly Dictionary<Type, EntityTranslation> translationCache_;
         private readonly Dictionary<Type, PrincipalTableDef> principalTableCache_;
         private readonly Dictionary<TableName, Type> tableNameCache_;
         private readonly Dictionary<Type, IReadOnlyList<FieldGroup>> pkCache_;
