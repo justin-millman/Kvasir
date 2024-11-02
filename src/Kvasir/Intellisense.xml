@@ -7719,6 +7719,33 @@
               The name of <paramref name="property"/>.
             </returns>
         </member>
+        <member name="T:Kvasir.Translation.EntityTranslation">
+            <summary>
+              A translation of a single CLR type.
+            </summary>
+            
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></param>
+            <param name="Principal">The definition of the Principal Table</param>
+            <param name="Relations">The definitions of any Relation Tables</param>
+        </member>
+        <member name="M:Kvasir.Translation.EntityTranslation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.RelationTableDef})">
+            <summary>
+              A translation of a single CLR type.
+            </summary>
+            
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></param>
+            <param name="Principal">The definition of the Principal Table</param>
+            <param name="Relations">The definitions of any Relation Tables</param>
+        </member>
+        <member name="P:Kvasir.Translation.EntityTranslation.CLRSource">
+            <summary>The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></summary>
+        </member>
+        <member name="P:Kvasir.Translation.EntityTranslation.Principal">
+            <summary>The definition of the Principal Table</summary>
+        </member>
+        <member name="P:Kvasir.Translation.EntityTranslation.Relations">
+            <summary>The definitions of any Relation Tables</summary>
+        </member>
         <member name="T:Kvasir.Translation.AmbiguousNullabilityException">
             <summary>
               An exception that is raised when the nullability of an Aggregate property causes an ambiguity.
@@ -10598,33 +10625,6 @@
         </member>
         <member name="P:Kvasir.Translation.RelationTableDef.Repopulator">
             <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</summary>
-        </member>
-        <member name="T:Kvasir.Translation.Translation">
-            <summary>
-              A translation of a single CLR type.
-            </summary>
-            
-            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.Translation"/></param>
-            <param name="Principal">The definition of the Principal Table</param>
-            <param name="Relations">The definitions of any Relation Tables</param>
-        </member>
-        <member name="M:Kvasir.Translation.Translation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.RelationTableDef})">
-            <summary>
-              A translation of a single CLR type.
-            </summary>
-            
-            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.Translation"/></param>
-            <param name="Principal">The definition of the Principal Table</param>
-            <param name="Relations">The definitions of any Relation Tables</param>
-        </member>
-        <member name="P:Kvasir.Translation.Translation.CLRSource">
-            <summary>The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.Translation"/></summary>
-        </member>
-        <member name="P:Kvasir.Translation.Translation.Principal">
-            <summary>The definition of the Principal Table</summary>
-        </member>
-        <member name="P:Kvasir.Translation.Translation.Relations">
-            <summary>The definitions of any Relation Tables</summary>
         </member>
         <member name="T:Kvasir.Translation.Bound">
             <summary>
