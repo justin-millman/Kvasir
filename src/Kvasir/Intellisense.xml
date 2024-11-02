@@ -6681,28 +6681,25 @@
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Transaction.ICommands">
-            
-        </member>
-        <member name="P:Kvasir.Transaction.ICommands.Table">
             <summary>
-              The <see cref="T:Kvasir.Schema.ITable">Table</see> against which the commands execute.
+              The interface describing the selection and CRUD commands for a single <see cref="T:Kvasir.Schema.ITable">Table</see>.
             </summary>
         </member>
         <member name="P:Kvasir.Transaction.ICommands.CreateTableCommand">
             <summary>
-              The command that creates <see cref="P:Kvasir.Transaction.ICommands.Table"/> in the back-end database.
+              The command that creates the target <see cref="T:Kvasir.Schema.Table"/> in the back-end database.
             </summary>
         </member>
         <member name="P:Kvasir.Transaction.ICommands.SelectAllQuery">
             <summary>
-              The command that selects all data from <see cref="P:Kvasir.Transaction.ICommands.Table"/>. The rows should be returned in key-sorted
-              order, which for Relation Tables guarantees that the rows are grouped by "owning Entity."
+              The command that selects all data from the target <see cref="T:Kvasir.Schema.Table"/>. The rows should be returned in
+              key-sorted order, which for Relation Tables guarantees that the rows are grouped by "owning Entity."
             </summary>
         </member>
         <member name="M:Kvasir.Transaction.ICommands.InsertCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
               Produce a command that, when executed against a back-end database and committed, inserts one or more rows
-              of data into <see cref="P:Kvasir.Transaction.ICommands.Table"/>.
+              of data into the target <see cref="T:Kvasir.Schema.Table"/>.
             </summary>
             <param name="rows">
               The rows of data to be inserted.
@@ -6711,7 +6708,7 @@
         <member name="M:Kvasir.Transaction.ICommands.UpdateCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
               Produce a command that, when executed against a back-end database and committed, updates the values of one
-              or more rows that already exist in <see cref="P:Kvasir.Transaction.ICommands.Table"/>.
+              or more rows that already exist in the target <see cref="T:Kvasir.Schema.Table"/>.
             </summary>
             <remarks>
               Kvasir itself does not do any mutation tracking outside of Relations, and even then its tracking is
@@ -6727,7 +6724,7 @@
         <member name="M:Kvasir.Transaction.ICommands.DeleteCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
               Produce a command that, when executed against a back-end database and committed, deleted one or more rows
-              from <see cref="P:Kvasir.Transaction.ICommands.Table"/>.
+              from the target <see cref="T:Kvasir.Schema.Table"/>.
             </summary>
             <remarks>
               Deleting a row from a Principal Table may result in rows in various other tables (either other Entities'
@@ -6746,13 +6743,13 @@
             </summary>
             <remarks>
               The purpose of this interface is to provide a mechanism for the framework to create instances of the
-              <see cref="T:Kvasir.Transaction.ICommands"/> interface for constituent tables without knowing anything about the particular
+              <see cref="T:Kvasir.Transaction.ICommands"/> interface for constituent without knowing anything about the particular
               implementation details. An implementation of the <see cref="T:Kvasir.Transaction.ICommandsFactory"/> interface should generally
               correspond to a particular back-end database provider (e.g. MySQL) and produce instances that can operate
               against that RDBMS.
             </remarks>
         </member>
-        <member name="M:Kvasir.Transaction.ICommandsFactory.CreateCommand(Kvasir.Schema.ITable)">
+        <member name="M:Kvasir.Transaction.ICommandsFactory.CreateCommands(Kvasir.Schema.ITable)">
             <summary>
               Get the <see cref="T:Kvasir.Transaction.ICommands"/> that defines database interactions against a particular
               <see cref="T:Kvasir.Schema.ITable">Table</see>.
