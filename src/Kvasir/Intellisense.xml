@@ -6767,6 +6767,111 @@
               The <see cref="T:Kvasir.Schema.ITable">Table</see>.
             </param>
         </member>
+        <member name="T:Kvasir.Transaction.Topology">
+            <summary>
+              Some utility functions for performing topological queries needed by the Transaction Layer.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transaction.Topology.OrderEntities(System.Collections.Generic.IReadOnlyList{Kvasir.Translation.EntityTranslation})">
+            <summary>
+              Topologically sorts the Principal Table definitions from a set of
+              <see cref="T:Kvasir.Translation.EntityTranslation">translations</see>.
+            </summary>
+            <remarks>
+              The topological sort represents the order in which the Principal Tables must be created to avoid defining
+              Foreign Key references to tables that do not yet exist. Consequently, it is the same order in which data
+              must be loaded out of the back-end database in order to ensure that references can be resolved to existing
+              CLR objects. If a Principal Table <c>A</c> occurs in the topological order before <c>B</c>, that means
+              there is no chain of reference fields from <c>A</c> to <c>B</c>. Relations are not included in the order
+              because they are all inherently independent of one another, and if ordered entirely after the Principal
+              Tables there will never be any issues.
+            </remarks>
+            <param name="translations">
+              The source <see cref="T:Kvasir.Translation.EntityTranslation">translatios</see>.
+            </param>
+            <returns>
+              The topological order of the Principal Tables of <paramref name="translations"/>.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Transaction.Transactor">
+            <summary>
+              The Transactor, which bridges the C# entity code with the back-end database based on the translation of those
+              entities and a particular back-end provider/system.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object})">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
+            </summary>
+            <param name="translations">
+              The set of <see cref="T:Kvasir.Translation.EntityTranslation">translations</see> that define the schema of the back-end
+              database on which the new <see cref="T:Kvasir.Transaction.Transactor"/> will operate.
+            </param>
+            <param name="connection">
+              The database connection through which all commands and queries will be executed.
+            </param>
+            <param name="commandsFactory">
+              The <see cref="T:Kvasir.Transaction.ICommandsFactory"/> with which to create the necessary commands and queries to interact
+              with the tables for <paramref name="translations"/>.
+            </param>
+            <param name="entityStorage">
+              The functor through which reconstituted Entities will be stored for later look-up.
+            </param>
+        </member>
+        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
+            </summary>
+            <param name="translations">
+              The set of <see cref="T:Kvasir.Translation.EntityTranslation">translations</see> that define the schema of the back-end
+              database on which the new <see cref="T:Kvasir.Transaction.Transactor"/> will operate.
+            </param>
+            <param name="connection">
+              The database connection through which all commands and queries will be executed.
+            </param>
+            <param name="commandsFactory">
+              The <see cref="T:Kvasir.Transaction.ICommandsFactory"/> with which to create the necessary commands and queries to interact
+              with the tables for <paramref name="translations"/>.
+            </param>
+            <param name="entityStorage">
+              The functor through which reconstituted Entities will be stored for later look-up.
+            </param>
+            <param name="settings">
+              The <see cref="T:Kvasir.Core.Settings"/> according to which to perform the transaction activity.
+            </param>
+            <remarks>
+              Note that the settings are not currently used for anything; in fact, there are no traits available in the
+              <see cref="T:Kvasir.Core.Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
+              us to provide customization of behaviors in the future without necessitating a significant redesign.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Transaction.Transactor.CreateTables">
+            <summary>
+              Creates each of the constituent Principal and Relation Tables in the back-end database.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+              if the transaction creating the necessary tables fails and is successfully rolled back.
+            </exception>
+            <exception cref="T:System.AggregateException">
+              if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
+              fails.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Transaction.Transactor.TryCommitTransaction(System.Data.IDbTransaction)">
+            <summary>
+              Attempts to commit a <see cref="T:System.Data.IDbTransaction">database transaction</see>. If the commit operation fails,
+              an attempt to roll the transaction back is made.
+            </summary>
+            <param name="transaction">
+              The <see cref="T:System.Data.IDbTransaction">database transaction</see>.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+              if the attempt to commit <paramref name="transaction"/> fails and is successfully rolled back.
+            </exception>
+            <exception cref="T:System.AggregateException">
+              if the attempt to commit <paramref name="transaction"/> fails, and the attempt to roll it back also fails.
+            </exception>
+        </member>
         <member name="T:Kvasir.Transcription.IBuilderFactory`5">
             <summary>
               The interface for a factory that creates internally consistent declaration builders for generating
