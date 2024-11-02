@@ -1,38 +1,35 @@
 ﻿using Kvasir.Schema;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data;
 
 namespace Kvasir.Transaction {
-    ///
+    /// <summary>
+    ///   The interface describing the selection and CRUD commands for a single <see cref="ITable">Table</see>.
+    /// </summary>
     public interface ICommands {
         /// <summary>
-        ///   The <see cref="ITable">Table</see> against which the commands execute.
+        ///   The command that creates the target <see cref="Table"/> in the back-end database.
         /// </summary>
-        ITable Table { get; set; }
+        IDbCommand CreateTableCommand { get; }
 
         /// <summary>
-        ///   The command that creates <see cref="Table"/> in the back-end database.
+        ///   The command that selects all data from the target <see cref="Table"/>. The rows should be returned in
+        ///   key-sorted order, which for Relation Tables guarantees that the rows are grouped by "owning Entity."
         /// </summary>
-        DbCommand CreateTableCommand { get; }
-
-        /// <summary>
-        ///   The command that selects all data from <see cref="Table"/>. The rows should be returned in key-sorted
-        ///   order, which for Relation Tables guarantees that the rows are grouped by "owning Entity."
-        /// </summary>
-        DbCommand SelectAllQuery { get; }
+        IDbCommand SelectAllQuery { get; }
 
         /// <summary>
         ///   Produce a command that, when executed against a back-end database and committed, inserts one or more rows
-        ///   of data into <see cref="Table"/>.
+        ///   of data into the target <see cref="Table"/>.
         /// </summary>
         /// <param name="rows">
         ///   The rows of data to be inserted.
         /// </param>
-        DbCommand InsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
+        IDbCommand InsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
 
         /// <summary>
         ///   Produce a command that, when executed against a back-end database and committed, updates the values of one
-        ///   or more rows that already exist in <see cref="Table"/>.
+        ///   or more rows that already exist in the target <see cref="Table"/>.
         /// </summary>
         /// <remarks>
         ///   Kvasir itself does not do any mutation tracking outside of Relations, and even then its tracking is
@@ -44,11 +41,11 @@ namespace Kvasir.Transaction {
         /// <param name="rows">
         ///   The full rows of data that should exist in the back-end database after the update.
         /// </param>
-        DbCommand UpdateCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
+        IDbCommand UpdateCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
 
         /// <summary>
         ///   Produce a command that, when executed against a back-end database and committed, deleted one or more rows
-        ///   from <see cref="Table"/>.
+        ///   from the target <see cref="Table"/>.
         /// </summary>
         /// <remarks>
         ///   Deleting a row from a Principal Table may result in rows in various other tables (either other Entities'
@@ -60,6 +57,6 @@ namespace Kvasir.Transaction {
         /// <param name="rows">
         ///   The rows of data that should be deleted. (Note that this is <b>not</b> just the rows' Primary Keys.)
         /// </param>
-        DbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
+        IDbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
     }
 }
