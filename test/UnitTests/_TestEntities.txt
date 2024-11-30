@@ -1,10 +1,12 @@
 # This document lists the Entity concepts that have been used in unit tests for Kvasir Translation.
 
+A Capella Group
 Accountant
 Achaean Naval Contingent
 Acid
 ACT
 Actor/Actress
+Actuarial Table
 Ad Blocker
 Address
 Adverb
@@ -16,6 +18,7 @@ Airport
 Alarm
 Alkene
 Allegory
+Allergen
 Allomancy
 Almanac
 Alpha Monster
@@ -30,6 +33,7 @@ Amino Acid
 Amusement Park
 Animal
 Animation (PowerPoint)
+Annuity
 Ant Colony
 Antari
 Antibiotic
@@ -53,6 +57,7 @@ Armory
 Aron Kodesh
 Arrondissement
 Arson
+Artery
 Arthurian Knight
 Artificial Intelligence
 Artiodactyl
@@ -239,6 +244,7 @@ Cockfight
 Cocoa Farm
 Codon
 Coin
+Colonoscopy
 Color
 Comedian
 Comet
@@ -305,10 +311,12 @@ Defenestration
 Delicatessen
 Denarian
 Dentist
+Deodorant
 Deposition
 Dermatologist
 Desert
 Diamond
+Diaper
 Dice Roll
 Diet
 Dinosaur
@@ -334,6 +342,7 @@ Dreidel
 Drinking Fountain
 Druid (D&D)
 Drum
+Drunk History
 DSM
 Dubbing
 Duo Push
@@ -458,6 +467,7 @@ Guy's Grocery Game
 Gymnast
 Hacker
 Haiku
+Hail Mary
 Hairstyle
 Haitian Loa
 Hall of Fame
@@ -760,6 +770,7 @@ PEP
 Pepper
 Perfume
 Person of the Year (Time)
+Personality Test
 Petroglyph
 Pharaoh
 Pharmacy
@@ -834,6 +845,7 @@ Python Interpreter
 QR Code
 Quadratic Equation
 Quarterback
+Quasar
 Quatrain
 Quilt
 Rabbi
@@ -874,6 +886,7 @@ Sabermetric
 Safari
 Saint
 Salsa
+Samurai
 Sarcophagus
 Satellite
 Scattergories Round
@@ -901,6 +914,7 @@ Serial Killer
 Sermon
 Set Card
 Seventh Inning Stretch
+Shah of Iran
 Shampoo
 Shard of Adonalsium
 Shark Tank Pitch

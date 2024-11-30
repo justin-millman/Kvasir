@@ -1,5 +1,6 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Core;
+using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Kvasir.Translation;
 using System;
@@ -78,7 +79,7 @@ namespace Kvasir.Transaction {
             Debug.Assert(settings is not null);
 
             settings_ = settings;
-            entities_ = translations.ToDictionary(t => t.CLRSource, t => t);
+            translations_ = translations.ToDictionary(t => t.CLRSource, t => t);
             connection_ = connection;
             commandsFactory_ = commandsFactory;
             entityStorage_ = entityStorage;
@@ -91,8 +92,8 @@ namespace Kvasir.Transaction {
                 principalCommands.Add(commandsFactory_.CreateCommands(principal.Table));
 
                 // using `Extractor.SourceType` is a little awkward here, but it's the best we have
-                foreach (var relation in entities_[principal.Extractor.SourceType].Relations) {
-                    tables[relation.Table] = entities_.Count + relationCommands.Count;
+                foreach (var relation in translations_[principal.Extractor.SourceType].Relations) {
+                    tables[relation.Table] = translations_.Count + relationCommands.Count;
                     relationCommands.Add(commandsFactory_.CreateCommands(relation.Table));
                 }
             }
@@ -122,6 +123,56 @@ namespace Kvasir.Transaction {
                 command.ExecuteNonQuery();
             }
             TryCommitTransaction(transaction);
+        }
+
+        /// <summary>
+        ///   Selects all of the data out of the back-end database and creates corresponding CLR objects.
+        /// </summary>
+        public void SelectAll() {
+            var translations = translations_.Values.OrderBy(t => tables_[t.Principal.Table]).ToList();
+            int numEntityTypes = translations_.Count;
+            var allEntities = new Dictionary<int, List<object>>();
+
+            // Load all the data from Principal Tables and create the Entity instances first
+            for (int idx = 0; idx < numEntityTypes; idx++) {
+                var query = commands_[idx].SelectAllQuery;
+                query.Connection = connection_;
+                var reader = query.ExecuteReader();
+
+                var creations = new List<object>();
+                while (reader.Read()) {
+                    var fields = Enumerable.Range(0, reader.FieldCount).Select(i => DBValue.Create(reader[i])).ToList();
+                    var entity = translations[idx].Principal.Reconstitutor.ReconstituteFrom(fields);
+                    entityStorage_(entity);
+                    creations.Add(entity);
+                }
+                allEntities[idx] = creations;
+            }
+
+            // Load all the data from Relation Tables and repopulate the Relations second
+            foreach (var translation in translations_.Values) {
+                var principalIndex = tables_[translation.Principal.Table];
+                var options = allEntities[principalIndex];
+                var matcher = new KeyMatcher(() => options, translation.Principal.KeyExtractor);
+
+                foreach (var relation in translation.Relations) {
+                    var query = commands_[tables_[relation.Table]].SelectAllQuery;
+                    query.Connection = connection_;
+                    var reader = query.ExecuteReader();
+
+                    var rows = options.ToDictionary(e => e, _ => new List<IReadOnlyList<DBValue>>());
+                    while (reader.Read()) {
+                        var fields = Enumerable.Range(0, reader.FieldCount).Select(i => DBValue.Create(reader[i])).ToList();
+                        var owningEntityKey = fields.Take(translation.Principal.Table.PrimaryKey.Fields.Count).ToList();
+                        var owningEntity = matcher.Lookup(owningEntityKey);
+                        rows[owningEntity].Add(fields);
+                    }
+
+                    foreach (var (owningEntity, relationRows) in rows) {
+                        relation.Repopulator.Repopulate(owningEntity, relationRows);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -157,7 +208,7 @@ namespace Kvasir.Transaction {
 
         private readonly Settings settings_;
         private readonly IReadOnlyList<ICommands> commands_;                // topologically ordered
-        private readonly IReadOnlyDictionary<Type, EntityTranslation> entities_;
+        private readonly IReadOnlyDictionary<Type, EntityTranslation> translations_;
         private readonly IReadOnlyDictionary<ITable, int> tables_;          // maps to index in `commands_` list
         private readonly IDbConnection connection_;
         private readonly ICommandsFactory commandsFactory_;

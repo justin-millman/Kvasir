@@ -169,4 +169,182 @@ namespace UT.Kvasir.Transaction {
             public double CheeseFullRating { get; set; }
         }
     }
+
+    internal static class Selection {
+        // Test Scenario: Zero Instances of Single Entity
+        public class Samurai {
+            [PrimaryKey, Column(0)] public Guid SamuraiID { get; set; }
+            [Column(1)] public string Era { get; set; } = "";
+            [Column(2)] public string Clan { get; set; } = "";
+            [Column(3)] public bool IsRonin { get; set; }
+            [Column(4)] public double SwordLength { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Non-Null Values and No Relations
+        public class Diaper {
+            [PrimaryKey, Column(0)] public Guid DiaperID { get; set; }
+            [Column(1)] public bool IsUsed { get; set; }
+            [Column(2)] public float Volume { get; set; }
+            [Column(3)] public string Brand { get; set; } = "";
+            [Column(4)] public bool ForAdults { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Null Values and No Relations
+        public class PersonalityTest {
+            [PrimaryKey, Column(0)] public string TestName { get; set; } = "";
+            [Column(1)] public uint NumQuestions { get; set; }
+            [Column(2)] public double? AccuracyPercentage { get; set; }
+            [Column(3)] public byte Discriminations { get; set; }
+            [Column(4)] public bool IsAMAApproved { get; set; }
+            [Column(5)] public ulong? DebutYear { get; set; }
+        }
+
+        // Test Scenario: Multiple Instances of Single Entity without Relations
+        public class Artery {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public byte NumPerPerson { get; set; }
+            [Column(2)] public uint BloodFlowPSV { get; set; }
+            [Column(3)] public string Vein { get; set; } = "";
+        }
+
+        // Test Scenario: Single Entity with Non-Empty Scalar Relations
+        public class ActuarialTable {
+            [PrimaryKey, Column(0)] public string TableID { get; set; } = "";
+            [PrimaryKey, Column(1)] public ushort Year { get; set; }
+            [Column(2)] public bool EndorsedBySSA { get; set; }
+            public RelationMap<int, double> MaleDeathProbability { get; set; } = new RelationMap<int, double>();
+            public RelationMap<int, double> FemaleDeathProbability { get; set; } = new RelationMap<int, double>();
+        }
+
+        // Test Scenario: Single Entity with Empty Scalar Relation
+        public class Quasar {
+            [PrimaryKey, Column(0)] public string Designation { get; set; } = "";
+            public IReadOnlyRelationSet<string> Discoverers { get; set; } = new RelationSet<string>();
+            [Column(1)] public string? Constellation { get; set; }
+            [Column(2)] public double Redshift { get; set; }
+            [Column(3)] public ulong Distance { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities with Scalar Relations
+        public class Deodorant {
+            [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
+            public RelationOrderedList<string> Scents { get; set; } = new RelationOrderedList<string>();
+            [Column(1)] public string Brand { get; set; } = "";
+            [Column(2)] public decimal Price { get; set; }
+            [Column(3)] public bool Antipersperant { get; set; }
+        }
+
+        // Test Scenario: Multiple Unrelated Entities
+        public class DrunkHistory {
+            [PrimaryKey, Column(0)] public byte Season { get; set; }
+            [PrimaryKey, Column(1)] public byte EpisodeNumber { get; set; }
+            [PrimaryKey, Column(2)] public string Segment { get; set; } = "";
+            [Column(3)] public string Title { get; set; } = "";
+            [Column(4)] public string Narrator { get; set; } = "";
+            [Column(5)] public DateTime AirDate { get; set; }
+        }
+        public class Allergen {
+            public enum Kind { FoodBorne, AnimalBorne, PlantBorne, MaterialBorne, FungusBorne, Immunodeficiency, Other }
+
+            [PrimaryKey, Column(0)] public Guid AllergenID { get; set; }
+            [Column(1)] public Kind Category { get; set; }
+            [Column(2)] public string Name { get; set; } = "";
+            [Column(3)] public bool FDARecognized { get; set; }
+            [Column(4)] public double? Prevalence { get; set; }
+        }
+        public class Colonscopy {
+            [PrimaryKey, Column(0)] public string Patient { get; set; } = "";
+            [Column(1)] public DateTime Date { get; set; }
+            [Column(2)] public string Doctor { get; set; } = "";
+            [Column(3)] public bool IsPreventative { get; set; }
+            [Column(4)] public sbyte Discomfort { get; set; }
+            [Column(5)] public bool Biopsy { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Chain
+        public class Annuity {
+            public enum Stage { Accumulation, Annuitization }
+
+            public class Gender {
+                [PrimaryKey, Column(0)] public char Symbol { get; set; }
+                [Column(1)] public string Designation { get; set; } = "";
+                [Column(2)] public double Prevalence { get; set; }
+            }
+            public class Person {
+                [PrimaryKey, Column(0)] public string SSN { get; set; } = "";
+                [Column(1)] public string FirstName { get; set; } = "";
+                [Column(2)] public string LastName { get; set; } = "";
+                [Column(3)] public Gender Gender { get; set; } = new();
+            }
+            public class Company {
+                [PrimaryKey, Column(0)] public string CompanyName { get; set; } = "";
+                [PrimaryKey, Column(1)] public char Classification { get; set; }
+                [Column(2)] public Person CEO { get; set; } = new();
+                [Column(3)] public decimal Revenue { get; set; }
+                [Column(4)] public decimal MarketCap { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public Stage Phase { get; set; }
+            [Column(2)] public decimal MarketValue { get; set; }
+            [Column(3)] public Person Annuitant { get; set; } = new();
+            [Column(4)] public Company Guarantor { get; set; } = new();
+            [Column(6)] public bool IsVariable { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Tree
+        public class ACapellaGroup {
+            public class Songwriter {
+                [PrimaryKey, Column(0)] public Guid ID { get; set; }
+                [Column(1)] public string FirtName { get; set; } = "";
+                [Column(2)] public string LastName { get; set; } = "";
+            }
+            public class Song {
+                [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+                [Column(1)] public short SecondsLong { get; set; }
+                [Column(2)] public Songwriter Writer { get; set; } = new();
+                [Column(3)] public bool ContainsRap { get; set; }
+            }
+            public class University {
+                [PrimaryKey, Column(0)] public Guid InternationalSchoolIdentifier { get; set; }
+                [Column(1)] public string Name { get; set; } = "";
+                [Column(2)] public ulong Enrollment { get; set; }
+                [Column(3)] public decimal Endowment { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string GroupName { get; set; } = "";
+            [Column(1)] public University? College { get; set; }
+            [Column(2)] public Song EncoreSong { get; set; } = new();
+            [Column(3)] public int NumAltos { get; set; }
+            [Column(4)] public int NumSopranos { get; set; }
+            [Column(5)] public int NumBaritones { get; set; }
+            [Column(6)] public bool IsCoed { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation
+        public class HailMary {
+            public class FootballPlayer {
+                [PrimaryKey, Column(0)] public string Team { get; set; } = "";
+                [PrimaryKey, Column(1)] public int JerseyNumber { get; set; }
+                [Column(2)] public string Name { get; set; } = "";
+                [Column(3)] public string Position { get; set; } = "";
+            }
+
+            [PrimaryKey, Column(0)] public DateTime Date { get; set; }
+            [PrimaryKey, Column(1)] public uint PlayNumber { get; set; }
+            [Column(2)] public string Opponent { get; set; } = "";
+            public IReadOnlyRelationList<FootballPlayer> PlayersInvolved { get; set; } = new RelationList<FootballPlayer>();
+            [Column(3)] public bool ResultedInTouchdown { get; set; }
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Relation
+        public class IranianShah {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public DateTime ReignStart { get; set; }
+            [Column(2)] public DateTime ReignEnd { get; set; }
+            [Column(3)] public string RoyalHouse { get; set; } = "";
+            [Column(4)] public string Capital { get; set; } = "";
+            public IReadOnlyRelationSet<IranianShah> Predecessor { get; set; } = new RelationSet<IranianShah>();
+        }
+    }
 }
