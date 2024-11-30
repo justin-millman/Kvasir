@@ -10577,8 +10577,9 @@
             <param name="Table">The schema model for the Principal Table.</param>
             <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
             <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
         </member>
-        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan)">
+        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Extraction.DataExtractionPlan)">
             <summary>
               The definition of a Principal Table.
             </summary>
@@ -10586,6 +10587,7 @@
             <param name="Table">The schema model for the Principal Table.</param>
             <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
             <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
         </member>
         <member name="P:Kvasir.Translation.PrincipalTableDef.Table">
             <summary>The schema model for the Principal Table.</summary>
@@ -10595,6 +10597,9 @@
         </member>
         <member name="P:Kvasir.Translation.PrincipalTableDef.Reconstitutor">
             <summary>The plan that can recreate a CLR object from a row of data stored in the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.KeyExtractor">
+            <summary>The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</summary>
         </member>
         <member name="T:Kvasir.Translation.RelationTableDef">
             <summary>
