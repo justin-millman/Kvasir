@@ -6857,6 +6857,11 @@
               fails.
             </exception>
         </member>
+        <member name="M:Kvasir.Transaction.Transactor.SelectAll">
+            <summary>
+              Selects all of the data out of the back-end database and creates corresponding CLR objects.
+            </summary>
+        </member>
         <member name="M:Kvasir.Transaction.Transactor.TryCommitTransaction(System.Data.IDbTransaction)">
             <summary>
               Attempts to commit a <see cref="T:System.Data.IDbTransaction">database transaction</see>. If the commit operation fails,
