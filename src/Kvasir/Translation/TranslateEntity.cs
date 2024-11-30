@@ -111,7 +111,7 @@ namespace Kvasir.Translation {
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
             var extractor = new DataExtractionPlan(fieldGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
             var creator = new DataReconstitutionPlan(ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false));
-            principal = new PrincipalTableDef(table, extractor, creator);
+            principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
 
             principalTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);

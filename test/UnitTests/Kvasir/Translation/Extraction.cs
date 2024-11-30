@@ -28,6 +28,7 @@ namespace UT.Kvasir.Translation {
             var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Morgue)];
             var data = translation.Principal.Extractor.ExtractFrom(morgue);
+            var pk = translation.Principal.KeyExtractor.ExtractFrom(morgue);
 
             // Assert
             data.Should().HaveCount(7);
@@ -38,12 +39,14 @@ namespace UT.Kvasir.Translation {
             data[4].Datum.Should().Be(morgue.FederalGrade);
             data[5].Datum.Should().Be(ConversionOf(morgue.AvailableServices));
             data[6].Datum.Should().Be(morgue.GovernmentRun);
+            pk.Should().HaveCount(1);
+            pk[0].Datum.Should().Be(morgue.Name);
         }
 
         [TestMethod] public void NonNullPublicStaticScalars() {
             // Arrange
             var interpreter = new PythonInterpreter() {
-                ProgramID = new Guid(),
+                ProgramID = Guid.NewGuid(),
                 Path = "/usr/bin/python",
                 InstalledOn = new DateTime(2022, 3, 17)
             };
@@ -55,6 +58,7 @@ namespace UT.Kvasir.Translation {
             var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(PythonInterpreter)];
             var data = translation.Principal.Extractor.ExtractFrom(interpreter);
+            var pk = translation.Principal.KeyExtractor.ExtractFrom(interpreter);
 
             // Assert
             data.Should().HaveCount(6);
@@ -64,12 +68,14 @@ namespace UT.Kvasir.Translation {
             data[3].Datum.Should().Be(PythonInterpreter.MinVersion);
             data[4].Datum.Should().Be(PythonInterpreter.MaxVersion);
             data[5].Datum.Should().Be(ConversionOf(PythonInterpreter.BackEndLanguage));
+            pk.Should().HaveCount(1);
+            pk[0].Datum.Should().Be(interpreter.ProgramID);
         }
 
         [TestMethod] public void NonNullNonPublicInstanceScalars() {
             // Arrange
             var ship = new PirateShip() {
-                ID = new Guid(),
+                ID = Guid.NewGuid(),
                 ShipName = "Queen Anne's Revenge",
                 Captain = "Blackbeard",
                 Style = PirateShip.ShipKind.Frigate,
@@ -82,6 +88,7 @@ namespace UT.Kvasir.Translation {
             var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(PirateShip)];
             var data = translation.Principal.Extractor.ExtractFrom(ship);
+            var pk = translation.Principal.KeyExtractor.ExtractFrom(ship);
 
             // Assert
             data.Should().HaveCount(7);
@@ -92,6 +99,8 @@ namespace UT.Kvasir.Translation {
             data[4].Datum.Should().Be(ship.GetNumCannons());
             data[5].Datum.Should().Be(ConversionOf(ship.Style));
             data[6].Datum.Should().Be(ship.CarriedSlaves);
+            pk.Should().HaveCount(1);
+            pk[0].Datum.Should().Be(ship.ID);
         }
 
         [TestMethod] public void NonNullNonPublicStaticScalars() {
@@ -109,6 +118,7 @@ namespace UT.Kvasir.Translation {
             var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Enzyme)];
             var data = translation.Principal.Extractor.ExtractFrom(enzyme);
+            var pk = translation.Principal.KeyExtractor.ExtractFrom(enzyme);
 
             // Assert
             data.Should().HaveCount(6);
@@ -118,6 +128,8 @@ namespace UT.Kvasir.Translation {
             data[3].Datum.Should().Be(Enzyme.GetNumEnzymesTotal());
             data[4].Datum.Should().Be(Enzyme.Regulator);
             data[5].Datum.Should().Be(Enzyme.FirstDiscovered);
+            pk.Should().HaveCount(1);
+            pk[0].Datum.Should().Be(enzyme.EnzymeCommissionNumber);
         }
 
         [TestMethod] public void NullScalars() {
@@ -136,6 +148,7 @@ namespace UT.Kvasir.Translation {
             var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Ode)];
             var data = translation.Principal.Extractor.ExtractFrom(ode);
+            var pk = translation.Principal.KeyExtractor.ExtractFrom(ode);
 
             // Assert
             data.Should().HaveCount(7);
@@ -146,12 +159,15 @@ namespace UT.Kvasir.Translation {
             data[4].Datum.Should().Be(DBNull.Value);
             data[5].Datum.Should().Be(ode.Collection);
             data[6].Datum.Should().Be(DBNull.Value);
+            pk.Should().HaveCount(2);
+            data[0].Datum.Should().Be(ode.Title);
+            data[1].Datum.Should().Be(ode.Author);
         }
 
         [TestMethod] public void ExplicitInterfaceImplementation() {
             // Arrange
             var tlatoani = new Tlatoani() {
-                ID = new Guid(),
+                ID = Guid.NewGuid(),
                 Death = new DateTime(1520, 6, 30),
                 EncounteredConquistadors = true,
                 CoronationYear = 1502
@@ -200,7 +216,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void Hiding() {
             // Arrange
             var aurora = new Aurora() {
-                AuroraID = new Guid(),
+                AuroraID = Guid.NewGuid(),
                 Name = "Aurora Borealis",
                 AKA = "Northern Lights",
                 Intensity = 173.912884f
@@ -245,7 +261,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void EnumerationNumericConversion() {
             // Arrange
             var maze = new CornMaze() {
-                MazeID = new Guid(),
+                MazeID = Guid.NewGuid(),
                 CornType = CornMaze.Corn.Sweet,
                 MazeShape = CornMaze.Shape.Animal | CornMaze.Shape.Character | CornMaze.Shape.Person,
                 StalkCount = 48913,
@@ -374,7 +390,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void AggregateWithAllNullNestedFields() {
             // Arrange
             var fight = new SnowballFight() {
-                FightID = new Guid(),
+                FightID = Guid.NewGuid(),
                 KickOff = new DateTime(2023, 12, 7),
                 FightStructure = new SnowballFight.Structure() {
                     NumTeams = null,
@@ -451,7 +467,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void NestedAggregate() {
             // Arrange
             var question = new MillionaireQuestion() {
-                QuestionID = new Guid(),
+                QuestionID = Guid.NewGuid(),
                 Category = "European Ruins",
                 Question = "The ruins of Urquhart Castle stand on the banks of which loch?",
                 Answers = new MillionaireQuestion.Options() {
@@ -637,7 +653,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void NullReferenceMultiFieldPrimaryKey() {
             // Arrange
             var library = new Library() {
-                LibraryID = new Guid(),
+                LibraryID = Guid.NewGuid(),
                 NumBooks = 716284,
                 HeadLibrarian = null,
                 Endowment = 7000000,
@@ -662,7 +678,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void ReferenceNestedDataConversion() {
             // Arrange
             var match = new CurlingMatch() {
-                ID = new Guid(),
+                ID = Guid.NewGuid(),
                 TeamA = new CurlingMatch.OlympicOrganization() {
                     Code = "ita",
                     Country = "Italy",
@@ -700,7 +716,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void NonNullRelationWithZeroElements() {
             // Arrange
             var pretzel = new Pretzel() {
-                PretzelID = new Guid(),
+                PretzelID = Guid.NewGuid(),
                 Name = "Plain Pretzel",
                 Toppings = new(),
                 RetailPrice = 2.75M,
@@ -721,7 +737,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void NonNullSequenceRelationWithOnlyNewElements() {
             // Arrange
             var teppanyaki = new Teppanyaki() {
-                GrillID = new Guid(),
+                GrillID = Guid.NewGuid(),
                 GrillSurfaceArea = 88.5,
                 AuthorizedChefs = new() {
                     "Daisuke Orinaka",
@@ -833,7 +849,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void NonNullRelationWithOnlySavedElements() {
             // Arrange
             var tip = new NedsDeclassifiedTip() {
-                ID = new Guid(),
+                ID = Guid.NewGuid(),
                 Category = "Photo Day",
                 Tip = "Bring a hair brush to fix your hair before the picture",
                 For = {
@@ -1001,7 +1017,7 @@ namespace UT.Kvasir.Translation {
                 Commenced = new DateTime(1804, 3, 12),
                 Counts = new() {
                     new Impeachment.Count() {
-                        ID = new Guid(),
+                        ID = Guid.NewGuid(),
                         Claim = new Impeachment.Charge() {
                             Claim = "Improper Conduct during the Trial of John Fries",
                             Severity = Impeachment.Charge.Category.Misdemeanor
@@ -1009,7 +1025,7 @@ namespace UT.Kvasir.Translation {
                         Guilty = false
                     },
                     new Impeachment.Count() {
-                        ID = new Guid(),
+                        ID = Guid.NewGuid(),
                         Claim = new Impeachment.Charge() {
                             Claim = "Improper Conduct during the Trial of James T. Callendar",
                             Severity = Impeachment.Charge.Category.Misdemeanor
@@ -1017,7 +1033,7 @@ namespace UT.Kvasir.Translation {
                         Guilty = false
                     },
                     new Impeachment.Count() {
-                        ID = new Guid(),
+                        ID = Guid.NewGuid(),
                         Claim = new Impeachment.Charge() {
                             Claim = "Conduct Unbecoming in front of a Baltimore Grand Jury",
                             Severity = Impeachment.Charge.Category.Misdemeanor
@@ -1115,7 +1131,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void CalculatedRelation() {
             // Arrange
             var chameleon = new Chameleon() {
-                ReptileID = new Guid(),
+                ReptileID = Guid.NewGuid(),
                 TimesChangedColor = 8719287581,
                 Genus = "Furcifer",
                 Species = "Pardalis"
