@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using Kvasir.Core;
 using Kvasir.Schema;
 using Kvasir.Transaction;
 using Kvasir.Translation;
@@ -16,16 +15,17 @@ namespace UT.Kvasir.Transaction {
         public IReadOnlyDictionary<ITable, ICommands> Commands => commands_;
         public IDbConnection Connection { get; }
         public IDbTransaction Transaction { get; }
-        public EntityDepot Depot { get; }
+        public Dictionary<Type, List<object>> Depot { get; }
         public Transactor Transactor { get; }
 
 
         public TestFixture(params Type[] types) {
             commands_ = new Dictionary<ITable, ICommands>();
+            dbRows_ = new Dictionary<ITable, IEnumerator<IReadOnlyList<object>>>();
             commandsFactory_ = Substitute.For<ICommandsFactory>();
             Connection = Substitute.For<IDbConnection>();
             Transaction = Connection.BeginTransaction();
-            Depot = new EntityDepot();
+            Depot = types.ToDictionary(t => t, _ => new List<object>());
             translator_ = new Translator(t => Depot[t]);
             ordering_ = new Dictionary<IDbCommand, int>();
 
@@ -41,11 +41,24 @@ namespace UT.Kvasir.Transaction {
                 commands.CreateTableCommand.Returns(createTable);
                 commands.CreateTableCommand.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[createTable] = ordering_.Count + 1);
 
+                var reader = Substitute.For<IDataReader>();
+                reader.Read().Returns(_ => dbRows_[table].MoveNext());
+                reader.FieldCount.Returns(_ => dbRows_[table].Current.Count);
+                reader[Arg.Any<int>()].Returns(args => dbRows_[table].Current[args.ArgAt<int>(0)]);
+
+                var selectAll = Substitute.For<IDbCommand>();
+                selectAll.CommandText = $"SELECT * FROM {table.Name}";
+                selectAll.ExecuteReader().Returns(reader);
+                commands.SelectAllQuery.Returns(selectAll);
+                commands.SelectAllQuery.When(c => c.ExecuteReader()).Do(_ => ordering_[selectAll] = ordering_.Count + 1);
+                reader.ClearReceivedCalls();
+
                 commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t == table)).Returns(commands);
                 commands_[table] = commands;
+                dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();
             }
 
-            Transactor = new Transactor(translations, Connection, commandsFactory_, e => Depot.StoreEntity(e));
+            Transactor = new Transactor(translations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e));
         }
         public TestFixture WithCommitError() {
             Transaction.When(x => x.Commit()).Throw<InvalidOperationException>();
@@ -54,6 +67,29 @@ namespace UT.Kvasir.Transaction {
         public TestFixture WithRollbackError() {
             WithCommitError();
             Transaction.When(x => x.Rollback()).Throw<InvalidOperationException>();
+            return this;
+        }
+
+        public TestFixture WithEntityRow<TEntity>(object[] values) {
+            var table = translator_[typeof(TEntity)].Principal.Table;
+            var rows = new List<IReadOnlyList<object>>();
+            while (dbRows_[table].MoveNext()) {
+                rows.Add(dbRows_[table].Current);
+            }
+            rows.Add(new List<object>(values));
+
+            dbRows_[table] = rows.GetEnumerator();
+            return this;
+        }
+        public TestFixture WithRelationRow<TEntity>(int index, object[] values) {
+            var table = translator_[typeof(TEntity)].Relations[index].Table;
+            var rows = new List<IReadOnlyList<object>>();
+            while (dbRows_[table].MoveNext()) {
+                rows.Add(dbRows_[table].Current);
+            }
+            rows.Add(new List<object>(values));
+
+            dbRows_[table] = rows.GetEnumerator();
             return this;
         }
 
@@ -106,6 +142,7 @@ namespace UT.Kvasir.Transaction {
         private readonly ICommandsFactory commandsFactory_;
         private readonly Translator translator_;
         private readonly Dictionary<ITable, ICommands> commands_;
+        private readonly Dictionary<ITable, IEnumerator<IReadOnlyList<object>>> dbRows_;
         private readonly Dictionary<IDbCommand, int> ordering_;
     }
 }
