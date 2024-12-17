@@ -207,7 +207,7 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public string Vein { get; set; } = "";
         }
 
-        // Test Scenario: Single Entity with Non-Empty Scalar Relations
+        // Test Scenario: Single Instance of Single Entity with Non-Empty Scalar Relations
         public class ActuarialTable {
             [PrimaryKey, Column(0)] public string TableID { get; set; } = "";
             [PrimaryKey, Column(1)] public ushort Year { get; set; }
@@ -216,7 +216,7 @@ namespace UT.Kvasir.Transaction {
             public RelationMap<int, double> FemaleDeathProbability { get; set; } = new RelationMap<int, double>();
         }
 
-        // Test Scenario: Single Entity with Empty Scalar Relation
+        // Test Scenario: Single Instance of Single Entity with Empty Scalar Relation
         public class Quasar {
             [PrimaryKey, Column(0)] public string Designation { get; set; } = "";
             public IReadOnlyRelationSet<string> Discoverers { get; set; } = new RelationSet<string>();
@@ -225,7 +225,7 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public ulong Distance { get; set; }
         }
 
-        // Test Scenario: Multiple Entities with Scalar Relations
+        // Test Scenario: Multiple Instances of Single Entities with Scalar Relations
         public class Deodorant {
             [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
             public RelationOrderedList<string> Scents { get; set; } = new RelationOrderedList<string>();
@@ -345,6 +345,189 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public string RoyalHouse { get; set; } = "";
             [Column(4)] public string Capital { get; set; } = "";
             public IReadOnlyRelationSet<IranianShah> Predecessor { get; set; } = new RelationSet<IranianShah>();
+        }
+    }
+
+    internal static class Insertion {
+        // Test Scenario: Single Instance of Single Entity with Non-Null Values and No Relations
+        public class Crossbow {
+            [PrimaryKey, Column(0)] public Guid BowID { get; set; }
+            [Column(1)] public string Brand { get; set; } = "";
+            [Column(2)] public string Model { get; set; } = "";
+            [Column(3)] public double Weight { get; set; }
+            [Column(4)] public double DrawWeight { get; set; }
+            [Column(5)] public double DrawLength { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Null Values and No Relations
+        public class GoogleDoodle {
+            [PrimaryKey, Column(0)] public DateTime Date { get; set; }
+            [Column(1)] public string? Artist { get; set; }
+            [Column(2)] public bool IsForHoliday { get; set; }
+            [Column(3)] public bool IsAnimated { get; set; }
+            [Column(4)] public string ArchiveURL { get; set; } = "";
+        }
+
+        // Test Scenario: Multiple Instances of Single Entity without Relations
+        public class CountOlafDisguise {
+            [Flags] public enum Book { BB = 1, RR = 2, WW = 4, MM = 8, AA = 16, EE = 32, VV = 64, HH = 128, CC = 256, SS = 512, GG = 1024, PP = 2048, E = 5096 }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public Book Appearances { get; set; }
+            [Column(2)] public bool FooledBaudelaires { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Non-Empty Scalar Relations
+        public class SodaFountain {
+            public enum Category { Restaurant, MovieTheater, Stadium, Dwelling, Hotel, Other }
+
+            [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
+            [Column(1)] public string Location { get; set; } = "";
+            [Column(2)] public Category TypeOfInstitute { get; set; }
+            public IReadOnlyRelationMap<string, bool> Sodas { get; set; } = new RelationMap<string, bool>();
+            [Column(3)] public bool IsCokeFreestyle { get; set; }
+            public RelationOrderedList<DateTime> Inspections { get; set; } = new();
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Empty Scalar Relation
+        public class LetterOfRecommendation {
+            [PrimaryKey, Column(0)] public string Author { get; set; } = "";
+            [PrimaryKey, Column(1)] public string Recipient { get; set; } = "";
+            [PrimaryKey, Column(2)] public ushort Year { get; set; }
+            [Column(3)] public string Purpose { get; set; } = "";
+            [Column(4)] public decimal? Compensation { get; set; }
+            public IReadOnlyRelationOrderedList<string> Words { get; set; } = new RelationOrderedList<string>();
+        }
+
+        // Test Scenario: Multiple Instances of Single Entities with Scalar Relations
+        public class MutualFund {
+            [PrimaryKey, Column(0)] public Guid FundID { get; set; }
+            [PrimaryKey, Column(1)] public Guid CompanyID { get; set; }
+            [Column(2)] public decimal NAV { get; set; }
+            public RelationMap<string, decimal> Investors { get; set; } = new();
+            [Column(3)] public string FundManager { get; set; } = "";
+            [Column(4)] public double ManagementFee { get; set; }
+        }
+
+        // Test Scenario: Multiple Unrelated Entities
+        public class Wheelchair {
+            [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
+            [Column(1)] public string Material { get; set; } = "";
+            [Column(2)] public decimal Price { get; set; }
+            [Column(3)] public double? MaxWeight { get; set; }
+            [Column(4)] public bool CompliesWithADA { get; set; }
+        }
+        public class Haka {
+            [PrimaryKey, Column(0)] public Guid HakaID { get; set; }
+            [Column(1)] public string? Leader { get; set; }
+            [Column(2)] public bool BeforeSportingEvent { get; set; }
+            [Column(3)] public bool PerformedByMaori { get; set; }
+            [Column(4)] public double Duration { get; set; }
+        }
+        public class BetterKnowADistrict {
+            public enum Response { GreatPresident, GreatestPresident }
+
+            [PrimaryKey, Column(0)] public byte Season { get; set; }
+            [PrimaryKey, Column(1)] public ushort Episode { get; set; }
+            [Column(2)] public string State { get; set; } = "";
+            [Column(3)] public int DistrictNumber { get; set; }
+            [Column(4)] public string Congressperson { get; set; } = "";
+            [Column(5)] public double SegmentDuration { get; set; }
+            [Column(6)] public Response GeorgeBush { get; set; }
+        }
+        public class Invoice {
+            [PrimaryKey, Column(0)] public Guid InvoiceNumber { get; set; }
+            [Column(1)] public string Buyer { get; set; } = "";
+            [Column(2)] public string Seller { get; set; } = "";
+            [Column(3)] public decimal Amount { get; set; }
+            [Column(4)] public DateTime Date { get; set; }
+            [Column(5)] public bool IsElectronic { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Chain
+        public class Rhinoceros {
+            public class Person {
+                [PrimaryKey, Column(0)] public Guid IntelligenceNumber { get; set; }
+                [Column(1)] public string FullName { get; set; } = "";
+                [Column(2)] public DateTime Birthdate { get; set; }
+            }
+            public class Zoo {
+                [PrimaryKey, Column(0)] public Guid ZooID { get; set; }
+                [Column(1)] public string City { get; set; } = "";
+                [Column(2)] public Person HeadZookeeper { get; set; } = new();
+                [Column(3)] public double Area { get; set; }
+                [Column(4)] public ushort DaysOpenPerYear { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid AnimalID { get; set; }
+            [Column(1)] public string Genus { get; set; } = "";
+            [Column(2)] public string Species { get; set; } = "";
+            [Column(3)] public Zoo? Captivity { get; set; }
+            [Column(4)] public sbyte NumHorns { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Tree
+        public class Sheriff {
+            public class Badge {
+                [PrimaryKey, Column(0)] public uint Number { get; set; }
+                [PrimaryKey, Column(1)] public string Municipality { get; set; } = "";
+                [Column(2)] public DateTime DateIssued { get; set; }
+            }
+            public class Election {
+                [PrimaryKey, Column(0)] public Guid ElectionID { get; set; }
+                [Column(1)] public DateTime Date { get; set; }
+                [Column(2)] public ulong VotesCast { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Badge SheriffsBadge { get; set; } = new();
+            [Column(2)] public string Name { get; set; } = "";
+            [Column(3)] public uint Arrests { get; set; }
+            [Column(4)] public Election? FirstElected { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation
+        public class Coven {
+            public class Witch {
+                [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+                [PrimaryKey, Column(1)] public uint SpellcasterNumber { get; set; }
+                [Column(2)] public bool Burned { get; set; }
+                [Column(3)] public ushort Age { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid CovenID { get; set; }
+            public IReadOnlyRelationList<Witch> Witches { get; set; } = new RelationList<Witch>();
+            [Column(1)] public bool Wicca { get; set; }
+            [Column(2)] public bool OwnsCauldron { get; set; }
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Relation
+        public class MayanGod {
+            [Flags] public enum Source { PopolVuh = 1, ChilamBilam = 2, MadridCodex = 4, Lacandon = 8, DiegoDeLanda = 16 }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            public IReadOnlyRelationSet<MayanGod> Mothers { get; set; } = new RelationSet<MayanGod>();
+            public IReadOnlyRelationSet<MayanGod> Fathers { get; set; } = new RelationSet<MayanGod>();
+            [Column(1)] public Source Attestations { get; set; }
+            [Column(2)] public string Domain { get; set; } = "";
+        }
+
+        // Test Scenario: Transaction Rolled Back
+        public class Blister {
+            public enum Substance { Pus, Blood, Lymph, Serum, Plasma }
+
+            [PrimaryKey, Column(0)] public string Person { get; set; } = "";
+            [PrimaryKey, Column(1)] public DateTime DateAcquired { get; set; }
+            [Column(2)] public Substance Filling { get; set; }
+            [Column(3)] public bool CausedByDermititis { get; set; }
+        }
+
+        // Test Scenario: Rollback Fails
+        public class Chainsaw {
+            [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
+            [Column(1)] public string Manufacturer { get; set; } = "";
+            [Column(2)] public double Horsepower { get; set; }
+            [Column(3)] public float Weight { get; set; }
+            [Column(4)] public bool IsBatteryPowered { get; set; }
         }
     }
 }
