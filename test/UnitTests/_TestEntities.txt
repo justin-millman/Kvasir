@@ -112,6 +112,7 @@ Belt
 Ben 10 Alien
 Benin Bronze
 Bestiary
+Better Know a District
 Biblical Plague
 Bicycle
 Big Block of Cheese Day
@@ -127,6 +128,7 @@ Black Op
 Blackjack Hand
 Blacksmith
 Blender
+Blister
 Blockade
 Blockbuster Store
 Blood Drive
@@ -202,6 +204,7 @@ Cenote
 Census
 Cereal
 Ceviche
+Chainsaw
 Chakra
 Chameleon
 Character (text)
@@ -272,13 +275,16 @@ Constructor
 Cookbook
 Coral Reef
 Corn Maze
+Count Olaf Disguise
 Country
 County
 Coup d'État
 Coupon
 Court Case
 Covalent Bond
+Coven
 Credit Card
+Crossbow
 Crossword Clue
 Cruise
 Crusade
@@ -450,6 +456,7 @@ Golem
 Golf Course
 Golf Hole
 Gondola
+Google Doodle
 Government Shutdown
 GPU
 Grammatical Case
@@ -470,6 +477,7 @@ Haiku
 Hail Mary
 Hairstyle
 Haitian Loa
+Haka
 Hall of Fame
 Hall Pass
 Happy Hour
@@ -544,6 +552,7 @@ Intern
 Internet Craze
 Interview
 Intifada
+Invoice
 Iowa Caucus
 IP Address
 iPhone
@@ -594,6 +603,7 @@ Lego Set
 Legume
 Lens
 Leprechaun
+Letter of Recommendation
 Library (books)
 License Plate
 Lifeguard
@@ -647,6 +657,7 @@ Mathematical Conjecture
 Mathematical Proof
 Matrix
 Mausoleum
+Mayan God
 Mayor
 Medal of Honor
 Medical Specialty
@@ -688,6 +699,7 @@ Museum
 Mushroom
 Musical
 Mustache
+Mutual Fund
 Mythbusting
 National Anthem
 National Monument
@@ -868,6 +880,7 @@ Resistor
 Rest Stop
 Restaurant
 Retail Product
+Rhinoceros
 Ring of Power
 River
 Riverwalk
@@ -920,6 +933,7 @@ Shard of Adonalsium
 Shark Tank Pitch
 Shark Week
 Shen Gong Wu
+Sheriff
 Sherpa
 Shipwreck
 Shoe
@@ -945,6 +959,7 @@ SNL Episode
 Snowball Fight
 Soap Opera
 Soccer Team
+Soda Fountain
 Solar Eclipse
 Solicitor General
 Song
@@ -1097,6 +1112,7 @@ Web Browser
 Wedding
 Weekend Update
 Werewolf
+Wheelchair
 Where's Waldo?
 White Walker
 Who Wants to Be a Millionaire? Question

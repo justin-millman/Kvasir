@@ -6862,6 +6862,22 @@
               Selects all of the data out of the back-end database and creates corresponding CLR objects.
             </summary>
         </member>
+        <member name="M:Kvasir.Transaction.Transactor.Insert(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Inserts data for one or more Entities into the back-end database.
+            </summary>
+            <param name="entities">
+              The Entities to be inserted. This collection must not be empty, and the order is irrelevant. The
+              collection can contain Entities of any number of types.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+              if the transaction creating the necessary tables fails and is successfully rolled back.
+            </exception>
+            <exception cref="T:System.AggregateException">
+              if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
+              fails.
+            </exception>
+        </member>
         <member name="M:Kvasir.Transaction.Transactor.TryCommitTransaction(System.Data.IDbTransaction)">
             <summary>
               Attempts to commit a <see cref="T:System.Data.IDbTransaction">database transaction</see>. If the commit operation fails,

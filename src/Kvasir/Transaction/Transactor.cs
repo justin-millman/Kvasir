@@ -176,6 +176,74 @@ namespace Kvasir.Transaction {
         }
 
         /// <summary>
+        ///   Inserts data for one or more Entities into the back-end database.
+        /// </summary>
+        /// <param name="entities">
+        ///   The Entities to be inserted. This collection must not be empty, and the order is irrelevant. The
+        ///   collection can contain Entities of any number of types.
+        /// </param>
+        /// <exception cref="InvalidOperationException">
+        ///   if the transaction creating the necessary tables fails and is successfully rolled back.
+        /// </exception>
+        /// <exception cref="AggregateException">
+        ///   if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
+        ///   fails.
+        /// </exception>
+        public void Insert(IEnumerable<object> entities) {
+            Debug.Assert(entities is not null);
+            Debug.Assert(!entities.IsEmpty());
+
+            var mapping = entities.GroupBy(e => e.GetType()).ToDictionary(g => g.Key, g => g.ToList());
+            var translations = mapping.Keys.Select(k => translations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
+
+            using var transaction = connection_.BeginTransaction();
+
+            // Insert all the data into Principal Tables first
+            foreach (var translation in translations) {
+                var rows = new List<IReadOnlyList<DBValue>>();
+                foreach (var entity in mapping[translation.CLRSource]) {
+                    rows.Add(translation.Principal.Extractor.ExtractFrom(entity));
+                }
+
+                var command = commands_[tables_[translation.Principal.Table]].InsertCommand(rows);
+                command.Connection = connection_;
+                command.Transaction = transaction;
+                command.ExecuteNonQuery();
+            }
+
+            // Insert all the data into Relation Tables second
+            var canonicalizations = new List<Action>();
+            foreach (var translation in translations) {
+                foreach (var relation in translation.Relations) {
+                    var rows = new List<IReadOnlyList<DBValue>>();
+                    foreach (var entity in mapping[translation.CLRSource]) {
+                        var ownerFields = translation.Principal.KeyExtractor.ExtractFrom(entity);
+                        var relationFields = relation.Extractor.ExtractFrom(entity);
+
+                        var insertionRows = relationFields.Insertions.Select(r => ownerFields.Concat(r).ToList()).ToList();
+                        Debug.Assert(relationFields.Modifications.IsEmpty());
+                        Debug.Assert(relationFields.Deletions.IsEmpty());
+
+                        rows.AddRange(insertionRows);
+                        canonicalizations.Add(() => relation.Extractor.Canonicalize(entity));
+                    }
+
+                    var command = commands_[tables_[relation.Table]].InsertCommand(rows);
+                    command.Connection = connection_;
+                    command.Transaction = transaction;
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            // Commit the transaction; if it succeeds (failure is indicated by a `throw`), then we run all of the
+            // canonicalization functions
+            TryCommitTransaction(transaction);
+            foreach (var canonicalize in canonicalizations) {
+                canonicalize();
+            }
+        }
+
+        /// <summary>
         ///   Attempts to commit a <see cref="IDbTransaction">database transaction</see>. If the commit operation fails,
         ///   an attempt to roll the transaction back is made.
         /// </summary>

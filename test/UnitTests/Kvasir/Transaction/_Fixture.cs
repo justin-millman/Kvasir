@@ -1,14 +1,18 @@
-﻿using FluentAssertions;
+﻿using Cybele.Extensions;
+using FluentAssertions;
 using FluentAssertions.Execution;
 using Kvasir.Schema;
 using Kvasir.Transaction;
 using Kvasir.Translation;
 using NSubstitute;
+using NSubstitute.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
+
+using Rows = System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<Kvasir.Schema.DBValue>>;
 
 namespace UT.Kvasir.Transaction {
     internal sealed class TestFixture {
@@ -28,6 +32,7 @@ namespace UT.Kvasir.Transaction {
             Depot = types.ToDictionary(t => t, _ => new List<object>());
             translator_ = new Translator(t => Depot[t]);
             ordering_ = new Dictionary<IDbCommand, int>();
+            invocationArgs_ = new Dictionary<IDbCommand, IReadOnlyList<IReadOnlyList<DBValue>>>();
 
             Connection.State.Returns(ConnectionState.Open);
 
@@ -38,20 +43,26 @@ namespace UT.Kvasir.Transaction {
 
                 var createTable = Substitute.For<IDbCommand>();
                 createTable.CommandText = $"CREATE TABLE {table.Name}";
+                createTable.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[createTable] = ordering_.Count + 1);
                 commands.CreateTableCommand.Returns(createTable);
-                commands.CreateTableCommand.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[createTable] = ordering_.Count + 1);
 
                 var reader = Substitute.For<IDataReader>();
                 reader.Read().Returns(_ => dbRows_[table].MoveNext());
                 reader.FieldCount.Returns(_ => dbRows_[table].Current.Count);
                 reader[Arg.Any<int>()].Returns(args => dbRows_[table].Current[args.ArgAt<int>(0)]);
+                reader.ClearReceivedCalls();
 
                 var selectAll = Substitute.For<IDbCommand>();
                 selectAll.CommandText = $"SELECT * FROM {table.Name}";
                 selectAll.ExecuteReader().Returns(reader);
+                selectAll.When(c => c.ExecuteReader()).Do(_ => ordering_[selectAll] = ordering_.Count + 1);
                 commands.SelectAllQuery.Returns(selectAll);
-                commands.SelectAllQuery.When(c => c.ExecuteReader()).Do(_ => ordering_[selectAll] = ordering_.Count + 1);
-                reader.ClearReceivedCalls();
+
+                var insert = Substitute.For<IDbCommand>();
+                insert.CommandText = $"INSERT INTO {table.Name}";
+                insert.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[insert] = ordering_.Count + 1);
+                commands.InsertCommand(Arg.Any<Rows>()).Returns(insert);
+                commands.When(c => c.InsertCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, insert));
 
                 commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t == table)).Returns(commands);
                 commands_[table] = commands;
@@ -102,6 +113,25 @@ namespace UT.Kvasir.Transaction {
             return commands_[table];
         }
 
+        public Rows InsertionsFor(IDbCommand command) {
+            if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
+                return value;
+            }
+            return Enumerable.Empty<IReadOnlyList<DBValue>>();
+        }
+        public Rows MutationsFor(IDbCommand command) {
+            if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
+                return value;
+            }
+            return Enumerable.Empty<IReadOnlyList<DBValue>>();
+        }
+        public Rows DeletionsFor(IDbCommand command) {
+            if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
+                return value;
+            }
+            return Enumerable.Empty<IReadOnlyList<DBValue>>();
+        }
+
         [CustomAssertion]
         public void ShouldBeOrdered(params object[] commands) {
             int getOrderingOf(IDbCommand cmd) {
@@ -138,11 +168,19 @@ namespace UT.Kvasir.Transaction {
             }
         }
 
+        private void SetInvocationArguments(CallInfo info, IDbCommand cmd) {
+            var rows = info.ArgAt<Rows>(0).ToList();
+            if (!rows.IsEmpty()) {
+                invocationArgs_[cmd] = rows;
+            }
+        }
+
 
         private readonly ICommandsFactory commandsFactory_;
         private readonly Translator translator_;
         private readonly Dictionary<ITable, ICommands> commands_;
         private readonly Dictionary<ITable, IEnumerator<IReadOnlyList<object>>> dbRows_;
         private readonly Dictionary<IDbCommand, int> ordering_;
+        private readonly Dictionary<IDbCommand, IReadOnlyList<IReadOnlyList<DBValue>>> invocationArgs_;
     }
 }

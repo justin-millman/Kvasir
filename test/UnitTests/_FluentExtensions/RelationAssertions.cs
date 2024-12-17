@@ -62,6 +62,27 @@ namespace FluentAssertions {
             }
 
             [CustomAssertion]
+            public AndConstraint<RelationAssertion> HaveUnsavedEntryCount(int count, string because = "",
+                params object[] becauseArgs) {
+
+                var actual = 0;
+                var iter = Subject.GetEnumerator();
+                while (iter.MoveNext()) {
+                    if (iter.Current.Status != Status.Saved) {
+                        ++actual;
+                    }
+                }
+
+                Execute.Assertion
+                    .BecauseOf(because, becauseArgs)
+                    .ForCondition(actual == count)
+                    .FailWith($"Expected {{context:relation}} to have {count} unsaved entr{(count == 1 ? "y" : "ies")}" +
+                              $"{{reason}}, but got {actual}");
+
+                return new AndConstraint<RelationAssertion>(this);
+            }
+
+            [CustomAssertion]
             public AndConstraint<RelationAssertion> HaveConnectionType<T>(string because = "",
                 params object[] becauseArgs) {
 
