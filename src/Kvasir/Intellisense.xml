@@ -1531,6 +1531,15 @@
               <see cref="T:Kvasir.Relations.IRelation">Relation</see> extracted from <paramref name="source"/>.
             </returns>
         </member>
+        <member name="M:Kvasir.Extraction.RelationExtractionPlan.Canonicalize(System.Object)">
+            <summary>
+              Canonicalize the target <see cref="T:Kvasir.Relations.IRelation">Relation</see> on a CLR source.
+            </summary>
+            <param name="source">
+              The CLR source object.
+            </param>
+            <seealso cref="M:Kvasir.Relations.IRelation.Canonicalize"/>
+        </member>
         <member name="T:Kvasir.Extraction.RelationData">
             <summary>
               A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
