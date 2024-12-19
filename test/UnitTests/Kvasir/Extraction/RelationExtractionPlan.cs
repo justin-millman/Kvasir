@@ -22,11 +22,13 @@ namespace UT.Kvasir.Extraction {
             // Act
             var plan = new RelationExtractionPlan(relationExtractor, elementPlan);
             (var inserts, var modifies, var deletes) = plan.ExtractFrom(source);
+            var canonicalization = () => plan.Canonicalize(source);
 
             // Assert
             inserts.Should().BeEmpty();
             modifies.Should().BeEmpty();
             deletes.Should().BeEmpty();
+            canonicalization.Should().NotThrow();
         }
 
         [TestMethod] public void EmptyRelation() {
@@ -42,11 +44,13 @@ namespace UT.Kvasir.Extraction {
             // Act
             var plan = new RelationExtractionPlan(relationExtractor, elementPlan);
             (var inserts, var modifies, var deletes) = plan.ExtractFrom(source);
+            plan.Canonicalize(source);
 
             // Assert
             inserts.Should().BeEmpty();
             modifies.Should().BeEmpty();
             deletes.Should().BeEmpty();
+            relation.Received(1).Canonicalize();
         }
 
         [TestMethod] public void OnlyNewElements() {
@@ -68,6 +72,7 @@ namespace UT.Kvasir.Extraction {
             // Act
             var plan = new RelationExtractionPlan(relationExtractor, elementPlan);
             (var inserts, var modifies, var deletes) = plan.ExtractFrom(source);
+            plan.Canonicalize(source);
 
             // Assert
             inserts.Should().HaveCount(3);
@@ -76,6 +81,7 @@ namespace UT.Kvasir.Extraction {
             inserts.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[2].Item1) });
             modifies.Should().BeEmpty();
             deletes.Should().BeEmpty();
+            relation.Received(1).Canonicalize();
         }
 
         [TestMethod] public void OnlySavedElements() {
@@ -89,18 +95,20 @@ namespace UT.Kvasir.Extraction {
             var relationExtractor = Substitute.For<ISingleExtractor>();
             relationExtractor.SourceType.Returns(typeof(EventHandler));
             relationExtractor.ResultType.Returns(typeof(IReadOnlyRelationMap<string, DateTime>));
-            relationExtractor.ExtractFrom(Arg.Any<List<EventHandler>>()).Returns(relation);
+            relationExtractor.ExtractFrom(Arg.Any<EventHandler>()).Returns(relation);
             var elementPlan = MakePlanFor<char>();
             var source = new EventHandler((o, a) => {});
 
             // Act
             var plan = new RelationExtractionPlan(relationExtractor, elementPlan);
             (var inserts, var modifies, var deletes) = plan.ExtractFrom(source);
+            plan.Canonicalize(source);
 
             // Assert
             inserts.Should().BeEmpty();
             modifies.Should().BeEmpty();
             deletes.Should().BeEmpty();
+            relation.Received(1).Canonicalize();
         }
 
         [TestMethod] public void OnlyModifiedElements() {
@@ -124,6 +132,7 @@ namespace UT.Kvasir.Extraction {
             // Act
             var plan = new RelationExtractionPlan(relationExtractor, elementPlan);
             (var inserts, var modifies, var deletes) = plan.ExtractFrom(source);
+            plan.Canonicalize(source);
 
             // Assert
             inserts.Should().BeEmpty();
@@ -134,6 +143,7 @@ namespace UT.Kvasir.Extraction {
             modifies.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[3].Item1) });
             modifies.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[4].Item1) });
             deletes.Should().BeEmpty();
+            relation.Received(1).Canonicalize();
         }
 
         [TestMethod] public void OnlyDeletedElements() {
@@ -156,6 +166,7 @@ namespace UT.Kvasir.Extraction {
             // Act
             var plan = new RelationExtractionPlan(relationExtractor, elementPlan);
             (var inserts, var modifies, var deletes) = plan.ExtractFrom(source);
+            plan.Canonicalize(source);
 
             // Assert
             inserts.Should().BeEmpty();
@@ -165,6 +176,7 @@ namespace UT.Kvasir.Extraction {
             deletes.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[1].Item1) });
             deletes.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[2].Item1) });
             deletes.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[3].Item1) });
+            relation.Received(1).Canonicalize();
         }
 
         [TestMethod] public void MixedStatusElements() {
@@ -193,6 +205,7 @@ namespace UT.Kvasir.Extraction {
             // Act
             var plan = new RelationExtractionPlan(relationExtractor, elementPlan);
             (var inserts, var modifies, var deletes) = plan.ExtractFrom(source);
+            plan.Canonicalize(source);
 
             // Assert
             inserts.Should().HaveCount(3);
@@ -206,6 +219,7 @@ namespace UT.Kvasir.Extraction {
             deletes.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[0].Item1) });
             deletes.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[1].Item1) });
             deletes.Should().ContainEquivalentOf(new DBValue[] { DBValue.Create(elements[2].Item1) });
+            relation.Received(1).Canonicalize();
         }
 
 

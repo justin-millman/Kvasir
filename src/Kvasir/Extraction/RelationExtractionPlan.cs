@@ -86,6 +86,20 @@ namespace Kvasir.Extraction {
             return new RelationData(Insertions: insertions, Modifications: modifications, Deletions: deletions);
         }
 
+        /// <summary>
+        ///   Canonicalize the target <see cref="IRelation">Relation</see> on a CLR source.
+        /// </summary>
+        /// <param name="source">
+        ///   The CLR source object.
+        /// </param>
+        /// <seealso cref="IRelation.Canonicalize"/>
+        public void Canonicalize(object source) {
+            Debug.Assert(source is null || source.GetType().IsInstanceOf(SourceType));
+
+            var relation = (IRelation?)relationExtractor_.ExtractFrom(source);
+            relation?.Canonicalize();
+        }
+
 
         private readonly ISingleExtractor relationExtractor_;
         private readonly DataExtractionPlan elementExtractionPlan_;
