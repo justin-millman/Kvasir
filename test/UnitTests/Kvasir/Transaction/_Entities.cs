@@ -530,4 +530,221 @@ namespace UT.Kvasir.Transaction {
             [Column(4)] public bool IsBatteryPowered { get; set; }
         }
     }
+
+    internal static class Deletion {
+        // Test Scenario: Single Instance of Single Entity with No Relations and Single-Field Primary Key
+        public class Pinata {
+            public enum Event { Birthday, Quinceaneara, Wedding, Sleepover, Prom, Graduation, Other }
+
+            [PrimaryKey, Column(0)] public Guid PinataID { get; set; }
+            [Column(1)] public decimal Price { get; set; }
+            [Column(2)] public Event Occasion { get; set; }
+            [Column(3)] public string? Breaker { get; set; }
+            [Column(4)] public double AmountOfCandy { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with No Relations and Multi-Field Primary Key
+        public class Choir {
+            [PrimaryKey, Column(0)] public string GroupName { get; set; } = "";
+            [PrimaryKey, Column(1)] public char Level { get; set; }
+            [PrimaryKey, Column(2)] public DateTime Established { get; set; }
+            [Column(3)] public uint Members { get; set; }
+            [Column(4)] public ushort KnownSongs { get; set; }
+            [Column(5)] public DateTime? NextConcert { get; set; }
+            [Column(6)] public bool IsReligious { get; set; }
+        }
+
+        // Test Scenario: Multiple Instances of Single Entity without Relations
+        public class EquityOption {
+            public enum PutCall { Put, Call };
+            public enum Status { InTheMoney, AtTheMoney, OutOfTheMoney }
+
+            [PrimaryKey, Column(0)] public string Underlying { get; set; } = "";
+            [PrimaryKey, Column(1)] public DateTime Expiration { get; set; }
+            [PrimaryKey, Column(2)] public decimal Strike { get; set; }
+            [PrimaryKey, Column(3)] public PutCall Side { get; set; }
+            [Column(4)] public Status Moneyness { get; set; }
+            [Column(5)] public decimal NBB { get; set; }
+            [Column(6)] public decimal NBO { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Scalar Relations of Saved Elements
+        public class K401 {
+            [PrimaryKey, Column(0)] public Guid AccountID { get; set; }
+            [Column(1)] public string Provider { get; set; } = "";
+            [Column(2)] public string CompanySponsor { get; set; } = "";
+            [Column(3)] public double PercentMatch { get; set; }
+            [Column(4)] public decimal Balance { get; set; }
+            public RelationMap<DateTime, decimal> Deposits { get; set; } = new RelationMap<DateTime, decimal>();
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Scalar Relation of Deleted Elements
+        public class JumpBall {
+            public enum Which { NBA, WNBA, NCAA, JUCO, NAIA, HighSchool, MiddleSchool, PickUp }
+
+            [PrimaryKey, Column(0)] public Guid GameID { get; set; }
+            [PrimaryKey, Column(1)] public uint Instance { get; set; }
+            [Column(2)] public Which League { get; set; }
+            public RelationMap<string, string> Participants { get; set; } = new RelationMap<string, string>();
+            [Column(3)] public string Referee { get; set; } = "";
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Scalar Relation of New Elements
+        public class BankVault {
+            [PrimaryKey, Column(0)] public Guid BankID { get; set; }
+            [PrimaryKey, Column(1)] public string Branch { get; set; } = "";
+            [PrimaryKey, Column(2)] public short VaultNumber { get; set; }
+            public RelationMap<Guid, decimal> Storage { get; set; } = new();
+            public RelationOrderedList<sbyte> Combination { get; set; } = new();
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Scalar Relation of Mixed-Status Elements
+        public class SushiRoll {
+            public enum Color { Brown, White };
+
+            [PrimaryKey, Column(0)] public string RollType { get; set; } = "";
+            [PrimaryKey, Column(1)] public string Restaurant { get; set; } = "";
+            [Column(2)] public decimal Price { get; set; }
+            public RelationSet<string> Ingredients { get; set; } = new();
+            [Column(3)] public Color RiceType { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Empty Scalar Relation
+        public class Woodshop {
+            public enum Wood { Birch, Cedar, Ash, Cherry, Cypress, Fir, Pine, Elm, Mahogany, Walnut, Maple, Bamboo }
+
+            [PrimaryKey, Column(0)] public Guid WoodshopID { get; set; }
+            public RelationSet<string> Tools { get; set; } = new();
+            [Column(1)] public string Owner { get; set; } = "";
+            public RelationOrderedList<Wood> TypesOfWood { get; set; } = new();
+            [Column(2)] public uint TotalIncidents { get; set; }
+            [Column(3)] public decimal InsuranceCoverage { get; set; }
+        }
+
+        // Test Scenario: Multiple Instances of Single Entities with Scalar Relations
+        public class ConvenienceStore {
+            [PrimaryKey, Column(0)] public string StoreBrand { get; set; } = "";
+            [PrimaryKey, Column(1)] public ulong StoreNumber { get; set; }
+            [Column(2)] public string Address { get; set; } = "";
+            [Column(3)] public bool IsBodega { get; set; }
+            public IReadOnlyRelationMap<string, decimal> Products { get; set; } = new RelationMap<string, decimal>();
+            public RelationOrderedList<string> Employees { get; set; } = new();
+        }
+
+        // Test Scenario: Multiple Unrelated Entities
+        public class SeaShanty {
+            public enum Type { LongDrag, ShortDrag, SweatingUp, HandOverHand, Bunt, Capstan, Pump, Windlass, Coastwise, Longshore, Misc }
+
+            [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+            [Column(1)] public DateTime? EarliestAttestation { get; set; }
+            [Column(2)] public Type Kind { get; set; }
+        }
+        public class ElginMarble {
+            public enum Type { Frieze, Metope, Pediment }
+
+            [PrimaryKey, Column(0)] public uint Number { get; set; }
+            [Column(1)] public string Description { get; set; } = "";
+            [Column(2)] public bool HasBeenRepatriated { get; set; }
+            [Column(3)] public Type Source { get; set; }
+        }
+        public class CepheidVariable {
+            public enum Type { Classical, TypeII, Anomalous, DoubleMode }
+            
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public float PeriodDays { get; set; }
+            [Column(2)] public double Distance { get; set; }
+            [Column(3)] public double Mass { get; set; }
+            [Column(4)] public ulong Luminosity { get; set; }
+            [Column(5)] public Type Class { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Chain
+        public class CostumeParty {
+            public class Costume {
+                [PrimaryKey, Column(0)] public Guid CostumeID { get; set; }
+                [Column(1)] public string Character { get; set; } = "";
+                [Column(2)] public bool IsHomemade { get; set; }
+                [Column(3)] public decimal? Cost { get; set; }
+            }
+            public class Partygoer {
+                [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+                [Column(1)] public bool WasInvited { get; set; }
+                [Column(2)] public Costume Costume { get; set; } = new();
+            }
+
+            [PrimaryKey, Column(0)] public Guid PartyID { get; set; }
+            [Column(1)] public string Host { get; set; } = "";
+            [Column(2)] public DateTime Date { get; set; }
+            [Column(3)] public bool ForHalloween { get; set; }
+            [Column(4)] public Partygoer Winner { get; set; } = new();
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Tree
+        public class WeirdAlParody {
+            public class Album {
+                [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+                [Column(1)] public DateTime Released { get; set; }
+            }
+            public class Song {
+                [PrimaryKey, Column(0)] public string Artist { get; set; } = "";
+                [PrimaryKey, Column(1)] public string Title { get; set; } = "";
+                [Column(2)] public ulong RecordsSold { get; set; }
+                [Column(3)] public bool WonGrammy { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public string Title { get; set; } = "";
+            [Column(1)] public DateTime Released { get; set; }
+            [Column(2)] public Album? SongAlbum { get; set; }
+            [Column(3)] public double Length { get; set; }
+            [Column(4)] public Song Basis { get; set; } = new();
+            [Column(6)] public string Label { get; set; } = "";
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation
+        public class Affidavit {
+            public class Lawyer {
+                public enum Employer { ProBono, LawFirm, DistrictAttorney, Government, DOJ }
+
+                [PrimaryKey, Column(0)] public Guid BarNumber { get; set; }
+                [PrimaryKey, Column(1)] public string Name { get; set; } = "";
+                [Column(2)] public string LawSchool { get; set; } = "";
+                [Column(3)] public Employer Employment { get; set; }
+            }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public string Affiant { get; set; } = "";
+            [Column(2)] public DateTime NotarizationDate { get; set; }
+            public IReadOnlyRelationOrderedList<Lawyer> LawyersInvolved { get; set; } = new RelationOrderedList<Lawyer>();
+            [Column(3)] public bool PartOfPleaDeal { get; set; }
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Relation
+        public class Masseuse {
+            public enum Kind { Shiatsu, DeepTissue, Acupuncture, Sports, Erotic, Reflexology, Swedish, Other }
+
+            [PrimaryKey, Column(0)] public Guid LicenseNumber { get; set; }
+            [PrimaryKey, Column(1)] public Kind Style { get; set; }
+            [Column(2)] public string Name { get; set; } = "";
+            public IReadOnlyRelationSet<Masseuse> Teachers { get; set; } = new RelationSet<Masseuse>();
+            [Column(3)] public bool IsFreelance { get; set; }
+            [Column(4)] public sbyte NumTables { get; set; }
+        }
+
+        // Test Scenario: Transaction Rolled Back
+        public class Gazebo {
+            [PrimaryKey, Column(0)] public Guid GazeboID { get; set; }
+            [Column(1)] public string GeneralShape { get; set; } = "";
+            [Column(2)] public uint MaxCapacity { get; set; }
+            [Column(3)] public bool IsTented { get; set; }
+        }
+
+        // Test Scenario: Rollback Fails
+        public class Moai {
+            [PrimaryKey, Column(0)] public string Site { get; set; } = "";
+            [PrimaryKey, Column(1)] public uint Number { get; set; }
+            [Column(2)] public double Height { get; set; }
+            [Column(3)] public string EyesMaterial { get; set; } = "";
+            [Column(4)] public bool HasPukao { get; set; }
+        }
+    }
 }

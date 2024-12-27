@@ -99,35 +99,6 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityEmptyScalarRelations() {
-            // Arrange
-            var recLetter = new LetterOfRecommendation() {
-                Author = "Dr. Barry Sfagnoulo",
-                Recipient = "Sheila Grandersonsdottir VIII",
-                Year = 2020,
-                Purpose = "Intercontinental University of the Mystical Sandwich Arts",
-                Compensation = null,
-                Words = new RelationOrderedList<string>()
-            };
-            var fixture = new TestFixture(typeof(LetterOfRecommendation));
-
-            // Act
-            fixture.Transactor.Insert(new object[] { recLetter });
-            var letterCmd = fixture.PrincipalCommands<LetterOfRecommendation>().InsertCommand(ANY_ROWS);
-            var letterInserts = fixture.InsertionsFor(letterCmd);
-            var wordsCmd = fixture.RelationCommands<LetterOfRecommendation>(0).InsertCommand(ANY_ROWS);
-            var wordsInserts = fixture.InsertionsFor(wordsCmd);
-
-            // Assert
-            letterCmd.Connection.Should().Be(fixture.Connection);
-            letterCmd.Transaction.Should().Be(fixture.Transaction);
-            letterInserts.Should().HaveCount(1);
-            letterInserts.Should().ContainRow(recLetter.Author, recLetter.Recipient, recLetter.Year, recLetter.Purpose, recLetter.Compensation);
-            wordsInserts.Should().HaveCount(0);
-            fixture.ShouldBeOrdered(letterCmd);
-            fixture.Transaction.Received(1).Commit();
-        }
-
         [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelations() {
             // Arrange
             var fountain = new SodaFountain() {
@@ -202,6 +173,35 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
             fountain.Inspections.Should().HaveUnsavedEntryCount(0);
             fountain.Sodas.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SingleInstanceSingleEntityEmptyScalarRelations() {
+            // Arrange
+            var recLetter = new LetterOfRecommendation() {
+                Author = "Dr. Barry Sfagnoulo",
+                Recipient = "Sheila Grandersonsdottir VIII",
+                Year = 2020,
+                Purpose = "Intercontinental University of the Mystical Sandwich Arts",
+                Compensation = null,
+                Words = new RelationOrderedList<string>()
+            };
+            var fixture = new TestFixture(typeof(LetterOfRecommendation));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { recLetter });
+            var letterCmd = fixture.PrincipalCommands<LetterOfRecommendation>().InsertCommand(ANY_ROWS);
+            var letterInserts = fixture.InsertionsFor(letterCmd);
+            var wordsCmd = fixture.RelationCommands<LetterOfRecommendation>(0).InsertCommand(ANY_ROWS);
+            var wordsInserts = fixture.InsertionsFor(wordsCmd);
+
+            // Assert
+            letterCmd.Connection.Should().Be(fixture.Connection);
+            letterCmd.Transaction.Should().Be(fixture.Transaction);
+            letterInserts.Should().HaveCount(1);
+            letterInserts.Should().ContainRow(recLetter.Author, recLetter.Recipient, recLetter.Year, recLetter.Purpose, recLetter.Compensation);
+            wordsInserts.Should().HaveCount(0);
+            fixture.ShouldBeOrdered(letterCmd);
+            fixture.Transaction.Received(1).Commit();
         }
 
         [TestMethod] public void MultipleInstancesSingleEntityScalarRelations() {

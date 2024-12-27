@@ -55,7 +55,8 @@ namespace Kvasir.Transaction {
         ///   supported.)
         /// </remarks>
         /// <param name="rows">
-        ///   The rows of data that should be deleted. (Note that this is <b>not</b> just the rows' Primary Keys.)
+        ///   The rows of data that should be deleted. Each row can either be the full row of data <i>OR</i> the Primary
+        ///   Key of the "owning Entity."
         /// </param>
         IDbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
     }

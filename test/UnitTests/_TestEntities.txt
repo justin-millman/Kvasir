@@ -1,5 +1,6 @@
 # This document lists the Entity concepts that have been used in unit tests for Kvasir Translation.
 
+401K
 A Capella Group
 Accountant
 Achaean Naval Contingent
@@ -11,6 +12,7 @@ Ad Blocker
 Address
 Adverb
 Aes Sedai
+Affidavit
 AirBNB
 Airline
 Airplane
@@ -202,6 +204,7 @@ Celtic God
 Cemetery
 Cenote
 Census
+Cepheid Variable
 Cereal
 Ceviche
 Chainsaw
@@ -218,6 +221,7 @@ Chewing Gum
 Chinese Character
 Chinese Dynasty
 Chocolate
+Choir
 Chopped Basket
 Chopsticks
 Christian Denomination
@@ -272,9 +276,11 @@ Constellation
 Constitution
 Constitutional Amendment
 Constructor
+Convenience Store
 Cookbook
 Coral Reef
 Corn Maze
+Costume Party
 Count Olaf Disguise
 Country
 County
@@ -362,6 +368,7 @@ Egyptian God
 Egyptian Pyramid
 Eigenvector
 Elevator
+Elgin Marble
 Emergency Room
 Emoji
 Emotion
@@ -435,6 +442,7 @@ Garden
 Gargoyle
 Gas Station
 Gatorade
+Gazebo
 Gelateria
 Gene
 Generation
@@ -565,6 +573,7 @@ Jedi
 Jigsaw Puzzle
 Joust
 Jukebox
+Jump Ball
 Kaiju
 Kami
 Kanji
@@ -652,6 +661,7 @@ Mars Rover
 Masked Singer
 Mass Extinction
 Massacre
+Masseuse
 MasterClass
 Mathematical Conjecture
 Mathematical Proof
@@ -679,6 +689,7 @@ Mint (currency)
 Mirror
 Missile
 Mitzvah
+Moai
 Monad
 Mongol Khan
 Monopoly Property
@@ -743,6 +754,7 @@ Olympian Boon (Hades)
 Onomatopoeia
 Opera
 Opioid
+Option (security)
 Orchestra
 Organ Procurement Organization
 Orgasm
@@ -798,6 +810,7 @@ Piano Sonata
 Pie
 Pigment (biology)
 Pillow
+Piñata
 Ping
 Pirate
 Pirate Ship
@@ -912,6 +925,7 @@ Screenwriter
 Screwdriver
 SCUBA Dive
 Sculpture
+Sea Shanty
 Séance
 Search Engine
 Search Warrant
@@ -1009,6 +1023,7 @@ Surah
 Surfing Maneuver
 Surgical Mask
 Survivor
+Sushi Roll
 Sutra
 Swamp
 Swimming Pool
@@ -1086,6 +1101,7 @@ UUID
 Vacuum Cleaner
 Valet
 Vampire Slayer
+Vault (bank)
 Verb
 Vestige of Divergence
 Vigenère Cipher
@@ -1111,6 +1127,7 @@ Waterfall
 Web Browser
 Wedding
 Weekend Update
+Weird Al Parody
 Werewolf
 Wheelchair
 Where's Waldo?
@@ -1125,6 +1142,7 @@ Winter Storm
 Wiretap
 Witch Hunt
 Wizard
+Woodshop
 Word Search
 Wordle
 World Cup
