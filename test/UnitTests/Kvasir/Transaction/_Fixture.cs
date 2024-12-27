@@ -64,6 +64,12 @@ namespace UT.Kvasir.Transaction {
                 commands.InsertCommand(Arg.Any<Rows>()).Returns(insert);
                 commands.When(c => c.InsertCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, insert));
 
+                var delete = Substitute.For<IDbCommand>();
+                delete.CommandText = $"DELETE FROM {table.Name}";
+                delete.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[delete] = ordering_.Count + 1);
+                commands.DeleteCommand(Arg.Any<Rows>()).Returns(delete);
+                commands.When(c => c.DeleteCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, delete));
+
                 commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t == table)).Returns(commands);
                 commands_[table] = commands;
                 dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();

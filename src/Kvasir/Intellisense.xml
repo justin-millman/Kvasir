@@ -6743,7 +6743,8 @@
               supported.)
             </remarks>
             <param name="rows">
-              The rows of data that should be deleted. (Note that this is <b>not</b> just the rows' Primary Keys.)
+              The rows of data that should be deleted. Each row can either be the full row of data <i>OR</i> the Primary
+              Key of the "owning Entity."
             </param>
         </member>
         <member name="T:Kvasir.Transaction.ICommandsFactory">
@@ -6875,6 +6876,22 @@
             </exception>
             <exception cref="T:System.AggregateException">
               if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
+              fails.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Transaction.Transactor.Delete(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Deletes data for one or more Entities from the back-end database.
+            </summary>
+            <param name="entities">
+              The Entities whose data to delete. This collection must not be empty, and the order is irrelevant. The
+              collection can contain Entities of any number of types.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+              if the transaction deleting the necessary data fails and is successfully rolled back.
+            </exception>
+            <exception cref="T:System.AggregateException">
+              if the transaction deleting the necessary data fails, and the attempt to roll the transaction back also
               fails.
             </exception>
         </member>
