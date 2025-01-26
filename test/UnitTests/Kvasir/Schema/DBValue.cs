@@ -222,7 +222,7 @@ namespace UT.Kvasir.Schema {
 
         [TestMethod] public void CreateFromDecimalDirectly() {
             // Arrange
-            var rawValue = (decimal)86.77;
+            var rawValue = 86.77M;
             var expectedType = DBType.Decimal;
 
             // Act
@@ -457,7 +457,7 @@ namespace UT.Kvasir.Schema {
 
         [TestMethod] public void CreateFromDecimalIndirectly() {
             // Arrange
-            var rawValue = (decimal)86.77;
+            var rawValue = 86.77M;
             var expectedType = DBType.Decimal;
 
             // Act

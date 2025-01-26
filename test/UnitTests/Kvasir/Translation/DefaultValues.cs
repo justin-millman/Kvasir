@@ -40,7 +40,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("ISBN").WithNoDefault().And
                 .HaveField("Title").WithNoDefault().And
                 .HaveField("Author").WithNoDefault().And
-                .HaveField("MarketValue").WithDefault((decimal)35.78).And
+                .HaveField("MarketValue").WithDefault(35.78M).And
                 .HaveField("NumPages").WithNoDefault().And
                 .HaveField("Published").WithNoDefault().And
                 .HaveField("NumBeasts").WithNoDefault().And
@@ -317,7 +317,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Tamagotchi.ID").WithNoDefault().And
                 .HaveField("Item.ID").WithNoDefault().And
                 .HaveField("Item.Name").WithNoDefault().And
-                .HaveField("Item.Cost").WithDefault((decimal)3.75).And
+                .HaveField("Item.Cost").WithDefault(3.75M).And
                 .HaveNoOtherFields();
         }
 

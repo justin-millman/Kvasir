@@ -74,7 +74,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint("TopBid", ComparisonOperator.GT, (decimal)10000).And
+                .HaveConstraint("TopBid", ComparisonOperator.GT, 10000M).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1442,7 +1442,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint("ClosingPrice", ComparisonOperator.GTE, (decimal)-18.412006).And
+                .HaveConstraint("ClosingPrice", ComparisonOperator.GTE, -18.412006M).And
                 .HaveNoOtherConstraints();
         }
 
@@ -1613,7 +1613,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Relations[0].Table.Should()
                 .HaveConstraint("Item.Name", ComparisonOperator.GTE, "Elmo").And
-                .HaveConstraint("Item.Value", ComparisonOperator.GTE, (decimal)22.5).And
+                .HaveConstraint("Item.Value", ComparisonOperator.GTE, 22.5M).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2802,7 +2802,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint("CostPerHour", ComparisonOperator.NE, (decimal)0.750).And
+                .HaveConstraint("CostPerHour", ComparisonOperator.NE, 0.750M).And
                 .HaveNoOtherConstraints();
         }
 

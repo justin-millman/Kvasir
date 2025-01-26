@@ -22,7 +22,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("NumericValue", ComparisonOperator.GT, 0).And
-                .HaveConstraint("Frequency", ComparisonOperator.GT, (decimal)0).And
+                .HaveConstraint("Frequency", ComparisonOperator.GT, 0M).And
                 .HaveConstraint("Index", ComparisonOperator.GT, (byte)0).And
                 .HaveNoOtherConstraints();
         }
@@ -38,7 +38,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("Practitioners", ComparisonOperator.GT, 0UL).And
-                .HaveConstraint("AverageSalary", ComparisonOperator.GT, (decimal)0).And
+                .HaveConstraint("AverageSalary", ComparisonOperator.GT, 0M).And
                 .HaveConstraint("YearsSchool", ComparisonOperator.GT, (sbyte)0).And
                 .HaveNoOtherConstraints();
         }
@@ -1060,7 +1060,7 @@ namespace UT.Kvasir.Translation {
                 .HaveConstraint("NumEdges", ComparisonOperator.NE, (ushort)0).And
                 .HaveConstraint("NumVertices", ComparisonOperator.NE, (sbyte)0).And
                 .HaveConstraint("InternalAngle", ComparisonOperator.NE, 0.0).And
-                .HaveConstraint("ExternalAngle", ComparisonOperator.NE, (decimal)0).And
+                .HaveConstraint("ExternalAngle", ComparisonOperator.NE, 0M).And
                 .HaveNoOtherConstraints();
         }
 
