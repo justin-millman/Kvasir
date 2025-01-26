@@ -163,9 +163,9 @@ namespace UT.Kvasir.Transaction {
 
         [TestMethod] public void MultipleInstancesSingleEntityScalarRelations() {
             // Arrange
-            var oldSpice = new object[] { Guid.NewGuid(), "Old Spice", (decimal)17.99, false };
-            var degreeUltra = new object[] { Guid.NewGuid(), "Degree Ultra", (decimal)24.99, false };
-            var dove = new object[] { Guid.NewGuid(), "Dove", (decimal)8.75, true };
+            var oldSpice = new object[] { Guid.NewGuid(), "Old Spice", 17.99M, false };
+            var degreeUltra = new object[] { Guid.NewGuid(), "Degree Ultra", 24.99M, false };
+            var dove = new object[] { Guid.NewGuid(), "Dove", 8.75M, true };
             var vanilla = new object[] { oldSpice[0], 0U, "Vanilla" };
             var cinnamon = new object[] { oldSpice[0], 1U, "Cinnamon" };
             var peppermint = new object[] { degreeUltra[0], 0U, "Peppermint" };
@@ -301,9 +301,9 @@ namespace UT.Kvasir.Transaction {
             var john = new object[] { "337-81-9045", "John", "Edelsburgg", male[0] };
             var nicholas = new object[] { "144-06-2252", "Nicholas", "Saint-Savez", male[0] };
             var esther = new object[] { "595-77-6211", "Esther", "Shwi", female[0] };
-            var bank = new object[] { "Bank of Biscuits", '$', nicholas[0], (decimal)28500000, (decimal)8000000000 };
-            var insurance = new object[] { "Goliath Insurance", 'i', esther[0], (decimal)23000000000, (decimal)400000000000 };
-            var annuity = new object[] { Guid.NewGuid(), "Annuitization", (decimal)750000, john[0], insurance[0], insurance[1], true };
+            var bank = new object[] { "Bank of Biscuits", '$', nicholas[0], 28500000M, 8000000000M };
+            var insurance = new object[] { "Goliath Insurance", 'i', esther[0], 23000000000M, 400000000000M };
+            var annuity = new object[] { Guid.NewGuid(), "Annuitization", 750000M, john[0], insurance[0], insurance[1], true };
             var fixture = new TestFixture(typeof(Annuity), typeof(Annuity.Company), typeof(Annuity.Person), typeof(Annuity.Gender))
                 .WithEntityRow<Annuity>(annuity)
                 .WithEntityRow<Annuity.Company>(bank)
@@ -375,7 +375,7 @@ namespace UT.Kvasir.Transaction {
             // Arrange
             var elvis = new object[] { Guid.NewGuid(), "Elvis", "Presley" };
             var taylor = new object[] { Guid.NewGuid(), "Taylor", "Swift" };
-            var harvard = new object[] { Guid.NewGuid(), "Harvard University", 21613UL, (decimal)50700000000 };
+            var harvard = new object[] { Guid.NewGuid(), "Harvard University", 21613UL, 50700000000M };
             var badBlood = new object[] { "Bad Blood", (short)211, taylor[0], true };
             var group = new object[] { "The Klippenkloppz", DBNull.Value, badBlood[0], 3, 11, 5, false };
             var fixture = new TestFixture(typeof(ACapellaGroup), typeof(ACapellaGroup.University), typeof(ACapellaGroup.Song), typeof(ACapellaGroup.Songwriter))

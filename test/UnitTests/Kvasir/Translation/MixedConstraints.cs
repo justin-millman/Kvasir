@@ -82,7 +82,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("Duration", ComparisonOperator.LT, 251U).And
-                .HaveConstraint("AverageTicketPrice", ComparisonOperator.LT, (decimal)0).And
+                .HaveConstraint("AverageTicketPrice", ComparisonOperator.LT, 0M).And
                 .HaveConstraint("Attendees", ComparisonOperator.LTE, 28172831).And
                 .HaveConstraint("Encores", ComparisonOperator.LT, (sbyte)0).And
                 .HaveNoOtherConstraints();
@@ -732,8 +732,8 @@ namespace UT.Kvasir.Translation {
                 ).And
                 .HaveConstraint("Statistics.Murders", ComparisonOperator.GT, 0.0).And
                 .HaveConstraint("Statistics.Murders", ComparisonOperator.LT, 195385.96).And
-                .HaveConstraint("Statistics.Bribes", ComparisonOperator.GT, (decimal)0).And
-                .HaveConstraint("Statistics.Bribes", ComparisonOperator.NE, (decimal)80.0).And
+                .HaveConstraint("Statistics.Bribes", ComparisonOperator.GT, 0M).And
+                .HaveConstraint("Statistics.Bribes", ComparisonOperator.NE, 80.0M).And
                 .HaveConstraint("Statistics.YearsActive", InclusionOperator.In,
                     (sbyte)10, (sbyte)20, (sbyte)30
                 ).And

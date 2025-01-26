@@ -17,7 +17,7 @@ namespace UT.Kvasir.Transaction {
             // Arrange
             var pinata = new Pinata() {
                 PinataID = Guid.NewGuid(),
-                Price = (decimal)29.99,
+                Price = 29.99M,
                 Occasion = Pinata.Event.Quinceaneara,
                 Breaker = null,
                 AmountOfCandy = 37.516
@@ -73,8 +73,8 @@ namespace UT.Kvasir.Transaction {
                 Strike = 417,
                 Side = EquityOption.PutCall.Put,
                 Moneyness = EquityOption.Status.InTheMoney,
-                NBB = (decimal)8.12,
-                NBO = (decimal)8.63
+                NBB = 8.12M,
+                NBO = 8.63M
             };
             var nvidia = new EquityOption() {
                 Underlying = "NVDA",
@@ -82,8 +82,8 @@ namespace UT.Kvasir.Transaction {
                 Strike = 263,
                 Side = EquityOption.PutCall.Put,
                 Moneyness = EquityOption.Status.OutOfTheMoney,
-                NBB = (decimal)4.57,
-                NBO = (decimal)4.59
+                NBB = 4.57M,
+                NBO = 4.59M
             };
             var disney = new EquityOption() {
                 Underlying = "DIS",
@@ -91,8 +91,8 @@ namespace UT.Kvasir.Transaction {
                 Strike = 111,
                 Side = EquityOption.PutCall.Call,
                 Moneyness = EquityOption.Status.AtTheMoney,
-                NBB = (decimal)3.19,
-                NBO = (decimal)3.26
+                NBB = 3.19M,
+                NBO = 3.26M
             };
             var fixture = new TestFixture(typeof(EquityOption));
 

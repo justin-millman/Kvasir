@@ -79,7 +79,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("AnnualTonnage", InclusionOperator.In,
-                    (decimal)0, (decimal)100, (decimal)1000, (decimal)10000, (decimal)100000, (decimal)1000000
+                    0M, 100M, 1000M, 10000M, 100000M, 1000000M
                 ).And
                 .HaveNoOtherConstraints();
         }
@@ -812,7 +812,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("Budget", InclusionOperator.NotIn,
-                    (decimal)0, (decimal)1000, (decimal)100000, (decimal)100000000
+                    0M, 1000M, 100000M, 100000000M
                 ).And
                 .HaveNoOtherConstraints();
         }

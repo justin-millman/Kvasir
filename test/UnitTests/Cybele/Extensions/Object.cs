@@ -70,7 +70,7 @@ namespace UT.Cybele.Extensions {
 
         [TestMethod] public void DisplayNonIntegralFloatingPoint() {
             // Arrange
-            var decimalNumber = (decimal)-0.99813;
+            var decimalNumber = -0.99813M;
             var doubleNumber = 84402.77123;
             var floatNumber = 7261283798123.2814f;
 
@@ -87,7 +87,7 @@ namespace UT.Cybele.Extensions {
 
         [TestMethod] public void DisplayIntegralFloatingPoint() {
             // Arrange
-            var decimalNumber = (decimal)18.0;
+            var decimalNumber = 18.0M;
             var doubleNumber = -671824.0;
             var floatNumber = -99991.0f;
 
@@ -97,7 +97,7 @@ namespace UT.Cybele.Extensions {
             var floatDisplay = floatNumber.ForDisplay();
 
             // Assert
-            decimalDisplay.Should().Be(decimalNumber.ToString() + ".0");
+            decimalDisplay.Should().Be(decimalNumber.ToString());
             doubleDisplay.Should().Be(doubleNumber.ToString() + ".0");
             floatDisplay.Should().Be(floatNumber.ToString() + ".0");
         }

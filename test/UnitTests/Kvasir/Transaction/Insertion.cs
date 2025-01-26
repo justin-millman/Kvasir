@@ -209,7 +209,7 @@ namespace UT.Kvasir.Transaction {
             var fund0 = new MutualFund() {
                 FundID = Guid.NewGuid(),
                 CompanyID = Guid.NewGuid(),
-                NAV = (decimal)163.19,
+                NAV = 163.19M,
                 FundManager = "Carlos Telorrio",
                 ManagementFee = 0.03,
                 Investors = new RelationMap<string, decimal>() {
@@ -221,7 +221,7 @@ namespace UT.Kvasir.Transaction {
             var fund1 = new MutualFund() {
                 FundID = Guid.NewGuid(),
                 CompanyID = Guid.NewGuid(),
-                NAV = (decimal)34.28,
+                NAV = 34.28M,
                 FundManager = "Kent Shoshamish",
                 ManagementFee = 0.0625,
                 Investors = new RelationMap<string, decimal>() {
@@ -232,7 +232,7 @@ namespace UT.Kvasir.Transaction {
             var fund2 = new MutualFund() {
                 FundID = Guid.NewGuid(),
                 CompanyID = Guid.NewGuid(),
-                NAV = (decimal)351.99,
+                NAV = 351.99M,
                 FundManager = "Donald E. Quaja-Huul",
                 ManagementFee = 0.07,
                 Investors = new RelationMap<string, decimal>() {
@@ -279,7 +279,7 @@ namespace UT.Kvasir.Transaction {
             var wheelchair = new Wheelchair() {
                 ProductID = Guid.NewGuid(),
                 Material = "Alloy Steel",
-                Price = (decimal)166.71,
+                Price = 166.71M,
                 MaxWeight = null,
                 CompliesWithADA = true
             };
@@ -303,7 +303,7 @@ namespace UT.Kvasir.Transaction {
                 InvoiceNumber = Guid.NewGuid(),
                 Buyer = "Alphonso d'Neuma",
                 Seller = "Yessika Hazneri",
-                Amount = (decimal)14892.61,
+                Amount = 14892.61M,
                 Date = new DateTime(1994, 12, 19),
                 IsElectronic = false
             };
