@@ -958,19 +958,13 @@ namespace UT.Kvasir.Translation {
                 BirthName = null,
                 BirthComm = null,
                 Rings = 10,
-                Appearances = new RelationMap<Orogene.Book, bool>() {
-                    { Orogene.Book.FifthSeason, true },
-                    { Orogene.Book.ObeliskGate, true },
-                    { Orogene.Book.StoneSky, false }
-                },
+                Appearances = null,
                 AtNodeStation = false
             };
 
             // Act
             var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Orogene)];
-            var _ = translation.Relations[0].Extractor.ExtractFrom(orogene);
-            orogene.Appearances = null;
             var data = translation.Relations[0].Extractor.ExtractFrom(orogene);
 
             // Assert

@@ -8880,6 +8880,19 @@
               The reason that <paramref name="annotation"/> is unsatisfiable.
             </param>
         </member>
+        <member name="T:Kvasir.Translation.WriteableRelationException">
+            <summary>
+              An exception that is raised when a freely writeable Relation-type property is included in the data model.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.WriteableRelationException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.WriteableRelationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the freely writeable Relation-type property was encountered.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.BooleanFieldDescriptor">
             <summary>
               The concrete base class for a <see cref="T:Kvasir.Translation.FieldDescriptor"/> whose data type is <see cref="T:System.Boolean"/>.

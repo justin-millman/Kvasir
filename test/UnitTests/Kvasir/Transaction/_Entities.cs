@@ -22,8 +22,8 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey] public Guid ProductID { get; set; }
             public string Brand { get; set; } = "";
             public Fruit Flavor { get; set; }
-            public RelationMap<string, double> NutritionInfo { get; } = new();
-            public RelationSet<Trait> Traits { get; } = new();
+            public RelationMap<string, double> NutritionInfo { get; init; } = new();
+            public RelationSet<Trait> Traits { get; init; } = new();
         }
 
         // Test Scenario: Multiple Unrelated Entities
@@ -122,8 +122,8 @@ namespace UT.Kvasir.Transaction {
 
             [PrimaryKey] public Guid RegisterID { get; set; }
             public string Location { get; set; } = "";
-            public RelationMap<Currency, ushort> CashOnHand { get; set; } = new RelationMap<Currency, ushort>();
-            public RelationSet<Item> Sellables { get; set; } = new RelationSet<Item>();
+            public RelationMap<Currency, ushort> CashOnHand { get; init; } = new RelationMap<Currency, ushort>();
+            public RelationSet<Item> Sellables { get; init; } = new RelationSet<Item>();
             public double Weight { get; set; }
             public bool IsDigital { get; set; }
             public string AdminCode { get; set; } = "";
@@ -136,8 +136,8 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey] public Guid MatrixID { get; set; }
             public ushort NumRows { get; set; }
             public ushort NumColumns { get; set; }
-            public IReadOnlyRelationList<double> Eigenvalues { get; set; } = new RelationList<double>();
-            public RelationSet<Matrix> Inverses { get; set; } = new RelationSet<Matrix>();
+            public IReadOnlyRelationList<double> Eigenvalues { get; init; } = new RelationList<double>();
+            public RelationSet<Matrix> Inverses { get; init; } = new RelationSet<Matrix>();
             public Traits MatrixTraits { get; set; }
         }
 
@@ -212,14 +212,14 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public string TableID { get; set; } = "";
             [PrimaryKey, Column(1)] public ushort Year { get; set; }
             [Column(2)] public bool EndorsedBySSA { get; set; }
-            public RelationMap<int, double> MaleDeathProbability { get; set; } = new RelationMap<int, double>();
-            public RelationMap<int, double> FemaleDeathProbability { get; set; } = new RelationMap<int, double>();
+            public RelationMap<int, double> MaleDeathProbability { get; init; } = new RelationMap<int, double>();
+            public RelationMap<int, double> FemaleDeathProbability { get; init; } = new RelationMap<int, double>();
         }
 
         // Test Scenario: Single Instance of Single Entity with Empty Scalar Relation
         public class Quasar {
             [PrimaryKey, Column(0)] public string Designation { get; set; } = "";
-            public IReadOnlyRelationSet<string> Discoverers { get; set; } = new RelationSet<string>();
+            public IReadOnlyRelationSet<string> Discoverers { get; init; } = new RelationSet<string>();
             [Column(1)] public string? Constellation { get; set; }
             [Column(2)] public double Redshift { get; set; }
             [Column(3)] public ulong Distance { get; set; }
@@ -228,7 +228,7 @@ namespace UT.Kvasir.Transaction {
         // Test Scenario: Multiple Instances of Single Entities with Scalar Relations
         public class Deodorant {
             [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
-            public RelationOrderedList<string> Scents { get; set; } = new RelationOrderedList<string>();
+            public RelationOrderedList<string> Scents { get; init; } = new RelationOrderedList<string>();
             [Column(1)] public string Brand { get; set; } = "";
             [Column(2)] public decimal Price { get; set; }
             [Column(3)] public bool Antipersperant { get; set; }
@@ -333,7 +333,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public DateTime Date { get; set; }
             [PrimaryKey, Column(1)] public uint PlayNumber { get; set; }
             [Column(2)] public string Opponent { get; set; } = "";
-            public IReadOnlyRelationList<FootballPlayer> PlayersInvolved { get; set; } = new RelationList<FootballPlayer>();
+            public IReadOnlyRelationList<FootballPlayer> PlayersInvolved { get; init; } = new RelationList<FootballPlayer>();
             [Column(3)] public bool ResultedInTouchdown { get; set; }
         }
 
@@ -344,7 +344,7 @@ namespace UT.Kvasir.Transaction {
             [Column(2)] public DateTime ReignEnd { get; set; }
             [Column(3)] public string RoyalHouse { get; set; } = "";
             [Column(4)] public string Capital { get; set; } = "";
-            public IReadOnlyRelationSet<IranianShah> Predecessor { get; set; } = new RelationSet<IranianShah>();
+            public IReadOnlyRelationSet<IranianShah> Predecessor { get; init; } = new RelationSet<IranianShah>();
         }
     }
 
@@ -384,9 +384,9 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
             [Column(1)] public string Location { get; set; } = "";
             [Column(2)] public Category TypeOfInstitute { get; set; }
-            public IReadOnlyRelationMap<string, bool> Sodas { get; set; } = new RelationMap<string, bool>();
+            public IReadOnlyRelationMap<string, bool> Sodas { get; init; } = new RelationMap<string, bool>();
             [Column(3)] public bool IsCokeFreestyle { get; set; }
-            public RelationOrderedList<DateTime> Inspections { get; set; } = new();
+            public RelationOrderedList<DateTime> Inspections { get; init; } = new();
         }
 
         // Test Scenario: Single Instance of Single Entity with Empty Scalar Relation
@@ -396,7 +396,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(2)] public ushort Year { get; set; }
             [Column(3)] public string Purpose { get; set; } = "";
             [Column(4)] public decimal? Compensation { get; set; }
-            public IReadOnlyRelationOrderedList<string> Words { get; set; } = new RelationOrderedList<string>();
+            public IReadOnlyRelationOrderedList<string> Words { get; init; } = new RelationOrderedList<string>();
         }
 
         // Test Scenario: Multiple Instances of Single Entities with Scalar Relations
@@ -404,7 +404,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid FundID { get; set; }
             [PrimaryKey, Column(1)] public Guid CompanyID { get; set; }
             [Column(2)] public decimal NAV { get; set; }
-            public RelationMap<string, decimal> Investors { get; set; } = new();
+            public RelationMap<string, decimal> Investors { get; init; } = new();
             [Column(3)] public string FundManager { get; set; } = "";
             [Column(4)] public double ManagementFee { get; set; }
         }
@@ -495,7 +495,7 @@ namespace UT.Kvasir.Transaction {
             }
 
             [PrimaryKey, Column(0)] public Guid CovenID { get; set; }
-            public IReadOnlyRelationList<Witch> Witches { get; set; } = new RelationList<Witch>();
+            public IReadOnlyRelationList<Witch> Witches { get; init; } = new RelationList<Witch>();
             [Column(1)] public bool Wicca { get; set; }
             [Column(2)] public bool OwnsCauldron { get; set; }
         }
@@ -505,8 +505,8 @@ namespace UT.Kvasir.Transaction {
             [Flags] public enum Source { PopolVuh = 1, ChilamBilam = 2, MadridCodex = 4, Lacandon = 8, DiegoDeLanda = 16 }
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
-            public IReadOnlyRelationSet<MayanGod> Mothers { get; set; } = new RelationSet<MayanGod>();
-            public IReadOnlyRelationSet<MayanGod> Fathers { get; set; } = new RelationSet<MayanGod>();
+            public IReadOnlyRelationSet<MayanGod> Mothers { get; init; } = new RelationSet<MayanGod>();
+            public IReadOnlyRelationSet<MayanGod> Fathers { get; init; } = new RelationSet<MayanGod>();
             [Column(1)] public Source Attestations { get; set; }
             [Column(2)] public string Domain { get; set; } = "";
         }
@@ -575,7 +575,7 @@ namespace UT.Kvasir.Transaction {
             [Column(2)] public string CompanySponsor { get; set; } = "";
             [Column(3)] public double PercentMatch { get; set; }
             [Column(4)] public decimal Balance { get; set; }
-            public RelationMap<DateTime, decimal> Deposits { get; set; } = new RelationMap<DateTime, decimal>();
+            public RelationMap<DateTime, decimal> Deposits { get; init; } = new RelationMap<DateTime, decimal>();
         }
 
         // Test Scenario: Single Instance of Single Entity with Scalar Relation of Deleted Elements
@@ -585,7 +585,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid GameID { get; set; }
             [PrimaryKey, Column(1)] public uint Instance { get; set; }
             [Column(2)] public Which League { get; set; }
-            public RelationMap<string, string> Participants { get; set; } = new RelationMap<string, string>();
+            public RelationMap<string, string> Participants { get; init; } = new RelationMap<string, string>();
             [Column(3)] public string Referee { get; set; } = "";
         }
 
@@ -594,8 +594,8 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid BankID { get; set; }
             [PrimaryKey, Column(1)] public string Branch { get; set; } = "";
             [PrimaryKey, Column(2)] public short VaultNumber { get; set; }
-            public RelationMap<Guid, decimal> Storage { get; set; } = new();
-            public RelationOrderedList<sbyte> Combination { get; set; } = new();
+            public RelationMap<Guid, decimal> Storage { get; init; } = new();
+            public RelationOrderedList<sbyte> Combination { get; init; } = new();
         }
 
         // Test Scenario: Single Instance of Single Entity with Scalar Relation of Mixed-Status Elements
@@ -605,7 +605,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public string RollType { get; set; } = "";
             [PrimaryKey, Column(1)] public string Restaurant { get; set; } = "";
             [Column(2)] public decimal Price { get; set; }
-            public RelationSet<string> Ingredients { get; set; } = new();
+            public RelationSet<string> Ingredients { get; init; } = new();
             [Column(3)] public Color RiceType { get; set; }
         }
 
@@ -614,9 +614,9 @@ namespace UT.Kvasir.Transaction {
             public enum Wood { Birch, Cedar, Ash, Cherry, Cypress, Fir, Pine, Elm, Mahogany, Walnut, Maple, Bamboo }
 
             [PrimaryKey, Column(0)] public Guid WoodshopID { get; set; }
-            public RelationSet<string> Tools { get; set; } = new();
+            public RelationSet<string> Tools { get; init; } = new();
             [Column(1)] public string Owner { get; set; } = "";
-            public RelationOrderedList<Wood> TypesOfWood { get; set; } = new();
+            public RelationOrderedList<Wood> TypesOfWood { get; init; } = new();
             [Column(2)] public uint TotalIncidents { get; set; }
             [Column(3)] public decimal InsuranceCoverage { get; set; }
         }
@@ -627,8 +627,8 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(1)] public ulong StoreNumber { get; set; }
             [Column(2)] public string Address { get; set; } = "";
             [Column(3)] public bool IsBodega { get; set; }
-            public IReadOnlyRelationMap<string, decimal> Products { get; set; } = new RelationMap<string, decimal>();
-            public RelationOrderedList<string> Employees { get; set; } = new();
+            public IReadOnlyRelationMap<string, decimal> Products { get; init; } = new RelationMap<string, decimal>();
+            public RelationOrderedList<string> Employees { get; init; } = new();
         }
 
         // Test Scenario: Multiple Unrelated Entities
@@ -714,7 +714,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid ID { get; set; }
             [Column(1)] public string Affiant { get; set; } = "";
             [Column(2)] public DateTime NotarizationDate { get; set; }
-            public IReadOnlyRelationOrderedList<Lawyer> LawyersInvolved { get; set; } = new RelationOrderedList<Lawyer>();
+            public IReadOnlyRelationOrderedList<Lawyer> LawyersInvolved { get; init; } = new RelationOrderedList<Lawyer>();
             [Column(3)] public bool PartOfPleaDeal { get; set; }
         }
 
@@ -725,7 +725,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid LicenseNumber { get; set; }
             [PrimaryKey, Column(1)] public Kind Style { get; set; }
             [Column(2)] public string Name { get; set; } = "";
-            public IReadOnlyRelationSet<Masseuse> Teachers { get; set; } = new RelationSet<Masseuse>();
+            public IReadOnlyRelationSet<Masseuse> Teachers { get; init; } = new RelationSet<Masseuse>();
             [Column(3)] public bool IsFreelance { get; set; }
             [Column(4)] public sbyte NumTables { get; set; }
         }
@@ -778,7 +778,7 @@ namespace UT.Kvasir.Transaction {
 
             [PrimaryKey, Column(0)] public DateTime Airdate { get; set; }
             [Column(1)] public Kind Variety { get; set; }
-            public RelationMap<string, Team> Teams { get; set; } = new();
+            public RelationMap<string, Team> Teams { get; init; } = new();
             [Column(2)] public ulong YouTubeViews { get; set; }
             [Column(3)] public double TelevisionRating { get; set; }
         }
@@ -788,7 +788,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid GuacamoleID { get; set; }
             [Column(1)] public string Preparer { get; set; } = "";
             [Column(2)] public ushort NumServings { get; set; }
-            public RelationSet<string> Ingredients { get; set; } = new();
+            public RelationSet<string> Ingredients { get; init; } = new();
             [Column(3)] public bool MadeInMolcajete { get; set; }
         }
 
@@ -807,7 +807,7 @@ namespace UT.Kvasir.Transaction {
             [Column(2)] public string? Artist { get; set; }
             [Column(3)] public string HorsebackFigure { get; set; } = "";
             [Column(4)] public sbyte NumHorses { get; set; }
-            public RelationMap<Dimension, Measurement> Dimensions { get; set; } = new();
+            public RelationMap<Dimension, Measurement> Dimensions { get; init; } = new();
         }
 
         // Test Scenario: Single Instance of Single Entity with Scalar Relation of Modified Elements
@@ -824,7 +824,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public Guid ID { get; set; }
             [Column(1)] public string For { get; set; } = "";
             [Column(2)] public Standard Style { get; set; }
-            public RelationOrderedList<Reference> References { get; set; } = new();
+            public RelationOrderedList<Reference> References { get; init; } = new();
             [Column(3)] public byte NumPages { get; set; }
         }
 
@@ -833,7 +833,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public string PrimaryMPID { get; set; } = "";
             [Column(1)] public string FirmName { get; set; } = "";
             [Column(2)] public decimal NetCapital { get; set; }
-            public RelationOrderedList<string> Symbols { get; set; } = new();
+            public RelationOrderedList<string> Symbols { get; init; } = new();
             [Column(3)] public bool IsDesignated { get; set; }
         }
 
@@ -846,7 +846,7 @@ namespace UT.Kvasir.Transaction {
             [Column(2)] public Language ScrollLanguage { get; set; }
             [Column(3)] public string BiblicalSource { get; set; } = "";
             [Column(4)] public ushort DiscoveryYear { get; set; }
-            public RelationSet<string> VerifiedAuthors { get; set; } = new();
+            public RelationSet<string> VerifiedAuthors { get; init; } = new();
         }
 
         // Test Scenario: Multiple Instances of Single Entities with Scalar Relations
@@ -860,7 +860,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(1)] public string Church { get; set; } = "";
             [Column(2)] public bool IsArchdiocese { get; set; }
             [Column(3)] public ushort Parishes { get; set; }
-            public RelationMap<string, DateRange> Bishops { get; set; } = new();
+            public RelationMap<string, DateRange> Bishops { get; init; } = new();
         }
 
         // Test Scenario: Multiple Unrelated Entities
@@ -955,7 +955,7 @@ namespace UT.Kvasir.Transaction {
 
             [PrimaryKey, Column(0)] public int Incarnation { get; set; }
             [Column(1)] public string Gamemaker { get; set; } = "";
-            public RelationMap<PanemCitizen, PanemCitizen?> Killers { get; set; } = new();
+            public RelationMap<PanemCitizen, PanemCitizen?> Killers { get; init; } = new();
             [Column(2)] public bool IsQuarterQuell { get; set; }
             [Column(3)] public string President { get; set; } = "";
         }
@@ -965,7 +965,7 @@ namespace UT.Kvasir.Transaction {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public string Father { get; set; } = "";
             [Column(2)] public ulong MahabharataMentions { get; set; }
-            public RelationList<Pandava> Brothers { get; set; } = new();
+            public RelationList<Pandava> Brothers { get; init; } = new();
             [Column(3)] public string PrimaryWeapon { get; set; } = "";
         }
 
