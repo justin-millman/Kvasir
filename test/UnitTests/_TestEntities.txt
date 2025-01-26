@@ -160,6 +160,7 @@ Briefcase
 Brothel
 Buffet
 Bug Spray
+Bug Zapper
 Burrito
 Bust
 Butterfly

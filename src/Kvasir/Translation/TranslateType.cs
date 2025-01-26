@@ -93,6 +93,9 @@ namespace Kvasir.Translation {
                         if (!allowRelations) {
                             throw new NestedRelationException(context);
                         }
+                        else if (property.CanWrite && !property.IsInitOnly()) {
+                            throw new WriteableRelationException(context);
+                        }
                         relationTrackers.Add(new RelationTracker(property));
                     }
                     else if (typeCategory.Equals(TypeCategory.Class)) {

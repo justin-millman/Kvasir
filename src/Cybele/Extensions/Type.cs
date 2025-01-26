@@ -5,9 +5,9 @@ using System.Linq;
 namespace Cybele.Extensions {
     /// <summary>
     ///   A collection of <see href="https://tinyurl.com/y8q6ojue">extension methods</see> that extend the public API
-    ///   of the <see cref="System.Reflection.MemberInfo"/> class.
+    ///   of the <see cref="Type"/> class.
     /// </summary>
-    public static partial class TypeExtensions {
+    public static class TypeExtensions {
         /// <summary>
         ///   Determines if an instance of one <see cref="Type"/> is also an instance of another <see cref="Type"/>
         ///   using a limited set of possible conversions.

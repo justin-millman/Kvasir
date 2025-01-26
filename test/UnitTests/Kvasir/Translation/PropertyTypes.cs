@@ -934,6 +934,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void PropertyTypeIsWriteableRelation_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BugZapper);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<WriteableRelationException>()
+                .WithLocation("`BugZapper` → SusceptibleSpecies")
+                .WithProblem("if a Relation-type property has a setter, is must be init-only")
+                .EndMessage();
+        }
+
         [TestMethod] public void AggregateConsistingOnlyOfRelations() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
