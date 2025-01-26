@@ -66,7 +66,7 @@ namespace UT.Kvasir.Reconstitution {
             mutator4.SourceType.Returns(typeof(DBNull));
 
             // Act
-            var row = new DBValue[] { DBValue.Create(new Guid()) };
+            var row = new DBValue[] { DBValue.Create(Guid.NewGuid()) };
             var mutators = new IMutator[] { mutator0, mutator1, mutator2, mutator3, mutator4 };
             var plan = new DataReconstitutionPlan(new ReconstitutingCreator(creator, mutators));
             var value = plan.ReconstituteFrom(row);

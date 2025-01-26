@@ -99,7 +99,7 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var boolSource = DBValue.Create(false);
             var datetimeSource = DBValue.Create(DateTime.Now);
-            var guidSource = DBValue.Create(new Guid());
+            var guidSource = DBValue.Create(Guid.NewGuid());
 
             // Act
             var boolCreator = new IdentityCreator(typeof(bool));
@@ -745,7 +745,7 @@ namespace UT.Kvasir.Reconstitution {
             creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(attribute);
 
             // Act
-            var row = new DBValue[] { DBValue.Create(17), DBValue.Create(1999), DBValue.Create(new Guid()) };
+            var row = new DBValue[] { DBValue.Create(17), DBValue.Create(1999), DBValue.Create(Guid.NewGuid()) };
             var facade = new CreatorFacade(creator, 0, 1);
             var value = facade.CreateFrom(row);
 
@@ -764,7 +764,7 @@ namespace UT.Kvasir.Reconstitution {
             creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(name);
 
             // Act
-            var row = new DBValue[] { DBValue.Create(-1U), DBValue.Create(DateTime.Now), DBValue.Create(new Guid()), DBValue.Create('f') };
+            var row = new DBValue[] { DBValue.Create(-1U), DBValue.Create(DateTime.Now), DBValue.Create(Guid.NewGuid()), DBValue.Create('f') };
             var facade = new CreatorFacade(creator, 1, 2);
             var value = facade.CreateFrom(row);
 
