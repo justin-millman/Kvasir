@@ -70,6 +70,12 @@ namespace UT.Kvasir.Transaction {
                 commands.DeleteCommand(Arg.Any<Rows>()).Returns(delete);
                 commands.When(c => c.DeleteCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, delete));
 
+                var update = Substitute.For<IDbCommand>();
+                update.CommandText = $"UPDATE {table.Name}";
+                update.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[update] = ordering_.Count + 1);
+                commands.UpdateCommand(Arg.Any<Rows>()).Returns(update);
+                commands.When(c => c.UpdateCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, update));
+
                 commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t == table)).Returns(commands);
                 commands_[table] = commands;
                 dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();
@@ -125,7 +131,7 @@ namespace UT.Kvasir.Transaction {
             }
             return Enumerable.Empty<IReadOnlyList<DBValue>>();
         }
-        public Rows MutationsFor(IDbCommand command) {
+        public Rows UpdatesFor(IDbCommand command) {
             if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
                 return value;
             }

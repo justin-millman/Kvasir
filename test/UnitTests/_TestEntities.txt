@@ -116,8 +116,10 @@ Benin Bronze
 Bestiary
 Better Know a District
 Biblical Plague
+Bibliography
 Bicycle
 Big Block of Cheese Day
+Big Fat Quiz of the Year
 Billiard Ball
 Billionaire
 Binary Test
@@ -212,6 +214,7 @@ Chakra
 Chameleon
 Character (text)
 Charcuterie Board
+ChatBot
 Check
 Cheerleader
 Cheese
@@ -270,12 +273,13 @@ Condom
 Confidence Interval
 Conlang
 Connecting Wall
-Contact Lens
+Conquistador
 Conspiracy Theory
 Constellation
 Constitution
 Constitutional Amendment
 Constructor
+Contact Lens
 Convenience Store
 Cookbook
 Coral Reef
@@ -317,10 +321,12 @@ Data Structure
 Database Field
 Date
 Dating App
+Dead Sea Scroll
 Debit Card
 Decathlon
 Defenestration
 Delicatessen
+Demigod Camp
 Denarian
 Dentist
 Deodorant
@@ -331,7 +337,9 @@ Diamond
 Diaper
 Dice Roll
 Diet
+Differential Equation
 Dinosaur
+Diocese
 Directory (file system)
 Discworld Guild
 Disneyland
@@ -383,6 +391,7 @@ Epic Poem
 Epic Rap Battle of History
 EpiPen
 Episode
+Equestrian Statue
 Escalator
 Escape Room
 Essay
@@ -475,6 +484,7 @@ Greek God
 Greek Letter
 Grilled Cheese
 Ground Meat
+Guacamole
 Guillotine
 Guitar
 Gulag
@@ -529,6 +539,7 @@ Hourglass
 House Committee
 HTML Element
 HTTP Error
+Hunger Games
 Hurricane
 Hypnotist
 Ice Age
@@ -657,6 +668,7 @@ Marian Apparition
 Marijuana Strain
 Mario Kart Racetrack
 Mark-Up Symbol
+Market Maker
 Mars Rover
 Masked Singer
 Mass Extinction
@@ -763,12 +775,14 @@ Orisha
 Orogene
 Orphanage
 Overnight Camp
+Pacemaker
 PACER Test
 Package (software)
 Pagoda
 Paintball Gun
 Painting
 Pajamas
+Pandava Brother
 Panegyric
 Papal Bull
 Papal Conclave
@@ -853,9 +867,10 @@ Prison
 Prisoner Exchange
 Process (computing)
 Programming Language
+Promo Code
 Prophecy
 Prophet
-Protest (Quiz Bowl)
+Protest (quiz bowl)
 Proto-Indo-European Root
 Psalm
 Pseudonym
@@ -1021,6 +1036,7 @@ Super Bowl
 SuperPAC
 Surah
 Surfing Maneuver
+Surgeon General
 Surgical Mask
 Survivor
 Sushi Roll
@@ -1118,6 +1134,7 @@ Vulgarity
 W2 Tax Form
 Wadi
 Walkabout
+Waltz
 Waffle
 Water Bottle
 Water Park
@@ -1150,6 +1167,7 @@ World Heritage Site
 Wormhole
 Wrestler
 Wristwatch
+Writ of Certiorari
 X-Men Mutant
 Xenomorph
 xkcd Comic
