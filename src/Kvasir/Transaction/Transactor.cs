@@ -244,6 +244,79 @@ namespace Kvasir.Transaction {
         }
 
         /// <summary>
+        ///   Updates data for one or more Entities in the back-end database.
+        /// </summary>
+        /// <param name="entities">
+        ///   The Entities whose data to update. This collection must not be empty, and the order is irrelevant. The
+        ///   collection can contain Entities of any number of types.
+        /// </param>
+        /// <exception cref="InvalidOperationException">
+        ///   if the transaction updating the necessary data fails and is successfully rolled back.
+        /// </exception>
+        /// <exception cref="AggregateException">
+        ///   if the transaction updating the necessary data fails, and the attempt to roll the transaction back also
+        ///   fails.
+        /// </exception>
+        public void Update(IEnumerable<object> entities) {
+            Debug.Assert(entities is not null);
+            Debug.Assert(!entities.IsEmpty());
+
+            var mapping = entities.GroupBy(e => e.GetType()).ToDictionary(g => g.Key, g => g.ToList());
+            var translations = mapping.Keys.Select(k => translations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
+
+            using var transaction = connection_.BeginTransaction();
+
+            // Update all the data in Principal Tables first
+            foreach (var translation in translations) {
+                var rows = new List<IReadOnlyList<DBValue>>();
+                foreach (var entity in mapping[translation.CLRSource]) {
+                    rows.Add(translation.Principal.Extractor.ExtractFrom(entity));
+                }
+
+                var command = commands_[tables_[translation.Principal.Table]].UpdateCommand(rows);
+                command.Connection = connection_;
+                command.Transaction = transaction;
+                command.ExecuteNonQuery();
+            }
+
+            // Update all the data in Relation Tables first: deletes, then updates, then inserts
+            var canonicalizations = new List<Action>();
+            foreach (var translation in translations) {
+                foreach (var relation in translation.Relations) {
+                    var deleteRows = new List<IReadOnlyList<DBValue>>();
+                    var updateRows = new List<IReadOnlyList<DBValue>>();
+                    var insertRows = new List<IReadOnlyList<DBValue>>();
+                    foreach (var entity in mapping[translation.CLRSource]) {
+                        var ownerFields = translation.Principal.KeyExtractor.ExtractFrom(entity);
+                        var relationFields = relation.Extractor.ExtractFrom(entity);
+
+                        deleteRows.AddRange(relationFields.Deletions.Select(r => ownerFields.Concat(r).ToList()));
+                        updateRows.AddRange(relationFields.Modifications.Select(r => ownerFields.Concat(r).ToList()));
+                        insertRows.AddRange(relationFields.Insertions.Select(r => ownerFields.Concat(r).ToList()));
+
+                        canonicalizations.Add(() => relation.Extractor.Canonicalize(entity));
+                    }
+
+                    var deleteCommand = commands_[tables_[relation.Table]].DeleteCommand(deleteRows);
+                    var updateCommand = commands_[tables_[relation.Table]].UpdateCommand(updateRows);
+                    var insertCommand = commands_[tables_[relation.Table]].InsertCommand(insertRows);
+                    foreach (var command in new IDbCommand[] { deleteCommand, updateCommand, insertCommand }) {
+                        command.Connection = connection_;
+                        command.Transaction = transaction;
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+
+            // Commit the transaction; if it succeeds (failure is indicated by a `throw`), then we run all of the
+            // canonicalization functions
+            TryCommitTransaction(transaction);
+            foreach (var canonicalize in canonicalizations) {
+                canonicalize();
+            }
+        }
+
+        /// <summary>
         ///   Deletes data for one or more Entities from the back-end database.
         /// </summary>
         /// <param name="entities">
@@ -273,10 +346,10 @@ namespace Kvasir.Transaction {
                     foreach (var entity in mapping[translation.CLRSource]) {
                         // For efficiency, we'll issue a DELETE based on the Primary Key of the "owning Entity." This
                         // reduces the amount of reflection we have to do (since we don't have to touch the Relation
-                        // itself at all), reduce the complexity of the DELETE command, and handles the fact that the
+                        // itself at all), reduces the complexity of the DELETE command, and handles the fact that the
                         // RelationExtractionPlan does not expose SAVED elements (which have to be deleted). However,
-                        // this does that we'll issue a DELETE command for empty Relations and Relations of only NEW
-                        // elements.
+                        // this does mean that we'll issue a DELETE command for empty Relations and Relations of only
+                        // NEW elements.
                         rows.Add(translation.Principal.KeyExtractor.ExtractFrom(entity));
                     }
 

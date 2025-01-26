@@ -6879,6 +6879,22 @@
               fails.
             </exception>
         </member>
+        <member name="M:Kvasir.Transaction.Transactor.Update(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Updates data for one or more Entities in the back-end database.
+            </summary>
+            <param name="entities">
+              The Entities whose data to update. This collection must not be empty, and the order is irrelevant. The
+              collection can contain Entities of any number of types.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+              if the transaction updating the necessary data fails and is successfully rolled back.
+            </exception>
+            <exception cref="T:System.AggregateException">
+              if the transaction updating the necessary data fails, and the attempt to roll the transaction back also
+              fails.
+            </exception>
+        </member>
         <member name="M:Kvasir.Transaction.Transactor.Delete(System.Collections.Generic.IEnumerable{System.Object})">
             <summary>
               Deletes data for one or more Entities from the back-end database.
