@@ -63,7 +63,7 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var pair = new Pair();
-            var row = new DBValue[] { DBValue.Create(new Guid()), DBValue.Create(-77.331M) };
+            var row = new DBValue[] { DBValue.Create(Guid.NewGuid()), DBValue.Create(-77.331M) };
             var mutator = new WritePropertyMutator(property, creator);
             mutator.Mutate(pair, row);
 

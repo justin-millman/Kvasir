@@ -150,7 +150,7 @@ namespace UT.Kvasir.Extraction {
     public class ConvertingExtractorTests {
         [TestMethod] public void ExtractFromExact() {
             // Arrange
-            var unconvertedValue = new Guid();
+            var unconvertedValue = Guid.NewGuid();
             var originalExtractor = Substitute.For<ISingleExtractor>();
             originalExtractor.SourceType.Returns(typeof(FlagsAttribute));
             originalExtractor.ResultType.Returns(typeof(Guid));
@@ -328,7 +328,7 @@ namespace UT.Kvasir.Extraction {
             var secondSubExtractor = Substitute.For<IMultiExtractor>();
             secondSubExtractor.SourceType.Returns(typeof(IComparable));
             secondSubExtractor.ExtractFrom(Arg.Any<IComparable>()).Returns(secondValues);
-            var thirdValues = new object?[] { new Guid() };
+            var thirdValues = new object?[] { Guid.NewGuid() };
             var thirdSubExtractor = Substitute.For<IMultiExtractor>();
             thirdSubExtractor.SourceType.Returns(typeof(IComparable));
             thirdSubExtractor.ExtractFrom(Arg.Any<IComparable>()).Returns(thirdValues);
@@ -395,7 +395,7 @@ namespace UT.Kvasir.Extraction {
             singleExtractor.SourceType.Returns(typeof(double[]));
             singleExtractor.ResultType.Returns(typeof(string));
             singleExtractor.ExtractFrom(Arg.Any<double[]>()).Returns(curriedValue);
-            var resultValues = new object?[] { '-', 17.554f, DateTime.Now, new Guid(), new Guid() };
+            var resultValues = new object?[] { '-', 17.554f, DateTime.Now, Guid.NewGuid(), Guid.NewGuid() };
             var multiExtractor = Substitute.For<IMultiExtractor>();
             multiExtractor.SourceType.Returns(typeof(string));
             multiExtractor.ExtractFrom(Arg.Any<string>()).Returns(resultValues);
