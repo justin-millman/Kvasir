@@ -27,7 +27,7 @@ namespace Kvasir.Schema {
                 ComparisonOperator.GT  => ComparisonOperator.LTE,
                 ComparisonOperator.LTE => ComparisonOperator.GT,
                 ComparisonOperator.GTE => ComparisonOperator.LT,
-                _ => throw new ApplicationException($"Switch statement over {nameof(ComparisonOperator)} exhausted"),
+                _ => throw new UnreachableException($"Switch statement over {nameof(ComparisonOperator)} exhausted"),
             };
         }
 
@@ -46,7 +46,7 @@ namespace Kvasir.Schema {
             return self switch {
                 InclusionOperator.In    => InclusionOperator.NotIn,
                 InclusionOperator.NotIn => InclusionOperator.In,
-                _ => throw new ApplicationException($"Switch statement over {nameof(InclusionOperator)} exhausted")
+                _ => throw new UnreachableException($"Switch statement over {nameof(InclusionOperator)} exhausted")
             };
         }
 
@@ -65,7 +65,7 @@ namespace Kvasir.Schema {
             return self switch {
                 NullityOperator.IsNull    => NullityOperator.IsNotNull,
                 NullityOperator.IsNotNull => NullityOperator.IsNull,
-                _ => throw new ApplicationException($"Switch statement over {nameof(NullityOperator)} exhausted")
+                _ => throw new UnreachableException($"Switch statement over {nameof(NullityOperator)} exhausted")
             };
         }
     }

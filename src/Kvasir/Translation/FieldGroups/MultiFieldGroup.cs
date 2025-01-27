@@ -47,7 +47,7 @@ namespace Kvasir.Translation {
                     column -= group.Size;
                     Debug.Assert(column >= 0);
                 }
-                throw new ApplicationException("This should be algorithmically unreachable code!");
+                throw new UnreachableException("This should be algorithmically unreachable code!");
             }
         }
 

@@ -66,7 +66,7 @@ namespace Kvasir.Schema {
             Field = field;
             DataType = function switch {
                 FieldFunction.LengthOf => DBType.Int32,
-                _ => throw new ApplicationException($"Switch statement over {nameof(FieldFunction)} exhausted")
+                _ => throw new UnreachableException($"Switch statement over {nameof(FieldFunction)} exhausted")
             };
         }
 

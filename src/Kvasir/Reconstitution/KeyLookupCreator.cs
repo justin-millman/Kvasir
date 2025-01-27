@@ -101,7 +101,7 @@ namespace Kvasir.Reconstitution {
             }
 
             // This code should be unreachable - it means that the Foreign Key values do not match any known Entity
-            throw new ApplicationException($"No entity found to match key: ({string.Join(", ", dbValues)})");
+            throw new UnreachableException($"No entity found to match key: ({string.Join(", ", dbValues)})");
         }
 
 
