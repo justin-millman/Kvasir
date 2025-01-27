@@ -78,7 +78,7 @@ namespace Kvasir.Extraction {
                             deletions.Add(elementData);
                             break;
                         default:
-                            throw new ApplicationException($"Switch statement over {nameof(Status)} exhausted");
+                            throw new UnreachableException($"Switch statement over {nameof(Status)} exhausted");
                     }
                 }
             }

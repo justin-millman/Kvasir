@@ -65,7 +65,7 @@ namespace Kvasir.Translation {
                     DoApplyConstraint(context, new Check.IsNotAttribute(zero));
                     break;
                 default:
-                    throw new ApplicationException($"Switch statement over {nameof(ComparisonOperator)} exhausted");
+                    throw new UnreachableException($"Switch statement over {nameof(ComparisonOperator)} exhausted");
             }
         }
 

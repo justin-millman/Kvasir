@@ -3,6 +3,7 @@ using FluentAssertions.Execution;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using And = FluentAssertions.AndConstraint<FluentAssertions.AssertionExtensions.TableAssertion>;
@@ -46,7 +47,7 @@ namespace FluentAssertions {
                     .ForCondition(false)
                     .FailWith($"Expected {{context:Table}} to have Field with name \"{fieldName}\", but no such Field found");
 
-                throw new ApplicationException("UNREACHABLE CODE!");
+                throw new UnreachableException("UNREACHABLE CODE!");
             }
             [CustomAssertion] public And HaveNoOtherFields() {
                 var missing = string.Join(", ", Subject.Fields.Select(f => f.Name).Where(n => !checkedFields_.Contains(n)));
@@ -101,7 +102,7 @@ namespace FluentAssertions {
                         .FailWith("Expected {context:Table} to have CHECK constraint" +
                                   $"'{field} {op} {anchor.ForDisplay()}', but no such constraint found");
 
-                throw new ApplicationException("UNREACHABLE CODE!");
+                throw new UnreachableException("UNREACHABLE CODE!");
             }
             [CustomAssertion] public And HaveConstraint(string field, InclusionOperator op, params object[] anchors) {
                 foreach (var constraint in Subject.CheckConstraints) {
@@ -128,7 +129,7 @@ namespace FluentAssertions {
                               $"'{field} {op} [{string.Join(", ", anchors.Select(v => v.ForDisplay()))}]', " +
                               "but no such constraint found");
 
-                throw new ApplicationException("UNREACHABLE CODE!");
+                throw new UnreachableException("UNREACHABLE CODE!");
             }
             [CustomAssertion] public And HaveConstraint(FieldFunction fn, string field, ComparisonOperator op, object anchor) {
                 foreach (var constraint in Subject.CheckConstraints) {
@@ -154,7 +155,7 @@ namespace FluentAssertions {
                         .FailWith("Expected {context:Table} to have CHECK constraint " +
                                   $"'{fn}({field}) {op} {anchor.ForDisplay()}', but no such constraint found");
 
-                throw new ApplicationException("UNREACHABLE CODE!");
+                throw new UnreachableException("UNREACHABLE CODE!");
             }
             [CustomAssertion] public And HaveNoOtherConstraints() {
                 var extras = Subject.CheckConstraints.Count - checkedConstraints_.Count;
@@ -348,7 +349,7 @@ namespace FluentAssertions {
                     .ForCondition(false)
                     .FailWith($"Expected {{context:Table}} to have Candidate Key with name \"{keyName}\", but no such Candidate Key found");
 
-                throw new ApplicationException("UNREACHABLE CODE!");
+                throw new UnreachableException("UNREACHABLE CODE!");
             }
             [CustomAssertion] public CandidateKeysAssertion ThatIsAnonymous() {
                 var anonymous = Subject.Where(k => !k.Name.HasValue);
@@ -373,7 +374,7 @@ namespace FluentAssertions {
                     .FailWith("Expected {context:Table} to have Candidate Key with Fields " +
                               $"[{string.Join(", ", rest.Prepend(first))}], but no such Candidate Key found");
 
-                throw new ApplicationException("UNREACHABLE CODE!");
+                throw new UnreachableException("UNREACHABLE CODE!");
             }
 
 
@@ -441,7 +442,7 @@ namespace FluentAssertions {
                     .FailWith("Expected {context:Table} to have Foreign Key with Fields " +
                               $"[{string.Join(", ", restFields.Prepend(firstField))}], but no such Foreign Key found");
 
-                throw new ApplicationException("UNREACHABLE CODE!");
+                throw new UnreachableException("UNREACHABLE CODE!");
             }
 
 

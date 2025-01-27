@@ -185,7 +185,7 @@ namespace Kvasir.Translation {
                 props.Add(("Value", valueType, valueNullable));
             }
             else {
-                throw new ApplicationException($"If block over {nameof(IRelation)} interfaces exhausted");
+                throw new UnreachableException($"If block over {nameof(IRelation)} interfaces exhausted");
             }
 
             // These shenanigans are necessary to make sure that contextualized error messages display a string that is
