@@ -342,5 +342,38 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
                 .WithAnnotations("[Nullable]");
         }
+
+        [TestMethod] public void PreDefinedInstanceMarkedNonNullable_Redundant() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Rugrat);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("VoiceActor").OfTypeText().BeingNonNullable().And
+                .HaveField("AgeYears").OfTypeUInt8().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void PreDefinedInstanceMarkedNullable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Cutlery);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Cutlery` → Chopsticks")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Nullable]")
+                .EndMessage();
+        }
     }
 }

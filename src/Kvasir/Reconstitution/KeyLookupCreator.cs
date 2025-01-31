@@ -100,7 +100,8 @@ namespace Kvasir.Reconstitution {
                 }
             }
 
-            // This code should be unreachable - it means that the Foreign Key values do not match any known Entity
+            // This code should be unreachable - it means that the Foreign Key values do not match any known Entity, or
+            // that the data for a Pre-Defined Entity do not match the hard-coded source values
             throw new UnreachableException($"No entity found to match key: ({string.Join(", ", dbValues)})");
         }
 

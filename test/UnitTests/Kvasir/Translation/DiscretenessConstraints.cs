@@ -222,6 +222,22 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsOneOf_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(WorldWonder);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`WorldWonder` → Artemision")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsOneOf_OriginalOnReferenceNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -919,6 +935,22 @@ namespace UT.Kvasir.Translation {
                     7U, 17U, 27U, 37U
                 ).And
                 .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNotOneOf_PreDefinedInstance() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Pentomino);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Pentomino` → V")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNotOneOf_OriginalOnReferenceNestedScalar() {

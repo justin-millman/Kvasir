@@ -127,6 +127,7 @@ Bingo Card
 Biography
 Biological Cycle
 Birth Control
+Birthstone
 Black Hole
 Black Op
 Blackjack Hand
@@ -154,6 +155,7 @@ Boxer
 Boy Band
 Boycott
 Brassiere
+Brazilian State
 Bread
 Bridge
 Briefcase
@@ -186,6 +188,7 @@ Cannon
 Canterbury Tale
 Canton of Switzerland
 Canyon
+Cap'n Crunch
 Capacitor
 Capitol Building
 Car Accident
@@ -213,12 +216,15 @@ Ceviche
 Chainsaw
 Chakra
 Chameleon
+Channel Island
 Character (text)
+Character Encoding
 Charcuterie Board
 ChatBot
 Check
 Cheerleader
 Cheese
+Cheesecake
 Chemical Element
 Chess Piece
 Chewing Gum
@@ -232,6 +238,7 @@ Christian Denomination
 Christmas Carol
 Chrome Extension
 Chromosome
+Chronicle of Narnia
 Church
 Cider Mill
 Cigar
@@ -240,12 +247,15 @@ Circle
 Circle Dance
 Circle of Hell
 Circus
+Citrus Fruit
 Civilization VI City State
 Civilization VI District
 Civilization VI Military Unit
+Civilization VI Yield
 Cliff
 Climate
 Clock Tower
+Cloud
 Clown
 Clue(do) Game
 CMake Target
@@ -307,6 +317,7 @@ Cult
 Curling Match
 Currency
 Customer Service Line
+Cutlery
 CVE
 Cybersite
 Cyclops
@@ -325,6 +336,7 @@ Dating App
 Dead Sea Scroll
 Debit Card
 Decathlon
+DEFCON
 Defenestration
 Delicatessen
 Demigod Camp
@@ -342,6 +354,7 @@ Differential Equation
 Dinosaur
 Diocese
 Directory (file system)
+Disciple of Jesus
 Discworld Guild
 Disneyland
 Distribution (probability)
@@ -413,6 +426,7 @@ Fairy Tale
 Farmer
 Family Tree
 Federal Law
+Federal Reserve District
 Ferris Wheel
 Ferry
 Feruchemy
@@ -443,7 +457,9 @@ Fraction
 Fraternity
 Fresco
 Fried Chicken
+Friend
 Function (programming)
+Functional Group
 Galaxy
 Gaming Console
 Garage Sale
@@ -475,6 +491,7 @@ Golf Course
 Golf Hole
 Gondola
 Google Doodle
+Gorgon
 Government Shutdown
 GPU
 Grammatical Case
@@ -489,6 +506,7 @@ Guacamole
 Guillotine
 Guitar
 Gulag
+Gulf
 Guy's Grocery Game
 Gymnast
 Hacker
@@ -515,6 +533,7 @@ Hepatitis
 Hercule Poirot Mystery
 Hieroglyph
 High Heel
+High School Musical
 Highway
 Hindu God
 Histogram
@@ -562,6 +581,7 @@ Infinity Stone
 Influenza
 Infomercial
 Inmate
+Inspector Clouseau
 Inquisition
 Installation Wizard
 Insurance Policy
@@ -578,6 +598,7 @@ Iowa Caucus
 IP Address
 iPhone
 IPO
+Iron Chef
 ISO Standard
 Isthmus
 Jack-o-Lantern
@@ -615,15 +636,18 @@ Land Card (MTG)
 Land Mine
 Language
 Laundry Detergent
+Law & Order
 Law Firm
 Lawn Gnome
 Lawn Mower
+Layer of Skin
 Lazarus Pit
 Lease
 LED
 Lego Set
 Legume
 Lens
+LEP Branch
 Leprechaun
 Letter of Recommendation
 Library (books)
@@ -672,6 +696,7 @@ Mario Kart Racetrack
 Mark-Up Symbol
 Market Maker
 Mars Rover
+Marx Brother
 Masked Singer
 Mass Extinction
 Massacre
@@ -692,6 +717,7 @@ Merit Badge
 Mermaid
 Mesopotamian God
 Metra Route
+Metric Prefix
 Mezuzah
 Michelin Guide
 Military Base
@@ -713,18 +739,20 @@ Morgue
 Mosque
 Motorcycle
 Mountain
+Moustache
 Movie
 Movie Ticket
 Muffin
 Multiple Choice Question
 Mummy
 Muppet
+Murder
 Muscle
 Museum
 Mushroom
 Musical
-Mustache
 Mutual Fund
+Myers-Briggs Type Indicator
 Mythbusting
 National Anthem
 National Monument
@@ -763,6 +791,7 @@ Oil (cooking)
 Oil Field
 Oil Spill
 Ointment
+Olive
 Olympiad
 Olympian Boon (Hades)
 Onomatopoeia
@@ -771,6 +800,7 @@ Opioid
 Option (security)
 Orchestra
 Organ Procurement Organization
+Organelle
 Orgasm
 Origami
 Orisha
@@ -806,6 +836,7 @@ Penalty (NFL)
 Pencil
 Penguin
 Peninsula
+Pentomino
 PEP
 Pepper
 Perfume
@@ -821,6 +852,7 @@ Phone Boook
 Phone Booth
 Phone Number
 Phonetic Alphabet
+Phylum
 Piano
 Piano Sonata
 Pie
@@ -831,6 +863,7 @@ Ping
 Pirate
 Pirate Ship
 Pizza
+Pizza Roll
 Plane of Existence (D&D)
 Planeswalker
 Planetarium
@@ -857,6 +890,7 @@ Pope
 Porn Star
 Post Office
 Potato
+Power Ranger
 Pregnancy Test
 Prenuptial Agreement
 Prescription
@@ -864,6 +898,7 @@ Presidential Election
 Press Secretary
 Pretzel
 Pride Parade
+Primate
 Printer
 Prison
 Prisoner Exchange
@@ -882,6 +917,7 @@ Pulitzer Prize
 Pull Request
 Pulley
 Pulsar
+Punctuation Mark
 Puppet Show
 Python Interpreter
 QR Code
@@ -900,6 +936,7 @@ Rainforest
 Random Number Generator
 Ransomware
 Raptor
+Ravnica Guild
 Readymade
 Refugee Camp
 Register (computing)
@@ -907,6 +944,7 @@ Rental Car
 Repository
 Representative
 Requiem
+Resident Evil
 Resistor
 Rest Stop
 Restaurant
@@ -920,12 +958,15 @@ Rollercoaster
 Roman Baths
 Roman Emperor
 Roman Festival
+Roman Numeral
 Rorschach Ink Blot
 Royal House
 Rube Goldberg Machine
+Rugrat
 Rune
 Runway
 Russian Tsar
+Russo (Wizards of Waverly Place)
 Sabermetric
 Safari
 Saint
@@ -959,6 +1000,7 @@ Serial Killer
 Sermon
 Set Card
 Seventh Inning Stretch
+Sexuality
 Shah of Iran
 Shampoo
 Shard of Adonalsium
@@ -997,6 +1039,7 @@ Solicitor General
 Song
 Sonnet
 Sorority
+Sorting Algorithm
 Soup
 Spa
 Space Shuttle
@@ -1011,18 +1054,23 @@ Sports Bet
 Sprachbund
 Spring (mechanics)
 SQL Query
+Squash
 Squintern
 Stack Frame
 Stadium
+Stage of Grief
+Stained Glass Window
 Stamp
 Stanley Cup
 Star
 Star-Crossed Lovers
+State of Matter
 State of the Union
 State Quarter
 Steak
 Step Pyramid
 Stock
+Stooge
 Stove
 Stratego Piece
 Strike (labor)
@@ -1048,6 +1096,7 @@ Swamp
 Swimming Pool
 Sword
 Syllabary
+Symbiosis
 Symphony
 Synagogue
 Talk Show
@@ -1059,6 +1108,7 @@ Tattoo
 Tectonic Plate
 TED Talk
 Telescope
+Teletubby
 Tendon
 Tennis Match
 Teppanyaki
@@ -1078,10 +1128,12 @@ Timestamp
 "Title of Your Sex Tape" Joke
 Tlatoani
 Tongue Twister
+Tony Award
 Tooth
 Toothbrush
 Toothpaste
 Top 10 List
+Tortilla
 Tossup Question
 Totem Pole
 Tour de France
@@ -1107,6 +1159,7 @@ Tsunami
 Tuxedo
 Tweet
 Typewriter
+Ubuntu Release
 Umbrella
 Umpire
 UN Resolution
@@ -1122,6 +1175,7 @@ Valet
 Vampire Slayer
 Vault (bank)
 Verb
+Vertebra
 Vestige of Divergence
 Vigenère Cipher
 Vineyard
@@ -1167,6 +1221,7 @@ Word Search
 Wordle
 World Cup
 World Heritage Site
+World Wonder
 Wormhole
 Wrestler
 Wristwatch

@@ -1,5 +1,4 @@
-﻿using Cybele.Core;
-using Cybele.Extensions;
+﻿using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Extraction;
@@ -42,6 +41,10 @@ namespace Kvasir.Translation {
         ///   if <paramref name="source"/> does not contribute at least 2 Fields to the data model for its Principal
         ///   Table.
         /// </exception>
+        /// <exception cref="NotEnoughInstancesException">
+        ///   if <paramref name="source"/> is a Pre-Defined Entity type that does not expose at least 2 pre-defined
+        ///   instances.
+        /// </exception>
         /// <exception cref="DuplicateNameException">
         ///   if 2 or more Fields in the data model of the Principal Table for <paramref name="source"/> have the same
         ///   name
@@ -75,7 +78,7 @@ namespace Kvasir.Translation {
                 throw new InvalidEntityTypeException(context, category);
             }
 
-            var fieldGroups = TranslateType(context, source, true).ToList();
+            var fieldGroups = TranslateType(context, source, true, IsPreDefined(source)).ToList();
             var schemas = fieldGroups.OrderBy(g => g.Column.Unwrap()).SelectMany(g => g).Select(d => d.MakeSchema(settings_)).ToList();
             var fields = schemas.Select(s => s.Field).ToList();
 
@@ -110,8 +113,20 @@ namespace Kvasir.Translation {
 
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
             var extractor = new DataExtractionPlan(fieldGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
-            var creator = new DataReconstitutionPlan(ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false));
-            principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+
+            // Pre-Defined Entities don't get reconstituted like normal, since the data is expected to be effectively
+            // hard-coded into the source. We use a KeyLookupCreator for those.
+            if (!IsPreDefined(source)) {
+                var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false);
+                var creator = new DataReconstitutionPlan(reconstitutor);
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+            }
+            else {
+                var instances = GetPreDefinedInstances(context, source);
+                var matcher = new KeyMatcher(() => instances, pkExtractor);
+                var creator = MakePreDefinedReconstitutionPlan(context, table, matcher, source);
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+            }
 
             principalTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);
@@ -154,7 +169,8 @@ namespace Kvasir.Translation {
                 var syntheticType = SyntheticType.MakeSyntheticType(source, tracker);
                 var context = new Context(syntheticType);
 
-                var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, false));
+                var sourceIsPreDefined = IsPreDefined(source);
+                var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, false, sourceIsPreDefined));
                 var schemas = relationGroup.Select(d => d.MakeSchema(settings_)).ToList();
                 var fields = schemas.Select(s => s.Field).ToList();
                 Debug.Assert(fields.Count >= 2);
@@ -181,14 +197,23 @@ namespace Kvasir.Translation {
                 var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
                 var extractor = new RelationExtractionPlan(extractRelationProperty, elementExtractor);
 
-                RelationRepopulationPlan? repopulator = null;
+                RelationRepopulationPlan? repopulationPlan = null;
                 if (relationGroup.Creator.HasValue) {
                     var elementCreator = (relationGroup.Creator.Unwrap() as ReconstitutingCreator)!;
                     var elementReconstitutor = new DataReconstitutionPlan(elementCreator);
-                    repopulator = new RelationRepopulationPlan(extractRelationProperty, elementReconstitutor, new DirectRepopulator());
+                    IRepopulator repopulator = new DirectRepopulator();
+
+                    // Data for a Pre-Defined Entity is not loaded from the back-end database; this goes for Relations
+                    // that are "owned" by the Pre-Defined Entity as well. Technically we still require that the
+                    // Relation data be repopulate-able, but we don't actually perform the repopulation.
+                    if (sourceIsPreDefined) {
+                        repopulator = new SkipRepopulator();
+                    }
+
+                    repopulationPlan = new RelationRepopulationPlan(extractRelationProperty, elementReconstitutor, repopulator);
                 }
 
-                var def = new RelationTableDef(table, extractor, repopulator);
+                var def = new RelationTableDef(table, extractor, repopulationPlan);
                 tableNameCache_.Add(tableName, syntheticType);
                 relationTables.Add(def);
             }

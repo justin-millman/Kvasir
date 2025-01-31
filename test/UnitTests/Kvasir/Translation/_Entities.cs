@@ -652,6 +652,616 @@ namespace UT.Kvasir.Translation {
         public delegate void SurfingManeuver(object surfboard, float speed, double waveHeight);
     }
 
+    internal static class PreDefinedEntities {
+        // Test Scenario: Zero Identified Instances (✗minimum 2 required✗)
+        [PreDefined] public class StainedGlassWindow {
+            [PrimaryKey] public Guid ID { get; private init; }
+            public ushort NumPanes { get; private init; }
+            public double SurfaceArea { get; private init; }
+            public bool IsReligious { get; private init; }
+            public double Transparency { get; private init; }
+            public decimal InstallationCost { get; private init; }
+        }
+
+        // Test Scenario: One Identified Instance (✗minimum 2 required✗)
+        [PreDefined] public class Gulf {
+            [PrimaryKey] public string Name { get; private init; }
+            public float SurfaceArea { get; private init; }
+            public float MaxDepth { get; private init; }
+            public string PrimaryInflow { get; private init; }
+
+            public static Gulf Aqaba { get; } = new Gulf("Gulf of Aqaba", 239, 1850, "Red Sea");
+
+            private Gulf(string name, float surfaceArea, float maxDepth, string primaryInflow) {
+                Name = name;
+                SurfaceArea = surfaceArea;
+                MaxDepth = maxDepth;
+                PrimaryInflow = primaryInflow;
+            }
+        }
+
+        // Test Scenario: Two or More Identified Instances (✓allowed✓)
+        [PreDefined] public class Disciple {
+            [PrimaryKey] public string Name { get; private init; }
+            public string? Epithet { get; private init; }
+            public DateTime? FeastDay { get; private init; }
+
+            public static Disciple SimonI { get; } = new Disciple("Simon Peter", null, new DateTime(2000, 6, 29));
+            public static Disciple Andrew { get; } = new Disciple("Andrew", "Simon's brother", new DateTime(2000, 11, 30));
+            public static Disciple JamesI { get; } = new Disciple("James the Great", "son of Zebedee", new DateTime(2000, 7, 25));
+            public static Disciple John { get; } = new Disciple("John", "James's brother", new DateTime(2000, 12, 27));
+            public static Disciple Philip { get; } = new Disciple("Philip", null, new DateTime(2000, 5, 3));
+            public static Disciple Bartholomew { get; } = new Disciple("Batholomew", null, new DateTime(2000, 8, 24));
+            public static Disciple Thomas { get; } = new Disciple("Thomas", "Didymus", new DateTime(2000, 7, 3));
+            public static Disciple Matthew { get; } = new Disciple("Matthew", "the publican", new DateTime(2000, 9, 21));
+            public static Disciple JamesII { get; } = new Disciple("James", "son of Alphaeus", new DateTime(2000, 5, 3));
+            public static Disciple Thaddeus { get; } = new Disciple("Thaddeus", null, new DateTime(2000, 10, 28));
+            public static Disciple SimonII { get; } = new Disciple("Simon", "the Canaanite", new DateTime(2000, 10, 28));
+            public static Disciple Judas { get; } = new Disciple("Judas Iscariot", null, null);
+
+            private Disciple(string name, string? epithet, DateTime? feastDay) {
+                Name = name;
+                Epithet = epithet;
+                FeastDay = feastDay;
+            }
+        }
+
+        // Test Scenario: Publicly Writeable Field Properties (✗not permitted✗)
+        [PreDefined] public class Olive {
+            [PrimaryKey] public string CommonName { get; private init; }
+            public double CaloriePer100g { get; private init; }
+            public sbyte OilContent { get; set; }
+            public string CountryOfOrigin { get; private init; }
+
+            public static Olive Kalamata { get; } = new Olive("Kalamata", 284, 6, "Greece");
+            public static Olive Aglandau { get; } = new Olive("Aglandau", 187, 3, "France");
+            public static Olive Tirilye { get; } = new Olive("Tirilye", 261, 6, "Turkey");
+            public static Olive Picual { get; } = new Olive("Picual", 135, 2, "Spain");
+            public static Olive Manzanilla { get; } = new Olive("Manzanilla", 279, 8, "Spain");
+
+            private Olive(string commonName, double calories, sbyte oilContent, string countryOfOrigin) {
+                CommonName = commonName;
+                CaloriePer100g = calories;
+                OilContent = oilContent;
+                CountryOfOrigin = countryOfOrigin;
+            }
+        }
+
+        // Test Scenario: Non-Publicly Writeable Field Properties (✗not permitted✗)
+        [PreDefined] public class Cloud {
+            public enum Layer { Mesosphere, Stratosphere, Troposphere, Any }
+
+            [PrimaryKey] public string Name { get; private init; }
+            public string Abbreviation { get; protected internal set; }
+            public Layer AtmosphericLayer { get; private init; }
+
+            public static Cloud Cirrus { get; } = new Cloud("Cirrus", "Ci", Layer.Troposphere);
+            public static Cloud Stratus { get; } = new Cloud("Stratus", "St", Layer.Any);
+            public static Cloud Cumulonimbus { get; } = new Cloud("Cumulonimbus", "Cb", Layer.Any);
+            public static Cloud Cumulus { get; } = new Cloud("Cumulus", "Cu", Layer.Any);
+            public static Cloud Fog { get; } = new Cloud("Fog", "Fg", Layer.Mesosphere);
+
+            private Cloud(string name, string abbr, Layer layer) {
+                Name = name;
+                Abbreviation = abbr;
+                AtmosphericLayer = layer;
+            }
+        }
+
+        // Test Scenario: Publicly Writeable Instance Properties (✗not permitted✗)
+        [PreDefined] public class LayerOfSkin {
+            [PrimaryKey] public uint Number { get; private init; }
+            public string Name { get; private init; }
+            public string MeSH { get; private init; }
+
+            public static LayerOfSkin Epidermis { get; } = new LayerOfSkin(0, "Epidermis", "D004817");
+            public static LayerOfSkin Dermis { get; } = new LayerOfSkin(1, "Dermis", "D020405");
+            public static LayerOfSkin Hypodermis { get; set; } = new LayerOfSkin(2, "Hypodermis", "D040521");
+
+            private LayerOfSkin(uint number, string name, string mesh) {
+                Number = number;
+                Name = name;
+                MeSH = mesh;
+            }
+        }
+
+        // Test Scenario: Non-Publicly Writeable Instance Property (✓allowed✓)
+        [PreDefined] public class PunctuationMark {
+            [PrimaryKey] public char Character { get; private init; }
+            public string Name { get; private init; }
+
+            public static PunctuationMark QuestionMark { get; private set; }
+            public static PunctuationMark ExclamationMark { get; private set; }
+            public static PunctuationMark Period { get; private set; }
+            public static PunctuationMark Comma { get; private set; }
+            public static PunctuationMark QuotationMark { get; private set; }
+            public static PunctuationMark Apostrophe { get; private set; }
+            public static PunctuationMark Hyphen { get; private set; }
+            public static PunctuationMark OpenParenthesis { get; private set; }
+            public static PunctuationMark CloseParenthesis { get; private set; }
+
+            private PunctuationMark(char character, string name) {
+                Character = character;
+                Name = name;
+            }
+            static PunctuationMark() {
+                QuestionMark = new PunctuationMark('?', "Question Mark");
+                ExclamationMark = new PunctuationMark('!', "Exclamation Mark");
+                Period = new PunctuationMark('.', "Period");
+                Comma = new PunctuationMark(',', "Comma");
+                QuotationMark = new PunctuationMark('"', "Quotation Mark");
+                Apostrophe = new PunctuationMark('\'', "Apostrophe");
+                Hyphen = new PunctuationMark('-', "Hyphen");
+                OpenParenthesis = new PunctuationMark('(', "Open Parenthesis");
+                CloseParenthesis = new PunctuationMark(')', "Close Parenthesis");
+            }
+        }
+
+        // Test Scenario: Public Constructor (✗not permitted✗)
+        [PreDefined] public class FederalReserveDistrict {
+            [PrimaryKey, Column(0)] public int Number { get; private init; }
+            [Column(1)] public string BankHQ { get; private init; }
+            [Column(2)] public DateTime Established { get; private init; }
+
+            public static FederalReserveDistrict First { get; } = new FederalReserveDistrict(1, "Boston", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Second { get; } = new FederalReserveDistrict(2, "New York City", new DateTime(1914, 11, 16));
+            public static FederalReserveDistrict Third { get; } = new FederalReserveDistrict(3, "Philadelphia", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Fourth { get; } = new FederalReserveDistrict(4, "Cleveland", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Fifth { get; } = new FederalReserveDistrict(5, "Richmond", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Sixth { get; } = new FederalReserveDistrict(6, "Atlanta", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Seventh { get; } = new FederalReserveDistrict(7, "Chicago", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Eighth { get; } = new FederalReserveDistrict(8, "St. Louis", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Ninth { get; } = new FederalReserveDistrict(9, "Minneapolis", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Tenth { get; } = new FederalReserveDistrict(10, "Kansas City", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Eleventh { get; } = new FederalReserveDistrict(11, "Dallas", new DateTime(1914, 5, 18));
+            public static FederalReserveDistrict Twelfth { get; } = new FederalReserveDistrict(12, "San Francisco", new DateTime(1914, 5, 18));
+
+            public FederalReserveDistrict(int number, string hq, DateTime established) {
+                Number = number;
+                BankHQ = hq;
+                Established = established;
+            }
+        }
+
+        // Test Scenario: Reference to Pre-Defined Entity (✓allowed✓)
+        [PreDefined] public class RavnicaGuild {
+            [PreDefined] public class Color {
+                [PrimaryKey] public byte R { get; private init; }
+                [PrimaryKey] public byte G { get; private init; }
+                [PrimaryKey] public byte B { get; private init; }
+
+                public static Color Blue { get; } = new Color() { R = 0, G = 0, B = 255 };
+                public static Color Red { get; } = new Color() { R = 255, G = 0, B = 0 };
+                public static Color Green { get; } = new Color() { R = 0, G = 255, B = 0 };
+                public static Color White { get; } = new Color() { R = 255, G = 255, B = 255 };
+                public static Color Black { get; } = new Color() { R = 0, G = 0, B = 0 };
+
+                private Color() {}
+            }
+            [PreDefined] public class Mana {
+                [PrimaryKey] public uint ID { get; private init; }
+                public Color? Color { get; private init; }
+                public string BasicLand { get; private init; }
+
+                public static Mana Blue { get; } = new Mana(0, Color.Blue, "island");
+                public static Mana Red { get; } = new Mana(1, Color.Red, "mountain");
+                public static Mana Green { get; } = new Mana(2, Color.Green, "forest");
+                public static Mana White { get; } = new Mana(3, Color.White, "plains");
+                public static Mana Black { get; } = new Mana(4, Color.Black, "swamp");
+                public static Mana Colorless { get; } = new Mana(5, null, "wastes");
+                public static Mana Phyrexian { get; } = new Mana(6, null, "life");
+
+                private Mana(uint id, Color? color, string basic) {
+                    ID = id;
+                    Color = color;
+                    BasicLand = basic;
+                }
+            }
+
+            [PrimaryKey] public string Name { get; private init; }
+            public string GuildHall { get; private init; }
+            public string Parun { get; private init; }
+            public Mana FirstMana { get; private init; }
+            public Mana SecondMana { get; private init; }
+
+            public static RavnicaGuild Azorius { get; } = new RavnicaGuild("Azorius Senate", "Prahv", "Azor I", Mana.White, Mana.Blue);
+            public static RavnicaGuild Dimir { get; } = new RavnicaGuild("House Dimir", "Duskmantle", "Lazav", Mana.Blue, Mana.Black);
+            public static RavnicaGuild Rakdos { get; } = new RavnicaGuild("Cult of Rakdos", "Rix Maadi", "Rakdos", Mana.Black, Mana.Red);
+            public static RavnicaGuild Gruul { get; } = new RavnicaGuild("Gruul Clans", "Skarrg", "Cisarzim", Mana.Red, Mana.Green);
+            public static RavnicaGuild Selesnya { get; } = new RavnicaGuild("Selesnya Conclave", "Vitu-Ghazi", "Mat'Selesnya", Mana.Green, Mana.White);
+            public static RavnicaGuild Orzhov { get; } = new RavnicaGuild("Orzhov Syndicate", "Orzhova", "Obzedat", Mana.White, Mana.Black);
+            public static RavnicaGuild Izzet { get; } = new RavnicaGuild("Izzet League", "Nivix", "Niv-Mizzet", Mana.Blue, Mana.Red);
+            public static RavnicaGuild Golgari { get; } = new RavnicaGuild("Golgari Swarm", "Svogthos", "Svogthir", Mana.Black, Mana.Green);
+            public static RavnicaGuild Boros { get; } = new RavnicaGuild("Boros Legion", "Sunhomme", "Razia", Mana.Red, Mana.White);
+            public static RavnicaGuild Simic { get; } = new RavnicaGuild("Simic Combine", "Novijen", "Simic", Mana.Green, Mana.Blue);
+
+            private RavnicaGuild(string name, string hall, string parun, Mana first, Mana second) {
+                Name = name;
+                GuildHall = hall;
+                Parun = parun;
+                FirstMana = first;
+                SecondMana = second;
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Reference to Pre-Defined Entity (✓allowed✓)
+        [PreDefined] public class MarxBrother {
+            [PreDefined] public class Month {
+                [PrimaryKey] public uint Index { get; private init; }
+                public string Name { get; private init; }
+
+                public static Month January { get; } = new Month(1, "January");
+                public static Month February { get; } = new Month(2, "February");
+                public static Month March { get; } = new Month(3, "March");
+                public static Month April { get; } = new Month(4, "April");
+                public static Month May { get; } = new Month(5, "May");
+                public static Month June { get; } = new Month(6, "June");
+                public static Month July { get; } = new Month(7, "July");
+                public static Month August { get; } = new Month(8, "August");
+                public static Month September { get; } = new Month(9, "September");
+                public static Month October { get; } = new Month(10, "October");
+                public static Month Novemeber { get; } = new Month(11, "November");
+                public static Month December { get; } = new Month(12, "December");
+
+                private Month(uint index, string name) {
+                    Index = index;
+                    Name = name;
+                }
+            }
+
+            public readonly record struct Date(byte Day, Month Month, ushort Year);
+
+            [PrimaryKey] public string Name { get; private init; }
+            public Date BirthDate { get; private init; }
+            public string FilmDebut { get; private init; }
+
+            public static MarxBrother Chico { get; } = new MarxBrother("Chico Marx", new Date(22, Month.March, 1887), "The Cocoanuts");
+            public static MarxBrother Harpo { get; } = new MarxBrother("Harpo Marx", new Date(23, Month.Novemeber, 1888), "Humor Risk");
+            public static MarxBrother Groucho { get; } = new MarxBrother("Groucho Marx", new Date(2, Month.October, 1890), "Humor Risk");
+            public static MarxBrother Gummo { get; } = new MarxBrother("Gummo Marx", new Date(23, Month.October, 1892), "n/a");
+            public static MarxBrother Zeppo { get; } = new MarxBrother("Zeppo Marx", new Date(25, Month.February, 1901), "Humor Risk");
+
+            private MarxBrother(string name, Date dob, string debut) {
+                Name = name;
+                BirthDate = dob;
+                FilmDebut = debut;
+            }
+        }
+
+        // Test Scenario: Relation to Pre-Defined Entity (✓allowed✓)
+        [PreDefined] public class ResidentEvil {
+            [PreDefined] public class GamingMode {
+                [PrimaryKey] public uint ModeID { get; private init; }
+                public string Mode { get; private init; }
+
+                public static GamingMode SinglePlayer { get; } = new GamingMode(8172, "Single-Player");
+                public static GamingMode MultiPlayer { get; } = new GamingMode(9182005, "Multi-Player");
+                public static GamingMode Online { get; } = new GamingMode(61, "Online");
+
+                private GamingMode(uint id, string mode) {
+                    ModeID = id;
+                    Mode = mode;
+                }
+            }
+
+            [PrimaryKey] public ulong GameID { get; private init; }
+            public string Title { get; private init; }
+            public DateTime ReleaseDate { get; private init; }
+            public RelationSet<GamingMode> Modes { get; }
+
+            public static ResidentEvil Original { get; } = new ResidentEvil(41099, "Resident Evil", new DateTime(1996, 3, 22));
+            public static ResidentEvil Two { get; } = new ResidentEvil(875, "Resident Evil 2", new DateTime(1998, 1, 21));
+            public static ResidentEvil Nemesis { get; } = new ResidentEvil(6710294, "Resident Evil 3: Nemesis", new DateTime(1999, 9, 22));
+            public static ResidentEvil CodeVeronica { get; } = new ResidentEvil(765, "Resident Evil - Code: Veronica", new DateTime(2000, 2, 3));
+            public static ResidentEvil Zero { get; } = new ResidentEvil(6120, "Resident Evil Zero", new DateTime(2002, 11, 12));
+            public static ResidentEvil Four { get; } = new ResidentEvil(4, "Resident Evil 4", new DateTime(2005, 1, 11));
+            public static ResidentEvil Five { get; } = new ResidentEvil(81008, "Resident Evil 5", new DateTime(2009, 3, 5));
+            public static ResidentEvil Six { get; } = new ResidentEvil(9511361672, "Resident Evil 6", new DateTime(2012, 10, 2));
+            public static ResidentEvil Biohazard { get; } = new ResidentEvil(7561200, "Resident Evil 7: Biohazard", new DateTime(2017, 1, 24));
+            public static ResidentEvil Village { get; } = new ResidentEvil(5405, "Resident Evil Village", new DateTime(2021, 5, 7));
+
+            private ResidentEvil(ulong id, string title, DateTime release) {
+                GameID = id;
+                Title = title;
+                ReleaseDate = release;
+                Modes = new RelationSet<GamingMode>() { GamingMode.SinglePlayer, GamingMode.MultiPlayer };
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Relation to Pre-Defined Entity (✓allowed✓)
+        [PreDefined] public class CitrusFruit {
+            [PreDefined] public class TaxonomicRank {
+                [PrimaryKey] public char Symbol { get; private init; }
+                public string Name { get; private init; }
+
+                public static TaxonomicRank Kingdom { get; } = new TaxonomicRank('K', "kingdom");
+                public static TaxonomicRank Phylum { get; } = new TaxonomicRank('P', "phylum");
+                public static TaxonomicRank Class { get; } = new TaxonomicRank('C', "class");
+                public static TaxonomicRank Order { get; } = new TaxonomicRank('O', "order");
+                public static TaxonomicRank Family { get; } = new TaxonomicRank('F', "family");
+                public static TaxonomicRank Genus { get; } = new TaxonomicRank('G', "genus");
+                public static TaxonomicRank Species { get; } = new TaxonomicRank('S', "species");
+
+                private TaxonomicRank(char symbol, string name) {
+                    Symbol = symbol;
+                    Name = name;
+                }
+            }
+
+            public readonly struct BioData {
+                public bool IsHybrid { get; init; }
+                public IReadOnlyRelationMap<TaxonomicRank, string> Taxonomy { get; init; }
+            }
+
+            [PrimaryKey] public uint ID { get; private init; }
+            public string CommonName { get; private init; }
+            public BioData Bio { get; private init; }
+
+            public static CitrusFruit Kumquat { get; } = new CitrusFruit(0, "kumqut", false, "margarita");
+            public static CitrusFruit Mandarin { get; } = new CitrusFruit(1, "mandarin", false, "reticulata");
+            public static CitrusFruit Citron { get; } = new CitrusFruit(2, "citron", false, "medica");
+            public static CitrusFruit Pomelo { get; } = new CitrusFruit(3, "pomelo", false, "maxima");
+            public static CitrusFruit Micrantha { get; } = new CitrusFruit(4, "micrantha", false, "micrantha");
+            public static CitrusFruit Grapefruit { get; } = new CitrusFruit(5, "grapefruit", true, "× paradisi");
+            public static CitrusFruit Lemon { get; } = new CitrusFruit(6, "lemon", true, "× limon");
+            public static CitrusFruit Lime { get; } = new CitrusFruit(7, "lime", true, "× latifolia");
+            public static CitrusFruit Mangshanyegan { get; } = new CitrusFruit(8, "mangshanyegan", false, "mangshanensis");
+            public static CitrusFruit Papeda { get; } = new CitrusFruit(9, "papeda", false, "cavalerieri");
+            public static CitrusFruit Tangerine { get; } = new CitrusFruit(10, "tagerine", true, "× tangerina");
+            public static CitrusFruit Orange { get; } = new CitrusFruit(11, "orange", true, "× sinensis");
+            public static CitrusFruit Tangelo { get; } = new CitrusFruit(12, "tangelo", true, "× tangelo");
+            public static CitrusFruit Satsuma { get; } = new CitrusFruit(13, "satsuma", false, "unshiu");
+            public static CitrusFruit BuddhasHand { get; } = new CitrusFruit(14, "Buddha's hand", false, "media var. sarcodactylis");
+            public static CitrusFruit Clymenia { get; } = new CitrusFruit(15, "clymenia", false, "platypoda");
+            public static CitrusFruit Clementine { get; } = new CitrusFruit(16, "clementine", true, "× clementina");
+            public static CitrusFruit Jabara { get; } = new CitrusFruit(17, "jabara", true, "× jabara");
+            public static CitrusFruit Yuzu { get; } = new CitrusFruit(18, "yuzu", true, "× junos");
+
+            private CitrusFruit(uint id, string commonName, bool isHybrid, string species) {
+                ID = id;
+                CommonName = commonName;
+                Bio = new BioData() {
+                    IsHybrid = isHybrid,
+                    Taxonomy = new RelationMap<TaxonomicRank, string>() {
+                        { TaxonomicRank.Kingdom, "Plantae" },
+                        { TaxonomicRank.Order, "Sapindales" },
+                        { TaxonomicRank.Family, "Rutaceae" },
+                        { TaxonomicRank.Genus, "Citrus" },
+                        { TaxonomicRank.Species, species }
+                    }
+                };
+            }
+        }
+
+        // Test Scenario: Reference to Non-Pre-Defined Entity (✗not permitted✗)
+        [PreDefined] public class CapnCrunch {
+            public class Date {
+                [PrimaryKey] public byte Day { get; set; }
+                [PrimaryKey] public byte Month { get; set; }
+                [PrimaryKey] public byte Year { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; private init; }
+            public string Name { get; private init; }
+            public bool Discontinued { get; private init; }
+            public Date FirstReleased { get; private init; }
+
+            public static CapnCrunch Regular { get; } = new CapnCrunch("Cap'n Crunch", false);
+            public static CapnCrunch CrunchBerries { get; } = new CapnCrunch("Cap'n Crunch Crunch Berries", false);
+            public static CapnCrunch PeanutButter { get; } = new CapnCrunch("Peanut Butter Crunch", false);
+            public static CapnCrunch AllBerries { get; } = new CapnCrunch("Oops! All Berries", false);
+            public static CapnCrunch Chocolate { get; } = new CapnCrunch("Chocolatey Crunch", true);
+
+            private CapnCrunch(string name, bool discontinued) {
+                ID = Guid.NewGuid();
+                Name = name;
+                Discontinued = discontinued;
+                FirstReleased = new Date();
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Reference to Non-Pre-Defined Entity (✗not permitted✗)
+        [PreDefined] public class StageOfGrief {
+            public class Psychologist {
+                [PrimaryKey] public Guid MedicalID { get; set; }
+                public string FirstName { get; set; } = "";
+                public string LastName { get; set; } = "";
+                public ushort Publications { get; set; }
+                public bool IsPracticing { get; set; }
+            }
+            
+            public readonly record struct Article(string Title, DateTime PublishedOn, Psychologist Author);
+
+            [PrimaryKey] public byte Index { get; private init; }
+            public string Name { get; private init; }
+            public Article? ProposedIn { get; private init; }
+
+            public static StageOfGrief Denial { get; } = new StageOfGrief(0, "Denial");
+            public static StageOfGrief Anger { get; } = new StageOfGrief(1, "Anger");
+            public static StageOfGrief Bargaining { get; } = new StageOfGrief(2, "Bargaining");
+            public static StageOfGrief Depression { get; } = new StageOfGrief(3, "Depression");
+            public static StageOfGrief Acceptance { get; } = new StageOfGrief(4, "Acceptance");
+
+            private StageOfGrief(byte index, string name) {
+                Index = index;
+                Name = name;
+                ProposedIn = null;
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Reference to Non-Pre-Defined Entity, post-Memoization (✗not permitted✗)
+        [PreDefined] public class Stooge {
+            public class Film {
+                [PrimaryKey] public ulong IMDbID { get; set; }
+                public string Title { get; set; } = "";
+                public DateTime ReleaseDate { get; set; }
+                public bool IsSilent { get; set; }
+            }
+            public class ProductionCompany {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                public DateTime Founded { get; set; }
+                public FilmDeal MostLucrativeDeal { get; set; }
+            }
+
+            public readonly record struct FilmDeal(decimal Budget, decimal Revenue, Film FirstFilm);
+
+            [PrimaryKey] public string Name { get; private init; }
+            public DateTime DateOfBirth { get; private init; }
+            public bool WasMainstay { get; private init; }
+            public FilmDeal InitialDeal { get; private init; }
+
+            public static Stooge Larry { get; } = new Stooge("Larry Fine", new DateTime(1902, 10, 4), true);
+            public static Stooge Moe { get; } = new Stooge("Moe Howard", new DateTime(1897, 6, 19), true);
+            public static Stooge Curly { get; } = new Stooge("Curly Howard", new DateTime(1903, 10, 22), false);
+
+            private Stooge(string name, DateTime dob, bool mainstay) {
+                Name = name;
+                DateOfBirth = dob;
+                WasMainstay = mainstay;
+            }
+        }
+
+        // Test Scenario: Relation to Non-Pre-Defined Entity (✗not permitted✗)
+        [PreDefined] public class CivVIYield {
+            public class District {
+                [PrimaryKey] public Guid AssetID { get; set; }
+                public string Name { get; set; } = "";
+                public bool IsSpecialty { get; set; }
+                public ushort GoldCost { get; set; }
+                public ushort ProductionCost { get; set; }
+                public ushort? FaithCost { get; set; }
+            }
+
+            [PrimaryKey] public Guid AssetId { get; private init; }
+            public string Name { get; private init; }
+            public bool InBaseGame { get; private init; }
+            public IReadOnlyRelationList<District> ProducedBy { get; }
+
+            public static CivVIYield Amenities { get; } = new CivVIYield("Amenities", true);
+            public static CivVIYield Culture { get; } = new CivVIYield("Culture", true);
+            public static CivVIYield Faith { get; } = new CivVIYield("Faith", true);
+            public static CivVIYield Food { get; } = new CivVIYield("Food", true);
+            public static CivVIYield Gold { get; } = new CivVIYield("Gold", true);
+            public static CivVIYield Power { get; } = new CivVIYield("Power", false);
+            public static CivVIYield Production { get; } = new CivVIYield("Production", true);
+            public static CivVIYield Science { get; } = new CivVIYield("Science", true);
+            public static CivVIYield Tourism { get; } = new CivVIYield("Tourism", true);
+
+            private CivVIYield(string name, bool baseGame) {
+                AssetId = Guid.NewGuid();
+                Name = name;
+                InBaseGame = baseGame;
+                ProducedBy = new RelationList<District>();
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Relation to Non-Pre-Defined Entity (✗not permitted✗)
+        [PreDefined] public class StateOfMatter {
+            public class Scientist {
+                [PrimaryKey] public Guid ScientistID { get; set; }
+                public string Name { get; set; } = "";
+                public string DegreeFrom { get; set; } = "";
+                public bool IsPhysicist { get; set; }
+                public bool IsChemisty { get; set; }
+            }
+
+            public record struct Theory {
+                public string? Name { get; set; }
+                public DateTime FirstProposed { get; set; }
+                public RelationSet<Scientist> Namesakes { get; }
+            }
+
+            [PrimaryKey] public string Name { get; private init; }
+            public string? AsWater { get; private init; }
+            public Theory? ExplanatoryTheory { get; private init; }
+
+            public static StateOfMatter Solid { get; } = new StateOfMatter("Solid", "ice");
+            public static StateOfMatter Liquid { get; } = new StateOfMatter("Liquid", "water");
+            public static StateOfMatter Gas { get; } = new StateOfMatter("Gas", "water vapor / steam");
+            public static StateOfMatter Plasma { get; } = new StateOfMatter("Plasma", null);
+            public static StateOfMatter BEC { get; } = new StateOfMatter("Bose-Einstein Condensate", null);
+            public static StateOfMatter QGP { get; } = new StateOfMatter("Quark-Gluon Plasma", null);
+
+            private StateOfMatter(string name, string? water) {
+                Name = name;
+                AsWater = water;
+                ExplanatoryTheory = null;
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Relation to Non-Pre-Defined Entity, post-Memoization (✗not permitted✗)
+        [PreDefined] public class Primate {
+            public enum Kind { Monkey, Ape }
+
+            public class Study {
+                [PrimaryKey] public Guid ID { get; set; }
+                public DateTime Initiated { get; set; }
+                public DateTime? Concluded { get; set; }
+                public string? Title { get; set; }
+                public bool OnLocatio { get; set; }
+            }
+            public class Primatologist {
+                [PrimaryKey] public Guid ID { get; set; }
+                public Journal? PrimaryJournal { get; set; }
+                public DateTime DOB { get; set; }
+            }
+
+            public struct Journal {
+                public string Title { get; set; }
+                public IReadOnlyRelationOrderedList<Study> Studies { get; }
+            }
+
+            [PrimaryKey] public string Genus { get; private init; }
+            [PrimaryKey] public string Species { get; private init; }
+            public string CommonName { get; private init; }
+            public Kind Type { get; private init; }
+            public Journal? DedicatedJournal { get; private init; }
+
+            public static Primate AllensSwampMonkey { get; } = new Primate("Allenopithecus", "nigroviridis", "Allen's Swamp Monkey", true);
+            public static Primate Guenon { get; } = new Primate("Allochorecubs", "preussi", "Guenon", true);
+            public static Primate Mangabey { get; } = new Primate("Lophocebus", "albigena", "Magabey", true);
+            public static Primate Macaque { get; } = new Primate("Macaca", "mulatta", "Macaque", true);
+            public static Primate Mandrill { get; } = new Primate("Mandrillus", "sphinx", "Mandrill", true);
+            public static Primate Talapoin { get; } = new Primate("Miopithecus", "talapoin", "Talapoin", true);
+            public static Primate Baboon { get; } = new Primate("Papio", "anubis", "Baboon", true);
+            public static Primate Kipunji { get; } = new Primate("Rungwecebus", "kipunji", "Kipuji", true);
+            public static Primate Gelada { get; } = new Primate("Theropithecus", "gelada", "Gelada", true);
+            public static Primate Colobus { get; } = new Primate("Colobus", "angolensis", "Colobus", true);
+            public static Primate ProboscisMonkey { get; } = new Primate("Nasalis", "larvatus", "Proboscis Monkey", true);
+            public static Primate Langur { get; } = new Primate("Presbytis", "canicrus", "Langur", true);
+            public static Primate Douc { get; } = new Primate("Pygathrix", "cinerea", "Douc", true);
+            public static Primate Gorilla { get; } = new Primate("Gorilla", "gorilla", "Gorilla", false);
+            public static Primate Human { get; } = new Primate("Homo", "sapiens", "Human", false);
+            public static Primate Chimpanzee { get; } = new Primate("Pan", "troglodytes", "Chimpanzee", false);
+            public static Primate Bonobo { get; } = new Primate("Pan", "paniscus", "Bonobo", false);
+            public static Primate Orangutan { get; } = new Primate("Pongo", "pygmaeus", "Orangutan", false);
+            public static Primate Gibbon { get; } = new Primate("Nomascus", "gabriellae", "Gibbon", true);
+            public static Primate Siamang { get; } = new Primate("Symphalangus", "syndactylus", "Siamang", true);
+            public static Primate HowlerMonkey { get; } = new Primate("Alouatta", "arctoidea", "Howler Monkey", true);
+            public static Primate SpiderMonkey { get; } = new Primate("Ateles", "belzebuth", "Spider Monkey", true);
+            public static Primate Muriqui { get; } = new Primate("Brachyteles", "arachnoides", "Muriqui", true);
+            public static Primate Marmoset { get; } = new Primate("Callithrix", "flaviceps", "Marmoset", true);
+            public static Primate Tamarin { get; } = new Primate("Leontopithecus", "chrysomelas", "Tamarin", true);
+            public static Primate Capuchin { get; } = new Primate("Cebus", "albifrons", "Capuchin", true);
+            public static Primate Tarsier { get; } = new Primate("Tarsius", "dentatus", "Tarsier", true);
+            public static Primate Uakari { get; } = new Primate("Cacajao", "ayresi", "Uakari", true);
+            public static Primate Lemur { get; } = new Primate("Lemur", "catta", "Lemur", true);
+            public static Primate AyeAye { get; } = new Primate("Daubentonia", "madagascariensis", "Aye-Aye", true);
+            public static Primate Sifaka { get; } = new Primate("Propithecus", "candidus", "Sifaka", true);
+            public static Primate Bushbaby { get; } = new Primate("Galago", "senegalensis", "Bushbaby", true);
+            public static Primate Loris { get; } = new Primate("Nyctecibus", "hilleri", "Loris", true);
+
+            private Primate(string genus, string species, string common, bool isMonkey) {
+                Genus = genus;
+                Species = species;
+                CommonName = common;
+                Type = isMonkey ? Kind.Monkey : Kind.Ape;
+                DedicatedJournal = null;
+            }
+        }
+    }
+
     internal static class FieldClusivity {
         // Test Scenario: Zero Identified Fields (✗minimum 2 required✗)
         public class Nothing {}
@@ -813,7 +1423,7 @@ namespace UT.Kvasir.Translation {
             [IncludeInModel] public string this[string word] { get { return ""; } set {} }
         }
 
-        // Test Scenario: Public Write-Only Property Marked as [IncludeInModel (✗not permitted✗)
+        // Test Scenario: Public Write-Only Property Marked as [IncludeInModel] (✗not permitted✗)
         public class HebrewPrayer {
             [PrimaryKey] public string Name { get; set; } = "";
             [IncludeInModel] public bool OnShabbat { set {} }
@@ -995,6 +1605,80 @@ namespace UT.Kvasir.Translation {
             public string Line1 { get; set; } = "";
             [IncludeInModel] public string Line2 { get; set; } = "";
             public string Line3 { get; set; } = "";
+        }
+
+        // Test Scenario: Non-Public Pre-Defined Instance Marked as [IncludeInModel] (✗not permitted✗)
+        [PreDefined] public class SortingAlgorithm {
+            [PrimaryKey] public string Name { get; private init; }
+            public string BestCase { get; private init; }
+            public string AverageCase { get; private init; }
+            public string WorstCase { get; private init; }
+
+            public static SortingAlgorithm Bubble { get; } = new SortingAlgorithm("Bubble Sort", "n", "n^2", "n^2");
+            public static SortingAlgorithm Merge { get; } = new SortingAlgorithm("Merge Sort", "n*log(n)", "n*log(n)", "n*log(n)");
+            public static SortingAlgorithm Heap { get; } = new SortingAlgorithm("Heap Sort", "n*log(n)", "n*log(n)", "n*log(n)");
+            [IncludeInModel] private static SortingAlgorithm Bogo { get; } = new SortingAlgorithm("Bogo Sort", "n", "n*n!", "infinite");
+            public static SortingAlgorithm Insertion { get; } = new SortingAlgorithm("Insertion Sort", "n", "n^2", "n^2");
+            public static SortingAlgorithm Selection { get; } = new SortingAlgorithm("Selection Sort", "n^2", "n^2", "n^2");
+            public static SortingAlgorithm Quick { get; } = new SortingAlgorithm("Quick Sort", "n*log(n)", "n*log(n)", "n^2");
+
+            private SortingAlgorithm(string name, string best, string average, string worst) {
+                Name = name;
+                BestCase = $"O({best})";
+                AverageCase = $"O({average})";
+                WorstCase = $"O({worst})";
+            }
+        }
+
+        // Test Scenario: Write-Only Pre-Defined Instance Marked as [IncludeInModel] (✗not permitted✗)
+        [PreDefined] public class AnimalPhylum {
+            [Calculated] public string Kingdom { get; } = "Animalia";
+            [PrimaryKey] public string Name { get; private init; }
+            public bool? FromCambrian { get; private init; }
+            public ulong? ExtantSpecies { get; private init; }
+
+            public static AnimalPhylum Acanthocephala { get; } = new AnimalPhylum("Acanthocephala", null, 750);
+            public static AnimalPhylum Acoelomorpha { get; } = new AnimalPhylum("Acoelomorpha", null, null);
+            public static AnimalPhylum Annelida { get; } = new AnimalPhylum("Annelida", true, 17000);
+            public static AnimalPhylum Arthropoda { get; } = new AnimalPhylum("Arthropoda", true, 1100000);
+            public static AnimalPhylum Brachiopoda { get; } = new AnimalPhylum("Brachiopoda", true, 400);
+            public static AnimalPhylum Bryozoa { get; } = new AnimalPhylum("Bryozoa", false, 5000);
+            public static AnimalPhylum Chaetognatha { get; } = new AnimalPhylum("Chaetognatha", true, 100);
+            public static AnimalPhylum Chordata { get; } = new AnimalPhylum("Chordata", true, 60000);
+            public static AnimalPhylum Cnidaria { get; } = new AnimalPhylum("Cnidaria", true, 11000);
+            public static AnimalPhylum Ctenophora { get; } = new AnimalPhylum("Ctenophora", true, 100);
+            public static AnimalPhylum Cycliophora { get; } = new AnimalPhylum("Cycliophora", null, 3);
+            public static AnimalPhylum Echinodermata { get; } = new AnimalPhylum("Echinodermata", true, 7000);
+            public static AnimalPhylum Echiura { get; } = new AnimalPhylum("Echiura", null, 130);
+            public static AnimalPhylum Entoprocta { get; } = new AnimalPhylum("Entoprocta", null, 150);
+            public static AnimalPhylum Gastrotricha { get; } = new AnimalPhylum("Gastrotricha", null, 690);
+            public static AnimalPhylum Gnathostomulida { get; } = new AnimalPhylum("Gnathostomulida", null, 100);
+            public static AnimalPhylum Hemichordata { get; } = new AnimalPhylum("Hemichordata", true, 100);
+            public static AnimalPhylum Kinorhyncha { get; } = new AnimalPhylum("Kinorhyncha", null, 150);
+            public static AnimalPhylum Loricifera { get; } = new AnimalPhylum("Loricifera", null, 120);
+            public static AnimalPhylum Micrognathozoa { get; } = new AnimalPhylum("Micrognathozoa", null, 1);
+            public static AnimalPhylum Mollusca { get; } = new AnimalPhylum("Mollusca", true, 112000);
+            public static AnimalPhylum Nematoda { get; } = new AnimalPhylum("Nematoda", null, 1000000);
+            public static AnimalPhylum Nematomorpha { get; } = new AnimalPhylum("Nematomorpha", null, 300);
+            public static AnimalPhylum Nemertea { get; } = new AnimalPhylum("Nemertea", null, 1000);
+            public static AnimalPhylum Onychophora { get; } = new AnimalPhylum("Onychophora", null, 200);
+            public static AnimalPhylum Orthonectida { get; } = new AnimalPhylum("Orthonectida", null, 20);
+            public static AnimalPhylum Phoronida { get; } = new AnimalPhylum("Phoronida", true, 20);
+            public static AnimalPhylum Placozoa { get; } = new AnimalPhylum("Placozoa", null, 1);
+            public static AnimalPhylum Platyhelminthes { get; } = new AnimalPhylum("Platyhelminthes", false, 25000);
+            [IncludeInModel] public static AnimalPhylum Porifera { set { throw new NotImplementedException(); } }
+            public static AnimalPhylum Priapulida { get; } = new AnimalPhylum("Priapulida", true, 17);
+            public static AnimalPhylum Rhombozoa { get; } = new AnimalPhylum("Rhombozoa", null, null);
+            public static AnimalPhylum Rotifera { get; } = new AnimalPhylum("Rotifera", false, null);
+            public static AnimalPhylum Sipuncula { get; } = new AnimalPhylum("Sipuncula", true, null);
+            public static AnimalPhylum Tardigrada { get; } = new AnimalPhylum("Tardigrada", true, 0);
+            public static AnimalPhylum Xenoturbellida { get; } = new AnimalPhylum("Xenoturbellida", null, 2);
+
+            private AnimalPhylum(string name, bool? cambrian, ulong? numSpecies) {
+                Name = name;
+                FromCambrian = cambrian;
+                ExtantSpecies = numSpecies;
+            }
         }
 
         // Test Scenario: Property Marked as [IncludeInModel] and [CodeOnly] (✗conflicting✗)
@@ -1181,6 +1865,53 @@ namespace UT.Kvasir.Translation {
             public string? PostulatedBy { get; set; }
             public bool IsLogical { get; set; }
             [Nullable] public RelationSet<string> DerivedTheories { get; } = new();
+        }
+
+        // Test Scenario: Pre-Defined Instance Property Marked as [NonNullable] (✓redundant✓)
+        [PreDefined] public class Rugrat {
+            [PrimaryKey] public uint ID { get; private init; }
+            public string Name { get; private init; }
+            public string VoiceActor { get; private init; }
+            public byte AgeYears { get; private init; }
+
+            [NonNullable] public static Rugrat Tommy { get; } = new Rugrat(1, "Tommy Pickles", "E. G. Daily", 1);
+            [NonNullable] public static Rugrat Chuckie { get; } = new Rugrat(2, "Chuckie Finster", "Nancy Cartwright", 1);
+            [NonNullable] public static Rugrat Angelica { get; } = new Rugrat(3, "Angelica Pickles", "Cheryl Chase", 3);
+            [NonNullable] public static Rugrat Phil { get; } = new Rugrat(4, "Phil DeVille", "Kath Soucie", 1);
+            [NonNullable] public static Rugrat Lil { get; } = new Rugrat(5, "Lil DeVille", "Kath Soucie", 1);
+            [NonNullable] public static Rugrat Susie { get; } = new Rugrat(6, "Susie Carmichael", "Cree Summer", 3);
+            [NonNullable] public static Rugrat Dil { get; } = new Rugrat(7, "Dil Pickles", "Tara Strong", 0);
+            [NonNullable] public static Rugrat Kimi { get; } = new Rugrat(8, "Kimi Watanabe-Finster", "Charlotte Chung", 1);
+
+            private Rugrat(uint id, string name, string voice, byte years) {
+                ID = id;
+                Name = name;
+                VoiceActor = voice;
+                AgeYears = years;
+            }
+        }
+
+        // Test Scenario: Pre-Defined Instance Property Marked as [Nullable] (✗illegal✗)
+        [PreDefined] public class Cutlery {
+            [PrimaryKey] public Guid ID { get; private init; }
+            public string Name { get; private init; }
+
+            public static Cutlery Fork { get; } = new Cutlery("dinner fork");
+            public static Cutlery Spoon { get; } = new Cutlery("spoon");
+            public static Cutlery Knife { get; } = new Cutlery("table knife");
+            public static Cutlery SaladFork { get; } = new Cutlery("salad fork");
+            public static Cutlery SteakKnife { get; } = new Cutlery("steak knife");
+            public static Cutlery ButterKnife { get; } = new Cutlery("butter knife");
+            public static Cutlery Spork { get; } = new Cutlery("spork");
+            [Nullable] public static Cutlery Chopsticks { get; } = new Cutlery("chopsticks");
+            public static Cutlery SoupSpoon { get; } = new Cutlery("soup spoon");
+            public static Cutlery DesertFork { get; } = new Cutlery("desert fork");
+            public static Cutlery OysterFork { get; } = new Cutlery("oyster fork");
+
+            private Cutlery(string name) {
+                ID = Guid.NewGuid();
+                Name = name;
+            }
         }
     }
 
@@ -1489,6 +2220,25 @@ namespace UT.Kvasir.Translation {
             public double AverageDistance { get; set; }
             public decimal CostPerCar { get; set; }
             public bool TippingExpected { get; set; }
+        }
+
+        // Test Scenario: [RelationTable] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class DEFCON {
+            [PrimaryKey] public sbyte Level { get; private init; }
+            public string ExerciseTerm { get; private init; }
+            public string Readiness { get; private init; }
+
+            public static DEFCON One { get; } = new DEFCON(1, "COCKED PISTOL", "maximum");
+            public static DEFCON Two { get; } = new DEFCON(2, "FAST PACE", "Army < 6hrs");
+            public static DEFCON Three { get; } = new DEFCON(3, "ROUND HOUSE", "Air Force < 15min");
+            [RelationTable("---")] public static DEFCON Four { get; } = new DEFCON(4, "DOUBLE TAKE", "above normal");
+            public static DEFCON Five { get; } = new DEFCON(5, "FADE OUT", "normal");
+
+            private DEFCON(sbyte level, string exerciseTerm, string readiness) {
+                Level = level;
+                ExerciseTerm = exerciseTerm;
+                Readiness = readiness;
+            }
         }
     }
 
@@ -2024,6 +2774,30 @@ namespace UT.Kvasir.Translation {
             public ulong Height { get; set; }
             public DateTime LastEruption { get; set; }
             [Name("")] public bool IsActive { get; set; }
+        }
+
+        // Test Scenario: [Name] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class Murder {
+            [PrimaryKey] public string What { get; private init; }
+            public string Who { get; private init; }
+            public ulong? WordFrequencyRank { get; private init; }
+
+            public static Murder Suicide { get; } = new Murder("suicide", "self", 2288);
+            public static Murder Matricide { get; } = new Murder("matricide", "mother", 55721);
+            public static Murder Patricide { get; } = new Murder("patricide", "father", null);
+            public static Murder Sororicide { get; } = new Murder("sororicide", "sister", null);
+            public static Murder Fratricide { get; } = new Murder("fratricide", "brother", 39880);
+            public static Murder Infanticide { get; } = new Murder("infanticide", "infants", 28692);
+            [Name("King-Killing")] public static Murder Regicide { get; } = new Murder("regicide", "king", 51563);
+            public static Murder Deicide { get; } = new Murder("deicide", "god", null);
+            public static Murder Filicide { get; } = new Murder("filicide", "child", null);
+            public static Murder Genocide { get; } = new Murder("genocide", "group", 7692);
+
+            private Murder(string what, string who, ulong? rank) {
+                What = what;
+                Who = who;
+                WordFrequencyRank = rank;
+            }
         }
 
         // Test Scenario: <Path> is `null` (✗illegal✗)
@@ -2572,6 +3346,24 @@ namespace UT.Kvasir.Translation {
             public ushort L4Value { get; set; }
         }
 
+        // Test Scenario: [Default] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class InspectorClouseau {
+            [PrimaryKey] public string Actor { get; private init; }
+            public ushort FilmAppearances { get; private init; }
+            public DateTime FirstAppearance { get; private init; }
+
+            [Default(1000)] public static InspectorClouseau Sellers { get; } = new InspectorClouseau("Peter Sellers", 7, new DateTime(1963, 12, 18));
+            public static InspectorClouseau Arkin { get; } = new InspectorClouseau("Alan Arkin", 1, new DateTime(1968, 5, 28));
+            public static InspectorClouseau Moore { get; } = new InspectorClouseau("Roger Moore", 1, new DateTime(1983, 8, 12));
+            public static InspectorClouseau Martin { get; } = new InspectorClouseau("Steve Martin", 2, new DateTime(2006, 2, 10));
+
+            private InspectorClouseau(string actor, ushort appearances, DateTime first) {
+                Actor = actor;
+                FilmAppearances = appearances;
+                FirstAppearance = first;
+            }
+        }
+
         // Test Scenario: <Path> is `null` (✗illegal✗)
         public class Waterfall {
             [PrimaryKey] public uint InternationalUnifiedWaterfallNumber { get; set; }
@@ -2774,6 +3566,32 @@ namespace UT.Kvasir.Translation {
             [Column(6)] public RelationList<string> Depictions { get; } = new();
             public string? Artist { get; set; }
             public ulong ThreadCount { get; set; }
+        }
+
+        // Test Scenario: [Column] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class Birthstone {
+            [PrimaryKey] public string Month { get; private init; }
+            public string Stone { get; private init; }
+            public bool IsQuartz { get; private init; }
+
+            public static Birthstone Garnet { get; } = new Birthstone("JAN", "garnet", false);
+            [Column(7)] public static Birthstone Amethyst { get; } = new Birthstone("FEB", "amethyst", true);
+            public static Birthstone Aquamarine { get; } = new Birthstone("MAR", "aquamarine", false);
+            public static Birthstone Diamond { get; } = new Birthstone("APR", "diamond", false);
+            public static Birthstone Emerald { get; } = new Birthstone("MAY", "emerald", false);
+            public static Birthstone Pearl { get; } = new Birthstone("JUNE", "pearl", false);
+            public static Birthstone Ruby { get; } = new Birthstone("JULY", "ruby", false);
+            public static Birthstone Peridot { get; } = new Birthstone("AUG", "peridot", false);
+            public static Birthstone Sapphire { get; } = new Birthstone("SEP", "sapphire", false);
+            public static Birthstone Opal { get; } = new Birthstone("OCT", "opal", false);
+            public static Birthstone Topaz { get; } = new Birthstone("NOV", "topaz", false);
+            public static Birthstone Turquoise { get; } = new Birthstone("DEC", "turquoise", false);
+
+            private Birthstone(string month, string stone, bool quartz) {
+                Month = month;
+                Stone = stone;
+                IsQuartz = quartz;
+            }
         }
 
         // Test Scenario: Reference's Primary Key Fields are Non-Consecutive (✓collapsed✓)
@@ -3373,6 +4191,43 @@ namespace UT.Kvasir.Translation {
             public bool IsFranchise { get; set; }
         }
 
+        // Test Scenario: [PrimaryKey] Applied to Pre-Defined Instance (✗illegal✗)
+        [PreDefined] public class FunctionalGroup {
+            [PrimaryKey] public string Group { get; private init; }
+            public string Formula { get; private init; }
+            public string? Prefix { get; private init; }
+            public string? Suffix { get; private init; }
+
+            public static FunctionalGroup Alkane { get; } = new FunctionalGroup("Alkyl", "R(CH2)nH", "alkyl-", "-ane");
+            public static FunctionalGroup Alkene { get; } = new FunctionalGroup("Alkenyl", "R2C=CR2", "alkenyl-", "-ene");
+            public static FunctionalGroup Alkyne { get; } = new FunctionalGroup("Akynyl", "RC==CR'", "alkynyl", "-yne");
+            public static FunctionalGroup Alcohol { get; } = new FunctionalGroup("Hydroxyl", "ROH", "hydroxy-", "-ol");
+            public static FunctionalGroup Ketone { get; } = new FunctionalGroup("Ketone", "RCOR'", null, "-one");
+            public static FunctionalGroup Aldehyde { get; } = new FunctionalGroup("Aldehyde", "RCHO", "formyl-", "-al");
+            public static FunctionalGroup Carbonate { get; } = new FunctionalGroup("Carbonate Ester", "ROCOOR'", null, null);
+            public static FunctionalGroup CarboxylicAcid { get; } = new FunctionalGroup("Carboxyl", "RCOOH", "carboxy-", "-oic acid");
+            public static FunctionalGroup Ester { get; } = new FunctionalGroup("Carboalkoxy", "RCOOR'", "alkanoyloxy-", null);
+            [PrimaryKey] public static FunctionalGroup Peroxide { get; } = new FunctionalGroup("Peroxy", "ROOR'", "peroxy-", null);
+            public static FunctionalGroup Ether { get; } = new FunctionalGroup("Ether", "ROR'", "alkoxy-", null);
+            public static FunctionalGroup Amide { get; } = new FunctionalGroup("Carboxamide", "RCONR'R\"", "carboxamido-", "-amide");
+            public static FunctionalGroup Amine { get; } = new FunctionalGroup("Tertiary Amine", "R3N", "amino-", "-amine");
+            public static FunctionalGroup Azide { get; } = new FunctionalGroup("Azide", "RN3", "azido-", null);
+            public static FunctionalGroup Cyanate { get; } = new FunctionalGroup("Cyanate", "ROCN", "cyanato-", null);
+            public static FunctionalGroup Nitrate { get; } = new FunctionalGroup("Nitrate", "RONO2", "nitroxy-", null);
+            public static FunctionalGroup Nitrite { get; } = new FunctionalGroup("Nitrite", "RONO", "nitrosooxy-", null);
+            public static FunctionalGroup Nitrile { get; } = new FunctionalGroup("Nitrile", "RCN", "cyano-", null);
+            public static FunctionalGroup Thiol { get; } = new FunctionalGroup("Sulfhydryl", "RSH", "sulfanyl-", "-thiol");
+            public static FunctionalGroup Disulfide { get; } = new FunctionalGroup("Disulfide", "RSSR'", null, null);
+            public static FunctionalGroup Phosphate { get; } = new FunctionalGroup("Phosphate", "ROP(=O)(OH)2", "phosphonooxy-", null);
+
+            private FunctionalGroup(string group, string formula, string? prefix, string? suffix) {
+                Group = group;
+                Formula = formula;
+                Prefix = prefix;
+                Suffix = suffix;
+            }
+        }
+
         // Test Scenario: <Path> is `null` (✗illegal✗)
         public class Alphabet {
             [PrimaryKey(Path = null!)] public string Name { get; set; } = "";
@@ -3924,6 +4779,27 @@ namespace UT.Kvasir.Translation {
             public ushort ReferenceNumber { get; set; }
         }
 
+        // Test Scenario: [Unique] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class Cheesecake {
+            [PrimaryKey] public Guid ID { get; private init; }
+            public string Name { get; private init; }
+            public bool AmericanOrigin { get; private init; }
+
+            public static Cheesecake NoBake { get; } = new Cheesecake("no-bake cheesecake", true);
+            public static Cheesecake NewYork { get; } = new Cheesecake("New York cheesecake", true);
+            public static Cheesecake Ricotta { get; } = new Cheesecake("ricotta cheesecake", true);
+            public static Cheesecake Japanese { get; } = new Cheesecake("Japanese cheesecake", false);
+            [Unique] public static Cheesecake Ube { get; } = new Cheesecake("ube", false);
+            public static Cheesecake Basque { get; } = new Cheesecake("Basque cheesecake", false);
+            public static Cheesecake Flao { get; } = new Cheesecake("flaó", false);
+
+            private Cheesecake(string name, bool isAmerican) {
+                ID = Guid.NewGuid();
+                Name = name;
+                AmericanOrigin = isAmerican;
+            }
+        }
+
         // Test Scenario: <Path> is `null` (✗illegal✗)
         public class Tendon {
             [PrimaryKey] public string MESH { get; set; } = "";
@@ -4201,6 +5077,25 @@ namespace UT.Kvasir.Translation {
             public bool Crypto { get; set; }
         }
 
+        // Test Scenario: [DataConverter] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class PowerRanger {
+            [PrimaryKey] public string Color { get; private init; }
+            public string Name { get; private init; }
+            public string Dinozord { get; private init; }
+
+            public static PowerRanger Pink { get; } = new PowerRanger("pink", "Kimberly Hart", "Pterodactyl");
+            public static PowerRanger Red { get; } = new PowerRanger("red", "Jason Lee Scott", "Tyrannosaurus");
+            public static PowerRanger Black { get; } = new PowerRanger("black", "Zack Taylor", "Mastodon");
+            [DataConverter<Identity<PowerRanger>>] public static PowerRanger Blue { get; } = new PowerRanger("blue", "Billy Cranston", "Triceratops");
+            public static PowerRanger Yellow { get; } = new PowerRanger("yellow", "Trini Kwan", "Sabertooth Tiger");
+
+            private PowerRanger(string color, string name, string dinozord) {
+                Color = color;
+                Name = name;
+                Dinozord = dinozord;
+            }
+        }
+
         // Test Scenario: Data Conversion Source Type is Non-Nullable on Nullable Field (✓applied✓)
         public class RoyalHouse {
             [PrimaryKey] public string HouseName { get; set; } = "";
@@ -4374,6 +5269,28 @@ namespace UT.Kvasir.Translation {
             public sbyte NumOases { get; set; }
         }
 
+        // Test Scenario: [Numeric] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class Friend {
+            [PrimaryKey] public string FirstName { get; private init; }
+            [PrimaryKey] public string LastName { get; private init; }
+            public string Actor { get; private init; }
+            public ulong LineCount { get; private init; }
+
+            public static Friend Chandler { get; } = new Friend("Chandler", "Bing", "Matthew Perry", 8465);
+            [Numeric] public static Friend Joey { get; } = new Friend("Joey", "Tribbiani", "Matt LeBlanc", 8171);
+            public static Friend Monica { get; } = new Friend("Monica", "Gellar-Bing", "Courteney Cox", 8441);
+            public static Friend Phoebe { get; } = new Friend("Phoebe", "Buffay", "Lisa Kudrow", 7501);
+            public static Friend Rachel { get; } = new Friend("Rachel", "Green", "Jennifer Aniston", 9312);
+            public static Friend Ross { get; } = new Friend("Ross", "Gellar", "David Schwimmer", 9157);
+
+            private Friend(string firstName, string lastName, string actor, ulong lines) {
+                FirstName = firstName;
+                LastName = lastName;
+                Actor = actor;
+                LineCount = lines;
+            }
+        }
+
         // Test Scenario: [AsString] Applied to Boolean Field (✗impermissible✗)
         public class BondGirl {
             [PrimaryKey] public string Name { get; set; } = "";
@@ -4457,6 +5374,24 @@ namespace UT.Kvasir.Translation {
             public string Author { get; set; } = "";
             public string EncryptedText { get; set; } = "";
             [AsString] public RelationMap<char, char> Solution { get; } = new();
+        }
+
+        // Test Scenario: [AsString] Applied to Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class Teletubby {
+            [PrimaryKey] public string Name { get; private init; }
+            public string Color { get; private init; }
+            public string AntennaShape { get; private init; }
+
+            public static Teletubby TinkyWinky { get; } = new Teletubby("Tinky Winky", "purple", "triangle");
+            [AsString] public static Teletubby Dipsy { get; } = new Teletubby("Dipsy", "green", "dipstick");
+            public static Teletubby LaaLaa { get; } = new Teletubby("Laa-Laa", "yellow", "curl");
+            public static Teletubby Po { get; } = new Teletubby("Po", "red", "bubble blower");
+
+            private Teletubby(string name, string color, string shape) {
+                Name = name;
+                Color = color;
+                AntennaShape = shape;
+            }
         }
 
         // Test Scenario: Property Marked with [DataConverter] and [Numeric] (✗conflicting✗)
@@ -4673,6 +5608,32 @@ namespace UT.Kvasir.Translation {
                 public sbyte NumBulbs { get; set; }
                 public bool IsLED { get; set; }
                 [Check.IsPositive(Path = "Unit")] public Output Power { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class Russo {
+                public enum Wizardry { Current, Past, Never }
+
+                [PrimaryKey] public ulong IMDbID { get; private init; }
+                public string Name { get; private init; }
+                public string Actor { get; private init; }
+                public ushort Episodes { get; private init; }
+                public Wizardry WizardStatus { get; private init; }
+
+                public static Russo Alex { get; } = new Russo(1411125, "Alex Russo", "Selena Gomez", 106, Wizardry.Current);
+                [Check.IsPositive] public static Russo Justin { get; } = new Russo(1273708, "Justin Russo", "David Henrie", 106, Wizardry.Past);
+                public static Russo Max { get; } = new Russo(1545471, "Max Russo", "Jake T. Austin", 106, Wizardry.Past);
+                public static Russo Jerry { get; } = new Russo(217936, "Jerry Russo", "David DeLuise", 106, Wizardry.Past);
+                public static Russo Theresa { get; } = new Russo(133566, "Theresa Russo", "Maria Canals-Barrera", 106, Wizardry.Never);
+                public static Russo Kelbo { get; } = new Russo(307531, "Kelbo Russo", "Jeff Garlin", 3, Wizardry.Current);
+
+                private Russo(ulong imdb, string name, string actor, ushort episodes, Wizardry status) {
+                    IMDbID = imdb;
+                    Name = name;
+                    Actor = actor;
+                    Episodes = episodes;
+                    WizardStatus = status;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -5111,6 +6072,43 @@ namespace UT.Kvasir.Translation {
                 public Guid OwnerID { get; set; }
             }
 
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class MBTI {
+                public enum Attitude { Introversion, Extroversion };
+                public enum Function1 { Intuition, Sensing };
+                public enum Function2 { Thinking, Feeling };
+                public enum Lifestyle { Judging, Perceiving };
+
+                [PrimaryKey] public Attitude IE { get; private init; }
+                [PrimaryKey] public Function1 NS { get; private init; }
+                [PrimaryKey] public Function2 TF { get; private init; }
+                [PrimaryKey] public Lifestyle JP { get; private init; }
+
+                public static MBTI INTJ { get; } = new MBTI(Attitude.Introversion, Function1.Intuition, Function2.Thinking, Lifestyle.Judging);
+                public static MBTI INTP { get; } = new MBTI(Attitude.Introversion, Function1.Intuition, Function2.Thinking, Lifestyle.Perceiving);
+                public static MBTI ENTJ { get; } = new MBTI(Attitude.Extroversion, Function1.Intuition, Function2.Thinking, Lifestyle.Judging);
+                public static MBTI ENTP { get; } = new MBTI(Attitude.Extroversion, Function1.Intuition, Function2.Thinking, Lifestyle.Perceiving);
+                public static MBTI INFJ { get; } = new MBTI(Attitude.Introversion, Function1.Intuition, Function2.Feeling, Lifestyle.Judging);
+                public static MBTI INFP { get; } = new MBTI(Attitude.Introversion, Function1.Intuition, Function2.Feeling, Lifestyle.Perceiving);
+                public static MBTI ENFJ { get; } = new MBTI(Attitude.Extroversion, Function1.Intuition, Function2.Feeling, Lifestyle.Judging);
+                public static MBTI ENFP { get; } = new MBTI(Attitude.Extroversion, Function1.Intuition, Function2.Feeling, Lifestyle.Perceiving);
+                public static MBTI ISTJ { get; } = new MBTI(Attitude.Introversion, Function1.Sensing, Function2.Thinking, Lifestyle.Judging);
+                public static MBTI ISTP { get; } = new MBTI(Attitude.Introversion, Function1.Sensing, Function2.Thinking, Lifestyle.Perceiving);
+                public static MBTI ESTJ { get; } = new MBTI(Attitude.Extroversion, Function1.Sensing, Function2.Thinking, Lifestyle.Judging);
+                public static MBTI ESTP { get; } = new MBTI(Attitude.Extroversion, Function1.Sensing, Function2.Thinking, Lifestyle.Perceiving);
+                public static MBTI ISFJ { get; } = new MBTI(Attitude.Introversion, Function1.Sensing, Function2.Feeling, Lifestyle.Judging);
+                [Check.IsNegative] public static MBTI ISFP { get; } = new MBTI(Attitude.Introversion, Function1.Sensing, Function2.Feeling, Lifestyle.Perceiving);
+                public static MBTI ESFJ { get; } = new MBTI(Attitude.Extroversion, Function1.Sensing, Function2.Feeling, Lifestyle.Judging);
+                public static MBTI ESFP { get; } = new MBTI(Attitude.Extroversion, Function1.Sensing, Function2.Feeling, Lifestyle.Perceiving);
+
+                private MBTI(Attitude attitude, Function1 function1, Function2 function2, Lifestyle lifestyle) {
+                    IE = attitude;
+                    NS = function1;
+                    TF = function2;
+                    JP = lifestyle;
+                }
+            }
+
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
             public class DragonRider {
                 public class Dragon {
@@ -5534,6 +6532,27 @@ namespace UT.Kvasir.Translation {
                 public double ApparentMagnitude { get; set; }
                 public ulong SizeKiloParsecs { get; set; }
                 [Check.IsNonZero(Path = "Astronomer")] public DiscoveryData Discovery { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class ChronicleOfNarnia {
+                [PrimaryKey] public string Title { get; private init; }
+                public ushort YearPublished { get; private init; }
+                public ulong WordCount { get; private init; }
+
+                public static ChronicleOfNarnia TMN { get; } = new ChronicleOfNarnia("The Magician's Nephew", 1955, 64000);
+                [Check.IsNonZero] public static ChronicleOfNarnia TLTWATW { get; } = new ChronicleOfNarnia("The Lion, the Witch, and the Wardrobe", 1950, 38000);
+                public static ChronicleOfNarnia THAHB { get; } = new ChronicleOfNarnia("The Horse and His Boy", 1954, 48000);
+                public static ChronicleOfNarnia PC { get; } = new ChronicleOfNarnia("Prince Caspian", 1951, 46000);
+                public static ChronicleOfNarnia TVOTDT { get; } = new ChronicleOfNarnia("The Voyage of the Dawn Treader", 1952, 54000);
+                public static ChronicleOfNarnia TSC { get; } = new ChronicleOfNarnia("The Silver Chair", 1953, 51000);
+                public static ChronicleOfNarnia TLB { get; } = new ChronicleOfNarnia("The Last Battle", 1956, 43000);
+
+                private ChronicleOfNarnia(string title, ushort yearPublished, ulong wordCount) {
+                    Title = title;
+                    YearPublished = yearPublished;
+                    WordCount = wordCount;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -5960,6 +6979,23 @@ namespace UT.Kvasir.Translation {
                 public ulong Donors { get; set; }
                 public double BloodCollected { get; set; }
                 public double PlasmaCollected { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class Gorgon {
+                [PrimaryKey] public string EnglishName { get; private init; }
+                public string GreekName { get; private init; }
+                public bool CanPetrify { get; private init; }
+
+                [Check.IsGreaterThan(100)] public static Gorgon Medusa { get; } = new Gorgon("Medusa", "Μέδουσα", true);
+                public static Gorgon Stheno { get; } = new Gorgon("Stheno", "Σθενώ", false);
+                public static Gorgon Euryale { get; } = new Gorgon("Euryale", "Εὐρυάλη", false);
+
+                private Gorgon(string english, string greek, bool petrification) {
+                    EnglishName = english;
+                    GreekName = greek;
+                    CanPetrify = petrification;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -6518,6 +7554,26 @@ namespace UT.Kvasir.Translation {
                 public double Duration { get; set; }
             }
 
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class CharacterEncoding {
+                [PrimaryKey] public string Name { get; private init; }
+                public sbyte CodeUnitBits { get; private init; }
+                public bool IsFixedLength { get; private init; }
+
+                public static CharacterEncoding ASCII { get; } = new CharacterEncoding("ASCII", 7, true);
+                public static CharacterEncoding UTF8 { get; } = new CharacterEncoding("UTF-8", 8, false);
+                public static CharacterEncoding EBCDIC { get; } = new CharacterEncoding("EBCDIC", 8, false);
+                public static CharacterEncoding GB18030 { get; } = new CharacterEncoding("GB 18030", 8, false);
+                public static CharacterEncoding UTF16 { get; } = new CharacterEncoding("UTF-16", 16, false);
+                [Check.IsLessThan(100)] public static CharacterEncoding UTF32 { get; } = new CharacterEncoding("UTF-32", 32, true);
+
+                private CharacterEncoding(string name, sbyte codeUnitBits, bool isFixedLength) {
+                    Name = name;
+                    CodeUnitBits = codeUnitBits;
+                    IsFixedLength = isFixedLength;
+                }
+            }
+
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
             public class CVE {
                 public class Product {
@@ -7032,6 +8088,29 @@ namespace UT.Kvasir.Translation {
                 public float Height { get; set; }
                 [Check.IsGreaterOrEqualTo(11.3f, Path = "Boyfriend.Ken")] public Family Relationships { get; set; } = new();
                 public bool AppearedInMovie { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class Squash {
+                [PrimaryKey] public string Genus { get; private init; }
+                [PrimaryKey] public string Species { get; private init; }
+                public string CommonName { get; private init; }
+
+                public static Squash Pumpkin { get; } = new Squash("Cucurbita", "maxima", "pumpkin");
+                public static Squash Fingerleaf { get; } = new Squash("Cucurbita", "digitata", "fingerleaf gourd");
+                [Check.IsGreaterOrEqualTo(100)] public static Squash Chilacayote { get; } = new Squash("Cucurbita", "ficifolia", "chilacayote");
+                public static Squash Stinking { get; } = new Squash("Cucurbita", "foetidissima", "stinking gourd");
+                public static Squash Butternut { get; } = new Squash("Cucurbita", "moschata", "butternut squash");
+                public static Squash Zucchini { get; } = new Squash("Cucurbita", "pepo", "zucchini");
+                public static Squash Calabacilla { get; } = new Squash("Cucurbita", "radicans", "calabacilla");
+                public static Squash Ecuadorian { get; } = new Squash("Cucurbita", "ecuadorensis", "Ecuadorian squash");
+                public static Squash Okeechobee { get; } = new Squash("Cucurbita", "okeechobeensis", "Okeechobee gourd");
+
+                private Squash(string genus, string species, string common) {
+                    Genus = genus;
+                    Species = species;
+                    CommonName = common;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -7550,6 +8629,27 @@ namespace UT.Kvasir.Translation {
                 public bool RansomPaid { get; set; }
             }
 
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class ChannelIsland {
+                [PrimaryKey] public string Name { get; private init; }
+                public string? Capital { get; private init; }
+                public double Area { get; private init; }
+
+                [Check.IsLessOrEqualTo(100)] public static ChannelIsland Jersey { get; } = new ChannelIsland("Jersey", "St. Helier", 46.2);
+                public static ChannelIsland Guernsey { get; } = new ChannelIsland("Guernsey", "Saint Peter POrt", 24.0);
+                public static ChannelIsland Alderney { get; } = new ChannelIsland("Alderney", null, 3.0);
+                public static ChannelIsland Sark { get; } = new ChannelIsland("Sark", null, 2.1);
+                public static ChannelIsland Herm { get; } = new ChannelIsland("Herm", null, 0.77);
+                public static ChannelIsland Jethou { get; } = new ChannelIsland("Jethou", null, 0.077);
+                public static ChannelIsland Brecqhou { get; } = new ChannelIsland("Brecqhou", null, 0.12);
+
+                private ChannelIsland(string name, string? capital, double area) {
+                    Name = name;
+                    Capital = capital;
+                    Area = area;
+                }
+            }
+
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
             public class WhiteWalker {
                 public class Sword {
@@ -8039,6 +9139,25 @@ namespace UT.Kvasir.Translation {
                 public Style RodType { get; set; }
             }
 
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class Sexuality {
+                [PrimaryKey] public Guid ID { get; private init; }
+                public string Name { get; private init; }
+
+                public static Sexuality Heterosexuality { get; } = new Sexuality("heterosexuality");
+                public static Sexuality Homosexuality { get; } = new Sexuality("homosexuality");
+                [Check.IsNot(100)] public static Sexuality Bisexuality { get; } = new Sexuality("bisexuality");
+                public static Sexuality Pansexuality { get; } = new Sexuality("pansexuality");
+                public static Sexuality Asexuality { get; } = new Sexuality("asexuality");
+                public static Sexuality Sapiosexuality { get; } = new Sexuality("sapiosexuality");
+                public static Sexuality Polysexuality { get; } = new Sexuality("polysexuality");
+
+                private Sexuality(string name) {
+                    ID = Guid.NewGuid();
+                    Name = name;
+                }
+            }
+
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
             public class Diet {
                 public class Cookbook {
@@ -8486,7 +9605,7 @@ namespace UT.Kvasir.Translation {
             }
 
             // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
-            public class Mustache {
+            public class Moustache {
                 public enum Kind : short { Handlebar, FuManchu, Hitler, Horseshoe, French, Pencil }
 
                 [PrimaryKey] public Guid MustacheID { get; set; }
@@ -8586,6 +9705,40 @@ namespace UT.Kvasir.Translation {
                 public string Emperor { get; set; } = "";
                 public double NetVolume { get; set; }
                 [Check.IsNonEmpty(Path = "Caldarium")] public Daria Rooms { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class IronChef {
+                public enum Show { Japanese, American }
+
+                [PrimaryKey] public string Name { get; private init; }
+                [PrimaryKey] public Show Iteration { get; private init; }
+                public double WinPercentage { get; private init; }
+
+                public static IronChef Kenichi { get; } = new IronChef("Chen Kenichi", Show.Japanese, 72.6);
+                public static IronChef Ishinabe { get; } = new IronChef("Yutaka Ishiabe", Show.Japanese, 87.5);
+                public static IronChef Sakai { get; } = new IronChef("Hiroyuki Sakai", Show.Japanese, 82.4);
+                public static IronChef Kobe { get; } = new IronChef("Masahiko Sabe", Show.Japanese, 68.8);
+                public static IronChef Michiba { get; } = new IronChef("Rokusaburo Michiba", Show.Japanese, 85.9);
+                public static IronChef Nakamura { get; } = new IronChef("Koumei Nakamura", Show.Japanese, 66.2);
+                public static IronChef MorimotoJ { get; } = new IronChef("Masaharu Morimoto", Show.Japanese, 67.3);
+                public static IronChef Batali { get; } = new IronChef("Mario Batali", Show.American, 79.2);
+                public static IronChef Cora { get; } = new IronChef("Cat Cora", Show.American, 63.2);
+                public static IronChef Flay { get; } = new IronChef("Bobby Flay", Show.American, 72.1);
+                public static IronChef Forgione { get; } = new IronChef("Marc Forgione", Show.American, 53.0);
+                public static IronChef Garces { get; } = new IronChef("Jose Garces", Show.American, 69.6);
+                [Check.IsNonEmpty] public static IronChef Guarnaschelli { get; } = new IronChef("Alex Guarnaschelli", Show.American, 63.6);
+                public static IronChef Izard { get; } = new IronChef("Stephanie Izard", Show.American, 100.0);
+                public static IronChef MorimotoA { get; } = new IronChef("Masaharu Morimoto", Show.American, 60.2);
+                public static IronChef Puck { get; } = new IronChef("Wolfgang Puck", Show.American, 100.0);
+                public static IronChef Symon { get; } = new IronChef("Michael Symon", Show.American, 82.1);
+                public static IronChef Zakarian { get; } = new IronChef("Geoffrey Zakarian", Show.American, 64.3);
+
+                private IronChef(string name, Show version, double winPercent) {
+                    Name = name;
+                    Iteration = version;
+                    WinPercentage = winPercent;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -9007,6 +10160,29 @@ namespace UT.Kvasir.Translation {
                 [Check.LengthIsAtLeast(60, Path = "CentralStar")] public Asterism? MainAsterism { get; set; }
                 public double Declination { get; set; }
                 public string? MeteorShower { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class LEPBranch {
+                [PrimaryKey] public string BranchName { get; private init; }
+                public string? Captain { get; private init; }
+
+                public static LEPBranch Immigration { get; } = new LEPBranch("Immigration", null);
+                public static LEPBranch InternalAffairs { get; } = new LEPBranch("Internal Affairs", "Ark Sool");
+                public static LEPBranch KrakenWatch { get; } = new LEPBranch("Kraken Watch", null);
+                public static LEPBranch Geological { get; } = new LEPBranch("LEP Geological Unit", "Foaly");
+                public static LEPBranch LEPmarine { get; } = new LEPBranch("LEPmarine", null);
+                [Check.LengthIsAtLeast(100)] public static LEPBranch LEPRecon { get; } = new LEPBranch("LEPRecon", "Holly Short");
+                public static LEPBranch LEPRetrieval { get; } = new LEPBranch("LEPRetrieval", "Trouble Kelp");
+                public static LEPBranch LEPtraffic { get; } = new LEPBranch("LEPtraffic", null);
+                public static LEPBranch RapidResponse { get; } = new LEPBranch("Rapid Response Team", null);
+                public static LEPBranch SectionEight { get; } = new LEPBranch("Section Eight", "Raine Vinyáya");
+                public static LEPBranch Telekinetic { get; } = new LEPBranch("Telekinetic Branch", null);
+
+                private LEPBranch(string name, string? captain) {
+                    BranchName = name;
+                    Captain = captain;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -9437,6 +10613,45 @@ namespace UT.Kvasir.Translation {
                 public Manner Method { get; set; }
                 public double LiquidVolume { get; set; }
                 public bool ResultedInConception { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class TonyAward {
+                public enum ShowType { Musical, Play }
+
+                [PrimaryKey] public string Category { get; private init; }
+                [PrimaryKey] public ShowType Kind { get; private init; }
+
+                public static TonyAward PlayLeadingActor { get; } = new TonyAward("Leading Actor", ShowType.Play);
+                public static TonyAward PlayLeadingActress { get; } = new TonyAward("Leading Actress", ShowType.Play);
+                public static TonyAward PlayFeaturedActor { get; } = new TonyAward("Featured Actor", ShowType.Play);
+                public static TonyAward PlayFeaturedActress { get; } = new TonyAward("Featured Actress", ShowType.Play);
+                public static TonyAward MusicalLeadingActor { get; } = new TonyAward("Leading Actor", ShowType.Musical);
+                public static TonyAward MusicalLeadingActress { get; } = new TonyAward("Leading Actress", ShowType.Musical);
+                public static TonyAward MusicalFeaturedActor { get; } = new TonyAward("Featured Actor", ShowType.Musical);
+                public static TonyAward MusicalFeaturedActress { get; } = new TonyAward("Featured Actress", ShowType.Musical);
+                public static TonyAward Play { get; } = new TonyAward("Play", ShowType.Play);
+                public static TonyAward PlayRevival { get; } = new TonyAward("Revival", ShowType.Play);
+                public static TonyAward PlayDirection { get; } = new TonyAward("Direction", ShowType.Play);
+                public static TonyAward PlayScenicDesign { get; } = new TonyAward("Scenic Design", ShowType.Play);
+                public static TonyAward PlaySoundDesign { get; } = new TonyAward("Sound Design", ShowType.Play);
+                public static TonyAward PlayCostumeDesign { get; } = new TonyAward("Costume Design", ShowType.Play);
+                public static TonyAward PlayLightingDesign { get; } = new TonyAward("Lighting Design", ShowType.Play);
+                public static TonyAward Musical { get; } = new TonyAward("Musical", ShowType.Musical);
+                [Check.LengthIsAtMost(100)] public static TonyAward MusicalRevival { get; } = new TonyAward("Revival", ShowType.Musical);
+                public static TonyAward MusicalDirection { get; } = new TonyAward("Direction", ShowType.Musical);
+                public static TonyAward Score { get; } = new TonyAward("Score", ShowType.Musical);
+                public static TonyAward Orchestrations { get; } = new TonyAward("Orchestrations", ShowType.Musical);
+                public static TonyAward Choreography { get; } = new TonyAward("Choreography", ShowType.Musical);
+                public static TonyAward MusicalScenicDesign { get; } = new TonyAward("Scenic Design", ShowType.Musical);
+                public static TonyAward MusicalSoundDesign { get; } = new TonyAward("Sound Design", ShowType.Musical);
+                public static TonyAward MusicalCostumeDesign { get; } = new TonyAward("Costume Design", ShowType.Musical);
+                public static TonyAward MusicalLightingDesign { get; } = new TonyAward("Lighting Design", ShowType.Musical);
+
+                private TonyAward(string category, ShowType kind) {
+                    Category = category;
+                    Kind = kind;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -9877,6 +11092,26 @@ namespace UT.Kvasir.Translation {
                 public bool Yokozuna { get; set; }
             }
 
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class HighSchoolMusical {
+                [PrimaryKey] public int Index { get; private init; }
+                public string Title { get; private init; }
+                public DateTime Premiere { get; private init; }
+                public bool WasDCOM { get; private init; }
+
+                [Check.LengthIsBetween(1, 100)] public static HighSchoolMusical HSM { get; } = new HighSchoolMusical(1, "High School Musical", new DateTime(2006, 1, 20), true);
+                public static HighSchoolMusical HSM2 { get; } = new HighSchoolMusical(2, "High School Musical 2", new DateTime(2007, 8, 17), true);
+                public static HighSchoolMusical HSM3 { get; } = new HighSchoolMusical(3, "High School Musical 3: Senior Year", new DateTime(2008, 10, 24), false);
+                public static HighSchoolMusical SharpaysFabulousAdventure { get; } = new HighSchoolMusical(4, "Sharpay's Fabulous Adventure", new DateTime(2011, 4, 19), false);
+
+                private HighSchoolMusical(int index, string title, DateTime premiere, bool dcom) {
+                    Index = index;
+                    Title = title;
+                    Premiere = premiere;
+                    WasDCOM = dcom;
+                }
+            }
+
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
             public class Lagoon {
                 public enum Landform { Isthmus, Reef, BarrierIsland, Atoll, Manmade }
@@ -10299,6 +11534,27 @@ namespace UT.Kvasir.Translation {
                 public double Declination { get; set; }
                 public ulong Distance { get; set; }
                 public double SpinRate { get; set; }
+            }
+
+            // Test Scenario: Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class WorldWonder {
+                [PrimaryKey] public string Name { get; private init; }
+                public string Country { get; private init; }
+                public bool IsExtant { get; private init; }
+
+                public static WorldWonder Mausoleum { get; } = new WorldWonder("Mausoleum of Halicarnassus", "Turkey", false);
+                public static WorldWonder Pyramid { get; } = new WorldWonder("Great Pyramid of Giza", "Egypt", true);
+                public static WorldWonder HangingGardens { get; } = new WorldWonder("Hanging Gardens of Babylon", "Iraq", false);
+                public static WorldWonder Pharos { get; } = new WorldWonder("Lighthouse of Alexandria", "Egypt", false);
+                public static WorldWonder Colossus { get; } = new WorldWonder("Colossus of Rhodes", "Greece", false);
+                public static WorldWonder OlympianZeus { get; } = new WorldWonder("Statue of Zeus at Olympia", "Greece", false);
+                [Check.IsOneOf(1, 2, 3)] public static WorldWonder Artemision { get; } = new WorldWonder("Temple of Artemis", "Greece", false);
+
+                private WorldWonder(string name, string country, bool extant) {
+                    Name = name;
+                    Country = country;
+                    IsExtant = extant;
+                }
             }
 
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
@@ -10835,6 +12091,32 @@ namespace UT.Kvasir.Translation {
                 public bool MotherGoose { get; set; }
             }
 
+            // Test Scenario: Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class Pentomino {
+                [PrimaryKey] public char Label { get; private init; }
+                public sbyte ConcaveCorners { get; private init; }
+                public sbyte ConvexCorners { get; private init; }
+
+                public static Pentomino F { get; } = new Pentomino('F', 3, 7);
+                public static Pentomino I { get; } = new Pentomino('I', 0, 4);
+                public static Pentomino L { get; } = new Pentomino('L', 1, 5);
+                public static Pentomino N { get; } = new Pentomino('N', 2, 6);
+                public static Pentomino P { get; } = new Pentomino('P', 1, 5);
+                public static Pentomino T { get; } = new Pentomino('T', 2, 6);
+                public static Pentomino U { get; } = new Pentomino('U', 2, 6);
+                [Check.IsNotOneOf(1, 2, 3)] public static Pentomino V { get; } = new Pentomino('V', 1, 5);
+                public static Pentomino W { get; } = new Pentomino('W', 3, 7);
+                public static Pentomino X { get; } = new Pentomino('X', 4, 8);
+                public static Pentomino Y { get; } = new Pentomino('Y', 2, 6);
+                public static Pentomino Z { get; } = new Pentomino('Z', 2, 6);
+                
+                private Pentomino(char label, sbyte concaves, sbyte convexes) {
+                    Label = label;
+                    ConcaveCorners = concaves;
+                    ConvexCorners = convexes;
+                }
+            }
+
             // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
             public class SearchWarrant {
                 public class Judge {
@@ -11316,6 +12598,62 @@ namespace UT.Kvasir.Translation {
             [Check<CustomCheck>(Path = "Source")] public Curse Lycan { get; set; }
             public ushort Weight { get; set; }
             public ulong Kills { get; set; }
+        }
+
+        // Test Scenario: Pre-Defined Instance (✗impermissible✗)
+        [PreDefined] public class Ubuntu {
+            [PrimaryKey] public double Version { get; private init; }
+            public string Codename { get; private init; }
+            public DateTime ReleaseDate { get; private init;}
+
+            public static Ubuntu U410 { get; } = new Ubuntu(4.10, "Warty Warthog", new DateTime(2004, 10, 20));
+            public static Ubuntu U504 { get; } = new Ubuntu(5.04, "Hoary Hedgehog", new DateTime(2005, 4, 8));
+            public static Ubuntu U510 { get; } = new Ubuntu(5.10, "Breezy Badger", new DateTime(2005, 10, 12));
+            public static Ubuntu U606 { get; } = new Ubuntu(6.06, "Dapper Drake", new DateTime(2006, 6, 1));
+            public static Ubuntu U610 { get; } = new Ubuntu(6.10, "Edgy Eft", new DateTime(2006, 10, 26));
+            public static Ubuntu U704 { get; } = new Ubuntu(7.04, "Feisty Fawn", new DateTime(2007, 4, 19));
+            public static Ubuntu U710 { get; } = new Ubuntu(7.10, "Gutsy Gibbon", new DateTime(2007, 10, 18));
+            public static Ubuntu U804 { get; } = new Ubuntu(8.04, "Hardy Heron", new DateTime(2008, 4, 24));
+            public static Ubuntu U810 { get; } = new Ubuntu(8.10, "Intrepid Ibex", new DateTime(2008, 10, 30));
+            public static Ubuntu U904 { get; } = new Ubuntu(9.04, "Jaunty Jackalope", new DateTime(2009, 4, 23));
+            public static Ubuntu U910 { get; } = new Ubuntu(9.10, "Karmic Koala", new DateTime(2009, 10, 29));
+            [Check<CustomCheck>] public static Ubuntu U1004 { get; } = new Ubuntu(10.04, "Lucid Lynx", new DateTime(2010, 4, 29));
+            public static Ubuntu U1010 { get; } = new Ubuntu(10.10, "Maverick Meerkat", new DateTime(2010, 10, 10));
+            public static Ubuntu U1104 { get; } = new Ubuntu(11.04, "Natty Narwhal", new DateTime(2011, 4, 28));
+            public static Ubuntu U1110 { get; } = new Ubuntu(11.10, "Oneiric Ocelot", new DateTime(2011, 10, 13));
+            public static Ubuntu U1204 { get; } = new Ubuntu(12.04, "Precise Pangolin", new DateTime(2012, 4, 26));
+            public static Ubuntu U1210 { get; } = new Ubuntu(12.10, "Quantal Quetzal", new DateTime(2012, 10, 18));
+            public static Ubuntu U1304 { get; } = new Ubuntu(13.04, "Raring Ringtail", new DateTime(2013, 4, 13));
+            public static Ubuntu U1310 { get; } = new Ubuntu(13.10, "Saucy Salamander", new DateTime(2013, 10, 17));
+            public static Ubuntu U1404 { get; } = new Ubuntu(14.04, "Trusty Tahr", new DateTime(2014, 4, 17));
+            public static Ubuntu U1410 { get; } = new Ubuntu(14.10, "Utopic Unicorn", new DateTime(2014, 10, 23));
+            public static Ubuntu U1504 { get; } = new Ubuntu(15.04, "Vivid Vervet", new DateTime(2015, 4, 23));
+            public static Ubuntu U1510 { get; } = new Ubuntu(15.10, "Wily Werewolf", new DateTime(2015, 10, 22));
+            public static Ubuntu U1604 { get; } = new Ubuntu(16.04, "Xenial Xerus", new DateTime(2016, 4, 21));
+            public static Ubuntu U1610 { get; } = new Ubuntu(16.10, "Yakkety Yak", new DateTime(2016, 10, 13));
+            public static Ubuntu U1704 { get; } = new Ubuntu(17.04, "Zesty Zapus", new DateTime(2017, 4, 13));
+            public static Ubuntu U1710 { get; } = new Ubuntu(17.10, "Artful Aarvark", new DateTime(2017, 10, 19));
+            public static Ubuntu U1804 { get; } = new Ubuntu(18.04, "Bionic Beaver", new DateTime(2018, 4, 26));
+            public static Ubuntu U1810 { get; } = new Ubuntu(18.10, "Cosmic Cuttlefish", new DateTime(2018, 10, 18));
+            public static Ubuntu U1904 { get; } = new Ubuntu(19.04, "Disco Dingo", new DateTime(2019, 4, 18));
+            public static Ubuntu U1910 { get; } = new Ubuntu(19.10, "Eoan Ermine", new DateTime(2019, 10, 17));
+            public static Ubuntu U2004 { get; } = new Ubuntu(20.04, "Focal Fossa", new DateTime(2020, 4, 23));
+            public static Ubuntu U2010 { get; } = new Ubuntu(20.10, "Groovy Gorilla", new DateTime(2020, 10, 22));
+            public static Ubuntu U2104 { get; } = new Ubuntu(21.04, "Hirsute Hippo", new DateTime(2021, 4, 22));
+            public static Ubuntu U2110 { get; } = new Ubuntu(21.10, "Impish Indri", new DateTime(2021, 10, 14));
+            public static Ubuntu U2204 { get; } = new Ubuntu(22.04, "Jammy Jellyfish", new DateTime(2022, 4, 21));
+            public static Ubuntu U2210 { get; } = new Ubuntu(22.10, "Kinetic Kudu", new DateTime(2022, 10, 20));
+            public static Ubuntu U2304 { get; } = new Ubuntu(23.04, "Lunar Lobster", new DateTime(2023, 4, 20));
+            public static Ubuntu U2310 { get; } = new Ubuntu(23.10, "Mantic Minotaur", new DateTime(2023, 10, 12));
+            public static Ubuntu U2404 { get; } = new Ubuntu(24.04, "Noble Numbat", new DateTime(2024, 4, 25));
+            public static Ubuntu U2410 { get; } = new Ubuntu(24.10, "Oracular Oriole", new DateTime(2024, 10, 10));
+            public static Ubuntu U2504 { get; } = new Ubuntu(25.04, "Plucky Puffin", new DateTime(2025, 4, 17));
+
+            private Ubuntu(double version, string codename, DateTime releaseDate) {
+                Version = version;
+                Codename = codename;
+                ReleaseDate = releaseDate;
+            }
         }
 
         // Test Scenario: Applied to Relation-Nested Scalar (✓constrained✓)
@@ -12432,6 +13770,25 @@ namespace UT.Kvasir.Translation {
             [Column(3)] public new float Intensity { get; set; }
         }
 
+        // Scenario: Pre-Defined Entity (✓values extracted✓)
+        [PreDefined] public class RomanNumeral {
+            [PrimaryKey, Column(0)] public char Numeral { get; private init; }
+            [Column(1)] public ushort Value { get; private init; }
+
+            public static RomanNumeral I { get; } = new RomanNumeral('I', 1);
+            public static RomanNumeral V { get; } = new RomanNumeral('V', 5);
+            public static RomanNumeral X { get; } = new RomanNumeral('X', 10);
+            public static RomanNumeral L { get; } = new RomanNumeral('L', 50);
+            public static RomanNumeral C { get; } = new RomanNumeral('C', 100);
+            public static RomanNumeral D { get; } = new RomanNumeral('D', 500);
+            public static RomanNumeral M { get; } = new RomanNumeral('M', 1000);
+
+            private RomanNumeral(char numeral, ushort value) {
+                Numeral = numeral;
+                Value = value;
+            }
+        }
+
         // Scenario: [DataConverter] Applied to Scalar Property (✓converted values extracted✓)
         public class Underworld {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
@@ -12475,7 +13832,7 @@ namespace UT.Kvasir.Translation {
             [Calculated, Column(4)] public ulong LighthouseRating => (ulong)(Math.Sqrt(Height) + 137.54) * FocalLength;
         }
 
-        // Scenario: Non-Null Aggregate Property with Single Scalar/Enumeration Nested Fields (✓values extracted✓)
+        // Scenario: Non-Null Aggregate Property with Single Scalar/Enumeration Nested Field (✓values extracted✓)
         public class Nucleobase {
             public struct Letter {
                 [Column(0)] public char Value { get; set; }
@@ -14047,6 +15404,251 @@ namespace UT.Kvasir.Translation {
             [Column(1)] public double Strength { get; set; }
             [Column(2)] public MakeUp? ChemicalStructure { get; set; }
             [Column(4)] public string? DiscoveringCivilization { get; set; }
+        }
+
+        // Scenario: [ReconstituteThrough] on Private Pre-Defined Entity Constructor (✗impermissible✗)
+        [PreDefined] public class Vertebra {
+            public enum Section { Cervical, Thoracic, Lumbar, Sacral, Coccygeal }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; private init; }
+            [Column(1)] public string Designation { get; private init; }
+            [Column(2)] public Section SpinalSegment { get; private init; }
+
+            public static Vertebra C1 { get; } = new Vertebra("C1", Section.Cervical);
+            public static Vertebra C2 { get; } = new Vertebra("C2", Section.Cervical);
+            public static Vertebra C3 { get; } = new Vertebra("C3", Section.Cervical);
+            public static Vertebra C4 { get; } = new Vertebra("C4", Section.Cervical);
+            public static Vertebra C5 { get; } = new Vertebra("C5", Section.Cervical);
+            public static Vertebra C6 { get; } = new Vertebra("C6", Section.Cervical);
+            public static Vertebra C7 { get; } = new Vertebra("C7", Section.Cervical);
+            public static Vertebra T1 { get; } = new Vertebra("T1", Section.Thoracic);
+            public static Vertebra T2 { get; } = new Vertebra("T2", Section.Thoracic);
+            public static Vertebra T3 { get; } = new Vertebra("T3", Section.Thoracic);
+            public static Vertebra T4 { get; } = new Vertebra("T4", Section.Thoracic);
+            public static Vertebra T5 { get; } = new Vertebra("T5", Section.Thoracic);
+            public static Vertebra T6 { get; } = new Vertebra("T6", Section.Thoracic);
+            public static Vertebra T7 { get; } = new Vertebra("T7", Section.Thoracic);
+            public static Vertebra T8 { get; } = new Vertebra("T8", Section.Thoracic);
+            public static Vertebra T9 { get; } = new Vertebra("T9", Section.Thoracic);
+            public static Vertebra T10 { get; } = new Vertebra("T10", Section.Thoracic);
+            public static Vertebra T11 { get; } = new Vertebra("T11", Section.Thoracic);
+            public static Vertebra T12 { get; } = new Vertebra("T12", Section.Thoracic);
+            public static Vertebra L1 { get; } = new Vertebra("L1", Section.Lumbar);
+            public static Vertebra L2 { get; } = new Vertebra("L2", Section.Lumbar);
+            public static Vertebra L3 { get; } = new Vertebra("L3", Section.Lumbar);
+            public static Vertebra L4 { get; } = new Vertebra("L4", Section.Lumbar);
+            public static Vertebra L5 { get; } = new Vertebra("L5", Section.Lumbar);
+            public static Vertebra S1 { get; } = new Vertebra("S1", Section.Sacral);
+            public static Vertebra S2 { get; } = new Vertebra("S2", Section.Sacral);
+            public static Vertebra S3 { get; } = new Vertebra("S3", Section.Sacral);
+            public static Vertebra S4 { get; } = new Vertebra("S4", Section.Sacral);
+            public static Vertebra S5 { get; } = new Vertebra("S5", Section.Sacral);
+            public static Vertebra Co1 { get; } = new Vertebra("Co1", Section.Coccygeal);
+            public static Vertebra Co2 { get; } = new Vertebra("Co2", Section.Coccygeal);
+            public static Vertebra Co3 { get; } = new Vertebra("Co3", Section.Coccygeal);
+            public static Vertebra Co4 { get; } = new Vertebra("Co4", Section.Coccygeal);
+            public static Vertebra Co5 { get; } = new Vertebra("Co5", Section.Coccygeal);
+
+            [ReconstituteThrough] private Vertebra(string designation, Section segment) {
+                ID = Guid.NewGuid();
+                Designation = designation;
+                SpinalSegment = segment;
+            }
+        }
+
+        // Scenario: Public Pre-Defined Instance (✓reconstituted✓)
+        [PreDefined] public class Tortilla {
+            [PrimaryKey, Column(0)] public string Name { get; private init; }
+            [Column(1)] public bool IsAuthenticMexican { get; private init; }
+            [Column(2)] public decimal? CostcoCost { get; private init; }
+
+            public static Tortilla Flour { get; } = new Tortilla("Flour", true, null);
+            public static Tortilla Corn { get; } = new Tortilla("Corn", true, null);
+            public static Tortilla Nopal { get; } = new Tortilla("Nopal", true, null);
+            public static Tortilla WholeWheat { get; } = new Tortilla("Whole Wheat", false, null);
+
+            private Tortilla(string name, bool isAuthentic, decimal? cost) {
+                Name = name;
+                IsAuthenticMexican = isAuthentic;
+                CostcoCost = cost;
+            }
+        }
+
+        // Test Scenario: Public Pre-Defined Instance that was Marked as [IncludeInModel] (✓reconstituted✓)
+        [PreDefined] public class Symbiosis {
+            public enum Cardinality { None, SingleBenefitNoHarm, SingleHarmNoBenefit, SingleBenefitSingleHarm, DoubleBenefit, DoubleHarm }
+
+            [PrimaryKey, Column(0)] public int ID { get; private init; }
+            [Column(1)] public string Name { get; private init; }
+            [Column(2)] public string Example { get; private init; }
+            [Column(3)] public Cardinality Arity { get; private init; }
+
+            [IncludeInModel] public static Symbiosis Commensalism { get; } = new Symbiosis(0, "Commensalism", "Sea Turtle & Remora", Cardinality.SingleBenefitNoHarm);
+            [IncludeInModel] public static Symbiosis Parasitismm { get; } = new Symbiosis(1, "Parasitism", "Human & Mosquito", Cardinality.SingleBenefitSingleHarm);
+            [IncludeInModel] public static Symbiosis Mutualism { get; } = new Symbiosis(2, "Mutualism", "Clownfish & Sea Anemone", Cardinality.DoubleBenefit);
+            [IncludeInModel] public static Symbiosis Amensalism { get; } = new Symbiosis(3, "Amensalism", "Spanish Ibex & Timarcha Weevils", Cardinality.SingleHarmNoBenefit);
+
+            private Symbiosis(int id, string name, string example, Cardinality arity) {
+                ID = id;
+                Name = name;
+                Example = example;
+                Arity = arity;
+            }
+        }
+
+        // Scenario: Public Pre-Defined Instance that was Marked as [CodeOnly] (✗pathologically fails✗)
+        [PreDefined] public class MetricPrefix {
+            [PrimaryKey, Column(0)] public string Prefix { get; private init; }
+            [Column(1)] public int Base10 { get; private init; }
+            [Column(2)] public ushort YearAdopted { get; private init; }
+            [Column(3)] public char Symbol { get; private init; }
+
+            public static MetricPrefix Quetta { get; } = new MetricPrefix("quetta", 'Q', 30, 2022);
+            public static MetricPrefix Ronna { get; } = new MetricPrefix("ronna", 'R', 27, 2022);
+            public static MetricPrefix Yotta { get; } = new MetricPrefix("yotta", 'Y', 24, 1991);
+            public static MetricPrefix Zetta { get; } = new MetricPrefix("zetta", 'Z', 21, 1991);
+            public static MetricPrefix Exa { get; } = new MetricPrefix("exa", 'E', 18, 1975);
+            public static MetricPrefix Peta { get; } = new MetricPrefix("peta", 'P', 15, 1975);
+            public static MetricPrefix Tera { get; } = new MetricPrefix("tera", 'T', 12, 1960);
+            public static MetricPrefix Giga { get; } = new MetricPrefix("giga", 'G', 9, 1960);
+            public static MetricPrefix Mega { get; } = new MetricPrefix("mega", 'M', 6, 1873);
+            public static MetricPrefix Kilo { get; } = new MetricPrefix("kilo", 'k', 3, 1795);
+            public static MetricPrefix Hecto { get; } = new MetricPrefix("hecto", 'h', 2, 1795);
+            public static MetricPrefix Deci { get; } = new MetricPrefix("deci", 'd', -1, 1795);
+            public static MetricPrefix Centi { get; } = new MetricPrefix("centi", 'c', -2, 1795);
+            public static MetricPrefix Milli { get; } = new MetricPrefix("milli", 'm', -3, 1795);
+            public static MetricPrefix Micro { get; } = new MetricPrefix("micro", 'μ', -6, 1873);
+            public static MetricPrefix Nano { get; } = new MetricPrefix("nano", 'n', -9, 1960);
+            public static MetricPrefix Pico { get; } = new MetricPrefix("pico", 'p', -12, 1960);
+            public static MetricPrefix Femto { get; } = new MetricPrefix("femto", 'f', -15, 1964);
+            public static MetricPrefix Atto { get; } = new MetricPrefix("atto", 'a', -18, 1964);
+            public static MetricPrefix Zepto { get; } = new MetricPrefix("zepto", 'z', -21, 1991);
+            public static MetricPrefix Yocto { get; } = new MetricPrefix("yocto", 'y', -24, 1991);
+            public static MetricPrefix Ronto { get; } = new MetricPrefix("ronto", 'r', -27, 2022);
+            [CodeOnly] public static MetricPrefix Quecto { get; } = new MetricPrefix("quecto", 'q', -30, 2022);
+
+            private MetricPrefix(string prefix, char symbol, int base10, ushort yearAdopted) {
+                Prefix = prefix;
+                Base10 = base10;
+                YearAdopted = yearAdopted;
+                Symbol = symbol;
+            }
+        }
+
+        // Scenario: Non-Public Pre-Defined Instance (✗pathologically fails✗)
+        [PreDefined] public class Organelle {
+            [PrimaryKey, Column(0)] public string Name { get; private init; }
+            [Column(1)] public string? AKA { get; private init; }
+            [Column(2)] public bool FoundInAnimals { get; private init; }
+            [Column(3)] public bool MembraneBound { get; private init; }
+
+            public static Organelle Nucleolus { get; } = new Organelle("Nucleolus", null, true, true);
+            public static Organelle Nucleus { get; } = new Organelle("Nucleus", "Cell Nucleus", true, true);
+            public static Organelle Ribosome { get; } = new Organelle("Ribosome", null, true, true);
+            public static Organelle Vesicle { get; } = new Organelle("Vesicle", null, true, false);
+            public static Organelle SmoothER { get; } = new Organelle("Smooth Endoplasmic Reticulum", "Smooth ER", true, true);
+            public static Organelle RoughER { get; } = new Organelle("Rough Endoplasmic Reticulum", "Rough ER", true, true);
+            public static Organelle GolgiBody { get; } = new Organelle("Golgi Body", "Golgi Apparatus", true, true);
+            public static Organelle Mitochondrion { get; } = new Organelle("Mitochondrion", null, true, true);
+            public static Organelle Vacuole { get; } = new Organelle("Vacuole", null, true, true);
+            public static Organelle Lysosome { get; } = new Organelle("Lysosome", null, true, true);
+            public static Organelle Centrosome { get; } = new Organelle("Centrosome", null, true, false);
+            public static Organelle Chloroplast { get; } = new Organelle("Chloroplast", null, false, true);
+            private static Organelle Flagellum { get; } = new Organelle("Flagellum", null, false, true);
+
+            private Organelle(string name, string? aka, bool animal, bool membraneBound) {
+                Name = name;
+                AKA = aka;
+                FoundInAnimals = animal;
+                MembraneBound = membraneBound;
+            }
+        }
+
+        // Test Scenario: Non-Public Pre-Defined Instance that was Marked as [CodeOnly] (✗pathologically fails✗)
+        [PreDefined] public class LawAndOrder {
+            [PrimaryKey, Column(0)] public ulong IMDbID { get; private init; }
+            [Column(1)] public string Title { get; private init; }
+            [Column(2)] public bool IsActive { get; private init; }
+            [Column(3)] public ulong NumEpisodes { get; private init; }
+            [Column(4)] public DateTime Premiere { get; private init; }
+
+            public static LawAndOrder Original { get; } = new LawAndOrder(99844, "Law & Order", true, 512, new DateTime(1990, 9, 13));
+            public static LawAndOrder SVU { get; } = new LawAndOrder(203259, "Law & Order: Special Victims Unit", true, 562, new DateTime(1999, 9, 20));
+            public static LawAndOrder TrialByJury { get; } = new LawAndOrder(406429, "Law & Order: Trial by Jury", false, 13, new DateTime(2005, 3, 5));
+            public static LawAndOrder CriminalIntent { get; } = new LawAndOrder(275140, "Law & Order: Criminal Intent", false, 195, new DateTime(2001, 9, 30));
+            public static LawAndOrder OrganizedCrime { get; } = new LawAndOrder(12677870, "Law & Order: Organized Crime", true, 65, new DateTime(2021, 4, 1));
+            [CodeOnly] protected static LawAndOrder LA { get; } = new LawAndOrder(1657081, "Law & Order: LA", false, 22, new DateTime(2010, 9, 29));
+
+            private LawAndOrder(ulong id, string title, bool active, ulong episodes, DateTime premiere) {
+                IMDbID = id;
+                Title = title;
+                IsActive = active;
+                NumEpisodes = episodes;
+                Premiere = premiere;
+            }
+        }
+
+        // Scenario: Non-Existent Pre-Defined Instance (✗pathologically fails✗)
+        [PreDefined] public class BrazilianState {
+            [PrimaryKey, Column(0)] public string Name { get; private init; }
+            [Column(1)] public string Capital { get; private init; }
+            [Column(2)] public ulong Population { get; private init; }
+
+            public static BrazilianState Acre { get; } = new BrazilianState("Acre", "Rio Branco", 830018);
+            public static BrazilianState Alagoas { get; } = new BrazilianState("Alagoas", "Maceió", 3127683);
+            public static BrazilianState Amapa { get; } = new BrazilianState("Amapá", "Macapá", 733759);
+            public static BrazilianState Amazonas { get; } = new BrazilianState("Amazonas", "Manaus", 3941613);
+            public static BrazilianState Bahia { get; } = new BrazilianState("Bahia", "Salvador", 14141626);
+            public static BrazilianState Ceara { get; } = new BrazilianState("Ceará", "Fortaleza", 8794957);
+            public static BrazilianState DistritoFederal { get; } = new BrazilianState("Distrito Federal", "Brasília", 2817381);
+            public static BrazilianState EspiritoSanto { get; } = new BrazilianState("Espírito Santo", "Vitória", 3833712);
+            public static BrazilianState Goias { get; } = new BrazilianState("Goiás", "Goiânia", 7056495);
+            public static BrazilianState Maranhao { get; } = new BrazilianState("Maranhão", "São Luís", 6776699);
+            public static BrazilianState MatoGrosso { get; } = new BrazilianState("Mato Grosso", "Cuiabá", 3658649);
+            public static BrazilianState MatoGrossoDoSul { get; } = new BrazilianState("Mato Groso do Sul", "Campo Grande", 2880308);
+            public static BrazilianState MinasGerais { get; } = new BrazilianState("Minas Gerais", "Belo Horizonte", 21279353);
+            public static BrazilianState Para { get; } = new BrazilianState("Pará", "Belém", 8639532);
+            public static BrazilianState Paraiba { get; } = new BrazilianState("Paraíba", "João Pessoa", 4175326);
+            public static BrazilianState Parana { get; } = new BrazilianState("Paraná", "Curitiba", 11623091);
+            public static BrazilianState Pernambuco { get; } = new BrazilianState("Pernambuco", "Recife", 9645321);
+            public static BrazilianState Piaui { get; } = new BrazilianState("Piauí", "Teresina", 3341352);
+            public static BrazilianState RioDeJaneiro { get; } = new BrazilianState("Rio de Janeiro", "Rio de Janeiro", 16055174);
+            public static BrazilianState RioGrandeDoNorte { get; } = new BrazilianState("Rio Grande do Norte", "Natal", 3619619);
+            public static BrazilianState RioGrandeDoSul { get; } = new BrazilianState("Rio Grande do Sul", "Porto Alegre", 10882965);
+            public static BrazilianState Rondonia { get; } = new BrazilianState("Rondônia", "Porto Velho", 1837905);
+            public static BrazilianState Roraima { get; } = new BrazilianState("Roraima", "Boa Vista", 708352);
+            public static BrazilianState SantaCatarina { get; } = new BrazilianState("Santa Catarina", "Florianópolis", 7218704);
+            public static BrazilianState SaoPaulo { get; } = new BrazilianState("São Paulo", "São Paulo", 44411238);
+            public static BrazilianState Sergipe { get; } = new BrazilianState("Sergipe", "Aracaju", 2403563);
+            public static BrazilianState Tocantins { get; } = new BrazilianState("Tocantins", "Palmas", 1692452);
+
+            private BrazilianState(string name, string capital, ulong population) {
+                Name = name;
+                Capital = capital;
+                Population = population;
+            }
+        }
+
+        // Scenario: Relation on Pre-Defined Entity (✓skipped✓)
+        [PreDefined] public class PizzaRoll {
+            [PrimaryKey, Column(0)] public Guid ID { get; private init; }
+            [Column(1)] public string Flavor { get; private init; }
+            public IReadOnlyRelationSet<string> Ingredients { get; private init; }
+            [Column(2)] public double Rating { get; private init; }
+
+            public static PizzaRoll Cheese { get; } = new PizzaRoll("cheese", 4.5, "cheese", "pizza sauce");
+            public static PizzaRoll Pepperoni { get; } = new PizzaRoll("pepperoni", 4.2, "cheese", "pepperoni", "pizza sauce");
+            public static PizzaRoll BuffaloChicken { get; } = new PizzaRoll("buffalo-style chicken", 4.4, "chicken", "cheese", "hot sauce");
+            public static PizzaRoll Supreme { get; } = new PizzaRoll("supreme", 3.9, "cheese", "chicken", "pork", "pepperoni", "onion", "green pepper", "pizza sauce");
+            public static PizzaRoll TripleMeat { get; } = new PizzaRoll("triple meat", 4.7, "cheese", "chicken", "pepperoni", "beef", "pizza sauce");
+            public static PizzaRoll Combination { get; } = new PizzaRoll("combination", 4.6, "cheese", "pepperoni", "sausage", "pizza sauce");
+
+            private PizzaRoll(string flavor, double rating, params string[] ingredients) {
+                ID = Guid.NewGuid();
+                Flavor = flavor;
+                Rating = rating;
+                Ingredients = new RelationSet<string>(ingredients);
+            }
         }
     }
 }

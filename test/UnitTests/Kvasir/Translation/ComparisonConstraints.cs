@@ -205,6 +205,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsGreaterThan_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Gorgon);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Gorgon` → Medusa")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsGreaterThan_OriginalOnReferenceNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -885,6 +901,22 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Cartel` → Control")
                 .WithPath("Kind")
                 .WithProblem("the annotation cannot be applied to a Field of non-orderable type `CommodityType`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsLessThan_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CharacterEncoding);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`CharacterEncoding` → UTF32")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
                 .WithAnnotations("[Check.IsLessThan]")
                 .EndMessage();
         }
@@ -1572,6 +1604,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsGreaterOrEqualTo_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Squash);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Squash` → Chilacayote")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsGreaterOrEqualTo_OriginalOnReferenceNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -2252,6 +2300,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsLessOrEqualTo_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ChannelIsland);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ChannelIsland` → Jersey")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsLessOrEqualTo_OriginalOnReferenceNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -2907,6 +2971,22 @@ namespace UT.Kvasir.Translation {
                     StanleyCup.Conf.Eastern,
                     StanleyCup.Conf.Western
                 );
+        }
+
+        [TestMethod] public void IsNot_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Sexuality);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Sexuality` → Bisexuality")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
         }
 
         [TestMethod] public void IsNot_OriginalOnReferenceNestedScalar() {

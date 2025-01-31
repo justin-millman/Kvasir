@@ -235,6 +235,21 @@ namespace UT.Kvasir.Translation {
             data[3].Datum.Should().Be(aurora.Intensity);
         }
 
+        [TestMethod] public void PreDefinedEntity() {
+            // Arrange
+            var numeral = RomanNumeral.D;
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(RomanNumeral)];
+            var data = translation.Principal.Extractor.ExtractFrom(numeral);
+
+            // Assert
+            data.Should().HaveCount(2);
+            data[0].Datum.Should().Be(numeral.Numeral);
+            data[1].Datum.Should().Be(numeral.Value);
+        }
+
         [TestMethod] public void ScalarDataConversion() {
             // Arrange
             var underworld = new Underworld() {

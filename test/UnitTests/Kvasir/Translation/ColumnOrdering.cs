@@ -131,6 +131,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void PreDefinedInstanceOrdered_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Birthstone);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Birthstone` → Amethyst")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Column]")
+                .EndMessage();
+        }
+
         [TestMethod] public void ReferencePrimaryKeysAreNonSequential() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);

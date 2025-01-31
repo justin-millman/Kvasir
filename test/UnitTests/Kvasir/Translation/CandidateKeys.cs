@@ -490,6 +490,22 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should().HaveNoOtherCandidateKeys();
         }
 
+        [TestMethod] public void PreDefinedInstanceInCandidateKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Cheesecake);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Cheesecake` → Ube")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Unique]")
+                .EndMessage();
+        }
+
         [TestMethod] public void PathIsNull_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);

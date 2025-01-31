@@ -75,5 +75,27 @@ namespace Kvasir.Translation {
                 new Annotation(Display.AnnotationDisplayName(annotation.GetType()))
               )
         {}
+
+        /// <summary>
+        ///   Constructs a new <see cref="ReconstitutionNotPossibleException"/> cased by a
+        ///   <see cref="ReconstituteThroughAttribute">[ReconstituteThrough] annotation</see> being placed on a
+        ///   constructor of a Pre-Defined Entity.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the invalid annotation was encountered.
+        /// </param>
+        /// <param name="annotation">
+        ///   A <see cref="ReconstituteThroughAttribute">[ReconstituteThrough] annotation</see>.
+        /// </param>
+        /// <param name="_">
+        ///   <i>overload discriminator</i>
+        /// </param>
+        public ReconstitutionNotPossibleException(Context context, ReconstituteThroughAttribute annotation, PreDefinedTag _)
+            : base(
+                new Location(context.ToString()),
+                new Problem("Pre-Defined Entities do not support Reconstitution"),
+                new Annotation(Display.AnnotationDisplayName(annotation.GetType()))
+              )
+        {}
     }
 }

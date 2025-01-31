@@ -216,6 +216,12 @@ namespace Kvasir.Translation {
         }
 
         /// <inheritdoc/>
+        public sealed override object[] GetCustomAttributes(Type attributeType, bool inherit) {
+            var result = Array.CreateInstance(typeof(Attribute), 0);
+            return (object[])result;
+        }
+
+        /// <inheritdoc/>
         public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
             return new List<CustomAttributeData>();
         }
@@ -274,12 +280,6 @@ namespace Kvasir.Translation {
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public sealed override object[] GetCustomAttributes(bool inherit) {
-            throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(GetCustomAttributes)}");
-        }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public sealed override object[] GetCustomAttributes(Type attributeType, bool inherit) {
             throw new NotSupportedException($"{nameof(SyntheticType)}.{nameof(GetCustomAttributes)}");
         }
 

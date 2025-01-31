@@ -878,6 +878,20 @@
               types being treated by the framework.
             </remarks>
         </member>
+        <member name="T:Kvasir.Annotations.PreDefinedAttribute">
+            <summary>
+              An annotation that marks an Entity as pre-defined.
+            </summary>
+            <remarks>
+              <para>
+                A Pre-Defined Entity is one that exposes a discrete set of instances, much the same way that an enumeration
+                does. However, in contrast to an enumeration, the instances of a Pre-Defined Entity can have arbitrary
+                metadata, including references and relations. The metadata for a Pre-Defined Entity cannot change (that is,
+                all properties must be read- or init-only), and is therefore not loaded out of the database at application
+                start-up (the assumption being that all metadata is effectively hard-coded).
+              </para>
+            </remarks>
+        </member>
         <member name="T:Kvasir.Annotations.PrimaryKeyAttribute">
             <summary>
               An attribute that specifies that the Field backing a particular property is part of the owning Entity's
@@ -1830,6 +1844,29 @@
               ordered, member-wise equality.
             </summary>
         </member>
+        <member name="T:Kvasir.Reconstitution.PreDefinedCreator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.ICreator"/> that selects the pre-defined instance that matches the source database row.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Reconstitution.PreDefinedCreator.ResultType">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Reconstitution.PreDefinedCreator.#ctor(Kvasir.Schema.ITable,Kvasir.Reconstitution.KeyMatcher)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Reconstitution.PreDefinedCreator"/>.
+            </summary>
+            <param name="table">
+              The Principal Table for the Pre-Defined Entity to be created.
+            </param>
+            <param name="matcher">
+              The <see cref="T:Kvasir.Reconstitution.KeyMatcher"/> that links a Primary Key for one of the pre-defined instances to the actual
+              instance itself.
+            </param>
+        </member>
+        <member name="M:Kvasir.Reconstitution.PreDefinedCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Reconstitution.ReconstitutingCreator">
             <summary>
               An <see cref="T:Kvasir.Reconstitution.ICreator"/> that may apply <see cref="T:Kvasir.Reconstitution.IMutator">modifications</see> after creating the bare CLR
@@ -1917,6 +1954,14 @@
             </param>
         </member>
         <member name="M:Kvasir.Reconstitution.RevertingCreator.CreateFrom(System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue})">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Reconstitution.SkipRepopulator">
+            <summary>
+              An <see cref="T:Kvasir.Reconstitution.IRepopulator"/> that skips the repopulation operation (i.e. turns it into a no-op).
+            </summary>
+        </member>
+        <member name="M:Kvasir.Reconstitution.SkipRepopulator.Repopulate(Kvasir.Relations.IRelation,System.Collections.Generic.IEnumerable{System.Object})">
             <inheritdoc/>
         </member>
         <member name="T:Kvasir.Reconstitution.WritePropertyMutator">
@@ -7484,6 +7529,10 @@
               if <paramref name="source"/> does not contribute at least 2 Fields to the data model for its Principal
               Table.
             </exception>
+            <exception cref="T:Kvasir.Translation.NotEnoughInstancesException">
+              if <paramref name="source"/> is a Pre-Defined Entity type that does not expose at least 2 pre-defined
+              instances.
+            </exception>
             <exception cref="T:Kvasir.Translation.DuplicateNameException">
               if 2 or more Fields in the data model of the Principal Table for <paramref name="source"/> have the same
               name
@@ -7664,7 +7713,65 @@
               particular order.
             </returns>
         </member>
-        <member name="M:Kvasir.Translation.Translator.TranslateType(Kvasir.Translation.Context,System.Type,System.Boolean)">
+        <member name="M:Kvasir.Translation.Translator.IsPreDefined(System.Type)">
+            <summary>
+              Determines if an Entity type is a Pre-Defined Entity type.
+            </summary>
+            <param name="entity">
+              The Entity type.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="entity"/> is a Pre-Defined Entity type; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.GetPreDefinedInstances(Kvasir.Translation.Context,System.Type)">
+            <summary>
+              Identifies the pre-defined instances of a Pre-Defined Entity type.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which <paramref name="source"/> is being translated.
+            </param>
+            <param name="source">
+              The Pre-Defined Entity type.
+            </param>
+            <exception cref="T:Kvasir.Translation.NotEnoughInstancesException">
+              if <paramref name="source"/> has fewer than 2 pre-defined instances that are part of the data model.
+            </exception>
+            <exception cref="T:Kvasir.Translation.InvalidPreDefinedInstanceException">
+              if one of the pre-defined instances of <paramref name="source"/> that is included in the data model is
+              either non-public or writeable.
+            </exception>
+            <exception cref="T:Kvasir.Translation.InapplicableAnnotationException">
+              if any of the pre-defined instances of <paramref name="source"/> are annotated with an annotation other
+              than <c>[IncludeInModel]</c> or <c>[CodeOnly]</c>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.MakePreDefinedReconstitutionPlan(Kvasir.Translation.Context,Kvasir.Schema.ITable,Kvasir.Reconstitution.KeyMatcher,System.Type)">
+            <summary>
+              Produces the Reconstitution Plan for a Pre-Defined Entity type.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which <paramref name="source"/> is being translated.
+            </param>
+            <param name="table">
+              The <see cref="T:Kvasir.Schema.ITable">Principal Table</see> for <paramref name="source"/>.
+            </param>
+            <param name="matcher">
+              The <see cref="T:Kvasir.Reconstitution.KeyMatcher"/> with which to identify pre-defined instances of <paramref name="source"/>
+              from rows of database values.
+            </param>
+            <param name="source">
+              The Pre-Defined Entity type.
+            </param>
+            <exception cref="T:Kvasir.Translation.InvalidEntityTypeException">
+              if <paramref name="source"/> has any public constructors.
+            </exception>
+            <exception cref="T:Kvasir.Translation.ReconstitutionNotPossibleException">
+              if any of the constructors of <paramref name="source"/> is annotated with <c>[ReconstitueThrough]</c>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation.Translator.TranslateType(Kvasir.Translation.Context,System.Type,System.Boolean,System.Boolean)">
             <summary>
               Translates a single CLR type.
             </summary>
@@ -7678,6 +7785,11 @@
             <param name="allowRelations">
               <see langword="true"/> if Relations should be allowed as valid (e.g. when translating a real Entity Type);
               <see langword="false"/> if Relations should be disallowed (e.g. when translating a Relation).
+            </param>
+            <param name="requirePreDefined">
+              <see langword="true"/> if only References to Pre-Defined Entities should be allowed as valid (e.g. when
+              translating a Pre-Defined Entity or a type referenced therefrom); <see langword="false"/> if References to
+              regular Entities are valid (e.g. when translating anything else).
             </param>
             <returns>
               The unordered (but column-assigned) Fields that make up the data model for <paramref name="source"/>, with
@@ -7698,6 +7810,9 @@
                 --or--
               if a property of <paramref name="source"/> whose type is not supported (e.g. is a delegate, comes from a
               different assembly, etc.) would be included in the data model
+                --or--
+              if <paramref name="source"/> is a Pre-Defined Entity type and a writeable property of
+              <paramref name="source"/> is included in the data model.
             </exception>
             <exception cref="T:Kvasir.Translation.NotEnoughFieldsException">
               if <paramref name="source"/> corresponds to an Aggregate that contributes fewer than 1 Field to the data
@@ -7706,6 +7821,10 @@
             <exception cref="T:Kvasir.Translation.NestedRelationException">
               if <paramref name="allowRelations"/> is <see langword="false"/> and <paramref name="source"/> has a
               Relation-type Field that would be included in the data model.
+            </exception>
+            <exception cref="T:Kvasir.Translation.PreDefinedReferenceException">
+              if <paramref name="requirePreDefined"/> is <see langword="true"/> and <paramref name="source"/> is not a
+              Pre-Defined Entity type.
             </exception>
         </member>
         <member name="P:Kvasir.Translation.Translator.Item(System.Type)">
@@ -8123,6 +8242,19 @@
               The kind of property on which the annotation was erroneously placed.
             </param>
         </member>
+        <member name="M:Kvasir.Translation.InapplicableAnnotationException.#ctor(Kvasir.Translation.Context,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InapplicableAnnotationException"/> caused by an annotation other than
+              <c>[CodeOnly]</c> or <c>[NonNullable]</c> (both of which are redundant) or <c>[IncludeInModel]</c> (which
+              causes a different exception type) being placed on a pre-defined instance property.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the inapplicable annotation was encountered.
+            </param>
+            <param name="annotationType">
+              The type of the inapplicable annotation.
+            </param>
+        </member>
         <member name="M:Kvasir.Translation.InapplicableAnnotationException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.INestableAnnotation,System.Type,Kvasir.Translation.MultiKind)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.InapplicableAnnotationException"/> caused by a constraint annotation being
@@ -8401,13 +8533,25 @@
         </member>
         <member name="M:Kvasir.Translation.InvalidEntityTypeException.#ctor(Kvasir.Translation.Context,Kvasir.Translation.TypeCategory)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Translation.InvalidEntityTypeException"/>.
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidEntityTypeException"/> triggered by the actual CLR type.
             </summary>
             <param name="context">
               The <see cref="T:Kvasir.Translation.Context"/> in which the invalid Entity type was encountered
             </param>
             <param name="category">
               The category into which the invalid Entity type falls.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidEntityTypeException.#ctor(Kvasir.Translation.Context,Kvasir.Translation.PreDefinedTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidEntityTypeException"/> triggered by a Pre-Defined Entity type that has
+              a public constructor.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid Pre-Defined Entity type was encountered
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
             </param>
         </member>
         <member name="T:Kvasir.Translation.InvalidNameException">
@@ -8501,6 +8645,33 @@
               The annotation with an invalid path.
             </param>
         </member>
+        <member name="T:Kvasir.Translation.InvalidPreDefinedInstanceException">
+            <summary>
+              An exception that is raised when an invalid property is translated into the data model as a pre-defined
+              instance.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidPreDefinedInstanceException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidPreDefinedInstanceException"/> caused by a writeable property being
+              identified as a pre-defined instance.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid pre-defined instance was encountered.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidPreDefinedInstanceException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.IncludeInModelAttribute)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidPreDefinedInstanceException"/> caused by a non-public and/or write-only
+              property being identified as a pre-defined instance.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid pre-defined instance was encountered.
+            </param>
+            <param name="annotation">
+              The annotation applied to the non-public property causing it to be identified as a pre-defined instance.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.InvalidPrimaryKeyFieldException">
             <summary>
               An exception that is raised when a <see cref="T:Kvasir.Annotations.PrimaryKeyAttribute">[PrimaryKey]</see> annotation is applied,
@@ -8538,7 +8709,7 @@
               an unsupported type.
             </summary>
             <param name="context">
-              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid property type was encountered
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid property type was encountered.
             </param>
             <param name="type">
               The invalid property type.
@@ -8574,6 +8745,18 @@
               The assembly in which <paramref name="type"/> was expected to have been from.
             </param>
         </member>
+        <member name="M:Kvasir.Translation.InvalidPropertyInDataModelException.#ctor(Kvasir.Translation.Context,Kvasir.Translation.PreDefinedTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidPropertyInDataModelException"/> caused by a writeable property of a
+              Pre-Defined Entity.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the writeable property was encountered.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.NestedRelationException">
             <summary>
               An exception that is raised when the element type of a Relation container is itself, or contains, another
@@ -8607,6 +8790,25 @@
               The actual number of Fields that were contributed to the data model.
             </param>
         </member>
+        <member name="T:Kvasir.Translation.NotEnoughInstancesException">
+            <summary>
+              An exception that is raised when a Pre-Defined Entity type does not expose enough instances.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.NotEnoughInstancesException.#ctor(Kvasir.Translation.Context,System.Int32,System.Int32)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.NotEnoughInstancesException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the underpopulated type was encountered.
+            </param>
+            <param name="minExpected">
+              The minimum number of pre-defined instances that were expected to be exposed.
+            </param>
+            <param name="actual">
+              The actual number of pre-defined instances that were exposed.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.NotRelationException">
             <summary>
               An exception that is raised when an annotation that is only applicable to Relations is applied to a property
@@ -8625,6 +8827,27 @@
             </param>
             <param name="annotationType">
               The type of the improperly applied annotation.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation.PreDefinedReferenceException">
+            <summary>
+              An exception that is raised when a Pre-Defined Entity references or "owns" a Relation involving a
+              non-Pre-Defined Entity.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.PreDefinedReferenceException.#ctor(Kvasir.Translation.Context,System.Type,System.Boolean)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.PreDefinedReferenceException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid property type was encountered.
+            </param>
+            <param name="entityType">
+              The non-Pre-Defined Entity type.
+            </param>
+            <param name="isReference">
+              <see langword="true"/> if the invalid property was a Reference-type property; if it was a Relation-type
+              property, then <see langword="false"/>.
             </param>
         </member>
         <member name="T:Kvasir.Translation.ReconstitutionNotPossibleException">
@@ -8679,6 +8902,22 @@
             </param>
             <param name="numAnnotations">
               The number of constructors that are annotated.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.ReconstitutionNotPossibleException.#ctor(Kvasir.Translation.Context,Kvasir.Annotations.ReconstituteThroughAttribute,Kvasir.Translation.PreDefinedTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.ReconstitutionNotPossibleException"/> cased by a
+              <see cref="T:Kvasir.Annotations.ReconstituteThroughAttribute">[ReconstituteThrough] annotation</see> being placed on a
+              constructor of a Pre-Defined Entity.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid annotation was encountered.
+            </param>
+            <param name="annotation">
+              A <see cref="T:Kvasir.Annotations.ReconstituteThroughAttribute">[ReconstituteThrough] annotation</see>.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
             </param>
         </member>
         <member name="T:Kvasir.Translation.ReferenceCycleException">
@@ -10696,6 +10935,9 @@
               <see cref="T:Kvasir.Translation.SyntheticType"/>.
             </param>
         </member>
+        <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributesData">
             <inheritdoc/>
         </member>
@@ -10718,9 +10960,6 @@
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Boolean)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Type,System.Boolean)">
             <inheritdoc/>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetElementType">
