@@ -12,7 +12,7 @@ namespace Kvasir.Translation {
         ///   an unsupported type.
         /// </summary>
         /// <param name="context">
-        ///   The <see cref="Context"/> in which the invalid property type was encountered
+        ///   The <see cref="Context"/> in which the invalid property type was encountered.
         /// </param>
         /// <param name="type">
         ///   The invalid property type.
@@ -61,6 +61,23 @@ namespace Kvasir.Translation {
             : base(
                 new Location(context.ToString()),
                 new Problem($"type {type.DisplayName()} comes from assembly {type.Assembly}, not from user assembly {expected}")
+              )
+        {}
+
+        /// <summary>
+        ///   Constructs a new <see cref="InvalidPropertyInDataModelException"/> caused by a writeable property of a
+        ///   Pre-Defined Entity.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the writeable property was encountered.
+        /// </param>
+        /// <param name="_">
+        ///   <i>overload discriminator</i>
+        /// </param>
+        public InvalidPropertyInDataModelException(Context context, PreDefinedTag _)
+            : base(
+                new Location(context.ToString()),
+                new Problem("a writeable property cannot be included in the data model for a Pre-Defined Entity")
               )
         {}
     }

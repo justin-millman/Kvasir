@@ -124,14 +124,14 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void IsNonEmpty_EnumerationField_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
-            var source = typeof(Mustache);
+            var source = typeof(Moustache);
 
             // Act
             var translate = () => translator[source];
 
             // Assert
             translate.Should().FailWith<InapplicableAnnotationException>()
-                .WithLocation("`Mustache` → Style")
+                .WithLocation("`Moustache` → Style")
                 .WithProblem("the annotation cannot be applied to a Field of non-string type `Kind`")
                 .WithAnnotations("[Check.IsNonEmpty]")
                 .EndMessage();
@@ -198,6 +198,21 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should()
                 .HaveConstraint(FieldFunction.LengthOf, "Manufacturer.Name", ComparisonOperator.GTE, 1).And
                 .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNonEmpty_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(IronChef);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`IronChef` → Guarnaschelli")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsNonEmpty]");
         }
 
         [TestMethod] public void IsNonEmpty_ReferenceNestedInapplicableScalar_IsError() {
@@ -737,6 +752,21 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a Field of non-string type `ulong`")
                 .WithAnnotations("[Check.LengthIsAtLeast]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtLeast_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(LEPBranch);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LEPBranch` → LEPRecon")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.LengthIsAtLeast]");
         }
 
         [TestMethod] public void LengthIsAtLeast_OriginalOnReferenceNestedScalar() {
@@ -1294,6 +1324,21 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
                 .WithAnnotations("[Check.LengthIsAtMost]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtMost_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(TonyAward);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TonyAward` → MusicalRevival")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.LengthIsAtMost]");
         }
 
         [TestMethod] public void LengthIsAtMost_OriginalOnReferenceNestedScalar() {
@@ -1920,6 +1965,21 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationMap<Coordinate, double>`")
                 .WithAnnotations("[Check.LengthIsBetween]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsBetween_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(HighSchoolMusical);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`HighSchoolMusical` → HSM")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.LengthIsBetween]");
         }
 
         [TestMethod] public void LengthIsBetween_OriginalOnReferenceNestedScalar() {

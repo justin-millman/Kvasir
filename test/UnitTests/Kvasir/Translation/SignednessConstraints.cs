@@ -220,6 +220,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsPositive_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Russo);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Russo` → Justin")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsPositive]");
+        }
+        
         [TestMethod] public void IsPositive_OriginalOnReferenceNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -746,6 +761,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNegative_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MBTI);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MBTI` → ISFP")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsNegative]");
+        }
+
         [TestMethod] public void IsNegative_OriginalOnReferenceNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1241,6 +1271,21 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
                 .WithAnnotations("[Check.IsNonZero]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void IsNonZero_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ChronicleOfNarnia);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ChronicleOfNarnia` → TLTWATW")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.IsNonZero]");
         }
 
         [TestMethod] public void IsNonZero_OriginalOnReferenceNestedScalar() {

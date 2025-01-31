@@ -5,7 +5,7 @@
     /// </summary>
     internal sealed class InvalidEntityTypeException : TranslationException {
         /// <summary>
-        ///   Constructs a new <see cref="InvalidEntityTypeException"/>.
+        ///   Constructs a new <see cref="InvalidEntityTypeException"/> triggered by the actual CLR type.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which the invalid Entity type was encountered
@@ -17,6 +17,23 @@
             : base(
                 new Location(context.ToString()),
                 new Problem($"{category} cannot be an Entity type or the backing type of a Reference property")
+              )
+        {}
+
+        /// <summary>
+        ///   Constructs a new <see cref="InvalidEntityTypeException"/> triggered by a Pre-Defined Entity type that has
+        ///   a public constructor.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the invalid Pre-Defined Entity type was encountered
+        /// </param>
+        /// <param name="_">
+        ///   <i>overload discriminator</i>
+        /// </param>
+        public InvalidEntityTypeException(Context context, PreDefinedTag _)
+            : base(
+                new Location(context.ToString()),
+                new Problem("a Pre-Defined Entity cannot have a public constructor")
               )
         {}
     }

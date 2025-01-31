@@ -269,6 +269,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void ConverterOnPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(PowerRanger);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PowerRanger` → Blue")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[DataConverter]");
+        }
+
         [TestMethod] public void ConverterOnNullablePropertyHasNonNullableTargetType() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -514,6 +529,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void NumericConverterOnPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Friend);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Friend` → Joey")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Numeric]");
+        }
+
         [TestMethod] public void AsStringConverterOnBooleanField_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -640,6 +670,21 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a property of non-enumeration type `RelationMap<char, char>`")
                 .WithAnnotations("[AsString]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void AsStringConverterOnPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Teletubby);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Teletubby` → Dipsy")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[AsString]");
         }
 
         [TestMethod] public void DataConverterAndNumeric_IsError() {

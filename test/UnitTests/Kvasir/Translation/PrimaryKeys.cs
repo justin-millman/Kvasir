@@ -677,6 +677,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void PreDefinedInstanceMarkedPrimaryKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(FunctionalGroup);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FunctionalGroup` → Peroxide")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[PrimaryKey]");
+        }
+
         [TestMethod] public void PathIsNull_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);

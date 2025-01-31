@@ -42,6 +42,10 @@ namespace Kvasir.Translation {
         ///   if <paramref name="source"/> does not contribute at least 2 Fields to the data model for its Principal
         ///   Table.
         /// </exception>
+        /// <exception cref="NotEnoughInstancesException">
+        ///   if <paramref name="source"/> is a Pre-Defined Entity type that does not expose at least 2 pre-defined
+        ///   instances.
+        /// </exception>
         /// <exception cref="DuplicateNameException">
         ///   if 2 or more Fields in the data model of the Principal Table for <paramref name="source"/> have the same
         ///   name
@@ -110,8 +114,20 @@ namespace Kvasir.Translation {
 
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
             var extractor = new DataExtractionPlan(fieldGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
-            var creator = new DataReconstitutionPlan(ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false));
-            principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+
+            // Pre-Defined Entities don't get reconstituted like normal, since the data is expected to be effectively
+            // hard-coded into the source. We use a KeyLookupCreator for those.
+            if (!source.HasAttribute<PreDefinedAttribute>()) {
+                var creator = new DataReconstitutionPlan(ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false));
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+            }
+            else {
+                var instances = GetPreDefinedInstances(context, source);
+                var matcher = new KeyMatcher(() => instances, pkExtractor);
+                var reconstitutor = new ReconstitutingCreator(new KeyLookupCreator(matcher), Enumerable.Empty<IMutator>());
+                var creator = new DataReconstitutionPlan(reconstitutor);
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+            }
 
             principalTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);
@@ -333,6 +349,30 @@ namespace Kvasir.Translation {
                 var clause = annotation.TryMakeClause(fields, converters, settings, context);
                 yield return new CheckConstraint(clause);
             }
+        }
+
+        /// <summary>
+        ///   Identifies the pre-defined instances of a Pre-Defined Entity type.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="source"/> is being translated.
+        /// </param>
+        /// <param name="source">
+        ///   The Pre-Defined Entity type.
+        /// </param>
+        /// <exception cref="NotEnoughInstancesException">
+        ///   if <paramref name="source"/> has fewer than 2 pre-defined instances that are part of the data model.
+        /// </exception>
+        /// <exception cref="InvalidPreDefinedInstanceException">
+        ///   if one of the pre-defined instances of <paramref name="source"/> that is included in the data model is
+        ///   either non-public or writeable.
+        /// </exception>
+        /// <exception cref="InapplicableAnnotationException">
+        ///   if any of the pre-defined instances of <paramref name="source"/> are annotated with an annotation other
+        ///   than <c>[IncludeInModel]</c> or <c>[CodeOnly]</c>.
+        /// </exception>
+        private static IEnumerable<object> GetPreDefinedInstances(Context context, Type source) {
+            throw new NotImplementedException();
         }
     }
 }

@@ -41,6 +41,9 @@ namespace Kvasir.Translation {
         ///     --or--
         ///   if a property of <paramref name="source"/> whose type is not supported (e.g. is a delegate, comes from a
         ///   different assembly, etc.) would be included in the data model
+        ///     --or--
+        ///   if <paramref name="source"/> is a Pre-Defined Entity type and a writeable property of
+        ///   <paramref name="source"/> is included in the data model.
         /// </exception>
         /// <exception cref="NotEnoughFieldsException">
         ///   if <paramref name="source"/> corresponds to an Aggregate that contributes fewer than 1 Field to the data
@@ -67,6 +70,7 @@ namespace Kvasir.Translation {
                     return memoization.Select(g => g.Clone());
                 }
             }
+            var isPreDefined = source.HasAttribute<PreDefinedAttribute>();
             var translation = new List<FieldGroup>();
             var relationTrackers = new List<RelationTracker>();
 
@@ -93,6 +97,20 @@ namespace Kvasir.Translation {
                     throw new InvalidPropertyInDataModelException(context, propCategory);
                 }
                 else if (propCategory.Equals(PropertyCategory.InDataModel)) {
+                    // For pre-defined Entities, we want to ignore any static properties of the Entity's own type; these
+                    // are the pre-defined instances, and if we actually process them here we'll get a reference cycle
+                    // error. Error checking for these properties' annotations is performed elsewhere.
+                    if (isPreDefined && property.GetMethod!.IsStatic && propType == source) {
+                        continue;
+                    }
+
+                    // Pre-Defined Entities cannot have writeable properties, since their data is supposed to be
+                    // hard-coded into the source. Data isn't loaded from the database, so any dynamic changes to such
+                    // Fields, even if properly saved into the database, wouldn't be loaded later.
+                    if (isPreDefined && property.CanWrite && !property.IsInitOnly()) {
+                        throw new InvalidPropertyInDataModelException(context, new PreDefinedTag());
+                    }
+
                     var typeCategory = property.PropertyType.TranslationCategory();
                     if (typeCategory.Equals(TypeCategory.Enumeration) || typeCategory.Equals(TypeCategory.Supported)) {
                         translation.Add(new SingleFieldGroup(context, property));
