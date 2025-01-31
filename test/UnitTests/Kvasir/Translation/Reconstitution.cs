@@ -5,6 +5,8 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.Reconstitution;
@@ -1966,6 +1968,172 @@ namespace UT.Kvasir.Translation {
             row[2].Datum.Should().Be(aphrodisiac.ChemicalStructure!.Value.Formula);
             row[3].Datum.Should().Be(aphrodisiac.ChemicalStructure!.Value.IsAromatic);
             aphrodisiac.DiscoveringCivilization.Should().BeNull();
+        }
+
+        [TestMethod] public void ReconstituteThrough_PreDefinedEntity_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Vertebra);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<ReconstitutionNotPossibleException>()
+                .WithLocation("`Vertebra`")
+                .WithProblem("Pre-Defined Entities do not support Reconstitution")
+                .WithAnnotations("[ReconstituteThrough]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void PublicPreDefinedInstance() {
+            // Arrange
+            var flourRow = new List<DBValue>() {
+                DBValue.Create(Tortilla.Flour.Name),
+                DBValue.Create(Tortilla.Flour.IsAuthenticMexican),
+                DBValue.Create(Tortilla.Flour.CostcoCost)
+            };
+            var cornRow = new List<DBValue>() {
+                DBValue.Create(Tortilla.Corn.Name),
+                DBValue.Create(Tortilla.Corn.IsAuthenticMexican),
+                DBValue.Create(Tortilla.Corn.CostcoCost)
+            };
+            var nopalRow = new List<DBValue>() {
+                DBValue.Create(Tortilla.Nopal.Name),
+                DBValue.Create(Tortilla.Nopal.IsAuthenticMexican),
+                DBValue.Create(Tortilla.Nopal.CostcoCost)
+            };
+            var wholeWheatRow = new List<DBValue>() {
+                DBValue.Create(Tortilla.WholeWheat.Name),
+                DBValue.Create(Tortilla.WholeWheat.IsAuthenticMexican),
+                DBValue.Create(Tortilla.WholeWheat.CostcoCost)
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Tortilla)];
+            var flourTortilla = (Tortilla)translation.Principal.Reconstitutor.ReconstituteFrom(flourRow);
+            var cornTortilla = (Tortilla)translation.Principal.Reconstitutor.ReconstituteFrom(cornRow);
+            var nopalTortilla = (Tortilla)translation.Principal.Reconstitutor.ReconstituteFrom(nopalRow);
+            var wholeWheatTortilla = (Tortilla)translation.Principal.Reconstitutor.ReconstituteFrom(wholeWheatRow);
+
+            // Assert
+            flourTortilla.Should().Be(Tortilla.Flour);
+            cornTortilla.Should().Be(Tortilla.Corn);
+            nopalTortilla.Should().Be(Tortilla.Nopal);
+            wholeWheatTortilla.Should().Be(Tortilla.WholeWheat);
+        }
+
+        [TestMethod] public void PublicPreDefinedInstance_IncludeInModel_Redundant() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create(Symbiosis.Mutualism.ID),
+                DBValue.Create(Symbiosis.Mutualism.Name),
+                DBValue.Create(Symbiosis.Mutualism.Example),
+                DBValue.Create(ConversionOf(Symbiosis.Mutualism.Arity))
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Symbiosis)];
+            var symbiosis = (Symbiosis)translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            symbiosis.Should().Be(Symbiosis.Mutualism);
+        }
+
+        [TestMethod] public void PublicPreDefinedInstance_CodeOnly_PathologicalError() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create(MetricPrefix.Quecto.Prefix),
+                DBValue.Create(MetricPrefix.Quecto.Base10),
+                DBValue.Create(MetricPrefix.Quecto.YearAdopted),
+                DBValue.Create(MetricPrefix.Quecto.Symbol)
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(MetricPrefix)];
+            var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            reconstitute.Should().ThrowExactly<UnreachableException>();
+        }
+
+        [TestMethod] public void NonPublicPreDefinedInstance_PathologicalError() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create("Flagellum"),
+                DBValue.Create(null),
+                DBValue.Create(false),
+                DBValue.Create(true)
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Organelle)];
+            var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            reconstitute.Should().ThrowExactly<UnreachableException>();
+        }
+
+        [TestMethod] public void NonPublicPreDefinedInstance_CodeOnly_Redundant_PathologicalError() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create(1657081),
+                DBValue.Create("Law & Order: LA"),
+                DBValue.Create(false),
+                DBValue.Create(22),
+                DBValue.Create(new DateTime(2010, 9, 29))
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(LawAndOrder)];
+            var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            reconstitute.Should().ThrowExactly<UnreachableException>();
+        }
+
+        [TestMethod] public void NonExistentPreDefinedInstance_PathologicalError() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create("Federative Republic of Brazil"),
+                DBValue.Create("Brasília"),
+                DBValue.Create(212518750)
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(BrazilianState)];
+            var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            reconstitute.Should().ThrowExactly<UnreachableException>();
+        }
+
+        [TestMethod] public void RelationOnPreDefinedEntity() {
+            // Arrange
+            var pizzaRollRow = new List<DBValue>() {
+                DBValue.Create(PizzaRoll.Pepperoni.ID),
+                DBValue.Create(PizzaRoll.Pepperoni.Flavor),
+                DBValue.Create(PizzaRoll.Pepperoni.Rating)
+            };
+            var ingredientsRow = new List<List<DBValue>>(
+                PizzaRoll.Pepperoni.Ingredients.Select(v => new List<DBValue>() { DBValue.Create(v) })
+            );
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(PizzaRoll)];
+            var pizzaRoll = (PizzaRoll)translation.Principal.Reconstitutor.ReconstituteFrom(pizzaRollRow);
+            translation.Relations[0].Repopulator!.Repopulate(pizzaRoll, ingredientsRow);
+
+            // Assert
+            pizzaRoll.Should().Be(PizzaRoll.Pepperoni);
+            pizzaRoll.Ingredients.Count.Should().Be(3);
         }
 
 

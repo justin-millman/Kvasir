@@ -221,5 +221,25 @@ namespace UT.Kvasir.Annotations {
             // Assert
             isUnique.Should().BeTrue();
         }
+
+        [TestMethod] public void PreDefined_Construct() {
+            // Arrange
+
+            // Act
+            _ = new PreDefinedAttribute();
+
+            // Assert
+        }
+
+        [TestMethod] public void PreDefined_UniqueId() {
+            // Arrange
+            var attr = new PreDefinedAttribute();
+
+            // Act
+            var isUnique = ids_.Add(attr.TypeId);
+
+            // Assert
+            isUnique.Should().BeTrue();
+        }
     }
 }

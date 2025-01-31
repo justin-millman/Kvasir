@@ -531,6 +531,38 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void IncludeInModel_NonPublicPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(SortingAlgorithm);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPreDefinedInstanceException>()
+                .WithLocation("`SortingAlgorithm` → Bogo")
+                .WithProblem("a non-public and/or write-only property cannot be a pre-defined instance")
+                .WithAnnotations("[IncludeInModel]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IncludeInModel_WriteOnlyPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(AnimalPhylum);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPreDefinedInstanceException>()
+                .WithLocation("`AnimalPhylum` → Porifera")
+                .WithProblem("a non-public and/or write-only property cannot be a pre-defined instance")
+                .WithAnnotations("[IncludeInModel]")
+                .EndMessage();
+        }
+
         [TestMethod] public void CombinedAnnotation_CodeOnlyAndIncludeInModel_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);

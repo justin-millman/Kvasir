@@ -33,6 +33,25 @@ namespace Kvasir.Translation {
         {}
 
         /// <summary>
+        ///   Constructs a new <see cref="InapplicableAnnotationException"/> caused by an annotation other than
+        ///   <c>[CodeOnly]</c> or <c>[NonNullable]</c> (both of which are redundant) or <c>[IncludeInModel]</c> (which
+        ///   causes a different exception type) being placed on a pre-defined instance property.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the inapplicable annotation was encountered.
+        /// </param>
+        /// <param name="annotationType">
+        ///   The type of the inapplicable annotation.
+        /// </param>
+        public InapplicableAnnotationException(Context context, Type annotationType)
+            : base(
+                new Location(context.ToString()),
+                new Problem("the annotation cannot be applied to a pre-defined instance property"),
+                new Annotation(Display.AnnotationDisplayName(annotationType))
+              )
+        {}
+
+        /// <summary>
         ///   Constructs a new <see cref="InapplicableAnnotationException"/> caused by a constraint annotation being
         ///   placed on or applying to, an Aggregate property, a Reference property, or a Relation property.
         /// </summary>
@@ -163,4 +182,5 @@ namespace Kvasir.Translation {
     // Discrimination types
     internal enum MultiKind { Aggregate, Reference, Relation }
     internal readonly struct UnsignedTag {}
+    internal readonly struct PreDefinedTag {}
 }

@@ -30,8 +30,10 @@ namespace Kvasir.Translation {
             else if (type.FullName!.Contains(".Check+")) {
                 return "Check." + type.Name[..^9];
             }
-            else { 
-                return type.Name[..^9];
+            else {
+                var tickIdx = type.Name.IndexOf('`');
+                var genericSuffixLen = tickIdx == -1 ? 0 : type.Name.Length - tickIdx;
+                return type.Name[..^(9 + genericSuffixLen)];
             }
         }
 

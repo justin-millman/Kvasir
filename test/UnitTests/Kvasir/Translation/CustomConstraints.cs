@@ -164,6 +164,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void Check_AppliedToPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Ubuntu);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Ubuntu` → U1004")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check]")
+                .EndMessage();
+        }
+
         [TestMethod] public void Check_AppliedToRelationNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
