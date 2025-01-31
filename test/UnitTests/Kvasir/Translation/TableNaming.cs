@@ -3,6 +3,7 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.Globals;
+using static UT.Kvasir.Translation.Nullability;
 using static UT.Kvasir.Translation.TableNaming;
 
 namespace UT.Kvasir.Translation {
@@ -384,6 +385,21 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the property type `Organization` is not a Relation")
                 .WithAnnotations("[RelationTable]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void RelationTable_AppliedToPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(DEFCON);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`DEFCON` → Four")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[RelationTable]");
         }
     }
 }

@@ -797,6 +797,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void AppliedToPreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Murder);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Murder` → Regicide")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Name]");
+        }
+
         [TestMethod] public void PathIsNull_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
