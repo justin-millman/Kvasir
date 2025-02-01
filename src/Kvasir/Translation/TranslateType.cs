@@ -57,7 +57,15 @@ namespace Kvasir.Translation {
 
             // Memoization
             if (typeCache_.TryGetValue(source, out IReadOnlyList<FieldGroup>? memoization)) {
-                return memoization.Select(g => g.Clone());
+                // This may not be the most elegant solution, but it works. If we've seen an Aggregate type before in a
+                // context that allows Relations, and then we see it again in a context that doesn't (namely, when
+                // translating a Relation), we have to flag it as an error. We don't have enough information from the
+                // initial translation to fully report the error, so we simply let the regular translation happen again.
+                // Since we know there's a Relation, we know it's guaranteed to fail; and, since we know the type got
+                // translated once, we know there won't be any other errors.
+                if (allowRelations || relationTrackersCache_[source].Count == 0) {
+                    return memoization.Select(g => g.Clone());
+                }
             }
             var translation = new List<FieldGroup>();
             var relationTrackers = new List<RelationTracker>();

@@ -889,7 +889,7 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void RelationNestedWithAggregateNestedWithinRelation_IsError() {
+        [TestMethod] public void RelationNestedWithinAggregateNestedWithinRelation_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(Poll);
@@ -900,6 +900,21 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<NestedRelationException>()
                 .WithLocation("`Poll` → <synthetic> `Questions` → `Question` (from \"Item\") → Answers")
+                .WithProblem("nested Relations are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationNestedWithinAggregateNestedWithinRelation_PostMemoization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Quinceanera);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`Quinceanera` → <synthetic> `Presents` → `Gift` (from \"Value\") → Adjectives")
                 .WithProblem("nested Relations are not supported")
                 .EndMessage();
         }
