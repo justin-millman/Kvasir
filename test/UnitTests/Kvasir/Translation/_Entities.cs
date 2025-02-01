@@ -476,6 +476,22 @@ namespace UT.Kvasir.Translation {
             public double ReponseRate { get; set; }
         }
 
+        // Test Scenario: Relation Nested Within Aggregate Nested Within Relation, post-Memoization (✗not permitted✗)
+        public class Quinceanera {
+            public record struct Gift {
+                public string Description { get; set; }
+                public decimal Price { get; set; }
+                public RelationSet<string> Adjectives { get; }
+            }
+
+            [PrimaryKey] public Guid PartyID { get; set; }
+            public DateTime Date { get; set; }
+            public string BirthdayGirl { get; set; } = "";
+            public Gift BestGift { get; set; }
+            public RelationMap<string, Gift> Presents { get; } = new();
+            public bool InMexico { get; set; }
+        }
+
         // Test Scenario: Relation List/Set of KeyValuePair<X, Y> (✗not permitted - implementation ambiguity✗)
         public class Caricature {
             public enum Location { Circus, Zoo, AmusementPark, SportingEvent, FarmersMarket, Other }
