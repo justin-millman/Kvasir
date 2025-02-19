@@ -154,15 +154,6 @@ namespace Kvasir.Translation {
                 var syntheticType = SyntheticType.MakeSyntheticType(source, tracker);
                 var context = new Context(syntheticType);
 
-                var accessChainPaths = tracker.Path.Split('.');
-                var accessChain = new PropertyChain(source, accessChainPaths[0]);
-                for (int idx = 1; idx < accessChainPaths.Length; ++idx) {
-                    if (Nullable.GetUnderlyingType(accessChain.PropertyType) is not null) {
-                        accessChain = accessChain.Append("Value");
-                    }
-                    accessChain = accessChain.Append(accessChainPaths[idx]);
-                }
-
                 var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, false));
                 var schemas = relationGroup.Select(d => d.MakeSchema(settings_)).ToList();
                 var fields = schemas.Select(s => s.Field).ToList();
@@ -184,6 +175,7 @@ namespace Kvasir.Translation {
                     throw new DuplicateNameException(context, tableName, match);
                 }
 
+                var accessChain = tracker.AsPropertyChainOn(source);
                 var extractRelationProperty = new ReadPropertyExtractor(accessChain);
                 var elementExtractor = new DataExtractionPlan(Enumerable.Repeat(relationGroup.Extractor, 1));
                 var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
@@ -273,15 +265,11 @@ namespace Kvasir.Translation {
             // here to find the [Name] annotation applied directly to the property, if any. We only want to do this when
             // dealing with top-level properties, otherwise the annotation will have already been handled. Similarly, we
             // know that the name is valid (i.e. not null and not empty) and that there are no duplicates.
-            var ownPart = tracker.Name;
-            if (tracker.Name == tracker.Path) {
-                foreach (var annotation in tracker.Property.GetCustomAttributes<NameAttribute>()) {
-                    if (annotation.Path == "") {
-                        ownPart = annotation.Name;
-                        break;
-                    }
-                }
-            }
+            var nameAnnotations = tracker.Property.GetCustomAttributes<NameAttribute>();
+            var ownPart = tracker.AnnotatedName.Match(
+                some: name => name,
+                none: () => nameAnnotations.FirstOrDefault(a => a.Path == "")?.Name ?? tracker.Path
+            );
 
             if (source.HasAttribute<ExcludeNamespaceFromNameAttribute>()) {
                 return new TableName($"{source.Name}.{ownPart}Table");

@@ -10282,10 +10282,9 @@
               A utility for tracking annotations applied to Aggregate-nested Relation-type properties.
             </summary>
         </member>
-        <member name="P:Kvasir.Translation.RelationTracker.Name">
+        <member name="P:Kvasir.Translation.RelationTracker.AnnotatedName">
             <summary>
-              The name of the backing Relation-type property, accounting for any <see cref="T:Kvasir.Annotations.NameAttribute">[Name]</see>
-              annotation that has been applied.
+              The value of the <c>[Name]</c> annotation applied to the backing Relation-type property, if any.
             </summary>
         </member>
         <member name="P:Kvasir.Translation.RelationTracker.Path">
@@ -10307,16 +10306,16 @@
               The source <see cref="P:Kvasir.Translation.RelationTracker.Property"/>.
             </param>
         </member>
-        <member name="M:Kvasir.Translation.RelationTracker.#ctor(Kvasir.Translation.RelationTracker,System.String)">
+        <member name="M:Kvasir.Translation.RelationTracker.#ctor(Kvasir.Translation.RelationTracker,System.Reflection.PropertyInfo)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Translation.RelationTracker"/> that is identical to another but with a different
-              <see cref="P:Kvasir.Translation.RelationTracker.Path"/>.
+              Constructs a new <see cref="T:Kvasir.Translation.RelationTracker"/> that is identical to another but with an additional
+              property prepended to its <see cref="P:Kvasir.Translation.RelationTracker.Path"/>.
             </summary>
             <param name="source">
               The source <see cref="T:Kvasir.Translation.RelationTracker"/>.
             </param>
-            <param name="path">
-              The new <see cref="P:Kvasir.Translation.RelationTracker.Path">access path</see>.
+            <param name="upstreamProperty">
+              The additional property.
             </param>
         </member>
         <member name="M:Kvasir.Translation.RelationTracker.AttachAnnotation``1(Kvasir.Translation.Context,Kvasir.Translation.Nested{``0})">
@@ -10334,16 +10333,17 @@
               <see cref="T:Kvasir.Annotations.NameAttribute">[Name]</see> annotation.
             </exception>
         </member>
-        <member name="M:Kvasir.Translation.RelationTracker.ExtendPath(System.String)">
+        <member name="M:Kvasir.Translation.RelationTracker.Extend(System.Reflection.PropertyInfo)">
             <summary>
-              Prepend a segment to the <see cref="P:Kvasir.Translation.RelationTracker.Path"/>.
+              Prepends a property to the <see cref="P:Kvasir.Translation.RelationTracker.Path"/>.
             </summary>
-            <param name="path">
-              The new path segment.
+            <param name="property">
+              The <see cref="T:System.Reflection.PropertyInfo">property</see> to prepend to the <see cref="P:Kvasir.Translation.RelationTracker.Path"/>. This also affects the
+              <see cref="M:Kvasir.Translation.RelationTracker.GetSyntheticTypenameOn(System.Type)">implied synthetic typename</see>.
             </param>
             <returns>
-              A new <see cref="T:Kvasir.Translation.RelationTracker"/> that is equivalent to this one but with <paramref name="path"/> (and a
-              following <c>.</c>) prepended to the <see cref="P:Kvasir.Translation.RelationTracker.Path"/>.
+              A new <see cref="T:Kvasir.Translation.RelationTracker"/> identical to the current one, but with <paramref name="property"/>
+              prepended to the <see cref="P:Kvasir.Translation.RelationTracker.Path"/>.
             </returns>
         </member>
         <member name="M:Kvasir.Translation.RelationTracker.AnnotationsFor(System.String)">
@@ -10357,6 +10357,33 @@
             <returns>
               A collection of attached annotations, no particular order, where the path of the annotation at the time of
               application is exactly <paramref name="fieldPath"/> or is nested thereunder.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.RelationTracker.AsPropertyChainOn(System.Type)">
+            <summary>
+              Produces a <see cref="T:Cybele.Core.PropertyChain"/> that can be used to access the Relation-type property being tracked
+              from a particular CLR type.
+            </summary>
+            <param name="source">
+              The starting-point CLR type.
+            </param>
+            <returns>
+              A <see cref="T:Cybele.Core.PropertyChain"/> that, when given an instance of <paramref name="source"/>, will produce the
+              value of the Relation-type property being tracked.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Translation.RelationTracker.GetSyntheticTypenameOn(System.Type)">
+            <summary>
+              Produces the full, decorated typename of the <see cref="T:Kvasir.Translation.SyntheticType"/> implied by the current
+              <see cref="T:Kvasir.Translation.RelationTracker"/>.
+            </summary>
+            <param name="entity">
+              The "owning Entity" of the tracked Relation. The name of this Entity type will appear first in the implied
+              synthetic typename.
+            </param>
+            <returns>
+              The display-caliber name of the <see cref="T:Kvasir.Translation.SyntheticType"/> implied by the current
+              <see cref="T:Kvasir.Translation.RelationTracker"/> when considered "owned" by <paramref name="entity"/>.
             </returns>
         </member>
         <member name="T:Kvasir.Translation.SyntheticConstructorInfo">

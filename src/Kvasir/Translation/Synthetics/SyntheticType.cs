@@ -190,13 +190,9 @@ namespace Kvasir.Translation {
 
             // These shenanigans are necessary to make sure that contextualized error messages display a string that is
             // consistent with that displayed for non-relation properties. In particular, the leading and trailing back
-            // ticks are omitted because they will be added by the Context class, but the interior ones are explicitly
-            // included.
-            var nameParts = tracker.Path.Split('.');
-            var first = tracker.Property.ReflectedType!.Name + '`';
-            var middle = nameParts.Skip(1).SkipLast(1).Select(n => $"`{n}`");
-            var last = "<synthetic> `" + nameParts[^1];
-            var name = string.Join(" → ", Enumerable.Repeat(first, 1).Concat(middle).Append(last));
+            // ticks are stripped because they will be added by the Context class, but the interior ones are kept.
+            var name = tracker.GetSyntheticTypenameOn(entity);
+            name = name[1..^1];
 
             return new SyntheticType(
                 name: name,

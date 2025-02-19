@@ -464,6 +464,23 @@ namespace UT.Kvasir.Translation {
             public RelationMap<string, RelationMap<string, double>> Measurements { get; init; } = new();
         }
 
+        // Test Scenario: Relation Nested Within Relation Nested Within Aggregate (✗not permitted✗)
+        public class IntelligenceAgency {
+            public struct Leadership {
+                public DateTime EffectiveStart { get; set; }
+                public DateTime? EffectiveEnd { get; set; }
+                public RelationMap<string, RelationSet<string>> Roles { get; }
+            }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [PrimaryKey] public string Country { get; set; } = "";
+            public Leadership Board { get; set; }
+            public uint KnownAssassinations { get; set; }
+            public bool? PerformsCyberEspionage { get; set; }
+            public decimal Budget { get; set; }
+            public ulong Employees { get; set; }
+        }
+
         // Test Scenario: Relation Nested Within Aggregate Nested Within Relation (✗not permitted✗)
         public class Poll {
             public record struct Question(string Text, RelationSet<string> Answers);
