@@ -889,6 +889,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void RelationNestedWithinRelationNestedWithinAggregate_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(IntelligenceAgency);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`IntelligenceAgency` → `Leadership` (from \"Board\") → <synthetic> `Roles` → Value")
+                .WithProblem("nested Relations are not supported")
+                .EndMessage();
+        }
+
         [TestMethod] public void RelationNestedWithinAggregateNestedWithinRelation_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);

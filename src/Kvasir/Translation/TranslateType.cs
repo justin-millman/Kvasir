@@ -80,7 +80,6 @@ namespace Kvasir.Translation {
             foreach (var property in source.GetProperties(flags).OrderBy(f => f.Name)) {
                 using var propGuard = context.Push(property);
                 var propType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                var propName = property.Name.Split('.')[^1];
 
                 var propCategory = property.TranslationCategory();
                 if (propCategory.Equals(PropertyCategory.Ambiguous)) {
@@ -124,7 +123,7 @@ namespace Kvasir.Translation {
                         performAssemblyCheck(propType);
                         var nestedGuard = context.Push(propType);
                         var fields = TranslateType(context, propType, allowRelations).Select(g => g.Clone()).ToList();
-                        var trackers = relationTrackersCache_[propType].Select(t => t.ExtendPath(propName)).ToList();
+                        var trackers = relationTrackersCache_[propType].Select(t => t.Extend(property)).ToList();
                         if (fields.IsEmpty() && trackers.IsEmpty()) {
                             throw new NotEnoughFieldsException(context, 1, 0);
                         }
