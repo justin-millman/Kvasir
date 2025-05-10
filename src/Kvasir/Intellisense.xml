@@ -1564,6 +1564,34 @@
               A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
             </summary>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.ForeignKeyBuilder">
+            <summary>
+              An implementation of the <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/> interface for a MySQL provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ForeignKeyBuilder.#ctor">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Providers.MySQL.ForeignKeyBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ForeignKeyBuilder.SetName(Kvasir.Schema.FKName)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ForeignKeyBuilder.SetOnDeleteBehavior(Kvasir.Schema.OnDelete)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ForeignKeyBuilder.SetOnUpdateBehavior(Kvasir.Schema.OnUpdate)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ForeignKeyBuilder.SetReferencedTable(Kvasir.Schema.ITable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ForeignKeyBuilder.SetFields(System.Collections.Generic.IEnumerable{Kvasir.Schema.IField})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ForeignKeyBuilder.Build">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.KeyBuilder">
             <summary>
               An implementation of the <see cref="T:Kvasir.Transcription.IKeyDeclBuilder`1"/> interface for a MySQL provider.
@@ -1612,6 +1640,34 @@
             </summary>
             <param name="name">
               The Field name.
+            </param>
+            <returns>
+              A MySQL-compliant rendering of <paramref name="name"/>.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if the length of <paramref name="name"/> exceeds 64 characters.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.FKName)">
+            <summary>
+              Renders the name of a foreign key for a MySQL DDL.
+            </summary>
+            <param name="name">
+              The foreign key name.
+            </param>
+            <returns>
+              A MySQL-compliant rendering of <paramref name="name"/>.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if the length of <paramref name="name"/> exceeds 64 characters.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.TableName)">
+            <summary>
+              Renders the name of a table for a MySQL DDL or query.
+            </summary>
+            <param name="name">
+              The table name.
             </param>
             <returns>
               A MySQL-compliant rendering of <paramref name="name"/>.
