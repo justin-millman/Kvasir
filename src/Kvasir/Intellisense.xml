@@ -1564,6 +1564,115 @@
               A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
             </summary>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.IConstraintDecl">
+            <summary>
+              A type tag to be used as the return value for a MySQL <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>
+            </summary>
+            <remarks>
+              Dealing with constraints in MySQL is a bit tough because the type of MySQL textual Fields, in part, depends on
+              what (if any) length constraints are imposed. Specifically, a textual Field with no length constraint is
+              realized as a <c>BLOB</c>, while one with a maximum length constraint is realized as a <c>VARCHAR</c>. This
+              creates a somewhat intricate interplay, and I haven't come up with a great design to handle it. So the pattern
+              is this: the Declaration Builder returns one of two declaration types unified by the
+              <see cref="T:Kvasir.Providers.MySQL.IConstraintDecl"/> base interface, and then does type-based discrimination between the two. Not a
+              great solution, but one I can at least live with.
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Providers.MySQL.BasicConstraintDecl">
+            <summary>
+              A MySQL declaration for a constraint that does not impose a maximum length constraint on a Field, or does so
+              as part of a complex clause.
+            </summary>
+            <param name="DDL">
+              The SQL declaration of the constraint.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.BasicConstraintDecl.#ctor(Kvasir.Transcription.SqlSnippet)">
+            <summary>
+              A MySQL declaration for a constraint that does not impose a maximum length constraint on a Field, or does so
+              as part of a complex clause.
+            </summary>
+            <param name="DDL">
+              The SQL declaration of the constraint.
+            </param>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.BasicConstraintDecl.DDL">
+            <summary>
+              The SQL declaration of the constraint.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Providers.MySQL.MaxLengthConstraintDecl">
+            <summary>
+              A MySQL declaration for a constraint that imposes a maximum length constraint on a Field.
+            </summary>
+            <param name="Field">
+              The name of the Field being constrained.
+            </param>
+            <param name="MaxLength">
+              The constraint value.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.MaxLengthConstraintDecl.#ctor(Kvasir.Schema.FieldName,System.UInt64)">
+            <summary>
+              A MySQL declaration for a constraint that imposes a maximum length constraint on a Field.
+            </summary>
+            <param name="Field">
+              The name of the Field being constrained.
+            </param>
+            <param name="MaxLength">
+              The constraint value.
+            </param>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.MaxLengthConstraintDecl.Field">
+            <summary>
+              The name of the Field being constrained.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.MaxLengthConstraintDecl.MaxLength">
+            <summary>
+              The constraint value.
+            </summary>
+        </member>
+        <member name="T:Kvasir.Providers.MySQL.ConstraintBuilder">
+            <summary>
+              An implementation of the <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/> interface for a MySQL provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.#ctor">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Providers.MySQL.ConstraintBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.SetName(Kvasir.Schema.CheckName)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.StartClause">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.EndClause">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.And">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.Or">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.AddClause(Kvasir.Schema.ConstantClause)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.AddClause(Kvasir.Schema.CrossFieldClause)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.AddClause(Kvasir.Schema.InclusionClause)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.AddClause(Kvasir.Schema.NullityClause)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.Build">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.ForeignKeyBuilder">
             <summary>
               An implementation of the <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/> interface for a MySQL provider.
@@ -1620,6 +1729,20 @@
               queries and statements.
             </summary>
         </member>
+        <member name="P:Kvasir.Providers.MySQL.Rendering.NULL">
+            <summary>The `NULL` literal</summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.DBValue)">
+            <summary>
+              Renders a literal value for a MySQL DDL or query.
+            </summary>
+            <param name="value">
+              The literal.
+            </param>
+            <return>
+              A MySQL-compliant rendering of <paramref name="value"/>.
+            </return>
+        </member>
         <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.KeyName)">
             <summary>
               Renders the name of a key (primary or candidate) for a MySQL DDL.
@@ -1675,6 +1798,68 @@
             <exception cref="T:Kvasir.Exceptions.KvasirException">
               if the length of <paramref name="name"/> exceeds 64 characters.
             </exception>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.CheckName)">
+            <summary>
+              Renders the name of a constraint for a MySQL DDL.
+            </summary>
+            <param name="name">
+              The constraint name.
+            </param>
+            <returns>
+              A MySQL-compliant rendering of <paramref name="name"/>.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if the length of <paramref name="name"/> exceeds 64 characters.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.ComparisonOperator,System.Boolean)">
+            <summary>
+              Renders a comparison operator for a MySQL DDL or query.
+            </summary>
+            <param name="op">
+              The operator.
+            </param>
+            <param name="forBoolean">
+              <see langword="true"/> if the rendering should be done for a Boolean value; otherwise,
+              <see langword="false"/>.
+            </param>
+            <returns>
+              A MySQL-compliant rendering of <paramref name="op"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.InclusionOperator)">
+            <summary>
+              Renders an inclusion operator for a MySQL DDL or query.
+            </summary>
+            <param name="op">
+              The operator.
+            </param>
+            <returns>
+              A MySQL-compliant rendering of <paramref name="op"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.NullityOperator)">
+            <summary>
+              Renders a nullity operator for a MySQL DDL or query.
+            </summary>
+            <param name="op">
+              The operator.
+            </param>
+            <returns>
+              A MySQL-compliant rendering of <paramref name="op"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Rendering.Render(Kvasir.Schema.FieldExpression)">
+            <summary>
+              Renders a <see cref="T:Kvasir.Schema.FieldExpression"/> for a MySQL DDL.
+            </summary>
+            <param name="expression">
+              The expression.
+            </param>
+            <returns>
+              A MySQL-compliant rendering of <paramref name="expression"/>.
+            </returns>
         </member>
         <member name="T:Kvasir.Reconstitution.ConstructingCreator">
             <summary>
