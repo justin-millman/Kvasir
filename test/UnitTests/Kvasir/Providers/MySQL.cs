@@ -5,6 +5,7 @@ using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
+using System.Linq;
 
 namespace UT.Kvasir.Providers {
     [TestClass, TestCategory("MySQL - Keys")]
@@ -1303,6 +1304,810 @@ namespace UT.Kvasir.Providers {
             action.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining("[MySQL]")
                 .WithMessageContaining(checkName.ToString())
+                .WithMessageContaining("exceeds the maximum of 64 characters");
+        }
+    }
+
+    [TestClass, TestCategory("MySQL - Fields")]
+    public class MySqlFieldTests {
+        [TestMethod] public void Type_Boolean() {
+            // Arrange
+            var name = new FieldName("Peshawar");
+            var type = DBType.Boolean;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BOOLEAN");
+        }
+
+        [TestMethod] public void Type_Int8() {
+            // Arrange
+            var name = new FieldName("Lucknow");
+            var type = DBType.Int8;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` TINYINT");
+        }
+
+        [TestMethod] public void Type_UInt8() {
+            // Arrange
+            var name = new FieldName("Fez");
+            var type = DBType.UInt8;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` TINYINT UNSIGNED");
+        }
+
+        [TestMethod] public void Type_Int16() {
+            // Arrange
+            var name = new FieldName("Moroni");
+            var type = DBType.Int16;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` SMALLINT");
+        }
+
+        [TestMethod] public void Type_UInt16() {
+            // Arrange
+            var name = new FieldName("Malé");
+            var type = DBType.UInt16;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` SMALLINT UNSIGNED");
+        }
+
+        [TestMethod] public void Type_Int32() {
+            // Arrange
+            var name = new FieldName("Port Vila");
+            var type = DBType.Int32;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` INT");
+        }
+
+        [TestMethod] public void Type_UInt32() {
+            // Arrange
+            var name = new FieldName("Mandalay");
+            var type = DBType.UInt32;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` INT UNSIGNED");
+        }
+
+        [TestMethod] public void Type_Int64() {
+            // Arrange
+            var name = new FieldName("Oran");
+            var type = DBType.Int64;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BIGINT");
+        }
+
+        [TestMethod] public void Type_UInt64() {
+            // Arrange
+            var name = new FieldName("Gori");
+            var type = DBType.UInt64;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BIGINT UNSIGNED");
+        }
+
+        [TestMethod] public void Type_Single() {
+            // Arrange
+            var name = new FieldName("Luanda");
+            var type = DBType.Single;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` FLOAT");
+        }
+
+        [TestMethod] public void Type_Double() {
+            // Arrange
+            var name = new FieldName("Nagpur");
+            var type = DBType.Double;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DOUBLE");
+        }
+
+        [TestMethod] public void Type_Decimal() {
+            // Arrange
+            var name = new FieldName("Kharkiv");
+            var type = DBType.Decimal;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DECIMAL");
+        }
+
+        [TestMethod] public void Type_Text() {
+            // Arrange
+            var name = new FieldName("Kobe");
+            var type = DBType.Text;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` TEXT");
+        }
+
+        [TestMethod] public void Type_Varchar() {
+            // Arrange
+            var name = new FieldName("Fortaleza");
+            var type = DBType.Text;
+            var maxLength = 173UL;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            intermediate.EnforceMaximumLength(maxLength);
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` VARCHAR({maxLength})");
+        }
+
+        [TestMethod] public void Type_Character() {
+            // Arrange
+            var name = new FieldName("Derry");
+            var type = DBType.Character;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` CHAR(1)");
+        }
+
+        [TestMethod] public void Type_DateTime() {
+            // Arrange
+            var name = new FieldName("Jeddah");
+            var type = DBType.DateTime;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DATETIME");
+        }
+
+        [TestMethod] public void Type_Guid() {
+            // Arrange
+            var name = new FieldName("St. George's");
+            var type = DBType.Guid;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BINARY(16)");
+        }
+
+        [TestMethod] public void Type_Enumeration() {
+            // Arrange
+            var name = new FieldName("Astana");
+            var type = DBType.Enumeration;
+            var values = new[] { DBValue.Create("Hamilton"), DBValue.Create("Swansea"), DBValue.Create("Wuhan") };
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetAllowedValues(values);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` ENUM({string.Join(", ", values.Select(v => "\"" + v.Datum.ToString() + "\""))})");
+        }
+
+        [TestMethod] public void NotNullable() {
+            // Arrange
+            var name = new FieldName("Wrexham");
+            var type = DBType.Int32;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetNullability(IsNullable.No);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` INT NOT NULL");
+        }
+
+        [TestMethod] public void Nullable() {
+            // Arrange
+            var name = new FieldName("Porto-Novo");
+            var type = DBType.Int32;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetNullability(IsNullable.Yes);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` INT");
+        }
+
+        [TestMethod] public void Default_Boolean_True() {
+            // Arrange
+            var name = new FieldName("Freetown");
+            var type = DBType.Boolean;
+            var defaultValue = true;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BOOLEAN DEFAULT TRUE");
+        }
+
+        [TestMethod] public void Default_Boolean_False() {
+            // Arrange
+            var name = new FieldName("Georgetown");
+            var type = DBType.Boolean;
+            var defaultValue = false;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BOOLEAN DEFAULT FALSE");
+        }
+
+        [TestMethod] public void Default_Int8() {
+            // Arrange
+            var name = new FieldName("Nusantara");
+            var type = DBType.Int8;
+            var defaultValue = (sbyte)103;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` TINYINT DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_UInt8() {
+            // Arrange
+            var name = new FieldName("Putrajaya");
+            var type = DBType.UInt8;
+            var defaultValue = (byte)9;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` TINYINT UNSIGNED DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_Int16() {
+            // Arrange
+            var name = new FieldName("Kuwait City");
+            var type = DBType.Int16;
+            var defaultValue = (short)-4810;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` SMALLINT DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_UInt16() {
+            // Arrange
+            var name = new FieldName("Libreville");
+            var type = DBType.UInt16;
+            var defaultValue = (ushort)50666;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` SMALLINT UNSIGNED DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_Int32() {
+            // Arrange
+            var name = new FieldName("Lobamba");
+            var type = DBType.Int32;
+            var defaultValue = 871920004;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` INT DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_UInt32() {
+            // Arrange
+            var name = new FieldName("Luxembourg");
+            var type = DBType.UInt32;
+            var defaultValue = 0U;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` INT UNSIGNED DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_Int64() {
+            // Arrange
+            var name = new FieldName("Oranjestad");
+            var type = DBType.Int64;
+            var defaultValue = -127182901258125L;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BIGINT DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_UInt64() {
+            // Arrange
+            var name = new FieldName("Thimphu");
+            var type = DBType.UInt64;
+            var defaultValue = 87100537;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BIGINT UNSIGNED DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_Single() {
+            // Arrange
+            var name = new FieldName("Samarkand");
+            var type = DBType.Single;
+            var defaultValue = -909.44f;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` FLOAT DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_Double() {
+            // Arrange
+            var name = new FieldName("Axum");
+            var type = DBType.Double;
+            var defaultValue = -77.777;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DOUBLE DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_Decimal() {
+            // Arrange
+            var name = new FieldName("Agadez");
+            var type = DBType.Decimal;
+            var defaultValue = -11.309M;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DECIMAL DEFAULT {defaultValue}");
+        }
+
+        [TestMethod] public void Default_Text() {
+            // Arrange
+            var name = new FieldName("Mbanza Kongo");
+            var type = DBType.Text;
+            var defaultValue = "Izamal";
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` TEXT DEFAULT \"{defaultValue}\"");
+        }
+
+        [TestMethod] public void Default_Varchar() {
+            // Arrange
+            var name = new FieldName("Oaxaca");
+            var type = DBType.Text;
+            var maxLength = 88UL;
+            var defaultValue = "Byblos";
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            intermediate.EnforceMaximumLength(maxLength);
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` VARCHAR({maxLength}) DEFAULT \"{defaultValue}\"");
+        }
+
+        [TestMethod] public void Default_Character() {
+            // Arrange
+            var name = new FieldName("Madurai");
+            var type = DBType.Character;
+            var defaultValue = 'b';
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` CHAR(1) DEFAULT \"{defaultValue}\"");
+        }
+
+        [TestMethod] public void Deafult_DateTime_NoTime() {
+            // Arrange
+            var name = new FieldName("Luang Prabang");
+            var type = DBType.DateTime;
+            var defaultValue = new DateTime(2009, 10, 08);
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DATETIME DEFAULT DATETIME \"2009-10-08 00:00:00\"");
+        }
+
+        [TestMethod] public void Deafult_DateTime_WithTime() {
+            // Arrange
+            var name = new FieldName("Cádiz");
+            var type = DBType.DateTime;
+            var defaultValue = new DateTime(1655, 1, 11, 3, 58, 44);
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DATETIME DEFAULT DATETIME \"1655-01-11 03:58:44\"");
+        }
+
+        [TestMethod] public void Default_Guid() {
+            // Arrange
+            var name = new FieldName("Heraklion");
+            var type = DBType.Guid;
+            var defaultValue = Guid.NewGuid();
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BINARY(16) DEFAULT UUID_TO_BIN(\"{defaultValue:D}\")");
+        }
+
+        [TestMethod] public void Default_Enumeration() {
+            // Arrange
+            var name = new FieldName("Syracuse");
+            var type = DBType.Enumeration;
+            var values = new[] { DBValue.Create("Dubrovnik"), DBValue.Create("Colchester"), DBValue.Create("Geelong"), DBValue.Create("Valparaíso") };
+            var defaultValue = values[1].Datum;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetAllowedValues(values);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` ENUM({string.Join(", ", values.Select(v => "\"" + v.Datum.ToString() + "\""))}) DEFAULT \"{defaultValue}\"");
+        }
+
+        [TestMethod] public void Default_Null() {
+            // Arrange
+            var name = new FieldName("Arequipa");
+            var type = DBType.Guid;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.NULL);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BINARY(16) DEFAULT NULL");
+        }
+
+        [TestMethod] public void VarcharWithUppercaseTextInDefaultValue() {
+            // Arrange
+            var name = new FieldName("Tartu");
+            var type = DBType.Text;
+            var maxLength = 4501UL;
+            var defaultValue = "DEFAULT CONTAINS THE WORD TEXT WITH SPACES";
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            intermediate.EnforceMaximumLength(maxLength);
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` VARCHAR({maxLength}) DEFAULT \"{defaultValue}\"");
+        }
+
+        [TestMethod] public void FieldNameIsMaximumLength() {
+            // Arrange
+            var name = new FieldName(new string('L', 64));
+            var type = DBType.Boolean;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` BOOLEAN");
+        }
+
+        [TestMethod] public void FieldNameExceedsMaximumLength_IsError() {
+            // Arrange
+            var fieldName = new FieldName(new string('s', 65));
+
+            // Act
+            var builder = new FieldBuilder();
+            var action = () => builder.SetName(fieldName);
+
+            // Assert
+            action.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining("[MySQL]")
+                .WithMessageContaining(fieldName.ToString())
                 .WithMessageContaining("exceeds the maximum of 64 characters");
         }
     }

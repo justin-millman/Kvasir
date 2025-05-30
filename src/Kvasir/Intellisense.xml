@@ -1673,6 +1673,70 @@
         <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.Build">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.FieldDecl">
+            <summary>
+              An intermediate for a MySQL declaration of a Field that allows for changing the default textual backing type
+              from <c>TEXT</c> to <c>VARCHAR(N)</c>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.FieldDecl.Name">
+            <summary>The name of the Field being declared.</summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldDecl.#ctor(Kvasir.Schema.FieldName,System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Providers.MySQL.FieldDecl"/>.
+            </summary>
+            <param name="name">
+              The <see cref="P:Kvasir.Providers.MySQL.FieldDecl.Name"/> of the Field being declared.
+            </param>
+            <param name="declaration">
+              The full declaration of the Field, with no placeholder text.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldDecl.EnforceMaximumLength(System.UInt64)">
+            <summary>
+              Enforces a maximum length on the Field.
+            </summary>
+            <param name="maxLength">
+              The maximum length.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldDecl.Build">
+            <summary>
+              Produces the MySQL-compliant declaration.
+            </summary>
+            <returns>
+              A MySQL-compliant declaration of a Field.
+            </returns>
+        </member>
+        <member name="T:Kvasir.Providers.MySQL.FieldBuilder">
+            <summary>
+              An implementation of the <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/> interface for a MySQL provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldBuilder.#ctor">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Providers.MySQL.FieldBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldBuilder.SetName(Kvasir.Schema.FieldName)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldBuilder.SetDataType(Kvasir.Schema.DBType)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldBuilder.SetNullability(Kvasir.Schema.IsNullable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldBuilder.SetDefaultValue(Kvasir.Schema.DBValue)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldBuilder.SetAllowedValues(System.Collections.Generic.IEnumerable{Kvasir.Schema.DBValue})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.FieldBuilder.Build">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.ForeignKeyBuilder">
             <summary>
               An implementation of the <see cref="T:Kvasir.Transcription.IForeignKeyDeclBuilder`1"/> interface for a MySQL provider.
