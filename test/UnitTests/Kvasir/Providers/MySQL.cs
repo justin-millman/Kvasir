@@ -2,10 +2,14 @@
 using Kvasir.Exceptions;
 using Kvasir.Providers.MySQL;
 using Kvasir.Schema;
+using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
+using static System.Net.Mime.MediaTypeNames;
+using static UT.Kvasir.Translation.ComparisonConstraints.IsLessOrEqualTo;
 
 namespace UT.Kvasir.Providers {
     [TestClass, TestCategory("MySQL - Keys")]
@@ -2108,6 +2112,243 @@ namespace UT.Kvasir.Providers {
             action.Should().ThrowExactly<KvasirException>()
                 .WithMessageContaining("[MySQL]")
                 .WithMessageContaining(fieldName.ToString())
+                .WithMessageContaining("exceeds the maximum of 64 characters");
+        }
+    }
+
+    [TestClass, TestCategory("MySQL - Tables")]
+    public class MySqlTableTests {
+        [TestMethod] public void RegularFields() {
+            // Arrange
+            var name = new TableName("TheTable");
+            var field0 = new FieldDecl(new FieldName("Ojai"), "`Ojai` INT UNSIGNED NOT NULL");
+            var field1 = new FieldDecl(new FieldName("West Hartford"), "`West Hartford` BOOLEAN NOT NULL DEFAULT TRUE");
+            var field2 = new FieldDecl(new FieldName("Blackfoot"), "`Blackfoot` DOUBLE");
+            var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`)");
+
+            // Act
+            var builder = new TableBuilder();
+            builder.SetName(name);
+            builder.AddFieldDeclaration(field0);
+            builder.AddFieldDeclaration(field1);
+            builder.AddFieldDeclaration(field2);
+            builder.SetPrimaryKeyDeclaration(pk);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
+                "`Ojai` INT UNSIGNED NOT NULL\n" +
+                "`West Hartford` BOOLEAN NOT NULL DEFAULT TRUE\n" +
+                "`Blackfoot` DOUBLE\n" +
+                pk.ToString()
+            );
+        }
+
+        [TestMethod] public void VarcharFields() {
+            // Arrange
+            var name = new TableName("HaShulkhan");
+            var field0 = new FieldDecl(new FieldName("East Rutherford"), "`East Rutherford` TEXT NOT NULL");
+            var field1 = new FieldDecl(new FieldName("West Bloomfield"), "`West Bloomfield` TEXT NOT NULL");
+            var constraint0 = new MaxLengthConstraintDecl(field0.Name, 153);
+            var constraint1 = new MaxLengthConstraintDecl(field1.Name, 22);
+            var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`, `{field1.Name}`)");
+
+            // Act
+            var builder = new TableBuilder();
+            builder.SetName(name);
+            builder.AddFieldDeclaration(field0);
+            builder.AddFieldDeclaration(field1);
+            builder.SetPrimaryKeyDeclaration(pk);
+            builder.AddCheckConstraintDeclaration(constraint0);
+            builder.AddCheckConstraintDeclaration(constraint1);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
+                $"`East Rutherford` VARCHAR({constraint0.MaxLength}) NOT NULL\n" +
+                $"`West Bloomfield` VARCHAR({constraint1.MaxLength}) NOT NULL\n" +
+                pk.ToString()
+            );
+        }
+
+        [TestMethod] public void CandidateKeys() {
+            // Arrange
+            var name = new TableName("LaMesa");
+            var field0 = new FieldDecl(new FieldName("Greenville"), "`Greenville` TEXT NOT NULL");
+            var field1 = new FieldDecl(new FieldName("Buffalo Grove"), "`Buffalo Grove` BIGINT UNSIGNED NOT NULL");
+            var field2 = new FieldDecl(new FieldName("Grambling"), "`Grambling` FLOAT NOT NULL");
+            var pk = new SqlSnippet($"PRIMARY KEY (`{field1.Name}`)");
+            var ck = new SqlSnippet($"CONSTRAINT unique_0 UNIQUE (`{field2.Name}`)");
+
+            // Act
+            var builder = new TableBuilder();
+            builder.SetName(name);
+            builder.AddFieldDeclaration(field0);
+            builder.AddFieldDeclaration(field1);
+            builder.AddFieldDeclaration(field2);
+            builder.SetPrimaryKeyDeclaration(pk);
+            builder.AddCandidateKeyDeclaration(ck);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
+                "`Greenville` TEXT NOT NULL\n" +
+                "`Buffalo Grove` BIGINT UNSIGNED NOT NULL\n" +
+                "`Grambling` FLOAT NOT NULL\n" +
+                $"{pk}\n" +
+                ck.ToString()
+            );
+        }
+
+        [TestMethod] public void ForeignKeys() {
+            // Arrange
+            var name = new TableName("LaTable");
+            var field0 = new FieldDecl(new FieldName("Muskegon"), "`Muskegon` SMALLINT NOT NULL");
+            var field1 = new FieldDecl(new FieldName("Poughkeepsie"), "`Poughkeepsie` TINYINT UNSIGNED NOT NULL");
+            var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`, `{field1.Name}`)");
+            var fk = new SqlSnippet($"FOREIGN KEY (`{field0.Name}`) REFERENCES `DerTisch` (`Natchitoches`)");
+
+            // Act
+            var builder = new TableBuilder();
+            builder.SetName(name);
+            builder.AddFieldDeclaration(field0);
+            builder.AddFieldDeclaration(field1);
+            builder.SetPrimaryKeyDeclaration(pk);
+            builder.AddForeignKeyDeclaration(fk);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
+                "`Muskegon` SMALLINT NOT NULL\n" +
+                "`Poughkeepsie` TINYINT UNSIGNED NOT NULL\n" +
+                $"{pk}\n" +
+                fk.ToString()
+            );
+        }
+
+        [TestMethod] public void CheckConstraints() {
+            // Arrange
+            var name = new TableName("ToTrapezi");
+            var field0 = new FieldDecl(new FieldName("Santa Claus"), "`Santa Claus` INT UNSIGNED NOT NULL");
+            var field1 = new FieldDecl(new FieldName("Independence"), "`Independence` TEXT NOT NULL");
+            var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`");
+            var check = new BasicConstraintDecl(new SqlSnippet($"CHECK (`{field0}` <= 200000)"));
+
+            // Act
+            var builder = new TableBuilder();
+            builder.SetName(name);
+            builder.AddFieldDeclaration(field0);
+            builder.AddFieldDeclaration(field1);
+            builder.SetPrimaryKeyDeclaration(pk);
+            builder.AddCheckConstraintDeclaration(check);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
+                "`Santa Claus` INT UNSIGNED NOT NULL\n" +
+                "`Independence` TEXT NOT NULL\n" +
+                $"{pk}\n" +
+                check.DDL.ToString()
+            );
+        }
+
+        [TestMethod] public void FullTableDeclaration() {
+            // Arrange
+            var name = new TableName("IlTavolo");
+            var field0 = new FieldDecl(new FieldName("Appomattox"), "`Appomattox` BIGINT UNSIGNED NOT NULL");
+            var field1 = new FieldDecl(new FieldName("Chickamauga"), "`Chickamauga` TEXT NOT NULL DEFAULT \"--none--\"");
+            var field2 = new FieldDecl(new FieldName("Kitty Hawk"), "`Kitty Hawk` INT DEFAULT NULL");
+            var field3 = new FieldDecl(new FieldName("Harpers Ferry"), "`Harpers Ferry` BOOLEAN NOT NULL");
+            var field4 = new FieldDecl(new FieldName("La Jolla"), "`La Jolla` TEXT NOT NULL");
+            var field5 = new FieldDecl(new FieldName("Compton"), "`Compton` INT UNSIGNED NOT NULL");
+            var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`, `{field5.Name}`)");
+            var ck0 = new SqlSnippet($"UNIQUE (`{field2.Name}`)");
+            var ck1 = new SqlSnippet($"UNIQUE (`{field3.Name}`, `{field0.Name}`)");
+            var fk = new SqlSnippet($"FOREIGN KEY (`{field2.Name}`) REFERENCES `KaPapaʻaina` (`Amherst`)");
+            var check0 = new MaxLengthConstraintDecl(field1.Name, 45);
+            var check1 = new BasicConstraintDecl(new SqlSnippet($"CHECK (`{field4.Name}` != \"Salt Lake City\")"));
+            var check2 = new BasicConstraintDecl(new SqlSnippet($"CHECK (`{field2.Name}` < `{field5.Name}`)"));
+
+            // Act
+            var builder = new TableBuilder();
+            builder.SetName(name);
+            builder.AddFieldDeclaration(field0);
+            builder.AddFieldDeclaration(field1);
+            builder.AddFieldDeclaration(field2);
+            builder.AddFieldDeclaration(field3);
+            builder.AddFieldDeclaration(field4);
+            builder.AddFieldDeclaration(field5);
+            builder.SetPrimaryKeyDeclaration(pk);
+            builder.AddCandidateKeyDeclaration(ck0);
+            builder.AddCandidateKeyDeclaration(ck1);
+            builder.AddForeignKeyDeclaration(fk);
+            builder.AddCheckConstraintDeclaration(check0);
+            builder.AddCheckConstraintDeclaration(check1);
+            builder.AddCheckConstraintDeclaration(check2);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
+                "`Appomattox` BIGINT UNSIGNED NOT NULL\n" +
+                $"`Chickamauga` VARCHAR({check0.MaxLength}) NOT NULL DEFAULT \"--none--\"\n" +
+                "`Kitty Hawk` INT DEFAULT NULL\n" +
+                "`Harpers Ferry` BOOLEAN NOT NULL\n" +
+                "`La Jolla` TEXT NOT NULL\n" +
+                "`Compton` INT UNSIGNED NOT NULL\n" +
+                $"{pk}\n" +
+                $"{ck0}\n" +
+                $"{ck1}\n" +
+                $"{check1.DDL}\n" +
+                $"{check2.DDL}\n" +
+                fk.ToString()
+            );
+        }
+
+        [TestMethod] public void TableNameIsMaximumLength() {
+            // Arrange
+            var name = new TableName(new string('M', 64));
+            var field0 = new FieldDecl(new FieldName("Battle Ground"), "`Battle Ground` SMALLINT UNSIGNED NOT NULL");
+            var field1 = new FieldDecl(new FieldName("Ponce"), "`Ponce` DECIMAL NOT NULL");
+            var field2 = new FieldDecl(new FieldName("Līhuʻe"), "`Līhuʻe` DATETIME");
+            var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`)");
+
+            // Act
+            var builder = new TableBuilder();
+            builder.SetName(name);
+            builder.AddFieldDeclaration(field0);
+            builder.AddFieldDeclaration(field1);
+            builder.AddFieldDeclaration(field2);
+            builder.SetPrimaryKeyDeclaration(pk);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
+                "`Battle Ground` SMALLINT UNSIGNED NOT NULL\n" +
+                "`Ponce` DECIMAL NOT NULL\n" +
+                "`Līhuʻe` DATETIME\n" +
+                pk.ToString()
+            );
+        }
+
+        [TestMethod] public void TableNameExceedsMaximumLength_IsError() {
+            // Arrange
+            var tableName = new TableName(new string('7', 1780));
+
+            // Act
+            var builder = new TableBuilder();
+            var action = () => builder.SetName(tableName);
+
+            // Assert
+            action.Should().ThrowExactly<KvasirException>()
+                .WithMessageContaining("[MySQL]")
+                .WithMessageContaining(tableName.ToString())
                 .WithMessageContaining("exceeds the maximum of 64 characters");
         }
     }
