@@ -1925,6 +1925,38 @@
               A MySQL-compliant rendering of <paramref name="expression"/>.
             </returns>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.TableBuilder">
+            <summary>
+              An implementation of the <see cref="T:Kvasir.Transcription.ITableDeclBuilder`5"/>
+              interface for a MySQL provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.#ctor">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Providers.MySQL.TableBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.SetName(Kvasir.Schema.TableName)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.AddFieldDeclaration(Kvasir.Providers.MySQL.FieldDecl)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.SetPrimaryKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.AddCandidateKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.AddForeignKeyDeclaration(Kvasir.Transcription.SqlSnippet)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.AddCheckConstraintDeclaration(Kvasir.Providers.MySQL.IConstraintDecl)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.TableBuilder.Build">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Reconstitution.ConstructingCreator">
             <summary>
               An <see cref="T:Kvasir.Reconstitution.ICreator"/> that creates a new CLR object by invoking a constructor via reflection.
