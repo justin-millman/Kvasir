@@ -2352,4 +2352,67 @@ namespace UT.Kvasir.Providers {
                 .WithMessageContaining("exceeds the maximum of 64 characters");
         }
     }
+
+    [TestClass, TestCategory("MySQL - Factory")]
+    public class MySqlBuilderFactoryTests {
+        [TestMethod] public void UniqueConstraintBuilder() {
+            // Arrange
+            var factory = new BuilderFactory();
+
+            // Act
+            var builder0 = factory.NewConstraintDeclBuilder();
+            var builder1 = factory.NewConstraintDeclBuilder();
+
+            // Assert
+            builder0.Should().NotBe(builder1);
+        }
+
+        [TestMethod] public void UniqueKeyBuilder() {
+            // Arrange
+            var factory = new BuilderFactory();
+
+            // Act
+            var builder0 = factory.NewKeyDeclBuilder();
+            var builder1 = factory.NewKeyDeclBuilder();
+
+            // Assert
+            builder0.Should().NotBe(builder1);
+        }
+
+        [TestMethod] public void UniqueForeignKeyBuilder() {
+            // Arrange
+            var factory = new BuilderFactory();
+
+            // Act
+            var builder0 = factory.NewForeignKeyDeclBuilder();
+            var builder1 = factory.NewForeignKeyDeclBuilder();
+
+            // Assert
+            builder0.Should().NotBe(builder1);
+        }
+
+        [TestMethod] public void UniqueFieldBuilder() {
+            // Arrange
+            var factory = new BuilderFactory();
+
+            // Act
+            var builder0 = factory.NewFieldDeclBuilder();
+            var builder1 = factory.NewFieldDeclBuilder();
+
+            // Assert
+            builder0.Should().NotBe(builder1);
+        }
+
+        [TestMethod] public void UniqueTableBuilder() {
+            // Arrange
+            var factory = new BuilderFactory();
+
+            // Act
+            var builder0 = factory.NewTableDeclBuilder();
+            var builder1 = factory.NewTableDeclBuilder();
+
+            // Assert
+            builder0.Should().NotBe(builder1);
+        }
+    }
 }

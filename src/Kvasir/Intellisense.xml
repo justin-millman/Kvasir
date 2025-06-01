@@ -1564,6 +1564,27 @@
               A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
             </summary>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.BuilderFactory">
+            <summary>
+              An implementation of the <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>
+              interface for a MySQL provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.BuilderFactory.NewConstraintDeclBuilder">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.BuilderFactory.NewForeignKeyDeclBuilder">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.BuilderFactory.NewKeyDeclBuilder">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.BuilderFactory.NewFieldDeclBuilder">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.BuilderFactory.NewTableDeclBuilder">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.IConstraintDecl">
             <summary>
               A type tag to be used as the return value for a MySQL <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>
