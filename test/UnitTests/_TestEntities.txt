@@ -2,6 +2,7 @@
 
 401K
 A Capella Group
+Abortion Clinic
 Accountant
 Achaean Naval Contingent
 Acid
@@ -79,6 +80,7 @@ Azeotrope
 Aztec God
 Bachelor Party
 Bachelorette
+Backstreet Boy
 Backyard Baseball Player
 Bacterium
 Bagel
@@ -167,6 +169,7 @@ Burrito
 Bust
 Butterfly
 Button (UI)
+Buzzer System
 C++ Header File
 Cabaret
 Cabinet Department
@@ -192,6 +195,7 @@ Cap'n Crunch
 Capacitor
 Capitol Building
 Car Accident
+Car Dealership
 Carbohydrate
 Cardinal (clergy)
 Care Bear
@@ -230,10 +234,12 @@ Chess Piece
 Chewing Gum
 Chinese Character
 Chinese Dynasty
+Chipotle Order
 Chocolate
 Choir
 Chopped Basket
 Chopsticks
+Choreographer
 Christian Denomination
 Christmas Carol
 Chrome Extension
@@ -263,6 +269,7 @@ Coal Mine
 Coat of Arms
 Cockfight
 Cocoa Farm
+Codex
 Codon
 Coin
 Colonoscopy
@@ -318,9 +325,11 @@ Curling Match
 Currency
 Customer Service Line
 Cutlery
+Cutthroat Kitchen Sabotage
 CVE
 Cybersite
 Cyclops
+Cyrillic Letter
 Cytonic
 D&D Character
 D&D Monster
@@ -349,6 +358,7 @@ Dermatologist
 Desert
 Diamond
 Diaper
+Diaspora
 Dice Roll
 Diet
 Differential Equation
@@ -415,6 +425,7 @@ Etiology
 Eunuch
 Eurovision Song Contest
 Excel Range
+Executive Order
 Existentialist
 Exorcism
 Experiment
@@ -451,6 +462,7 @@ Flower
 Font
 Food Chain
 Food Pantry
+Food Truck
 Forecast
 Fortune Cookie
 Fountain
@@ -460,6 +472,7 @@ Fraternity
 Fresco
 Fried Chicken
 Friend
+Fugue
 Function (programming)
 Functional Group
 Galaxy
@@ -512,6 +525,7 @@ Gulf
 Guy's Grocery Game
 Gymnast
 Hacker
+Hadith
 Haiku
 Hail Mary
 Hairstyle
@@ -519,6 +533,7 @@ Haitian Loa
 Haka
 Hall of Fame
 Hall Pass
+Hamentaschen
 Happy Hour
 Hash Function
 Hash Map
@@ -603,6 +618,7 @@ IPO
 Iron Chef
 ISO Standard
 Isthmus
+Iyalet
 Jack-o-Lantern
 Japanese Emperor
 Jedi
@@ -660,6 +676,7 @@ Lighthouse
 Limbo Competition
 Limerick
 Limousine
+Line Dance
 Linker
 Linux Distribution
 Lipstick
@@ -687,6 +704,8 @@ Magazine
 Magic System
 Magical Preserve (Fablehaven)
 Mall Santa
+Manicure
+Mansa of the Mali Empire
 Maori God
 Marathon
 Marble League
@@ -753,9 +772,11 @@ Muscle
 Museum
 Mushroom
 Musical
+Mutiny
 Mutual Fund
 Myers-Briggs Type Indicator
 Mythbusting
+Nachos
 National Anthem
 National Monument
 National Park
@@ -809,6 +830,7 @@ Orisha
 Orogene
 Orphanage
 Overnight Camp
+Overture
 Pacemaker
 PACER Test
 Package (software)
@@ -857,6 +879,7 @@ Phonetic Alphabet
 Phylum
 Piano
 Piano Sonata
+Pidgin
 Pie
 Pigment (biology)
 Pillow
@@ -942,6 +965,7 @@ Ravnica Guild
 Readymade
 Refugee Camp
 Register (computing)
+Regular Expression
 Rental Car
 Repository
 Representative
@@ -1016,6 +1040,7 @@ Shoe
 Shofar
 Shogunate
 Sign (ASL)
+Sign Language
 Skee-Ball
 Ski Slope
 Skittles
@@ -1086,6 +1111,7 @@ Sumo Wrestler
 Sundial
 Sunscreen
 Super Bowl
+Supermodel
 SuperPAC
 Surah
 Surfing Maneuver
@@ -1105,6 +1131,7 @@ Talk Show
 Tamagotchi
 Tapestry
 Tar Pits
+Tariff
 Tarot Card
 Tattoo
 Tectonic Plate
@@ -1204,6 +1231,7 @@ Web Browser
 Wedding
 Weekend Update
 Weird Al Parody
+Welsh God
 Werewolf
 Wheelchair
 Where's Waldo?

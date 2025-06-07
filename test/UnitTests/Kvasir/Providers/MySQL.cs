@@ -7,12 +7,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using static System.Net.Mime.MediaTypeNames;
-using static UT.Kvasir.Translation.ComparisonConstraints.IsLessOrEqualTo;
+
+using static UT.Kvasir.Providers.MySql;
 
 namespace UT.Kvasir.Providers {
-    [TestClass, TestCategory("MySQL - Keys")]
+    [TestClass, TestCategory("MySQL - Keys (DDL)")]
     public class MySqlKeyTests {
         [TestMethod] public void CandidateKeySingleFieldUnnamed() {
             // Arrange
@@ -184,7 +183,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Foreign Keys")]
+    [TestClass, TestCategory("MySQL - Foreign Keys (DDL)")]
     public class MySqlForeignKeyTests {
         [TestMethod] public void SingleFieldUnnamed() {
             // Arrange
@@ -576,7 +575,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Constraints")]
+    [TestClass, TestCategory("MySQL - Constraints (DDL)")]
     public class MySqlConstraintTests {
         [TestMethod] public void LengthConstraint_Maximum_LessThan() {
             // Arrange
@@ -1312,7 +1311,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Fields")]
+    [TestClass, TestCategory("MySQL - Fields (DDL)")]
     public class MySqlFieldTests {
         [TestMethod] public void Type_Boolean() {
             // Arrange
@@ -2116,7 +2115,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Tables")]
+    [TestClass, TestCategory("MySQL - Tables (DDL)")]
     public class MySqlTableTests {
         [TestMethod] public void RegularFields() {
             // Arrange
@@ -2353,7 +2352,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Factory")]
+    [TestClass, TestCategory("MySQL - Factory (DDL)")]
     public class MySqlBuilderFactoryTests {
         [TestMethod] public void UniqueConstraintBuilder() {
             // Arrange
@@ -2414,5 +2413,10 @@ namespace UT.Kvasir.Providers {
             // Assert
             builder0.Should().NotBe(builder1);
         }
+    }
+
+    [TestClass, TestCategory("MySQL - Commands (DML)")]
+    public class MySqlCommandTests {
+        
     }
 }

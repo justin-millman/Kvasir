@@ -76,7 +76,7 @@ namespace UT.Kvasir.Transaction {
                 commands.UpdateCommand(Arg.Any<Rows>()).Returns(update);
                 commands.When(c => c.UpdateCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, update));
 
-                commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t == table)).Returns(commands);
+                commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t == table), Arg.Any<bool>()).Returns(commands);
                 commands_[table] = commands;
                 dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();
             }

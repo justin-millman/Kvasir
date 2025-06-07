@@ -19,6 +19,13 @@ namespace Kvasir.Transaction {
         /// <param name="table">
         ///   The <see cref="ITable">Table</see>.
         /// </param>
-        ICommands CreateCommands(ITable table);
+        /// <param name="isPrincipalTable">
+        ///   <see langword="true"/> if <paramref name="table"/> is a Principal Table, and <see langword="false"/> if it
+        ///   is a Relation Table.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ICommands"/> instance that can be used to manipulate and query <paramref name="table"/>.
+        /// </returns>
+        ICommands CreateCommands(ITable table, bool isPrincipalTable);
     }
 }
