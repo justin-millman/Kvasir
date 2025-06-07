@@ -89,12 +89,12 @@ namespace Kvasir.Transaction {
             var tables = new Dictionary<ITable, int>();
             foreach (var principal in Topology.OrderEntities(translations.ToList())) {
                 tables[principal.Table] = principalCommands.Count;
-                principalCommands.Add(commandsFactory_.CreateCommands(principal.Table));
+                principalCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
 
                 // using `Extractor.SourceType` is a little awkward here, but it's the best we have
                 foreach (var relation in translations_[principal.Extractor.SourceType].Relations) {
                     tables[relation.Table] = translations_.Count + relationCommands.Count;
-                    relationCommands.Add(commandsFactory_.CreateCommands(relation.Table));
+                    relationCommands.Add(commandsFactory_.CreateCommands(relation.Table, isPrincipalTable: false));
                 }
             }
 
