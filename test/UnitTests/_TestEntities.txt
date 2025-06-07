@@ -2,6 +2,7 @@
 
 401K
 A Capella Group
+Abortion Clinic
 Accountant
 Achaean Naval Contingent
 Acid
@@ -79,6 +80,7 @@ Azeotrope
 Aztec God
 Bachelor Party
 Bachelorette
+Backstreet Boy
 Backyard Baseball Player
 Bacterium
 Bagel
@@ -167,6 +169,7 @@ Burrito
 Bust
 Butterfly
 Button (UI)
+Buzzer System
 C++ Header File
 Cabaret
 Cabinet Department
@@ -192,6 +195,7 @@ Cap'n Crunch
 Capacitor
 Capitol Building
 Car Accident
+Car Dealership
 Carbohydrate
 Cardinal (clergy)
 Care Bear
@@ -230,10 +234,12 @@ Chess Piece
 Chewing Gum
 Chinese Character
 Chinese Dynasty
+Chipotle Order
 Chocolate
 Choir
 Chopped Basket
 Chopsticks
+Choreographer
 Christian Denomination
 Christmas Carol
 Chrome Extension
@@ -252,6 +258,7 @@ Civilization VI City State
 Civilization VI District
 Civilization VI Military Unit
 Civilization VI Yield
+Click Consonant
 Cliff
 Climate
 Clock Tower
@@ -261,8 +268,10 @@ Clue(do) Game
 CMake Target
 Coal Mine
 Coat of Arms
+Cochlear Implant
 Cockfight
 Cocoa Farm
+Codex
 Codon
 Coin
 Colonoscopy
@@ -282,6 +291,7 @@ Concert Tour
 Condiment
 Condom
 Confidence Interval
+Conga Line
 Conlang
 Connecting Wall
 Conquistador
@@ -316,11 +326,14 @@ Cryptogram
 Cult
 Curling Match
 Currency
+Curry
 Customer Service Line
 Cutlery
+Cutthroat Kitchen Sabotage
 CVE
 Cybersite
 Cyclops
+Cyrillic Letter
 Cytonic
 D&D Character
 D&D Monster
@@ -349,6 +362,7 @@ Dermatologist
 Desert
 Diamond
 Diaper
+Diaspora
 Dice Roll
 Diet
 Differential Equation
@@ -415,6 +429,7 @@ Etiology
 Eunuch
 Eurovision Song Contest
 Excel Range
+Executive Order
 Existentialist
 Exorcism
 Experiment
@@ -451,6 +466,7 @@ Flower
 Font
 Food Chain
 Food Pantry
+Food Truck
 Forecast
 Fortune Cookie
 Fountain
@@ -502,6 +518,7 @@ Grasslands
 Great Old One
 Greek God
 Greek Letter
+Grenade
 Grilled Cheese
 Ground Meat
 Guacamole
@@ -512,6 +529,7 @@ Gulf
 Guy's Grocery Game
 Gymnast
 Hacker
+Hadith
 Haiku
 Hail Mary
 Hairstyle
@@ -519,6 +537,7 @@ Haitian Loa
 Haka
 Hall of Fame
 Hall Pass
+Hamentaschen
 Happy Hour
 Hash Function
 Hash Map
@@ -603,6 +622,7 @@ IPO
 Iron Chef
 ISO Standard
 Isthmus
+Iyalet
 Jack-o-Lantern
 Japanese Emperor
 Jedi
@@ -660,6 +680,7 @@ Lighthouse
 Limbo Competition
 Limerick
 Limousine
+Line Dance
 Linker
 Linux Distribution
 Lipstick
@@ -687,6 +708,8 @@ Magazine
 Magic System
 Magical Preserve (Fablehaven)
 Mall Santa
+Manicure
+Mansa of the Mali Empire
 Maori God
 Marathon
 Marble League
@@ -753,9 +776,11 @@ Muscle
 Museum
 Mushroom
 Musical
+Mutiny
 Mutual Fund
 Myers-Briggs Type Indicator
 Mythbusting
+Nachos
 National Anthem
 National Monument
 National Park
@@ -809,6 +834,7 @@ Orisha
 Orogene
 Orphanage
 Overnight Camp
+Overture
 Pacemaker
 PACER Test
 Package (software)
@@ -942,6 +968,7 @@ Ravnica Guild
 Readymade
 Refugee Camp
 Register (computing)
+Regular Expression
 Rental Car
 Repository
 Representative
@@ -956,6 +983,7 @@ Ring of Power
 River
 Riverwalk
 Rodent
+Rodeo
 Rollercoaster
 Roman Baths
 Roman Emperor
@@ -1016,6 +1044,7 @@ Shoe
 Shofar
 Shogunate
 Sign (ASL)
+Sign Language
 Skee-Ball
 Ski Slope
 Skittles
@@ -1072,6 +1101,7 @@ State Quarter
 Steak
 Step Pyramid
 Stock
+Stock Index
 Stooge
 Stove
 Stratego Piece
@@ -1086,11 +1116,13 @@ Sumo Wrestler
 Sundial
 Sunscreen
 Super Bowl
+Supermodel
 SuperPAC
 Surah
 Surfing Maneuver
 Surgeon General
 Surgical Mask
+Surrogate
 Survivor
 Sushi Roll
 Sutra
@@ -1105,6 +1137,7 @@ Talk Show
 Tamagotchi
 Tapestry
 Tar Pits
+Tariff
 Tarot Card
 Tattoo
 Tectonic Plate
@@ -1127,6 +1160,7 @@ TikTok
 Time Traveler
 Time Zone
 Timestamp
+Tirthankara
 "Title of Your Sex Tape" Joke
 Tlatoani
 Tongue Twister
@@ -1204,6 +1238,7 @@ Web Browser
 Wedding
 Weekend Update
 Weird Al Parody
+Welsh God
 Werewolf
 Wheelchair
 Where's Waldo?

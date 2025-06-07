@@ -1585,6 +1585,40 @@
         <member name="M:Kvasir.Providers.MySQL.BuilderFactory.NewTableDeclBuilder">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.Commands">
+            <summary>
+              An implementation of the <see cref="T:Kvasir.Transaction.ICommands"/> interface for a MySQL provider.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.Commands.CreateTableCommand">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.Commands.SelectAllQuery">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Commands.#ctor(Kvasir.Schema.ITable,System.Boolean)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Providers.MySQL.Commands"/>.
+            </summary>
+            <param name="table">
+              The <see cref="T:Kvasir.Schema.ITable">Table</see> with respect to which the new <see cref="T:Kvasir.Providers.MySQL.Commands"/> instance will
+              operate.
+            </param>
+            <param name="isPrincipalTable">
+              <see langword="true"/> if <paramref name="table"/> is a Principal Table, and <see langword="false"/> if it
+              is a Relation Table. (This controls the interpretation of the "Deletion Keys" for the
+              <see cref="M:Kvasir.Providers.MySQL.Commands.DeleteCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})"/> function.)
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Commands.InsertCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Commands.UpdateCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Commands.DeleteCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.IConstraintDecl">
             <summary>
               A type tag to be used as the return value for a MySQL <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>
@@ -7232,7 +7266,7 @@
               against that RDBMS.
             </remarks>
         </member>
-        <member name="M:Kvasir.Transaction.ICommandsFactory.CreateCommands(Kvasir.Schema.ITable)">
+        <member name="M:Kvasir.Transaction.ICommandsFactory.CreateCommands(Kvasir.Schema.ITable,System.Boolean)">
             <summary>
               Get the <see cref="T:Kvasir.Transaction.ICommands"/> that defines database interactions against a particular
               <see cref="T:Kvasir.Schema.ITable">Table</see>.
@@ -7240,6 +7274,13 @@
             <param name="table">
               The <see cref="T:Kvasir.Schema.ITable">Table</see>.
             </param>
+            <param name="isPrincipalTable">
+              <see langword="true"/> if <paramref name="table"/> is a Principal Table, and <see langword="false"/> if it
+              is a Relation Table.
+            </param>
+            <returns>
+              An <see cref="T:Kvasir.Transaction.ICommands"/> instance that can be used to manipulate and query <paramref name="table"/>.
+            </returns>
         </member>
         <member name="T:Kvasir.Transaction.Topology">
             <summary>

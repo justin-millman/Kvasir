@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Kvasir.Core;
 using Kvasir.Exceptions;
 using Kvasir.Providers.MySQL;
 using Kvasir.Schema;
@@ -6,13 +7,14 @@ using Kvasir.Transcription;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using static System.Net.Mime.MediaTypeNames;
-using static UT.Kvasir.Translation.ComparisonConstraints.IsLessOrEqualTo;
+
+using static UT.Kvasir.Providers.MySql;
+using Translator = Kvasir.Translation.Translator;
 
 namespace UT.Kvasir.Providers {
-    [TestClass, TestCategory("MySQL - Keys")]
+    [TestClass, TestCategory("MySQL - Keys (DDL)")]
     public class MySqlKeyTests {
         [TestMethod] public void CandidateKeySingleFieldUnnamed() {
             // Arrange
@@ -184,7 +186,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Foreign Keys")]
+    [TestClass, TestCategory("MySQL - Foreign Keys (DDL)")]
     public class MySqlForeignKeyTests {
         [TestMethod] public void SingleFieldUnnamed() {
             // Arrange
@@ -576,7 +578,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Constraints")]
+    [TestClass, TestCategory("MySQL - Constraints (DDL)")]
     public class MySqlConstraintTests {
         [TestMethod] public void LengthConstraint_Maximum_LessThan() {
             // Arrange
@@ -1312,7 +1314,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Fields")]
+    [TestClass, TestCategory("MySQL - Fields (DDL)")]
     public class MySqlFieldTests {
         [TestMethod] public void Type_Boolean() {
             // Arrange
@@ -2116,7 +2118,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Tables")]
+    [TestClass, TestCategory("MySQL - Tables (DDL)")]
     public class MySqlTableTests {
         [TestMethod] public void RegularFields() {
             // Arrange
@@ -2353,7 +2355,7 @@ namespace UT.Kvasir.Providers {
         }
     }
 
-    [TestClass, TestCategory("MySQL - Factory")]
+    [TestClass, TestCategory("MySQL - Factory (DDL)")]
     public class MySqlBuilderFactoryTests {
         [TestMethod] public void UniqueConstraintBuilder() {
             // Arrange
@@ -2415,4 +2417,1248 @@ namespace UT.Kvasir.Providers {
             builder0.Should().NotBe(builder1);
         }
     }
+
+    [TestClass, TestCategory("MySQL - Commands (DML)")]
+    public class MySqlCommandTests {
+        [TestMethod] public void CreateTable_Principal() {
+            // Arrange
+            var source = typeof(Mutiny);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.CreateTableCommand;
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
+                "`Date` DATETIME NOT NULL\n" +
+                "`Ship` TEXT NOT NULL\n" +
+                "`LeadMutineer` TEXT\n" +
+                "`OustedCaptain` TEXT NOT NULL\n" +
+                "`Casualties` INT UNSIGNED NOT NULL\n" +
+                "PRIMARY KEY (`Date`, `Ship`);"
+            );
+        }
+
+        [TestMethod] public void CreateTable_Relation() {
+            // Arrange
+            var source = typeof(CyrillicLetter);
+            var translator = new Translator(NO_ENTITIES);
+            var principalTable = translator[source].Principal.Table;
+            var relationTable = translator[source].Relations[0].Table;
+
+            // Act
+            var commands = new Commands(relationTable, false);
+            var command = commands.CreateTableCommand;
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{relationTable.Name}`\n" +
+                "`CyrillicLetter.LetterName` TEXT NOT NULL\n" +
+                "`Key` BIGINT UNSIGNED NOT NULL\n" +
+                "`Value` CHAR(1) NOT NULL\n" +
+                "PRIMARY KEY (`CyrillicLetter.LetterName`, `Key`)\n" +
+                $"FOREIGN KEY (`CyrillicLetter.LetterName`) REFERENCES `{principalTable.Name}` (`LetterName`) ON DELETE CASCADE ON UPDATE CASCADE;"
+            );
+        }
+
+        [TestMethod] public void CreateTable_PreDefinedEntity() {
+            // Arrange
+            var source = typeof(BackstreetBoy);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.CreateTableCommand;
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
+                "`FirstName` TEXT NOT NULL\n" +
+                "`LastName` TEXT NOT NULL\n" +
+                "`Birthdate` DATETIME NOT NULL\n" +
+                "PRIMARY KEY (`FirstName`, `LastName`);"
+            );
+        }
+
+        [TestMethod] public void SelectAll_Principal() {
+            // Arrange
+            var source = typeof(CarDealership);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.SelectAllQuery;
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be($"SELECT * FROM `{table.Name}`;");
+        }
+
+        [TestMethod] public void SelectAll_Relation() {
+            // Arrange
+            var source = typeof(Hadith);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.SelectAllQuery;
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be($"SELECT * FROM `{table.Name}`;");
+        }
+
+        [TestMethod] public void SelectAll_WithCalculatedField() {
+            // Arrange
+            var source = typeof(Grenade);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.SelectAllQuery;
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be($"SELECT * FROM `{table.Name}`;");
+        }
+
+        [TestMethod] public void Insert_TextEnumerations() {
+            // Arrange
+            var source = typeof(ChipotleOrder);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("CHPTL-1Tj47EqP0"),
+                    DBValue.Create(ConversionOf(ChipotleOrder.MealType.Burrito)),
+                    DBValue.Create(ConversionOf(ChipotleOrder.BeansOption.Pinto)),
+                    DBValue.Create(ConversionOf(ChipotleOrder.ProteinOption.Chicken)),
+                    DBValue.Create(ConversionOf(ChipotleOrder.SalsaOption.Hot)),
+                    DBValue.Create(ConversionOf(ChipotleOrder.CheeseOption.Single)),
+                    DBValue.Create(ConversionOf(ChipotleOrder.LettuceOption.None)),
+                    DBValue.Create(ConversionOf(ChipotleOrder.GuacOption.OnTheSide)),
+                    DBValue.Create("Rahul Shamazz"),
+                    DBValue.Create('U')
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`OrderId`, `Kind`, `Beans`, `Protein`, `Salsa`, `Cheese`, `Lettuce`, `Guacamole`, `NameForOrder`, `CRC`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4, @v5, @v6, @v7, @v8, @v9);"
+            );
+            command.Parameters.Should().HaveCount(10).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum).And
+                .HaveParameter("@v6", rows[0][6].Datum).And
+                .HaveParameter("@v7", rows[0][7].Datum).And
+                .HaveParameter("@v8", rows[0][8].Datum).And
+                .HaveParameter("@v9", rows[0][9].Datum);
+        }
+
+        [TestMethod] public void Insert_IntegersBooleans() {
+            // Arrange
+            var source = typeof(RegularExpression);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(true),
+                    DBValue.Create("^([a-zA-Z0-9._%-]+)@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,6})*$"),
+                    DBValue.Create(3),
+                    DBValue.Create((ushort)15783),
+                    DBValue.Create(3L)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`IsPerlCompatible`, `Expression`, `NumCaptureGroups`, `MaxMatchLength`, `NumWildcards`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4);"
+            );
+            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum);
+        }
+
+        [TestMethod] public void Insert_FloatingPoint() {
+            // Arrange
+            var source = typeof(Tariff);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(18571924UL),
+                    DBValue.Create("Brazil"),
+                    DBValue.Create("Palau"),
+                    DBValue.Create(18.65),
+                    DBValue.Create(13.10f),
+                    DBValue.Create(false),
+                    DBValue.Create(40000M)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`ID`, `Importer`, `Exporter`, `RegularRate`, `DiscountRate`, `IsInForce`, `Revenue`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4, @v5, @v6);"
+            );
+            command.Parameters.Should().HaveCount(7).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum).And
+                .HaveParameter("@v6", rows[0][6].Datum);
+        }
+
+        [TestMethod] public void Insert_DateGuid() {
+            // Arrange
+            var source = typeof(ExecutiveOrder);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Ezra Steinenbergstein"),
+                    DBValue.Create((ushort)7361),
+                    DBValue.Create(new DateTime(2314, 7, 19)),
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create(true)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`President`, `OrderNumber`, `Issued`, `DocumentID`, `EnshrinedInLegislation`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4);"
+            );
+            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum);
+        }
+
+        [TestMethod] public void Insert_Null() {
+            // Arrange
+            var source = typeof(Codex);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Codex Mendoza"),
+                    DBValue.Create("Aztec Empire"),
+                    DBValue.Create(DBNull.Value),
+                    DBValue.Create(3290.0)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`Title`, `Civilization`, `Published`, `SurfaceArea`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3);"
+            );
+            command.Parameters.Should().HaveCount(4).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum);
+        }
+
+        [TestMethod] public void Insert_TwoRows() {
+            // Arrange
+            var source = typeof(Choreographer);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Kenny Ortega"),
+                    DBValue.Create("Pop"),
+                    DBValue.Create(14),
+                    DBValue.Create(new DateTime(2019, 7, 24))
+                },
+                new() {
+                    DBValue.Create("Bob Fosse"),
+                    DBValue.Create("Jazz"),
+                    DBValue.Create(7),
+                    DBValue.Create(DBNull.Value)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`Name`, `Specialty`, `FilmsChoreographed`, `WalkOfFameStar`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3),\n" +
+                "(@v4, @v5, @v6, @v7);"
+            );
+            command.Parameters.Should().HaveCount(8).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[1][0].Datum).And
+                .HaveParameter("@v5", rows[1][1].Datum).And
+                .HaveParameter("@v6", rows[1][2].Datum).And
+                .HaveParameter("@v7", rows[1][3].Datum);
+        }
+
+        [TestMethod] public void Insert_ThreePlusRows() {
+            // Arrange
+            var source = typeof(Nachos);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create(ConversionOf(Nachos.KindOfChip.BlueCorn)),
+                    DBValue.Create(579.44),
+                    DBValue.Create((sbyte)3),
+                    DBValue.Create(true),
+                    DBValue.Create(true),
+                    DBValue.Create(true),
+                    DBValue.Create(ConversionOf(Nachos.Role.Appetizer)),
+                    DBValue.Create("Sandra Uguetta")
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create(ConversionOf(Nachos.KindOfChip.Tostitos)),
+                    DBValue.Create(1439.986),
+                    DBValue.Create((sbyte)8),
+                    DBValue.Create(true),
+                    DBValue.Create(false),
+                    DBValue.Create(true),
+                    DBValue.Create(ConversionOf(Nachos.Role.Lunch)),
+                    DBValue.Create("Bonnie St. Prierrelle")
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create(ConversionOf(Nachos.KindOfChip.Corn)),
+                    DBValue.Create(1874.41),
+                    DBValue.Create((sbyte)0),
+                    DBValue.Create(false),
+                    DBValue.Create(false),
+                    DBValue.Create(false),
+                    DBValue.Create(ConversionOf(Nachos.Role.Dessert)),
+                    DBValue.Create("Edna Kuqul")
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`NachosID`, `Chips`, `Calories`, `TypesOfCheese`, `Beans`, `Salsa`, `Guacamole`, `FoodRole`, `Chef`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4, @v5, @v6, @v7, @v8),\n" +
+                "(@v9, @v10, @v11, @v12, @v13, @v14, @v15, @v16, @v17),\n" +
+                "(@v18, @v19, @v20, @v21, @v22, @v23, @v24, @v25, @v26);"
+            );
+            command.Parameters.Should().HaveCount(27).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum).And
+                .HaveParameter("@v6", rows[0][6].Datum).And
+                .HaveParameter("@v7", rows[0][7].Datum).And
+                .HaveParameter("@v8", rows[0][8].Datum).And
+                .HaveParameter("@v9", rows[1][0].Datum).And
+                .HaveParameter("@v10", rows[1][1].Datum).And
+                .HaveParameter("@v11", rows[1][2].Datum).And
+                .HaveParameter("@v12", rows[1][3].Datum).And
+                .HaveParameter("@v13", rows[1][4].Datum).And
+                .HaveParameter("@v14", rows[1][5].Datum).And
+                .HaveParameter("@v15", rows[1][6].Datum).And
+                .HaveParameter("@v16", rows[1][7].Datum).And
+                .HaveParameter("@v17", rows[1][8].Datum).And
+                .HaveParameter("@v18", rows[2][0].Datum).And
+                .HaveParameter("@v19", rows[2][1].Datum).And
+                .HaveParameter("@v20", rows[2][2].Datum).And
+                .HaveParameter("@v21", rows[2][3].Datum).And
+                .HaveParameter("@v22", rows[2][4].Datum).And
+                .HaveParameter("@v23", rows[2][5].Datum).And
+                .HaveParameter("@v24", rows[2][6].Datum).And
+                .HaveParameter("@v25", rows[2][7].Datum).And
+                .HaveParameter("@v26", rows[2][8].Datum);
+        }
+
+        [TestMethod] public void Insert_Relation() {
+            // Arrange
+            var source = typeof(Manicure);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Louisa d'Alesssao"),
+                    DBValue.Create("Oren Swayziei"),
+                    DBValue.Create(DateTime.Now),
+                    DBValue.Create(ConversionOf(Manicure.Hand.Left)),
+                    DBValue.Create(ConversionOf(Manicure.Position.Middle)),
+                    DBValue.Create(true)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.InsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`Manicure.Manicurist`, `Manicure.Manicuree`, `Manicure.Timestamp`, `Key.Hand`, `Key.Position`, `Value`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4, @v5);"
+            );
+            command.Parameters.Should().HaveCount(6).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum);
+        }
+
+        [TestMethod] public void Update_SingleFieldPrimaryKey() {
+            // Arrange
+            var source = typeof(SignLanguage);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("ase"),
+                    DBValue.Create("American Sign Language"),
+                    DBValue.Create(730000UL),
+                    DBValue.Create(130000UL),
+                    DBValue.Create(true)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Name` = @v1, `NativeSigners` = @v2, `L2Signers` = @v3, `SingleHandFingerspelling` = @v4\n" +
+                "WHERE (`ISO6393` = @v0);"
+            );
+            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum);
+        }
+
+        [TestMethod] public void Update_MultiFieldPrimaryKey() {
+            // Arrange
+            var source = typeof(Diaspora);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Jewish"),
+                    DBValue.Create("Israel"),
+                    DBValue.Create(8500000UL),
+                    DBValue.Create("Yordim"),
+                    DBValue.Create(false)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Population` = @v2, `DiasporicTerm` = @v3, `PrimarilyRefugees` = @v4\n" +
+                "WHERE (`Ethnicity` = @v0 AND `ExogenousCountry` = @v1);"
+            );
+            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum);
+        }
+
+        [TestMethod] public void Update_AllFieldsPrimaryKey() {
+            // Arrange
+            var source = typeof(Click);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Bilabial Clik"),
+                    DBValue.Create('ʘ'),
+                    DBValue.Create("mwah")
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be("");
+            command.Parameters.Should().HaveCount(0).And.BeForMySql();
+        }
+
+        [TestMethod] public void Update_TwoRows() {
+            // Arrange
+            var source = typeof(CutthroatKitchenSabotage);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create((sbyte)1),
+                    DBValue.Create((sbyte)1),
+                    DBValue.Create(ConversionOf(CutthroatKitchenSabotage.Round.Round1)),
+                    DBValue.Create((sbyte)5),
+                    DBValue.Create("replace opponent's cheese with Kraft powder"),
+                    DBValue.Create(4000M)
+                },
+                new() {
+                    DBValue.Create((sbyte)7),
+                    DBValue.Create((sbyte)13),
+                    DBValue.Create(ConversionOf(CutthroatKitchenSabotage.Round.Round3)),
+                    DBValue.Create((sbyte)9),
+                    DBValue.Create("force opponent to use a Swiss army knife for their only utensils"),
+                    DBValue.Create(6300M)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Sabotage` = @v4, `WinningBid` = @v5\n" +
+                "WHERE (`Season` = @v0 AND `Episode` = @v1 AND `WhichRound` = @v2 AND `SabotageNumber` = @v3);\n" +
+                "\n" +
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Sabotage` = @v10, `WinningBid` = @v11\n" +
+                "WHERE (`Season` = @v6 AND `Episode` = @v7 AND `WhichRound` = @v8 AND `SabotageNumber` = @v9);"
+            );
+            command.Parameters.Should().HaveCount(12).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum).And
+                .HaveParameter("@v6", rows[1][0].Datum).And
+                .HaveParameter("@v7", rows[1][1].Datum).And
+                .HaveParameter("@v8", rows[1][2].Datum).And
+                .HaveParameter("@v9", rows[1][3].Datum).And
+                .HaveParameter("@v10", rows[1][4].Datum).And
+                .HaveParameter("@v11", rows[1][5].Datum);
+        }
+
+        [TestMethod] public void Update_ThreePlusRows() {
+            // Arrange
+            var source = typeof(WelshGod);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Arianrhod"),
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Sky and Stars"),
+                    DBValue.Create(18UL)
+                },
+                new() {
+                    DBValue.Create("Llŷr Llediaith"),
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Sea"),
+                    DBValue.Create(17UL)
+                },
+                new() {
+                    DBValue.Create("Gwydion"),
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Trickster"),
+                    DBValue.Create(51UL)
+                },
+                new() {
+                    DBValue.Create("Taran"),
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Storm"),
+                    DBValue.Create(2UL)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Name` = @v0, `Domain` = @v2, `MabinogionMentions` = @v3\n" +
+                "WHERE (`DeityID` = @v1);\n" +
+                "\n" +
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Name` = @v4, `Domain` = @v6, `MabinogionMentions` = @v7\n" +
+                "WHERE (`DeityID` = @v5);\n" +
+                "\n" +
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Name` = @v8, `Domain` = @v10, `MabinogionMentions` = @v11\n" +
+                "WHERE (`DeityID` = @v9);\n" +
+                "\n" +
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Name` = @v12, `Domain` = @v14, `MabinogionMentions` = @v15\n" +
+                "WHERE (`DeityID` = @v13);"
+            );
+            command.Parameters.Should().HaveCount(16).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[1][0].Datum).And
+                .HaveParameter("@v5", rows[1][1].Datum).And
+                .HaveParameter("@v6", rows[1][2].Datum).And
+                .HaveParameter("@v7", rows[1][3].Datum).And
+                .HaveParameter("@v8", rows[2][0].Datum).And
+                .HaveParameter("@v9", rows[2][1].Datum).And
+                .HaveParameter("@v10", rows[2][2].Datum).And
+                .HaveParameter("@v11", rows[2][3].Datum).And
+                .HaveParameter("@v12", rows[3][0].Datum).And
+                .HaveParameter("@v13", rows[3][1].Datum).And
+                .HaveParameter("@v14", rows[3][2].Datum).And
+                .HaveParameter("@v15", rows[3][3].Datum);
+        }
+
+        [TestMethod] public void Update_NullValue() {
+            // Arrange
+            var source = typeof(Curry);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create(DBNull.Value),
+                    DBValue.Create(ConversionOf(Curry.Origin.Indian)),
+                    DBValue.Create(DBNull.Value),
+                    DBValue.Create(false),
+                    DBValue.Create(byte.MaxValue)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"UPDATE `{table.Name}`\n" +
+                "SET `CurryColor` = @v1, `CountryOfOrigin` = @v2, `Protein` = @v3, `IsVegetarian` = @v4, `SpiceLevel` = @v5\n" +
+                "WHERE (`CurryID` = @v0);"
+            );
+            command.Parameters.Should().HaveCount(6).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum);
+        }
+
+        [TestMethod] public void Update_NonAssociativeRelation() {
+            // Arrange
+            var source = typeof(Overture);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Pytor Ilyich Tchaikovsky"),
+                    DBValue.Create(49),
+                    DBValue.Create("Cor Anglais"),
+                    DBValue.Create((sbyte)1)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be("");
+            command.Parameters.Should().HaveCount(0).And.BeForMySql();
+        }
+
+        [TestMethod] public void Update_SingleKeyAssociativeRelation() {
+            // Arrange
+            var source = typeof(Supermodel);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Gisele Bündchen"),
+                    DBValue.Create(1),
+                    DBValue.Create("Model Management")
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Item` = @v2\n" +
+                "WHERE (`Supermodel.Name` = @v0 AND `Index` = @v1);"
+            );
+            command.Parameters.Should().HaveCount(3).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum);
+        }
+
+        [TestMethod] public void Update_MultiKeyAssociativeRelation() {
+            // Arrange
+            var source = typeof(StockIndex);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("S&P 500"),
+                    DBValue.Create(new DateTime(2021, 3, 22)),
+                    DBValue.Create("CZR"),
+                    DBValue.Create(0.01f)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.UpdateCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"UPDATE `{table.Name}`\n" +
+                "SET `Value` = @v3\n" +
+                "WHERE (`StockIndex.IndexName` = @v0 AND `Key.Listed` = @v1 AND `Key.Symbol` = @v2);"
+            );
+            command.Parameters.Should().HaveCount(4).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum);
+        }
+
+        [TestMethod] public void Delete_SingleFieldPrimaryKey() {
+            // Arrange
+            var source = typeof(Mansa);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(9U)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`Index` = @v0);"
+            );
+            command.Parameters.Should().HaveCount(1).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum);
+        }
+
+        [TestMethod] public void Delete_MultiFieldPrimaryKey() {
+            // Arrange
+            var source = typeof(Hamentaschen);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create((ushort)2025),
+                    DBValue.Create(7U),
+                    DBValue.Create((ushort)17),
+                    DBValue.Create(Guid.NewGuid())
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`Year` = @v0 AND `BatchNumber` = @v1 AND `CookieNumber` = @v2 AND `CookieMakerID` = @v3);"
+            );
+            command.Parameters.Should().HaveCount(4).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum);
+        }
+
+        [TestMethod] public void Delete_AllFieldsPrimaryKey() {
+            // Arrange
+            var source = typeof(Tirthankara);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Mahavira"),
+                    DBValue.Create("Lion"),
+                    DBValue.Create(24U)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`Name` = @v0 AND `Emblem` = @v1 AND `Iteration` = @v2);"
+            );
+            command.Parameters.Should().HaveCount(3).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum);
+        }
+
+        [TestMethod] public void Delete_TwoRows() {
+            // Arrange
+            var source = typeof(FoodTruck);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Lobster 'n' Stuff"),
+                    DBValue.Create("NicoAngelo Buenarottazzini")
+                },
+                new() {
+                    DBValue.Create("Der Schnitzel"),
+                    DBValue.Create("Hans Neuen")
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`TruckName` = @v0 AND `Proprietor` = @v1) OR\n" +
+                "(`TruckName` = @v2 AND `Proprietor` = @v3);"
+            );
+            command.Parameters.Should().HaveCount(4).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[1][0].Datum).And
+                .HaveParameter("@v3", rows[1][1].Datum);
+        }
+
+        [TestMethod] public void Delete_ThreePlusRows() {
+            // Arrange
+            var source = typeof(Iyalet);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Iudex")
+                },
+                new() {
+                    DBValue.Create("Apothetikals")
+                },
+                new() {
+                    DBValue.Create("Engineers")
+                },
+                new() {
+                    DBValue.Create("Legion")
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`Name` = @v0) OR\n" +
+                "(`Name` = @v1) OR\n" +
+                "(`Name` = @v2) OR\n" +
+                "(`Name` = @v3);"
+            );
+            command.Parameters.Should().HaveCount(4).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[1][0].Datum).And
+                .HaveParameter("@v2", rows[2][0].Datum).And
+                .HaveParameter("@v3", rows[3][0].Datum);
+        }
+
+        [TestMethod] public void Delete_NonAssociativeRelation() {
+            // Arrange
+            var source = typeof(BuzzerSystem);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create((ushort)2024)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`BuzzerSystem.BuzzerID` = @v0 AND `Item` = @v1);"
+            );
+            command.Parameters.Should().HaveCount(2).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum);
+        }
+
+        [TestMethod] public void Delete_SingleKeyAssociativeRelation() {
+            // Arrange
+            var source = typeof(LineDance);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("The One That Got Away"),
+                    DBValue.Create("(by Katy Perry)"),
+                    DBValue.Create(18U)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`LineDance.Song` = @v0 AND `LineDance.Discriminator` = @v1 AND `Index` = @v2);"
+            );
+            command.Parameters.Should().HaveCount(3).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum);
+        }
+
+        [TestMethod] public void Delete_MultiKeyAssociativeRelation() {
+            // Arrange
+            var source = typeof(CochlearImplant);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Samuel Kolerr"),
+                    DBValue.Create(true),
+                    DBValue.Create(3U),
+                    DBValue.Create("Barzensson's Exam"),
+                    DBValue.Create(2.0f)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`CochlearImplant.Individual` = @v0 AND `CochlearImplant.LeftSide` = @v1 AND `CochlearImplant.Iteration` = @v2 AND `Key.Title` = @v3 AND `Key.Version` = @v4);"
+            );
+            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum);
+        }
+
+        [TestMethod] public void Delete_OwningEntity_NonAssociativeRelation() {
+            // Arrange
+            var source = typeof(CongaLine);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(71804419)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`CongaLine.DanceID` = @v0);"
+            );
+            command.Parameters.Should().HaveCount(1).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum);
+        }
+
+        [TestMethod] public void Delete_OwningEntity_SingleKeyAssociativeRelation() {
+            // Arrange
+            var source = typeof(Rodeo);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid())
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid())
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`Rodeo.RodeoID` = @v0) OR\n" +
+                "(`Rodeo.RodeoID` = @v1);"
+            );
+            command.Parameters.Should().HaveCount(2).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[1][0].Datum);
+        }
+
+        [TestMethod] public void Delete_OwningEntity_MultiKeyAssociativeRelation() {
+            // Arrange
+            var source = typeof(Surrogate);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Linda Elenhenney")
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Sasha Spozane")
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Helena Bar-Esther")
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`Surrogate.PersonID` = @v0 AND `Surrogate.Agency` = @v1) OR\n" +
+                "(`Surrogate.PersonID` = @v2 AND `Surrogate.Agency` = @v3) OR\n" +
+                "(`Surrogate.PersonID` = @v4 AND `Surrogate.Agency` = @v5);"
+            );
+            command.Parameters.Should().HaveCount(6).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[1][0].Datum).And
+                .HaveParameter("@v3", rows[1][1].Datum).And
+                .HaveParameter("@v4", rows[2][0].Datum).And
+                .HaveParameter("@v5", rows[2][1].Datum);
+        }
+
+        [TestMethod] public void Delete_MixedStyleFromRelation() {
+            // Arrange
+            var source = typeof(AbortionClinic);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid())
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Dr. Maxwell Correlli")
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Dr. Amanda S. Ovwell")
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid())
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid())
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.DeleteCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"DELETE FROM `{table.Name}`\n" +
+                "WHERE (`AbortionClinic.ID` = @v0) OR\n" +
+                "(`AbortionClinic.ID` = @v1 AND `Item` = @v2) OR\n" +
+                "(`AbortionClinic.ID` = @v3 AND `Item` = @v4) OR\n" +
+                "(`AbortionClinic.ID` = @v5) OR\n" +
+                "(`AbortionClinic.ID` = @v6);"
+            );
+            command.Parameters.Should().HaveCount(7).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[1][0].Datum).And
+                .HaveParameter("@v2", rows[1][1].Datum).And
+                .HaveParameter("@v3", rows[2][0].Datum).And
+                .HaveParameter("@v4", rows[2][1].Datum).And
+                .HaveParameter("@v5", rows[3][0].Datum).And
+                .HaveParameter("@v6", rows[4][0].Datum);
+        }
+
+
+        private static string ConversionOf<T>(T enumerator) where T : Enum {
+            var converter = new EnumToStringConverter(typeof(T)).ConverterImpl;
+            return (string)converter.Convert(enumerator)!;
+        }
+        private static Func<Type, IEnumerable<object>> NO_ENTITIES => _ => Array.Empty<object>();
+    }    
 }
