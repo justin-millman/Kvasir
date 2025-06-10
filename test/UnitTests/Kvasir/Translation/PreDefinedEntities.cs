@@ -18,7 +18,6 @@ namespace UT.Kvasir.Translation {
             var translate = () => translator[source];
 
             // Assert
-            // Assert
             translate.Should().FailWith<NotEnoughInstancesException>()
                 .WithLocation("`StainedGlassWindow`")
                 .WithProblem("expected at least 2 pre-defined instances, but found 0")
@@ -33,7 +32,6 @@ namespace UT.Kvasir.Translation {
             // Act
             var translate = () => translator[source];
 
-            // Assert
             // Assert
             translate.Should().FailWith<NotEnoughInstancesException>()
                 .WithLocation("`Gulf`")
@@ -61,6 +59,19 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherCandidateKeys().And
                 .HaveNoOtherForeignKeys().And
                 .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(12);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.SimonI);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Andrew);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.JamesI);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.John);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Philip);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Bartholomew);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Thomas);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Matthew);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.JamesII);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Thaddeus);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.SimonII);
+            translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Judas);
         }
 
         [TestMethod] public void PubliclyWriteableFieldProperty_IsError() {
@@ -127,6 +138,16 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherCandidateKeys().And
                 .HaveNoOtherForeignKeys().And
                 .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(9);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.QuestionMark);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.ExclamationMark);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.Period);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.Comma);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.QuotationMark);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.Apostrophe);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.Hyphen);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.OpenParenthesis);
+            translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.CloseParenthesis);
         }
 
         [TestMethod] public void PublicConstructor_IsError() {
@@ -173,6 +194,17 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(10);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Azorius);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Dimir);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Rakdos);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Gruul);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Selesnya);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Orzhov);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Izzet);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Golgari);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Boros);
+            translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Simic);
         }
 
         [TestMethod] public void AggregateNestedReferenceToPreDefinedEntity() {
@@ -200,6 +232,12 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(5);
+            translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Chico);
+            translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Harpo);
+            translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Groucho);
+            translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Gummo);
+            translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Zeppo);
         }
 
         [TestMethod] public void RelationToPreDefinedEntity() {

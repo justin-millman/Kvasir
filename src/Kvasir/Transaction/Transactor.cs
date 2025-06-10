@@ -106,7 +106,8 @@ namespace Kvasir.Transaction {
         }
 
         /// <summary>
-        ///   Creates each of the constituent Principal and Relation Tables in the back-end database.
+        ///   Creates each of the constituent Principal and Relation Tables in the back-end database. Any rows for
+        ///   Pre-Defined Entities are inserted into their corresponding Principal Table.
         /// </summary>
         /// <exception cref="InvalidOperationException">
         ///   if the transaction creating the necessary tables fails and is successfully rolled back.
@@ -123,6 +124,13 @@ namespace Kvasir.Transaction {
                 command.ExecuteNonQuery();
             }
             TryCommitTransaction(transaction);
+
+            // Rather than do the ordering ourselves here, just let the insertion function handle it. This will also
+            // make everything on transaction, though that's not really super important.
+            var preDefineds = translations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances);
+            if (!preDefineds.IsEmpty()) {
+                Insert(preDefineds.ToList());
+            }
         }
 
         /// <summary>

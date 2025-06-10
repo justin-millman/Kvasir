@@ -141,6 +141,30 @@ namespace UT.Kvasir.Transaction {
             public Traits MatrixTraits { get; set; }
         }
 
+        // Test Scenario: Pre-Defined Entity
+        [PreDefined] public class Dashavatara {
+            [PrimaryKey, Column(0)] public int Index { get; private init; }
+            [Column(1)] public string Name { get; private init; }
+            [Column(2)] public string Form { get; private init; }
+
+            public static Dashavatara Matsaya { get; } = new Dashavatara(1, "Matsaya", "fish");
+            public static Dashavatara Kurma { get; } = new Dashavatara(2, "Kurma", "tortoise");
+            public static Dashavatara Varaha { get; } = new Dashavatara(3, "Varaha", "boar");
+            public static Dashavatara Narasimha { get; } = new Dashavatara(4, "Narasimha", "man-lion");
+            public static Dashavatara Vamana { get; } = new Dashavatara(5, "Vamana", "dwarf-god");
+            public static Dashavatara Parashurama { get; } = new Dashavatara(6, "Parashurama", "Brahmin warrior");
+            public static Dashavatara Rama { get; } = new Dashavatara(7, "Rama", "god");
+            public static Dashavatara Krishna { get; } = new Dashavatara(8, "Krishna", "god");
+            public static Dashavatara Buddha { get; } = new Dashavatara(9, "Buddha", "enlightened individual");
+            public static Dashavatara Kalki { get; } = new Dashavatara(10, "Kalki", "prophesied warrior");
+
+            private Dashavatara(int index, string name, string form) {
+                Index = index;
+                Name = name;
+                Form = form;
+            }
+        }
+
         // Test Scenario: Transaction Rolled Back
         public class Bond {
             public enum Category { Corporate, Municipal, Treasury, Foreign }

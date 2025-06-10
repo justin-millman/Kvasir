@@ -1,7 +1,10 @@
 ﻿using FluentAssertions;
+using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using static UT.Kvasir.Transaction.TableCreation;
 
@@ -154,6 +157,36 @@ namespace UT.Kvasir.Transaction {
             inversesCmd.Transaction.Should().Be(fixture.Transaction);
             fixture.ShouldBeOrdered(matrixCmd, (eigenvaluesCmd, inversesCmd));
             fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void PreDefinedEntity() {
+            // Arrange
+            var fixture = new TestFixture(typeof(Dashavatara));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var createCmd = fixture.PrincipalCommands<Dashavatara>().CreateTableCommand;
+            var insertCmd = fixture.PrincipalCommands<Dashavatara>().InsertCommand(Enumerable.Empty<IReadOnlyList<DBValue>>());
+            var inserts = fixture.InsertionsFor(insertCmd);
+
+            // Assert
+            createCmd.Connection.Should().Be(fixture.Connection);
+            createCmd.Transaction.Should().Be(fixture.Transaction);
+            insertCmd.Connection.Should().Be(fixture.Connection);
+            insertCmd.Transaction.Should().Be(fixture.Transaction);
+            inserts.Should().HaveCount(10);
+            inserts.Should().ContainRow(Dashavatara.Matsaya.Index, Dashavatara.Matsaya.Name, Dashavatara.Matsaya.Form);
+            inserts.Should().ContainRow(Dashavatara.Kurma.Index, Dashavatara.Kurma.Name, Dashavatara.Kurma.Form);
+            inserts.Should().ContainRow(Dashavatara.Varaha.Index, Dashavatara.Varaha.Name, Dashavatara.Varaha.Form);
+            inserts.Should().ContainRow(Dashavatara.Narasimha.Index, Dashavatara.Narasimha.Name, Dashavatara.Narasimha.Form);
+            inserts.Should().ContainRow(Dashavatara.Vamana.Index, Dashavatara.Vamana.Name, Dashavatara.Vamana.Form);
+            inserts.Should().ContainRow(Dashavatara.Parashurama.Index, Dashavatara.Parashurama.Name, Dashavatara.Parashurama.Form);
+            inserts.Should().ContainRow(Dashavatara.Rama.Index, Dashavatara.Rama.Name, Dashavatara.Rama.Form);
+            inserts.Should().ContainRow(Dashavatara.Krishna.Index, Dashavatara.Krishna.Name, Dashavatara.Krishna.Form);
+            inserts.Should().ContainRow(Dashavatara.Buddha.Index, Dashavatara.Buddha.Name, Dashavatara.Buddha.Form);
+            inserts.Should().ContainRow(Dashavatara.Kalki.Index, Dashavatara.Kalki.Name, Dashavatara.Kalki.Form);
+            fixture.ShouldBeOrdered(createCmd, insertCmd);
+            fixture.Transaction.Received(2).Commit();
         }
 
         [TestMethod] public void TransactionRolledBack() {
