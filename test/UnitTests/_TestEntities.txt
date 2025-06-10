@@ -328,6 +328,7 @@ D&D Spell
 D&D Weapon
 Dalai Lama
 Dam
+Dashavatara
 Data Center
 Data Structure
 Database Field

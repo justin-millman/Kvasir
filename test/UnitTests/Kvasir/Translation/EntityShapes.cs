@@ -25,6 +25,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Green").OfTypeUInt8().BeingNonNullable().And
                 .HaveField("Blue").OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsPartialClass() {
@@ -47,6 +48,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("RepublicanPVs").OfTypeUInt64().BeingNonNullable().And
                 .HaveField("RepublicanEVs").OfTypeUInt16().BeingNonNullable().And
                 .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsStaticClass_IsError() {
@@ -81,6 +83,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Message").OfTypeText().BeingNonNullable().And
                 .HaveField("Timestamp").OfTypeDateTime().BeingNonNullable().And
                 .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsInternal() {
@@ -100,6 +103,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("NumHoles").OfTypeInt8().BeingNonNullable().And
                 .HaveField("IsBuckled").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsStruct_IsError() {

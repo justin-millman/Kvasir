@@ -119,13 +119,13 @@ namespace Kvasir.Translation {
             if (!IsPreDefined(source)) {
                 var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false);
                 var creator = new DataReconstitutionPlan(reconstitutor);
-                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, new List<object>());
             }
             else {
                 var instances = GetPreDefinedInstances(context, source);
                 var matcher = new KeyMatcher(() => instances, pkExtractor);
                 var creator = MakePreDefinedReconstitutionPlan(context, table, matcher, source);
-                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor);
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, instances.ToList());
             }
 
             principalTableCache_.Add(source, principal);
