@@ -807,13 +807,26 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public double TelevisionRating { get; set; }
         }
 
-        // Test Scenario: Single Instance of Single Entity with Scalar Relation of Deleted Elements
+        // Test Scenario: Single Instance of Single Entity with Scalar Non-Associative Relation of Deleted Elements
         public class Guacamole {
             [PrimaryKey, Column(0)] public Guid GuacamoleID { get; set; }
             [Column(1)] public string Preparer { get; set; } = "";
             [Column(2)] public ushort NumServings { get; set; }
             public RelationSet<string> Ingredients { get; init; } = new();
             [Column(3)] public bool MadeInMolcajete { get; set; }
+        }
+
+        // Test Scenario: Single Instance of Single Entity with Scalar Associative Relation of Deleted Elements
+        public class EyeDrops {
+            public enum Condition { Astigmatism, NearSightedness, FarSightedness, Glaucoma, Cataracts, Conjunctivitis }
+
+            [PrimaryKey, Column(0)] public Guid DropsID { get; set; }
+            [Column(1)] public string BrandName { get; set; } = "";
+            [Column(2)] public ulong Prescriptions { get; set; }
+            public RelationMap<Condition, bool> TreatmentPlan { get; init; } = new();
+            [Column(3)] public bool SafeForChildren { get; set; }
+            [Column(4)] public bool Dilatory { get; set; }
+            [Column(5)] public sbyte MaxDropsPerDay { get; set; }
         }
 
         // Test Scenario: Single Instance of Single Entity with Scalar Relation of New Elements

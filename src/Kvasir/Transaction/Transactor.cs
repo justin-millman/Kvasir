@@ -297,8 +297,9 @@ namespace Kvasir.Transaction {
                     foreach (var entity in mapping[translation.CLRSource]) {
                         var ownerFields = translation.Principal.KeyExtractor.ExtractFrom(entity);
                         var relationFields = relation.Extractor.ExtractFrom(entity);
+                        var relationPKFieldsCount = relation.Table.PrimaryKey.Fields.Count - ownerFields.Count();
 
-                        deleteRows.AddRange(relationFields.Deletions.Select(r => ownerFields.Concat(r).ToList()));
+                        deleteRows.AddRange(relationFields.Deletions.Select(r => ownerFields.Concat(r.Take(relationPKFieldsCount)).ToList()));
                         updateRows.AddRange(relationFields.Modifications.Select(r => ownerFields.Concat(r).ToList()));
                         insertRows.AddRange(relationFields.Insertions.Select(r => ownerFields.Concat(r).ToList()));
 
