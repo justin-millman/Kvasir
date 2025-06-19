@@ -107,7 +107,7 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelationsDeletedElements() {
+        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarNonAssociativeRelationsDeletedElements() {
             // Arrange
             var guacamole = new Guacamole() {
                 GuacamoleID = Guid.NewGuid(),
@@ -155,6 +155,60 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(guacamoleCmd, ingredientsDeleteCmd);
             fixture.Transaction.Received(1).Commit();
             guacamole.Ingredients.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarAssociativeRelationsDeletedElements() {
+            // Arrange
+            var eyeDrops = new EyeDrops() {
+                DropsID = Guid.NewGuid(),
+                BrandName = "Mr. Sees-All",
+                Prescriptions = 1876504,
+                TreatmentPlan = new RelationMap<EyeDrops.Condition, bool>() {
+                    { EyeDrops.Condition.Glaucoma, false },
+                    { EyeDrops.Condition.Conjunctivitis, true },
+                    { EyeDrops.Condition.Cataracts, true },
+                    { EyeDrops.Condition.NearSightedness, false },
+                    { EyeDrops.Condition.FarSightedness, false },
+                    { EyeDrops.Condition.Astigmatism, true }
+                },
+                SafeForChildren = false,
+                Dilatory = true,
+                MaxDropsPerDay = 7
+            };
+            (eyeDrops.TreatmentPlan as IRelation).Canonicalize();
+            eyeDrops.TreatmentPlan.Clear();
+            var fixture = new TestFixture(typeof(EyeDrops));
+
+            // Act
+            fixture.Transactor.Update(new object[] { eyeDrops });
+            var eyeDropsCmd = fixture.PrincipalCommands<EyeDrops>().UpdateCommand(ANY_ROWS);
+            var eyeDropsUpdates = fixture.UpdatesFor(eyeDropsCmd);
+            var treatmentsInsertCmd = fixture.RelationCommands<EyeDrops>(0).InsertCommand(ANY_ROWS);
+            var treatmentsInsertions = fixture.InsertionsFor(treatmentsInsertCmd);
+            var treatmentsDeleteCmd = fixture.RelationCommands<EyeDrops>(0).DeleteCommand(ANY_ROWS);
+            var treatmentsDeletions = fixture.DeletionsFor(treatmentsDeleteCmd);
+            var treatmentsUpdateCmd = fixture.RelationCommands<EyeDrops>(0).UpdateCommand(ANY_ROWS);
+            var treatmentsUpdates = fixture.UpdatesFor(treatmentsUpdateCmd);
+
+            // Assert
+            eyeDropsCmd.Connection.Should().Be(fixture.Connection);
+            eyeDropsCmd.Transaction.Should().Be(fixture.Transaction);
+            treatmentsDeleteCmd.Connection.Should().Be(fixture.Connection);
+            treatmentsDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            eyeDropsUpdates.Should().HaveCount(1);
+            eyeDropsUpdates.Should().ContainRow(eyeDrops.DropsID, eyeDrops.BrandName, eyeDrops.Prescriptions, eyeDrops.SafeForChildren, eyeDrops.Dilatory, eyeDrops.MaxDropsPerDay);
+            treatmentsInsertions.Should().HaveCount(0);
+            treatmentsDeletions.Should().HaveCount(6);
+            treatmentsDeletions.Should().ContainRow(eyeDrops.DropsID, ConversionOf(EyeDrops.Condition.Astigmatism));
+            treatmentsDeletions.Should().ContainRow(eyeDrops.DropsID, ConversionOf(EyeDrops.Condition.NearSightedness));
+            treatmentsDeletions.Should().ContainRow(eyeDrops.DropsID, ConversionOf(EyeDrops.Condition.FarSightedness));
+            treatmentsDeletions.Should().ContainRow(eyeDrops.DropsID, ConversionOf(EyeDrops.Condition.Cataracts));
+            treatmentsDeletions.Should().ContainRow(eyeDrops.DropsID, ConversionOf(EyeDrops.Condition.Conjunctivitis));
+            treatmentsDeletions.Should().ContainRow(eyeDrops.DropsID, ConversionOf(EyeDrops.Condition.Glaucoma));
+            treatmentsUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered(eyeDropsCmd, treatmentsDeleteCmd);
+            fixture.Transaction.Received(1).Commit();
+            eyeDrops.TreatmentPlan.Should().HaveUnsavedEntryCount(0);
         }
 
         [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelationsNewElements() {

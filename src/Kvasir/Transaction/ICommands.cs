@@ -54,10 +54,24 @@ namespace Kvasir.Transaction {
         ///   Implementations may, however, handle such events manually (such as if <c>ON DELETE</c> behavior is not
         ///   supported.)
         /// </remarks>
-        /// <param name="rows">
-        ///   The rows of data that should be deleted. Each row can either be the full row of data <i>OR</i> the Primary
-        ///   Key of the "owning Entity."
+        /// <param name="keys">
+        ///   The "Deletion Keys" of the rows of data that should be deleted. If the <see cref="ICommands"/> instance is
+        ///   responsible for a Principal Table, this should be the Primary Key; otherwise, it should be the Primary Key
+        ///   of the "owning Entity" of the relation.
         /// </param>
-        IDbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
+        /// <note>
+        ///   The expected shape of the <paramref name="keys"/> depends on whether the <see cref="ICommands"/> instance
+        ///   is targeting a Principal Table or a Relation Table. Each element can always be the Primary Key of a single
+        ///   row to be deleted; however, if the target is a Relation Table, each element can also be the Primary Key of
+        ///   an owning Entity whose entire Relation is to be deleted. This represents an optimization opportunity over
+        ///   performing several individual row deletes. Note that, in general, we cannot support accepting the full row
+        ///   of data and then extracting the Primary Key; if we tried to do this, we would have an ambiguity in the
+        ///   case where the full row is the Primary Key, but the Fields in the Primary Key are listed in a different
+        ///   order than their columns naturally fall. In such a case, we'd be unable to determine which orientation the
+        ///   values represent, especially if there isn't enough type-based information to discriminate (e.g. if all the
+        ///   Fields are of the same type). If the Primary Key is, in fact, the full row, then obviously the full row
+        ///   can be provided, though the Fields must be present in the order matching that of the Primary Key.
+        /// </note>
+        IDbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> keys);
     }
 }
