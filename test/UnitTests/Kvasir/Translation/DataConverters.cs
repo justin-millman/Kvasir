@@ -450,6 +450,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void NumericConverterOnDateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(PonziScheme);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`PonziScheme` → Initiated")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `DateOnly`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
+        }
+
         [TestMethod] public void NumericConverterOnDateTimeField_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -590,6 +606,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InvalidDataConverterException>()
                 .WithLocation("`Cemetery` → Latitude")
                 .WithProblem("the annotation cannot be applied to a property of non-enumeration type `double`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void AsStringConverterOnDateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Vaccine);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidDataConverterException>()
+                .WithLocation("`Vaccine` → SynthesizedOn")
+                .WithProblem("the annotation cannot be applied to a property of non-enumeration type `DateOnly`")
                 .WithAnnotations("[AsString]")
                 .EndMessage();
         }

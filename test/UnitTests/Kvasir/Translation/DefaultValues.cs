@@ -47,7 +47,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
-        [TestMethod] public void NonNullDateTimeDefault() {
+        [TestMethod] public void NonNullDateishDefault() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(Umpire);
@@ -61,6 +61,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("UniformNumber").WithNoDefault().And
                 .HaveField("Name").WithNoDefault().And
                 .HaveField("Debut").WithDefault(new DateTime(1970, 1, 1)).And
+                .HaveField("JoinedUnion").WithDefault(new DateOnly(1984, 3, 7)).And
                 .HaveField("Ejections").WithNoDefault().And
                 .HaveNoOtherFields();
         }
@@ -500,6 +501,54 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void DateDefaultIsNotString_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Doula);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Doula` → DateOfOwnBirth")
+                .WithProblem("value 45681 is of type `ulong`, not `string` as expected")
+                .WithAnnotations("[Default]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void DateDefaultIsMalformatted_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Unicorn);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`Unicorn` → FirstHornMolting")
+                .WithProblem("unable to parse `string` value \"1500-06-19 08:17:44\" as a `DateOnly`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void DateDefaultIsOutOfRange_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(LargeLanguageModel);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidDefaultException>()
+                .WithLocation("`LargeLanguageModel` → Released")
+                .WithProblem("unable to parse `string` value \"1654-02-48\" as a `DateOnly`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
+        }
+
         [TestMethod] public void DateTimeDefaultIsNotString_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -543,7 +592,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidDefaultException>()
                 .WithLocation("`Sculpture` → CreationDate")
-                .WithProblem("unable to parse `string` value \"1344-18-18\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"1344-12-11 27:14:05\" as a `DateTime`")
                 .WithAnnotations("[Default]")
                 .EndMessage();
         }

@@ -89,6 +89,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNonEmpty_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Fudge);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Fudge` → Baked")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateOnly`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNonEmpty_DateTimeField_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -623,6 +639,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`Magazine` → Syndicated")
                 .WithProblem("the annotation cannot be applied to a Field of non-string type `bool`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtLeast_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Skateboard);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Skateboard` → ManufactureDate")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateOnly`")
                 .WithAnnotations("[Check.LengthIsAtLeast]")
                 .EndMessage();
         }
@@ -1200,6 +1232,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LengthIsAtMost_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MontyPythonSkit);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MontyPythonSkit` → OriginalAirdate")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateOnly`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
+        }
+
         [TestMethod] public void LengthIsAtMost_DateTimeField_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1767,6 +1815,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`Process` → IsActive")
                 .WithProblem("the annotation cannot be applied to a Field of non-string type `bool`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsBetween_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Tumbleweed);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Tumbleweed` → LastViewedOn")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateOnly`")
                 .WithAnnotations("[Check.LengthIsBetween]")
                 .EndMessage();
         }

@@ -150,6 +150,20 @@ namespace UT.Kvasir.Schema {
             matches.Should().BeTrue();
         }
 
+        [TestMethod] public void CreateFromDateOnlyDirectly() {
+            // Arrange
+            var rawValue = new DateOnly(1738, 11, 14);
+            var expectedType = DBType.Date;
+
+            // Act
+            var value = new DBValue(rawValue);
+            var matches = value.IsInstanceOf(expectedType);
+
+            // Assert
+            value.Datum.Should().Be(rawValue);
+            matches.Should().BeTrue();
+        }
+
         [TestMethod] public void CreateFromDateTimeDirectly() {
             // Arrange
             var rawValue = new DateTime(1996, 02, 29);
@@ -375,6 +389,20 @@ namespace UT.Kvasir.Schema {
             // Arrange
             var rawValue = (sbyte)4;
             var expectedType = DBType.Int8;
+
+            // Act
+            var value = DBValue.Create(rawValue);
+            var matches = value.IsInstanceOf(expectedType);
+
+            // Assert
+            value.Datum.Should().Be(rawValue);
+            matches.Should().BeTrue();
+        }
+
+        [TestMethod] public void CreateFromDateOnlyIndirectly() {
+            // Arrange
+            var rawValue = new DateOnly(1738, 11, 14);
+            var expectedType = DBType.Date;
 
             // Act
             var value = DBValue.Create(rawValue);
@@ -642,23 +670,23 @@ namespace UT.Kvasir.Schema {
             var boolValue = DBValue.Create(rawBool);
             var intValue = DBValue.Create(rawInt);
             var floatValue = DBValue.Create(rawFloat);
-            var dateValue = DBValue.Create(rawDate);
+            var datetimeValue = DBValue.Create(rawDate);
 
             // Act
             var rawBoolStr = rawBool.ToString();
             var rawIntStr = rawInt.ToString();
             var rawFloatStr = rawFloat.ToString();
-            var rawDateStr = rawDate.ToString();
+            var rawDatetimeStr = rawDate.ToString();
             var boolStr = boolValue.ToString();
             var intStr = intValue.ToString();
             var floatStr = floatValue.ToString();
-            var dateStr = dateValue.ToString();
+            var datetimeStr = datetimeValue.ToString();
 
             // Assert
             boolStr.Should().Be(rawBoolStr);
             intStr.Should().Be(rawIntStr);
             floatStr.Should().Be(rawFloatStr);
-            dateStr.Should().Be(rawDateStr);
+            datetimeStr.Should().Be(rawDatetimeStr);
         }
 
         [TestMethod] public void StringifyCharacter() {

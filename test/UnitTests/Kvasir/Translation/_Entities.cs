@@ -14,6 +14,7 @@ namespace UT.Kvasir.Translation {
         public class Smorgasbord {
             public byte Byte { get; set; }
             public char Char { get; set; }
+            public DateOnly Date { get; set; }
             public DateTime DateTime { get; set; }
             public decimal Decimal { get; set; }
             public double Double { get; set; }
@@ -33,6 +34,7 @@ namespace UT.Kvasir.Translation {
         public class Plethora {
             public byte? Byte { get; set; }
             public char? Char { get; set; }
+            public DateOnly? Date { get; set; }
             public DateTime? DateTime { get; set; }
             public decimal? Decimal { get; set; }
             public double? Double { get; set; }
@@ -2935,12 +2937,13 @@ namespace UT.Kvasir.Translation {
             public ushort NumBeasts { get; set; }
         }
 
-        // Test Scenario: Non-`null` DateTime Default (✓valid✓)
+        // Test Scenario: Non-`null` Date-ish Default (✓valid✓)
         public class Umpire {
             [PrimaryKey] public Guid UniqueUmpireNumber { get; set; }
             public ushort UniformNumber { get; set; }
             public string Name { get; set; } = "";
             [Default("1970-01-01")] public DateTime Debut { get; set; }
+            [Default("1984-03-07")] public DateOnly JoinedUnion { get; set; }
             public uint Ejections { get; set; }
         }
 
@@ -3251,6 +3254,35 @@ namespace UT.Kvasir.Translation {
             [Default(double.MaxValue)] public decimal HeadWidth { get; set; }
         }
 
+        // Test Scenario: Date Default is Not as String (✗invalid✗)
+        public class Doula {
+            [PrimaryKey] public Guid CaregiverID { get; set; }
+            public ushort NumBirthsAssisted { get; set; }
+            [Default(45681UL)] public DateOnly DateOfOwnBirth { get; set; }
+            public bool HasLicense { get; set; }
+            public bool WaterBirthCertified { get; set; }
+        }
+
+        // Test Scenario: Date Default is Improperly Formatted (✗invalid✗)
+        public class Unicorn {
+            [PrimaryKey] public Guid CreatureID { get; set; }
+            public string? Name { get; set; }
+            [Default("1500-06-19 08:17:44")] public DateOnly FirstHornMolting { get; set; }
+            public DateOnly? SecondHornMolting { get; set; }
+            public ulong Age { get; set; }
+            public sbyte Strength { get; set; }
+        }
+
+        // Test Scenario: Date Default is Out-of-Range (✗invalid✗)
+        public class LargeLanguageModel {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public string Developer { get; set; } = "";
+            [Default("1654-02-48")] public DateOnly Released { get; set; }
+            public ulong Parameters { get; set; }
+            public ulong Compute { get; set; }
+            public decimal? TokenCost { get; set; }
+        }
+
         // Test Scenario: DateTime Default is Not a String (✗invalid✗)
         public class RomanEmperor {
             [PrimaryKey] public int ChronologicalIndex { get; set; }
@@ -3271,7 +3303,7 @@ namespace UT.Kvasir.Translation {
 
         // Test Scenario: DateTime Default is Out-of-Range (✗invalid✗)
         public class Sculpture {
-            [PrimaryKey, Default("1344-18-18")] public DateTime CreationDate { get; set; }
+            [PrimaryKey, Default("1344-12-11 27:14:05")] public DateTime CreationDate { get; set; }
             public string Sculptor { get; set; } = "";
             public ushort HeightFt { get; set; }
             public ushort WeightLbs { get; set; }
@@ -5193,6 +5225,15 @@ namespace UT.Kvasir.Translation {
             [Numeric] public ulong OrbitsCompleted { get; set; }
         }
 
+        // Test Scenario: [Numeric] Applied to DateOnly Field (✗impermissible✗)
+        public class PonziScheme {
+            [PrimaryKey] public string Perpetrator { get; set; } = "";
+            [PrimaryKey, Numeric] public DateOnly Initiated { get; set; }
+            public DateOnly? Discovred { get; set; }
+            public decimal TotalCost { get; set; }
+            public bool InvestigatedBySEC { get; set; }
+        }
+
         // Test Scenario: [Numeric] Applied to DateTime Field (✗impermissible✗)
         public class Symphony {
             [PrimaryKey] public string Composer { get; set; } = "";
@@ -5319,6 +5360,16 @@ namespace UT.Kvasir.Translation {
             public int Capacity { get; set; }
             public bool IsNational { get; set; }
             public uint NumMausoleums { get; set; }
+        }
+
+        // Test Scenario: [AsString] Applied to DateOnly Field (✗impermissible✗)
+        public class Vaccine {
+            [PrimaryKey] public Guid MedicineID { get; set; }
+            public string DiseaseTargeted { get; set; } = "";
+            public string SynthesizedBy { get; set; } = "";
+            [AsString] public DateOnly SynthesizedOn { get; set; }
+            public ulong DosesAdministeredPerYear { get; set; }
+            public bool RecommendedForNewborns { get; set; }
         }
 
         // Test Scenario: [AsString] Applied to DateTime Field (✗impermissible✗)
@@ -5479,6 +5530,18 @@ namespace UT.Kvasir.Translation {
                 public ushort DistanceToFlag { get; set; }
                 public byte NumSandTraps { get; set; }
                 [Check.IsPositive] public bool ContainsWaterHazard { get; set; }
+            }
+
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class Jotunn {
+                public enum Varity { Fire, Ice, Earth }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool LivesInJotunheim { get; set; }
+                public bool ParticipatesInRagnarok { get; set; }
+                [Check.IsPositive] public DateOnly? FirstMentioned { get; set; }
+                public uint EddaMentions { get; set; }
+                public Varity Kind { get; set; }
             }
 
             // Test Scenario: Applied to DateTime Field (✗impermissible✗)
@@ -5945,6 +6008,16 @@ namespace UT.Kvasir.Translation {
                 public string Category { get; set; } = "";
             }
 
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class VenmoRequest {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Requestor { get; set; } = "";
+                public string Requestee { get; set; } = "";
+                public decimal Amount { get; set; }
+                [Check.IsNegative] public DateOnly RequestedOn { get; set; }
+                public bool Fulfilled { get; set; }
+            }
+
             // Test Scenario: Applied to DateTime Field (✗impermissible✗)
             public class Olympiad {
                 [PrimaryKey] public ushort Year { get; set; }
@@ -6397,6 +6470,18 @@ namespace UT.Kvasir.Translation {
                 public char EnglishApproximation { get; set; }
                 public bool InElderFuthark { get; set; }
                 [Check.IsNonZero] public bool InYoungerFuthark { get; set; }
+            }
+
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class TieDye {
+                public enum Garment { Shirt, Sock, Underwear, Shorts, Pants, Dress, Skirt, Hat, Jacket, Bra, Glove, Other }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.IsNonZero] public DateOnly DateCreated { get; set; }
+                public Garment Article { get; set; }
+                public byte NumColors { get; set; }
+                public decimal? RetailPrice { get; set; }
+                public string? Artist { get; set; }
             }
 
             // Test Scenario: Applied to DateTime Field (✗impermissible✗)
@@ -6860,11 +6945,11 @@ namespace UT.Kvasir.Translation {
                 [Check.IsGreaterThan(10000.0)] public decimal TopBid { get; set; }
             }
 
-            // Test Scenario: Applied to DateTime Field (✓constrained✓)
+            // Test Scenario: Applied to Date-ish Field (✓constrained✓)
             public class GoldRush {
                 [PrimaryKey] public string Location { get; set; } = "";
                 [PrimaryKey, Check.IsGreaterThan("1200-03-18")] public DateTime StartDate { get; set; }
-                [PrimaryKey, Check.IsGreaterThan("1176-11-22")] public DateTime EndDate { get; set; }
+                [PrimaryKey, Check.IsGreaterThan("1176-11-22")] public DateOnly EndDate { get; set; }
                 public decimal EstimatedGrossWealth { get; set; }
             }
 
@@ -7425,13 +7510,14 @@ namespace UT.Kvasir.Translation {
                 public double AverageYield { get; set; }
             }
 
-            // Test Scenario: Applied to DateTime Field (✓constrained✓)
+            // Test Scenario: Applied to Date-ish Field (✓constrained✓)
             public class Commercial {
                 [PrimaryKey] public ushort Channel { get; set; }
                 [PrimaryKey, Check.IsLessThan("2300-01-01")] public DateTime TimeSlot { get; set; }
                 public byte LengthSeconds { get; set; }
                 public bool ForSuperBowl { get; set; }
                 public string? Company { get; set; } = "";
+                [Check.IsLessThan("2137-04-17")] public DateOnly? DateOfPitch { get; set; }
             }
 
             // Test Scenario: Applied to Guid Field (✗impermissible✗)
@@ -7961,13 +8047,14 @@ namespace UT.Kvasir.Translation {
                 public string OfferingOrganization { get; set; } = "";
             }
 
-            // Test Scenario: Applied to DateTime Field (✓constrained✓)
+            // Test Scenario: Applied to Date-ish Field (✓constrained✓)
             public class PEP {
                 [PrimaryKey] public int Number { get; set; }
                 public string URL { get; set; } = "";
                 public string Title { get; set; } = "";
                 public ushort NumNewKeywords { get; set; }
                 [Check.IsGreaterOrEqualTo("1887-04-29")] public DateTime CreatedOn { get; set; }
+                [Check.IsGreaterOrEqualTo("1902-11-04")] public DateOnly AdoptedOn { get; set; }
                 public bool IsActive { get; set; }
             }
 
@@ -8509,13 +8596,14 @@ namespace UT.Kvasir.Translation {
                 public ulong Area { get; set; }
             }
 
-            // Test Scenario: Applied to DateTime Field (✓constrained✓)
+            // Test Scenario: Applied to Date-ish Field (✓constrained✓)
             public class Representative {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public string Party { get; set; } = "";
                 public long District { get; set; }
                 public string State { get; set; } = "";
                 [Check.IsLessOrEqualTo("2688-12-02")] public DateTime FirstElected { get; set; }
+                [Check.IsLessOrEqualTo("4199-08-08")] public DateOnly? DateOfResignation { get; set; }
             }
 
             // Test Scenario: Applied to Guid Field (✗impermissible✗)
@@ -9042,12 +9130,13 @@ namespace UT.Kvasir.Translation {
                 public DateTime NextAvailableAppointment { get; set; }
             }
 
-            // Test Scenario: Applied to DateTime Field (✓constrained✓)
+            // Test Scenario: Applied to Date-ish Field (✓constrained✓)
             public class SlotMachine {
                 [PrimaryKey] public Guid MachineNumber { get; set; }
                 public ulong Jackpot { get; set; }
                 public decimal LeverCost { get; set; }
                 [Check.IsNot("4431-01-21")] public DateTime InstalledOn { get; set; }
+                [Check.IsNot("1010-10-10")] public DateOnly FirstPlayed { get; set; }
                 public ulong NumPlays { get; set; }
             }
 
@@ -9584,6 +9673,16 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNonEmpty] public bool Eaten { get; set; }
             }
 
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class Fudge {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.IsNonEmpty] public DateOnly Baked { get; set; }
+                public string Flavor { get; set; }
+                public double CaloriesPerGram { get; set; }
+                public decimal PricePerPound { get; set; }
+                public bool IsEaten { get; set; }
+            }
+
             // Test Scenario: Applied to DateTime Field (✗impermissible✗)
             public class ScubaDive {
                 [PrimaryKey] public Guid ID { get; set; }
@@ -10044,6 +10143,15 @@ namespace UT.Kvasir.Translation {
                 public string EditorInChief { get; set; } = "";
             }
 
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class Skateboard {
+                [PrimaryKey] public Guid ID { get; set; }
+                public byte NumWheels { get; set; }
+                [Check.LengthIsAtLeast(73)] public DateOnly ManufactureDate { get; set; }
+                public float Length { get; set; }
+                public bool OwnedByTonyHawk { get; set; }
+            }
+
             // Test Scenario: Applied to DateTime Field (✗impermissible✗)
             public class Camerlengo {
                 [PrimaryKey] public string FirstName { get; set; } = "";
@@ -10493,6 +10601,18 @@ namespace UT.Kvasir.Translation {
                 public decimal MarketValue { get; set; }
                 [Check.LengthIsAtMost(50)] public bool IsBloodDiamond { get; set; }
                 public string? CurrentMuseum { get; set; }
+            }
+
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class MontyPythonSkit {
+                [Flags] public enum Python { Cleese = 1, Chapman = 2, Idle = 4, Gilliam = 8, Palin = 16, Jones = 32 }
+
+                [PrimaryKey] public string Title { get; set; } = "";
+                public double Duration { get; set; }
+                public Python Cast { get; set; }
+                [Check.LengthIsAtMost(180)] public DateOnly OriginalAirdate { get; set; }
+                public bool InFilm { get; set; }
+                public string Script { get; set; } = "";
             }
 
             // Test Scenario: Applied to DateTime Field (✗impermissible✗)
@@ -10976,6 +11096,14 @@ namespace UT.Kvasir.Translation {
                 public string StdErr { get; set; } = "";
             }
 
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class Tumbleweed {
+                [PrimaryKey] public Guid ID { get; set; }
+                public float Weight { get; set; }
+                [Check.LengthIsBetween(7, 7777)] public DateOnly LastViewedOn { get; set; }
+                public bool UsedInWesternFilm { get; set; }
+            }
+
             // Test Scenario: Applied to DateTime Field (✗impermissible✗)
             public class Mummy {
                 [PrimaryKey] public Guid MummyID { get; set; }
@@ -11438,11 +11566,12 @@ namespace UT.Kvasir.Translation {
                 public bool MakesAlcoholic { get; set; }
             }
 
-            // Test Scenario: Applied to DateTime Field (✓constrained✓)
+            // Test Scenario: Applied to Date-ish Field (✓constrained✓)
             public class Hospital {
                 [PrimaryKey] public string Address { get; set; } = "";
                 public ulong NumBeds { get; set; }
                 [Check.IsOneOf("2000-01-01", "2000-01-02", "2000-01-03")] public DateTime Opened { get; set; }
+                [Check.IsOneOf("2100-01-01", "2100-01-02", "2100-01-03")] public DateOnly? Closed { get; set; }
                 public bool HasTraumaWard { get; set; }
                 public ulong StaffCount { get; set; }
             }
@@ -11998,12 +12127,13 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNotOneOf(0.0, 1000.0, 100000.0, 100000000.0)] public decimal Budget { get; set; }
             }
 
-            // Test Scenario: Applied to DateTime Field (✓constrained✓)
+            // Test Scenario: Applied to Date-ish Field (✓constrained✓)
             public class GamingConsole {
                 [PrimaryKey] public Guid SerialNumber { get; set; }
                 public string Name { get; set; } = "";
                 public string? AKA { get; set; }
                 [Check.IsNotOneOf("1973-04-30", "1973-05-30")] public DateTime Launched { get; set; }
+                [Check.IsNotOneOf("1984-06-22", "1988-10-17")] public DateOnly? Recalled { get; set; }
                 public DateTime? Retired { get; set; }
                 public ulong UnitsSold { get; set; }
                 public float CPUClockCycle { get; set; }

@@ -78,7 +78,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsGreaterThan_DateTimeField() {
+        [TestMethod] public void IsGreaterThan_DateishField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(GoldRush);
@@ -89,7 +89,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("StartDate", ComparisonOperator.GT, new DateTime(1200, 3, 18)).And
-                .HaveConstraint("EndDate", ComparisonOperator.GT, new DateTime(1176, 11, 22)).And
+                .HaveConstraint("EndDate", ComparisonOperator.GT, new DateOnly(1176, 11, 22)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -777,7 +777,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsLessThan_DateTimeField() {
+        [TestMethod] public void IsLessThan_DateishField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(Commercial);
@@ -788,6 +788,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("TimeSlot", ComparisonOperator.LT, new DateTime(2300, 1, 1)).And
+                .HaveConstraint("DateOfPitch", ComparisonOperator.LT, new DateOnly(2137, 4, 17)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -1478,7 +1479,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsGreaterOrEqualTo_DateTimeField() {
+        [TestMethod] public void IsGreaterOrEqualTo_DateishField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(PEP);
@@ -1489,6 +1490,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("CreatedOn", ComparisonOperator.GTE, new DateTime(1887, 4, 29)).And
+                .HaveConstraint("AdoptedOn", ComparisonOperator.GTE, new DateOnly(1902, 11, 4)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -2175,7 +2177,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsLessOrEqualTo_DateTimeField() {
+        [TestMethod] public void IsLessOrEqualTo_DateishField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(Representative);
@@ -2186,6 +2188,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("FirstElected", ComparisonOperator.LTE, new DateTime(2688, 12, 2)).And
+                .HaveConstraint("DateOfResignation", ComparisonOperator.LTE, new DateOnly(4199, 8, 8)).And
                 .HaveNoOtherCandidateKeys();
         }
 
@@ -2870,7 +2873,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsNot_DateTimeField() {
+        [TestMethod] public void IsNot_DateishField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(SlotMachine);
@@ -2881,6 +2884,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HaveConstraint("InstalledOn", ComparisonOperator.NE, new DateTime(4431, 1, 21)).And
+                .HaveConstraint("FirstPlayed", ComparisonOperator.NE, new DateOnly(1010, 10, 10)).And
                 .HaveNoOtherCandidateKeys();
         }
 

@@ -95,6 +95,11 @@ namespace Kvasir.Schema {
         public static DBType Decimal { get; }
 
         /// <summary>
+        ///   The <see cref="DBType"/> representing a calendar date (without a time).
+        /// </summary>
+        public static DBType Date { get; }
+
+        /// <summary>
         ///   The <see cref="DBType"/> representing a calendar date and time.
         /// </summary>
         public static DBType DateTime { get; }
@@ -253,7 +258,7 @@ namespace Kvasir.Schema {
 
             STRING_FORMS = new string[] {
                 "Int32", "Boolean", "Character", "Date/Time", "Decimal", "Double", "Enumeration", "GUID", "Int8",
-                "Int16", "Int64", "Single", "Text", "UInt8", "UInt16", "UInt32", "UInt64"
+                "Int16", "Int64", "Single", "Text", "UInt8", "UInt16", "UInt32", "UInt64", "Date"
             };
 
             Debug.Assert(default(byte) == 0, $"Sequence of IDs for {nameof(DBType)} is not starting at 0");
@@ -274,6 +279,7 @@ namespace Kvasir.Schema {
             UInt16 = new DBType(default(byte) + 14);
             UInt32 = new DBType(default(byte) + 15);
             UInt64 = new DBType(default(byte) + 16);
+            Date = new DBType(default(byte) + 17);
 
             // We don't need to use a ConcurrentDictionary<Type, DBType> because we will only be reading from the
             // lookup map, and Dictionary itself is threadsafe when reading only
@@ -294,7 +300,8 @@ namespace Kvasir.Schema {
                 [typeof(string)] = Text,
                 [typeof(uint)] = UInt32,
                 [typeof(ulong)] = UInt64,
-                [typeof(ushort)] = UInt16
+                [typeof(ushort)] = UInt16,
+                [typeof(DateOnly)] = Date
             };
         }
 

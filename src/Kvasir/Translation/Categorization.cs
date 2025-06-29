@@ -134,7 +134,7 @@ namespace Kvasir.Translation {
         public static TypeCategory OpenGeneric { get; set; } = new TypeCategory("an open generic type");
         public static TypeCategory Pointer { get; } = new TypeCategory("a pointer type");
         public static TypeCategory Relation { get; } = new TypeCategory("an implementation of the `IRelation` interface");
-        public static TypeCategory Supported { get; } = new TypeCategory("a primitive type, `string`, `DateTime`, or `Guid`");
+        public static TypeCategory Supported { get; } = new TypeCategory("a primitive type, `string`, `DateOnly`, `DateTime`, or `Guid`");
         public static TypeCategory StaticClass { get; } = new TypeCategory("a static class");
         public static TypeCategory Struct { get; } = new TypeCategory("a struct or a record struct");
         public static TypeCategory UniversalBase { get; } = new TypeCategory("a universal base class");

@@ -115,13 +115,14 @@ namespace UT.Kvasir.Providers {
             [Column(6)] public decimal Revenue { get; set; }
         }
 
-        // Scenario: INSERT INTO – DateTime and GUID
+        // Scenario: INSERT INTO – Date, DateTime, and GUID
         public class ExecutiveOrder {
             [PrimaryKey, Column(0)] public string President { get; set; } = "";
             [PrimaryKey, Column(1)] public ushort OrderNumber { get; set; }
             [Column(2)] public DateTime Issued { get; set; }
-            [Column(3)] public Guid DocumentID { get; set; }
-            [Column(4)] public bool EnshrinedInLegislation { get; set; }
+            [Column(3)] public DateOnly? Rescinded { get; set; }
+            [Column(4)] public Guid DocumentID { get; set; }
+            [Column(5)] public bool EnshrinedInLegislation { get; set; }
         }
 
         // Scenario: INSERT INTO – Null Value
