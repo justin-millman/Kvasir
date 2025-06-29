@@ -8,7 +8,7 @@ using System.Linq;
 namespace Kvasir.Providers.MySQL {
     /// <summary>
     ///   An intermediate for a MySQL declaration of a Field that allows for changing the default textual backing type
-    ///   from <c>TEXT</c> to <c>VARCHAR(N)</c>.
+    ///   from <c>LONGTEXT</c> to <c>VARCHAR(N)</c>.
     /// </summary>
     internal struct FieldDecl {
         /// <summary>The name of the Field being declared.</summary>
@@ -38,10 +38,10 @@ namespace Kvasir.Providers.MySQL {
         ///   The maximum length.
         /// </param>
         public void EnforceMaximumLength(ulong maxLength) {
-            // We can't just do a find-and-replace of TEXT, even with spaces surrounding it, because that specific
+            // We can't just do a find-and-replace of LONGTEXT, even with spaces surrounding it, because that specific
             // sequence may appear in the literal default value. The C# string.Replace library method has no way to
             // indicate "replace only the first instance."
-            var startIdx = Name.Length + 7;         // +2 for the backticks, +1 for space, +4 for TEXT
+            var startIdx = Name.Length + 11;         // +2 for the backticks, +1 for space, +8 for LONGTEXT
             var varchar = $"VARCHAR({maxLength})";
             declaration_ = $"{Name.Render()} {varchar}{declaration_[startIdx..]}";
         }
@@ -121,7 +121,7 @@ namespace Kvasir.Providers.MySQL {
                 declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "FLOAT");
             }
             else if (dataType == DBType.Text) {
-                declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "TEXT");
+                declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "LONGTEXT");
             }
             else if (dataType == DBType.UInt16) {
                 declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "SMALLINT UNSIGNED");
