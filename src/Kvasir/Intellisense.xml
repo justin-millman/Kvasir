@@ -1619,6 +1619,14 @@
         <member name="M:Kvasir.Providers.MySQL.Commands.DeleteCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.CommandsFactory">
+            <summary>
+              An implementation of the <see cref="T:Kvasir.Transaction.ICommandsFactory"/> interface for a MySQL provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.CommandsFactory.CreateCommands(Kvasir.Schema.ITable,System.Boolean)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.IConstraintDecl">
             <summary>
               A type tag to be used as the return value for a MySQL <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>
@@ -1731,7 +1739,7 @@
         <member name="T:Kvasir.Providers.MySQL.FieldDecl">
             <summary>
               An intermediate for a MySQL declaration of a Field that allows for changing the default textual backing type
-              from <c>TEXT</c> to <c>VARCHAR(N)</c>.
+              from <c>LONGTEXT</c> to <c>VARCHAR(N)</c>.
             </summary>
         </member>
         <member name="P:Kvasir.Providers.MySQL.FieldDecl.Name">

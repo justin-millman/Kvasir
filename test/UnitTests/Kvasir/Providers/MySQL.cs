@@ -1534,7 +1534,7 @@ namespace UT.Kvasir.Providers {
 
             // Assert
             intermediate.Name.Should().Be(name.ToString());
-            decl.Should().Be($"`{name}` TEXT");
+            decl.Should().Be($"`{name}` LONGTEXT");
         }
 
         [TestMethod] public void Type_Varchar() {
@@ -1925,7 +1925,7 @@ namespace UT.Kvasir.Providers {
 
             // Assert
             intermediate.Name.Should().Be(name.ToString());
-            decl.Should().Be($"`{name}` TEXT DEFAULT \"{defaultValue}\"");
+            decl.Should().Be($"`{name}` LONGTEXT DEFAULT \"{defaultValue}\"");
         }
 
         [TestMethod] public void Default_Varchar() {
@@ -2064,12 +2064,12 @@ namespace UT.Kvasir.Providers {
             decl.Should().Be($"`{name}` BINARY(16) DEFAULT NULL");
         }
 
-        [TestMethod] public void VarcharWithUppercaseTextInDefaultValue() {
+        [TestMethod] public void VarcharWithUppercaseLongtextInDefaultValue() {
             // Arrange
             var name = new FieldName("Tartu");
             var type = DBType.Text;
             var maxLength = 4501UL;
-            var defaultValue = "DEFAULT CONTAINS THE WORD TEXT WITH SPACES";
+            var defaultValue = "DEFAULT CONTAINS THE WORD LONGTEXT WITH SPACES";
 
             // Act
             var builder = new FieldBuilder();
@@ -2150,8 +2150,8 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void VarcharFields() {
             // Arrange
             var name = new TableName("HaShulkhan");
-            var field0 = new FieldDecl(new FieldName("East Rutherford"), "`East Rutherford` TEXT NOT NULL");
-            var field1 = new FieldDecl(new FieldName("West Bloomfield"), "`West Bloomfield` TEXT NOT NULL");
+            var field0 = new FieldDecl(new FieldName("East Rutherford"), "`East Rutherford` LONGTEXT NOT NULL");
+            var field1 = new FieldDecl(new FieldName("West Bloomfield"), "`West Bloomfield` LONGTEXT NOT NULL");
             var constraint0 = new MaxLengthConstraintDecl(field0.Name, 153);
             var constraint1 = new MaxLengthConstraintDecl(field1.Name, 22);
             var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`, `{field1.Name}`)");
@@ -2178,7 +2178,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void CandidateKeys() {
             // Arrange
             var name = new TableName("LaMesa");
-            var field0 = new FieldDecl(new FieldName("Greenville"), "`Greenville` TEXT NOT NULL");
+            var field0 = new FieldDecl(new FieldName("Greenville"), "`Greenville` LONGTEXT NOT NULL");
             var field1 = new FieldDecl(new FieldName("Buffalo Grove"), "`Buffalo Grove` BIGINT UNSIGNED NOT NULL");
             var field2 = new FieldDecl(new FieldName("Grambling"), "`Grambling` FLOAT NOT NULL");
             var pk = new SqlSnippet($"PRIMARY KEY (`{field1.Name}`)");
@@ -2197,7 +2197,7 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                "`Greenville` TEXT NOT NULL\n" +
+                "`Greenville` LONGTEXT NOT NULL\n" +
                 "`Buffalo Grove` BIGINT UNSIGNED NOT NULL\n" +
                 "`Grambling` FLOAT NOT NULL\n" +
                 $"{pk}\n" +
@@ -2236,7 +2236,7 @@ namespace UT.Kvasir.Providers {
             // Arrange
             var name = new TableName("ToTrapezi");
             var field0 = new FieldDecl(new FieldName("Santa Claus"), "`Santa Claus` INT UNSIGNED NOT NULL");
-            var field1 = new FieldDecl(new FieldName("Independence"), "`Independence` TEXT NOT NULL");
+            var field1 = new FieldDecl(new FieldName("Independence"), "`Independence` LONGTEXT NOT NULL");
             var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`");
             var check = new BasicConstraintDecl(new SqlSnippet($"CHECK (`{field0}` <= 200000)"));
 
@@ -2253,7 +2253,7 @@ namespace UT.Kvasir.Providers {
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
                 "`Santa Claus` INT UNSIGNED NOT NULL\n" +
-                "`Independence` TEXT NOT NULL\n" +
+                "`Independence` LONGTEXT NOT NULL\n" +
                 $"{pk}\n" +
                 check.DDL.ToString()
             );
@@ -2263,10 +2263,10 @@ namespace UT.Kvasir.Providers {
             // Arrange
             var name = new TableName("IlTavolo");
             var field0 = new FieldDecl(new FieldName("Appomattox"), "`Appomattox` BIGINT UNSIGNED NOT NULL");
-            var field1 = new FieldDecl(new FieldName("Chickamauga"), "`Chickamauga` TEXT NOT NULL DEFAULT \"--none--\"");
+            var field1 = new FieldDecl(new FieldName("Chickamauga"), "`Chickamauga` LONGTEXT NOT NULL DEFAULT \"--none--\"");
             var field2 = new FieldDecl(new FieldName("Kitty Hawk"), "`Kitty Hawk` INT DEFAULT NULL");
             var field3 = new FieldDecl(new FieldName("Harpers Ferry"), "`Harpers Ferry` BOOLEAN NOT NULL");
-            var field4 = new FieldDecl(new FieldName("La Jolla"), "`La Jolla` TEXT NOT NULL");
+            var field4 = new FieldDecl(new FieldName("La Jolla"), "`La Jolla` LONGTEXT NOT NULL");
             var field5 = new FieldDecl(new FieldName("Compton"), "`Compton` INT UNSIGNED NOT NULL");
             var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`, `{field5.Name}`)");
             var ck0 = new SqlSnippet($"UNIQUE (`{field2.Name}`)");
@@ -2301,7 +2301,7 @@ namespace UT.Kvasir.Providers {
                 $"`Chickamauga` VARCHAR({check0.MaxLength}) NOT NULL DEFAULT \"--none--\"\n" +
                 "`Kitty Hawk` INT DEFAULT NULL\n" +
                 "`Harpers Ferry` BOOLEAN NOT NULL\n" +
-                "`La Jolla` TEXT NOT NULL\n" +
+                "`La Jolla` LONGTEXT NOT NULL\n" +
                 "`Compton` INT UNSIGNED NOT NULL\n" +
                 $"{pk}\n" +
                 $"{ck0}\n" +
@@ -2436,9 +2436,9 @@ namespace UT.Kvasir.Providers {
             command.CommandText.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
                 "`Date` DATETIME NOT NULL\n" +
-                "`Ship` TEXT NOT NULL\n" +
-                "`LeadMutineer` TEXT\n" +
-                "`OustedCaptain` TEXT NOT NULL\n" +
+                "`Ship` LONGTEXT NOT NULL\n" +
+                "`LeadMutineer` LONGTEXT\n" +
+                "`OustedCaptain` LONGTEXT NOT NULL\n" +
                 "`Casualties` INT UNSIGNED NOT NULL\n" +
                 "PRIMARY KEY (`Date`, `Ship`);"
             );
@@ -2460,7 +2460,7 @@ namespace UT.Kvasir.Providers {
             command.Transaction.Should().BeNull();
             command.CommandText.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{relationTable.Name}`\n" +
-                "`CyrillicLetter.LetterName` TEXT NOT NULL\n" +
+                "`CyrillicLetter.LetterName` LONGTEXT NOT NULL\n" +
                 "`Key` BIGINT UNSIGNED NOT NULL\n" +
                 "`Value` CHAR(1) NOT NULL\n" +
                 "PRIMARY KEY (`CyrillicLetter.LetterName`, `Key`)\n" +
@@ -2483,8 +2483,8 @@ namespace UT.Kvasir.Providers {
             command.Transaction.Should().BeNull();
             command.CommandText.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
-                "`FirstName` TEXT NOT NULL\n" +
-                "`LastName` TEXT NOT NULL\n" +
+                "`FirstName` LONGTEXT NOT NULL\n" +
+                "`LastName` LONGTEXT NOT NULL\n" +
                 "`Birthdate` DATETIME NOT NULL\n" +
                 "PRIMARY KEY (`FirstName`, `LastName`);"
             );
