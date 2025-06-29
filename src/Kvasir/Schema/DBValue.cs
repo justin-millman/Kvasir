@@ -166,6 +166,16 @@ namespace Kvasir.Schema {
         }
 
         /// <summary>
+        ///   Constructs a new <see cref="DBValue"/> from a <see cref="DateOnly"/>.
+        /// </summary>
+        /// <param name="value">
+        ///   The <see cref="DateOnly"/> value of the new <see cref="DBValue"/>.
+        /// </param>
+        public DBValue(DateOnly value) {
+            Datum = value;
+        }
+
+        /// <summary>
         ///   Constructs a new <see cref="DBValue"/> from a <see cref="DateTime"/>.
         /// </summary>
         /// <param name="value">
@@ -255,7 +265,7 @@ namespace Kvasir.Schema {
             else if (type == DBType.Enumeration) {
                 return Datum.GetType() == typeof(string);
             }
-            else if (isNumeric && (Equals(Datum, 0))) {
+            else if (isNumeric && Equals(Datum, 0)) {
                 return true;
             }
             else {

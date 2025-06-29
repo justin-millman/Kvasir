@@ -90,6 +90,9 @@ namespace Kvasir.Providers.MySQL {
             else if (dataType == DBType.Character) {
                 declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "CHAR(1)");
             }
+            else if (dataType == DBType.Date) {
+                declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "DATE");
+            }
             else if (dataType == DBType.DateTime) {
                 declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "DATETIME");
             }

@@ -5994,6 +5994,11 @@
               The <see cref="T:Kvasir.Schema.DBType"/> representing a decimal number.
             </summary>
         </member>
+        <member name="P:Kvasir.Schema.DBType.Date">
+            <summary>
+              The <see cref="T:Kvasir.Schema.DBType"/> representing a calendar date (without a time).
+            </summary>
+        </member>
         <member name="P:Kvasir.Schema.DBType.DateTime">
             <summary>
               The <see cref="T:Kvasir.Schema.DBType"/> representing a calendar date and time.
@@ -6286,6 +6291,14 @@
             </summary>
             <param name="value">
               The <see cref="T:System.Decimal"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
+            </param>
+        </member>
+        <member name="M:Kvasir.Schema.DBValue.#ctor(System.DateOnly)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Schema.DBValue"/> from a <see cref="T:System.DateOnly"/>.
+            </summary>
+            <param name="value">
+              The <see cref="T:System.DateOnly"/> value of the new <see cref="T:Kvasir.Schema.DBValue"/>.
             </param>
         </member>
         <member name="M:Kvasir.Schema.DBValue.#ctor(System.DateTime)">
@@ -9615,14 +9628,15 @@
               The concrete base class for a <see cref="T:Kvasir.Translation.FieldDescriptor"/> whose data type is <see cref="T:System.Boolean"/>.
             </summary>
         </member>
+        <member name="T:Kvasir.Translation.CalendarFieldDescriptor">
+            <summary>
+              The concrete class for an <see cref="T:Kvasir.Translation.OrderableFieldDescriptor"/> whose data type is either
+              <see cref="T:System.DateOnly"/> or <see cref="T:System.DateTime"/>.
+            </summary>
+        </member>
         <member name="T:Kvasir.Translation.CharFieldDescriptor">
             <summary>
               The concrete class for an <see cref="T:Kvasir.Translation.OrderableFieldDescriptor"/> whose data type is <see cref="T:System.Char"/>.
-            </summary>
-        </member>
-        <member name="T:Kvasir.Translation.DateTimeFieldDescriptor">
-            <summary>
-              The concrete class for an <see cref="T:Kvasir.Translation.OrderableFieldDescriptor"/> whose data type is <see cref="T:System.DateTime"/>.
             </summary>
         </member>
         <member name="T:Kvasir.Translation.DecimalFieldDescriptor">

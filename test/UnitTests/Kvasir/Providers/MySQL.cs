@@ -798,7 +798,25 @@ namespace UT.Kvasir.Providers {
             ((BasicConstraintDecl)decl).DDL.Should().Be($"CHECK (`{field.Name}` >= \"{anchor}\")");
         }
 
-        [TestMethod] public void ComparisonConstraint_DateTimeValue_DateOnly() {
+        [TestMethod] public void ComparisonConstraint_DateOnly() {
+            // Arrange
+            var field = Substitute.For<IField>();
+            field.Name.Returns(new FieldName("East Highland"));
+            field.DataType.Returns(DBType.Date);
+            var anchor = new DateOnly(1377, 4, 9);
+            var constraint = new ConstantClause(new FieldExpression(field), ComparisonOperator.LT, DBValue.Create(anchor));
+
+            // Act
+            var builder = new ConstraintBuilder();
+            builder.AddClause(constraint);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().BeOfType<BasicConstraintDecl>();
+            ((BasicConstraintDecl)decl).DDL.Should().Be($"CHECK (`{field.Name}` < DATE \"1377-04-09\")");
+        }
+
+        [TestMethod] public void ComparisonConstraint_DateTimeValue_NoTime() {
             // Arrange
             var field = Substitute.For<IField>();
             field.Name.Returns(new FieldName("Janloon"));
@@ -1573,6 +1591,23 @@ namespace UT.Kvasir.Providers {
             decl.Should().Be($"`{name}` CHAR(1)");
         }
 
+        [TestMethod] public void Type_Date() {
+            // Arrange
+            var name = new FieldName("Cuiabá");
+            var type = DBType.Date;
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DATE");
+        }
+
         [TestMethod] public void Type_DateTime() {
             // Arrange
             var name = new FieldName("Jeddah");
@@ -1966,6 +2001,25 @@ namespace UT.Kvasir.Providers {
             // Assert
             intermediate.Name.Should().Be(name.ToString());
             decl.Should().Be($"`{name}` CHAR(1) DEFAULT \"{defaultValue}\"");
+        }
+
+        [TestMethod] public void Default_Date() {
+            // Arrange
+            var name = new FieldName("Kazan");
+            var type = DBType.Date;
+            var defaultValue = new DateOnly(1884, 5, 25);
+
+            // Act
+            var builder = new FieldBuilder();
+            builder.SetName(name);
+            builder.SetDataType(type);
+            builder.SetDefaultValue(DBValue.Create(defaultValue));
+            var intermediate = builder.Build();
+            var decl = intermediate.Build();
+
+            // Assert
+            intermediate.Name.Should().Be(name.ToString());
+            decl.Should().Be($"`{name}` DATE DEFAULT DATE \"1884-05-25\"");
         }
 
         [TestMethod] public void Deafult_DateTime_NoTime() {
@@ -2670,6 +2724,7 @@ namespace UT.Kvasir.Providers {
                     DBValue.Create("Ezra Steinenbergstein"),
                     DBValue.Create((ushort)7361),
                     DBValue.Create(new DateTime(2314, 7, 19)),
+                    DBValue.Create(new DateOnly(2314, 9, 27)),
                     DBValue.Create(Guid.NewGuid()),
                     DBValue.Create(true)
                 }
@@ -2684,16 +2739,17 @@ namespace UT.Kvasir.Providers {
             command.Transaction.Should().BeNull();
             command.CommandText.Should().Be(
                 $"INSERT INTO `{table.Name}`\n" +
-                "(`President`, `OrderNumber`, `Issued`, `DocumentID`, `EnshrinedInLegislation`)\n" +
+                "(`President`, `OrderNumber`, `Issued`, `Rescinded`, `DocumentID`, `EnshrinedInLegislation`)\n" +
                 "VALUES\n" +
-                "(@v0, @v1, @v2, @v3, @v4);"
+                "(@v0, @v1, @v2, @v3, @v4, @v5);"
             );
-            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+            command.Parameters.Should().HaveCount(6).And.BeForMySql().And
                 .HaveParameter("@v0", rows[0][0].Datum).And
                 .HaveParameter("@v1", rows[0][1].Datum).And
                 .HaveParameter("@v2", rows[0][2].Datum).And
                 .HaveParameter("@v3", rows[0][3].Datum).And
-                .HaveParameter("@v4", rows[0][4].Datum);
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum);
         }
 
         [TestMethod] public void Insert_Null() {

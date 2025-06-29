@@ -198,6 +198,7 @@ namespace FluentAssertions {
 
             public FieldAssertion OfTypeBoolean() { return OfType(DBType.Boolean); }
             public FieldAssertion OfTypeCharacter() { return OfType(DBType.Character); }
+            public FieldAssertion OfTypeDate() { return OfType(DBType.Date); }
             public FieldAssertion OfTypeDateTime() { return OfType(DBType.DateTime); }
             public FieldAssertion OfTypeDecimal() { return OfType(DBType.Decimal); }
             public FieldAssertion OfTypeDouble() { return OfType(DBType.Double); }

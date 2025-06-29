@@ -383,6 +383,7 @@ Dog Show
 Domino
 Donut
 Dormitory
+Doula
 Draft Pick
 Dragon
 Dragon Rider (Eragon)
@@ -476,6 +477,7 @@ Fraternity
 Fresco
 Fried Chicken
 Friend
+Fudge
 Function (programming)
 Functional Group
 Galaxy
@@ -627,6 +629,7 @@ Jack-o-Lantern
 Japanese Emperor
 Jedi
 Jigsaw Puzzle
+Jötunn
 Joust
 Jukebox
 Jump Ball
@@ -657,6 +660,7 @@ Lamp
 Land Card (MTG)
 Land Mine
 Language
+Large Language Model
 Laundry Detergent
 Law & Order
 Law Firm
@@ -759,6 +763,7 @@ Monad
 Mongol Khan
 Monopoly Property
 Month
+Monty Python Skit
 Moon of Jupiter
 Morgue
 Mosque
@@ -912,6 +917,7 @@ Polygon
 Polygraph Test
 Polyhedron
 Pond
+Ponzi Scheme
 Pop Tart
 Popcorn
 Pope
@@ -1045,6 +1051,7 @@ Shofar
 Shogunate
 Sign (ASL)
 Sign Language
+Skateboard
 Skee-Ball
 Ski Slope
 Skittles
@@ -1156,6 +1163,7 @@ Thesis
 Thumb War
 Tic-Tac-Toe Game
 Ticket2Ride Route
+Tie-Dye
 TikTok
 Time Traveler
 Time Zone
@@ -1192,6 +1200,7 @@ Triptych
 Trivial Pursuit
 Trolley Problem
 Tsunami
+Tumbleweed
 Tuxedo
 Tweet
 Typewriter
@@ -1201,15 +1210,18 @@ Umpire
 UN Resolution
 UN Secretary General
 Underworld
+Unicorn
 Union
 University
 Upanishad
 URL
 UUID
+Vaccine
 Vacuum Cleaner
 Valet
 Vampire Slayer
 Vault (bank)
+Venmo Request
 Verb
 Vertebra
 Vestige of Divergence

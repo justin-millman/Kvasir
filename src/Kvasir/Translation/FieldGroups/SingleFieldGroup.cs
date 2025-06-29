@@ -364,7 +364,7 @@ namespace Kvasir.Translation {
                     new EnumFieldDescriptor(context, source, dataConverterAnnotation);
             }
 
-            // Bool / Char / DateTime / Decimal / Guid / String
+            // Bool / Char / DateOnly / DateTime / Decimal / Guid / String
             else if (effectiveType == typeof(bool)) {
                 return dataConverterAnnotation is null ?
                     new BooleanFieldDescriptor(context, source) :
@@ -375,10 +375,10 @@ namespace Kvasir.Translation {
                     new CharFieldDescriptor(context, source) :
                     new CharFieldDescriptor(context, source, dataConverterAnnotation);
             }
-            else if (effectiveType == typeof(DateTime)) {
+            else if (effectiveType == typeof(DateOnly) || effectiveType == typeof(DateTime)) {
                 return dataConverterAnnotation is null ?
-                    new DateTimeFieldDescriptor(context, source) :
-                    new DateTimeFieldDescriptor(context, source, dataConverterAnnotation);
+                    new CalendarFieldDescriptor(context, source) :
+                    new CalendarFieldDescriptor(context, source, dataConverterAnnotation);
             }
             else if (effectiveType == typeof(decimal)) {
                 return dataConverterAnnotation is null ?

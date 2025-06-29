@@ -84,7 +84,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsOneOf_DateTimeField() {
+        [TestMethod] public void IsOneOf_DateishField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(Hospital);
@@ -96,6 +96,9 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should()
                 .HaveConstraint("Opened", InclusionOperator.In,
                     new DateTime(2000, 1, 1), new DateTime(2000, 1, 2), new DateTime(2000, 1, 3)
+                ).And
+                .HaveConstraint("Closed", InclusionOperator.In,
+                    new DateOnly(2100, 1, 1), new DateOnly(2100, 1, 2), new DateOnly(2100, 1, 3)
                 ).And
                 .HaveNoOtherConstraints();
         }
@@ -833,7 +836,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void IsNotOneOf_DateTimeField() {
+        [TestMethod] public void IsNotOneOf_DateishField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(GamingConsole);
@@ -845,6 +848,9 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should()
                 .HaveConstraint("Launched", InclusionOperator.NotIn,
                     new DateTime(1973, 4, 30), new DateTime(1973, 5, 30)
+                ).And
+                .HaveConstraint("Recalled", InclusionOperator.NotIn,
+                    new DateOnly(1984, 6, 22), new DateOnly(1988, 10, 17)
                 ).And
                 .HaveNoOtherConstraints();
         }

@@ -31,6 +31,10 @@ namespace Kvasir.Providers.MySQL {
             else if (value.Datum.GetType() == typeof(char)) {
                 return $"\"{value.Datum}\"";
             }
+            else if (value.Datum.GetType() == typeof(DateOnly)) {
+                var date = (DateOnly)value.Datum;
+                return $"DATE \"{date:yyyy-MM-dd}\"";
+            }
             else if (value.Datum.GetType() == typeof(DateTime)) {
                 var datetime = (DateTime)value.Datum;
                 return $"DATETIME \"{datetime:yyyy-MM-dd HH:mm:ss}\"";

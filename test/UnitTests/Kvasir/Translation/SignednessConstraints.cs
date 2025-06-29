@@ -75,6 +75,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsPositive_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Jotunn);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Jotunn` → FirstMentioned")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `DateOnly`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsPositive_DateTimeField_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -618,6 +634,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNegative_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(VenmoRequest);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`VenmoRequest` → RequestedOn")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `DateOnly`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNegative_DateTimeField_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1140,6 +1172,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`FutharkRune` → InYoungerFuthark")
                 .WithProblem("the annotation cannot be applied to a Field of non-numeric type `bool`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNonZero_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(TieDye);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`TieDye` → DateCreated")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `DateOnly`")
                 .WithAnnotations("[Check.IsNonZero]")
                 .EndMessage();
         }

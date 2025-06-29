@@ -25,6 +25,7 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should()
                 .HaveField("Byte").OfTypeUInt8().BeingNonNullable().And
                 .HaveField("Char").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("Date").OfTypeDate().BeingNonNullable().And
                 .HaveField("DateTime").OfTypeDateTime().BeingNonNullable().And
                 .HaveField("Decimal").OfTypeDecimal().BeingNonNullable().And
                 .HaveField("Double").OfTypeDouble().BeingNonNullable().And
@@ -55,6 +56,7 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Should()
                 .HaveField("Byte").OfTypeUInt8().BeingNullable().And
                 .HaveField("Char").OfTypeCharacter().BeingNullable().And
+                .HaveField("Date").OfTypeDate().BeingNullable().And
                 .HaveField("DateTime").OfTypeDateTime().BeingNullable().And
                 .HaveField("Decimal").OfTypeDecimal().BeingNullable().And
                 .HaveField("Double").OfTypeDouble().BeingNullable().And

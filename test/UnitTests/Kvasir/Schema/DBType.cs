@@ -147,6 +147,19 @@ namespace UT.Kvasir.Schema {
             dbType.Should().Be(DBType.Int8);
         }
 
+        [TestMethod] public void LookupDateOnly() {
+            // Arrange
+            var type = typeof(DateOnly);
+
+            // Act
+            var supported = DBType.IsSupported(type);
+            var dbType = DBType.Lookup(type);
+
+            // Assert
+            supported.Should().BeTrue();
+            dbType.Should().Be(DBType.Date);
+        }
+
         [TestMethod] public void LookupDateTime() {
             // Arrange
             var type = typeof(DateTime);
@@ -368,6 +381,19 @@ namespace UT.Kvasir.Schema {
             dbType.Should().Be(DBType.Int8);
         }
 
+        [TestMethod] public void LookupNullableDate() {
+            // Arrange
+            var type = typeof(DateOnly?);
+
+            // Act
+            var supported = DBType.IsSupported(type);
+            var dbType = DBType.Lookup(type);
+
+            // Assert
+            supported.Should().BeTrue();
+            dbType.Should().Be(DBType.Date);
+        }
+
         [TestMethod] public void LookupNullableDateTime() {
             // Arrange
             var type = typeof(DateTime?);
@@ -529,12 +555,14 @@ namespace UT.Kvasir.Schema {
         }
 
         [TestMethod] public void Stringification() {
-            // No Arrangement
+            // Arrange
+
             // Act
             var boolStr = DBType.Boolean.ToString();
             var byteStr = DBType.UInt8.ToString();
             var charStr = DBType.Character.ToString();
-            var dateStr = DBType.DateTime.ToString();
+            var dateStr = DBType.Date.ToString();
+            var datetimeStr = DBType.DateTime.ToString();
             var decimalStr = DBType.Decimal.ToString();
             var doubleStr = DBType.Double.ToString();
             var enumStr = DBType.Enumeration.ToString();
@@ -553,7 +581,8 @@ namespace UT.Kvasir.Schema {
             boolStr.Should().Be("Boolean");
             byteStr.Should().Be("UInt8");
             charStr.Should().Be("Character");
-            dateStr.Should().Be("Date/Time");
+            dateStr.Should().Be("Date");
+            datetimeStr.Should().Be("Date/Time");
             decimalStr.Should().Be("Decimal");
             doubleStr.Should().Be("Double");
             enumStr.Should().Be("Enumeration");
