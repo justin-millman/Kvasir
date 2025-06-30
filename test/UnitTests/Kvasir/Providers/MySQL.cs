@@ -831,7 +831,7 @@ namespace UT.Kvasir.Providers {
 
             // Assert
             decl.Should().BeOfType<BasicConstraintDecl>();
-            ((BasicConstraintDecl)decl).DDL.Should().Be($"CHECK (`{field.Name}` != DATETIME \"1865-05-30 00:00:00\")");
+            ((BasicConstraintDecl)decl).DDL.Should().Be($"CHECK (`{field.Name}` != TIMESTAMP \"1865-05-30 00:00:00\")");
         }
 
         [TestMethod] public void ComparisonConstraint_DateTimeValue_WithTime() {
@@ -849,7 +849,7 @@ namespace UT.Kvasir.Providers {
 
             // Assert
             decl.Should().BeOfType<BasicConstraintDecl>();
-            ((BasicConstraintDecl)decl).DDL.Should().Be($"CHECK (`{field.Name}` <= DATETIME \"2188-11-04 01:07:02\")");
+            ((BasicConstraintDecl)decl).DDL.Should().Be($"CHECK (`{field.Name}` <= TIMESTAMP \"2188-11-04 01:07:02\")");
         }
 
         [TestMethod] public void ComparisonConstraint_BooleanValue_True() {
@@ -2038,7 +2038,7 @@ namespace UT.Kvasir.Providers {
 
             // Assert
             intermediate.Name.Should().Be(name.ToString());
-            decl.Should().Be($"`{name}` DATETIME DEFAULT DATETIME \"2009-10-08 00:00:00\"");
+            decl.Should().Be($"`{name}` DATETIME DEFAULT TIMESTAMP \"2009-10-08 00:00:00\"");
         }
 
         [TestMethod] public void Deafult_DateTime_WithTime() {
@@ -2057,7 +2057,7 @@ namespace UT.Kvasir.Providers {
 
             // Assert
             intermediate.Name.Should().Be(name.ToString());
-            decl.Should().Be($"`{name}` DATETIME DEFAULT DATETIME \"1655-01-11 03:58:44\"");
+            decl.Should().Be($"`{name}` DATETIME DEFAULT TIMESTAMP \"1655-01-11 03:58:44\"");
         }
 
         [TestMethod] public void Default_Guid() {
