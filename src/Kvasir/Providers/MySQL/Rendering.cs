@@ -37,7 +37,7 @@ namespace Kvasir.Providers.MySQL {
             }
             else if (value.Datum.GetType() == typeof(DateTime)) {
                 var datetime = (DateTime)value.Datum;
-                return $"DATETIME \"{datetime:yyyy-MM-dd HH:mm:ss}\"";
+                return $"TIMESTAMP \"{datetime:yyyy-MM-dd HH:mm:ss}\"";
             }
             else if (value.Datum.GetType() == typeof(Guid)) {
                 var guid = (Guid)value.Datum;
