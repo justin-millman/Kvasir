@@ -52,8 +52,8 @@ namespace Kvasir.Relations {
     /// <seealso cref="RelationSet{T}"/>
     /// <seealso cref="RelationMap{TKey, TValue}"/>
     /// <seealso cref="RelationOrderedList{T}"/>
-    public sealed class RelationList<T> : ICollection<T>, IEnumerable, IEnumerable<T>, IList, IList<T>,
-        IReadOnlyCollection<T>, IReadOnlyList<T>, IReadOnlyRelationList<T>, IRelation where T : notnull {
+    public sealed class RelationList<T> : IList, IList<T>, IReadOnlyList<T>, IReadOnlyRelationList<T>, IRelation
+        where T : notnull {
 
         // *************************************** PROPERTIES ***************************************
 
