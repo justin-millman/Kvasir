@@ -1,4 +1,5 @@
 using FluentAssertions.Execution;
+using Kvasir.Localization;
 using Kvasir.Relations;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,12 @@ namespace FluentAssertions {
             return new RelationAssertion(self);
         }
         public static RelationAssertion Should<T>(this IReadOnlyRelationOrderedList<T> self) where T : notnull {
+            return new RelationAssertion(self);
+        }
+        public static RelationAssertion Should<K, C, V>(this Localization<K, C, V> self) where K : notnull where C : notnull {
+            return new RelationAssertion(self);
+        }
+        public static RelationAssertion Should<K, C, V>(this IReadOnlyLocalization<K, C, V> self) where K : notnull where C : notnull {
             return new RelationAssertion(self);
         }
 

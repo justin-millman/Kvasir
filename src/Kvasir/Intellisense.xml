@@ -1564,6 +1564,465 @@
               A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
             </summary>
         </member>
+        <member name="T:Kvasir.Localization.Localization`3">
+            <summary>
+              A collection of localized data that tracks the state of its locale-value mappings for interaction with a
+              back-end database.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Kvasir.Localization.Localization`3"/> class is a first-class data structure in Kvasir for
+                representing semantics that have different values in different circumstances. The canonical example of this
+                is text, which changes according to language; other examples may be measurements in imperial versus metric
+                or dates according to different calendars. These modes are called "locales" and the value of a semantic in
+                a particular locale the "localized value" or "localization." The semantic being localized is known as the
+                "localization key" and is simply an identifier by which the localizations are grouped.
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Localization.Localization`3"/> implements the same interfaces as and behaves
+                identically to a standard <see cref="T:System.Collections.Generic.Dictionary`2"/> collection. Operations that mutate the
+                collection are used to track changes that can then be reflected in a back-end database, while view- or
+                read-only operations have no additional side effects. Converting a
+                <see cref="T:Kvasir.Localization.Localization`3"/> into another collection, such as through a member API or
+                LINQ, drops the change tracking capabilities.
+              </para>
+              <para>
+                Every locale-value pair in a <see cref="T:Kvasir.Localization.Localization`3"/> is in one of three states:
+                <c>NEW</c>, <c>SAVED</c>, or <c>DELETED</c>. Each state corresponds to the action or actions that should be
+                taken with respect to that item to synchronize the back-end database table corresponding to the relation. An
+                item enters the <c>NEW</c> state when it is first added; when the collection is canonicalized, each
+                <c>NEW</c> item transitions to the <c>SAVED</c> state, indicating that it does not need to be written to the
+                database on the next write. When a <c>SAVED</c> item is removed from the collection, it transitions to the
+                <c>DELETED</c> state; <c>NEW</c> items do not transition to <c>DELETED</c>. Note that if a <c>SAVED</c>
+                item is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
+              </para>
+              <para>
+                The <see cref="T:Kvasir.Localization.Localization`3"/> does not support the <c>MODIFIED</c> state; instead,
+                each locale-value pair is treated as its own unit. This means that changing the value localized for an
+                existing locale results in two separate operations in the back-end database: first a removal of the old
+                locale-value pair, then an insertion of the new one. This behavior <i>may</i> change in the future, so
+                clients should not rely on it. The guarantee, however, is that Kvasir will properly respond to an overwrite
+                by ensuring that the resulting back-end database contains only the new locale-value pair.
+              </para>
+              <para>
+                Items used for the value in a <see cref="T:Kvasir.Localization.Localization`3"/> should be immutable:
+                structs, <see cref="T:System.String"/>, etc. This is because read access is <i>not</i> tracked: when using mutable
+                values, it is possible for the user to access an item (e.g. through <c>operator[]</c>) and mutate that value
+                without the collection knowing, preventing the change from being reflected in the back-end database. This
+                also means that actions that convert the collection into another form will <i>copy</i> the elements,
+                ensuring that the tracing data remains up-to-date.
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Localization.Localization`3"/> does not permit duplicate locales, but it does support
+                duplicate values.
+              </para>
+            </remarks>
+            <typeparam name="TKey">
+              The type of the "localization key" for the Localization.
+            </typeparam>
+            <typeparam name="TLocale">
+              The type of the locale for which values in the Localization are localized.
+            </typeparam>
+            <typeparam name="TValue">
+              The type of the localized values.
+            </typeparam>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Count">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Item(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that is empty,
+              has the default initial capacity, and uses the default equality comparer for the locale type.
+            </summary>
+            <param name="key">
+              The "localization key" for the new instance.
+            </param>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0,System.Collections.Generic.IEqualityComparer{`1})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that is empty,
+              has the default initial capacity, and uses the specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="key">
+              The "localization key" for the new instance.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing locale, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the
+              locale.
+            </param>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0,System.Collections.Generic.IDictionary{`1,`2})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that contains
+              elements copied from the specified <see cref="T:System.Collections.Generic.IDictionary`2"/> and use the default
+              equality comparer for the locale type.
+            </summary>
+            <param name="key">
+              The "localization key" for the new instance.
+            </param>
+            <param name="dictionary">
+              The <see cref="T:System.Collections.Generic.IDictionary`2"/> whose elements are copied to the new
+              <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="dictionary"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0,System.Collections.Generic.IDictionary{`1,`2},System.Collections.Generic.IEqualityComparer{`1})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that contains
+              elements copied from the specified <see cref="T:System.Collections.Generic.IDictionary`2"/> and uses the specified
+              <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="key">
+              The "localization key" for the new instance.
+            </param>
+            <param name="dictionary">
+              The <see cref="T:System.Collections.Generic.IDictionary`2"/> whose elements are copied to the new
+              <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing locales, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the
+              locale.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="dictionary"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`1,`2}})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that contains
+              elements copied from the specified <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <param name="key">
+              The "localization key" for the new instance.
+            </param>
+            <param name="collection">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> whose elements are copied to the new
+              <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="collection"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`1,`2}},System.Collections.Generic.IEqualityComparer{`1})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that contains
+              elements copied from the specified <see cref="T:System.Collections.Generic.IEnumerable`1"/> and uses the specified
+              <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="key">
+              The "localization key" for the new instance.
+            </param>
+            <param name="collection">
+              The <see cref="T:System.Collections.Generic.IEnumerable`1"/> whose elements are copied to the new
+              <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing locales, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the
+              locale.
+            </param>
+            <exception cref="T:System.ArgumentException">
+              if <paramref name="collection"/> contains one or more duplicate keys.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that is empty,
+              has the specified initial capacity, and uses the default equality comparer for the locale type.
+            </summary>
+            <param name="localizationKey">
+              The "localization key" for the new instance.
+            </param>
+            <param name="capacity">
+              The initial number of elements that the <see cref="T:Kvasir.Localization.Localization`3"/> can contain.
+            </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="capacity"/> is less than <c>0</c>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0,System.Int32,System.Collections.Generic.IEqualityComparer{`1})">
+            <summary>
+              Initializes a new instance of the <see cref="T:Kvasir.Localization.Localization`3"/> class that is empty,
+              has the specified initial capacity, and uses the specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+            <param name="key">
+              The "localization key" for the new instance.
+            </param>
+            <param name="capacity">
+              The initial number of elements that the <see cref="T:Kvasir.Localization.Localization`3"/> can contain.
+            </param>
+            <param name="comparer">
+              The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing locales, or
+              <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the
+              locale.
+            </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="capacity"/> is less than <c>0</c>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Add(`1,`2)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Clear">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.ContainsLocalizationFor(`1)">
+            <summary>
+              Determines whether the <see cref="T:Kvasir.Localization.Localization`3"/> contains a localization for a
+              specified locale.
+            </summary>
+            <param name="locale">
+              The locale locate in the <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </param>
+            <returns>
+              <see langword="true"/> if the <see cref="T:Kvasir.Localization.Localization`3"/> contains a localized
+              value for the specified locale; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.ContainsValue(`2)">
+            <summary>
+              Determines whether the <see cref="T:Kvasir.Localization.Localization`3"/> contains a specific localized
+              value.
+            </summary>
+            <param name="value">
+              The localized value to locate in the <see cref="T:Kvasir.Localization.Localization`3"/>. The value can be
+              <see langword="null"/> for nullable reference types.
+            </param>
+            <returns>
+              <see langword="true"/> if the <see cref="T:Kvasir.Localization.Localization`3"/> contains a localization
+              with the specified value; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.GetEnumerator">
+            <summary>
+              Returns an enumerator that iterates through a <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </summary>
+            <returns>
+              A <see cref="T:System.Collections.Generic.Dictionary`2.Enumerator"/> object for the
+              <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Remove(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Remove(`1,`2@)">
+            <summary>
+              Removes the localized value for the specified locale from the
+              <see cref="T:Kvasir.Localization.Localization`3"/>, and copies the element to the <paramref name="value"/>
+              parameter.
+            </summary>
+            <param name="locale">
+              The locale of the localized value to remove.
+            </param>
+            <param name="value">
+              The removed element.
+            </param>
+            <returns>
+              <see langword="true"/> if the element is successfully found and removed; otherwise,
+              <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.TrimExcess">
+            <summary>
+              Sets the capacity of this <see cref="T:Kvasir.Localization.Localization`3"/> to what it would be if it had
+              originally been initialized with all its entries.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.TrimExcess(System.Int32)">
+            <summary>
+              Sets the capacity of this <see cref="T:Kvasir.Localization.Localization`3"/> to hold up to a specified
+              number of entries without further expansion of its backing storage.
+            </summary>
+            <param name="capacity">
+              The new capacity.
+            </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              <paramref name="capacity"/> is less than the size of the
+              <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.TryAdd(`1,`2)">
+            <summary>
+              Attempts to add the specific locale and localized value to the
+              <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </summary>
+            <param name="locale">
+              The locale of the localized value to add.
+            </param>
+            <param name="value">
+              The localized value to add. It can be <see langword="null"/> for nullable reference types.
+            </param>
+            <returns>
+              <see langword="true"/> if the localization was added to the
+              <see cref="T:Kvasir.Localization.Localization`3"/>; otherwise, <see langword="false"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="locale"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.TryGetValue(`1,`2@)">
+            <summary>
+              Gets the localized value for the specified locale.
+            </summary>
+            <param name="locale">
+              The locale of the localized value to get.
+            </param>
+            <param name="value">
+              When this method returns, contains the localized value for the specified locale, if the locale is found;
+              otherwise, the default value for the type of the <paramref name="value"/> parameter. This parameter is
+              passed uninitialized.
+            </param>
+            <returns>
+              <see langword="true"/> if the <see cref="T:Kvasir.Localization.Localization`3"/> contains a localized
+              value with for specified locale; otherwise, <see langword="false"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="locale"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Kvasir#Relations#IRelation#ConnectionType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#ICollection#IsSynchronized">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#ICollection#SyncRoot">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TLocale,TValue}}#IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#IDictionary#IsFixedSize">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#IDictionary#IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#IDictionary#Item(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#IDictionary#Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#IDictionary#Values">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#Generic#IReadOnlyDictionary{TLocale,TValue}#Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#Generic#IReadOnlyDictionary{TLocale,TValue}#Values">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#Generic#IDictionary{TLocale,TValue}#Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.System#Collections#Generic#IDictionary{TLocale,TValue}#Values">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#ICollection#CopyTo(System.Array,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TLocale,TValue}}#Add(System.Collections.Generic.KeyValuePair{`1,`2})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TLocale,TValue}}#Contains(System.Collections.Generic.KeyValuePair{`1,`2})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TLocale,TValue}}#CopyTo(System.Collections.Generic.KeyValuePair{`1,`2}[],System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TLocale,TValue}}#Remove(System.Collections.Generic.KeyValuePair{`1,`2})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#IDictionary#Add(System.Object,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#IDictionary#Contains(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#IDictionary#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#IDictionary#Remove(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#Generic#IDictionary{TLocale,TValue}#ContainsKey(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#Generic#IEnumerable{System#Collections#Generic#KeyValuePair{TLocale,TValue}}#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Kvasir#Localization#ILocalization#LocalizationKey">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.System#Collections#Generic#IReadOnlyDictionary{TLocale,TValue}#ContainsKey(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Kvasir#Relations#IRelation#Canonicalize">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Kvasir#Relations#IRelation#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Kvasir#Relations#IRelation#Repopulate(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Localization.ILocalization">
+            <summary>
+              The internal framework interface denoting a collection of localized values.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Localization.ILocalization.LocalizationKey">
+            <summary>
+              Gets the "localization key" that identifies the Localization.
+            </summary>
+            <value>
+              The "localization key" for the localization.
+            </value>
+        </member>
+        <member name="T:Kvasir.Localization.IReadOnlyLocalization`3">
+            <summary>
+              An interface denoting a read-only view over a <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </summary>
+            <remarks>
+              This interface is intended to allow class authors to expose a Localization through a read-only property while
+              controlling mutating operations on the underlying collection via member functions. Users would call, e.g., an
+              insertion function that essentially "intercepts" the call to the underlying collection's mutator, permitting
+              validation or ordering or logging or any other custom behavior.
+            </remarks>
+            <typeparam name="TKey">
+              The type of the "localization key" for the Localization.
+            </typeparam>
+            <typeparam name="TLocale">
+              The type of the locale for which values in the Localization are localized.
+            </typeparam>
+            <typeparam name="TValue">
+              The type of the localized values.
+            </typeparam>
+        </member>
+        <member name="P:Kvasir.Localization.IReadOnlyLocalization`3.Kvasir#Relations#IRelation#ConnectionType">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.BuilderFactory">
             <summary>
               An implementation of the <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>
@@ -3489,7 +3948,7 @@
         </member>
         <member name="P:Kvasir.Relations.RelationMap`2.Values">
             <summary>
-              Gets a collection containing the keys in the <see cref="T:Kvasir.Relations.RelationMap`2"/>.
+              Gets a collection containing the values in the <see cref="T:Kvasir.Relations.RelationMap`2"/>.
             </summary>
             <value>
               A <see cref="T:System.Collections.Generic.Dictionary`2.ValueCollection"/> containing the values in the
@@ -3599,6 +4058,9 @@
               The <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> implementation to use when comparing keys, or
               <see langword="null"/> to use the default <see cref="T:System.Collections.Generic.EqualityComparer`1"/> for the type of the key.
             </param>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+              if <paramref name="capacity"/> is less than <c>0</c>.
+            </exception>
         </member>
         <member name="M:Kvasir.Relations.RelationMap`2.Add(`0,`1)">
             <inheritdoc/>

@@ -961,7 +961,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void LengthIsAtLeast_PathIsNull_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
-            var source = typeof(Localization);
+            var source = typeof(UT.Kvasir.Translation.StringLengthConstraints.LengthIsAtLeast.Localization);
 
             // Act
             var translate = () => translator[source];

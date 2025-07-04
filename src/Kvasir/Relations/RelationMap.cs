@@ -98,7 +98,7 @@ namespace Kvasir.Relations {
         public Dictionary<TKey, TValue>.KeyCollection Keys => impl_.Keys;
 
         /// <summary>
-        ///   Gets a collection containing the keys in the <see cref="RelationMap{TKey, TValue}"/>.
+        ///   Gets a collection containing the values in the <see cref="RelationMap{TKey, TValue}"/>.
         /// </summary>
         /// <value>
         ///   A <see cref="Dictionary{TKey, TValue}.ValueCollection"/> containing the values in the
@@ -120,11 +120,11 @@ namespace Kvasir.Relations {
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="RelationMap{TKey, TValue}"/> class that is empty, has the
-        ///   default initial capacity, and uses the specified <see cref="IEqualityComparer{T}"/>.
+        ///   default initial capacity, and uses the specified <see cref="IEqualityComparer{TKey}"/>.
         /// </summary>
         /// <param name="comparer">
-        ///   The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys, or
-        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{T}"/> for the type of the key.
+        ///   The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, or
+        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{TKey}"/> for the type of the key.
         /// </param>
         public RelationMap(IEqualityComparer<TKey>? comparer) {
             impl_ = new Dictionary<TKey, TValue>(comparer);
@@ -150,15 +150,15 @@ namespace Kvasir.Relations {
         /// <summary>
         ///   Initializes a new instance of the <see cref="RelationMap{TKey, TValue}"/> class that contains elements
         ///   copied from the specified <see cref="IDictionary{TKey, TValue}"/> and uses the specified
-        ///   <see cref="IEqualityComparer{T}"/>.
+        ///   <see cref="IEqualityComparer{TKey}"/>.
         /// </summary>
         /// <param name="dictionary">
         ///   The <see cref="IDictionary{TKey, TValue}"/> whose elements are copied to the new
         ///   <see cref="Dictionary{TKey, TValue}"/>.
         /// </param>
         /// <param name="comparer">
-        ///   The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys, or
-        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{T}"/> for the type of the key.
+        ///   The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, or
+        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{TKey}"/> for the type of the key.
         /// </param>
         /// <exception cref="ArgumentException">
         ///   if <paramref name="dictionary"/> contains one or more duplicate keys.
@@ -187,15 +187,15 @@ namespace Kvasir.Relations {
         /// <summary>
         ///   Initializes a new instance of the <see cref="RelationMap{TKey, TValue}"/> class that contains elements
         ///   copied from the specified <see cref="IEnumerable{T}"/> and uses the specified
-        ///   <see cref="IEqualityComparer{T}"/>.
+        ///   <see cref="IEqualityComparer{TKey}"/>.
         /// </summary>
         /// <param name="collection">
         ///   The <see cref="IEnumerable{T}"/> whose elements are copied to the new
         ///   <see cref="RelationMap{TKey, TValue}"/>.
         /// </param>
         /// <param name="comparer">
-        ///   The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys, or
-        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{T}"/> for the type of the key.
+        ///   The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, or
+        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{TKey}"/> for the type of the key.
         /// </param>
         /// <exception cref="ArgumentException">
         ///   if <paramref name="collection"/> contains one or more duplicate keys.
@@ -228,9 +228,12 @@ namespace Kvasir.Relations {
         ///   The initial number of elements that the <see cref="RelationMap{TKey, TValue}"/> can contain.
         /// </param>
         /// <param name="comparer">
-        ///   The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys, or
-        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{T}"/> for the type of the key.
+        ///   The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, or
+        ///   <see langword="null"/> to use the default <see cref="EqualityComparer{TKey}"/> for the type of the key.
         /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///   if <paramref name="capacity"/> is less than <c>0</c>.
+        /// </exception>
         public RelationMap(int capacity, IEqualityComparer<TKey>? comparer) {
             impl_ = new Dictionary<TKey, TValue>(capacity, comparer);
             statuses_ = new Dictionary<TKey, Status>(capacity, comparer);
