@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Schema;
 using Kvasir.Transcription;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -38,11 +39,11 @@ namespace Kvasir.Providers.MySQL {
         ///   The maximum length.
         /// </param>
         public void EnforceMaximumLength(ulong maxLength) {
-            // We can't just do a find-and-replace of LONGTEXT, even with spaces surrounding it, because that specific
-            // sequence may appear in the literal default value. The C# string.Replace library method has no way to
-            // indicate "replace only the first instance."
-            var startIdx = Name.Length + 11;         // +2 for the backticks, +1 for space, +8 for LONGTEXT
-            var varchar = $"VARCHAR({maxLength})";
+            // We can't just do a find-and-replace of VARCHAR(255), even with spaces surrounding it, because that
+            // specific sequence may appear in the literal default value. The C# string.Replace library method has no
+            // way to indicate "replace only the first instance."
+            var startIdx = Name.Length + 15;         // +2 for the backticks, +1 for space, +12 for VARCHAR(255)
+            var varchar = $"VARCHAR({Math.Min(maxLength, MAX_LENGTH_UPPER_BOUND)})";
             declaration_ = $"{Name.Render()} {varchar}{declaration_[startIdx..]}";
         }
 
@@ -57,6 +58,7 @@ namespace Kvasir.Providers.MySQL {
         }
 
 
+        private static ulong MAX_LENGTH_UPPER_BOUND = 65535;
         private string declaration_;
     }
 
@@ -124,7 +126,7 @@ namespace Kvasir.Providers.MySQL {
                 declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "FLOAT");
             }
             else if (dataType == DBType.Text) {
-                declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "LONGTEXT");
+                declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "VARCHAR(255)");
             }
             else if (dataType == DBType.UInt16) {
                 declaration_ = declaration_.Replace(TYPE_PLACEHOLDER, "SMALLINT UNSIGNED");
