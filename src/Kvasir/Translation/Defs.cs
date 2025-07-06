@@ -1,6 +1,7 @@
 ﻿using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
+using System;
 using System.Collections.Generic;
 
 namespace Kvasir.Translation {
@@ -29,6 +30,19 @@ namespace Kvasir.Translation {
     /// <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
     /// <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
     internal sealed record class RelationTableDef(
+        ITable Table,
+        RelationExtractionPlan Extractor,
+        RelationRepopulationPlan Repopulator
+    );
+
+    /// <summary>
+    ///   The definition of a Field on an Entity that is a Localization.
+    /// </summary>
+    /// 
+    /// <param name="Table">The schema model for the Localization Table.</param>
+    /// <param name="Extractor">The plan that can extract the element-specific data to be stored in the Localization Table.</param>
+    /// <param name="Repopulator">The plan that can populate elements into a CLR Localization from a row of data stored in the Localization Table.</param>
+    internal sealed record class LocalizationDef(
         ITable Table,
         RelationExtractionPlan Extractor,
         RelationRepopulationPlan Repopulator

@@ -35,8 +35,14 @@ namespace Kvasir.Translation {
                 var context = new Context(source);
                 var principal = TranslatePrincipalTable(context, source);
                 var relations = TranslateRelationTables(source);
+                var localizations = new List<LocalizationDef>();
 
-                var result = new EntityTranslation(CLRSource: source, Principal: principal, Relations: relations);
+                var result = new EntityTranslation(
+                    CLRSource: source,
+                    Principal: principal,
+                    Relations: relations,
+                    Localizations: localizations
+                );
                 translationCache_[source] = result;
                 return result;
             }

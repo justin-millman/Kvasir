@@ -8956,32 +8956,128 @@
               The name of <paramref name="property"/>.
             </returns>
         </member>
+        <member name="T:Kvasir.Translation.PrincipalTableDef">
+            <summary>
+              The definition of a Principal Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Principal Table.</param>
+            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
+            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
+            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
+        </member>
+        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Extraction.DataExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
+            <summary>
+              The definition of a Principal Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Principal Table.</param>
+            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
+            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
+            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Table">
+            <summary>The schema model for the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Extractor">
+            <summary>The plan that can extract a row of data to be stored into the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Reconstitutor">
+            <summary>The plan that can recreate a CLR object from a row of data stored in the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.KeyExtractor">
+            <summary>The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances">
+            <summary>The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</summary>
+        </member>
+        <member name="T:Kvasir.Translation.RelationTableDef">
+            <summary>
+              The definition of a Relation Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Relation Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
+        </member>
+        <member name="M:Kvasir.Translation.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationRepopulationPlan)">
+            <summary>
+              The definition of a Relation Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Relation Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Table">
+            <summary>The schema model for the Relation Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Extractor">
+            <summary>The plan that can extract the element-specific data to be stored in the Relation Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Repopulator">
+            <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</summary>
+        </member>
+        <member name="T:Kvasir.Translation.LocalizationDef">
+            <summary>
+              The definition of a Field on an Entity that is a Localization.
+            </summary>
+            
+            <param name="Table">The schema model for the Localization Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Localization Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Localization from a row of data stored in the Localization Table.</param>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationRepopulationPlan)">
+            <summary>
+              The definition of a Field on an Entity that is a Localization.
+            </summary>
+            
+            <param name="Table">The schema model for the Localization Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Localization Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Localization from a row of data stored in the Localization Table.</param>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationDef.Table">
+            <summary>The schema model for the Localization Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationDef.Extractor">
+            <summary>The plan that can extract the element-specific data to be stored in the Localization Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationDef.Repopulator">
+            <summary>The plan that can populate elements into a CLR Localization from a row of data stored in the Localization Table.</summary>
+        </member>
         <member name="T:Kvasir.Translation.EntityTranslation">
             <summary>
               A translation of a single CLR type.
             </summary>
             
-            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></param>
-            <param name="Principal">The definition of the Principal Table</param>
-            <param name="Relations">The definitions of any Relation Tables</param>
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/>.</param>
+            <param name="Principal">The definition of the Principal Table.</param>
+            <param name="Relations">The definitions of any Relation Tables.</param>
+            <param name="Localizations">The definitions of any Localizations.</param>
         </member>
-        <member name="M:Kvasir.Translation.EntityTranslation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.RelationTableDef})">
+        <member name="M:Kvasir.Translation.EntityTranslation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.RelationTableDef},System.Collections.Generic.IReadOnlyList{Kvasir.Translation.LocalizationDef})">
             <summary>
               A translation of a single CLR type.
             </summary>
             
-            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></param>
-            <param name="Principal">The definition of the Principal Table</param>
-            <param name="Relations">The definitions of any Relation Tables</param>
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/>.</param>
+            <param name="Principal">The definition of the Principal Table.</param>
+            <param name="Relations">The definitions of any Relation Tables.</param>
+            <param name="Localizations">The definitions of any Localizations.</param>
         </member>
         <member name="P:Kvasir.Translation.EntityTranslation.CLRSource">
-            <summary>The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></summary>
+            <summary>The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/>.</summary>
         </member>
         <member name="P:Kvasir.Translation.EntityTranslation.Principal">
-            <summary>The definition of the Principal Table</summary>
+            <summary>The definition of the Principal Table.</summary>
         </member>
         <member name="P:Kvasir.Translation.EntityTranslation.Relations">
-            <summary>The definitions of any Relation Tables</summary>
+            <summary>The definitions of any Relation Tables.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.EntityTranslation.Localizations">
+            <summary>The definitions of any Localizations.</summary>
         </member>
         <member name="T:Kvasir.Translation.AmbiguousNullabilityException">
             <summary>
@@ -11969,70 +12065,6 @@
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.IsPrimitiveImpl">
             <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Translation.PrincipalTableDef">
-            <summary>
-              The definition of a Principal Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Principal Table.</param>
-            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
-            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
-            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
-            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
-        </member>
-        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Extraction.DataExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
-            <summary>
-              The definition of a Principal Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Principal Table.</param>
-            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
-            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
-            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
-            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.Table">
-            <summary>The schema model for the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.Extractor">
-            <summary>The plan that can extract a row of data to be stored into the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.Reconstitutor">
-            <summary>The plan that can recreate a CLR object from a row of data stored in the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.KeyExtractor">
-            <summary>The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances">
-            <summary>The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</summary>
-        </member>
-        <member name="T:Kvasir.Translation.RelationTableDef">
-            <summary>
-              The definition of a Relation Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Relation Table.</param>
-            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
-            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
-        </member>
-        <member name="M:Kvasir.Translation.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationRepopulationPlan)">
-            <summary>
-              The definition of a Relation Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Relation Table.</param>
-            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
-            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
-        </member>
-        <member name="P:Kvasir.Translation.RelationTableDef.Table">
-            <summary>The schema model for the Relation Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.RelationTableDef.Extractor">
-            <summary>The plan that can extract the element-specific data to be stored in the Relation Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.RelationTableDef.Repopulator">
-            <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</summary>
         </member>
         <member name="T:Kvasir.Translation.Bound">
             <summary>

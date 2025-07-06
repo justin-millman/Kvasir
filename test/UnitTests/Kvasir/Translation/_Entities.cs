@@ -1,4 +1,5 @@
 ﻿using Kvasir.Annotations;
+using Kvasir.Localization;
 using Kvasir.Relations;
 using System;
 using System.Collections;
@@ -466,6 +467,16 @@ namespace UT.Kvasir.Translation {
             public RelationMap<string, RelationMap<string, double>> Measurements { get; init; } = new();
         }
 
+        // Test Scenario: Relation Nested Within Localization (✗not permitted✗)
+        public class Retrovirus {
+            public enum Class { Oncoretrovirus, Lentivirus, Spumavirus }
+
+            [PrimaryKey] public Guid VirusID { get; set; }
+            public Class Variety { get; set; }
+            public double Incidence { get; set; }
+            public Localization<int, string, RelationList<string>> Name { get; } = new(0);
+        }
+
         // Test Scenario: Relation Nested Within Relation Nested Within Aggregate (✗not permitted✗)
         public class IntelligenceAgency {
             public struct Leadership {
@@ -483,6 +494,20 @@ namespace UT.Kvasir.Translation {
             public ulong Employees { get; set; }
         }
 
+        // Test Scenario: Relation Nested Within Localization Nested Within Aggregate (✗not permitted✗)
+        public class Bodybuilder {
+            public struct Biography {
+                public DateOnly Birthday { get; set; }
+                public string SSN { get; set; }
+                public Localization<string, sbyte, RelationSet<double>> Measurements { get; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public Biography Bio { get; set; }
+            public float BMI { get; set; }
+            public bool Olympia { get; set; }
+        }
+
         // Test Scenario: Relation Nested Within Aggregate Nested Within Relation (✗not permitted✗)
         public class Poll {
             public record struct Question(string Text, RelationSet<string> Answers);
@@ -493,6 +518,17 @@ namespace UT.Kvasir.Translation {
             public RelationList<Question> Questions { get; init; } = new();
             public ulong Responses { get; set; }
             public double ReponseRate { get; set; }
+        }
+
+        // Test Scenario: Relation Nested Within Aggregate Nested Within Localization (✗not permitted✗)
+        public class Macro {
+            public record struct Argument(byte Index, string Token, IReadOnlyRelationSet<string> AllowedTypes);
+
+            [PrimaryKey] public string File { get; set; } = "";
+            [PrimaryKey] public string Name { get; set; } = "";
+            public Localization<char, string, Argument> Arguments { get; } = new('\0');
+            public bool IsInOverloadSet { get; set; }
+            public bool StandardsCompliant { get; set; }
         }
 
         // Test Scenario: Relation Nested Within Aggregate Nested Within Relation, post-Memoization (✗not permitted✗)
@@ -511,6 +547,18 @@ namespace UT.Kvasir.Translation {
             public bool InMexico { get; set; }
         }
 
+        // Test Scenario: Relation Nested Within Aggregate Nested Within Localization, post-Memoization (✗not permitted✗)
+        public class Parable {
+            public enum Version { KingJames, Wicked, Septuagint, Vaticanus }
+            public record struct Citation(string Book, byte Chapter, RelationOrderedList<uint> Verses);
+
+            [PrimaryKey] public Guid StoryID { get; set; }
+            public string? Title { get; set; }
+            public Citation Incipience { get; set; }
+            public Localization<string, Version, Citation> Mentions { get; } = new("");
+            public bool HistoricallyAttested { get; set; }
+        }
+
         // Test Scenario: Relation List/Set of KeyValuePair<X, Y> (✗not permitted - implementation ambiguity✗)
         public class Caricature {
             public enum Location { Circus, Zoo, AmusementPark, SportingEvent, FarmersMarket, Other }
@@ -522,6 +570,16 @@ namespace UT.Kvasir.Translation {
             public double HeadSize { get; set; }
             public bool Certified { get; set; }
             public Location Source { get; set; }
+        }
+
+        // Test Scenario: Relation List/Set of Tuple<X, Y, Z> (✗not permitted - implementation ambiguity✗)
+        public class StirFry {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string? Variety { get; set; }
+            public RelationOrderedList<Tuple<int, string, string>> Ingredients { get; } = new();
+            public double Calories { get; set; }
+            public bool MadeInWok { get; set; }
+            public double Scovilles { get; set; }
         }
 
         // Test Scenario: IRelation (✗not permitted✗)

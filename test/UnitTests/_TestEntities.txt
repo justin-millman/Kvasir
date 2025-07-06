@@ -142,6 +142,7 @@ Blood Drive
 Blood Type
 Boarding School
 Bodhisattva
+Bodybuilder
 Bond
 Bond Girl
 Bone
@@ -704,6 +705,7 @@ Lunar Crater
 Lunar Eclipse
 Lycanthrope
 Lyric
+Macro (C++)
 Madden NFL
 Madonna (painting)
 Madrasa
@@ -851,6 +853,7 @@ Pandava Brother
 Panegyric
 Papal Bull
 Papal Conclave
+Parable
 Parabola
 Parashah
 Parking Garage
@@ -984,6 +987,7 @@ Resistor
 Rest Stop
 Restaurant
 Retail Product
+Retrovirus
 Rhinoceros
 Ring of Power
 River
@@ -1107,6 +1111,7 @@ State of the Union
 State Quarter
 Steak
 Step Pyramid
+Stir Fry
 Stock
 Stock Index
 Stooge
