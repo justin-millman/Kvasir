@@ -9603,6 +9603,26 @@
               <i>overload discriminator</i>
             </param>
         </member>
+        <member name="T:Kvasir.Translation.InvalidLocalizationKeyException">
+            <summary>
+              An exception that is raised when the type of a Localization Key is not a primitive, built-in type.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidLocalizationKeyException.#ctor(Kvasir.Translation.Context,System.Type,Kvasir.Translation.TypeCategory)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidLocalizationKeyException"/> caused by the Localization Key being
+              something other than a primitive, built-in type.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid Localization Key type was encountered.
+            </param>
+            <param name="type">
+              The invalid Localization Key type.
+            </param>
+            <param name="category">
+              The category into which the invalid Localization Key type falls.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.InvalidNameException">
             <summary>
               An exception that is raised when a user-provided name is invalid.
@@ -9806,10 +9826,24 @@
               <i>overload discriminator</i>
             </param>
         </member>
+        <member name="T:Kvasir.Translation.NestedLocalizationException">
+            <summary>
+              An exception that is raised when the element type of a Relation container or a Localization container is
+              itself, or contains, another Localization.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.NestedLocalizationException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.NestedLocalizationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the nested Localization was encountered.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.NestedRelationException">
             <summary>
-              An exception that is raised when the element type of a Relation container is itself, or contains, another
-              Relation.
+              An exception that is raised when the element type of a Relation container or a Localization container is
+              itself, or contains, another Relation.
             </summary>
         </member>
         <member name="M:Kvasir.Translation.NestedRelationException.#ctor(Kvasir.Translation.Context)">
@@ -10166,6 +10200,19 @@
             </param>
             <param name="reason">
               The reason that <paramref name="annotation"/> is unsatisfiable.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation.WriteableLocalizationException">
+            <summary>
+              An exception that is raised when a freely writeable Localization-type property is included in the data model.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.WriteableLocalizationException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.WriteableLocalizationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the freely writeable Localization-type property was encountered.
             </param>
         </member>
         <member name="T:Kvasir.Translation.WriteableRelationException">

@@ -1,7 +1,7 @@
 ﻿namespace Kvasir.Translation {
     /// <summary>
-    ///   An exception that is raised when the element type of a Relation container is itself, or contains, another
-    ///   Relation.
+    ///   An exception that is raised when the element type of a Relation container or a Localization container is
+    ///   itself, or contains, another Relation.
     /// </summary>
     internal sealed class NestedRelationException : TranslationException {
         /// <summary>
