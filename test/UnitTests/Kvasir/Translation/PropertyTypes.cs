@@ -1110,5 +1110,68 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherForeignKeys();
             translation.Localizations.Should().BeEmpty();
         }
+
+        [TestMethod] public void NonNullableLocalizationsOfNonNullableValues() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Fondue);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+FondueTable").And
+                .HaveField("FondueID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Variety").OfTypeEnumeration(
+                    Fondue.Kind.Chocolate,
+                    Fondue.Kind.Cheese,
+                    Fondue.Kind.Meat
+                ).BeingNonNullable().And
+                .HaveField("Timestamp").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("Ingredients").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("AverageCalories").OfTypeUInt16().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+            translation.Relations.Should().HaveCount(0);
+            translation.Localizations.Should().HaveCount(1);
+            translation.Localizations[0].Table.Should()
+                .HaveName("CharLocalizedDoubleByUInt32Table").And
+                .HaveField("Key").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Locale").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("Value").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void NonNullableLocalizationsOfNullableValues() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(HolocaustMuseum);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+HolocaustMuseumTable").And
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Name").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Budget").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("Opened").OfTypeDateTime().BeingNonNullable().And
+                .HaveField("JewishProvost").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("TorahScrolls").OfTypeUInt16().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+            translation.Relations.Should().HaveCount(0);
+            translation.Localizations.Should().HaveCount(1);
+            translation.Localizations[0].Table.Should()
+                .HaveName("StringLocalizedStringByGuidTable").And
+                .HaveField("Key").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Locale").OfTypeText().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+        }
     }
 }

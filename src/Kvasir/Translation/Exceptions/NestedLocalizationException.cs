@@ -1,7 +1,7 @@
 ﻿namespace Kvasir.Translation {
     /// <summary>
-    ///   An exception that is raised when the element type of a Relation container or a Localization container is
-    ///   itself, or contains, another Localization.
+    ///   An exception that is raised when the element type of a Localization container is itself, or contains, another
+    ///   Localization.
     /// </summary>
     internal sealed class NestedLocalizationException : TranslationException {
         /// <summary>
@@ -13,7 +13,7 @@
         public NestedLocalizationException(Context context)
             : base(
                 new Location(context.ToString()),
-                new Problem("nested Localizations (including within Relations) are not supported")
+                new Problem("nested Localizations are not supported")
               )
         {}
     }

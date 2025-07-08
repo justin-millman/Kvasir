@@ -11,6 +11,7 @@ Actor/Actress
 Actuarial Table
 Ad Blocker
 Address
+Advent Calendar
 Adverb
 Aes Sedai
 Affidavit
@@ -98,6 +99,7 @@ Banshee
 Baobab Tree
 Bar Graph
 Barbecue Sauce
+Barbershop
 Barbie
 Baryon
 Baseball Bat
@@ -236,6 +238,7 @@ Chewing Gum
 Chinese Character
 Chinese Dynasty
 Chipotle Order
+Chiropractor
 Chocolate
 Choir
 Chopped Basket
@@ -274,6 +277,7 @@ Cockfight
 Cocoa Farm
 Codex
 Codon
+Coffee
 Coin
 Colonoscopy
 Color
@@ -465,6 +469,7 @@ Flashcard
 Flight
 Flood
 Flower
+Fondue
 Font
 Food Chain
 Food Pantry
@@ -564,6 +569,7 @@ Histogram
 Hoedown (WLIIA)
 Hogwarts House
 Holiday
+Holocaust Museum
 Hologram
 Holy Roman Emperor
 Home Run Derby
@@ -640,6 +646,7 @@ Kanji
 Kayak
 Kebab
 Kentucky Derby
+Ketubah
 Key Signature
 Keystroke
 Kibbutz
@@ -662,6 +669,7 @@ Land Card (MTG)
 Land Mine
 Language
 Large Language Model
+Laundromat
 Laundry Detergent
 Law & Order
 Law Firm
@@ -840,6 +848,7 @@ Origami
 Orisha
 Orogene
 Orphanage
+Ovarian Cyst
 Overnight Camp
 Overture
 Pacemaker
@@ -1163,6 +1172,7 @@ Tepui
 Terminator
 Territory (Pendragon)
 Terrorist Organization
+Tetris Piece
 Therapist
 Thesis
 Thumb War
@@ -1202,6 +1212,7 @@ Tribe of Israel
 Trilogy
 Triplets
 Triptych
+Triumvirate
 Trivial Pursuit
 Trolley Problem
 Tsunami

@@ -9828,8 +9828,8 @@
         </member>
         <member name="T:Kvasir.Translation.NestedLocalizationException">
             <summary>
-              An exception that is raised when the element type of a Relation container or a Localization container is
-              itself, or contains, another Localization.
+              An exception that is raised when the element type of a Localization container is itself, or contains, another
+              Localization.
             </summary>
         </member>
         <member name="M:Kvasir.Translation.NestedLocalizationException.#ctor(Kvasir.Translation.Context)">

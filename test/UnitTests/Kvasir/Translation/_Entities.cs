@@ -9,6 +9,10 @@ using System.Linq;
 using static UT.Kvasir.Translation.TestConstraints;
 using static UT.Kvasir.Translation.TestConverters;
 
+using LocalizedText = Kvasir.Localization.Localization<string, string, string>;
+using LocalizedDate = Kvasir.Localization.Localization<ulong, string, System.DateTime>;
+using LocalizedMeasure = Kvasir.Localization.Localization<string, string, double>;
+
 namespace UT.Kvasir.Translation {
     internal static class PropertyTypes {
         // Test Scenario: Non-Nullable Scalars (✓recognized✓)
@@ -474,7 +478,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid VirusID { get; set; }
             public Class Variety { get; set; }
             public double Incidence { get; set; }
-            public Localization<int, string, RelationList<string>> Name { get; } = new(0);
+            public LocalizedText Name { get; } = new("");
         }
 
         // Test Scenario: Relation Nested Within Relation Nested Within Aggregate (✗not permitted✗)
@@ -499,7 +503,7 @@ namespace UT.Kvasir.Translation {
             public struct Biography {
                 public DateOnly Birthday { get; set; }
                 public string SSN { get; set; }
-                public Localization<string, sbyte, RelationSet<double>> Measurements { get; }
+                public LocalizedMeasure Measurements { get; }
             }
 
             [PrimaryKey] public Guid ID { get; set; }
@@ -616,6 +620,69 @@ namespace UT.Kvasir.Translation {
             public bool HomeToNessie { get; set; }
             public ushort Islands { get; set; }
         }
+
+        // Test Scenario: Non-Nullable Localizations of Non-Nullable Values (✓recognized✓)
+        public class Fondue {
+            public enum Kind { Chocolate, Cheese, Meat }
+
+            [PrimaryKey] public Guid FondueID { get; set; }
+            public Kind Variety { get; set; }
+            public DateTime Timestamp { get; set; }
+            public Localization<uint, char, double> Ingredients { get; } = new(0U);
+            public ushort AverageCalories { get; set; }
+        }
+
+        // Test Scenario: Non-Nullable Localizations of Nullable Values (✓recognized✓)
+        public class HolocaustMuseum {
+            [PrimaryKey] public Guid ID { get; set; }
+            public Localization<Guid, string, string?> Name { get; } = new(Guid.NewGuid());
+            public decimal Budget { get; set; }
+            public DateOnly Opened { get; set; }
+            public bool JewishProvost { get; set; }
+            public ushort TorahScrolls { get; set; }
+        }
+
+        // Test Scenario: Read-Only Localizations (✓recognized✓)
+        // [TODO] - Advent Calendar
+
+        // Test Scenario: Localizations Nested Within Aggregates (✓recognized✓)
+        // [TODO] - Ketubah
+
+        // Test Scenario: Localizations Nested Within Relations (✓recognized✓)
+        // [TODO] - Barbershop
+
+        // Test Scenario: Localization Nested Within Localization (✗not permitted✗)
+        // [TODO] - Tetris Piece
+
+        // Test Scenario: Localization Nested Within Relation Nested Within Aggregate (✓recognized✓)
+        // [TODO] - Chiropractor
+
+        // Test Scenario: Localization Nested Within Localization Nested Within Aggregate (✗not permitted✗)
+        // [TODO] - Coffee
+
+        // Test Scenario: Localization Nested Within Aggregate Nested Within Relation (✓recognized✓)
+        // [TODO] - Triumvirate
+
+        // Test Scenario: Localization Nested Within Aggregate Nested Within Localization (✗not permitted✗)
+        // [TODO] - Laundromat
+
+        // Test Scenario: Localization Nested Within Aggregate Nested Within Localization, Post-Memoization (✗not permitted✗)
+        // [TODO] - 
+
+        // Test Scenario: Localization with Aggregate Localization Key Type (✗not permitted✗)
+        // [TODO] - 
+
+        // Test Scenario: Localization with Reference Localization Key Type (✗not permitted✗)
+        // [TODO] - 
+
+        // Test Scenario: ILocalization (✗not permitted✗)
+        // [TODO] - Ovarian Cyst
+
+        // Test Scenario: Writeable Localization (✗not permitted✗)
+        // [TODO] - 
+
+        // Test Scenario: Aggregate Consisting of Only Localizations (✓recognized✓)
+        // [TODO] - 
     }
 
     internal static class EntityShapes {
