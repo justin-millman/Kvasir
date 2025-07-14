@@ -35,8 +35,9 @@ namespace Kvasir.Translation {
                 var context = new Context(source);
                 var principal = TranslatePrincipalTable(context, source);
                 var relations = TranslateRelationTables(source);
+                var localizations = TranslateLocalizationTables(source);
 
-                var result = new EntityTranslation(CLRSource: source, Principal: principal, Relations: relations);
+                var result = new EntityTranslation(source, principal, relations, localizations);
                 translationCache_[source] = result;
                 return result;
             }
@@ -80,9 +81,11 @@ namespace Kvasir.Translation {
             typeCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
             translationCache_ = new Dictionary<Type, EntityTranslation>();
             principalTableCache_ = new Dictionary<Type, PrincipalTableDef>();
+            localizationTableCache_ = new Dictionary<Type, ITable>();
             tableNameCache_ = new Dictionary<TableName, Type>();
             pkCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
             relationTrackersCache_ = new Dictionary<Type, IReadOnlyList<RelationTracker>>();
+            localizationTrackersCache_ = new Dictionary<Type, IReadOnlyList<LocalizationTracker>>();
             keyMatchers_ = new Dictionary<Type, KeyMatcher>();
         }
 
@@ -93,9 +96,11 @@ namespace Kvasir.Translation {
         private readonly Dictionary<Type, IReadOnlyList<FieldGroup>> typeCache_;
         private readonly Dictionary<Type, EntityTranslation> translationCache_;
         private readonly Dictionary<Type, PrincipalTableDef> principalTableCache_;
+        private readonly Dictionary<Type, ITable> localizationTableCache_;
         private readonly Dictionary<TableName, Type> tableNameCache_;
         private readonly Dictionary<Type, IReadOnlyList<FieldGroup>> pkCache_;
         private readonly Dictionary<Type, IReadOnlyList<RelationTracker>> relationTrackersCache_;
+        private readonly Dictionary<Type, IReadOnlyList<LocalizationTracker>> localizationTrackersCache_;
         private readonly Dictionary<Type, KeyMatcher> keyMatchers_;
     }
 }

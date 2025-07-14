@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using K4os.Hash.xxHash;
 using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -153,6 +154,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNonEmpty_LocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Frisbee);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "BrandName", ComparisonOperator.GTE, 1).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNonEmpty_LocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Elegy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Elegy` → PublishedOn")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNonEmpty_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -275,6 +308,39 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`RomanBaths` → Rooms")
                 .WithPath("Caldarium")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Bathroom`")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNonEmpty_NestedLocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(FunkoPop);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Fandom.Name", ComparisonOperator.GTE, 1).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNonEmpty_NestedLocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(GrandWizard);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`GrandWizard` → Tenure")
+                .WithPath("Start")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
                 .WithAnnotations("[Check.IsNonEmpty]")
                 .EndMessage();
         }
@@ -531,6 +597,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNonEmpty_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(GarbageCollector);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`GarbageCollector` → Language")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNonEmpty_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Eulogy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Eulogy` → Decedent")
+                .WithProblem("the path \"Value\" does not exist")
+                .WithAnnotations("[Check.IsNonEmpty]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNonEmpty_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -707,6 +805,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LengthIsAtLeast_LocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(TermsOfService);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Company", ComparisonOperator.GTE, 17).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtLeast_LocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ChessGrandmaster);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ChessGrandmaster` → ELO")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ulong`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
+        }
+
         [TestMethod] public void LengthIsAtLeast_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -829,6 +959,39 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Constellation` → MainAsterism")
                 .WithPath("CentralStar")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Star`")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NestedLocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(UsefulChart);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Name.Subtitle", ComparisonOperator.GTE, 5).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NestedLocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Furbie);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Furbie` → CollectorInformation")
+                .WithPath("Rating")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `short`")
                 .WithAnnotations("[Check.LengthIsAtLeast]")
                 .EndMessage();
         }
@@ -1118,6 +1281,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LengthIsAtLeast_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(TrailerPark);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`TrailerPark` → Address")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtLeast_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BeitDin);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`BeitDin` → Av")
+                .WithProblem("the path \"Key\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtLeast]")
+                .EndMessage();
+        }
+
         [TestMethod] public void LengthIsAtLeast_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1296,6 +1491,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LengthIsAtMost_LocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(SearsCatalog);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "EditorInChief", ComparisonOperator.LTE, 473).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtMost_LocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Crucifixion);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Crucifixion` → NumNailsUsed")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ulong`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
+        }
+
         [TestMethod] public void LengthIsAtMost_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1418,6 +1645,39 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Orgasm` → Receiver")
                 .WithPath("Who")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Person`")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtMost_NestedLocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(WeddingRegistry);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Location.URL", ComparisonOperator.LTE, 109).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtMost_NestedLocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Beautician);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Beautician` → License")
+                .WithPath("Expiration")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
                 .WithAnnotations("[Check.LengthIsAtMost]")
                 .EndMessage();
         }
@@ -1705,6 +1965,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LengthIsAtMost_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Swimsuit);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Swimsuit` → Brand")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtMost_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(GorillaTroop);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`GorillaTroop` → Habitat")
+                .WithProblem("the path \"Key\" does not exist")
+                .WithAnnotations("[Check.LengthIsAtMost]")
+                .EndMessage();
+        }
+
         [TestMethod] public void LengthIsAtMost_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1883,6 +2175,39 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LengthIsBetween_LocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(NonDisclosureAgreement);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Signatory", ComparisonOperator.GTE, 10).And
+                .HaveConstraint(FieldFunction.LengthOf, "Signatory", ComparisonOperator.LTE, 30).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsBetween_LocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ObstacleCourse);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ObstacleCourse` → Rating")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `short`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+
         [TestMethod] public void LengthIsBetween_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1979,6 +2304,40 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`SumoWrestler` → DOB")
                 .WithPath("Month")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Number`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsBetween_NestedLocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Visa);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Authority.GrantedBy", ComparisonOperator.GTE, 11).And
+                .HaveConstraint(FieldFunction.LengthOf, "Authority.GrantedBy", ComparisonOperator.LTE, 296).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsBetween_NestedLocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(DDoS);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`DDoS` → BotNet")
+                .WithPath("OtherBots")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ulong`")
                 .WithAnnotations("[Check.LengthIsBetween]")
                 .EndMessage();
         }
@@ -2327,6 +2686,38 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`HeartAttack` → <synthetic> `Symptoms`")
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsBetween_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ThoughtExperiment);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ThoughtExperiment` → Scientist")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsBetween_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MusicVideo);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`MusicVideo` → SongTitle")
+                .WithProblem("the path \"Value\" does not exist")
                 .WithAnnotations("[Check.LengthIsBetween]")
                 .EndMessage();
         }

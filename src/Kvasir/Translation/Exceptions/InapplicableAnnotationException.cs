@@ -10,7 +10,7 @@ namespace Kvasir.Translation {
     internal sealed class InapplicableAnnotationException : TranslationException {
         /// <summary>
         ///   Constructs a new <see cref="InapplicableAnnotationException"/> caused by a non-constraint annotation being
-        ///   placed on an Aggregate property, a Reference property, or a Relation property.
+        ///   placed on an Aggregate property, a Reference property, a Relation property, or a Localization property.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which the inapplicable annotation was encountered.
@@ -180,7 +180,7 @@ namespace Kvasir.Translation {
 
 
     // Discrimination types
-    internal enum MultiKind { Aggregate, Reference, Relation }
+    internal enum MultiKind { Aggregate, Reference, Relation, Localization }
     internal readonly struct UnsignedTag {}
     internal readonly struct PreDefinedTag {}
 }

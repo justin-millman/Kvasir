@@ -33,4 +33,13 @@ namespace Kvasir.Translation {
         RelationExtractionPlan Extractor,
         RelationRepopulationPlan Repopulator
     );
+
+    /// <summary>
+    ///   The definition of a Field on an Entity that is a Localization.
+    /// </summary>
+    /// 
+    /// <param name="Table">The schema model for the Localization Table.</param>
+    internal sealed record class LocalizationDef(
+        ITable Table
+    );
 }

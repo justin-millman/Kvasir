@@ -3,7 +3,6 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.Globals;
-using static UT.Kvasir.Translation.Nullability;
 using static UT.Kvasir.Translation.TableNaming;
 
 namespace UT.Kvasir.Translation {
@@ -19,6 +18,18 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Name.Should().Be("DeckOfCards");
+        }
+
+        [TestMethod] public void LocalizationTableRenamedToBrandNewName() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Vasectomy);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Name.Should().Be("AllLocalizedDoctors");
         }
 
         [TestMethod] public void NamespaceExcludedFromDefaultPrimaryTableName() {
@@ -400,6 +411,67 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`DEFCON` → Four")
                 .WithProblem("the annotation cannot be applied to a pre-defined instance property")
                 .WithAnnotations("[RelationTable]");
+        }
+
+        [TestMethod] public void RelationTable_AppliedToLocalizationField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Mattress);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`Mattress` → Price")
+                .WithProblem("the property type `LocalizedCurrency` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationTable_DuplicateNameWithLocalizationTable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Target);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`Target` → `LocalizedString` (from \"Graffiti\")")
+                .WithProblem("Table name \"GlobalLocalizationTable\" is already in use for the Principal Table of `LocalizedAddress`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationTable_DuplicateNameWithPrincipalTable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Overlord);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`Overlord` → `LocalizedCount` (from \"SoulsOwned\")")
+                .WithProblem("Table name \"OneTableToRuleThemAll\" is already in use for the Principal Table of `Overlord`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationTable_DuplicateNameWithRelationTable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(SportsAgent);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`SportsAgent` → `LocalizedSalary` (from \"LargestNegotiatedSalary\")")
+                .WithProblem("Table name \"TheBestTableEver\" is already in use for the Relation Table of `SportsAgent` → <synthetic> `Clients`")
+                .EndMessage();
         }
     }
 }

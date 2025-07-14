@@ -341,7 +341,7 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void RelationMarkedNonNullable_Redundant() {
+        [TestMethod] public void RelationMarkedNonNullable() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(Squintern);
@@ -411,6 +411,120 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a pre-defined instance property")
                 .WithAnnotations("[Nullable]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void NullableLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Madrigal);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Madrigal` → Gift")
+                .WithProblem("a property of Localization type cannot be nullable");
+        }
+
+        [TestMethod] public void LocalizationWithNullableValue() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(HolocaustMuseum);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HaveField("Key").OfTypeText().BeingNonNullable().And
+                .HaveField("Locale").OfTypeEnumeration(
+                    TestLocalizations.Language.English,
+                    TestLocalizations.Language.Spanish,
+                    TestLocalizations.Language.French,
+                    TestLocalizations.Language.Hebrew,
+                    TestLocalizations.Language.Hindi,
+                    TestLocalizations.Language.German,
+                    TestLocalizations.Language.Arabic,
+                    TestLocalizations.Language.Japanese,
+                    TestLocalizations.Language.Esperanto,
+                    TestLocalizations.Language.Italian
+                ).BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void LocalizationWithNullableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ClassActionLawsuit);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`ClassActionLawsuit` → `LocalizedName` (from \"Case\") → Key")
+                .WithProblem("the Localization Key type of a Localization cannot be nullable");
+        }
+
+        [TestMethod] public void LocalizationWithNullableLocale_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Halide);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Halide` → `LocalizedElement` (from \"Halogen\") → Locale")
+                .WithProblem("the Locale type of a Localization cannot be nullable");
+        }
+
+        [TestMethod] public void LocalizationMarkedNonNullable() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CivVIPolicy);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HaveField("Key").OfTypeText().BeingNonNullable().And
+                .HaveField("Locale").OfTypeEnumeration(
+                    TestLocalizations.Language.English,
+                    TestLocalizations.Language.Spanish,
+                    TestLocalizations.Language.French,
+                    TestLocalizations.Language.Hebrew,
+                    TestLocalizations.Language.Hindi,
+                    TestLocalizations.Language.German,
+                    TestLocalizations.Language.Arabic,
+                    TestLocalizations.Language.Japanese,
+                    TestLocalizations.Language.Esperanto,
+                    TestLocalizations.Language.Italian
+                ).BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+            translation.Localizations[1].Table.Should().Be(translation.Localizations[0].Table);
+        }
+
+        [TestMethod] public void LocalizationMarkedNullable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Superintendent);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Superintendent` → District")
+                .WithProblem("the annotation cannot be applied to a property of Localization type `LocalizedText`")
+                .WithAnnotations("[Nullable]");
         }
     }
 }

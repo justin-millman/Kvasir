@@ -18,14 +18,9 @@ namespace Kvasir.Translation {
         /// <param name="source">
         ///   The CLR type to translate.
         /// </param>
-        /// <param name="allowRelations">
-        ///   <see langword="true"/> if Relations should be allowed as valid (e.g. when translating a real Entity Type);
-        ///   <see langword="false"/> if Relations should be disallowed (e.g. when translating a Relation).
-        /// </param>
-        /// <param name="requirePreDefined">
-        ///   <see langword="true"/> if only References to Pre-Defined Entities should be allowed as valid (e.g. when
-        ///   translating a Pre-Defined Entity or a type referenced therefrom); <see langword="false"/> if References to
-        ///   regular Entities are valid (e.g. when translating anything else).
+        /// <param name="traits">
+        ///   The <see cref="TranslationTraits"/> describing how to treat Relations, Localizations, and Pre-Defined
+        ///   Entities.
         /// </param>
         /// <returns>
         ///   The unordered (but column-assigned) Fields that make up the data model for <paramref name="source"/>, with
@@ -55,21 +50,30 @@ namespace Kvasir.Translation {
         ///   model.
         /// </exception>
         /// <exception cref="NestedRelationException">
-        ///   if <paramref name="allowRelations"/> is <see langword="false"/> and <paramref name="source"/> has a
-        ///   Relation-type Field that would be included in the data model.
+        ///   if the <see cref="TranslationTraits.AllowRelations"/> flag of <paramref name="traits"/> is not set and
+        ///   <paramref name="source"/> has a Relation-type Field that would be included in the data model.
+        /// </exception>
+        /// <exception cref="NestedLocalizationException">
+        ///   if the <see cref="TranslationTraits.AllowLocalizations"/> flag of <paramref name="traits"/> is not set and
+        ///   <paramref name="source"/> has a Localization-type Field that would be included in the data model.
         /// </exception>
         /// <exception cref="PreDefinedReferenceException">
-        ///   if <paramref name="requirePreDefined"/> is <see langword="true"/> and <paramref name="source"/> is not a
-        ///   Pre-Defined Entity type.
+        ///   if the <see cref="TranslationTraits.RequirePreDefined"/> flag of <paramref name="traits"/> is set and
+        ///   <paramref name="source"/> is not a Pre-Defined Entity type.
         /// </exception>
-        private IEnumerable<FieldGroup> TranslateType(Context context, Type source, bool allowRelations, bool requirePreDefined) {
+        private IEnumerable<FieldGroup> TranslateType(Context context, Type source, TranslationTraits traits) {
             Debug.Assert(context is not null);
             Debug.Assert(source is not null);
             Debug.Assert(Nullable.GetUnderlyingType(source) is null);
 
+            bool allowRelations = traits.HasFlag(TranslationTraits.AllowRelations);
+            bool allowLocalizations = traits.HasFlag(TranslationTraits.AllowLocalizations);
+            bool requirePreDefined = traits.HasFlag(TranslationTraits.RequirePreDefined);
+
             // Memoization
             if (typeCache_.TryGetValue(source, out IReadOnlyList<FieldGroup>? memoization)) {
                 var existsRelations = relationTrackersCache_[source].Count > 0;
+                var existsLocalizations = localizationTrackersCache_[source].Count > 0;
                 var existRegularRefs = memoization.OfType<ReferenceFieldGroup>().Any(g => !IsPreDefined(g.Extractor.SourceType));
 
                 // This may not be the most elegant solution, but it works. If we've seen an Aggregate type before in a
@@ -80,15 +84,17 @@ namespace Kvasir.Translation {
                 // it's guaranteed to fail; and, since we know the type got translated successfully once already, we
                 // know there won't be any other errors.
                 var illegalNestedRelations = !allowRelations && existsRelations;
+                var illegalNestedLocalizations = !allowLocalizations && existsLocalizations;
                 var illegalRegularReference = requirePreDefined && existRegularRefs;
 
-                if (!illegalNestedRelations && !illegalRegularReference) {
+                if (!illegalNestedRelations && !illegalNestedLocalizations && !illegalRegularReference) {
                     return memoization.Select(g => g.Clone());
                 }
             }
             var isPreDefined = IsPreDefined(source);
             var translation = new List<FieldGroup>();
             var relationTrackers = new List<RelationTracker>();
+            var localizationTrackers = new List<LocalizationTracker>();
 
             void performAssemblyCheck(Type type) {
                 if (type.Assembly != callingAssembly_) {
@@ -96,10 +102,19 @@ namespace Kvasir.Translation {
                 }
             }
 
+            // We need an isolated Context (i.e. one rooted at the type being translated) for contextualizing
+            // Localizations. Because Localizations can be valid in one Context and then invalid in another due to
+            // Pre-Defined Entity references and reference cycles, we cannot just reuse the Context of the first
+            // encounter.
+            var isolatedContext = new Context(source);
+
             foreach (var property in source.GetProperties(PROPERTY_FLAGS).OrderBy(f => f.Name)) {
                 using var propGuard = context.Push(property);
+                using var isolatedPropGuard = isolatedContext.Push(property);
+
                 var propType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 var propCategory = property.TranslationCategory();
+                var newTraits = traits;
 
                 // For pre-defined Entities, we want to ignore any static properties of the Entity's own type; these
                 // are the pre-defined instances, and if we actually process them here we'll get a reference cycle
@@ -108,6 +123,7 @@ namespace Kvasir.Translation {
                     if (propCategory.Equals(PropertyCategory.WriteOnly) || property.GetMethod!.IsStatic) {
                         continue;
                     }
+                    newTraits |= TranslationTraits.RequirePreDefined;
                 }
 
                 if (propCategory.Equals(PropertyCategory.Ambiguous)) {
@@ -127,7 +143,7 @@ namespace Kvasir.Translation {
                         throw new InvalidPropertyInDataModelException(context, new PreDefinedTag());
                     }
 
-                    var typeCategory = property.PropertyType.TranslationCategory();
+                    var typeCategory = propType.TranslationCategory();
                     if (typeCategory.Equals(TypeCategory.Enumeration) || typeCategory.Equals(TypeCategory.Supported)) {
                         translation.Add(new SingleFieldGroup(context, property));
                     }
@@ -139,6 +155,17 @@ namespace Kvasir.Translation {
                             throw new WriteableRelationException(context);
                         }
                         relationTrackers.Add(new RelationTracker(property));
+                    }
+                    else if (typeCategory.Equals(TypeCategory.Localization)) {
+                        if (!allowLocalizations) {
+                            throw new NestedLocalizationException(context);
+                        }
+                        else if (property.CanWrite && !property.IsInitOnly()) {
+                            throw new WriteableLocalizationException(context);
+                        }
+                        translation.Add(new LocalizationKeyFieldGroup(context, property));              // use FULL context for error reporting
+                        using var nestedGuard = isolatedContext.Push(property.PropertyType);
+                        localizationTrackers.Add(new LocalizationTracker(property, isolatedContext));   // use ISOLATED context for concatenation
                     }
                     else if (typeCategory.Equals(TypeCategory.Class)) {
                         performAssemblyCheck(propType);
@@ -165,14 +192,16 @@ namespace Kvasir.Translation {
                         performAssemblyCheck(propType);
                         var nestedGuard = context.Push(propType);
 
-                        var fields = TranslateType(context, propType, allowRelations, isPreDefined || requirePreDefined).Select(g => g.Clone()).ToList();
-                        var trackers = relationTrackersCache_[propType].Select(t => t.Extend(property)).ToList();
-                        if (fields.IsEmpty() && trackers.IsEmpty()) {
+                        var fields = TranslateType(context, propType, newTraits).Select(g => g.Clone()).ToList();
+                        var trackersForRelations = relationTrackersCache_[propType].Select(t => t.Extend(property)).ToList();
+                        var trackersForLocalizations = localizationTrackersCache_[propType].Select(t => new LocalizationTracker(t.Source, isolatedContext.Concat(t.Context))).ToList();
+                        if (fields.IsEmpty() && trackersForRelations.IsEmpty()) {
                             throw new NotEnoughFieldsException(context, 1, 0);
                         }
                         nestedGuard.Dispose();
-                        var aggregate = new AggregateFieldGroup(context, property, fields, trackers);
-                        relationTrackers.AddRange(trackers);
+                        var aggregate = new AggregateFieldGroup(context, property, fields, trackersForRelations);
+                        relationTrackers.AddRange(trackersForRelations);
+                        localizationTrackers.AddRange(trackersForLocalizations);
 
                         // If an Aggregate contains only Relation-type Fields, we still need to do a Translation of it
                         // so that we can process any annotations on the original Aggregate property. However, we don't
@@ -191,11 +220,24 @@ namespace Kvasir.Translation {
             AssignColumns(context, translation);
             typeCache_[source] = translation.ToList();
             relationTrackersCache_[source] = relationTrackers;
+            localizationTrackersCache_[source] = localizationTrackers;
 
             // It's important to return a concrete collection here rather than the result of a LINQ query because we do
             // not want to re-evaluate the `Clone()` operation multiple times. Doing so will cause issues with Primary
             // Key extraction due to the use of identity equality.
             return translation.Select(g => g.Clone()).ToList();
+        }
+
+
+        /// <summary>
+        ///   Traits controlling the validity of different categories of properties when translating a Type. Essentially
+        ///   a collection of Boolean flags.
+        /// </summary>
+        [Flags] private enum TranslationTraits {
+            None = 0,
+            AllowRelations = 1 << 0,
+            AllowLocalizations = 1 << 1,
+            RequirePreDefined = 1 << 2,
         }
 
 

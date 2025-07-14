@@ -199,5 +199,50 @@ namespace UT.Kvasir.Translation {
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
         }
+
+        [TestMethod] public void SelfReferentialLocalizationViaKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BirthdayParty);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidLocalizationKeyException>()
+                .WithLocation("`BirthdayParty` → `LocalizedAverage` (from \"AverageGiftCost\") → Key")
+                .WithProblem("type `BirthdayParty` is a class or a record class and cannot be the type of a Localization Key")
+                .EndMessage();
+        }
+
+        [TestMethod] public void SelfReferentialLocalizationViaLocale_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(DuelingPianos);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<ReferenceCycleException>()
+                .WithLocation("`DuelingPianos` → `LocalizedRandomization` (from \"RandomGuid\") → `DuelingPianos` (from \"Locale\")")
+                .WithProblem("reference cycle detected")
+                .EndMessage();
+        }
+
+        [TestMethod] public void SelfReferentialLocalizationViaValue_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CareerFair);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<ReferenceCycleException>()
+                .WithLocation("`CareerFair` → `LocalizedEvent` (from \"SisterFair\") → `CareerFair` (from \"Value\")")
+                .WithProblem("reference cycle detected")
+                .EndMessage();
+        }
     }
 }

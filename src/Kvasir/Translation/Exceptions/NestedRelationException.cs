@@ -13,7 +13,7 @@
         public NestedRelationException(Context context)
             : base(
                 new Location(context.ToString()),
-                new Problem("nested Relations are not supported")
+                new Problem("nested Relations (i.e. within a Localization or another Relation) are not supported")
               )
         {}
     }

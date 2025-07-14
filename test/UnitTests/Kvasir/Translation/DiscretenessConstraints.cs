@@ -142,6 +142,24 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsOneOf_LocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Zeppelin);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("FuelEfficiency", InclusionOperator.In,
+                    5UL, 18UL, 39UL, 196UL
+                ).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsOneOf_AggregateNestedScalarField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -206,6 +224,24 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Observatory`")
                 .WithAnnotations("[Check.IsOneOf]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void IsOneOf_NestedLocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(TemperatureScale);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("WaterMeasures.Freezing", InclusionOperator.In,
+                    0UL, 317UL, 22UL
+                ).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsOneOf_RelationNestedScalarField() {
@@ -729,6 +765,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsOneOf_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Bailiff);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Bailiff` → Courthouse")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsOneOf_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(NavalBase);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`NavalBase` → OperatingCountry")
+                .WithProblem("the path \"Key\" does not exist")
+                .WithAnnotations("[Check.IsOneOf]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -894,6 +962,24 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsNotOneOf_LocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(SECShort);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("VideoDuration", InclusionOperator.NotIn,
+                    0UL, 1UL, 2UL
+                ).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsNotOneOf_AggregateNestedScalarField() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -987,6 +1073,22 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Character`")
                 .WithAnnotations("[Check.IsNotOneOf]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void IsNotOneOf_NestedLocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(GregorianChant);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Dates.Written", ComparisonOperator.NE, new Guid("e8383177-3142-4a24-adef-ddfb6f644919")).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsNotOneOf_RelationNestedScalarField() {
@@ -1483,6 +1585,38 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`QRCode` → <synthetic> `Vertical`")
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<bool>`")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNotOneOf_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Bedouin);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Bedouin` → Tribe")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNotOneOf]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNotOneOf_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(RubiksCube);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`RubiksCube` → Difficulty")
+                .WithProblem("the path \"Locale\" does not exist")
                 .WithAnnotations("[Check.IsNotOneOf]")
                 .EndMessage();
         }

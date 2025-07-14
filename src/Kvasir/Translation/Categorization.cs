@@ -1,5 +1,6 @@
 ﻿using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Localization;
 using Kvasir.Relations;
 using Kvasir.Schema;
 using System;
@@ -25,12 +26,19 @@ namespace Kvasir.Translation {
             if (self.IsByRef) {
                 return TypeCategory.ByRef;
             }
-            if (self == typeof(IRelation)) {
+            else if (self == typeof(IRelation)) {
                 return TypeCategory.IRelation;
+            }
+            else if (self == typeof(ILocalization)) {
+                return TypeCategory.ILocalization;
             }
             else if (self.IsInstanceOf(typeof(IRelation))) {
                 // `IRelation` is an instance of itself, so this must come later
                 return TypeCategory.Relation;
+            }
+            else if (self.IsInstanceOf(typeof(ILocalization))) {
+                // `ILocalization` is an instance of itself, so this must come later
+                return TypeCategory.Localization;
             }
             else if (self.IsGenericTypeDefinition) {
                 return TypeCategory.OpenGeneric;
@@ -128,8 +136,10 @@ namespace Kvasir.Translation {
         public static TypeCategory ClosedGeneric { get; } = new TypeCategory("a closed generic type");
         public static TypeCategory Delegate { get; } = new TypeCategory("a delegate");
         public static TypeCategory Enumeration { get; } = new TypeCategory("an enumeration type");
+        public static TypeCategory ILocalization { get; } = new TypeCategory("the `ILocalization` interface");
         public static TypeCategory Interface { get; } = new TypeCategory("an interface");
         public static TypeCategory IRelation { get; } = new TypeCategory("the `IRelation` interface");
+        public static TypeCategory Localization { get; } = new TypeCategory("an implementation of the `ILocalization` interface");
         public static TypeCategory Object { get; set; } = new TypeCategory("`object` (or `dynamic`)");
         public static TypeCategory OpenGeneric { get; set; } = new TypeCategory("an open generic type");
         public static TypeCategory Pointer { get; } = new TypeCategory("a pointer type");

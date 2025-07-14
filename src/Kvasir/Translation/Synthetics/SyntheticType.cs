@@ -1,4 +1,6 @@
-﻿using Kvasir.Annotations;
+﻿using Cybele.Extensions;
+using Kvasir.Annotations;
+using Kvasir.Localization;
 using Kvasir.Relations;
 using System;
 using System.Collections.Generic;
@@ -67,12 +69,18 @@ namespace Kvasir.Translation {
         /// <param name="actualType">
         ///   The <see cref="Type"/> that the new <see cref="SyntheticType"/> is a façade for.
         /// </param>
+        /// <param name="isLocalization">
+        ///   Whether the new <see cref="SyntheticType"/> represents a Localization (<see langword="true"/>) or a
+        ///   Relation <see langword="false"/>).
+        /// </param>
         /// <param name="nativelyNullable">
         ///   Whether or not the new <see cref="SyntheticType"/> is considered
         ///   <see cref="IsNativelyNullable">natively nullable</see>.
         /// </param>
         /// <seealso cref="MakeSyntheticType(Type, RelationTracker)"/>
-        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties, Type actualType, bool nativelyNullable) {
+        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties, Type actualType,
+            bool isLocalization, bool nativelyNullable) {
+            
             Debug.Assert(name is not null && name != "");
             Debug.Assert(ns is not null && ns != "");
             Debug.Assert(assmebly is not null);
@@ -86,9 +94,10 @@ namespace Kvasir.Translation {
             Assembly = assmebly;
             properties_ = properties(this).ToList();
 
-            // We want to be able to construct a SyntheticType, conceptually, from just the element; the first property
-            // is always that of the owning Entity
-            constructors_ = new ConstructorInfo[] { new SyntheticConstructorInfo(this, properties_.Skip(1)) };
+            // For Relations, we want to be able to construct a SyntheticType, conceptually, from just the element; the
+            // first property is always that of the owning Entity. For Localizations, we want everything.
+            var skipCount = isLocalization ? 0 : 1;
+            constructors_ = new ConstructorInfo[] { new SyntheticConstructorInfo(this, properties_.Skip(skipCount)) };
 
             Debug.Assert(properties_.Count >= 2);
         }
@@ -124,7 +133,7 @@ namespace Kvasir.Translation {
         }
 
         /// <summary>
-        ///   Creates a new <see cref="SyntheticType"/>.
+        ///   Creates a new <see cref="SyntheticType"/> as a façade for a Relation.
         /// </summary>
         /// <param name="entity">
         ///   The type of the owning Entity, which defines the first property on the new <see cref="SyntheticType"/>.
@@ -226,14 +235,92 @@ namespace Kvasir.Translation {
                     return new SyntheticPropertyInfo(p.Name, t, p.Type, annotations);
                 }),
                 actualType: elementType,
+                isLocalization: false,
                 nativelyNullable: nullability.ReadState != NullabilityState.NotNull
             );
         }
 
+        /// <summary>
+        ///   Creates a new <see cref="SyntheticType"/> as a façade for a Localization.
+        /// </summary>
+        /// <param name="tracker">
+        ///   The <see cref="LocalizationTracker"/> containing the metadata for the type that defines the Localization
+        ///   underneath the <see cref="SyntheticType"/>.
+        /// </param>
+        /// <exception cref="InvalidPropertyInDataModelException">
+        ///   if the Localization represented by <paramref name="tracker"/> has a Field in the data model beyond the Key
+        ///   Locale, and Value Fields defined by the base <see cref="Localization{TKey, TLocale, TValue}"/> class.
+        /// </exception>
+        /// <exception cref="InvalidNativeNullabilityException">
+        ///   if the Key or Locale type of the Localization represented by <paramref name="tracker"/> is natively
+        ///   nullable.
+        /// </exception>
+        public static SyntheticType MakeSyntheticType(LocalizationTracker tracker) {
+            Debug.Assert(tracker is not null);
+
+            // We will build up the properties' metadata so that we can then write a single constructor call for the
+            // SyntheticType, where we'll leverage LINQ to transform the metadata elements into SyntheticProperty
+            // instances
+            var props = new List<(string Name, Type Type, Metadata Flags)>();
+            var metadata = LocalizationHelper.Reflect(tracker.Source.PropertyType);
+
+            // Key
+            var keyNullability = metadata.IsKeyNullable ? Metadata.Nullable : Metadata.None;
+            props.Add(("Key", metadata.KeyType, Metadata.CannotBeNull | Metadata.Unique | keyNullability));
+
+            // Locale
+            var localeNullability = metadata.IsLocaleNullable ? Metadata.Nullable : Metadata.None;
+            props.Add(("Locale", metadata.LocaleType, Metadata.CannotBeNull | Metadata.Unique | localeNullability));
+
+            // Value
+            var valueNullability = metadata.IsValueNullable ? Metadata.Nullable : Metadata.None;
+            props.Add(("Value", metadata.ValueType, valueNullability));
+
+            // Make type
+            var type = new SyntheticType(
+                name: tracker.Source.PropertyType.Name,
+                ns: tracker.Source.PropertyType.Namespace!,
+                assmebly: tracker.Source.ReflectedType!.Assembly,
+                properties: t => props.Select(p => {
+                    var annotations = new List<Attribute>();
+                    if (p.Flags.HasFlag(Metadata.Nullable)) {
+                        annotations.Add(new NullableAttribute());
+                    }
+                    if (p.Flags.HasFlag(Metadata.Unique)) {
+                        annotations.Add(new UniqueAttribute('\0'));
+                    }
+                    if (p.Flags.HasFlag(Metadata.CannotBeNull)) {
+                        annotations.Add(new NonNullableAttribute());
+                    }
+                    return new SyntheticPropertyInfo(p.Name, t, p.Type, annotations);
+                }),
+                actualType: tracker.Source.PropertyType,
+                isLocalization: true,
+                nativelyNullable: false
+            );
+
+            // Locales cannot be nullable
+            if (localeNullability == Metadata.Nullable) {
+                tracker.Context.Push(type.properties_[1]);
+                throw new InvalidNativeNullabilityException(tracker.Context, "the Locale type of a Localization");
+            }
+
+            // Localizations cannot have derived properties that are included in the data model
+            if (metadata.FirstDerivedProperty is not null) {
+                tracker.Context.Push(metadata.FirstDerivedProperty);
+                throw new InvalidPropertyInDataModelException(tracker.Context, new DerivedLocalizationTag());
+            }
+
+            return type;
+        }
+
         /// <inheritdoc/>
         public sealed override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-            var result = Array.CreateInstance(typeof(Attribute), 0);
-            return (object[])result;
+            // Localization Types are allowed to be annotated with [Table] (to change the default name of the
+            // Localization Table) or [PrimaryKey] (to name the Table's Primary Key). We have to account for those by
+            // forwarding the call to the actual underlying type. For Relations, that type is a built-in pair or tuple,
+            // which will not have any relevant annotations.
+            return ActualType.GetCustomAttributes(attributeType, inherit);
         }
 
         /// <inheritdoc/>

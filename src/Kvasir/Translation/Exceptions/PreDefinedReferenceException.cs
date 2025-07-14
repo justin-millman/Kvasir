@@ -25,7 +25,7 @@ namespace Kvasir.Translation {
                 new Location(context.ToString()),
                 new Problem(
                     "a Pre-Defined Entity cannot " +
-                    (isReference ? "reference " : "contain a Relation involving ") +
+                    (isReference ? "reference " : "contain a Relation or a Localization involving ") +
                     $"non-Pre-Defined Entity type {entityType.DisplayName()}"
                 )
               )

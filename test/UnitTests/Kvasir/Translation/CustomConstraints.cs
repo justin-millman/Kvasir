@@ -824,5 +824,32 @@ namespace UT.Kvasir.Translation {
                 .WithAnnotations("[Check.Complex]")
                 .EndMessage();
         }
+
+        [TestMethod] public void ComplexCheck_OnLocalization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MahjongTile);
+
+            // Act
+            var translation = translator[source];
+            var table = translation.Localizations[0].Table;
+
+            // Assert
+            table.CheckConstraints.Should().HaveCount(1);
+            table.CheckConstraints[0].Condition.Should().BeSameAs(CustomCheck.Clause);
+            table.CheckConstraints[0].Name.Should().NotHaveValue();
+            CustomCheck.LastCtorArgs.Should().BeEmpty();
+            CustomCheck.Generator.Received(1).MakeConstraint(
+                NArg.IsSameSequence<IEnumerable<IField>>(
+                    new IField[] {
+                        table[new NameOfField("Key")],
+                        table[new NameOfField("Locale")],
+                        table[new NameOfField("Value")]
+                    }
+                ),
+                Arg.Is<IEnumerable<DataConverter>>(s => s.Count() == 3),
+                Settings.Default
+            );
+        }
     }
 }

@@ -2,8 +2,8 @@
 using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Extraction;
+using Kvasir.Localization;
 using Kvasir.Reconstitution;
-using Kvasir.Relations;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -79,7 +79,12 @@ namespace Kvasir.Translation {
                 throw new InvalidEntityTypeException(context, category);
             }
 
-            var fieldGroups = TranslateType(context, source, true, IsPreDefined(source)).ToList();
+            var traits = TranslationTraits.AllowRelations | TranslationTraits.AllowLocalizations;
+            if (IsPreDefined(source)) {
+                traits |= TranslationTraits.RequirePreDefined;
+            }
+
+            var fieldGroups = TranslateType(context, source, traits).ToList();
             var schemas = fieldGroups.OrderBy(g => g.Column.Unwrap()).SelectMany(g => g).Select(d => d.MakeSchema(settings_)).ToList();
             var fields = schemas.Select(s => s.Field).ToList();
 
@@ -180,11 +185,11 @@ namespace Kvasir.Translation {
                     throw new InvalidNativeNullabilityException(context, "a property of Relation type");
                 }
 
-                // This isn't the best, but it will have to do. To indicate that a particular Relation property should
-                // cannot be null, we insinuate that it is [NonNullable]. Then, if it is a natively nullable, it comes
-                // through as [Nullable]. Therefore, if both are present, then we have a problem, and we have to catch
-                // it here to avoid an annotation conflict. And, to provide the description, we have to switch over the
-                // field names.
+                // This isn't the best, but it will have to do. To indicate that a particular Relation property cannot
+                // be null, we insinuate that it is [NonNullable]. Then, if it is a natively nullable, it comes through
+                // as [Nullable]. Therefore, if both are present, then we have a problem, and we have to catch it here
+                // to avoid an annotation conflict. And, to provide the description, we have to switch over the field
+                // names.
                 foreach (var prop in syntheticType.GetProperties(PROPERTY_FLAGS).OrderBy(f => f.Name)) {
                     using var guard = context.Push(prop);
                     if (prop.HasAttribute<NullableAttribute>() && prop.HasAttribute<NonNullableAttribute>()) {
@@ -195,13 +200,17 @@ namespace Kvasir.Translation {
                             throw new InvalidNativeNullabilityException(context, "the key type of a map-like Relation");
                         }
                         else {
-                            throw new UnreachableException($"If block over non-nullable Relation fields exhausted");
+                            throw new UnreachableException("If block over non-nullable Relation fields exhausted");
                         }
                     }
                 }
 
-                var sourceIsPreDefined = IsPreDefined(source);
-                var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, false, sourceIsPreDefined));
+                var traits = TranslationTraits.AllowLocalizations;
+                if (IsPreDefined(source)) {
+                    traits |= TranslationTraits.RequirePreDefined;
+                }
+
+                var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, traits));
                 var schemas = relationGroup.Select(d => d.MakeSchema(settings_)).ToList();
                 var fields = schemas.Select(s => s.Field).ToList();
                 Debug.Assert(fields.Count >= 2);
@@ -213,7 +222,7 @@ namespace Kvasir.Translation {
 
                 // A RelationTable can still have CHECK constraints from its constituent members (specifically, the
                 // element type if it is an Aggregate), but it cannot have any Type-scope custom CHECK annotations
-                (var primaryKey, var candidateKeys) = KeyTranslator.ComputeKeys(context, source, schemas);
+                (var primaryKey, var candidateKeys) = KeyTranslator.ComputeKeys(context, syntheticType, schemas);
                 var foreignKeys = CreateForeignKeys(Enumerable.Repeat(relationGroup, 1));
                 var constraints = schemas.SelectMany(s => s.CHECKs).ToList();
 
@@ -237,12 +246,17 @@ namespace Kvasir.Translation {
                     // Data for a Pre-Defined Entity is not loaded from the back-end database; this goes for Relations
                     // that are "owned" by the Pre-Defined Entity as well. Technically we still require that the
                     // Relation data be repopulate-able, but we don't actually perform the repopulation.
-                    if (sourceIsPreDefined) {
+                    if (IsPreDefined(source)) {
                         repopulator = new SkipRepopulator();
                     }
 
                     repopulationPlan = new RelationRepopulationPlan(extractRelationProperty, elementReconstitutor, repopulator);
                 }
+
+                var existingLocalizations = localizationTrackersCache_[source].ToList();
+                var newLocalizations = localizationTrackersCache_[syntheticType];
+                existingLocalizations.AddRange(newLocalizations);
+                localizationTrackersCache_[source] = existingLocalizations;
 
                 var def = new RelationTableDef(table, extractor, repopulationPlan!);
                 tableNameCache_.Add(tableName, syntheticType);
@@ -250,6 +264,93 @@ namespace Kvasir.Translation {
             }
 
             return relationTables;
+        }
+
+        /// <summary>
+        ///   Translates the Localization Tables referenced by an Entity Type.
+        /// </summary>
+        /// <remarks>
+        ///   Localization Tables exist per type of Localization, meaning that the same Localization Type present on
+        ///   multiple Entities will produce the same shared Table. Therefore, each Localization is translated only the
+        ///   first time the Localization Type is encountered. There is, however, a unique Extraction and Reconstitution
+        ///   Plan associated with each instance of a Localization to ensure that data is properly handled.
+        /// </remarks>
+        /// <param name="source">
+        ///   The referencing Entity Type.
+        /// </param>
+        /// <returns>
+        ///   A collection of <see cref="localizationTableCache_">Table definitions</see>, in no particular order, for
+        ///   the Localization Tables referenced by <paramref name="source"/>.
+        /// </returns>
+        /// <exception cref="DuplicateNameException">
+        ///   if the name of any of the Localization Tables referenced by <paramref name="source"/> is already taken by
+        ///   another Entity's Principal Table, by a Relation Table, or by some other Localization Table.
+        /// </exception>
+        /// <exception cref="NestedLocalizationException">
+        ///   if the Locale or Value type of any of the Localization Tables referenced by <paramref name="source"/> is
+        ///   a Localization.
+        /// </exception>
+        /// <exception cref="NestedRelationException">
+        ///   if the Locale or Value type of any of the Localization Tables referenced by <paramref name="source"/> is
+        ///   a Relation.
+        /// </exception>
+        /// <exception cref="InvalidPropertyInDataModelException">
+        ///   if any of the Localization Tables referenced by <paramref name="source"/> would have Fields beyond the
+        ///   Key, Locale, and Value Fields defined by the base <see cref="Localization{TKey, TLocale, TValue}"/> class.
+        /// </exception>
+        /// <exception cref="InvalidNativeNullabilityException">
+        ///   if any of the Localization types referenced by <paramref name="source"/> have a Key or Locale property
+        ///   that is natively nullable.
+        /// </exception>
+        private List<LocalizationDef> TranslateLocalizationTables(Type source) {
+            Debug.Assert(source is not null && source.IsClass);
+            Debug.Assert(principalTableCache_.ContainsKey(source));
+            Debug.Assert(localizationTrackersCache_.ContainsKey(source));
+
+            var localizations = new List<LocalizationDef>();
+            foreach (var tracker in localizationTrackersCache_[source]) {
+                var localizationType = tracker.Source.PropertyType;
+                var syntheticType = SyntheticType.MakeSyntheticType(tracker);
+                var context = tracker.Context;
+
+                var traits = TranslationTraits.None;
+                if (IsPreDefined(source)) {
+                    traits |= TranslationTraits.RequirePreDefined;
+                }
+                var fieldGroups = TranslateType(context, syntheticType, traits);
+
+                // `TranslateType` is going to memoize the Field Groups for us, but it will also take care of
+                // identifying impermissible references to non-Pre-Defined Entities. That's a lot harder to do at this
+                // scope, so we'll *always* run that.
+                if (localizationTableCache_.TryGetValue(localizationType, out ITable? localizationTable)) {
+                    localizations.Add(new LocalizationDef(localizationTable));
+                    continue;
+                }
+
+                var schemas = fieldGroups.SelectMany(g => g).Select(d => d.MakeSchema(settings_)).ToList();
+                var fields = schemas.Select(s => s.Field).ToList();
+                Debug.Assert(fields.Count >= 3);
+
+                // A LocalizationTable can have CHECK constraints both from its constituent members (specifically, the
+                // Locale and Value types if they are Aggregates) and from Type-scope custom CHECK annotations
+                (var primaryKey, var candidateKeys) = KeyTranslator.ComputeKeys(context, syntheticType, schemas);
+                var foreignKeys = CreateForeignKeys(fieldGroups);
+                var constraints = schemas.SelectMany(s => s.CHECKs).Concat(GetTableConstraints(context, localizationType, schemas, settings_)).ToList();
+                Debug.Assert(candidateKeys.IsEmpty());
+
+                var tableName = GetTableName(context, localizationType);
+                if (tableNameCache_.TryGetValue(tableName, out Type? match)) {
+                    throw new DuplicateNameException(context, tableName, match);
+                }
+
+                var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
+                var def = new LocalizationDef(table);
+                localizationTableCache_.Add(localizationType, table);
+                tableNameCache_.Add(tableName, localizationType);
+                localizations.Add(def);
+            }
+
+            return localizations;
         }
 
         /// <summary>

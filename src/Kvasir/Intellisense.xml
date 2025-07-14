@@ -1564,6 +1564,150 @@
               A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
             </summary>
         </member>
+        <member name="T:Kvasir.Localization.ILocalization">
+            <summary>
+              The internal framework interface denoting a custom collection type that serves as a mapping of localized
+              values.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Localization.ILocalization.Triplet">
+            <summary>
+              The type of the Localization triplet. This should be three-element tuple where the first constituent type
+              is the type of the localization key, the second is the type of the locale, and the third is the type of
+              the localized value.
+            </summary>
+            <remarks>
+              A few notes about this. We need something that is <see langword="static"/> so that we can access its value
+              via reflection when holding just the type, which is the situation we find ourself in when doing
+              Translation. However, for mocking purposes, we also need to be able to use <see cref="T:Kvasir.Localization.ILocalization"/> as
+              a generic type parameter, which we cannot do if this property were <see langword="abstract"/>. We
+              therefore make it regular <see langword="virtual"/> with an error-throwing base implementation. While this
+              isn't ideal (technically, an implementation could choose not to override the base functionality), it's not
+              a huge deal because the property is <c>internal</c>, and we can write exhaustive tests for the
+              implementations authored within Kvasir itself.
+            </remarks>
+        </member>
+        <member name="T:Kvasir.Localization.Localization`3">
+            <summary>
+              A collection of localized data that tracks the state of its locale-value mappings for interaction with a
+              back-end database.
+            </summary>
+            <remarks>
+              <para>
+                The <see cref="T:Kvasir.Localization.Localization`3"/> class is a first-class data structure in Kvasir for
+                representing semantics that have different values in different circumstances. The canonical example of this
+                is text, which changes according to language; other examples may be measurements in imperial versus metric
+                or dates according to different calendars. These modes are called "locales" and the value of a semantic in
+                a particular locale the "localized value" or "localization." The semantic being localized is known as the
+                "localization key" and is simply an identifier by which the localizations are grouped.
+              </para>
+              <para>
+                Every locale-value pair in a <see cref="T:Kvasir.Localization.Localization`3"/> is in one of three states:
+                <c>NEW</c>, <c>SAVED</c>, or <c>DELETED</c>. Each state corresponds to the action or actions that should be
+                taken with respect to that item to synchronize the back-end database table corresponding to the
+                Localization. An item enters the <c>NEW</c> state when it is first added; when the collection is
+                canonicalized, each <c>NEW</c> item transitions to the <c>SAVED</c> state, indicating that it does not need
+                to be written to the database on the next write. When a <c>SAVED</c> item is removed from the collection, it
+                transitions to the <c>DELETED</c> state; <c>NEW</c> items do not transition to <c>DELETED</c>. Note that if
+                a <c>SAVED</c> item is deleted and then re-added, it will be re-added in the <c>SAVED</c> state.
+              </para>
+              <para>
+                The <see cref="T:Kvasir.Localization.Localization`3"/> does not support the <c>MODIFIED</c> state; instead,
+                each locale-value pair is treated as its own unit. This means that changing the value localized for an
+                existing locale results in two separate operations in the back-end database: first a removal of the old
+                locale-value pair, then an insertion of the new one. This behavior <i>may</i> change in the future, so
+                clients should not rely on it. The guarantee, however, is that Kvasir will properly respond to an overwrite
+                by ensuring that the resulting back-end database contains only the new locale-value pair.
+              </para>
+              <para>
+                Items used for the value in a <see cref="T:Kvasir.Localization.Localization`3"/> should be immutable:
+                structs, <see cref="T:System.String"/>, etc. This is because read access is <i>not</i> tracked: when using mutable
+                values, it is possible for the user to access an item (e.g. through <c>operator[]</c>) and mutate that value
+                without the collection knowing, preventing the change from being reflected in the back-end database. This
+                also means that actions that convert the collection into another form will <i>copy</i> the elements,
+                ensuring that the tracing data remains up-to-date.
+              </para>
+              <para>
+                A <see cref="T:Kvasir.Localization.Localization`3"/> does not permit duplicate locales, but it does support
+                duplicate values.
+              </para>
+            </remarks>
+            <typeparam name="TKey">
+              The type of the "localization key" for the Localization.
+            </typeparam>
+            <typeparam name="TLocale">
+              The type of the locale for which values in the Localization are localized.
+            </typeparam>
+            <typeparam name="TValue">
+              The type of the localized values.
+            </typeparam>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Key">
+            <summary>
+              The localization key of the Localization.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Item(`1)">
+            <summary>
+              Gets or sets the localized value for a specified locale.
+            </summary>
+            <remarks>
+              By default, a <see cref="T:Kvasir.Localization.Localization`3"/> is read-only. (This is just an annoying
+              artifact of the overall design and limitations within C#.) Derived classes are encouraged to enable
+              writeability by providing a <c>new</c> implementation of the <c>this[]</c> operator and delegating to the
+              base class.
+            </remarks>
+            <param name="locale">
+              [GET] The locale of the localized value to return.
+              [SET] The locale of the new localized value.
+            </param>
+            <returns>
+              [GET] The value localized for <paramref name="locale"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+              [GET] If there is no localization for <paramref name="locale"/>.
+            </exception>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Relation">
+            <summary>
+              The change-tracked collection of localizations.
+            </summary>
+            <remarks>
+              This property is <c>internal</c> so that it is inaccessible to derived classes but accessible to Kvasir.
+              This is the property through which change tracking occurs, and therefore the property through which the
+              framework implements extraction and reconstitution.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.#ctor(`0)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Localization.Localization`3"/>.
+            </summary>
+            <param name="localizationKey">
+              The <see cref="P:Kvasir.Localization.Localization`3.Key">localization key</see> of the new Localization.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+              if <paramref name="localizationKey"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Localizations">
+            <summary>
+              The collection of localized values, as a read-only mapping.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.op_Implicit(Kvasir.Localization.Localization{`0,`1,`2})~`0">
+            <summary>
+              Implicitly converts a Localization to its localization key.
+            </summary>
+            <param name="localization">
+              The <see cref="T:Kvasir.Localization.Localization`3"/> to convert.
+            </param>
+            <returns>
+              The <see cref="P:Kvasir.Localization.Localization`3.Key">localization key</see> of <paramref name="localization"/>.
+            </returns>
+        </member>
+        <member name="P:Kvasir.Localization.Localization`3.Kvasir#Localization#ILocalization#Triplet">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.BuilderFactory">
             <summary>
               An implementation of the <see cref="T:Kvasir.Transcription.IBuilderFactory`5"/>
@@ -8056,6 +8200,44 @@
               a <c>[NonNullable]</c> annotation applied.
             </exception>
         </member>
+        <member name="M:Kvasir.Translation.Translator.TranslateLocalizationTables(System.Type)">
+            <summary>
+              Translates the Localization Tables referenced by an Entity Type.
+            </summary>
+            <remarks>
+              Localization Tables exist per type of Localization, meaning that the same Localization Type present on
+              multiple Entities will produce the same shared Table. Therefore, each Localization is translated only the
+              first time the Localization Type is encountered. There is, however, a unique Extraction and Reconstitution
+              Plan associated with each instance of a Localization to ensure that data is properly handled.
+            </remarks>
+            <param name="source">
+              The referencing Entity Type.
+            </param>
+            <returns>
+              A collection of <see cref="F:Kvasir.Translation.Translator.localizationTableCache_">Table definitions</see>, in no particular order, for
+              the Localization Tables referenced by <paramref name="source"/>.
+            </returns>
+            <exception cref="T:Kvasir.Translation.DuplicateNameException">
+              if the name of any of the Localization Tables referenced by <paramref name="source"/> is already taken by
+              another Entity's Principal Table, by a Relation Table, or by some other Localization Table.
+            </exception>
+            <exception cref="T:Kvasir.Translation.NestedLocalizationException">
+              if the Locale or Value type of any of the Localization Tables referenced by <paramref name="source"/> is
+              a Localization.
+            </exception>
+            <exception cref="T:Kvasir.Translation.NestedRelationException">
+              if the Locale or Value type of any of the Localization Tables referenced by <paramref name="source"/> is
+              a Relation.
+            </exception>
+            <exception cref="T:Kvasir.Translation.InvalidPropertyInDataModelException">
+              if any of the Localization Tables referenced by <paramref name="source"/> would have Fields beyond the
+              Key, Locale, and Value Fields defined by the base <see cref="T:Kvasir.Localization.Localization`3"/> class.
+            </exception>
+            <exception cref="T:Kvasir.Translation.InvalidNativeNullabilityException">
+              if any of the Localization types referenced by <paramref name="source"/> have a Key or Locale property
+              that is natively nullable.
+            </exception>
+        </member>
         <member name="M:Kvasir.Translation.Translator.GetTableName(Kvasir.Translation.Context,System.Type)">
             <summary>
               Determines the name of the Principal Table for an Entity Type.
@@ -8266,7 +8448,7 @@
               if any of the constructors of <paramref name="source"/> is annotated with <c>[ReconstitueThrough]</c>.
             </exception>
         </member>
-        <member name="M:Kvasir.Translation.Translator.TranslateType(Kvasir.Translation.Context,System.Type,System.Boolean,System.Boolean)">
+        <member name="M:Kvasir.Translation.Translator.TranslateType(Kvasir.Translation.Context,System.Type,Kvasir.Translation.Translator.TranslationTraits)">
             <summary>
               Translates a single CLR type.
             </summary>
@@ -8277,14 +8459,9 @@
             <param name="source">
               The CLR type to translate.
             </param>
-            <param name="allowRelations">
-              <see langword="true"/> if Relations should be allowed as valid (e.g. when translating a real Entity Type);
-              <see langword="false"/> if Relations should be disallowed (e.g. when translating a Relation).
-            </param>
-            <param name="requirePreDefined">
-              <see langword="true"/> if only References to Pre-Defined Entities should be allowed as valid (e.g. when
-              translating a Pre-Defined Entity or a type referenced therefrom); <see langword="false"/> if References to
-              regular Entities are valid (e.g. when translating anything else).
+            <param name="traits">
+              The <see cref="T:Kvasir.Translation.Translator.TranslationTraits"/> describing how to treat Relations, Localizations, and Pre-Defined
+              Entities.
             </param>
             <returns>
               The unordered (but column-assigned) Fields that make up the data model for <paramref name="source"/>, with
@@ -8314,13 +8491,23 @@
               model.
             </exception>
             <exception cref="T:Kvasir.Translation.NestedRelationException">
-              if <paramref name="allowRelations"/> is <see langword="false"/> and <paramref name="source"/> has a
-              Relation-type Field that would be included in the data model.
+              if the <see cref="F:Kvasir.Translation.Translator.TranslationTraits.AllowRelations"/> flag of <paramref name="traits"/> is not set and
+              <paramref name="source"/> has a Relation-type Field that would be included in the data model.
+            </exception>
+            <exception cref="T:Kvasir.Translation.NestedLocalizationException">
+              if the <see cref="F:Kvasir.Translation.Translator.TranslationTraits.AllowLocalizations"/> flag of <paramref name="traits"/> is not set and
+              <paramref name="source"/> has a Localization-type Field that would be included in the data model.
             </exception>
             <exception cref="T:Kvasir.Translation.PreDefinedReferenceException">
-              if <paramref name="requirePreDefined"/> is <see langword="true"/> and <paramref name="source"/> is not a
-              Pre-Defined Entity type.
+              if the <see cref="F:Kvasir.Translation.Translator.TranslationTraits.RequirePreDefined"/> flag of <paramref name="traits"/> is set and
+              <paramref name="source"/> is not a Pre-Defined Entity type.
             </exception>
+        </member>
+        <member name="T:Kvasir.Translation.Translator.TranslationTraits">
+            <summary>
+              Traits controlling the validity of different categories of properties when translating a Type. Essentially
+              a collection of Boolean flags.
+            </summary>
         </member>
         <member name="P:Kvasir.Translation.Translator.Item(System.Type)">
             <summary>
@@ -8422,17 +8609,28 @@
               The initial <see cref="T:System.Type"/> whose translation will be tracked by the new <see cref="T:Kvasir.Translation.Context"/>.
             </param>
         </member>
-        <member name="M:Kvasir.Translation.Context.#ctor(Kvasir.Translation.Context)">
+        <member name="M:Kvasir.Translation.Context.#ctor(Kvasir.Translation.Context,System.Boolean)">
             <summary>
               Constructs a frozen (i.e. immutable) copy of another <see cref="T:Kvasir.Translation.Context"/>.
             </summary>
             <param name="source">
               The source <see cref="T:Kvasir.Translation.Context"/>.
             </param>
+            <param name="frozen">
+              Whether or not the new <see cref="T:Kvasir.Translation.Context"/> should be frozen (i.e. immutable).
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.Context.Clone">
+            <summary>
+              Constructs a non-frozen (i.e. mutable) copy of another <see cref="T:Kvasir.Translation.Context"/>.
+            </summary>
+            <returns>
+              A deep copy of this <see cref="T:Kvasir.Translation.Context"/> that can be pushed onto and/or popped from
+            </returns>
         </member>
         <member name="M:Kvasir.Translation.Context.Freeze">
             <summary>
-              Creates a frozen (i.e. immutable) copy of this <see cref="T:Kvasir.Translation.Context"/>.
+              Creates a copy of this <see cref="T:Kvasir.Translation.Context"/>.
             </summary>
             <returns>
               A deep copy of this <see cref="T:Kvasir.Translation.Context"/> that cannot be pushed onto or popped from.
@@ -8478,6 +8676,18 @@
               finished translating.
             </remarks>
         </member>
+        <member name="M:Kvasir.Translation.Context.Concat(Kvasir.Translation.Context)">
+            <summary>
+              Concatenates two <see cref="T:Kvasir.Translation.Context">Contexts</see>.
+            </summary>
+            <param name="suffix">
+              The <see cref="T:Kvasir.Translation.Context"/> to be appended onto this one.
+            </param>
+            <returns>
+              A new <see cref="T:Kvasir.Translation.Context"/> consisting of the state of the current one followed by the state of
+              <paramref name="suffix"/>.
+            </returns>
+        </member>
         <member name="M:Kvasir.Translation.Context.ToString">
             <summary>
               Produces a human-readable string representation of the <see cref="T:Kvasir.Translation.Context"/>.
@@ -8498,32 +8708,118 @@
               The name of <paramref name="property"/>.
             </returns>
         </member>
+        <member name="T:Kvasir.Translation.PrincipalTableDef">
+            <summary>
+              The definition of a Principal Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Principal Table.</param>
+            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
+            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
+            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
+        </member>
+        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Extraction.DataExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
+            <summary>
+              The definition of a Principal Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Principal Table.</param>
+            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
+            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
+            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Table">
+            <summary>The schema model for the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Extractor">
+            <summary>The plan that can extract a row of data to be stored into the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Reconstitutor">
+            <summary>The plan that can recreate a CLR object from a row of data stored in the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.KeyExtractor">
+            <summary>The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances">
+            <summary>The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</summary>
+        </member>
+        <member name="T:Kvasir.Translation.RelationTableDef">
+            <summary>
+              The definition of a Relation Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Relation Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
+        </member>
+        <member name="M:Kvasir.Translation.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationRepopulationPlan)">
+            <summary>
+              The definition of a Relation Table.
+            </summary>
+            
+            <param name="Table">The schema model for the Relation Table.</param>
+            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Table">
+            <summary>The schema model for the Relation Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Extractor">
+            <summary>The plan that can extract the element-specific data to be stored in the Relation Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.RelationTableDef.Repopulator">
+            <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</summary>
+        </member>
+        <member name="T:Kvasir.Translation.LocalizationDef">
+            <summary>
+              The definition of a Field on an Entity that is a Localization.
+            </summary>
+            
+            <param name="Table">The schema model for the Localization Table.</param>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationDef.#ctor(Kvasir.Schema.ITable)">
+            <summary>
+              The definition of a Field on an Entity that is a Localization.
+            </summary>
+            
+            <param name="Table">The schema model for the Localization Table.</param>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationDef.Table">
+            <summary>The schema model for the Localization Table.</summary>
+        </member>
         <member name="T:Kvasir.Translation.EntityTranslation">
             <summary>
               A translation of a single CLR type.
             </summary>
             
-            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></param>
-            <param name="Principal">The definition of the Principal Table</param>
-            <param name="Relations">The definitions of any Relation Tables</param>
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/>.</param>
+            <param name="Principal">The definition of the Principal Table.</param>
+            <param name="Relations">The definitions of any Relation Tables.</param>
+            <param name="Localizations">The definition of any Localizations.</param>
         </member>
-        <member name="M:Kvasir.Translation.EntityTranslation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.RelationTableDef})">
+        <member name="M:Kvasir.Translation.EntityTranslation.#ctor(System.Type,Kvasir.Translation.PrincipalTableDef,System.Collections.Generic.IReadOnlyList{Kvasir.Translation.RelationTableDef},System.Collections.Generic.IReadOnlyList{Kvasir.Translation.LocalizationDef})">
             <summary>
               A translation of a single CLR type.
             </summary>
             
-            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></param>
-            <param name="Principal">The definition of the Principal Table</param>
-            <param name="Relations">The definitions of any Relation Tables</param>
+            <param name="CLRSource">The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/>.</param>
+            <param name="Principal">The definition of the Principal Table.</param>
+            <param name="Relations">The definitions of any Relation Tables.</param>
+            <param name="Localizations">The definition of any Localizations.</param>
         </member>
         <member name="P:Kvasir.Translation.EntityTranslation.CLRSource">
-            <summary>The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/></summary>
+            <summary>The CLR <see cref="T:System.Type"/> that produced this <see cref="T:Kvasir.Translation.EntityTranslation"/>.</summary>
         </member>
         <member name="P:Kvasir.Translation.EntityTranslation.Principal">
-            <summary>The definition of the Principal Table</summary>
+            <summary>The definition of the Principal Table.</summary>
         </member>
         <member name="P:Kvasir.Translation.EntityTranslation.Relations">
-            <summary>The definitions of any Relation Tables</summary>
+            <summary>The definitions of any Relation Tables.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.EntityTranslation.Localizations">
+            <summary>The definition of any Localizations.</summary>
         </member>
         <member name="T:Kvasir.Translation.AmbiguousNullabilityException">
             <summary>
@@ -8722,7 +9018,7 @@
         <member name="M:Kvasir.Translation.InapplicableAnnotationException.#ctor(Kvasir.Translation.Context,System.Type,System.Type,Kvasir.Translation.MultiKind)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.InapplicableAnnotationException"/> caused by a non-constraint annotation being
-              placed on an Aggregate property, a Reference property, or a Relation property.
+              placed on an Aggregate property, a Reference property, a Relation property, or a Localization property.
             </summary>
             <param name="context">
               The <see cref="T:Kvasir.Translation.Context"/> in which the inapplicable annotation was encountered.
@@ -9049,6 +9345,27 @@
               <i>overload discriminator</i>
             </param>
         </member>
+        <member name="T:Kvasir.Translation.InvalidLocalizationKeyException">
+            <summary>
+              An exception that is raised when the type of a localization key is not a primitive, built-in type.
+            </summary>
+            <seealso cref="T:Kvasir.Translation.NestedLocalizationException"/>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidLocalizationKeyException.#ctor(Kvasir.Translation.Context,System.Type,Kvasir.Translation.TypeCategory)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidLocalizationKeyException"/> caused by the localization key being
+              something other than a primitive, built-in type.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid localization key type was encountered.
+            </param>
+            <param name="type">
+              The invalid localization key type.
+            </param>
+            <param name="category">
+              The category into which the invalid localization key type falls.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.InvalidNameException">
             <summary>
               An exception that is raised when a user-provided name is invalid.
@@ -9267,6 +9584,33 @@
             </param>
             <param name="_">
               <i>overload discriminator</i>
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidPropertyInDataModelException.#ctor(Kvasir.Translation.Context,Kvasir.Translation.DerivedLocalizationTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.InvalidPropertyInDataModelException"/> caused by a property in a derived
+              Localization.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the writeable property was encountered.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation.NestedLocalizationException">
+            <summary>
+              An exception that is raised when the locale type or value type of a Localization is itself, another
+              Localization.
+            </summary>
+            <seealso cref="T:Kvasir.Translation.InvalidLocalizationKeyException"/>
+        </member>
+        <member name="M:Kvasir.Translation.NestedLocalizationException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.NestedLocalizationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the nested Localization was encountered.
             </param>
         </member>
         <member name="T:Kvasir.Translation.NestedRelationException">
@@ -9629,6 +9973,19 @@
             </param>
             <param name="reason">
               The reason that <paramref name="annotation"/> is unsatisfiable.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation.WriteableLocalizationException">
+            <summary>
+              An exception that is raised when a freely writeable Localization-type property is included in the data model.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.WriteableLocalizationException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.WriteableLocalizationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the freely writeable Localization-type property was encountered.
             </param>
         </member>
         <member name="T:Kvasir.Translation.WriteableRelationException">
@@ -10508,6 +10865,130 @@
               <see langword="null"/>.
             </exception>
         </member>
+        <member name="T:Kvasir.Translation.LocalizationKeyFieldGroup">
+            <summary>
+              A <see cref = "T:Kvasir.Translation.FieldGroup" /> backed by a scalar or enumeration CLR property, and therefore corresponding to
+              exactly one Field, that was taken from the key type of a Localization.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.Size">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.AllNullable">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.IsNativelyNullable">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.ReconstitutionArgumentName">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.Extractor">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.Creator">
+            <inheritdoc/>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.KeyType">
+            <summary>
+              The type of the key for the Localization that the <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/> backs.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which <paramref name="source"/> was accessed via reflection. This context
+              should include that property.
+            </param>
+            <param name="source">
+              The CLR property backing the new <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/>.
+            </param>
+            <exception cref="T:Kvasir.Translation.InvalidLocalizationKeyException">
+              if the <see cref="P:Kvasir.Translation.LocalizationKeyFieldGroup.KeyType"/> of the Localization represented by <paramref name="source"/> is not a type
+              natively supported by Kvasir.
+            </exception>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.#ctor(Kvasir.Translation.LocalizationKeyFieldGroup)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/> that is largely identical to another.
+            </summary>
+            <param name="source">
+              The source <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/>.
+            </param>
+            <seealso cref="M:Kvasir.Translation.FieldGroup.Clone"/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.#ctor(Kvasir.Translation.LocalizationKeyFieldGroup,Kvasir.Translation.FieldGroup.ResetTag)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/> that is largely identical to another, but with the
+              constituent Field reset.
+            </summary>
+            <param name="source">
+              The source <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/>.
+            </param>
+            <param name="_">
+              <i>overload discriminator</i>
+            </param>
+            <seealso cref="M:Kvasir.Translation.LocalizationKeyFieldGroup.Reset"/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.ApplyConstraint(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.CheckAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.ApplyConstraint(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.Check.ComparisonAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.ApplyConstraint(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.Check.InclusionAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.ApplyConstraint(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.Check.SignednessAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.ApplyConstraint(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.Check.StringLengthAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.Clone">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.Filter(System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldDescriptor})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.References">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.SetDefault(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.DefaultAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.SetInCandidateKey(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.UniqueAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.SetInPrimaryKey(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.PrimaryKeyAttribute},System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.SetName(Kvasir.Translation.Context,Kvasir.Translation.Nested{Kvasir.Annotations.NameAttribute})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.SetNamePrefix(Kvasir.Translation.Context,System.Collections.Generic.IEnumerable{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.SetNullability(Kvasir.Translation.Context,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.ProcessNativeNullability(Kvasir.Translation.Context)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.ProcessAnnotations(Kvasir.Translation.Context)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Translation.MultiFieldGroup">
             <summary>
               The intermediate base class for a <see cref="T:Kvasir.Translation.FieldGroup"/> backed by an Aggregate, Reference, or Relation
@@ -10989,6 +11470,32 @@
               and <see cref="T:Kvasir.Annotations.NumericAttribute">[Numeric]</see>.
             </exception>
         </member>
+        <member name="T:Kvasir.Translation.LocalizationTracker">
+            <summary>
+              A utility for tracking the presence of Localizations.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationTracker.Source">
+            <summary>
+              The source property.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationTracker.Context">
+            <summary>
+              The <see cref="P:Kvasir.Translation.LocalizationTracker.Context"/> in which the property sourcing the tracker was encountered.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationTracker.#ctor(System.Reflection.PropertyInfo,Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.LocalizationTracker"/>.
+            </summary>
+            <param name="source">
+              The source property.
+            </param>
+            <param name="context">
+              The <see cref="P:Kvasir.Translation.LocalizationTracker.Context"/> of <paramref name="source"/>.
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.ReconstitutionHelper">
             <summary>
               A helper class for evaluating a type's constructors for usability in Reconstitution.
@@ -11291,7 +11798,7 @@
         </member>
         <member name="T:Kvasir.Translation.SyntheticPropertyInfo">
             <summary>
-              The reflection representation of a property on a <see cref="T:Kvasir.Translation.SyntheticType"/>.
+              The reflection representation of a property that doesn't actually exist in the CLR.
             </summary>
         </member>
         <member name="P:Kvasir.Translation.SyntheticPropertyInfo.CanRead">
@@ -11312,7 +11819,7 @@
         <member name="P:Kvasir.Translation.SyntheticPropertyInfo.ReflectedType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticPropertyInfo.#ctor(System.String,Kvasir.Translation.SyntheticType,System.Type,System.Collections.Generic.IEnumerable{System.Attribute})">
+        <member name="M:Kvasir.Translation.SyntheticPropertyInfo.#ctor(System.String,System.Type,System.Type,System.Collections.Generic.IEnumerable{System.Attribute})">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.SyntheticPropertyInfo"/>.
             </summary>
@@ -11320,7 +11827,7 @@
               The <see cref="P:Kvasir.Translation.SyntheticPropertyInfo.Name"/> of the property.
             </param>
             <param name="source">
-              The <see cref="T:Kvasir.Translation.SyntheticType"/> on which the property resides.
+              The <see cref="T:System.Type"/> on which the property resides (even though it doesn't exist).
             </param>
             <param name="propertyType">
               The <see cref="P:Kvasir.Translation.SyntheticPropertyInfo.PropertyType">type</see> of the property.
@@ -11404,7 +11911,7 @@
         <member name="P:Kvasir.Translation.SyntheticType.UnderlyingSystemType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticType.#ctor(System.String,System.String,System.Reflection.Assembly,System.Func{Kvasir.Translation.SyntheticType,System.Collections.Generic.IEnumerable{Kvasir.Translation.SyntheticPropertyInfo}},System.Type,System.Boolean)">
+        <member name="M:Kvasir.Translation.SyntheticType.#ctor(System.String,System.String,System.Reflection.Assembly,System.Func{Kvasir.Translation.SyntheticType,System.Collections.Generic.IEnumerable{Kvasir.Translation.SyntheticPropertyInfo}},System.Type,System.Boolean,System.Boolean)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.SyntheticType"/>.
             </summary>
@@ -11424,6 +11931,10 @@
             </param>
             <param name="actualType">
               The <see cref="T:System.Type"/> that the new <see cref="T:Kvasir.Translation.SyntheticType"/> is a façade for.
+            </param>
+            <param name="isLocalization">
+              Whether the new <see cref="T:Kvasir.Translation.SyntheticType"/> represents a Localization (<see langword="true"/>) or a
+              Relation <see langword="false"/>).
             </param>
             <param name="nativelyNullable">
               Whether or not the new <see cref="T:Kvasir.Translation.SyntheticType"/> is considered
@@ -11448,7 +11959,7 @@
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.MakeSyntheticType(System.Type,Kvasir.Translation.RelationTracker)">
             <summary>
-              Creates a new <see cref="T:Kvasir.Translation.SyntheticType"/>.
+              Creates a new <see cref="T:Kvasir.Translation.SyntheticType"/> as a façade for a Relation.
             </summary>
             <param name="entity">
               The type of the owning Entity, which defines the first property on the new <see cref="T:Kvasir.Translation.SyntheticType"/>.
@@ -11457,6 +11968,23 @@
               The <see cref="T:Kvasir.Translation.RelationTracker"/> containing the metadata for the property that forms the rest of the
               <see cref="T:Kvasir.Translation.SyntheticType"/>.
             </param>
+        </member>
+        <member name="M:Kvasir.Translation.SyntheticType.MakeSyntheticType(Kvasir.Translation.LocalizationTracker)">
+            <summary>
+              Creates a new <see cref="T:Kvasir.Translation.SyntheticType"/> as a façade for a Localization.
+            </summary>
+            <param name="tracker">
+              The <see cref="T:Kvasir.Translation.LocalizationTracker"/> containing the metadata for the type that defines the Localization
+              underneath the <see cref="T:Kvasir.Translation.SyntheticType"/>.
+            </param>
+            <exception cref="T:Kvasir.Translation.InvalidPropertyInDataModelException">
+              if the Localization represented by <paramref name="tracker"/> has a Field in the data model beyond the Key
+              Locale, and Value Fields defined by the base <see cref="T:Kvasir.Localization.Localization`3"/> class.
+            </exception>
+            <exception cref="T:Kvasir.Translation.InvalidNativeNullabilityException">
+              if the Key or Locale type of the Localization represented by <paramref name="tracker"/> is natively
+              nullable.
+            </exception>
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.GetCustomAttributes(System.Type,System.Boolean)">
             <inheritdoc/>
@@ -11538,70 +12066,6 @@
         </member>
         <member name="M:Kvasir.Translation.SyntheticType.IsPrimitiveImpl">
             <inheritdoc/>
-        </member>
-        <member name="T:Kvasir.Translation.PrincipalTableDef">
-            <summary>
-              The definition of a Principal Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Principal Table.</param>
-            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
-            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
-            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
-            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
-        </member>
-        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Extraction.DataExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
-            <summary>
-              The definition of a Principal Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Principal Table.</param>
-            <param name="Extractor">The plan that can extract a row of data to be stored into the Principal Table.</param>
-            <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
-            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</param>
-            <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.Table">
-            <summary>The schema model for the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.Extractor">
-            <summary>The plan that can extract a row of data to be stored into the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.Reconstitutor">
-            <summary>The plan that can recreate a CLR object from a row of data stored in the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.KeyExtractor">
-            <summary>The plan that can extract the subset of a row of data that constitute's the Primary Key in the Principal Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances">
-            <summary>The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</summary>
-        </member>
-        <member name="T:Kvasir.Translation.RelationTableDef">
-            <summary>
-              The definition of a Relation Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Relation Table.</param>
-            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
-            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
-        </member>
-        <member name="M:Kvasir.Translation.RelationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.RelationExtractionPlan,Kvasir.Reconstitution.RelationRepopulationPlan)">
-            <summary>
-              The definition of a Relation Table.
-            </summary>
-            
-            <param name="Table">The schema model for the Relation Table.</param>
-            <param name="Extractor">The plan that can extract the element-specific data to be stored in the Relation Table.</param>
-            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</param>
-        </member>
-        <member name="P:Kvasir.Translation.RelationTableDef.Table">
-            <summary>The schema model for the Relation Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.RelationTableDef.Extractor">
-            <summary>The plan that can extract the element-specific data to be stored in the Relation Table.</summary>
-        </member>
-        <member name="P:Kvasir.Translation.RelationTableDef.Repopulator">
-            <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Relation Table.</summary>
         </member>
         <member name="T:Kvasir.Translation.Bound">
             <summary>
@@ -11820,6 +12284,32 @@
             <returns>
               A representation of the <see cref="T:Kvasir.Translation.Interval"/> in mathematical notation, with an absent endpoint being
               indicated by the infinity symbol.
+            </returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Kvasir.Translation.LocalizationMetadata" -->
+        <!-- Badly formed XML comment ignored for member "M:Kvasir.Translation.LocalizationMetadata.#ctor(System.Reflection.PropertyInfo,System.Type,System.Type,System.Type,System.Boolean,System.Boolean,System.Boolean,System.Reflection.PropertyInfo)" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.KeyProperty" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.KeyType" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.LocaleType" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.ValueType" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.IsKeyNullable" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.IsLocaleNullable" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.IsValueNullable" -->
+        <!-- Badly formed XML comment ignored for member "P:Kvasir.Translation.LocalizationMetadata.FirstDerivedProperty" -->
+        <member name="T:Kvasir.Translation.LocalizationHelper">
+            <summary>
+              A collection of helper functions for performing translation operations on Localization types.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.LocalizationHelper.Reflect(System.Type)">
+            <summary>
+              Reflects over a Localization type, extracting the important properties, types, and nullability statuses.
+            </summary>
+            <param name="localization">
+              The Localization type.
+            </param>
+            <returns>
+              A <see cref="T:Kvasir.Translation.LocalizationMetadata"/> for <paramref name="localization"/>.
             </returns>
         </member>
         <member name="T:Kvasir.Translation.Nested`1">
