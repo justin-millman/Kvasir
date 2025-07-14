@@ -2,8 +2,8 @@
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.FieldClusivity;
+using static UT.Kvasir.Translation.Globals;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Field Clusivity")]
@@ -577,6 +577,128 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the two annotations are mutually exclusive")
                 .WithAnnotations("[IncludeInModel]", "[CodeOnly]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationWithPublicInstanceDerivedProperties_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(FlightAttendant);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`FlightAttendant` → `SuperLocalizedText` (from \"Name\") → Default")
+                .WithProblem("a property in a derived Localization class cannot be included in the data model")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationWithDerivedPropeties_CodeOnly() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Bullfight);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HaveField("Key").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Locale").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void LocalizationWithNonPublicStaticDerivedProperties() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Baptism);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HaveField("Key").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Locale").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void LocalizationWithNonPublicDerivedProperties_IncludeInModel_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Tropism);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Tropism` → `SuperLocalizedText` (from \"Description\") → DefaultValue")
+                .WithProblem("a property in a derived Localization class cannot be included in the data model")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationWithStaticDerivedProperties_IncludedInModel_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(AesopsFable);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`AesopsFable` → `SuperLocalizedText` (from \"Title\") → Validity")
+                .WithProblem("a property in a derived Localization class cannot be included in the data model")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationWithHidingKeyProperty_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Cathedral);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPropertyInDataModelException>()
+                .WithLocation("`Cathedral` → `SuperLocalizedText` (from \"Name\") → Key")
+                .WithProblem("a property in a derived Localization class cannot be included in the data model")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationWithIntermediateInheritedProperty() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(PowerOutage);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HaveField("Key").OfTypeText().BeingNonNullable().And
+                .HaveField("Locale").OfTypeEnumeration(
+                    TestLocalizations.Language.English,
+                    TestLocalizations.Language.Spanish,
+                    TestLocalizations.Language.French,
+                    TestLocalizations.Language.Hebrew,
+                    TestLocalizations.Language.Hindi,
+                    TestLocalizations.Language.German,
+                    TestLocalizations.Language.Arabic,
+                    TestLocalizations.Language.Japanese,
+                    TestLocalizations.Language.Esperanto,
+                    TestLocalizations.Language.Italian
+                ).BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
         }
     }
 }

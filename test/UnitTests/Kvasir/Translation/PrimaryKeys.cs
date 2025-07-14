@@ -177,6 +177,35 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LocalizationMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Headache);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields("HeadacheKey");
+        }
+
+        [TestMethod] public void NestedLocalizationMarkedPrimaryKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Abbey);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "ID",
+                    "Membership.AbbotOrAbbess"
+                );
+        }
+
         [TestMethod] public void AllScalarsMarkedPrimaryKey() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -473,6 +502,22 @@ namespace UT.Kvasir.Translation {
                     "Item"
                 ).And
                 .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void DefaultPrimaryKeyForLocalization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Whale);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HavePrimaryKey().OfFields(
+                    "Key",
+                    "Locale"
+                );
         }
 
         [TestMethod] public void NullableFieldNamedIDSkipped() {
@@ -836,11 +881,43 @@ namespace UT.Kvasir.Translation {
                 .WithAnnotations("[PrimaryKey]")
                 .EndMessage();
         }
+
+        [TestMethod] public void NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MatchPair);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`MatchPair` → Translator")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CreditReport);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`CreditReport` → IssuedOn")
+                .WithProblem("the path \"Locale\" does not exist")
+                .WithAnnotations("[PrimaryKey]")
+                .EndMessage();
+        }
     }
 
     [TestClass, TestCategory("Primary Key Naming")]
     public class PrimaryKeyNamingTests {
-        [TestMethod] public void NamedPrimaryKey() {
+        [TestMethod] public void NamedPrimaryKeyOfPrincipalTable() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
             var source = typeof(HebrewLetter);
@@ -851,6 +928,19 @@ namespace UT.Kvasir.Translation {
             // Assert
             translation.Principal.Table.Should()
                 .HavePrimaryKey("LetterPK").OfFields("Letter");
+        }
+
+        [TestMethod] public void NamedPriaryKeyOfLocalizationTable() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Lawyer);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HavePrimaryKey("TheBestKey").OfFields("Key", "Locale");
         }
 
         [TestMethod] public void NamedPrimaryKeyForUnnamedDeducedCandidateKey() {

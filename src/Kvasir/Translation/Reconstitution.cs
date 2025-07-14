@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kvasir.Translation {
@@ -35,7 +34,7 @@ namespace Kvasir.Translation {
             // Strip any nullability wrapper from the source type
             source = Nullable.GetUnderlyingType(source) ?? source;
 
-            // We need to ignore [Calculated] Fields, which have to `Creator`
+            // We need to ignore [Calculated] Fields, which have no `Creator`
             var nonCalculatedFields = fields.Where(g => g.Creator.HasValue);
 
             Candidate MakeCandidate(ConstructorInfo constructor) {
@@ -137,6 +136,12 @@ namespace Kvasir.Translation {
             // to account for `Nullable<T>`, which is different than `T`.
             var paramType = Nullable.GetUnderlyingType(parameter.ParameterType) ?? parameter.ParameterType;
             var argType = Nullable.GetUnderlyingType(argument.Source.PropertyType) ?? argument.Source.PropertyType;
+
+            // Localizations are implicitly convertible to their key type, and we expect that constructors will accept
+            // the key rather than a full Localization.
+            if (paramType != argType && argument is LocalizationKeyFieldGroup lfg) {
+                argType = Nullable.GetUnderlyingType(lfg.KeyType) ?? lfg.KeyType;
+            }
             return paramType == argType;
         }
 

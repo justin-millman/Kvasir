@@ -131,6 +131,41 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LocalizationTableOrdering() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MemoryLeak);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Localizations[0].Table.Should()
+                .HaveField("Key").AtColumn(0).And
+                .HaveField("Locale").AtColumn(1).And
+                .HaveField("Value").AtColumn(2).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void LocalizationFieldsOrdered() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Merger);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("AbsorbingCompany").AtColumn(2).And
+                .HaveField("AbsorbedCompany").AtColumn(0).And
+                .HaveField("StockSplit").AtColumn(5).And
+                .HaveField("Cost").AtColumn(4).And
+                .HaveField("Date").AtColumn(1).And
+                .HaveField("AntitrustExemption").AtColumn(3).And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void PreDefinedInstanceOrdered_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);

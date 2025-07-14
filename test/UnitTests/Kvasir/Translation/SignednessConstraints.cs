@@ -4,9 +4,9 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.Globals;
-using static UT.Kvasir.Translation.SignednessConstraints.IsPositive;
 using static UT.Kvasir.Translation.SignednessConstraints.IsNegative;
 using static UT.Kvasir.Translation.SignednessConstraints.IsNonZero;
+using static UT.Kvasir.Translation.SignednessConstraints.IsPositive;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Constraints - Signedness")]
@@ -139,6 +139,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsPositive_LocalizationWithNumericKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Argonaut);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("DaysAtSea", ComparisonOperator.GT, 0UL).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsPositive_LocalizationWithNonNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Microscope);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Microscope` → ManufacturedOn")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsPositive_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -232,6 +264,39 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Lamp` → Power")
                 .WithPath("Unit")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Unit`")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsPositive_NestedLocalizationWithNumericKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(StockSplit);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Metadata.SharesOutstanding", ComparisonOperator.GT, 0UL).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsPositive_NestedLocalizationWithNonNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Famine);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Famine` → Dates")
+                .WithPath("End")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `Guid`")
                 .WithAnnotations("[Check.IsPositive]")
                 .EndMessage();
         }
@@ -519,6 +584,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsPositive_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Well);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Well` → Depth")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsPositive_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Diacritic);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Diacritic` → Name")
+                .WithProblem("the path \"Locale\" does not exist")
+                .WithAnnotations("[Check.IsPositive]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsPositive_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -698,6 +795,54 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNegative_LocalizationWithSignedNumericKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Snowman);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Rating", ComparisonOperator.LT, (short)0).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNegative_LocalizationWithUnsignedNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Tortellini);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Tortellini` → WeightPer")
+                .WithProblem("the annotation cannot be applied to a Field of unsigned numeric type `ulong`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNegative_LocalizationWithNonNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Quark);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Quark` → Name")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNegative_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -790,6 +935,56 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`AirBNB` → HouseAddress")
                 .WithPath("State")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `State`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNegative_NestedLocalizationWithSignedNumericKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(RapeKit);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("History.EvidenceGrade", ComparisonOperator.LT, (short)0).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNegative_NestedLocalizationWithUnsignedNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(LogicPuzzle);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LogicPuzzle` → SolveRecords")
+                .WithPath("AverageSolveTime")
+                .WithProblem("the annotation cannot be applied to a Field of unsigned numeric type `ulong`")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNegative_NestedLocalizationWithNonNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Rainbow);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Rainbow` → ColorScheme")
+                .WithPath("Gradient")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
                 .WithAnnotations("[Check.IsNegative]")
                 .EndMessage();
         }
@@ -1075,6 +1270,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNegative_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Jester);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Jester` → Commissioned")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNegative_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Reservation);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Reservation` → Tribe")
+                .WithProblem("the path \"Value\" does not exist")
+                .WithAnnotations("[Check.IsNegative]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNegative_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1240,6 +1467,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsNonZero_LocalizationWithNumericKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Plumber);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("YelpRating", ComparisonOperator.NE, (short)0).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNonZero_LocalizationWithNonNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(EggRoll);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`EggRoll` → Cost")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsNonZero_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1365,6 +1624,40 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Galaxy` → Discovery")
                 .WithPath("Astronomer")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Person`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNonZero_NestedLocalizationWithNumericKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Megafauna);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Measurements.Height", ComparisonOperator.NE, 0UL).And
+                .HaveConstraint("Measurements.Weight", ComparisonOperator.NE, 0UL).And
+                .HaveNoOtherConstraints();
+            translation.Localizations[0].Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsNonZero_NestedLocalizationWithNonNumericKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(VenusFlyTrap);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`VenusFlyTrap` → Taxonomy")
+                .WithPath("Common")
+                .WithProblem("the annotation cannot be applied to a Field of non-numeric type `string`")
                 .WithAnnotations("[Check.IsNonZero]")
                 .EndMessage();
         }
@@ -1617,6 +1910,38 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`GarbageTruck` → <synthetic> `RouteStops`")
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNonZero_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Imam);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Imam` → Ordination")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNonZero]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNonZero_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Haberdashery);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Haberdashery` → Rating")
+                .WithProblem("the path \"Locale\" does not exist")
                 .WithAnnotations("[Check.IsNonZero]")
                 .EndMessage();
         }

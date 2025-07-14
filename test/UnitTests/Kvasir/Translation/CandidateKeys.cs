@@ -2,8 +2,8 @@
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.CandidateKeys;
+using static UT.Kvasir.Translation.Globals;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Candidate Keys")]
@@ -401,6 +401,39 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherCandidateKeys();
         }
 
+        [TestMethod] public void LocalizationInCandidateKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ToDoList);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveAnonymousCandidateKey().OfFields(
+                    "Deadline"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
+        [TestMethod] public void NestedLocalizationInCandidateKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Hexagon);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveCandidateKey("Center").OfFields(
+                    "CenterPoint.X",
+                    "CenterPoint.Y"
+                ).And
+                .HaveNoOtherCandidateKeys();
+        }
+
         [TestMethod] public void ScalarAndNestedFieldsInSameCandidateKey() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -647,6 +680,38 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`LimboCompetition` → <synthetic> `Heights`")
                 .WithProblem("the annotation cannot be applied to a property of Relation type `IReadOnlyRelationMap<string, float>`")
+                .WithAnnotations("[Unique]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(GameChanger);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`GameChanger` → AirDate")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Unique]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Ramen);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Ramen` → Name")
+                .WithProblem("the path \"Value\" does not exist")
                 .WithAnnotations("[Unique]")
                 .EndMessage();
         }

@@ -35,7 +35,6 @@ namespace Kvasir.Reconstitution {
             Debug.Assert(ctor.ReflectedType is not null);
             Debug.Assert(argumentCreators is not null);
             Debug.Assert(argumentCreators.Count() == ctor.GetParameters().Length);
-            Debug.Assert(argumentCreators.All((i, c) => c.ResultType.IsInstanceOf(ctor.GetParameters()[i].ParameterType)));
 
             constructFromAllNulls_ = allowAllNulls;
             constructor_ = ctor;

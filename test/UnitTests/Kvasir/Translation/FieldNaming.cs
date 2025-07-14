@@ -606,6 +606,54 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void ChangeNameOfLocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Shiva);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("Decedent").OfTypeText().BeingNonNullable().And
+                .HaveField("ShivaAddress").OfTypeText().BeingNonNullable().And
+                .HaveField("Date").OfTypeDate().BeingNonNullable().And
+                .HaveField("IsBuffet").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Attendees").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Judaism").OfTypeEnumeration(
+                    Shiva.Denomination.Reform,
+                    Shiva.Denomination.Conservative,
+                    Shiva.Denomination.Orthodox,
+                    Shiva.Denomination.Haredi,
+                    Shiva.Denomination.Secular
+                ).BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void ChangeNameOfNestedLocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BollywoodMovie);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("IMDbID").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("DanceNumbers").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("DirectorsGuild").OfTypeText().BeingNonNullable().And
+                .HaveField("FilmDirector.Name").OfTypeText().BeingNonNullable().And
+                .HaveField("FilmDirector.DirectorNumber").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("RuntimeMinutes").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Year").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("Budget").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("BoxOffice").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("StarsShahRukhKhan").OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void NameChangeOnAggregateNestedFieldOverridesOriginalNameChange() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -729,6 +777,26 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void NameChangeOnNestedLocalizationOverridesOriginalNameChange() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MovingCompany);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Company.License").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Trademark").OfTypeText().BeingNonNullable().And
+                .HaveField("Founding").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Employees").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("FleetSize").OfTypeUInt16().BeingNonNullable().And
+                .HaveField("YearlyRevenue").OfTypeDecimal().BeingNonNullable().And
+                .HaveNoOtherFields();
         }
 
         [TestMethod] public void MultipleNameChangesOnNestedProperty_IsError() {
@@ -938,6 +1006,38 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InvalidPathException>()
                 .WithLocation("`Yeshiva` → <synthetic> `Students`")
                 .WithProblem("the path \"Yeshiva.City\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Slushy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Slushy` → Flavor")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Name]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Spoonerism);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Spoonerism` → SpoonerizedText")
+                .WithProblem("the path \"Locale\" does not exist")
                 .WithAnnotations("[Name]")
                 .EndMessage();
         }

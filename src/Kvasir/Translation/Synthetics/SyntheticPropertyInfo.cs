@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Kvasir.Translation {
     /// <summary>
-    ///   The reflection representation of a property on a <see cref="SyntheticType"/>.
+    ///   The reflection representation of a property that doesn't actually exist in the CLR.
     /// </summary>
     internal sealed partial class SyntheticPropertyInfo : PropertyInfo {
         /// <inheritdoc/>
@@ -37,7 +37,7 @@ namespace Kvasir.Translation {
         ///   The <see cref="Name"/> of the property.
         /// </param>
         /// <param name="source">
-        ///   The <see cref="SyntheticType"/> on which the property resides.
+        ///   The <see cref="Type"/> on which the property resides (even though it doesn't exist).
         /// </param>
         /// <param name="propertyType">
         ///   The <see cref="PropertyType">type</see> of the property.
@@ -45,7 +45,7 @@ namespace Kvasir.Translation {
         /// <param name="annotations">
         ///   The set of <see cref="Attribute">annotations</see> applied to the property, in any order.
         /// </param>
-        public SyntheticPropertyInfo(string name, SyntheticType source, Type propertyType, IEnumerable<Attribute> annotations) {
+        public SyntheticPropertyInfo(string name, Type source, Type propertyType, IEnumerable<Attribute> annotations) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(source is not null);
             Debug.Assert(propertyType is not null);

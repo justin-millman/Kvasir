@@ -43,10 +43,13 @@ namespace Kvasir.Translation {
         /// <param name="source">
         ///   The source <see cref="Context"/>.
         /// </param>
-        private Context(Context source) {
+        /// <param name="frozen">
+        ///   Whether or not the new <see cref="Context"/> should be frozen (i.e. immutable).
+        /// </param>
+        private Context(Context source, bool frozen) {
             Debug.Assert(source is not null);
 
-            frozen_ = true;
+            frozen_ = frozen;
             initialType_ = source.initialType_;
             history_ = new List<PropertyInfo>(source.history_);
             current_ = source.current_;
@@ -54,13 +57,23 @@ namespace Kvasir.Translation {
         }
 
         /// <summary>
-        ///   Creates a frozen (i.e. immutable) copy of this <see cref="Context"/>.
+        ///   Constructs a non-frozen (i.e. mutable) copy of another <see cref="Context"/>.
+        /// </summary>
+        /// <returns>
+        ///   A deep copy of this <see cref="Context"/> that can be pushed onto and/or popped from
+        /// </returns>
+        public Context Clone() {
+            return new Context(this, frozen: false);
+        }
+
+        /// <summary>
+        ///   Creates a copy of this <see cref="Context"/>.
         /// </summary>
         /// <returns>
         ///   A deep copy of this <see cref="Context"/> that cannot be pushed onto or popped from.
         /// </returns>
         public Context Freeze() {
-            return new Context(this);
+            return new Context(this, frozen: true);
         }
 
         /// <summary>
@@ -143,6 +156,36 @@ namespace Kvasir.Translation {
                 // Context. As such, there should not be a Handle to unwind at that point in the stack.
                 Debug.Assert(false);
             }
+        }
+
+        /// <summary>
+        ///   Concatenates two <see cref="Context">Contexts</see>.
+        /// </summary>
+        /// <param name="suffix">
+        ///   The <see cref="Context"/> to be appended onto this one.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="Context"/> consisting of the state of the current one followed by the state of
+        ///   <paramref name="suffix"/>.
+        /// </returns>
+        public Context Concat(Context suffix) {
+            Debug.Assert(suffix is not null);
+            Context result = Clone();
+
+            if (current_.HasValue) {
+                result.Push(suffix.initialType_);
+                result = result.Clone();
+            }
+
+            foreach (var property in suffix.history_) {
+                result.Push(property);
+                result.Push(property.PropertyType);
+                result = result.Clone();
+            }
+
+            suffix.current_.MatchSome(p => { result.Push(p); result = result.Clone(); });
+
+            return result;
         }
 
         /// <summary>
