@@ -949,7 +949,7 @@ namespace UT.Kvasir.Translation {
             // Arrange
             var existentialist = new Existentialist() {
                 Name = "Jean-Paul Sartre",
-                DoctoralTheses = null,
+                DoctoralTheses = null!,
                 DateOfBirth = new DateTime(1905, 6, 21),
                 DateOfDeath = new DateTime(1980, 4, 15),
                 ExistentialSchool = "Phenomenlogy"
@@ -973,7 +973,7 @@ namespace UT.Kvasir.Translation {
                 BirthName = null,
                 BirthComm = null,
                 Rings = 10,
-                Appearances = null,
+                Appearances = null!,
                 AtNodeStation = false
             };
 

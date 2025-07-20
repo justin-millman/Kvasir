@@ -227,6 +227,20 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void NullableRelation_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Forecast);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Forecast` → <synthetic> `Meteorologists`")
+                .WithProblem("a property of Relation type cannot be nullable");
+        }
+
         [TestMethod] public void RelationWithNullableElements() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -248,25 +262,6 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherForeignKeys();
             translation.Relations[1].Table.Should()
                 .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
-                .HaveField("Item").OfTypeText().BeingNullable().And
-                .HaveNoOtherFields().And
-                .HaveForeignKey("PostOffice.ID")
-                    .Against(translation.Principal.Table)
-                    .WithOnDeleteBehavior(OnDelete.Cascade)
-                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
-                .HaveNoOtherForeignKeys();
-            translation.Relations[2].Table.Should()
-                .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
-                .HaveField("Item.Number").OfTypeText().BeingNullable().And
-                .HaveField("Item.State").OfTypeText().BeingNullable().And
-                .HaveNoOtherFields().And
-                .HaveForeignKey("PostOffice.ID")
-                    .Against(translation.Principal.Table)
-                    .WithOnDeleteBehavior(OnDelete.Cascade)
-                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
-                .HaveNoOtherForeignKeys();
-            translation.Relations[3].Table.Should()
-                .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
                 .HaveField("Key").OfTypeInt16().BeingNonNullable().And
                 .HaveField("Value").OfTypeText().BeingNullable().And
                 .HaveNoOtherFields().And
@@ -275,9 +270,9 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
-            translation.Relations[4].Table.Should()
+            translation.Relations[2].Table.Should()
                 .HaveField("PostOffice.ID").OfTypeGuid().BeingNonNullable().And
-                .HaveField("Key").OfTypeDateTime().BeingNullable().And
+                .HaveField("Key").OfTypeDateTime().BeingNonNullable().And
                 .HaveField("Value.StampID").OfTypeGuid().BeingNullable().And
                 .HaveField("Value.Price").OfTypeDecimal().BeingNullable().And
                 .HaveNoOtherFields().And
@@ -286,6 +281,48 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void RelationListWithNullableElement_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Hibakusha);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Hibakusha` → <synthetic> `Conditions` → Item")
+                .WithProblem("the element type of an unordered list- or set-like Relation cannot be nullable");
+        }
+
+        [TestMethod] public void RelationSetWithNullableElement_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Earthworks);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Earthworks` → <synthetic> `Locations` → Item")
+                .WithProblem("the element type of an unordered list- or set-like Relation cannot be nullable");
+        }
+
+        [TestMethod] public void RelationMapWithNullableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Naiad);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Naiad` → <synthetic> `Relationships` → Key")
+                .WithProblem("the key type of a map-like Relation cannot be nullable");
         }
 
         [TestMethod] public void RelationElementNullableAggregateContainsOnlyNullableFields_IsError() {

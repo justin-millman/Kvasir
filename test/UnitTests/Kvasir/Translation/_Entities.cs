@@ -399,19 +399,6 @@ namespace UT.Kvasir.Translation {
             public RelationOrderedList<string> LinkAgainst { get; init; } = new();
         }
 
-        // Test Scenario: Nullable Relations of Non-Nullable Elements (✓recognized✓)
-        public class Forecast {
-            public enum Extremity { Hurricane, Tornado, Thunderstorm, Blizzard, Hailstorm, Sandstorm }
-            public record struct SingleDay(DateTime Date, float HighTemp, float LowTemp, double ChanceRain);
-
-            [PrimaryKey] public string City { get; set; } = "";
-            public ulong PersonsImpacted { get; set; }
-            public RelationList<SingleDay>? Dailies { get; init; }
-            public RelationSet<string>? Meteorologists { get; init; }
-            public RelationMap<string, bool>? DataSources { get; init; }
-            public RelationOrderedList<Extremity>? ExtremeWeather { get; init; }
-        }
-
         // Test Scenario: Read-Only Relations (✓recognized✓)
         public class CivVIDistrict {
             public enum Terrain { Flat, Grasslands, Marsh, Floodplains, Hills, Desert, Coast, Ocean, Reef, Lake, Mountain }
@@ -1822,7 +1809,19 @@ namespace UT.Kvasir.Translation {
             public double AverageBatteryLife { get; set; }
         }
 
-        // Test Scenario: Relations with Nullable Element Types (✓become nullable✓)
+        // Test Scenario: Nullable Relation (✗not permitted✗)
+        public class Forecast {
+            public enum Extremity { Hurricane, Tornado, Thunderstorm, Blizzard, Hailstorm, Sandstorm }
+            public record struct SingleDay(DateTime Date, float HighTemp, float LowTemp, double ChanceRain);
+
+            [PrimaryKey] public string City { get; set; } = "";
+            public ulong PersonsImpacted { get; set; }
+            public RelationList<SingleDay> Dailies { get; init; } = new();
+            public RelationSet<string>? Meteorologists { get; init; }
+            public RelationOrderedList<Extremity> ExtremeWeather { get; init; } = new();
+        }
+
+        // Test Scenario: Relations with Nullable Element Types (✓respected✓)
         public class PostOffice {
             public record struct LicensePlate(string Number, string State);
             public record struct Stamp(Guid StampID, decimal Price);
@@ -1831,10 +1830,42 @@ namespace UT.Kvasir.Translation {
             public string Address { get; set; } = "";
             public ulong MailVolume { get; set; }
             public RelationMap<short, string?> POBoxes { get; } = new();
-            public RelationSet<string?> Employees { get; } = new();
-            public RelationList<LicensePlate?> MailTrucks { get; } = new();
-            public RelationMap<DateTime?, Stamp?> Stamps { get; } = new();
+            public RelationMap<DateTime, Stamp?> Stamps { get; } = new();
             public RelationOrderedList<decimal?> Budgets { get; } = new();
+        }
+
+        // Test Scenario: RelationList with Nullable Element (✗illegal✗)
+        public class Hibakusha {
+            [Flags] public enum Event { Hiroshima = 1, Nagasaki = 2, Fukushima = 4 }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateOnly DateOfBirth { get; set; }
+            public Event EventsSurvived { get; set; }
+            public IReadOnlyRelationList<string?> Conditions { get; init; } = new RelationList<string?>();
+        }
+
+        // Test Scenario: RelationSet with Nullable Element (✗illegal✗)
+        public class Earthworks {
+            [Flags] public enum Kind { Mound = 1, HillFort = 2, Enclosure = 4, Barrow = 8, Tumulus = 16, Dyke = 32, Geoglyph = 64 }
+
+            public record struct Coordinate(float Latitude, float Longitude);
+
+            [PrimaryKey] public Guid AnthropologicalIdentifier { get; set; }
+            public string? Culture { get; set; }
+            public RelationSet<Coordinate?> Locations { get; init; } = new();
+            public double TotalArea { get; set; }
+            public Kind Varieties { get; set; }
+        }
+
+        // Test Scenario: RelationMap with Nullable Key (✗illegal✗)
+        public class Naiad {
+            public enum Source { Fountain, Spring, Brook, Stream, Well, Other }
+
+            [PrimaryKey] public string Name { get; set; }
+            [PrimaryKey] public byte Discriminator { get; set; }
+            public Source FreshwaterSource { get; set; }
+            public RelationMap<string?, string?> Relationships { get; init; }
+            public string? DeityConsort { get; set; }
         }
 
         // Test Scenario: Relation with Nullable Aggregate Element Type with Only Nullable Fields (✗ambiguous✗)
@@ -1846,17 +1877,17 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Point Vertex { get; set; }
             [PrimaryKey] public float Eccentricity { get; set; }
             public Direction Concavity { get; set; }
-            public RelationSet<MaybePoint?> Points { get; } = new();
+            public RelationOrderedList<MaybePoint?> Points { get; } = new();
         }
 
-        // Test Scenario: Relation Property Marked as [NonNullable] (✓redundant✓)
+        // Test Scenario: Relation Property Marked as [NonNullable] (✓becomes non-nullable✓)
         public class Squintern {
             public record struct Episode(uint Season, ushort Number, string Title);
 
             [PrimaryKey] public string FirstName { get; set; } = "";
             [PrimaryKey] public string LastName { get; set; } = "";
             public bool IsFemale { get; set; }
-            [NonNullable] public RelationList<Episode> Appearances { get; } = new();
+            [NonNullable] public RelationList<Episode>? Appearances { get; } = new();
             public bool HasTemperancesApproval { get; set; }
         }
 
@@ -14233,7 +14264,7 @@ namespace UT.Kvasir.Translation {
             }
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
-            public RelationOrderedList<Thesis>? DoctoralTheses { get; init; }
+            public RelationOrderedList<Thesis> DoctoralTheses { get; init; }
             [Column(1)] public DateTime DateOfBirth { get; set; }
             [Column(2)] public DateTime? DateOfDeath { get; set; }
             [Column(3)] public string ExistentialSchool { get; set; } = "";
@@ -14247,7 +14278,7 @@ namespace UT.Kvasir.Translation {
             [Column(1)] public string? BirthName { get; set; }
             [Column(2)] public string? BirthComm { get; set; }
             [Column(3)] public byte Rings { get; set; }
-            public RelationMap<Book, bool>? Appearances { get; init; }
+            public RelationMap<Book, bool> Appearances { get; init; }
             [Column(4)] public bool AtNodeStation { get; set; }
         }
 

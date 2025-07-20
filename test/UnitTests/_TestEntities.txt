@@ -400,6 +400,7 @@ Dwarf
 E-Mail
 Earring
 Earthquake
+Earthworks
 Ecumenical Council
 Edible Arrangement
 Egyptian God
@@ -554,6 +555,7 @@ Helicopter
 Hemalurgy
 Hepatitis
 Hercule Poirot Mystery
+Hibakusha
 Hieroglyph
 High Heel
 High School Musical
@@ -786,6 +788,7 @@ Mutual Fund
 Myers-Briggs Type Indicator
 Mythbusting
 Nachos
+Naiad
 National Anthem
 National Monument
 National Park
