@@ -57,7 +57,7 @@ namespace Kvasir.Relations {
     /// <seealso cref="RelationSet{T}"/>
     /// <seealso cref="RelationMap{TKey, TValue}"/>
     public sealed class RelationOrderedList<T> : IList, IList<T>, IReadOnlyList<T>, IReadOnlyRelationOrderedList<T>,
-        IRelation where T : notnull {
+        IRelation {
 
         // *************************************** PROPERTIES ***************************************
 
@@ -1154,7 +1154,7 @@ namespace Kvasir.Relations {
     /// <typeparam name="T">
     ///   The type of element to be stored in the collection.
     /// </typeparam>
-    public interface IReadOnlyRelationOrderedList<out T> : IReadOnlyList<T>, IRelation where T : notnull {
+    public interface IReadOnlyRelationOrderedList<out T> : IReadOnlyList<T>, IRelation {
         /// <inheritdoc/>
         static Type IRelation.ConnectionType => typeof(KeyValuePair<uint, T>);
     }

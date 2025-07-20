@@ -3,6 +3,7 @@ using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Extraction;
 using Kvasir.Reconstitution;
+using Kvasir.Relations;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -152,6 +153,10 @@ namespace Kvasir.Translation {
         ///   Entity's Principal Table or by some other Relation Table (including another Relation Table "owned" by
         ///   <paramref name="source"/>).
         /// </exception>
+        /// <exception cref="InvalidNativeNullabilityException">
+        ///   if any of the Relation-type properties of <paramref name="source"/> are natively nullable and do not have
+        ///   a <c>[NonNullable]</c> annotation applied.
+        /// </exception>
         private List<RelationTableDef> TranslateRelationTables(Type source) {
             Debug.Assert(source is not null && source.IsClass);
             Debug.Assert(principalTableCache_.ContainsKey(source));
@@ -168,6 +173,32 @@ namespace Kvasir.Translation {
                 var property = tracker.Property;
                 var syntheticType = SyntheticType.MakeSyntheticType(source, tracker);
                 var context = new Context(syntheticType);
+
+                // A Relation-type property cannot be natively nullable unless it has a [NonNullable] annotation
+                // attached
+                if (syntheticType.IsNativelyNullable && !property.HasAttribute<NonNullableAttribute>()) {
+                    throw new InvalidNativeNullabilityException(context, "a property of Relation type");
+                }
+
+                // This isn't the best, but it will have to do. To indicate that a particular Relation property should
+                // cannot be null, we insinuate that it is [NonNullable]. Then, if it is a natively nullable, it comes
+                // through as [Nullable]. Therefore, if both are present, then we have a problem, and we have to catch
+                // it here to avoid an annotation conflict. And, to provide the description, we have to switch over the
+                // field names.
+                foreach (var prop in syntheticType.GetProperties(PROPERTY_FLAGS).OrderBy(f => f.Name)) {
+                    using var guard = context.Push(prop);
+                    if (prop.HasAttribute<NullableAttribute>() && prop.HasAttribute<NonNullableAttribute>()) {
+                        if (prop.Name == "Item") {
+                            throw new InvalidNativeNullabilityException(context, "the element type of an unordered list- or set-like Relation");
+                        }
+                        else if (prop.Name == "Key") {
+                            throw new InvalidNativeNullabilityException(context, "the key type of a map-like Relation");
+                        }
+                        else {
+                            throw new UnreachableException($"If block over non-nullable Relation fields exhausted");
+                        }
+                    }
+                }
 
                 var sourceIsPreDefined = IsPreDefined(source);
                 var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, false, sourceIsPreDefined));
@@ -213,7 +244,7 @@ namespace Kvasir.Translation {
                     repopulationPlan = new RelationRepopulationPlan(extractRelationProperty, elementReconstitutor, repopulator);
                 }
 
-                var def = new RelationTableDef(table, extractor, repopulationPlan);
+                var def = new RelationTableDef(table, extractor, repopulationPlan!);
                 tableNameCache_.Add(tableName, syntheticType);
                 relationTables.Add(def);
             }

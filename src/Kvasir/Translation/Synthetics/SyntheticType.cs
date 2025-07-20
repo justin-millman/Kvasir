@@ -23,6 +23,12 @@ namespace Kvasir.Translation {
         /// </summary>
         public Type ActualType { get; }
 
+        /// <summary>
+        ///   <see langword="true"/> if the <see cref="SyntheticType"/> is sourced from a property that is natively
+        ///   nullable; otherwise, <see langword="false"/>
+        /// </summary>
+        public bool IsNativelyNullable { get; }
+
         /// <inheritdoc/>
         public sealed override Assembly Assembly { get; }
 
@@ -61,8 +67,12 @@ namespace Kvasir.Translation {
         /// <param name="actualType">
         ///   The <see cref="Type"/> that the new <see cref="SyntheticType"/> is a façade for.
         /// </param>
+        /// <param name="nativelyNullable">
+        ///   Whether or not the new <see cref="SyntheticType"/> is considered
+        ///   <see cref="IsNativelyNullable">natively nullable</see>.
+        /// </param>
         /// <seealso cref="MakeSyntheticType(Type, RelationTracker)"/>
-        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties, Type actualType) {
+        private SyntheticType(string name, string ns, Assembly assmebly, PropertyGenerator properties, Type actualType, bool nativelyNullable) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(ns is not null && ns != "");
             Debug.Assert(assmebly is not null);
@@ -72,6 +82,7 @@ namespace Kvasir.Translation {
             Name = name;
             Namespace = ns;
             ActualType = actualType;
+            IsNativelyNullable = nativelyNullable;
             Assembly = assmebly;
             properties_ = properties(this).ToList();
 
@@ -152,21 +163,21 @@ namespace Kvasir.Translation {
                 props.Add((entity.Name, entity, Metadata.ColumnZero));
                 // Item
                 var itemNullable = nullabilityOf(0);
-                props.Add(("Item", elementType, itemNullable));
+                props.Add(("Item", elementType, itemNullable | Metadata.CannotBeNull));
             }
             else if (interfaces.Contains(typeof(IReadOnlySet<>))) {
                 // Entity
                 props.Add((entity.Name, entity, Metadata.ColumnZero | Metadata.Unique));
                 // Item
                 var itemNullable = nullabilityOf(0);
-                props.Add(("Item", elementType, itemNullable | Metadata.Unique));
+                props.Add(("Item", elementType, itemNullable | Metadata.Unique | Metadata.CannotBeNull));
             }
             else if (interfaces.Contains(typeof(IReadOnlyRelationOrderedList<>))) {
                 // Entity
                 props.Add((entity.Name, entity, Metadata.ColumnZero | Metadata.Unique));
                 // Index
                 var indexType = elementType.GetProperty("Key", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
-                props.Add(("Index", indexType, Metadata.Unique));
+                props.Add(("Index", indexType, Metadata.Unique | Metadata.CannotBeNull));
                 // Item
                 var itemNullable = nullabilityOf(0);
                 var itemType = elementType.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
@@ -175,11 +186,11 @@ namespace Kvasir.Translation {
             else if (interfaces.Contains(typeof(IReadOnlyRelationMap<,>))) {
                 // Entity
                 props.Add((entity.Name, entity, Metadata.ColumnZero | Metadata.Unique));
-                // Index
+                // Key
                 var keyNullable = nullabilityOf(0);
                 var keyType = elementType.GetProperty("Key", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
-                props.Add(("Key", keyType, keyNullable | Metadata.Unique));
-                // Item
+                props.Add(("Key", keyType, keyNullable | Metadata.Unique | Metadata.CannotBeNull));
+                // Value
                 var valueNullable = nullabilityOf(1);
                 var valueType = elementType.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance)!.PropertyType;
                 props.Add(("Value", valueType, valueNullable));
@@ -209,9 +220,13 @@ namespace Kvasir.Translation {
                     if (p.Flags.HasFlag(Metadata.ColumnZero)) {
                         annotations = annotations.Append(new ColumnAttribute(0));
                     }
+                    if (p.Flags.HasFlag(Metadata.CannotBeNull)) {
+                        annotations = annotations.Append(new NonNullableAttribute());
+                    }
                     return new SyntheticPropertyInfo(p.Name, t, p.Type, annotations);
                 }),
-                actualType: elementType
+                actualType: elementType,
+                nativelyNullable: nullability.ReadState != NullabilityState.NotNull
             );
         }
 
@@ -247,7 +262,7 @@ namespace Kvasir.Translation {
 
         private readonly IReadOnlyList<SyntheticPropertyInfo> properties_;
         private readonly ConstructorInfo[] constructors_;
-        [Flags] private enum Metadata { None = 0, Nullable = 1, Unique = 2, ColumnZero = 4 }
+        [Flags] private enum Metadata { None = 0, Nullable = 1, Unique = 2, ColumnZero = 4, CannotBeNull = 8 }
     }
 
     // The functions implemented in this partial definition unconditionally throw NotSupportedExceptions, as they are

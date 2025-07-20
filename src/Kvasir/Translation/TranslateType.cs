@@ -96,8 +96,7 @@ namespace Kvasir.Translation {
                 }
             }
 
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
-            foreach (var property in source.GetProperties(flags).OrderBy(f => f.Name)) {
+            foreach (var property in source.GetProperties(PROPERTY_FLAGS).OrderBy(f => f.Name)) {
                 using var propGuard = context.Push(property);
                 var propType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 var propCategory = property.TranslationCategory();
@@ -198,5 +197,12 @@ namespace Kvasir.Translation {
             // Key extraction due to the use of identity equality.
             return translation.Select(g => g.Clone()).ToList();
         }
+
+
+        private static readonly BindingFlags PROPERTY_FLAGS =
+            BindingFlags.Public |
+            BindingFlags.NonPublic |
+            BindingFlags.Instance |
+            BindingFlags.Static;
     }
 }

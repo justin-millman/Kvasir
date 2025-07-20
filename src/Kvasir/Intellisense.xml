@@ -8051,6 +8051,10 @@
               Entity's Principal Table or by some other Relation Table (including another Relation Table "owned" by
               <paramref name="source"/>).
             </exception>
+            <exception cref="T:Kvasir.Translation.InvalidNativeNullabilityException">
+              if any of the Relation-type properties of <paramref name="source"/> are natively nullable and do not have
+              a <c>[NonNullable]</c> annotation applied.
+            </exception>
         </member>
         <member name="M:Kvasir.Translation.Translator.GetTableName(Kvasir.Translation.Context,System.Type)">
             <summary>
@@ -9117,6 +9121,23 @@
             </param>
             <param name="annotation">
               The invalid <see cref="T:Kvasir.Annotations.UniqueAttribute">[Unique]</see> annotation.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation.InvalidNativeNullabilityException">
+            <summary>
+              An exception that is raised when a property that cannot be natively nullable is, and the property is not
+              marked with a <c>[NonNullable]</c> annotation.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidNativeNullabilityException.#ctor(Kvasir.Translation.Context,System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.NotRelationException"/>.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> in which the invalid natively nullable property was encountered.
+            </param>
+            <param name="description">
+              A brief description of what the property that cannot be natively nullable actually is.
             </param>
         </member>
         <member name="T:Kvasir.Translation.InvalidPathException">
@@ -11359,6 +11380,12 @@
               The <see cref="T:System.Type"/> that the <see cref="T:Kvasir.Translation.SyntheticType"/> is masquerading as.
             </summary>
         </member>
+        <member name="P:Kvasir.Translation.SyntheticType.IsNativelyNullable">
+            <summary>
+              <see langword="true"/> if the <see cref="T:Kvasir.Translation.SyntheticType"/> is sourced from a property that is natively
+              nullable; otherwise, <see langword="false"/>
+            </summary>
+        </member>
         <member name="P:Kvasir.Translation.SyntheticType.Assembly">
             <inheritdoc/>
         </member>
@@ -11377,7 +11404,7 @@
         <member name="P:Kvasir.Translation.SyntheticType.UnderlyingSystemType">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.SyntheticType.#ctor(System.String,System.String,System.Reflection.Assembly,System.Func{Kvasir.Translation.SyntheticType,System.Collections.Generic.IEnumerable{Kvasir.Translation.SyntheticPropertyInfo}},System.Type)">
+        <member name="M:Kvasir.Translation.SyntheticType.#ctor(System.String,System.String,System.Reflection.Assembly,System.Func{Kvasir.Translation.SyntheticType,System.Collections.Generic.IEnumerable{Kvasir.Translation.SyntheticPropertyInfo}},System.Type,System.Boolean)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.SyntheticType"/>.
             </summary>
@@ -11397,6 +11424,10 @@
             </param>
             <param name="actualType">
               The <see cref="T:System.Type"/> that the new <see cref="T:Kvasir.Translation.SyntheticType"/> is a façade for.
+            </param>
+            <param name="nativelyNullable">
+              Whether or not the new <see cref="T:Kvasir.Translation.SyntheticType"/> is considered
+              <see cref="P:Kvasir.Translation.SyntheticType.IsNativelyNullable">natively nullable</see>.
             </param>
             <seealso cref="M:Kvasir.Translation.SyntheticType.MakeSyntheticType(System.Type,Kvasir.Translation.RelationTracker)"/>
         </member>
