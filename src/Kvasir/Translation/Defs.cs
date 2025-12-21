@@ -39,7 +39,9 @@ namespace Kvasir.Translation {
     /// </summary>
     /// 
     /// <param name="Table">The schema model for the Localization Table.</param>
+    /// <param name="Extractor">The plan that can extract element-specific data to be stored in the Localization Table.</param>
     internal sealed record class LocalizationDef(
-        ITable Table
+        ITable Table,
+        LocalizationExtractionPlan Extractor
     );
 }

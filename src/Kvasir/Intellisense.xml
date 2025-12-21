@@ -1485,6 +1485,38 @@
         <member name="M:Kvasir.Extraction.ISingleExtractor.Kvasir#Extraction#IMultiExtractor#ExtractFrom(System.Object)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Extraction.LocalizationExtractionPlan">
+            <summary>
+              A plan that extracts rows of database values from one or more <see cref="T:Kvasir.Localization.ILocalization">Localizations</see> to
+              be inserted, updated, and/or deleted from a back-end table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.LocalizationExtractionPlan.SourceType">
+            <summary>
+              The <see cref="T:System.Type"/> of object from which this <see cref="T:Kvasir.Extraction.LocalizationExtractionPlan"/> extracts values.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Extraction.LocalizationExtractionPlan.ExtractFrom(System.Object)">
+            <summary>
+              Run the extraction logic over a CLR source object, producing <see cref="T:Kvasir.Extraction.RelationData"/>.
+            </summary>
+            <param name="source">
+              The CLR source object.
+            </param>
+            <returns>
+              The <see cref="T:Kvasir.Extraction.RelationData"/> containing the insertions, modifications, and deletions of the
+              <see cref="T:Kvasir.Localization.ILocalization">Localization</see> extracted from <paramref name="source"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Extraction.LocalizationExtractionPlan.Canonicalize(System.Object)">
+            <summary>
+              Canonicalize the target <see cref="T:Kvasir.Localization.ILocalization">Localization(s)</see> on a CLR source.
+            </summary>
+            <param name="source">
+              The CLR source object.
+            </param>
+            <seealso cref="M:Kvasir.Relations.IRelation.Canonicalize"/>
+        </member>
         <member name="T:Kvasir.Extraction.ReadPropertyExtractor">
             <summary>
               A <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that produces its value by reading from a sequence of properties via
@@ -1556,12 +1588,14 @@
         </member>
         <member name="T:Kvasir.Extraction.RelationData">
             <summary>
-              A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
+              A triple of lists describing the data extracted <see cref="T:Kvasir.Extraction.RelationExtractionPlan">from a Relation</see> or
+              <see cref="T:Kvasir.Extraction.LocalizationExtractionPlan">from a Localization</see>.
             </summary>
         </member>
         <member name="M:Kvasir.Extraction.RelationData.#ctor(System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
-              A triple of lists describing the data <see cref="T:Kvasir.Extraction.RelationExtractionPlan">extracted from a Relation</see>.
+              A triple of lists describing the data extracted <see cref="T:Kvasir.Extraction.RelationExtractionPlan">from a Relation</see> or
+              <see cref="T:Kvasir.Extraction.LocalizationExtractionPlan">from a Localization</see>.
             </summary>
         </member>
         <member name="T:Kvasir.Localization.ILocalization">
@@ -1694,6 +1728,27 @@
               The collection of localized values, as a read-only mapping.
             </summary>
         </member>
+        <member name="M:Kvasir.Localization.Localization`3.Equals(Kvasir.Localization.Localization{`0,`1,`2})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.RemoveLocalization(`1)">
+            <summary>
+              Removes the localization entry for a particular locale
+            </summary>
+            <param name="locale">
+              The target locale.
+            </param>
+            <returns>
+              <see langword="true"/> if the element was successfully removed; otherwise, <see langword="false"/>. This
+              method also returns <see langword="false"/> if there is no localized value for <paramref name="locale"/>.
+            </returns>
+        </member>
         <member name="M:Kvasir.Localization.Localization`3.op_Implicit(Kvasir.Localization.Localization{`0,`1,`2})~`0">
             <summary>
               Implicitly converts a Localization to its localization key.
@@ -1704,6 +1759,42 @@
             <returns>
               The <see cref="P:Kvasir.Localization.Localization`3.Key">localization key</see> of <paramref name="localization"/>.
             </returns>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.op_Equality(Kvasir.Localization.Localization{`0,`1,`1},Kvasir.Localization.Localization{`0,`1,`2})">
+            <summary>
+              Equality Operator.
+            </summary>
+            <param name="lhs">
+              The left-hand operand.
+            </param>
+            <param name="rhs">
+              The right-hand operand.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+            <seealso cref="M:Kvasir.Localization.Localization`3.Equals(Kvasir.Localization.Localization{`0,`1,`2})"/>
+            <seealso cref="M:Kvasir.Localization.Localization`3.Equals(System.Object)"/>
+            <seealso cref="M:Kvasir.Localization.Localization`3.op_Inequality(Kvasir.Localization.Localization{`0,`1,`1},Kvasir.Localization.Localization{`0,`1,`2})"/>
+        </member>
+        <member name="M:Kvasir.Localization.Localization`3.op_Inequality(Kvasir.Localization.Localization{`0,`1,`1},Kvasir.Localization.Localization{`0,`1,`2})">
+            <summary>
+              Non-Equality Operator.
+            </summary>
+            <param name="lhs">
+              The left-hand operand.
+            </param>
+            <param name="rhs">
+              The right-hand operand.
+            </param>
+            <returns>
+              <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+              <see langword="false"/>.
+            </returns>
+            <seealso cref="M:Kvasir.Localization.Localization`3.Equals(Kvasir.Localization.Localization{`0,`1,`2})"/>
+            <seealso cref="M:Kvasir.Localization.Localization`3.Equals(System.Object)"/>
+            <seealso cref="M:Kvasir.Localization.Localization`3.op_Equality(Kvasir.Localization.Localization{`0,`1,`1},Kvasir.Localization.Localization{`0,`1,`2})"/>
         </member>
         <member name="P:Kvasir.Localization.Localization`3.Kvasir#Localization#ILocalization#Triplet">
             <inheritdoc/>
@@ -8778,16 +8869,21 @@
             </summary>
             
             <param name="Table">The schema model for the Localization Table.</param>
+            <param name="Extractor">The plan that can extract element-specific data to be stored in the Localization Table.</param>
         </member>
-        <member name="M:Kvasir.Translation.LocalizationDef.#ctor(Kvasir.Schema.ITable)">
+        <member name="M:Kvasir.Translation.LocalizationDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.LocalizationExtractionPlan)">
             <summary>
               The definition of a Field on an Entity that is a Localization.
             </summary>
             
             <param name="Table">The schema model for the Localization Table.</param>
+            <param name="Extractor">The plan that can extract element-specific data to be stored in the Localization Table.</param>
         </member>
         <member name="P:Kvasir.Translation.LocalizationDef.Table">
             <summary>The schema model for the Localization Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationDef.Extractor">
+            <summary>The plan that can extract element-specific data to be stored in the Localization Table.</summary>
         </member>
         <member name="T:Kvasir.Translation.EntityTranslation">
             <summary>

@@ -57,8 +57,9 @@ namespace Kvasir.Localization {
     /// <typeparam name="TValue">
     ///   The type of the localized values.
     /// </typeparam>
-    public abstract class Localization<TKey, TLocale, TValue> : ILocalization
-        where TKey : notnull where TLocale : notnull {
+    public abstract class Localization<TKey, TLocale, TValue> : ILocalization, IEquatable<Localization<TKey, TLocale, TValue>>
+        where TKey : notnull
+        where TLocale : notnull {
         
         /// <summary>
         ///   The localization key of the Localization.
@@ -124,6 +125,38 @@ namespace Kvasir.Localization {
         /// </summary>
         public IReadOnlyDictionary<TLocale, TValue> Localizations => Relation;
 
+        /// <inheritdoc/>
+        public bool Equals(Localization<TKey, TLocale, TValue>? rhs) {
+            if (rhs is null) {
+                return false;
+            }
+            return Key.Equals(rhs.Key);
+        }
+
+        /// <inheritdoc/>
+        public sealed override bool Equals(object? obj) {
+            return (obj is Localization<TKey, TLocale, TValue> loc) && Equals(loc);
+        }
+
+        /// <inheritdoc/>
+        public sealed override int GetHashCode() {
+            return Key.GetHashCode();
+        }
+
+        /// <summary>
+        ///   Removes the localization entry for a particular locale
+        /// </summary>
+        /// <param name="locale">
+        ///   The target locale.
+        /// </param>
+        /// <returns>
+        ///   <see langword="true"/> if the element was successfully removed; otherwise, <see langword="false"/>. This
+        ///   method also returns <see langword="false"/> if there is no localized value for <paramref name="locale"/>.
+        /// </returns>
+        protected bool RemoveLocalization(TLocale locale) {
+            return Relation.Remove(locale);
+        }
+
         /// <summary>
         ///   Implicitly converts a Localization to its localization key.
         /// </summary>
@@ -136,6 +169,46 @@ namespace Kvasir.Localization {
         public static implicit operator TKey(Localization<TKey, TLocale, TValue> localization) {
             Guard.Against.Null(localization);
             return localization.Key;
+        }
+
+        /// <summary>
+        ///   Equality Operator.
+        /// </summary>
+        /// <param name="lhs">
+        ///   The left-hand operand.
+        /// </param>
+        /// <param name="rhs">
+        ///   The right-hand operand.
+        /// </param>
+        /// <returns>
+        ///   <see langword="true"/> if <paramref name="lhs"/> is equal to <paramref name="rhs"/>; otherwise,
+        ///   <see langword="false"/>.
+        /// </returns>
+        /// <seealso cref="Equals(Localization{TKey, TLocale, TValue}?)"/>
+        /// <seealso cref="Equals(object?)"/>
+        /// <seealso cref="operator !=(Localization{TKey, TLocale, TLocale}, Localization{TKey, TLocale, TValue})"/>
+        public static bool operator==(Localization<TKey, TLocale, TLocale> lhs, Localization<TKey, TLocale, TValue> rhs) {
+            return lhs.Equals(rhs);
+        }
+
+        /// <summary>
+        ///   Non-Equality Operator.
+        /// </summary>
+        /// <param name="lhs">
+        ///   The left-hand operand.
+        /// </param>
+        /// <param name="rhs">
+        ///   The right-hand operand.
+        /// </param>
+        /// <returns>
+        ///   <see langword="true"/> if <paramref name="lhs"/> is not equal to <paramref name="rhs"/>; otherwise,
+        ///   <see langword="false"/>.
+        /// </returns>
+        /// <seealso cref="Equals(Localization{TKey, TLocale, TValue}?)"/>
+        /// <seealso cref="Equals(object?)"/>
+        /// <seealso cref="operator==(Localization{TKey, TLocale, TLocale}, Localization{TKey, TLocale, TValue})"/>
+        public static bool operator!=(Localization<TKey, TLocale, TLocale> lhs, Localization<TKey, TLocale, TValue> rhs) {
+            return lhs.Equals(rhs);
         }
 
         /// <inheritdoc/>

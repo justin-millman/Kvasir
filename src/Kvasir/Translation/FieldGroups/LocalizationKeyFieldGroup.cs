@@ -1,8 +1,8 @@
 ﻿using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Core;
 using Kvasir.Extraction;
-using Kvasir.Localization;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Optional;
@@ -81,11 +81,28 @@ namespace Kvasir.Translation {
                 throw new InvalidNativeNullabilityException(context, "the Localization Key type of a Localization");
             }
 
+            // Localization properties are not allowed to have [DataConverter] annotations applied, so we just have to
+            // extract out the data via a property read. However, if the Localization Key is an enumeration, we have to
+            // apply an automatic conversion to string.
             Extractor = new ReadPropertyExtractor(new PropertyChain(source).Append(metadata.KeyProperty));
-            var reconstitutionGroup = new SingleFieldGroup(context, metadata.KeyProperty);
-            reconstitutionGroup.SetColumn(context, 0);
-            var groups = Enumerable.Repeat(reconstitutionGroup, 1);
-            Creator = Option.Some<ICreator>(ReconstitutionHelper.MakeCreator(context, Source.PropertyType, groups, false));
+            if (KeyType.IsEnum) {
+                var toString = new EnumToStringConverter(KeyType);
+                Extractor = new ConvertingExtractor(Extractor, toString.ConverterImpl);
+            }
+
+            // First, if the Localization itself is [Calculated], then we have no Creator. If it isn't, we have to get a
+            // little creative. To reconstitute a Localization, we need the *name* of the source field but the *type* of
+            // the key. This allows authors to write their constructors expecting the Localization Key, which is what we
+            // want, since Localizations are init-only anyway. Since Localizations implicitly convert to their key type,
+            // this lets the system match against appropriate constructor argument that will match against an instance
+            // of an actual Localization.
+            Creator = Option.None<ICreator>();
+            if (!Source.HasAttribute<CalculatedAttribute>()) {
+                var reconstitutionGroup = new SingleFieldGroup(context, metadata.KeyProperty);
+                reconstitutionGroup.SetColumn(context, 0);
+                var groups = Enumerable.Repeat(reconstitutionGroup, 1);
+                Creator = Option.Some<ICreator>(ReconstitutionHelper.MakeCreator(context, Source.PropertyType, groups, false));
+            }
         }
 
         /// <summary>

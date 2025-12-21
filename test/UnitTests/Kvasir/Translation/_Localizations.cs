@@ -15,6 +15,7 @@ namespace UT.Kvasir.Translation {
                 get { return base[locale]; }
                 set { base[locale] = value; }
             }
+            public void Delocalize(Language locale) { base.RemoveLocalization(locale); }
         }
         public sealed class LocalizedNullableText : Localization<string, Language, string?> {
             public LocalizedNullableText(string key) : base(key) {}
@@ -39,6 +40,7 @@ namespace UT.Kvasir.Translation {
                 get { return base[locale]; }
                 set { base[locale] = value; }
             }
+            public void Delocalize(Calendar locale) { base.RemoveLocalization(locale); }
         }
         public sealed class LocalizedCurrency : Localization<string, string, decimal> {
             public LocalizedCurrency(string key) : base(key) {}
@@ -49,6 +51,10 @@ namespace UT.Kvasir.Translation {
         }
         public sealed class LocalizedRating : Localization<short, char, double> {
             public LocalizedRating(short key) : base(key) {}
+            public new double this[char locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
         }
     }
 }

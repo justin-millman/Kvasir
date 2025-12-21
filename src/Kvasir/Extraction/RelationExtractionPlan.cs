@@ -106,7 +106,8 @@ namespace Kvasir.Extraction {
     }
 
     /// <summary>
-    ///   A triple of lists describing the data <see cref="RelationExtractionPlan">extracted from a Relation</see>.
+    ///   A triple of lists describing the data extracted <see cref="RelationExtractionPlan">from a Relation</see> or
+    ///   <see cref="LocalizationExtractionPlan">from a Localization</see>.
     /// </summary>
     internal readonly record struct RelationData(
         IReadOnlyList<IReadOnlyList<DBValue>> Insertions,

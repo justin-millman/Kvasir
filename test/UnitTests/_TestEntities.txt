@@ -39,11 +39,13 @@ American Idol
 American Ninja Warrior
 Amicus Brief
 Amino Acid
+Amulet
 Amusement Park
 Animal
 Animation (PowerPoint)
 Annuity
 Ant Colony
+Antarctic Expedition
 Antari
 Antibiotic
 Antihistamine
@@ -56,6 +58,7 @@ Aquarium
 Aqueduct
 Aquifer
 Arcade Game
+Arcanum of Magic
 Arch
 Archaeological Site
 Archangel
@@ -99,6 +102,7 @@ Balk
 Ballerina
 Ballet
 Balsamic Vinegar
+Bandeirante
 Bank
 Bank Account
 Bank Robber
@@ -259,6 +263,7 @@ Cheesecake
 Chemical Element
 Chess Piece
 Chewing Gum
+Chinatown
 Chinese Character
 Chinese Dynasty
 Chipotle Order
@@ -310,6 +315,7 @@ Coffee
 Coin
 Colonoscopy
 Color
+Combatant Center
 Comedian
 Comet
 Comic Book
@@ -417,6 +423,7 @@ Diocese
 Directory (file system)
 Disciple of Jesus
 Discworld Guild
+Disney Princess
 Disneyland
 Distribution (probability)
 District Attorney
@@ -432,6 +439,7 @@ Dormitory
 Doula
 Draft Pick
 Dragon
+Dragonlord
 Dragon Rider (Eragon)
 Dream
 Dreidel
@@ -444,6 +452,7 @@ Dubbing
 Dueling Pianos
 Duo Push
 Dwarf
+DWTS Couple
 E-Mail
 Earring
 Earthquake
@@ -472,6 +481,7 @@ Epic Rap Battle of History
 EpiPen
 Episode
 Equestrian Statue
+Era (Taylor Swift)
 Escalator
 Escape Room
 Essay
@@ -501,6 +511,7 @@ Federal Reserve District
 Ferris Wheel
 Ferry
 Feruchemy
+Festigal
 Field Goal
 Fighter Jet
 Filibuster
@@ -660,6 +671,7 @@ Ice Age
 Ice Cream Sundae
 Iconoclast
 IDE
+Iditarod
 Igloo
 IKEA Furniture
 Illithid Power (BG3)
@@ -671,6 +683,7 @@ Impeachment
 Impractical Joke
 Improv Troupe
 Inator
+Indentured Servant
 Indictment
 Infinity Stone
 Influenza
@@ -713,6 +726,7 @@ Kami
 Kanji
 Kayak
 Kebab
+Keebler Cookie
 Kentucky Derby
 Key Signature
 Keystroke
@@ -893,8 +907,10 @@ Necktie
 Necromancer
 Ned's Declassified School Survival Guide Tip
 Neighborhood
+Neuron
 Neurotoxin
 Neurotransmitter
+Neutron Star
 News Anchor
 Newscast
 Newspaper
@@ -1002,6 +1018,7 @@ Pirate Ship
 Pitmaster
 Pizza
 Pizza Roll
+Pizzeria
 Plane of Existence (D&D)
 Planeswalker
 Planetarium
@@ -1071,12 +1088,14 @@ Quark
 Quarterback
 Quasar
 Quatrain
+Quesadilla
 Quilt
 Quinceañera
 Rabbi
 Racehorse
 Racetrack (auto racing)
 Radio Station
+Radiologist
 Rain Delay
 Rainbow
 Rainforest
@@ -1126,6 +1145,7 @@ Safari
 Saint
 Salsa
 Samurai
+Sapa Inca
 Sarcophagus
 Satellite
 Scattergories Round
@@ -1158,6 +1178,7 @@ Set Card
 Seventh Inning Stretch
 Sexuality
 Shah of Iran
+Shaman
 Shampoo
 Shard of Adonalsium
 Shark Tank Pitch
@@ -1170,6 +1191,7 @@ Shiva
 Shoe
 Shofar
 Shogunate
+Showstopper (GBBO)
 Shtetl
 Sign (ASL)
 Sign Language
@@ -1236,6 +1258,7 @@ State of Matter
 State of the Union
 State Quarter
 Steak
+Stem Cell
 Step Pyramid
 Stir Fry
 Stock
@@ -1300,6 +1323,7 @@ Therapist
 Thesis
 Thought Experiment
 Thumb War
+Thunderstorm
 Tic-Tac-Toe Game
 Ticket2Ride Route
 Tie-Dye
@@ -1350,6 +1374,7 @@ Tuxedo
 Tweet
 Typewriter
 Ubuntu Release
+Ultrasound
 Umbrella
 Umpire
 UN Resolution

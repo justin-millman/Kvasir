@@ -323,7 +323,7 @@ namespace Kvasir.Translation {
                 // identifying impermissible references to non-Pre-Defined Entities. That's a lot harder to do at this
                 // scope, so we'll *always* run that.
                 if (localizationTableCache_.TryGetValue(localizationType, out ITable? localizationTable)) {
-                    localizations.Add(new LocalizationDef(localizationTable));
+                    localizations.Add(new LocalizationDef(localizationTable, null!));
                     continue;
                 }
 
@@ -344,7 +344,7 @@ namespace Kvasir.Translation {
                 }
 
                 var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
-                var def = new LocalizationDef(table);
+                var def = new LocalizationDef(table, null!);
                 localizationTableCache_.Add(localizationType, table);
                 tableNameCache_.Add(tableName, localizationType);
                 localizations.Add(def);

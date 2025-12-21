@@ -16800,18 +16800,6 @@ namespace UT.Kvasir.Translation {
             [Column(3)] public string ExistentialSchool { get; set; } = "";
         }
 
-        // Scenario: Non-Null Relation Property becomes Null (✓no values extracted✓)
-        public class Orogene {
-            public enum Book { FifthSeason, ObeliskGate, StoneSky }
-
-            [PrimaryKey, Column(0)] public string FulcrumName { get; set; } = "";
-            [Column(1)] public string? BirthName { get; set; }
-            [Column(2)] public string? BirthComm { get; set; }
-            [Column(3)] public byte Rings { get; set; }
-            public RelationMap<Book, bool> Appearances { get; init; }
-            [Column(4)] public bool AtNodeStation { get; set; }
-        }
-
         // Scenario: Non-Null Relation Property with Nested Aggregate and At Least One Element (✓values extracted✓)
         public class OlympianBoon {
             public enum Deity { Ares, Athena, Aphrodite, Artemis, Demeter, Dionysus, Hermes, Poseidon, Zeus }
@@ -16918,6 +16906,379 @@ namespace UT.Kvasir.Translation {
             public RelationMap<DateTime, Listing> Readings { get; init; } = new();
             [Column(1)] public DateTime RangeLower { get; set; }
             [Column(2)] public DateTime RangeUpper { get; set; }
+        }
+
+        // Scenario: Non-Null Localization Property with Non-Enumeration Key (✓key extracted✓)
+        public class CombatantCommand {
+            [PrimaryKey, Column(0)] public string Acronym { get; set; } = "";
+            [Column(1)] public LocalizedText Name { get; }
+            [Column(2)] public DateTime Founded { get; set; }
+            [Column(3)] public string HQ { get; set; } = "";
+            [Column(4)] public string Commander { get; set; } = "";
+            [Column(5)] public bool NuclearCapable { get; set; }
+
+            public CombatantCommand(string name) {
+                Name = new LocalizedText(name);
+            }
+        }
+
+        // Scenario: Non-Null Localization Property with Enumeration Key (✓key extracted✓)
+        public class StemCell {
+            public enum Kind { Pluripotent, Embryonic, Hematopoetic, Mesenchymal, Endothelial, DentalPulp, Amniotic }
+
+            public class LocalizedUsage : Localization<Kind, int, string> {
+                public LocalizedUsage(Kind key) : base(key) {}
+            }
+            
+
+            [PrimaryKey, Column(0)] public Guid Host { get; set; }
+            [PrimaryKey, Column(1)] public ulong CellNumber { get; set; }
+            [Column(2)] public LocalizedUsage Usage { get; }
+            [Column(3)] public ushort LongevityDays { get; set; }
+
+            public StemCell(Kind usage) {
+                Usage = new LocalizedUsage(usage);
+            }
+        }
+
+        // Scenario: [Calculated] Localization (✓values extracted✓)
+        public class SapaInca {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public byte Index { get; set; }
+            [Calculated, Column(2)] public LocalizedDate ReignStart { get; }
+            [Column(3)] public ulong ReignDays { get; set; }
+            [Column(4)] public char TocapuMotif { get; set; }
+            [Column(5)] public bool WasConquered { get; set; }
+
+            public SapaInca() {
+                ReignStart = new LocalizedDate(Guid.NewGuid());
+            }
+        }
+
+        // Scenario: Non-Null Localization Property with Zero Elements (✓no values extracted✓)
+        public class Orogene {
+            [Flags] public enum Book { FifthSeason = 1, ObeliskGate = 2, StoneSky = 4 }
+
+            [PrimaryKey, Column(0)] public string FulcrumName { get; set; } = "";
+            [Column(1)] public string? BirthName { get; set; }
+            [Column(2)] public string? BirthComm { get; set; }
+            [Column(3)] public byte Rings { get; set; }
+            [Column(4)] public Book Appearances { get; set; }
+            [Column(5)] public bool AtNodeStation { get; set; }
+            [Column(6)] public LocalizedMeasure Strength { get; }
+
+            public Orogene(ulong strength) {
+                Strength = new LocalizedMeasure(strength);
+            }
+        }
+
+        // Scenario: Non-Null Localization Property with Only New Elements (✓values extracted✓)
+        public class NeutronStar {
+            [PrimaryKey, Column(0)] public string Designation { get; set; } = "";
+            [Column(1)] public double Radius { get; set; }
+            [Column(2)] public LocalizedMeasure Temperature { get; }
+            [Column(3)] public ushort OrbitingPlanets { get; set; }
+            [Column(4)] public DateOnly? Discovery { get; set; }
+            [Column(5)] public string? HostConstellation { get; set; }
+            [Column(6)] public float LightYearsFromEarth { get; set; }
+
+            public NeutronStar(ulong temperature) {
+                Temperature = new LocalizedMeasure(temperature);
+            }
+        }
+
+        // Scenario: Non-Null Localization Property with Only Saved Elements (✓no values extracted✓)
+        public class Arcanum {
+            public enum Domain { Moon, Sky, Sun, Earth, Ocean, Stars }
+
+            [PrimaryKey, Column(0)] public Domain PrimalSource { get; set; }
+            [Column(1)] public byte Season { get; set; }
+            [Column(2)] public LocalizedText Elves { get; }
+            [Column(3)] public string Archdragon { get; set; } = "";
+            [Column(4)] public ushort NumKnownSpells { get; set; }
+
+            public Arcanum(string elves) {
+                Elves = new LocalizedText(elves);
+            }
+        }
+
+        // Scenario: Non-Null Localization Property with At Least One Deleted Element (✓values extracted✓)
+        public class Chinatown {
+            [PrimaryKey, Column(0)] public LocalizedText HomeCity { get; }
+            [Column(1)] public ulong Population { get; set; }
+            [Column(2)] public uint YelpRestaurants { get; set; }
+            [Column(3)] public uint ZipCode { get; set; }
+            [Column(4)] public string USRepresentative { get; set; } = "";
+
+            public Chinatown(string homeCity) {
+                HomeCity = new LocalizedText(homeCity);
+            }
+        }
+
+        // Scenario: Non-Null Localization Property with Nested Aggregate and At Least One Element (✓values extracted✓)
+        public class DisneyPrincess {
+            [PrimaryKey, Column(0)] public Guid CharacterID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public string VoiceActress { get; set; } = "";
+            [Column(3)] public byte NumSongsSung { get; set; }
+            [Column(4)] public bool InKingdomHearts { get; set; }
+            [Column(5)] public bool HasPrince { get; set; }
+            [Column(6)] public string? AnimalSidekick { get; set; }
+            [Column(7)] public LocalizedMeasure Height { get; }
+
+            public DisneyPrincess(ulong height) {
+                Height = new LocalizedMeasure(height);
+            }
+        }
+
+        // Scenario: Non-Null Localization Property with Nested Reference and At Least One Element (✓values extracted✓)
+        public class DWTSCouple {
+            [Flags] public enum Dance { Tango = 1, ArgentineTango = 2, VienneseWaltz = 4, Foxtrot = 8, ChaCha = 16, Contemprorary = 32, Freestyle = 64, Jive = 128, Jazz = 256, Mambo = 512, Salsa = 1024, Rumba = 2048, PasoDoble = 5096, Quicktstep = 10192 }
+
+            public class Judge {
+                [PrimaryKey, Column(0)] public string FirstName { get; set; } = "";
+                [PrimaryKey, Column(1)] public string LastName { get; set; } = "";
+                [Column(2)] public bool FormerPro { get; set; }
+                [Column(3)] public ushort YearsAsJudge { get; set; }
+            }
+
+            public class LocalizedScore : Localization<string, Judge, byte> {
+                public LocalizedScore(string key) : base(key) {}
+                public new byte this[Judge locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [PrimaryKey, Column(0)] public sbyte Season { get; set; }
+            [Column(1)] public string Professional { get; set; } = "";
+            [Column(2)] public string Celebrity { get; set; } = "";
+            [Column(3)] public byte FinishingPlace { get; set; }
+            [Column(4)] public LocalizedScore BestScore { get; }
+            [Column(5)] public Dance DancesPerformed { get; set; }
+
+            public DWTSCouple(string bestScore) {
+                BestScore = new LocalizedScore(bestScore);
+            }
+        }
+
+        // Scenario: Null Localization Property (✓key but no values extracted✓)
+        public class Thunderstorm {
+            [PrimaryKey, Column(0)] public DateTime Incipience { get; set; }
+            [Column(1)] public float Latitude { get; set; }
+            [Column(2)] public float Longitude { get; set; }
+            [Column(3)] public LocalizedMeasure Rainfall { get; }
+            [Column(4)] public bool IsSuperCell { get; set; }
+            [Column(5)] public bool WithTornado { get; set; }
+
+            public Thunderstorm(ulong rainfall) {
+                Rainfall = null!;
+            }
+        }
+
+        // Scenario: Multiple Localization Properties of the Same Type (✓keys and values extracted✓)
+        public class Showstopper {
+            [PrimaryKey, Column(0)] public sbyte Season { get; set; }
+            [PrimaryKey, Column(1)] public sbyte Episode { get; set; }
+            [Column(2)] public LocalizedText Challenge { get; }
+            [Column(3)] public string WinningBaker { get; set; } = "";
+            [Column(4)] public string WorstBaker { get; set; } = "";
+            [Column(5)] public LocalizedText PredominantFlavor { get; }
+
+            public Showstopper(string challenge, string predominantFlavor) {
+                Challenge = new LocalizedText(challenge);
+                PredominantFlavor = new LocalizedText(predominantFlavor);
+            }
+        }
+
+        // Scenario: Multiple Localization Properties of Different Types (✓keys and values extracted✓)
+        public class Pizzeria {
+            [Flags] public enum Variety { FamilyOwned = 1, Chain = 2, MafiaFront = 4, Arcade = 8, HoleInTheWall = 16, ByTheSlice = 32 }
+
+            [PrimaryKey, Column(0)] public Guid RestaurantID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public ushort NumPizzasOffered { get; set; }
+            [Column(3)] public Variety Kind { get; set; }
+            [Column(4)] public LocalizedDate FirstOpened { get; }
+            [Column(5)] public LocalizedCurrency AnnualRevenue { get; }
+            [Column(6)] public bool PerformsDeliveries { get; set; }
+            [Column(7)] public LocalizedNullableText BestSellingPasta { get; }
+
+            public Pizzeria(Guid firstOpened, string annualRevenue, string bestSellingPasta) {
+                FirstOpened = new LocalizedDate(firstOpened);
+                AnnualRevenue = new LocalizedCurrency(annualRevenue);
+                BestSellingPasta = new LocalizedNullableText(bestSellingPasta);
+            }
+        }
+
+        // Scenario: Aggregate-Nested Localization Property (✓key and values extracted✓)
+        public class TaylorSwiftEra {
+            public struct Era {
+                [Column(0)] public string Name { get; set; } = "";
+                [Column(1)] public string FlagshipAlbum { get; set; } = "";
+                [Column(2)] public LocalizedDate Start { get; init; }
+
+                public Era(Guid start) {
+                    Start = new LocalizedDate(start);
+                }
+            }
+
+            [Column(0)] public byte Index { get; set; }
+            [PrimaryKey(Path = "Name"), Column(1)] public Era Details { get; set; }
+            [Column(4)] public ushort TotalSongs { get; set; }
+            [Column(5)] public bool FeaturedInErasTour { get; set; }
+        }
+
+        // Scenario: Localization as New Element in List/Set Relation (✓key and values extracted per element✓)
+        // (new entries only)
+        public class Festigal {
+            [PrimaryKey, Column(0)] public ushort Year { get; set; }
+            [Column(1)] public string HostCity { get; set; } = "";
+            public RelationList<LocalizedText> Songs { get; init; } = new();
+            [Column(2)] public DateOnly Opening { get; set; }
+            public RelationSet<LocalizedRating> Ratings { get; init; } = new();
+            [Column(3)] public ushort NumPerformers { get; set; }
+        }
+
+        // Scenario: Localization as Saved Element in List/Set Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Bandeirante {
+            [Flags] public enum Weapon { Pistol = 1, Slingshot = 2, Sword = 4, Dagger = 8 }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            public RelationList<LocalizedText> Crews { get; init; } = new();
+            [Column(1)] public string HomeBase { get; set; } = "";
+            [Column(2)] public Weapon Proficiencies { get; set; }
+            [Column(3)] public bool SpokePaulistaGeneral { get; set; }
+            public RelationSet<LocalizedDate> ExpeditionStarts { get; init; } = new();
+            [Column(4)] public bool WoreBandana { get; set; }
+        }
+
+        // Scenario: Localization as Deleted Element in List/Set Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Iditarod {
+            [PrimaryKey, Column(0)] public ushort Year { get; set; }
+            public RelationList<LocalizedDate> Dates { get; init; } = new();
+            [Column(1)] public string Winner { get; set; } = "";
+            public RelationSet<LocalizedText> SledDogs { get; init; } = new();
+            [Column(2)] public uint FastestTimeSeconds { get; set; }
+            [Column(3)] public decimal PrizeMoney { get; set; }
+        }
+
+        // Scenario: Localization as Key of New Element in Map Relation (✓key and values extracted per element✓)
+        // (new entries only)
+        public class IndenturedServant {
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            public RelationMap<LocalizedDate, byte> Indentertude { get; init; } = new();
+            [Column(2)] public bool IsFree { get; set; }
+            [Column(3)] public bool WasSlave { get; set; }
+        }
+
+        // Scenario: Localization as Key of Saved Element in Map Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Dragonlord {
+            [PrimaryKey, Column(0)] public string HumanSoul { get; set; } = "";
+            [PrimaryKey, Column(1)] public string DragonSoul { get; set; } = "";
+            [Column(2)] public ulong Age { get; set; }
+            [Column(3)] public bool HasSoulTwin { get; set; }
+            [Column(4)] public string Marking { get; set; } = "";
+            public RelationMap<LocalizedText, bool> Councils { get; set; } = new();
+        }
+
+        // Scenario: Localization as Key of Deleted Element in Map Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Radiologist {
+            public enum Certification { HighSchoolDiploma, BachelorsDegree, MatersDegree, MedicalDegree, MedialLicense }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            public RelationMap<Certification, LocalizedDate> CertificationDates { get; init; } = new();
+            [Column(2)] public decimal RadiationExposure { get; set; }
+            [Column(3)] public bool IsCancerSurvivor { get; set; }
+            [Column(4)] public bool ForHumans { get; set; }
+            [Column(5)] public string? CurrentHospital { get; set; }
+            [Column(6)] public ulong XRaysPerformed { get; set; }
+        }
+
+        // Scenario: Localization as Value of New Element in Map Relation (✓key and values extracted per element✓)
+        // (new entries only)
+        public class Shaman {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string Tradition { get; set; } = "";
+            [Column(2)] public int TrancesInduced { get; set; }
+            public RelationMap<string, LocalizedRating> Skills { get; init; } = new();
+            [Column(3)] public bool IsMedicineMan { get; set; }
+        }
+
+        // Scenario: Localization as Value of Saved Element in Map Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Neuron {
+            public enum Kind { Sensory, Motor, Inter }
+
+            [PrimaryKey, Column(0)] public string Owner { get; set; } = "";
+            [Column(1)] public ulong NeuralNumber { get; set; }
+            public RelationMap<ulong, LocalizedMeasure> Dendrites { get; init; } = new();
+            [Column(2)] public float SynapseSize { get; set; }
+            [Column(3)] public Kind Variety { get; set; }
+        }
+
+        // Scenario: Localization as Value of Deleted Element in Map Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Ultrasound {
+            public enum Reason { Pregnancy, Surgery, ForeignBody, Cancer, Other }
+
+            [PrimaryKey, Column(0)] public Guid ProcedureID { get; set; }
+            [Column(1)] public Reason Motivation { get; set; }
+            [Column(2)] public DateTime Timestamp { get; set; }
+            [Column(3)] public string Patient { get; set; } = "";
+            public IReadOnlyRelationMap<string, LocalizedText> Doctors { get; init; } = new RelationMap<string, LocalizedText>();
+            [Column(4)] public bool WasMalpractice { get; set; }
+            [Column(5)] public decimal Cost { get; set; }
+        }
+
+        // Scenario: Localization as New Element in Ordered List Relation (✓key and values extracted per element✓)
+        // (new entries only)
+        public class AntarcticExpedition {
+            [PrimaryKey, Column(0)] public Guid ExpeditionID { get; set; }
+            [Column(1)] public string LeadScientist { get; set; } = "";
+            [Column(2)] public string? ExpeditionName { get; set; }
+            [Column(3)] public bool WasSponsoredByRGS { get; set; }
+            public RelationOrderedList<LocalizedNullableText> Discoveries { get; init; } = new();
+            [Column(4)] public ushort NumShips { get; set; }
+            [Column(5)] public DateOnly StartDate { get; set; }
+        }
+
+        // Scenario: Localization as Saved Element in Ordered List Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        // [TODO] - Keebler Cookie
+
+        // Scenario: Localization as Deleted Element in Ordered List Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Quesadilla {
+            public enum Mechanism { BakedInOven, Stovetop, Plancha, PaniniPress, Microwave, AirFryer, Other }
+            public enum TortillaKind { Flour, YellowCorn, BlueCorn, Tomato, Spinach, Other }
+            [Flags] public enum Sauce { Salsa = 1, Guacamole = 2, SourCream = 4, Questo = 8, PicoDeGallo = 16, Yogurt = 32 }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public Mechanism CookingMethod { get; set; }
+            [Column(2)] public TortillaKind Tortilla { get; set; }
+            public RelationOrderedList<LocalizedText> Ingredients { get; init; } = new();
+            [Column(3)] public double CaloriesPerServing { get; set; }
+            [Column(4)] public Sauce Sauces { get; set; }
+        }
+
+        // Scenario: Localization as Modified Element in Ordered List Relation (✓key and values extracted per element✓)
+        // (new, saved, and deleted entries)
+        public class Amulet {
+            public enum Material { Gold, Silver, Bronze, Copper, Brass, Tin, Aluminum, Platic, Leather, FauxLeather, Other }
+
+            [PrimaryKey, Column(0)] public Guid JewelryID { get; set; }
+            public RelationOrderedList<LocalizedText> PredominantColors { get; init; } = new();
+            [Column(1)] public decimal Price { get; set; }
+            [Column(2)] public string CurrentOwner { get; set; } = "";
+            [Column(3)] public Material ChainMaterial { get; set; }
+            [Column(4)] bool IsCursed { get; set; }
         }
     }
 

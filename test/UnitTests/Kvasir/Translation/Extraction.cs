@@ -4,10 +4,14 @@ using Kvasir.Relations;
 using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.DataExtraction;
 using static UT.Kvasir.Translation.TestConverters;
+using static UT.Kvasir.Translation.TestLocalizations;
+
+using MeasurementSystem = UT.Kvasir.Translation.TestLocalizations.System;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Extraction")]
@@ -952,35 +956,13 @@ namespace UT.Kvasir.Translation {
                 DoctoralTheses = null!,
                 DateOfBirth = new DateTime(1905, 6, 21),
                 DateOfDeath = new DateTime(1980, 4, 15),
-                ExistentialSchool = "Phenomenlogy"
+                ExistentialSchool = "Phenomenology"
             };
 
             // Act
             var translator = new Translator(NO_ENTITIES);
             var translation = translator[typeof(Existentialist)];
             var data = translation.Relations[0].Extractor.ExtractFrom(existentialist);
-
-            // Assert
-            data.Insertions.Should().BeEmpty();
-            data.Modifications.Should().BeEmpty();
-            data.Deletions.Should().BeEmpty();
-        }
-
-        [TestMethod] public void NonNullRelationBecomesNull() {
-            // Arrange
-            var orogene = new Orogene() {
-                FulcrumName = "Alabaster",
-                BirthName = null,
-                BirthComm = null,
-                Rings = 10,
-                Appearances = null!,
-                AtNodeStation = false
-            };
-
-            // Act
-            var translator = new Translator(NO_ENTITIES);
-            var translation = translator[typeof(Orogene)];
-            var data = translation.Relations[0].Extractor.ExtractFrom(orogene);
 
             // Assert
             data.Insertions.Should().BeEmpty();
@@ -1189,6 +1171,660 @@ namespace UT.Kvasir.Translation {
             data.Insertions.Should().ContainRow(new DateTime(2024, 2, 3), "[gobbledy gook]", (int)'q', (int)'!', (int)'B', (int)'9');
             data.Modifications.Should().BeEmpty();
             data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonNullLocalizationWithNonEnumerationKey() {
+            // Arrange
+            var command = new CombatantCommand("CENTOM_NAME_KEY") {
+                Acronym = "CENTCOM",
+                Founded = new DateTime(1983, 1, 1),
+                HQ = "MacDill Air Force Base (FL)",
+                Commander = "Admiral Charles B. Cooper II",
+                NuclearCapable = false
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(CombatantCommand)];
+            var data = translation.Principal.Extractor.ExtractFrom(command);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Datum.Should().Be(command.Acronym);
+            data[1].Datum.Should().Be(command.Name.Key);
+            data[2].Datum.Should().Be(command.Founded);
+            data[3].Datum.Should().Be(command.HQ);
+            data[4].Datum.Should().Be(command.Commander);
+            data[5].Datum.Should().Be(command.NuclearCapable);
+        }
+
+        [TestMethod] public void NonNullLocalizationWithEnumerationKey() {
+            // Arrange
+            var cell = new StemCell(StemCell.Kind.Pluripotent) {
+                Host = Guid.NewGuid(),
+                CellNumber = 1278124,
+                LongevityDays = 8194
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(StemCell)];
+            var data = translation.Principal.Extractor.ExtractFrom(cell);
+
+            // Assert
+            data.Should().HaveCount(4);
+            data[0].Datum.Should().Be(cell.Host);
+            data[1].Datum.Should().Be(cell.CellNumber);
+            data[2].Datum.Should().Be(ConversionOf(cell.Usage.Key));
+            data[3].Datum.Should().Be(cell.LongevityDays);
+        }
+
+        [TestMethod] public void CalculatedLocalization() {
+            // Arrange
+            var inca = new SapaInca() {
+                Name = "Pachacuti",
+                Index = 9,
+                ReignDays = 12045,
+                TocapuMotif = 'w',
+                WasConquered = false
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(SapaInca)];
+            var data = translation.Principal.Extractor.ExtractFrom(inca);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Datum.Should().Be(inca.Name);
+            data[1].Datum.Should().Be(inca.Index);
+            data[2].Datum.Should().Be(inca.ReignStart.Key);
+            data[3].Datum.Should().Be(inca.ReignDays);
+            data[4].Datum.Should().Be(inca.TocapuMotif);
+            data[5].Datum.Should().Be(inca.WasConquered);
+        }
+
+        [TestMethod] public void NonNullLocalizationWithZeroElements() {
+            // Arrange
+            var orogene = new Orogene(71782) {
+                FulcrumName = "Alabaster",
+                BirthName = null,
+                BirthComm = null,
+                Rings = 10,
+                Appearances = Orogene.Book.FifthSeason | Orogene.Book.ObeliskGate | Orogene.Book.StoneSky,
+                AtNodeStation = false
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Orogene)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(orogene);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonNullLocalizationWithOnlyNewElements() {
+            // Arrange
+            var star = new NeutronStar(18240124) {
+                Designation = "RX J1856.5-3754",
+                Radius = 12.1,
+                OrbitingPlanets = 0,
+                Discovery = null,
+                HostConstellation = "Corona Australis",
+                LightYearsFromEarth = 400
+            };
+            star.Temperature[MeasurementSystem.Celsius] = new Measurement(434000, "°C");
+            star.Temperature[MeasurementSystem.Fahrenheit] = new Measurement(781232, "°F");
+            star.Temperature[MeasurementSystem.Kelvin] = new Measurement(434273, "kelvins");
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(NeutronStar)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(star);
+
+            // Assert
+            data.Insertions.Should().HaveCount(3);
+            data.Insertions.Should().ContainRow(star.Temperature.Key, ConversionOf(MeasurementSystem.Celsius), star.Temperature[MeasurementSystem.Celsius].Value, star.Temperature[MeasurementSystem.Celsius].Unit);
+            data.Insertions.Should().ContainRow(star.Temperature.Key, ConversionOf(MeasurementSystem.Fahrenheit), star.Temperature[MeasurementSystem.Fahrenheit].Value, star.Temperature[MeasurementSystem.Fahrenheit].Unit);
+            data.Insertions.Should().ContainRow(star.Temperature.Key, ConversionOf(MeasurementSystem.Kelvin), star.Temperature[MeasurementSystem.Kelvin].Value, star.Temperature[MeasurementSystem.Kelvin].Unit);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonNullLocalizationWithOnlySavedElements() {
+            // Arrange
+            var arcanum = new Arcanum("SUNFIRE_ELVES_LOC") {
+                PrimalSource = Arcanum.Domain.Sun,
+                Season = 3,
+                Archdragon = "Sol Regem",
+                NumKnownSpells = 22
+            };
+            arcanum.Elves[Language.English] = "Sunfire Elves";
+            arcanum.Elves[Language.Spanish] = "Elfos del Fuego del Sol";
+            (arcanum.Elves.Relation as IRelation).Canonicalize();
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Arcanum)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(arcanum);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonNullLocalizationWithAtLeastOneDeletedElement() {
+            // Arrange
+            var chinatown = new Chinatown("SAN_FRANCISCO_LOC") {
+                Population = 34557,
+                YelpRestaurants = 240,
+                ZipCode = 94108,
+                USRepresentative = "Nancy Pelosi"
+            };
+            chinatown.HomeCity[Language.English] = "San Francisco";
+            chinatown.HomeCity[Language.Hebrew] = "סן פרנסיסקו";
+            (chinatown.HomeCity.Relation as IRelation).Canonicalize();
+            chinatown.HomeCity[Language.Hindi] = "सैन फ्रांसिस्को";
+            chinatown.HomeCity.Delocalize(Language.Hebrew);
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Chinatown)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(chinatown);
+
+            // Assert
+            data.Insertions.Should().HaveCount(1);
+            data.Insertions.Should().ContainRow(chinatown.HomeCity.Key, ConversionOf(Language.Hindi), chinatown.HomeCity[Language.Hindi]);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(1);
+            data.Deletions.Should().ContainRow(chinatown.HomeCity.Key, ConversionOf(Language.Hebrew), "סן פרנסיסקו");
+        }
+
+        [TestMethod] public void LocalizationNestedAggregate() {
+            // Arrange
+            var princess = new DisneyPrincess(1285) {
+                CharacterID = Guid.NewGuid(),
+                Name = "Moana",
+                VoiceActress = "Auli'i Cravalho",
+                NumSongsSung = 3,
+                InKingdomHearts = true,
+                HasPrince = false,
+                AnimalSidekick = "Hei-Hei & Pua"
+            };
+            princess.Height[MeasurementSystem.Imperial] = new Measurement(7.5, "feet");
+            princess.Height[MeasurementSystem.Metric] = new Measurement(2.286, "meters");
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(DisneyPrincess)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(princess);
+
+            // Assert
+            data.Insertions.Should().HaveCount(2);
+            data.Insertions.Should().ContainRow(princess.Height.Key, ConversionOf(MeasurementSystem.Imperial), princess.Height[MeasurementSystem.Imperial].Value, princess.Height[MeasurementSystem.Imperial].Unit);
+            data.Insertions.Should().ContainRow(princess.Height.Key, ConversionOf(MeasurementSystem.Metric), princess.Height[MeasurementSystem.Metric].Value, princess.Height[MeasurementSystem.Metric].Unit);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(0);
+        }
+
+        [TestMethod] public void LocalizationNestedReference() {
+            // Arrange
+            DWTSCouple.Judge derek = new DWTSCouple.Judge() {
+                FirstName = "Derek",
+                LastName = "Hough",
+                FormerPro = true,
+                YearsAsJudge = 5
+            };
+            DWTSCouple couple = new DWTSCouple("NYLE_PETA_S22_LOC") {
+                Season = 22,
+                Professional = "Peta Murgatroyd",
+                Celebrity = "Nyle DiMarco",
+                FinishingPlace = 1,
+                DancesPerformed = DWTSCouple.Dance.ChaCha | DWTSCouple.Dance.Rumba | DWTSCouple.Dance.Tango | DWTSCouple.Dance.Salsa | DWTSCouple.Dance.VienneseWaltz | DWTSCouple.Dance.Foxtrot | DWTSCouple.Dance.Freestyle | DWTSCouple.Dance.PasoDoble | DWTSCouple.Dance.ArgentineTango | DWTSCouple.Dance.Jive
+            };
+            couple.BestScore[derek] = 10;
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(DWTSCouple)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(couple);
+
+            // Assert
+            data.Insertions.Should().HaveCount(1);
+            data.Insertions.Should().ContainRow(couple.BestScore.Key, derek.FirstName, derek.LastName, couple.BestScore[derek]);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NullLocalization() {
+            // Arrange
+            var thunderstorm = new Thunderstorm(1824125) {
+                Incipience = new DateTime(2010, 6, 14, 15, 7, 33),
+                Latitude = -86.22f,
+                Longitude = 46.12f,
+                IsSuperCell = true,
+                WithTornado = false
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Thunderstorm)];
+            var entityData = translation.Principal.Extractor.ExtractFrom(thunderstorm);
+            var localizationData = translation.Localizations[0].Extractor.ExtractFrom(thunderstorm);
+
+            // Assert
+            entityData.Should().HaveCount(6);
+            entityData[0].Datum.Should().Be(thunderstorm.Incipience);
+            entityData[1].Datum.Should().Be(thunderstorm.Latitude);
+            entityData[2].Datum.Should().Be(thunderstorm.Longitude);
+            entityData[3].Datum.Should().Be(DBNull.Value);
+            entityData[4].Datum.Should().Be(thunderstorm.IsSuperCell);
+            entityData[5].Datum.Should().Be(thunderstorm.WithTornado);
+            localizationData.Insertions.Should().BeEmpty();
+            localizationData.Modifications.Should().BeEmpty();
+            localizationData.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void MultipleLocalizationsSameType() {
+            // Arrange
+            var showstopper = new Showstopper("VACHERIN_GLACE_LOC", "RASPBERRY_LOC") {
+                Season = 16,
+                Episode = 7,
+                WinningBaker = "Iain Ross",
+                WorstBaker = "Lesley Holloway"
+            };
+            showstopper.Challenge[Language.English] = "French Ice Cream Cake";
+            showstopper.Challenge[Language.French] = "Vacherin Glacé";
+            showstopper.PredominantFlavor[Language.English] = "Raspberry";
+            showstopper.PredominantFlavor[Language.Spanish] = "Frambuesa";
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Showstopper)];
+            var data0 = translation.Localizations[0].Extractor.ExtractFrom(showstopper);
+            var data1 = translation.Localizations[1].Extractor.ExtractFrom(showstopper);
+
+            // Assert
+            data0.Insertions.Should().HaveCount(2);
+            data0.Insertions.Should().ContainRow(showstopper.Challenge.Key, ConversionOf(Language.English), showstopper.Challenge[Language.English]);
+            data0.Insertions.Should().ContainRow(showstopper.Challenge.Key, ConversionOf(Language.French), showstopper.Challenge[Language.French]);
+            data0.Modifications.Should().BeEmpty();
+            data0.Deletions.Should().BeEmpty();
+            data1.Insertions.Should().ContainRow(showstopper.PredominantFlavor.Key, ConversionOf(Language.English), showstopper.PredominantFlavor[Language.English]);
+            data1.Insertions.Should().ContainRow(showstopper.PredominantFlavor.Key, ConversionOf(Language.Spanish), showstopper.PredominantFlavor[Language.Spanish]);
+            data1.Modifications.Should().BeEmpty();
+            data1.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void MultipleLocalizationsDifferentTypes() {
+            // Arrange
+            var pizzeria = new Pizzeria(Guid.NewGuid(), "MAFIA_CLUB_REVNUE_LOC", "MAFIA_CLUB_PASTA_LOC") {
+                RestaurantID = Guid.NewGuid(),
+                Name = "The Mafia Club: Slices For Days",
+                NumPizzasOffered = 183,
+                Kind = Pizzeria.Variety.MafiaFront | Pizzeria.Variety.FamilyOwned | Pizzeria.Variety.ByTheSlice,
+                PerformsDeliveries = false
+            };
+            pizzeria.FirstOpened[Calendar.Julian] = new DateOnly(1984, 11, 4);
+            pizzeria.AnnualRevenue["DOLLAR"] = 3750000M;
+            pizzeria.AnnualRevenue["MEXICAN_PESO"] = 69296195.28M;
+            pizzeria.AnnualRevenue["EURO"] = 3256682.47M;
+            pizzeria.AnnualRevenue["SHEKEL"] = 12310665.43M;
+            pizzeria.BestSellingPasta[Language.English] = "Spaghetti Bolognese";
+            pizzeria.BestSellingPasta[Language.Italian] = "Spaghetti alla Bolognese";
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Showstopper)];
+            var revenueData = translation.Localizations[0].Extractor.ExtractFrom(pizzeria);
+            var pastaData = translation.Localizations[1].Extractor.ExtractFrom(pizzeria);
+            var openingData = translation.Localizations[2].Extractor.ExtractFrom(pizzeria);
+
+            // Assert
+            revenueData.Insertions.Should().HaveCount(4);
+            revenueData.Insertions.Should().ContainRow(pizzeria.AnnualRevenue.Key, "DOLLAR", pizzeria.AnnualRevenue["DOLLAR"]);
+            revenueData.Insertions.Should().ContainRow(pizzeria.AnnualRevenue.Key, "MEXICAN_PESO", pizzeria.AnnualRevenue["MEXICAN_PESO"]);
+            revenueData.Insertions.Should().ContainRow(pizzeria.AnnualRevenue.Key, "EURO", pizzeria.AnnualRevenue["EURO"]);
+            revenueData.Insertions.Should().ContainRow(pizzeria.AnnualRevenue.Key, "SHEKEL", pizzeria.AnnualRevenue["SHEKEL"]);
+            revenueData.Modifications.Should().BeEmpty();
+            revenueData.Deletions.Should().BeEmpty();
+            pastaData.Insertions.Should().HaveCount(2);
+            pastaData.Insertions.Should().ContainRow(pizzeria.BestSellingPasta.Key, ConversionOf(Language.English), pizzeria.BestSellingPasta[Language.English]);
+            pastaData.Insertions.Should().ContainRow(pizzeria.BestSellingPasta.Key, ConversionOf(Language.Italian), pizzeria.BestSellingPasta[Language.Italian]);
+            pastaData.Modifications.Should().BeEmpty();
+            pastaData.Deletions.Should().BeEmpty();
+            openingData.Insertions.Should().HaveCount(1);
+            openingData.Insertions.Should().ContainRow(pizzeria.FirstOpened.Key, ConversionOf(Calendar.Julian), pizzeria.FirstOpened[Calendar.Julian]);
+            openingData.Modifications.Should().BeEmpty();
+            openingData.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void AggregateNestedLocalization() {
+            // Arrange
+            var era = new TaylorSwiftEra() {
+                Index = 2,
+                Details = new TaylorSwiftEra.Era(Guid.NewGuid()) {
+                    Name = "Fearless Era",
+                    FlagshipAlbum = "Fearless"
+                },
+                TotalSongs = 16,
+                FeaturedInErasTour = true
+            };
+            era.Details.Start[Calendar.Julian] = new DateOnly(2008, 11, 11);
+            era.Details.Start[Calendar.Gregorian] = new DateOnly(2008, 11, 24);
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(TaylorSwiftEra)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(era);
+
+            // Assert
+            data.Insertions.Should().HaveCount(2);
+            data.Insertions.Should().ContainRow(era.Details.Start.Key, ConversionOf(Calendar.Julian), era.Details.Start[Calendar.Julian]);
+            data.Insertions.Should().ContainRow(era.Details.Start.Key, ConversionOf(Calendar.Gregorian), era.Details.Start[Calendar.Gregorian]);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void RelationNestedLocalization_NewListSetElement() {
+            // Arrange
+            var festigal = new Festigal() {
+                Year = 2006,
+                HostCity = "Haifa",
+                Songs = new RelationList<LocalizedText>() {
+                    new LocalizedText("FINAL_COUNTDOWN_LOC")
+                },
+                Opening = new DateOnly(2006, 12, 15),
+                Ratings = new RelationSet<LocalizedRating>() {
+                    new LocalizedRating(1887),
+                    new LocalizedRating(204),
+                    new LocalizedRating(-198)
+                },
+                NumPerformers = 37
+            };
+            festigal.Songs[0][Language.English] = "The Final Countdown";
+            festigal.Songs[0][Language.Hebrew] = "פסטיגל פנטזיה";
+            festigal.Ratings.ElementAt(0)['u'] = 4128.33;
+            festigal.Ratings.ElementAt(0)['_'] = 0.0;
+            festigal.Ratings.ElementAt(1)['_'] = -68102.156;
+            festigal.Ratings.ElementAt(1)['#'] = double.MaxValue;
+            festigal.Ratings.ElementAt(1)['%'] = double.MinValue;
+            festigal.Ratings.ElementAt(2)['4'] = 4.0;
+            festigal.Ratings.ElementAt(2)['u'] = 4128.33;
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Festigal)];
+            var setData = translation.Localizations[0].Extractor.ExtractFrom(festigal);
+            var listData = translation.Localizations[1].Extractor.ExtractFrom(festigal);
+
+            // Assert
+            setData.Insertions.Should().HaveCount(1000);
+            setData.Insertions.Should().HaveCount(7);
+            setData.Insertions.Should().ContainRow(festigal.Ratings.ElementAt(0).Key, 'u', festigal.Ratings.ElementAt(0)['u']);
+            setData.Insertions.Should().ContainRow(festigal.Ratings.ElementAt(0).Key, '_', festigal.Ratings.ElementAt(0)['_']);
+            setData.Insertions.Should().ContainRow(festigal.Ratings.ElementAt(1).Key, '_', festigal.Ratings.ElementAt(0)['_']);
+            setData.Insertions.Should().ContainRow(festigal.Ratings.ElementAt(1).Key, '#', festigal.Ratings.ElementAt(0)['#']);
+            setData.Insertions.Should().ContainRow(festigal.Ratings.ElementAt(1).Key, '%', festigal.Ratings.ElementAt(0)['%']);
+            setData.Insertions.Should().ContainRow(festigal.Ratings.ElementAt(2).Key, '4', festigal.Ratings.ElementAt(0)['4']);
+            setData.Insertions.Should().ContainRow(festigal.Ratings.ElementAt(2).Key, 'u', festigal.Ratings.ElementAt(0)['u']);
+            setData.Modifications.Should().HaveCount(0);
+            setData.Deletions.Should().HaveCount(0);
+            listData.Insertions.Should().HaveCount(2);
+            listData.Insertions.Should().ContainRow(festigal.Songs[0].Key, ConversionOf(Language.English), festigal.Songs[0][Language.English]);
+            listData.Insertions.Should().ContainRow(festigal.Songs[0].Key, ConversionOf(Language.Hebrew), festigal.Songs[0][Language.Hebrew]);
+            listData.Modifications.Should().HaveCount(0);
+            listData.Insertions.Should().HaveCount(0);
+        }
+
+        [TestMethod] public void RelationNestedLocalization_SavedListSetElement() {
+            // Arrange
+            var bandeirante = new Bandeirante() {
+                ID = Guid.NewGuid(),
+                Crews = new RelationList<LocalizedText>() {
+                    new LocalizedText("DONKEYS_CREW_LOC"),
+                    new LocalizedText("MURDERERS_CREW_LOC"),
+                    new LocalizedText("CORN_CREW_LOC")
+                },
+                HomeBase = "Manaus",
+                Proficiencies = Bandeirante.Weapon.Sword | Bandeirante.Weapon.Pistol | Bandeirante.Weapon.Slingshot,
+                SpokePaulistaGeneral = true,
+                ExpeditionStarts = new RelationSet<LocalizedDate>() {
+                    new LocalizedDate(Guid.NewGuid())
+                },
+                WoreBandana = true
+            };
+            bandeirante.Crews[0][Language.English] = "The Donkeys";
+            bandeirante.Crews[0][Language.German] = "Die Eisel";
+            (bandeirante.Crews[0].Relation as IRelation).Canonicalize();
+            bandeirante.Crews[0][Language.French] = "Les Ânes";
+            bandeirante.Crews[1][Language.English] = "The Murderers";
+            (bandeirante.Crews[1].Relation as IRelation).Canonicalize();
+            bandeirante.Crews[2][Language.English] = "The Corn";
+            bandeirante.Crews[2][Language.Hebrew] = "התירס";
+            bandeirante.Crews[2][Language.Esperanto] = "La Maizo";
+            (bandeirante.Crews[2].Relation as IRelation).Canonicalize();
+            bandeirante.Crews[2][Language.English] = "The Corn Cobs";
+            bandeirante.Crews[2][Language.Hebrew] = "הקלחים תירס";
+            bandeirante.Crews[2].Delocalize(Language.Esperanto);
+            bandeirante.Crews[2][Language.Italian] = "Le Pannocchie di Mais";
+            (bandeirante.Crews as IRelation).Canonicalize();
+            bandeirante.ExpeditionStarts.First()[Calendar.Julian] = new DateOnly(1577, 4, 17);
+            (bandeirante.ExpeditionStarts.First().Relation as IRelation).Canonicalize();
+            bandeirante.ExpeditionStarts.First()[Calendar.Julian] = new DateOnly(1577, 4, 18);
+            bandeirante.ExpeditionStarts.First()[Calendar.Gregorian] = new DateOnly(1578, 4, 28);
+            (bandeirante.ExpeditionStarts as IRelation).Canonicalize();
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Bandeirante)];
+            var listData = translation.Localizations[0].Extractor.ExtractFrom(bandeirante);
+            var setData = translation.Localizations[1].Extractor.ExtractFrom(bandeirante);
+
+            // Assert
+            listData.Insertions.Should().HaveCount(2);
+            listData.Insertions.Should().ContainRow(bandeirante.Crews[0].Key, ConversionOf(Language.French), bandeirante.Crews[0][Language.French]);
+            listData.Insertions.Should().ContainRow(bandeirante.Crews[2].Key, ConversionOf(Language.Italian), bandeirante.Crews[2][Language.Italian]);
+            listData.Modifications.Should().HaveCount(0);
+            listData.Deletions.Should().HaveCount(3);
+            listData.Deletions.Should().ContainRow(bandeirante.Crews[2].Key, ConversionOf(Language.English), "The Corn");
+            listData.Deletions.Should().ContainRow(bandeirante.Crews[2].Key, ConversionOf(Language.Hebrew), "התירס");
+            listData.Deletions.Should().ContainRow(bandeirante.Crews[2].Key, ConversionOf(Language.Esperanto), "La Maizo");
+            setData.Insertions.Should().HaveCount(2);
+            setData.Insertions.Should().ContainRow(bandeirante.ExpeditionStarts.First().Key, ConversionOf(Calendar.Julian), bandeirante.ExpeditionStarts.First()[Calendar.Julian]);
+            setData.Insertions.Should().ContainRow(bandeirante.ExpeditionStarts.First().Key, ConversionOf(Calendar.Gregorian), bandeirante.ExpeditionStarts.First()[Calendar.Gregorian]);
+            setData.Modifications.Should().HaveCount(0);
+            setData.Deletions.Should().HaveCount(1);
+            setData.Deletions.Should().ContainRow(bandeirante.ExpeditionStarts.First().Key, ConversionOf(Calendar.Julian), new DateOnly(1577, 4, 17));
+        }
+
+        [TestMethod] public void RelationNestedLocalization_DeletedListSetElement() {
+            // Arrange
+            var iditarod = new Iditarod() {
+                Year = 2023,
+                Dates = new RelationList<LocalizedDate>() {
+                    new LocalizedDate(new Guid("d15b313e-c7ec-4a02-a5ca-148f50a9c593")),
+                    new LocalizedDate(new Guid("bbb60d4b-68d8-4400-83d8-57e6157a1a5c"))
+                },
+                Winner = "Ryan Redington",
+                SledDogs = new RelationSet<LocalizedText>() {
+                    new LocalizedText("GHOST_LOC"),
+                    new LocalizedText("SVEN_LOC")
+                },
+                FastestTimeSeconds = 767588,
+                PrizeMoney = 500000
+            };
+            iditarod.Dates[0][Calendar.Gregorian] = new DateOnly(2023, 3, 4);
+            (iditarod.Dates[0].Relation as IRelation).Canonicalize();
+            iditarod.Dates[1][Calendar.Gregorian] = new DateOnly(2023, 3, 17);
+            (iditarod.Dates[1].Relation as IRelation).Canonicalize();
+            iditarod.Dates[1][Calendar.Julian] = new DateOnly(2023, 3, 4);
+            iditarod.Dates[1].Delocalize(Calendar.Gregorian);
+            (iditarod.Dates[1].Relation as IRelation).Canonicalize();
+            (iditarod.Dates as IRelation).Canonicalize();
+            iditarod.Dates.Clear();
+            iditarod.SledDogs.First()[Language.Esperanto] = "Ghost";
+            iditarod.SledDogs.First()[Language.Spanish] = "Fantasma";
+            iditarod.SledDogs.First()[Language.French] = "Fantôme";
+            (iditarod.SledDogs.First().Relation as IRelation).Canonicalize();
+            iditarod.SledDogs.First().Delocalize(Language.French);
+            (iditarod.SledDogs.Last().Relation as IRelation).Canonicalize();
+            iditarod.SledDogs.Last()[Language.English] = "Sven";
+            (iditarod.SledDogs as IRelation).Canonicalize();
+            iditarod.SledDogs.Clear();
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Iditarod)];
+            var listData = translation.Localizations[0].Extractor.ExtractFrom(iditarod);
+            var setData = translation.Localizations[1].Extractor.ExtractFrom(iditarod);
+
+            // Assert
+            listData.Insertions.Should().HaveCount(0);
+            listData.Modifications.Should().HaveCount(0);
+            listData.Deletions.Should().HaveCount(2);
+            listData.Deletions.Should().ContainRow(new Guid("d15b313e-c7ec-4a02-a5ca-148f50a9c593"), ConversionOf(Calendar.Gregorian), new DateOnly(2023, 3, 4));
+            listData.Deletions.Should().ContainRow(new Guid("bbb60d4b-68d8-4400-83d8-57e6157a1a5c"), ConversionOf(Calendar.Gregorian), new DateOnly(2023, 3, 17));
+            setData.Insertions.Should().HaveCount(0);
+            setData.Modifications.Should().HaveCount(0);
+            setData.Deletions.Should().HaveCount(3);
+            setData.Deletions.Should().ContainRow("GHOST_LOC", ConversionOf(Language.English), "Ghost");
+            setData.Deletions.Should().ContainRow("GHOST_LOC", ConversionOf(Language.Spanish), "Fantasma");
+            setData.Deletions.Should().ContainRow("GHOST_LOC", ConversionOf(Language.French), "Fantôme");
+        }
+
+        [TestMethod] public void RelationNestedLocalization_KeyOfNewMapElement() {
+            // Arrange
+            var servant = new IndenturedServant() {
+                ID = Guid.NewGuid(),
+                Indentertude = new RelationMap<LocalizedDate, byte>() {
+                    { new LocalizedDate(Guid.NewGuid()), 4 },
+                    { new LocalizedDate(Guid.NewGuid()), 188 }
+                },
+                IsFree = true,
+                WasSlave = false
+            };
+            servant.Indentertude.Keys.ElementAt(0)[Calendar.Julian] = new DateOnly(1783, 4, 11);
+            servant.Indentertude.Keys.ElementAt(0)[Calendar.Gregorian] = new DateOnly(1783, 4, 22);
+            servant.Indentertude.Keys.ElementAt(1)[Calendar.Gregorian] = new DateOnly(1999, 6, 3);
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(IndenturedServant)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(servant);
+
+            // Assert
+            data.Insertions.Should().HaveCount(3);
+            data.Insertions.Should().ContainRow(servant.Indentertude.Keys.ElementAt(0).Key, ConversionOf(Calendar.Julian), servant.Indentertude.Keys.ElementAt(0)[Calendar.Julian]);
+            data.Insertions.Should().ContainRow(servant.Indentertude.Keys.ElementAt(0).Key, ConversionOf(Calendar.Gregorian), servant.Indentertude.Keys.ElementAt(0)[Calendar.Gregorian]);
+            data.Insertions.Should().ContainRow(servant.Indentertude.Keys.ElementAt(1).Key, ConversionOf(Calendar.Julian), servant.Indentertude.Keys.ElementAt(1)[Calendar.Julian]);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(0);
+        }
+
+        [TestMethod] public void RelationNestedLocalization_KeyOfSavedMapElement() {
+            Assert.Fail();
+        }
+
+        [TestMethod] public void RelationNestedLocalization_KeyOfDeletedMapElement() {
+            Assert.Fail();
+        }
+
+        [TestMethod] public void RelationNestedLocalization_ValueOfNewMapElement() {
+            // Arrange
+            var shaman = new Shaman() {
+                Name = "Chuonnasuan",
+                Tradition = "Oroqen",
+                TrancesInduced = 12841,
+                Skills = new RelationMap<string, LocalizedRating>() {
+                    { "Healing", new LocalizedRating(41) },
+                    { "Resurrection", new LocalizedRating(-6) }
+                },
+                IsMedicineMan = false
+            };
+            shaman.Skills["Healing"]['y'] = 83.11;
+            shaman.Skills["Healing"]['*'] = -4.1903;
+            shaman.Skills["Healing"]['6'] = 100.0;
+            shaman.Skills["Resurrection"]['@'] = 71.333;
+            shaman.Skills["Resurrection"]['6'] = 0.0000002;
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Shaman)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(shaman);
+
+            // Assert
+            data.Insertions.Should().HaveCount(5);
+            data.Insertions.Should().ContainRow(shaman.Skills["Healing"].Key, 'y', shaman.Skills["Healing"]['y']);
+            data.Insertions.Should().ContainRow(shaman.Skills["Healing"].Key, '*', shaman.Skills["Healing"]['*']);
+            data.Insertions.Should().ContainRow(shaman.Skills["Healing"].Key, '6', shaman.Skills["Healing"]['6']);
+            data.Insertions.Should().ContainRow(shaman.Skills["Resurrection"].Key, '@', shaman.Skills["Resurrection"]['@']);
+            data.Insertions.Should().ContainRow(shaman.Skills["Resurrection"].Key, '6', shaman.Skills["Resurrection"]['6']);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(0);
+        }
+
+        [TestMethod] public void RelationNestedLocalization_ValueOfSavedMapElement() {
+            Assert.Fail();
+        }
+
+        [TestMethod] public void RelationNestedLocalization_ValueOfDeletedMapElement() {
+            Assert.Fail();
+        }
+
+        [TestMethod] public void RelationNestedLocalization_NewOrderedListElement() {
+            // Arrange
+            var expedition = new AntarcticExpedition() {
+                ExpeditionID = Guid.NewGuid(),
+                LeadScientist = "Robert Falcon Scott",
+                ExpeditionName = "Discovery Expedition",
+                WasSponsoredByRGS = true,
+                Discoveries = new RelationOrderedList<LocalizedNullableText>() {
+                    new LocalizedNullableText("KING_EDWARD_VII_LAND_LOC"),
+                    new LocalizedNullableText("POLAR_PLATEAU_LOC"),
+                    new LocalizedNullableText("83_SOUTH_LOC")
+                },
+                NumShips = 1,
+                StartDate = new DateOnly(1901, 8, 6)
+            };
+            expedition.Discoveries[0][Language.English] = "King Edward VII Land";
+            expedition.Discoveries[0][Language.Spanish] = "La Tierra del Rey Edward 7°";
+            expedition.Discoveries[1][Language.English] = "Polar Plateau";
+            expedition.Discoveries[1][Language.German] = "Das Polarplateau";
+            expedition.Discoveries[1][Language.Hebrew] = "רמת הקוטב";
+            expedition.Discoveries[2][Language.English] = "83° South Latitude";
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(AntarcticExpedition)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(expedition);
+
+            // Assert
+            data.Insertions.Should().HaveCount(6);
+            data.Insertions.Should().ContainRow(expedition.Discoveries[0].Key, ConversionOf(Language.English), expedition.Discoveries[0][Language.English]);
+            data.Insertions.Should().ContainRow(expedition.Discoveries[0].Key, ConversionOf(Language.Spanish), expedition.Discoveries[0][Language.Spanish]);
+            data.Insertions.Should().ContainRow(expedition.Discoveries[1].Key, ConversionOf(Language.English), expedition.Discoveries[0][Language.English]);
+            data.Insertions.Should().ContainRow(expedition.Discoveries[1].Key, ConversionOf(Language.German), expedition.Discoveries[0][Language.German]);
+            data.Insertions.Should().ContainRow(expedition.Discoveries[1].Key, ConversionOf(Language.Hebrew), expedition.Discoveries[0][Language.Hebrew]);
+            data.Insertions.Should().ContainRow(expedition.Discoveries[2].Key, ConversionOf(Language.English), expedition.Discoveries[0][Language.English]);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(0);
+        }
+
+        [TestMethod] public void RelationNestedLocalization_SavedOrderedListElement() {
+            Assert.Fail();
+        }
+
+        [TestMethod] public void RelationNestedLocalization_DeletedOrderedListElement() {
+            Assert.Fail();
+        }
+
+        [TestMethod] public void RelationNestedLocalization_ModifiedOrderedListElement() {
+            Assert.Fail();
         }
 
 
