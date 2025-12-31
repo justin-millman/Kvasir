@@ -10421,7 +10421,7 @@ namespace UT.Kvasir.Translation {
             }
 
             // Test Scenario: <Path> is `null` (✗illegal✗)
-            public class Localization {
+            public class LocalizedData {
                 [PrimaryKey] public string LocalizationKey { get; set; } = "";
                 [PrimaryKey] public uint Locale { get; set; }
                 [Check.LengthIsAtLeast(4, Path = null!)] public string LocalizedValue { get; set; } = "";
