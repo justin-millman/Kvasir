@@ -3,7 +3,6 @@ using Kvasir.Translation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.Globals;
-using static UT.Kvasir.Translation.Nullability;
 using static UT.Kvasir.Translation.TableNaming;
 
 namespace UT.Kvasir.Translation {
@@ -19,6 +18,18 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Name.Should().Be("DeckOfCards");
+        }
+
+        [TestMethod] public void LocalizationTableRenamedToBrandNewName() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Placebo);
+
+            // Act
+            var translation = translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translation.Principal.Table.Name.Should().Be("AllPlacebosTable");
         }
 
         [TestMethod] public void NamespaceExcludedFromDefaultPrimaryTableName() {
@@ -400,6 +411,73 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`DEFCON` → Four")
                 .WithProblem("the annotation cannot be applied to a pre-defined instance property")
                 .WithAnnotations("[RelationTable]");
+        }
+
+        [TestMethod] public void RelationTable_AppliedToLocalizationField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Mattress);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NotRelationException>()
+                .WithLocation("`Mattress` → Price")
+                .WithProblem("the property type `LocalizedCurrency` is not a Relation")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationTable_DuplicateNameWithLocalizationTable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var firstSource = typeof(Target.LocalizedAddress);
+            var secondSource = typeof(Target.LocalizedString);
+
+            // Act
+            _ = translator[firstSource, Translator.AsLocalzation];
+            var translate = () => translator[secondSource, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`LocalizedString`")
+                .WithProblem("Table name \"GlobalLocalizationTable\" is already in use for the Principal Table of `LocalizedAddress`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationTable_DuplicateNameWithPrincipalTable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var firstSource = typeof(Overlord);
+            var secondSource = typeof(Overlord.LocalizedCount);
+
+            // Act
+            _ = translator[firstSource];
+            var translate = () => translator[secondSource, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`LocalizedCount`")
+                .WithProblem("Table name \"OneTableToRuleThemAll\" is already in use for the Principal Table of `Overlord`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationTable_DuplicateNameWithRelationTable_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var firstSource = typeof(SportsAgent);
+            var secondSource = typeof(SportsAgent.LocalizedSalary);
+
+            // Act
+            _ = translator[firstSource];
+            var translate = () => translator[secondSource, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<DuplicateNameException>()
+                .WithLocation("`LocalizedSalary`")
+                .WithProblem("Table name \"TheBestTableEver\" is already in use for the Relation Table of `SportsAgent` → <synthetic> `Clients`")
+                .EndMessage();
         }
     }
 }

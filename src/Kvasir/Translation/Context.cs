@@ -34,6 +34,7 @@ namespace Kvasir.Translation {
             initialType_ = initial;
             history_ = new List<PropertyInfo>();
             current_ = Option.None<PropertyInfo>();
+            references_ = new List<Type>() { initial };
             TranslatingEntity = true;
         }
 
@@ -50,6 +51,7 @@ namespace Kvasir.Translation {
             initialType_ = source.initialType_;
             history_ = new List<PropertyInfo>(source.history_);
             current_ = source.current_;
+            references_ = new List<Type>(source.references_);
             TranslatingEntity = source.TranslatingEntity;
         }
 
@@ -82,7 +84,10 @@ namespace Kvasir.Translation {
             Debug.Assert(next is not null);
             Debug.Assert(current_.Exists(p => (Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType) == next));
 
-            if (next == initialType_ || history_.Any(p => p.PropertyType == next)) {
+            // We use `ReferenceEquals` instead of the default `Equals` (e.g. through `Contains`) because the equality
+            // function of a SyntheticType returns `true` when compared against the "actual type" but we do not want
+            // that to be considered a reference cycle.
+            if (references_.Any(r => ReferenceEquals(r, next))) {
                 history_.Add(current_.Unwrap());
                 current_ = Option.None<PropertyInfo>();
                 throw new ReferenceCycleException(this);
@@ -91,6 +96,7 @@ namespace Kvasir.Translation {
                 TranslatingEntity = next.IsClass;
                 history_.Add(current_.Unwrap());
                 current_ = Option.None<PropertyInfo>();
+                references_.Add(next);
                 return new ContextHandle() { Context = this };
             }
         }
@@ -135,6 +141,7 @@ namespace Kvasir.Translation {
                 // Just finished translating a Type
                 current_ = Option.Some(history_[^1]);
                 history_.RemoveAt(history_.Count - 1);
+                references_.RemoveAt(references_.Count - 1);
                 TranslatingEntity = current_.Exists(p => p.ReflectedType!.IsClass);
             }
             else {
@@ -178,6 +185,14 @@ namespace Kvasir.Translation {
         }
 
         /// <summary>
+        ///   Resets the tracked references, such that <see cref="Push(Type)">pushing</see> one a second time does not
+        ///   induce a <see cref="ReferenceCycleException"/>.
+        /// </summary>
+        public void ResetReferences() {
+            references_.Clear();
+        }
+
+        /// <summary>
         ///   Produces the native name of a property, accounting for explicit interface implementations and indexers.
         /// </summary>
         /// <param name="property">
@@ -212,6 +227,7 @@ namespace Kvasir.Translation {
         private readonly bool frozen_;
         private readonly Type initialType_;
         private readonly List<PropertyInfo> history_;
+        private readonly List<Type> references_;
         private Option<PropertyInfo> current_;
     }
 }

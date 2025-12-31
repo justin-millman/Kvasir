@@ -3,7 +3,6 @@ using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Extraction;
 using Kvasir.Reconstitution;
-using Kvasir.Relations;
 using Kvasir.Schema;
 using System;
 using System.Collections.Generic;
@@ -14,15 +13,16 @@ using System.Reflection;
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
         /// <summary>
-        ///   Translates only the Principal Table for an Entity Type, ignoring all Relations.
+        ///   Translates only the Principal Table for an Entity Type, ignoring all Relations and all Localizations.
         /// </summary>
         /// <remarks>
         ///   This method is invoked from two different evaluation streams. The first is when translating an Entity in
         ///   full, such as when the <see cref="this[Type]">index operator</see> is used. In this case, translation of
-        ///   the Principal Table will be immediately followed by translation of the Entity's Relations. The second is
-        ///   <i>during</i> the translation of a Principal Table or a Relation when a Reference property is encountered.
-        ///   In this case, we need to delay the translation of Relations until a later time, since Relations are
-        ///   allowed to contain reference cycles.
+        ///   the Principal Table will be immediately followed by translation of the Entity's Relations and any
+        ///   referenced Localizations. The second is <i>during</i> the translation of a Principal Table, a Relation
+        ///   when a Reference property is encountered, or a Localization. In this case, we need to delay the
+        ///   translation of Relations until a later time, since Relations and Localizations are allowed to contain
+        ///   reference cycles.
         /// </remarks>
         /// <param name="context">
         ///   The <see cref="Context"/> in which <paramref name="source"/> is being translated. This <b>should</b>
@@ -51,7 +51,7 @@ namespace Kvasir.Translation {
         ///   name
         ///     --or--
         ///   if the name of the Principal Table of <paramref name="source"/> is already taken by another Entity's
-        ///   Principal Table or by some Relation Table.
+        ///   Principal Table, by some Relation Table, or by a Localization's Localization Table.
         /// </exception>
         private PrincipalTableDef TranslatePrincipalTable(Context context, Type source) {
             Debug.Assert(context is not null);
@@ -79,7 +79,12 @@ namespace Kvasir.Translation {
                 throw new InvalidEntityTypeException(context, category);
             }
 
-            var fieldGroups = TranslateType(context, source, true, IsPreDefined(source)).ToList();
+            var traits = TranslationTraits.AllowRelations | TranslationTraits.AllowLocalizations;
+            if (IsPreDefined(source)) {
+                traits |= TranslationTraits.RequirePreDefined;
+            }
+
+            var fieldGroups = TranslateType(context, source, traits).ToList();
             var schemas = fieldGroups.OrderBy(g => g.Column.Unwrap()).SelectMany(g => g).Select(d => d.MakeSchema(settings_)).ToList();
             var fields = schemas.Select(s => s.Field).ToList();
 
@@ -149,9 +154,9 @@ namespace Kvasir.Translation {
         ///   if 2 or more Fields in the data model of any Relation Table "owned" by <paramref name="source"/> have the
         ///   same name
         ///     --or--
-        ///   if the name of any of the Relation Tables "owned" by <paramref name="source"/> is already taken by another
-        ///   Entity's Principal Table or by some other Relation Table (including another Relation Table "owned" by
-        ///   <paramref name="source"/>).
+        ///   if the name of any of the Relation Tables "owned" by <paramref name="source"/> is already taken by an
+        ///   Entity's Principal Table, by some other Relation Table (including another Relation Table "owned" by
+        ///   <paramref name="source"/>), or by a Localization's Localization Table.
         /// </exception>
         /// <exception cref="InvalidNativeNullabilityException">
         ///   if any of the Relation-type properties of <paramref name="source"/> are natively nullable and do not have
@@ -168,6 +173,7 @@ namespace Kvasir.Translation {
             // However, the owning Entity will have been memoized when initially translated, and the element type will
             // be memoized if it is an Aggregate or a Reference.
 
+            var relationTypes = new List<Type>();
             var relationTables = new List<RelationTableDef>();
             foreach (var tracker in relationTrackersCache_[source]) {
                 var property = tracker.Property;
@@ -180,12 +186,12 @@ namespace Kvasir.Translation {
                     throw new InvalidNativeNullabilityException(context, "a property of Relation type");
                 }
 
-                // This isn't the best, but it will have to do. To indicate that a particular Relation property should
-                // cannot be null, we insinuate that it is [NonNullable]. Then, if it is a natively nullable, it comes
-                // through as [Nullable]. Therefore, if both are present, then we have a problem, and we have to catch
-                // it here to avoid an annotation conflict. And, to provide the description, we have to switch over the
-                // field names.
-                foreach (var prop in PropertiesOf(syntheticType).OrderBy(f => f.Name)) {
+                // This isn't the best, but it will have to do. To indicate that a particular Relation property cannot
+                // be null, we insinuate that it is [NonNullable]. Then, if it is a natively nullable, it comes through
+                // as [Nullable]. Therefore, if both are present, then we have a problem, and we have to catch it here
+                // to avoid an annotation conflict. And, to provide the description, we have to switch over the Field
+                // names.
+                foreach (var prop in PropertiesOf(context, syntheticType).OrderBy(f => f.Name)) {
                     using var guard = context.Push(prop);
                     if (prop.HasAttribute<NullableAttribute>() && prop.HasAttribute<NonNullableAttribute>()) {
                         if (prop.Name == "Item") {
@@ -195,13 +201,17 @@ namespace Kvasir.Translation {
                             throw new InvalidNativeNullabilityException(context, "the key type of a map-like Relation");
                         }
                         else {
-                            throw new UnreachableException($"If block over non-nullable Relation fields exhausted");
+                            throw new UnreachableException("If block over non-nullable Relation fields exhausted");
                         }
                     }
                 }
 
-                var sourceIsPreDefined = IsPreDefined(source);
-                var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, false, sourceIsPreDefined));
+                var traits = TranslationTraits.AllowLocalizations;
+                if (IsPreDefined(source)) {
+                    traits |= TranslationTraits.RequirePreDefined;
+                }
+
+                var relationGroup = new RelationFieldGroup(context, property, TranslateType(context, syntheticType, traits));
                 var schemas = relationGroup.Select(d => d.MakeSchema(settings_)).ToList();
                 var fields = schemas.Select(s => s.Field).ToList();
                 Debug.Assert(fields.Count >= 2);
@@ -237,7 +247,7 @@ namespace Kvasir.Translation {
                     // Data for a Pre-Defined Entity is not loaded from the back-end database; this goes for Relations
                     // that are "owned" by the Pre-Defined Entity as well. Technically we still require that the
                     // Relation data be repopulate-able, but we don't actually perform the repopulation.
-                    if (sourceIsPreDefined) {
+                    if (IsPreDefined(source)) {
                         repopulator = new SkipRepopulator();
                     }
 
@@ -247,13 +257,120 @@ namespace Kvasir.Translation {
                 var def = new RelationTableDef(table, extractor, repopulationPlan!);
                 tableNameCache_.Add(tableName, syntheticType);
                 relationTables.Add(def);
+
+                relationTypes.Add(syntheticType);
             }
 
+            relationTypesFromEntity_[source] = relationTypes;
             return relationTables;
         }
 
         /// <summary>
-        ///   Determines the name of the Principal Table for an Entity Type.
+        ///   Translates the Localization Table for a Localization Type.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which <paramref name="source"/> is being translated. This <b>should</b>
+        ///   include that type.
+        /// </param>
+        /// <param name="source">
+        ///   The Localization Type.
+        /// </param>
+        /// <returns>
+        ///   The <see cref="PrincipalTableDef"/> for <paramref name="source"/>.
+        /// </returns>
+        /// <exception cref="InvalidEntityTypeException">
+        ///   if <paramref name="source"/> is not a valid Entity Type (e.g. it is a generic, or is
+        ///   <see langword="abstract"/>, etc.).
+        /// </exception>
+        /// <exception cref="NotEnoughInstancesException">
+        ///   if <paramref name="source"/> is a Pre-Defined Entity type that does not expose at least 2 pre-defined
+        ///   instances.
+        /// </exception>
+        /// <exception cref="DuplicateNameException">
+        ///   if the name of the Localization Table of <paramref name="source"/> is already taken by an Entity's
+        ///   Principal Table, by some Relation Table, or by another Localization's Localization Table.
+        /// </exception>
+        private LocalizationTableDef TranslateLocalizationTable(Context context, Type source) {
+            Debug.Assert(context is not null);
+            Debug.Assert(source is not null);
+
+            // Memoization
+            if (localizationTableCache_.TryGetValue(source, out LocalizationTableDef? principal)) {
+                Debug.Assert(pkCache_.ContainsKey(source));
+                return principal;
+            }
+            Debug.Assert(!pkCache_.ContainsKey(source));
+
+            // Localizations cannot induce a reference cycle on its own. The Key Type is required to be a primitive,
+            // which cannot be an Entity. The Locale Type and Value Types are allowed to be the same as the Entity on
+            // which the Localization is found. We therefore reset the references on the Context to avoid detecting such
+            // sequences as cycles.
+            context.ResetReferences();
+
+            // Even though Localizations must derive from the `Localization<,,>` base class, and therefore must be
+            // classes themselves, they can still be invalid (e.g. being abstract or generic, etc.). We have to do the
+            // error checking here rather than in operator[], because the latter is invoked only from the top-level API
+            // whereas the former is also invoked when a Localization-type property is encountered while translating a
+            // non-Localization Entity.
+            var category = source.TranslationCategory();
+            if (!category.Equals(TypeCategory.Localization)) {
+                throw new InvalidEntityTypeException(context, category);
+            }
+
+            var traits = TranslationTraits.None;
+            if (IsPreDefined(source)) {
+                traits |= TranslationTraits.RequirePreDefined;
+            }
+
+            var fieldGroups = TranslateType(context, source, traits).ToList();
+            var schemas = fieldGroups.OrderBy(g => g.Column.Unwrap()).SelectMany(g => g).Select(d => d.MakeSchema(settings_)).ToList();
+            var fields = schemas.Select(s => s.Field).ToList();
+
+            // We know we're dealing with a Localization, and therefore know that the Primary Key will consist of the
+            // first two fields (Key, Locale) and that there will be no Candidate Keys; however, there may be Foreign
+            // Keys if we have a Localized Reference (or a Localized Aggregate containing a Reference). We'll still use
+            // the `KeyTranslator` helper, though.
+            (var primaryKey, var candidateKeys) = KeyTranslator.ComputeKeys(context, source, schemas);
+            var foreignKeys = CreateForeignKeys(fieldGroups);
+            var constraints = schemas.SelectMany(s => s.CHECKs).Concat(GetTableConstraints(context, source, schemas, settings_)).ToList();
+
+            // We have to reverse-engineer the Primary Key back into FieldGroup/FieldDescriptor form, because when we
+            // interact with it later for Reference-type Fields we need the structure intact. Specifically, we need to
+            // be able to apply Path-based annotations to the Fields in the Primary Key using their original paths. To
+            // do this, we extract out the Descriptors from Schemas whose Field is in the Primary Key, then filter each
+            // of the groups using those Descriptors (keeping only the non-empty groups). The filter operation performs
+            // an additional clone
+            var pkDescriptors = schemas.Where(s => primaryKey.Fields.Contains(s.Field)).Select(s => s.Descriptor);
+            var pkGroups = fieldGroups.Select(g => g.Filter(pkDescriptors)).Where(o => o.HasValue).Select(o => o.Unwrap());
+            pkCache_[source] = pkGroups.ToList();
+            var pkExtractor = new DataExtractionPlan(pkGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
+
+            var tableName = GetTableName(context, source);
+            if (tableNameCache_.TryGetValue(tableName, out Type? match)) {
+                throw new DuplicateNameException(context, tableName, match);
+            }
+
+            var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
+
+            // Pre-Defined Entities don't get reconstituted like normal, since the data is expected to be effectively
+            // hard-coded into the source. We use a KeyLookupCreator for those.
+            if (!IsPreDefined(source)) {
+                principal = new LocalizationTableDef(table, new List<object>());
+            }
+            else {
+                var instances = GetPreDefinedInstances(context, source);
+                principal = new LocalizationTableDef(table, instances.ToList());
+            }
+
+            localizationTableCache_.Add(source, principal);
+            tableNameCache_.Add(tableName, source);
+            keyMatchers_.Add(source, new KeyMatcher(() => entityLookup_(source), pkExtractor));
+            return principal;
+        }
+
+        /// <summary>
+        ///   Determines the name of the Principal Table for an Entity Type or the Localization Table for a Localization
+        ///   Type.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which <paramref name="source"/> is being translated.

@@ -412,5 +412,119 @@ namespace UT.Kvasir.Translation {
                 .WithAnnotations("[Nullable]")
                 .EndMessage();
         }
+
+        [TestMethod] public void NullableLocalization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Madrigal);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("IsFemale").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("Gift").OfTypeText().BeingNullable().And
+                .HaveField("NumLines").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("RelationToMirabel").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void LocalizationWithNullableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Alignment);
+
+            // Act
+            var translate = () => translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Alignment` → Key")
+                .WithProblem("the Localization Key type of a Localization cannot be nullable");
+        }
+
+        [TestMethod] public void LocalizationWithNullableLocale_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Halide);
+
+            // Act
+            var translate = () => translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<InvalidNativeNullabilityException>()
+                .WithLocation("`Halide` → Locale")
+                .WithProblem("the Locale type of a Localization cannot be nullable");
+        }
+
+        [TestMethod] public void LocalizationWithNullableValue() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Rhyme);
+
+            // Act
+            var translation = translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("Key").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Locale").OfTypeDate().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void LocalizationMarkedNonNullable() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CivVIPolicy);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Policy").OfTypeText().BeingNonNullable().And
+                .HaveField("Slot").OfTypeEnumeration(
+                    CivVIPolicy.Variety.Military,
+                    CivVIPolicy.Variety.Economic,
+                    CivVIPolicy.Variety.Diplomatic,
+                    CivVIPolicy.Variety.WildCard
+                ).BeingNonNullable().And
+                .HaveField("Effect").OfTypeText().BeingNonNullable().And
+                .HaveField("UnlockedBy").OfTypeText().BeingNonNullable().And
+                .HaveField("ObsoletedBy").OfTypeText().BeingNullable().And
+                .HaveField("IntroducedIn").OfTypeEnumeration(
+                    CivVIPolicy.Installment.Base,
+                    CivVIPolicy.Installment.RiseAndFall,
+                    CivVIPolicy.Installment.GatheringStorm,
+                    CivVIPolicy.Installment.RedDeath,
+                    CivVIPolicy.Installment.NewFrontier,
+                    CivVIPolicy.Installment.NewLeader
+                ).And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void LocalizationMarkedNullable() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Superintendent);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("EducatorID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("District").OfTypeText().BeingNullable().And
+                .HaveField("WasPreviouslyPrincipal").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("NumSchoolsOverseeing").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("HasDoctorate").OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
     }
 }

@@ -823,7 +823,37 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<NestedRelationException>()
                 .WithLocation("`BlackHole` → <synthetic> `Measurements` → Value")
-                .WithProblem("nested Relations are not supported")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationAsLocaliationLocale_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(OvarianCyst);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`OvarianCyst` → `LocalizedPain` (from \"Pain\") → Locale")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationAsLocalizationValue_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Fondue);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`Fondue` → `LocalizedIngredients` (from \"Ingredients\") → Value")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
                 .EndMessage();
         }
 
@@ -838,7 +868,22 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<NestedRelationException>()
                 .WithLocation("`IntelligenceAgency` → `Leadership` (from \"Board\") → <synthetic> `Roles` → Value")
-                .WithProblem("nested Relations are not supported")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationNestedWithinLocalizationNestedWithinAggregate_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(AmicusBrief);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`AmicusBrief` → `Contributors` (from \"Authors\") → `LocalizedAuthors` (from \"Secondary\") → Value")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
                 .EndMessage();
         }
 
@@ -853,7 +898,22 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<NestedRelationException>()
                 .WithLocation("`Poll` → <synthetic> `Questions` → `Question` (from \"Item\") → Answers")
-                .WithProblem("nested Relations are not supported")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationNestedWithinAggregateNestedWithinLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(PreprocessorMacro);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`PreprocessorMacro` → `LocalizedArgs` (from \"Arguments\") → `Argument` (from \"Value\") → Concepts")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
                 .EndMessage();
         }
 
@@ -868,7 +928,22 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<NestedRelationException>()
                 .WithLocation("`Quinceanera` → <synthetic> `Presents` → `Gift` (from \"Value\") → Adjectives")
-                .WithProblem("nested Relations are not supported")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationNestedWithinAggregateNestedWithinLocalization_PostMemoization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Parable);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedRelationException>()
+                .WithLocation("`Parable` → `LocalizedCitation` (from \"Mentions\") → `Citation` (from \"Value\") → Verses")
+                .WithProblem("nested Relations (i.e. within a Localization or another Relation) are not supported")
                 .EndMessage();
         }
 
@@ -956,6 +1031,254 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void NonNullableLocalizationsOfNonNullableElements() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Retrovirus);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("VirusID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Variety").OfTypeEnumeration(
+                    Retrovirus.Class.Lentivirus,
+                    Retrovirus.Class.Oncoretrovirus,
+                    Retrovirus.Class.Spumavirus
+                ).BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("Incidence").OfTypeDouble().BeingNonNullable().And
+                .HaveField("FirstIdentified").OfTypeGuid().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+            translation.Relations.Should().BeEmpty();
+        }
+
+        [TestMethod] public void ReadOnlyLocalizations() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Debate);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("DebateID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Participant1").OfTypeText().BeingNonNullable().And
+                .HaveField("Participant2").OfTypeText().BeingNonNullable().And
+                .HaveField("Topic").OfTypeText().BeingNonNullable().And
+                .HaveField("NumJudges").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("RebuttalsAllowed").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("DurationMinutes").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+            translation.Relations.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationsNestedWithinAggregates() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Bodybuilder);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Birthdate").OfTypeDate().BeingNonNullable().And
+                .HaveField("Stats.Height").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Stats.Weight").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Stats.BMI").OfTypeSingle().BeingNonNullable().And
+                .HaveField("WonOlympiaCompetition").OfTypeBoolean().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
+            translation.Relations.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationsNestedWithinRelations() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(AdventCalendar);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+AdventCalendar.GiftsTable").And
+                .HaveField("AdventCalendar.CalendarID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Key").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("AdventCalendar.CalendarID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void LocalizationAsLocalizationLocale() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Execution);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedLocalizationException>()
+                .WithLocation("`Execution` → `LocalizedCrime` (from \"ExecutedFor\") → Locale")
+                .WithProblem("nested Localizations (i.e. within another Localization) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationAsLocalizationValue() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(SlimeMold);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedLocalizationException>()
+                .WithLocation("`SlimeMold` → `LocalizedName` (from \"PetName\") → Value")
+                .WithProblem("nested Localizations (i.e. within another Localization) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationsNestedWithinRelationNestedWithinAggregate() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Chiropractor);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+Chiropractor.Licensure.DegreesTable").And
+                .HaveField("Chiropractor.DoctorID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Key").OfTypeEnumeration(
+                    Chiropractor.Degree.HighSchoolDiploma,
+                    Chiropractor.Degree.Undergrad,
+                    Chiropractor.Degree.Masters,
+                    Chiropractor.Degree.PhD,
+                    Chiropractor.Degree.MD,
+                    Chiropractor.Degree.JD
+                ).BeingNonNullable().And
+                .HaveField("Value").OfTypeGuid().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Chiropractor.DoctorID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void LocalizationNestedWithinLocalizationNestedWithinAggregate_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Coffee);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedLocalizationException>()
+                .WithLocation("`Coffee` → `Trademark` (from \"ID\") → `LocalizedName` (from \"Name\") → Value")
+                .WithProblem("nested Localizations (i.e. within another Localization) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationsNestedWithinAggregateNestedWithinRelation() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Triumvirate);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PropertyTypes+Triumvirate.MembersTable").And
+                .HaveField("Triumvirate.TriumvirateID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Item.Ranking").OfTypeUInt8().BeingNonNullable().And
+                .HaveField("Item.Name").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Triumvirate.TriumvirateID")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
+        [TestMethod] public void LocalizationNestedWithinAggregateNestedWithinLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Laundromat);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedLocalizationException>()
+                .WithLocation("`Laundromat` → `LocalizedCost` (from \"Charges\") → `Service` (from \"Locale\") → Cost")
+                .WithProblem("nested Localizations (i.e. within another Localization) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationNestedWithinAggregateNestedWithinLocalization_PostMemoization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Sommelier);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NestedLocalizationException>()
+                .WithLocation("`Sommelier` → `LocalizedWine` (from \"LeastFavoriteWine\") → `Vintage` (from \"Value\") → Name")
+                .WithProblem("nested Localizations (i.e. within another Localization) are not supported")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationWithAggregateKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ParoleHearing);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidLocalizationKeyException>()
+                .WithLocation("`ParoleHearing` → `LocalizedPrisoner` (from \"Parolee\") → Key")
+                .WithProblem("type `Sentence` is a struct or a record struct and cannot be the type of a Localization Key")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationWithReferenceKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Cocktail);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidLocalizationKeyException>()
+                .WithLocation("`Cocktail` → `LocalizedBooze` (from \"PrimaryAlcohol\") → Key")
+                .WithProblem("type `Alcohol` is a class or a record class and cannot be the type of a Localization Key")
+                .EndMessage();
         }
     }
 }

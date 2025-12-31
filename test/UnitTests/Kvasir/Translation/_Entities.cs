@@ -1,4 +1,5 @@
 ﻿using Kvasir.Annotations;
+using Kvasir.Localization;
 using Kvasir.Relations;
 using System;
 using System.Collections;
@@ -7,6 +8,7 @@ using System.Linq;
 
 using static UT.Kvasir.Translation.TestConstraints;
 using static UT.Kvasir.Translation.TestConverters;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Translation {
     internal static class PropertyTypes {
@@ -453,6 +455,36 @@ namespace UT.Kvasir.Translation {
             public RelationMap<string, RelationMap<string, double>> Measurements { get; init; } = new();
         }
 
+        // Test Scenario: Relation as Localization Locale (✗not permitted✗)
+        public class OvarianCyst {
+            public enum Stage { Prepubescent, Pubescent, Pregnant, Menopausal }
+
+            public class LocalizedPain : Localization<string, RelationOrderedList<int>, double> {
+                public LocalizedPain(string key) : base(key) {}
+            }
+
+            [PrimaryKey] public Guid MedicalID { get; set; }
+            public bool IsLeftSide { get; set; }
+            public Stage WomansStatus { get; set; }
+            public LocalizedPain Pain { get; set; } = new("");
+            public bool CausedByEndometriosis { get; set; }
+        }
+
+        // Test Scenario: Relation as Localization Value (✗not permitted✗)
+        public class Fondue {
+            public enum Kind { Chocolate, Cheese, Meat, Other }
+
+            public class LocalizedIngredients : Localization<int, string, RelationSet<string>> {
+                public LocalizedIngredients(int key) : base(key) {}
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public Kind Variety { get; set; }
+            public DateTime Timestamp { get; set; }
+            public LocalizedIngredients Ingredients { get; set; } = new(0);
+            public double CaloriesPerServing { get; set; }
+        }
+
         // Test Scenario: Relation Nested Within Relation Nested Within Aggregate (✗not permitted✗)
         public class IntelligenceAgency {
             public struct Leadership {
@@ -470,6 +502,26 @@ namespace UT.Kvasir.Translation {
             public ulong Employees { get; set; }
         }
 
+        // Test Scenario: Relation Nested Within Localization Nested Within Aggregate (✗not permitted✗)
+        public class AmicusBrief {
+            public class LocalizedAuthors : Localization<short, Guid, RelationOrderedList<string>> {
+                public LocalizedAuthors(short key) : base(key) {}
+            }
+
+            public struct Contributors {
+                public sbyte Count { get; set; }
+                public LocalizedText Lead { get; set; }
+                public LocalizedAuthors Secondary { get; set; }
+            }
+
+            [PrimaryKey] public string Case { get; set; } = "";
+            [PrimaryKey] public uint BriefNumber { get; set; }
+            public string BriefTitle { get; set; } = "";
+            public Contributors Authors { get; set; }
+            public bool? InFavorOfPlaintiff { get; set; }
+            public ulong PageCount { get; set; }
+        }
+
         // Test Scenario: Relation Nested Within Aggregate Nested Within Relation (✗not permitted✗)
         public class Poll {
             public record struct Question(string Text, RelationSet<string> Answers);
@@ -480,6 +532,21 @@ namespace UT.Kvasir.Translation {
             public RelationList<Question> Questions { get; init; } = new();
             public ulong Responses { get; set; }
             public double ReponseRate { get; set; }
+        }
+
+        // Test Scenario: Relation Nested Within Aggregate Nested Within Localization (✗not permitted✗)
+        public class PreprocessorMacro {
+            public record struct Argument(byte Index, string Token, bool IsVariadic, IReadOnlyRelationList<string> Concepts);
+
+            public sealed class LocalizedArgs : Localization<char, string, Argument> {
+                public LocalizedArgs(char key) : base(key) {}
+            }
+
+            [PrimaryKey] public string File { get; set; } = "";
+            [PrimaryKey] public string Symbol { get; set; } = "";
+            public LocalizedArgs Arguments { get; set; }
+            public bool IsOverloaded { get; set; }
+            public bool StandardCompliant { get; set; }
         }
 
         // Test Scenario: Relation Nested Within Aggregate Nested Within Relation, post-Memoization (✗not permitted✗)
@@ -496,6 +563,27 @@ namespace UT.Kvasir.Translation {
             public Gift BestGift { get; set; }
             public RelationMap<string, Gift> Presents { get; } = new();
             public bool InMexico { get; set; }
+        }
+
+        // Test Scenario: Relation Nested Within Aggregate Nested Within Localization, post-Memoization (✗not permitted✗)
+        public class Parable {
+            [Flags] public enum Version { KingJames = 1, Wicked = 2, Septuagint = 4, Vaticanus = 8 }
+
+            public struct Citation {
+                public string Book { get; set; }
+                public byte Chapter { get; set; }
+                public RelationOrderedList<int> Verses { get; }
+            }
+
+            public sealed class LocalizedCitation : Localization<string, Version, Citation> {
+                public LocalizedCitation(string key) : base(key) { }
+            }
+
+            [PrimaryKey] public Guid ParableID { get; set; }
+            public string? Title { get; set; }
+            public Citation Incipience { get; set; }
+            public LocalizedCitation Mentions { get; set; } = new("");
+            public bool HistoricallyAtteted { get; set; }
         }
 
         // Test Scenario: Relation List/Set of KeyValuePair<X, Y> (✗not permitted - implementation ambiguity✗)
@@ -545,6 +633,205 @@ namespace UT.Kvasir.Translation {
             public bool HomeToNessie { get; set; }
             public ushort Islands { get; set; }
         }
+
+        // Test Scenario: Non-Nullable Localizations of Non-Nullable Values (✓recognized✓)
+        public class Retrovirus {
+            public enum Class { Oncoretrovirus, Lentivirus, Spumavirus }
+
+            [PrimaryKey] public Guid VirusID { get; set; }
+            public Class Variety { get; set; }
+            public LocalizedText Name { get; set; } = new("");
+            public double Incidence { get; set; }
+            public LocalizedDate FirstIdentified { get; set; } = new(Guid.Empty);
+        }
+
+        // Test Scenario: Read-Only Localizations (✓recognized✓)
+        public class Debate {
+            [PrimaryKey] public Guid DebateID { get; set; }
+            public string Participant1 { get; set; } = "";
+            public string Participant2 { get; set; } = "";
+            public LocalizedReadOnlyText Topic { get; set; } = new("");
+            public byte NumJudges { get; set; }
+            public bool RebuttalsAllowed { get; set; }
+            public double DurationMinutes { get; set; }
+        }
+
+        // Test Scenario: Localizations Nested Within Aggregates (✓recognized✓)
+        public class Bodybuilder {
+            public struct Statistics {
+                public LocalizedMeasure Height { get; set; }
+                public LocalizedMeasure Weight { get; set; }
+                public float BMI { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public DateOnly Birthdate { get; set; }
+            public Statistics Stats { get; set; }
+            public bool WonOlympiaCompetition { get; set; }
+        }
+
+        // Test Scenario: Localizations Nested Within Relations (✓recognized✓)
+        public class AdventCalendar {
+            [PrimaryKey] public Guid CalendarID { get; set; }
+            public decimal Price { get; set; }
+            public RelationMap<LocalizedDate, string> Gifts { get; } = new();
+            public bool IsPhysical { get; set; }
+        }
+
+        // Test Scenario: Localization as Localization Locale (✗not permitted✗)
+        public class Execution {
+            public enum Means { LethalInjection, ElectricChair, FiringSquad, Guillotine, DrawnAndQuartered, Hanged, Vigilante, Other }
+
+            public class LocalizedCrime : Localization<string, LocalizedText, bool> {
+                public LocalizedCrime(string key) : base(key) { }
+            }
+
+            [PrimaryKey] public ushort Year { get; set; }
+            [PrimaryKey] public string Jurisdiction { get; set; } = "";
+            [PrimaryKey] public ulong PrisonerNumber { get; set; }
+            public string PrisonerName { get; set; } = "";
+            public sbyte TimesStayed { get; set; }
+            public DateTime TimeOfDeath { get; set; }
+            public Means Method { get; set; }
+            public LocalizedCrime ExecutedFor { get; set; } = new("");
+        }
+
+        // Test Scenario: Localization as Localization Value (✗not permitted✗)
+        public class SlimeMold {
+            public class LocalizedName : Localization<string, string, LocalizedText> {
+                public LocalizedName(string key) : base(key) {}
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Species { get; set; } = "";
+            public LocalizedName PetName { get; set; } = new("");
+            public ulong NumSpores { get; set; }
+            public bool IsParasitic { get; set; }
+            public double NeuralPower { get; set; }
+        }
+
+        // Test Scenario: Localization Nested Within Relation Nested Within Aggregate (✓recognized✓)
+        public class Chiropractor {
+            public enum Degree { HighSchoolDiploma, Undergrad, Masters, PhD, MD, JD }
+
+            public struct License {
+                public RelationMap<Degree, LocalizedDate> Degrees { get; }
+                public string LicenseNumber { get; set; }
+                public DateOnly LicenseExpiration { get; set; }
+            }
+
+            [PrimaryKey] public Guid DoctorID { get; set; }
+            public string Name { get; set; } = "";
+            public string? Clinic { get; set; }
+            public License Licensure { get; set; }
+            public ulong Adjustments { get; set; }
+        }
+
+        // Test Scenario: Localization Nested Within Localization Nested Within Aggregate (✗not permitted✗)
+        public class Coffee {
+            public class LocalizedName : Localization<int, string, LocalizedText> {
+                public LocalizedName(int key) : base(key) {}
+            }
+
+            public struct Trademark {
+                public LocalizedName Name { get; set; }
+                public Guid TrademarkNumber { get; set; }
+            }
+
+            public Trademark ID { get; set; }
+            [PrimaryKey] public Guid InternationalFoodNumber { get; set; }
+            public string Strain { get; set; } = "";
+            public string CountryOfOrigin { get; set; } = "";
+            public float Purity { get; set; }
+            public bool UsedAtStarbucks { get; set; }
+        }
+
+        // Test Scenario: Localization Nested Within Aggregate Nested Within Relation (✓recognized✓)
+        public class Triumvirate {
+            public struct Member {
+                public byte Ranking { get; set; }
+                public LocalizedText Name { get; set; }
+            }
+
+            [PrimaryKey] public Guid TriumvirateID { get; set; }
+            public IReadOnlyRelationSet<Member> Members { get; } = new RelationSet<Member>();
+            public DateOnly? Formed { get; set; }
+            public DateOnly? Dissolved { get; set; }
+        }
+
+        // Test Scenario: Localization Nested Within Aggregate Nested Within Localization (✗not permitted✗)
+        public class Laundromat {
+            public record struct Service(string Title, LocalizedCurrency Cost);
+
+            public class LocalizedCost : Localization<Guid, Service, float> {
+                public LocalizedCost(Guid key) : base(key) {}
+            }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [PrimaryKey] public string City { get; set; } = "";
+            public double SquareFootage { get; set; }
+            public decimal Revenue { get; set; }
+            public LocalizedCost Charges { get; set; } = new(Guid.Empty);
+            public bool IsFront { get; set; }
+        }
+
+        // Test Scenario: Localization Nested Within Aggregate Nested Within Localization, Post-Memoization (✗not permitted✗)
+        public class Sommelier {
+            public enum Kind { Restaurant, Personal, Corporate, Religious, None }
+
+            public struct Vintage {
+                public LocalizedText Name { get; set; }
+                public ushort Year { get; set; }
+                public string CountryOfOrigin { get; set; }
+            }
+
+            public class LocalizedWine : Localization<string, string, Vintage> {
+                public LocalizedWine(string key) : base(key) {}
+            }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateOnly LicensedSince { get; set; }
+            public Kind Employment { get; set; }
+            public Vintage FavoriteWine { get; set; }
+            public LocalizedWine LeastFavoriteWine { get; set; } = new("");
+        }
+
+        // Test Scenario: Localization with Aggregate Localization Key Type (✗not permitted✗)
+        public class ParoleHearing {
+            public record struct Sentence(ulong Days, bool ParoleEligible, bool DeathRow);
+
+            public class LocalizedPrisoner : Localization<Sentence, string, uint> {
+                public LocalizedPrisoner(Sentence key) : base(key) {}
+            }
+
+            [PrimaryKey] public Guid HearingID { get; set; }
+            public LocalizedPrisoner Parolee { get; set; } = new(new());
+            public DateTime Time { get; set; }
+            public bool ParoleGranted { get; set; }
+            public bool PublicHearing { get; set; }
+            public string HeadOfBoard { get; set; } = "";
+        }
+
+        // Test Scenario: Localization with Reference Localization Key Type (✗not permitted✗)
+        public class Cocktail {
+            public class Alcohol {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public double Proof { get; set; }
+                public bool IsLiquor { get; set; }
+            }
+
+            public class LocalizedBooze : Localization<Alcohol, string, Guid> {
+                public LocalizedBooze(Alcohol key) : base(key) {}
+            }
+
+            [PrimaryKey] public string DrinkName { get; set; } = "";
+            public LocalizedBooze PrimaryAlcohol { get; } = new(new());
+            public string? PrimaryFruitFlavor { get; set; }
+            public string? PreferredGarnish { get; set; }
+            public uint PopularityRanking { get; set; }
+            public decimal AveragePrice { get; set; }
+            public double CaloriesPerDrink { get; set; }
+        }
     }
 
     internal static class EntityShapes {
@@ -587,6 +874,11 @@ namespace UT.Kvasir.Translation {
             public bool IsBuckled { get; set; }
         }
 
+        // Test Scenario: Localization (✓allowed✓)
+        public class MatchPair : Localization<uint, Language, string> {
+            public MatchPair(uint key) : base(key) {}
+        }
+
         // Test Scenario: Struct (✗not permitted✗)
         public struct Carbohydrate {
             [PrimaryKey] public uint Carbon { get; set; }
@@ -614,11 +906,21 @@ namespace UT.Kvasir.Translation {
             public bool HomeWins { get; set; }
         }
 
+        // Test Scenario: Abstract Localization (✗not permitted✗)
+        public abstract class Trademark : Localization<int, Language, string> {
+            protected Trademark(int key) : base(key) { }
+        }
+
         // Test Scenario: Generic Type (✗not permitted✗)
         public class Speedometer<TUnit> {
             [PrimaryKey] public long MinSpeed { get; set; }
             [PrimaryKey] public long MaxSpeed { get; set; }
             public string Brand { get; set; } = "";
+        }
+
+        // Test Scenario: Generic Localization (✗not permitted✗)
+        public class Emoticon<TChar> : Localization<TChar, double, ulong> where TChar : notnull {
+            public Emoticon(TChar key) : base(key) {}
         }
 
         // Test Scenario: Interface (✗not permitted✗)
@@ -692,6 +994,38 @@ namespace UT.Kvasir.Translation {
                 Name = name;
                 Epithet = epithet;
                 FeastDay = feastDay;
+            }
+        }
+
+        // Test Scenario: Localization (✓allowed✓)
+        [PreDefined] public class FishFin : Localization<string, char, string> {
+            public static FishFin Dorsal { get; } = new FishFin("LOC_DORSAL_FIN_NAME");
+            public static FishFin Tail { get; } = new FishFin("LOC_TAIL_FIN_NAME");
+            public static FishFin Anal { get; } = new FishFin("LOC_ANAL_FIN_NAME");
+            public static FishFin Pectoral { get; } = new FishFin("LOC_PECTORAL_FIN_NAME");
+            public static FishFin Pelvic { get; } = new FishFin("LOC_PELVIC_FIN_NAME");
+            public static FishFin Adipose { get; } = new FishFin("LOC_ADIPOSE_FIN_NAME");
+
+            private FishFin(string key) : base(key) {}
+        }
+
+        // Test Scenario: Localization Properties (✓allowed✓)
+        [PreDefined] public class BrainLobe {
+            [PrimaryKey] public LocalizedReadOnlyText Name { get; private init; }
+            public string MeSH { get; private init; }
+            public string Function { get; private init; }
+            public double Volume { get; private init; }
+
+            public static BrainLobe Occipital { get; } = new BrainLobe("LOC_OCCIPITAL_NAME", "D009778", "vision", 18.0);
+            public static BrainLobe Parietal { get; } = new BrainLobe("LOC_PARIETAL_NAME", "D010296", "proprioception", 19.0);
+            public static BrainLobe Temporal { get; } = new BrainLobe("LOC_TEMPORAL_NAME", "D013702", "auditory", 20.0);
+            public static BrainLobe Frontal { get; } = new BrainLobe("LOC_FRONTAL_NAME", "D005625", "higher-level", 43.0);
+
+            private BrainLobe(string name, string mesh, string function, double volume) {
+                Name = new LocalizedReadOnlyText(name);
+                MeSH = mesh;
+                Function = function;
+                Volume = volume;
             }
         }
 
@@ -1022,6 +1356,149 @@ namespace UT.Kvasir.Translation {
             }
         }
 
+        // Test Scenario: Localization to Pre-Defined Entity (✓allowed✓)
+        [PreDefined] public class DeadlySin {
+            [PreDefined] public class Color {
+                [PrimaryKey] public byte R { get; private init; }
+                [PrimaryKey] public byte G { get; private init; }
+                [PrimaryKey] public byte B { get; private init; }
+
+                public static Color Green { get; } = new Color(0, 128, 0);
+                public static Color Purple { get; } = new Color(128, 0, 128);
+                public static Color Red { get; } = new Color(255, 0, 0);
+                public static Color Aqua { get; } = new Color(0, 255, 255);
+                public static Color Blue { get; } = new Color(0, 0, 255);
+                public static Color Yellow { get; } = new Color(255, 255, 0);
+                public static Color Orange { get; } = new Color(255, 165, 0);
+
+                private Color(byte r, byte g, byte b) {
+                    R = r;
+                    G = g;
+                    B = b;
+                }
+            }
+
+            public class LocalizedColor : Localization<Guid, sbyte, Color> {
+                public LocalizedColor(Guid key) : base(key) {}
+            }
+
+            [PrimaryKey] public sbyte Index { get; init; }
+            public string Name { get; private init; }
+            public uint SummaMentions { get; private init; }
+            public LocalizedColor AssociatedColor { get; private init; }
+
+            public static DeadlySin Lust { get; } = new DeadlySin(0, "Lust");
+            public static DeadlySin Greed { get; } = new DeadlySin(1, "Greed");
+            public static DeadlySin Gluttony { get; } = new DeadlySin(2, "Gluttony");
+            public static DeadlySin Sloth { get; } = new DeadlySin(3, "Sloth");
+            public static DeadlySin Pride { get; } = new DeadlySin(4, "Pride");
+            public static DeadlySin Envy { get; } = new DeadlySin(5, "Envy");
+            public static DeadlySin Wrath { get; } = new DeadlySin(6, "Wrath");
+
+            private DeadlySin(sbyte index, string name) {
+                Index = index;
+                Name = name;
+                SummaMentions = 0;
+                AssociatedColor = new(Guid.NewGuid());
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Localization to Pre-Defined Entity (✓allowed✓)
+        [PreDefined] public class LunarPhase {
+            [PreDefined] public class Hemisphere {
+                public enum Direction { North, South }
+
+                [PrimaryKey] public Direction NorthOrSouth { get; private init; }
+                public string Name { get; private init; }
+
+                public static Hemisphere Northern { get; } = new Hemisphere(Direction.North, "Northern Hemisphere");
+                public static Hemisphere Southern { get; } = new Hemisphere(Direction.South, "Southern Hemisphere");
+
+                private Hemisphere(Direction direction, string name) {
+                    NorthOrSouth = direction;
+                    Name = name;
+                }
+            }
+
+            public class LocalizedHemisphere : Localization<string, string, Hemisphere> {
+                public LocalizedHemisphere(string key) : base(key) {}
+            }
+
+            public struct Illumination {
+                public LocalizedHemisphere Hemisphere { get; set; }
+                public double Percentage { get; set; }
+            }
+
+            [PrimaryKey] public string Phase { get; private init; }
+            public Illumination Visibility { get; private init; }
+            public ushort AverageMoonriseTime { get; private init; }
+
+            public static LunarPhase New { get; } = new LunarPhase("New", 600);
+            public static LunarPhase WaxingCrescent { get; } = new LunarPhase("Waxing Crescent", 900);
+            public static LunarPhase FirstQuarter { get; } = new LunarPhase("First Quarter", 1200);
+            public static LunarPhase WaxingGibbous { get; } = new LunarPhase("Waxing Gibbous", 1500);
+            public static LunarPhase Full { get; } = new LunarPhase("Full", 1800);
+            public static LunarPhase WaningGibbous { get; } = new LunarPhase("Waning Gibbous", 2100);
+            public static LunarPhase LastQuarter { get; } = new LunarPhase("Last Quarter", 0);
+            public static LunarPhase WaningCrescent { get; } = new LunarPhase("Waning Crescent", 300);
+
+            private LunarPhase(string phase, ushort moonrise) {
+                Phase = phase;
+                Visibility = new Illumination();
+                AverageMoonriseTime = moonrise;
+            }
+        }
+
+        // Test Scenario: Relation-Nested Localization to Pre-Defined Entity (✓allowed✓)
+        [PreDefined] public class Cyclade {
+            [PreDefined] public class Geographer {
+                public enum Culture { Roman, Greek, Egyptian, Persian, Arabic }
+
+                [PrimaryKey] public string Name { get; private init; }
+                public Culture Ethnicity { get; private init; }
+
+                public static Geographer Strabo { get; } = new Geographer("Strabo", Culture.Roman);
+                public static Geographer Ptolemy { get; } = new Geographer("Ptolemy", Culture.Egyptian);
+                public static Geographer AlKhwarizmi { get; } = new Geographer("Al-Khwarizmi", Culture.Arabic);
+                public static Geographer Herodotus { get; } = new Geographer("Herodotus", Culture.Greek);
+                public static Geographer Eratosthenes { get; } = new Geographer("Eratosthenes", Culture.Greek);
+                public static Geographer IbnBattuta { get; } = new Geographer("Ibn Battuta", Culture.Arabic);
+
+                private Geographer(string name, Culture ethnicity) {
+                    Name = name;
+                    Ethnicity = ethnicity;
+                }
+            }
+
+            public class LocalizedGeographer : Localization<double, string, Geographer> {
+                public LocalizedGeographer(double key) : base(key) {}
+            }
+
+            [PrimaryKey] public uint IslandNumber { get; private init; }
+            public string Name { get; private init; }
+            public ulong Population { get; private init; }
+            public double LandArea { get; private init; }
+            public IReadOnlyRelationSet<LocalizedGeographer> MentionedBy { get; private init; }
+
+            public static Cyclade Syros { get; } = new Cyclade(7613, "Syros", 21124, 39.3);
+            public static Cyclade Santorini { get; } = new Cyclade(4, "Santorini", 15480, 35.02);
+            public static Cyclade Mykonos { get; } = new Cyclade(612904912, "Mykonos", 10704, 33.0);
+            public static Cyclade Naxos { get; } = new Cyclade(55515, "Naxos", 20578, 170.0);
+            public static Cyclade Folegandros { get; } = new Cyclade(163, "Folegandros", 719, 12.439);
+            public static Cyclade Milos { get; } = new Cyclade(71024399, "Milos", 5302, 58.1);
+            public static Cyclade Irakleia { get; } = new Cyclade(20, "Irakleia", 148, 6.871);
+            public static Cyclade Rineia { get; } = new Cyclade(6144302, "Rineia", 0, 5.4);
+            public static Cyclade Koufonisia { get; } = new Cyclade(2619023570, "Koufonisia", 391, 10.048);
+
+            private Cyclade(uint islandNumber, string name, ulong population, double area) {
+                IslandNumber = islandNumber;
+                Name = name;
+                Population = population;
+                LandArea = area;
+                MentionedBy = new RelationSet<LocalizedGeographer>();
+            }
+        }
+
         // Test Scenario: Reference to Non-Pre-Defined Entity (✗not permitted✗)
         [PreDefined] public class CapnCrunch {
             public class Date {
@@ -1247,6 +1724,147 @@ namespace UT.Kvasir.Translation {
                 CommonName = common;
                 Type = isMonkey ? Kind.Monkey : Kind.Ape;
                 DedicatedJournal = null;
+            }
+        }
+
+        // Test Scenario: Localization to Non-Pre-Defined Entity (✗not permitted✗)
+        [PreDefined] public class OpiumWar {
+            public class Country {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                public string Capital { get; set; } = "";
+                public ulong Population { get; set; }
+            }
+
+            public class LocalizedBelligerent : Localization<string, Country, bool> {
+                public LocalizedBelligerent(string key) : base(key) {}
+            }
+
+            [PrimaryKey] public sbyte Index { get; private init; }
+            public DateOnly Start { get; private init; }
+            public DateOnly End { get; private init; }
+            public ulong Casualties { get; private init; }
+            public LocalizedBelligerent Victor { get; private init; }
+
+            public static OpiumWar First { get; } = new OpiumWar(1, new DateOnly(1839, 9, 4), new DateOnly(1842, 8, 29), 3169);
+            public static OpiumWar Second { get; } = new OpiumWar(2, new DateOnly(1856, 10, 8), new DateOnly(1860, 10, 24), 2971);
+
+            private OpiumWar(sbyte index, DateOnly start, DateOnly end, ulong casualties) {
+                Index = index;
+                Start = start;
+                End = end;
+                Casualties = casualties;
+                Victor = new LocalizedBelligerent("");
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Localization to Non-Pre-Defined Entity (✗not permitted✗)
+        [PreDefined] public class BronteSister {
+            public class Novel {
+                [PrimaryKey] public ulong ISBN { get; set; }
+                public string Title { get; set; } = "";
+                public ushort NumPages { get; set; }
+                public int WordCount { get; set; }
+            }
+
+            public class LocalizedLiterature : Localization<string, Language, Novel> {
+                public LocalizedLiterature(string key) : base(key) {}
+            }
+
+            public struct Bibliography {
+                public LocalizedLiterature DebutNovel { get; set; }
+            };
+
+            [PrimaryKey] public string FirstName { get; private init; }
+            public string Pseudonym { get; private init; }
+            public Bibliography Works { get; private init; }
+            public DateOnly BirthDate { get; private init; }
+
+            public static BronteSister Charlotte { get; } = new BronteSister("Charlotte", "Currer Bell", new DateOnly(1816, 4, 21));
+            public static BronteSister Emily { get; } = new BronteSister("Emily", "Ellis Bell", new DateOnly(1818, 7, 30));
+            public static BronteSister Anne { get; } = new BronteSister("Anne", "Acton Bell", new DateOnly(1820, 1, 17));
+
+            private BronteSister(string firstName, string pseudonym, DateOnly birthdate) {
+                FirstName = firstName;
+                Pseudonym = pseudonym;
+                Works = new Bibliography();
+                BirthDate = birthdate;
+            }
+        }
+
+        // Test Scenario: Aggregate-Nested Localization to Non-Pre-Defined Entity, post-Memoization (✗not permitted✗)
+        [PreDefined] public class CapriSun {
+            public class Company {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                public decimal Revenue { get; set; }
+                public DateOnly FoundedOn { get; set; }
+            }
+            public class Brand {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                public Corporation TrademarkOwner { get; set; }
+            }
+
+            public class LocalizedCompany : Localization<string, char, Company> {
+                public LocalizedCompany(string key) : base(key) { }
+            }
+
+            public struct Corporation {
+                public LocalizedCompany Company { get; set; }
+                public string CEO { get; set; }
+            }
+
+            [PrimaryKey] public Guid FlavorID { get; private init; }
+            public string Name { get; private init; }
+            public Corporation DesignedBy { get; private init; }
+
+            public static CapriSun Orange { get; } = new CapriSun("Orange");
+            public static CapriSun Apple { get; } = new CapriSun("Apple");
+            public static CapriSun FruitPunch { get; } = new CapriSun("Fruit Punch");
+            public static CapriSun Lemonade { get; } = new CapriSun("Lemonade");
+            public static CapriSun MountainCooler { get; } = new CapriSun("Mountain Cooler");
+            public static CapriSun PacificCooler { get; } = new CapriSun("Pacific Cooler");
+            public static CapriSun StrawberryKiwi { get; } = new CapriSun("Strawberry Kiwi");
+            public static CapriSun TropicalPunch { get; } = new CapriSun("Tropical Punch");
+            public static CapriSun WildCherry { get; } = new CapriSun("Wild Cherry");
+
+            private CapriSun(string name) {
+                FlavorID = Guid.NewGuid();
+                Name = name;
+                DesignedBy = new Corporation();
+            }
+        }
+
+        // Test Scenario: Relation-Nested Localization to Non-Pre-Defined Entity (✗not permitted✗)
+        [PreDefined] public class Muse {
+            public class Deity {
+                [PrimaryKey] public Guid TheoID { get; set; }
+                public string Name { get; set; } = "";
+            }
+
+            public class LocalizedGod : Localization<string, ulong, Deity> {
+                public LocalizedGod(string key) : base(key) {}
+            }
+
+            [PrimaryKey] public string Name { get; private init; }
+            public string Domain { get; private init; }
+            public IReadOnlyRelationList<LocalizedGod> Parents { get; private init; }
+
+            public static Muse Calliope { get; } = new Muse("Calliope", "epic poetry");
+            public static Muse Clio { get; } = new Muse("Clio", "history");
+            public static Muse Polyhmnia { get; } = new Muse("Polyhymnia", "mime");
+            public static Muse Euterpe { get; } = new Muse("Euterpe", "flute");
+            public static Muse Terpsichore { get; } = new Muse("Terpsichore", "dance");
+            public static Muse Erato { get; } = new Muse("Erato", "lyric poetry");
+            public static Muse Melpomene { get; } = new Muse("Melpomene", "tragedy");
+            public static Muse Thalia { get; } = new Muse("Thalia", "comedy");
+            public static Muse Urania { get; } = new Muse("Urania", "astronomy");
+
+            private Muse(string name, string domain) {
+                Name = name;
+                Domain = domain;
+                Parents = new RelationList<LocalizedGod>();
             }
         }
     }
@@ -1676,6 +2294,73 @@ namespace UT.Kvasir.Translation {
             public DateTime Expiration { get; set; }
             [IncludeInModel, CodeOnly] public byte CVV { get; set; }
         }
+
+        // Test Scenario: Localization with Public, Non-Static Derived Properties (✗not permitted✗)
+        public class Motto : Localization<string, double, string> {
+            public string Purpose { get; set; } = "";
+
+            public Motto(string key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Public, Non-Static Derived Properties Marked as [CodeOnly] (✓excluded✓)
+        public class Vase : Localization<Guid, ulong, string> {
+            [CodeOnly] public DateTime CreatedOn { get; set; }
+            [CodeOnly] public decimal RetailPrice { get; set; }
+
+            public Vase(Guid key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Non-Public and/or Static Derived Properties (✓excluded✓)
+        public class Biome : Localization<char, bool, string> {
+            private double TotalLandArea { get; set; }
+            protected ulong EndemicSpecies { get; set; }
+            internal float AverageElevation { get; set; }
+            public static bool Terrestrial { get; set; }
+
+            public Biome(char key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Non-Public Derived Properties Marked as [IncludedInModel] (✗not permitted✗)
+        public class Tropism : Localization<string, DateOnly, string> {
+            [IncludeInModel] private string? Description { get; set; }
+
+            public Tropism(string key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Static Derived Properties Marked as [IncludedInModel] (✗not permitted✗)
+        public class Dermatitis : Localization<uint, char, string> {
+            [IncludeInModel] public static double GlobalPrevalence { get; set; }
+
+            public Dermatitis(uint key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Hiding `Key` Property (✗not permitted✗)
+        public class TierList : Localization<char, ushort, string> {
+            public new string Key => new string(base.Key, 1);
+
+            public TierList(char key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Intermediate Inherited Property (✗excluded✗)
+        public class PowerOutage {
+            public class SuperLocalizedText : Localization<string, int, string> {
+                public int Number { get; set; }
+
+                public SuperLocalizedText(string key) : base(key) {}
+            }
+            public class SuperDuperLocalizedText : SuperLocalizedText {
+                public SuperDuperLocalizedText(string key) : base(key) {}
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public SuperDuperLocalizedText EnergyCompany { get; set; } = new("");
+            public DateTime OutageStart { get; set; }
+            public DateTime? OutageEnd { get; set; }
+            public ulong CustomersAffected { get; set; }
+            public string? ProximateCause { get; set; }
+            public decimal Cost { get; set; }
+            public ulong DeathsCaused { get; set; }
+        }
     }
 
     internal static class Nullability {
@@ -1946,6 +2631,54 @@ namespace UT.Kvasir.Translation {
                 Name = name;
             }
         }
+
+        // Test Scenario: Nullable Localization (✗respected✗)
+        public class Madrigal {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public bool IsFemale { get; set; }
+            public LocalizedText? Gift { get; set; }
+            public ulong NumLines { get; set; }
+            public string RelationToMirabel { get; set; } = "";
+        }
+
+        // Test Scenario: Localization with Nullable Localization Key (✗illegal✗)
+        public class Alignment : Localization<char?, float, double> {
+            public Alignment(char? key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Nullable Locale (✗illegal✗)
+        public class Halide : Localization<string, ushort?, string> {
+            public Halide(string key) : base(key) {}
+        }
+
+        // Test Scenario: Localization with Nullable Value (✓respected✓)
+        public class Rhyme : Localization<double, DateOnly, string?> {
+            public Rhyme(double key) : base(key) {}
+        }
+
+        // Test Scenario: Localization Property Marked as [NonNullable] (✓becomes non-nullable✓)
+        public class CivVIPolicy {
+            public enum Variety { Military, Economic, Diplomatic, WildCard }
+            public enum Installment { Base, RiseAndFall, GatheringStorm, RedDeath, NewFrontier, NewLeader }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            [NonNullable] public LocalizedText? Policy { get; set; } = new("");
+            public Variety Slot { get; set; }
+            [NonNullable] public LocalizedText? Effect { get; set; } = new("");
+            public string UnlockedBy { get; set; } = "";
+            public string? ObsoletedBy { get; set; }
+            public Installment IntroducedIn { get; set; }
+        }
+
+        // Test Scenario: Localization Property Marked as [Nullable] (✗becomes nullable✗)
+        public class Superintendent {
+            [PrimaryKey] public Guid EducatorID { get; set; }
+            public string Name { get; set; } = "";
+            [Nullable] public LocalizedText District { get; set; } = new("");
+            public bool WasPreviouslyPrincipal { get; set; }
+            public byte NumSchoolsOverseeing { get; set; }
+            public bool HasDoctorate { get; set; }
+        }
     }
 
     internal static class TableNaming {
@@ -1954,6 +2687,12 @@ namespace UT.Kvasir.Translation {
         public class PlayingCard {
             [PrimaryKey] public byte Suit { get; set; }
             [PrimaryKey] public byte Value { get; set; }
+        }
+
+        // Test Scenario: New Localization Table Name (✓renamed✓)
+        [Table("AllPlacebosTable")]
+        public class Placebo : Localization<Guid, char, string> {
+            public Placebo(Guid key) : base(key) {}
         }
 
         // Test Scenario: Namespace Excluded with No Relations (✓renamed✓)
@@ -2272,6 +3011,74 @@ namespace UT.Kvasir.Translation {
                 ExerciseTerm = exerciseTerm;
                 Readiness = readiness;
             }
+        }
+
+        // Test Scenario: [RelationTable] Applied to Localization Field (✗impermissible✗)
+        public class Mattress {
+            public enum Sizing { King, Queen, Twin, Full, Cushion }
+
+            [PrimaryKey] public Guid ProductID { get; set; }
+            public Sizing Size { get; set; }
+            [RelationTable("---")] public LocalizedCurrency Price { get; set; } = new("");
+            public string PurchasedAt { get; set; } = "";
+            public bool HasMemoryFoam { get; set; }
+        }
+
+        // Test Scenario: Duplicate Localization Table Name (✗duplication✗)
+        public class Target {
+            [Table("GlobalLocalizationTable")]
+            public class LocalizedAddress : Localization<string, Guid, string> {
+                public LocalizedAddress(string key) : base(key) {}
+            }
+
+            [Table("GlobalLocalizationTable")]
+            public class LocalizedString : Localization<int, char, string> {
+                public LocalizedString(int key) : base(key) {}
+            }
+
+
+            [PrimaryKey] public Guid StoreID { get; set; }
+            public LocalizedAddress Address { get; set; } = new("");
+            public double SquareFootage { get; set; }
+            public decimal AnnualRevenue { get; set; }
+            public ulong Inventory { get; set; }
+            public LocalizedString Graffiti { get; set; } = new(0);
+            public byte NumFloors { get; set; }
+            public ushort NumCartsAvailable { get; set; }
+        }
+
+        // Test Scenario: Table Name Duplicated between Principal Table and Localization Table (✗duplication✗)
+        [Table("OneTableToRuleThemAll")]
+        public class Overlord {
+            [Table("OneTableToRuleThemAll")]
+            public class LocalizedCount : Localization<double, Guid, uint> {
+                public LocalizedCount(double key) : base(key) {}
+            }
+
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public bool InTheVees { get; set; }
+            public LocalizedCount SoulsOwned { get; set; } = new(0.0);
+            public ushort Appearances { get; set; }
+            public bool HasBeenToHazbinHotel { get; set; }
+        }
+
+        // Test Scenario: Table Name Duplicated between Relation Table and Localization Table (✗duplication✗)
+        public class SportsAgent {
+            [Flags] public enum Sport { Baseball = 1, Basketball = 2, Football = 4, Hockey = 8, Soccer = 16, Boxing = 32, eSports = 64 }
+
+            [Table("TheBestTableEver")]
+            public class LocalizedSalary : Localization<string, string, decimal> {
+                public LocalizedSalary(string key) : base(key) {}
+            }
+
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            [PrimaryKey] public string Agency { get; set; } = "";
+            public Sport SportsServiced { get; set; }
+            [RelationTable("TheBestTableEver")] public IReadOnlyRelationSet<string> Clients { get; } = new RelationSet<string>();
+            public LocalizedSalary LargestNegotiatedSalary { get; set; } = new("");
+            public double Rake { get; set; }
         }
     }
 
@@ -2691,6 +3498,70 @@ namespace UT.Kvasir.Translation {
             public Group Representation { get; set; }
         }
 
+        // Test Scenario: Change Localization Field Name (✓renamed✓)
+        public class Shiva {
+            public enum Denomination { Reform, Conservative, Orthodox, Haredi, Secular };
+
+            [PrimaryKey] public string Decedent { get; set; } = "";
+            [Name("ShivaAddress")] public LocalizedText Address { get; set; } = new("");
+            public DateOnly Date { get; set; }
+            public bool IsBuffet { get; set; }
+            public ushort Attendees { get; set; }
+            public Denomination Judaism { get; set; }
+        }
+
+        // Test Scenario: Change Nested Localization Name (✓renamed in Principal Table✓)
+        public class BollywoodMovie {
+            public struct Director {
+                public LocalizedText Guild { get; set; }
+                public string Name { get; set; }
+                public ulong DirectorNumber { get; set; }
+            }
+
+            [PrimaryKey] public ulong IMDbID { get; set; }
+            public ushort DanceNumbers { get; set; }
+            [Name("DirectorsGuild", Path = "Guild")] public Director FilmDirector { get; set; }
+            public uint RuntimeMinutes { get; set; }
+            public ushort Year { get; set; }
+            public decimal Budget { get; set; }
+            public decimal BoxOffice { get; set; }
+            public bool StarsShahRukhKhan { get; set; }
+        }
+
+        // Test Scenario: Localization Property with Multiple Identical [Name] Changes (✓de-duplicated✓)
+        public class FlightAttendant {
+            public enum Company { American, United, Delta, Southwest, Spirit, ElAl, AirCanda, Lufthansa, AerLingus, Other }
+
+            [PrimaryKey] public string FlightAttendantIdentifier { get; set; } = "";
+            public Company Airline { get; set; }
+            [Name("FullName"), Name("FullName")] public LocalizedText Name { get; set; } = new("");
+            public ulong FlightsTaken { get; set; }
+            public DateOnly Certified { get; set; }
+            public bool GetsMotionSick { get; set; }
+        }
+
+        // Test Scenario: Localization Property with Multiple Different [Name] Changes (✗cardinality✗)
+        public class Bullfight {
+            [PrimaryKey] public Guid BullfightID { get; set; }
+            public string Bull { get; set; } = "";
+            public string Matador { get; set; } = "";
+            public uint RedCapesUsed { get; set; }
+            public bool IsSpanishStyle { get; set; }
+            public decimal Revenue { get; set; }
+            [Name("DateOfFight"), Name("CalendarDate")] public LocalizedDate Date { get; set; } = new(Guid.Empty);
+            public ulong Attendance { get; set; }
+        }
+
+        // Test Scenario: Localization Property with Redundant and Non-Redundant [Name] Changes (✗cardinality✗)
+        public class Baptism {
+            [PrimaryKey] public DateTime Timetsamp { get; set; }
+            public string Baby { get; set; } = "";
+            public string Priest { get; set; } = "";
+            [Name("WaterVolume"), Name("VolumeOfWater")] public LocalizedMeasure WaterVolume { get; set; } = new(0);
+            public ushort DurationSeconds { get; set; }
+            public bool Catholic { get; set; }
+        }
+
         // Test Scenario: Aggregate-Nested [Name] Change on Field that Already Has [Name] Change (✓renamed✓)
         public class HashMap {
             public struct CppType {
@@ -2771,6 +3642,21 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid VortexID { get; set; }
             [Name("HIGHS", Path = "Highs"), Name("LOWS", Path = "Lows")] public Temps Temperatures { get; set; }
             public ushort AttributableDeaths { get; set; }
+        }
+
+        // Test Scenario: [Name] Change on Nested Localization that Already Has [Name] Change (✓renamed in Principal Table✓)
+        public class MovingCompany {
+            public struct Registration {
+                public Guid License { get; set; }
+                [Name("Name")] public LocalizedText RegisteredName { get; set; }
+                [Name("Effective")] public LocalizedDate Date { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            [Name("Trademark", Path = "RegisteredName"), Name("Founding", Path = "Date")] public Registration Company { get; set; }
+            public ulong Employees { get; set; }
+            public ushort FleetSize { get; set; }
+            public decimal YearlyRevenue { get; set; }
         }
 
         // Test Scenario: Nested Property with Multiple [Name] Changes (✗cardinality✗)
@@ -2944,6 +3830,24 @@ namespace UT.Kvasir.Translation {
             public string ChiefRabbi { get; set; } = "";
             public DateTime Founded { get; set; }
             [Name("HomeCity", Path = "Yeshiva.City")] public RelationList<Student> Students { get; } = new();
+        }
+
+        // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+        public class Slushy {
+            public enum Sizing { Small, Medium, Large, ExtraLarge };
+
+            [PrimaryKey] public Guid SlushyID { get; set; }
+            [Name("SlushyFlavor", Path = "---")] public LocalizedText Flavor { get; } = new("");
+            public decimal Price { get; set; }
+            public bool From711 { get; set; }
+            public Sizing Size { get; set; }
+        }
+
+        // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+        public class Spoonerism {
+            [PrimaryKey] public Guid ID { get; set; }
+            LocalizedText Original { get; } = new("");
+            [Name("Spoonerization", Path = "Locale")] public LocalizedText SpoonerizedText { get; } = new("");
         }
     }
 
@@ -3160,6 +4064,15 @@ namespace UT.Kvasir.Translation {
             [Default(3.75, Path = "Item.Cost")] public RelationList<Accessory> Accessories { get; } = new();
         }
 
+        // Test Scenario: Default on Localization Field (✓valid✓)
+        public class ConfidentialInformant {
+            [PrimaryKey] public Guid InformantID { get; set; }
+            public string ManagingCop { get; set; } = "";
+            public bool ForImmunity { get; set; }
+            public ulong ArrestsFacilitated { get; set; }
+            [Default("localized-currency")] public LocalizedCurrency TotalCompensation { get; set; } = new("");
+        }
+
         // Test Scenario: `null` Default for Non-Nullable Field (✗invalid✗)
         public class RadioStation {
             [PrimaryKey] public bool IsFM { get; set; }
@@ -3260,6 +4173,24 @@ namespace UT.Kvasir.Translation {
             [Default("Marty McFly", Path = "Owners")] public Machine TimeMachine { get; set; }
             public RelationSet<DateTime> Visitations { get; } = new();
             public uint ParadoxesCaused { get; set; }
+        }
+
+        // Test Scenario: Applied to Nested Localization (✓applied in Principal Table✓)
+        public class Cantrip {
+            [Flags] public enum DamageType { None = 0, Slashing = 1, Bludgeoning = 2, Force = 4, Radiant = 8, Necrotic = 16, Fire = 32, Posion = 64, Lightning = 128, Piercing = 256, Cold = 512, Acid = 1024, Thunder = 2048, Psychic = 4096 }
+            public enum AttackRange { Touch, Distance, Cube, Sphere, Cone, Wall }
+
+            public struct Effects {
+                public DamageType Damage { get; set; }
+                public LocalizedMeasure DamageAmount { get; set; }
+                public bool IsHealing { get; set; }
+            }
+
+            [PrimaryKey] public string SpellName { get; set; } = "";
+            [Default(1000UL, Path = "DamageAmount")] public Effects Effect { get; set; }
+            public AttackRange Range { get; set; }
+            public string MagicSchool { get; set; } = "";
+            public double Prevalence { get; set; }
         }
 
         // Test Scenario: Single-Element Array Default (✗invalid✗)
@@ -3550,6 +4481,27 @@ namespace UT.Kvasir.Translation {
             [Default(null)] public RelationSet<string> Ingredients { get; } = new();
             public bool ToxiToConsume { get; set; }
         }
+
+        // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+        public class SportsCenter {
+            [PrimaryKey] public Guid ID { get; set; }
+            [Default("823651c2-0a2a-4510-b556-576e73a7d75c", Path = "---")] public LocalizedDate AirDate { get; } = new(Guid.NewGuid());
+            public string Host { get; set; } = "";
+            public bool FiftyForFifty { get; set; }
+            public ulong TotalHighlights { get; set; }
+        }
+
+        // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+        public class Caddie {
+            public enum Club { Wedge, Woods, Iron, Putter }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public ushort Tournaments { get; set; }
+            public DateOnly FirstTime { get; set; }
+            [Default(1000, Path = "Value")] public LocalizedMeasure CarryingCapacity { get; } = new(0);
+            public decimal Winnings { get; set; }
+            public Club FavoriteGolfClub { get; set; }
+        }
     }
 
     internal static class ColumnOrdering {
@@ -3629,6 +4581,21 @@ namespace UT.Kvasir.Translation {
             [Column(6)] public RelationList<string> Depictions { get; } = new();
             public string? Artist { get; set; }
             public ulong ThreadCount { get; set; }
+        }
+
+        // Test Scenario: Localization Fields are Implicitly Ordered (✓default behavior✓)
+        public class RoyalTitle : Localization<int, string, string> {
+            public RoyalTitle(int key) : base(key) {}
+        }
+
+        // Test Scenario: Localization Fields are Manually Ordered (✓ordered✓)
+        public class Merger {
+            [PrimaryKey] public string AbsorbingCompany { get; set; } = "";
+            [PrimaryKey] public string AbsorbedCompany { get; set; } = "";
+            public decimal StockSplit { get; set; }
+            public decimal Cost { get; set; }
+            [Column(1)] public LocalizedDate Date { get; set; } = new(Guid.Empty);
+            public bool AntitrustExemption { get; set; }
         }
 
         // Test Scenario: [Column] Applied to Pre-Defined Instance (✗impermissible✗)
@@ -3899,6 +4866,33 @@ namespace UT.Kvasir.Translation {
             public double PercentWeddingsQuoted { get; set; }
         }
 
+        // Test Scenario: Localization Property Marked as [PrimaryKey] (✓identified✓)
+        public class Headache {
+            public enum Variety { Cluster, Neuralgia, Stabbing, Sex, Migraine, Hypnic, HemicraniaContinua }
+
+            [PrimaryKey] public LocalizedText HeadacheKey { get; set; } = new("");
+            public Variety Kind { get; set; }
+            public double Severity { get; set; }
+            public string Patient { get; set; } = "";
+            public bool IsHormonal { get; set; }
+            public DateTime Onset { get; set; }
+            public DateTime? Termination { get; set; }
+        }
+
+        // Test Scenario: Nested Localization Property Marked as [Primary Key] (✓identified✓)
+        public class Abbey {
+            public struct Members {
+                public LocalizedText AbbotOrAbbess { get; set; }
+                public short Size { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public string? Name { get; set; }
+            public bool ForMonks { get; set; }
+            [PrimaryKey(Path = "AbbotOrAbbess")] public Members Membership { get; set; }
+            public ulong SquareFootage { get; set; }
+        }
+
         // Test Scenario: All Properties Marked as [PrimaryKey] (✓identified✓)
         public class Character {
             [PrimaryKey] public char Glyph { get; set; }
@@ -4108,6 +5102,11 @@ namespace UT.Kvasir.Translation {
             [Unique(Path = "Item")] public RelationSet<string> Precautions { get; } = new();
             public bool Aquatic { get; set; }
             public bool Forested { get; set; }
+        }
+
+        // Test Scenario: Default Deduction for Localization (✓identified✓)
+        public class Pronoun : Localization<double, string, string> {
+            public Pronoun(double key) : base(key) {}
         }
 
         // Test Scenario: Nullable Field Named `ID` + Non-Nullable Field Named `<EntityType>ID` (✓identified✓)
@@ -4414,6 +5413,26 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public RelationMap<short, string> Copyrights { get; } = new();
             public bool ThreeDimensional { get; set; }
         }
+
+        // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+        public class AesopsFable {
+            [PrimaryKey] public ushort PerryIndex { get; set; }
+            public ushort TownsendChapter { get; set; }
+            [PrimaryKey(Path = "---")] public LocalizedText Title { get; set; } = new("");
+            public string? Moral { get; set; }
+            public ushort WordCount { get; set; }
+        }
+
+        // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+        public class CreditReport {
+            public enum Company { Experian, CreditKarma, TransUnion, Equifax, USAGov, Other }
+
+            [PrimaryKey] public string Person { get; set; } = "";
+            [PrimaryKey(Path = "Locale")] public LocalizedDate IssuedOn { get; } = new(Guid.Empty);
+            public ushort CreditScore { get; set; }
+            public Company IssuedBy { get; set; }
+            public decimal? Cost { get; set; }
+        }
     }
 
     internal static class PrimaryKeyNaming {
@@ -4425,6 +5444,12 @@ namespace UT.Kvasir.Translation {
             public uint GematriaValue { get; set; }
             public byte Position { get; set; }
             public bool IsMaterLectionis { get; set; }
+        }
+
+        // Test Scenario: Named Primary Key on Localization Type (✓named✓)
+        [NamedPrimaryKey("LocalizationPK")]
+        public class Dial : Localization<string, double, Measurement> {
+            public Dial(string key) : base(key) {}
         }
 
         // Test Scenario: Named Primary Key when Unnamed Candidate Key was Deduced (✓named✓)
@@ -4784,6 +5809,30 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey(Path = "OPO.ID"), PrimaryKey(Path = "Item"), Unique("Unique", Path = "OPO.ID"), Unique("Unique", Path = "Index")] public RelationOrderedList<string> Administrators { get; } = new();
         }
 
+        // Test Scenario: Localization Field in Candidate Key (✓recognized✓)
+        public class ToDoList {
+            [PrimaryKey] public Guid ID { get; set; }
+            [Unique] public LocalizedDate Deadline { get; set; } = new(Guid.Empty);
+            public RelationOrderedList<string> Things { get; } = new();
+            public string Doer { get; set; } = "";
+            public bool IsCompleted { get; set; }
+        }
+
+        // Test Scenario: Nested Localization Field in Candidate Key (✓recognized✓)
+        public class Hexagon {
+            public struct Point {
+                public LocalizedMeasure X { get; set; }
+                public LocalizedMeasure Y { get; set; }
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public bool IsRegular { get; set; }
+            public bool IsConvex { get; set; }
+            [Unique("Center", Path = "X"), Unique("Center", Path = "Y")] public Point CenterPoint { get; set; }
+            public double Perimeter { get; set; }
+            public double Area { get; set; }
+        }
+
         // Test Scenario: Scalar Fields in Same Candidate Key as Nested Fields (✓recognized✓)
         public class Sabermetric {
             public enum Phase { Offensive, Defensive, Pitching, Baserunning, Managing }
@@ -4988,6 +6037,29 @@ namespace UT.Kvasir.Translation {
             public decimal PrizeMoney { get; set; }
             public bool SoberRequired { get; set; }
         }
+
+        // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+        public class GameChanger {
+            [PrimaryKey] public sbyte Season { get; set; }
+            [PrimaryKey] public sbyte Episode { get; set; }
+            [Unique(Path = "---")] public LocalizedDate AirDate { get; set; } = new(Guid.Empty);
+            public string Title { get; set; } = "";
+            public string Player1 { get; set; } = "";
+            public string Player2 { get; set; } = "";
+            public string Player3 { get; set; } = "";
+            public ulong Views { get; set; }
+        }
+
+        // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+        public class Ramen {
+            [Flags] public enum Meat { None = 0, Chicken = 1, Pork = 2, Shrimp = 4, Tofu = 8, Beef = 16 }
+
+            [PrimaryKey] public Guid RamenID { get; set; }
+            [Unique(Path = "Value")] public LocalizedText Name { get; set; } = new("");
+            public Meat Protein { get; set; }
+            public double CaloriesPerServing { get; set; }
+            public float BrothTemperature { get; set; }
+        }
     }
 
     internal static class DataConverters {
@@ -5138,6 +6210,13 @@ namespace UT.Kvasir.Translation {
             public bool CanMakeLoans { get; set; }
             public byte NumTimesRobbed { get; set; }
             public bool Crypto { get; set; }
+        }
+
+        // Test Scenario: [DataConverter] Applied to Localization (✗impermissible✗)
+        public class RiskTerritory {
+            [PrimaryKey, DataConverter<Identity<string>>] public LocalizedText Name { get; set; } = new("");
+            public string Continent { get; set; } = "";
+            public sbyte Troops { get; set; }
         }
 
         // Test Scenario: [DataConverter] Applied to Pre-Defined Instance (✗impermissible✗)
@@ -5341,6 +6420,18 @@ namespace UT.Kvasir.Translation {
             public sbyte NumOases { get; set; }
         }
 
+        // Test Scenario: [Numeric] Applied to Localization Field (✗impermissible✗)
+        public class JapanesePrefecture {
+            public enum JapaneseIsland { Hokkaido, Tohoku, Kanto, Chubu, Kansai, Chugoku, Shikoku, Kyushu, Okinawa }
+
+            [PrimaryKey] byte Number { get; set; }
+            [Numeric] public LocalizedText Name { get; set; } = new("");
+            public JapaneseIsland Island { get; set; }
+            public string CapitalCity { get; set; } = "";
+            public ulong Population { get; set; }
+            public decimal GDP { get; set; }
+        }
+
         // Test Scenario: [Numeric] Applied to Pre-Defined Instance (✗impermissible✗)
         [PreDefined] public class Friend {
             [PrimaryKey] public string FirstName { get; private init; }
@@ -5456,6 +6547,17 @@ namespace UT.Kvasir.Translation {
             public string Author { get; set; } = "";
             public string EncryptedText { get; set; } = "";
             [AsString] public RelationMap<char, char> Solution { get; } = new();
+        }
+
+        // Test Scenario: [AsString] Applied to Localization Field (✗impermissible✗)
+        public class PettingZoo {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Name { get; set; } = "";
+            [AsString] public LocalizedDate GrandOpening { get; set; } = new(Guid.Empty);
+            public ushort NumAnimals { get; set; }
+            public decimal OperatingBudget { get; set; }
+            public decimal TicketCost { get; set; }
+            public sbyte GoatBitingIncidents { get; set; }
         }
 
         // Test Scenario: [AsString] Applied to Pre-Defined Instance (✗impermissible✗)
@@ -5609,6 +6711,26 @@ namespace UT.Kvasir.Translation {
                 [Check.IsPositive] public Resolution Rating { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with Numeric Key (✓constrained in principal table✓)
+            public class Argonaut {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string EnglishName { get; set; } = "";
+                public string GreekName { get; set; } = "";
+                [Check.IsPositive] public LocalizedMeasure DaysAtSea { get; set; } = new(0);
+                public bool SurvivedToColchis { get; set; }
+                public ulong ArgonauticaMentions { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-Numeric Key (✗impermissible✗)
+            public class Microscope {
+                [PrimaryKey] public Guid ProductID { get; set; }
+                [Check.IsPositive] public LocalizedDate ManufacturedOn { get; set; } = new(Guid.Empty);
+                public float SlideArea { get; set; }
+                public double MaxMagnification { get; set; }
+                public string? Laboratory { get; set; }
+                public sbyte NumLenses { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Numeric Scalar (✓constrained✓)
             public class IceAge {
                 public struct Timespan {
@@ -5702,6 +6824,36 @@ namespace UT.Kvasir.Translation {
                 public sbyte NumBulbs { get; set; }
                 public bool IsLED { get; set; }
                 [Check.IsPositive(Path = "Unit")] public Output Power { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Numeric Key (✓constrained in principal table✓)
+            public class StockSplit {
+                public struct Details {
+                    public LocalizedMeasure SharesOutstanding { get; set; }
+                    public decimal OriginalPrice { get; set; }
+                    public decimal ResultantPrice { get; set; }
+                }
+
+                [PrimaryKey] public string Symbol { get; set; } = "";
+                [PrimaryKey] public DateOnly ExDate { get; set; }
+                [Check.IsPositive(Path = "SharesOutstanding")] public Details Metadata { get; set; }
+                public double Ratio { get; set; }
+                public bool IsReverse { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-Numeric Key (✗impermissible✗)
+            public class Famine {
+                public struct Timeline {
+                    public LocalizedDate Start { get; set; }
+                    public LocalizedDate End { get; set; }
+                }
+
+                [PrimaryKey] public Guid FamineID { get; set; }
+                [Check.IsPositive(Path = "End")] public Timeline Dates { get; set; }
+                public ulong Casualties { get; set; }
+                public string? Name { get; set; }
+                public bool IsManMade { get; set; }
+                public string? CountryOfOrigin { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -5958,6 +7110,24 @@ namespace UT.Kvasir.Translation {
                 public ushort WordsPerMinute { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Well {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string? WellName { get; set; }
+                [Check.IsPositive(Path = "---")] public LocalizedMeasure Depth { get; set; } = new(0);
+                public ulong GallonsWater { get; set; }
+                public bool HasRunDry { get; set; }
+                public bool IsMechanized { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class Diacritic {
+                [PrimaryKey] public char Char { get; }
+                public ulong UnicodeNumber { get; set; }
+                [Check.IsPositive(Path = "Locale")] public LocalizedReadOnlyText Name { get; set; } = new("");
+                public IReadOnlyRelationSet<char> Examples { get; } = new RelationSet<char>();
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class ScoobyDooFilm {
                 [PrimaryKey] public string MovieTitle { get; set; } = "";
@@ -6085,6 +7255,35 @@ namespace UT.Kvasir.Translation {
                 public bool FBIMostWanted { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with Signed Numeric Key (✓constrained in principal table✓)
+            public class Snowman {
+                [PrimaryKey] public Guid ID { get; set; }
+                public float Height { get; set; }
+                public double SnowTemperature { get; set; }
+                [Check.IsNegative] public LocalizedRating Rating { get; set; } = new(0);
+                public bool WearsTopHat { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Unsigned Numeric Key (✗impermissible✗)
+            public class Tortellini {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Filling { get; set; } = "";
+                [Check.IsNegative] public LocalizedMeasure WeightPer { get; set; } = new(0);
+                public double HoleDiameter { get; set; }
+                public bool AuthenticItalian { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-Numeric Key (✗impermissible✗)
+            public class Quark {
+                public enum Gen { I, II, III }
+
+                public Gen Generation { get; set; }
+                [Check.IsNegative] public LocalizedReadOnlyText Name { get; set; } = new("");
+                public float Mass { get; set; }
+                public float Charge { get; set; }
+                public float Spin { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Signed Numeric Scalar (✓constrained✓)
             public class Flood {
                 public record struct Date(sbyte Day, sbyte Month, ushort Year);
@@ -6174,6 +7373,50 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNegative(Path = "State")] public Address HouseAddress { get; set; }
                 public decimal PerNight { get; set; }
                 public Guid OwnerID { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Signed Numeric Key (✓constrained in principal table✓)
+            public class RapeKit {
+                public struct Timeline {
+                    public DateOnly DateCatalogued { get; set; }
+                    public DateOnly? DateProcessed { get; set; }
+                    public LocalizedRating EvidenceGrade { get; set; }
+                }
+
+                [PrimaryKey] public Guid KitID { get; set; }
+                public string? Victim { get; set; }
+                [Check.IsNegative(Path = "EvidenceGrade")] public Timeline History { get; set; }
+                public bool IsProcessed { get; set; }
+                public string? Findings { get; set; }
+                public string Precinct { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Nested Localization with Unsigned Numeric Key (✗impermissible✗)
+            public class LogicPuzzle {
+                public struct Stats {
+                    public LocalizedMeasure BestSolveTime { get; set; }
+                    public LocalizedMeasure AverageSolveTime { get; set; }
+                }
+
+                [PrimaryKey] public Guid PuzzleID { get; set; }
+                public string Title { get; set; } = "";
+                public DateOnly PublicationDate { get; set; }
+                public sbyte Categories { get; set; }
+                public sbyte VariablesPerCategory { get; set; }
+                [Check.IsNegative(Path = "AverageSolveTime")] public Stats SolveRecords { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-Numeric Key (✗impermissible✗)
+            public class Rainbow {
+                public struct Colorization {
+                    public LocalizedNullableText Gradient { get; set; }
+                }
+
+                [PrimaryKey] public Guid RainbowID { get; set; }
+                public double VisibilityDuration { get; set; }
+                public bool CausedByThunderstorm { get; set; }
+                public sbyte NumLeprechauns { get; set; }
+                [Check.IsNegative(Path = "Gradient")] public Colorization ColorScheme { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -6442,6 +7685,25 @@ namespace UT.Kvasir.Translation {
                 public ulong InstagramFollowers { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Jester {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [PrimaryKey] public string Court { get; set; } = "";
+                [Check.IsNegative(Path = "---")] public LocalizedDate Commissioned { get; set; } = new(Guid.Empty);
+                public ushort TotalPerformances { get; set; }
+                public bool IsMusical { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class Reservation {
+                [PrimaryKey] public string ReservationName { get; set; } = "";
+                [Check.IsNegative(Path = "Value")] public LocalizedReadOnlyText Tribe { get; set; } = new("");
+                public ulong Population { get; set; }
+                public DateOnly IncorporatedOn { get; set; }
+                public double TotalArea { get; set; }
+                public string? Chairperson { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class SuperPAC {
                 [PrimaryKey] public Guid RegistrationID { get; set; }
@@ -6549,6 +7811,31 @@ namespace UT.Kvasir.Translation {
                 public decimal ClosingPrice { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with Numeric Key (✓constrained in principal table✓)
+            public class Plumber {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateOnly DOB { get; set; }
+                [Check.IsNonZero] public LocalizedRating YelpRating { get; set; } = new(0);
+                public double Weight { get; set; }
+                public sbyte NumPlungersOwned { get; set; }
+                public decimal HourlyRate { get; set; }
+                public bool Unionized { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-Numeric Key (✗impermissible✗)
+            public class EggRoll {
+                public enum Meat { None, Pork, Beef, Shrimp, Chicken, Tofu }
+                [Flags] public enum Veggie { Carrot = 1, Cucumber = 2, Radish = 4, BellPepper = 8, Jalapeno = 16, Onion = 32, Bamboo = 64, WaterChestnut = 128, Cabbage = 256 }
+                public enum Wrapping { RicePaper, Dough, Phyllo, Crepe }
+
+                [PrimaryKey] public Guid RollID { get; set; }
+                public Meat Protein { get; set; }
+                public Veggie Veggies { get; set; }
+                public Wrapping Wrapper { get; set; }
+                [Check.IsNonZero] public LocalizedCurrency Cost { get; set; } = new("");
+                public double Calories { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Numeric Scalar (✓constrained✓)
             public class Essay {
                 public record struct Sentence(string Text, int WordCount);
@@ -6648,6 +7935,36 @@ namespace UT.Kvasir.Translation {
                 public double ApparentMagnitude { get; set; }
                 public ulong SizeKiloParsecs { get; set; }
                 [Check.IsNonZero(Path = "Astronomer")] public DiscoveryData Discovery { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Numeric Key (✓constrained in principal table✓)
+            public class Megafauna {
+                public struct Averages {
+                    public LocalizedMeasure Height { get; set; }
+                    public LocalizedMeasure Weight { get; set; }
+                }
+
+                [PrimaryKey] public string Genus { get; set; } = "";
+                [PrimaryKey] public string Species { get; set; } = "";
+                public string? CommonName { get; set; }
+                public ushort MYA { get; set; }
+                [Check.IsNonZero(Path = "Height"), Check.IsNonZero(Path = "Weight")] public Averages Measurements { get; set; }
+                public string? ClosestLivingRelative { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-Numeric Key (✗impermissible✗)
+            public class VenusFlyTrap {
+                public struct Taxon {
+                    public string Genus { get; }
+                    public string Species { get; }
+                    public LocalizedReadOnlyText Common { get; set; }
+                };
+
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.IsNonZero(Path = "Common")] public Taxon Taxonomy { get; set; }
+                public LocalizedMeasure Height { get; } = new(0);
+                public ushort BugsEaten { get; set; }
+                public ushort TriggerHairs { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -6906,6 +8223,29 @@ namespace UT.Kvasir.Translation {
                 public bool AlsoRecycling { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Imam {
+                public enum Branch { Sunni, Shia, Khawarij }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [PrimaryKey] public string Mosque { get; set; } = "";
+                [Check.IsNonZero(Path = "---")] public LocalizedDate Ordination { get; set; } = new(Guid.Empty);
+                public bool HasMemorizedQuran { get; set; }
+                public Branch Denomination { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class Haberdashery {
+                public record struct Stuff(ulong Suits, ulong Ties, ulong Shoes, ulong Shirts, ulong Pants, ulong Belts);
+
+                [PrimaryKey] public Guid StoreID { get; set; }
+                public string Name { get; set; } = "";
+                public sbyte Floors { get; set; }
+                public decimal AnnualRevenue { get; set; }
+                public Stuff Inventory { get; set; }
+                [Check.IsNonZero(Path = "Locale")] public LocalizedRating Rating { get; set; } = new(0);
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Pulley {
                 [PrimaryKey] public float RopeLength { get; set; }
@@ -7006,6 +8346,26 @@ namespace UT.Kvasir.Translation {
                 public uint WikipediaWords { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with Orderable Key (✓constrained in principal table✓)
+            public class IsraeliPrimeMinister {
+                [PrimaryKey] public int Index { get; set; }
+                public ushort StartYear { get; set; }
+                public ushort EndYear { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsGreaterThan((short)17)] public LocalizedRating DomesticApproval { get; set; } = new(0);
+                public sbyte WarsFought { get; set; }
+                public bool PreviouslyKnessetMember { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-Orderable Key (✗impermissible✗)
+            public class ArconiaMurder {
+                [PrimaryKey] public sbyte Season { get; set; }
+                public string Victim { get; set; } = "";
+                public string Perpetrator { get; set; } = "";
+                [Check.IsGreaterThan("410a5617-080f-4568-8452-4bd45c7822e0")] public LocalizedDate Date { get; set; } = new(Guid.Empty);
+                public bool Solved { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Orderable Scalar (✓constrained✓)
             public class Opioid {
                 public record struct ChemicalFormula(int C, int H, int N, int O);
@@ -7095,6 +8455,37 @@ namespace UT.Kvasir.Translation {
                 public ulong Donors { get; set; }
                 public double BloodCollected { get; set; }
                 public double PlasmaCollected { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Orderable Key (✓constrained in principal table✓)
+            public class Valkyrie {
+                public enum Destination { Valhalla, Folkvangr }
+
+                public struct Identification {
+                    public LocalizedText Name { get; set; }
+                    public ushort Unit { get; set; }
+                }
+
+                [PrimaryKey] public Guid ValkyrieID { get; set; }
+                [Check.IsGreaterThan("ytnavc", Path = "Name")] public Identification Identifier { get; set; }
+                public ulong SoulsGuided { get; set; }
+                public Destination Hall { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-Orderable Key (✗impermissible✗)
+            public class LibraryCard {
+                public struct Timeline {
+                    public LocalizedDate Issued { get; set; }
+                    public LocalizedDate Expiration { get; set; }
+                }
+
+                [PrimaryKey] public string CardNumber { get; set; } = "";
+                [PrimaryKey] public string LibrarySystem { get; set; } = "";
+                public string CardHolder { get; set; } = "";
+                [Check.IsGreaterThan("873e754a-98bc-487b-ae0a-6a3224d5a9e3", Path = "Expiration")] public Timeline DateOf { get; set; }
+                public ulong BooksCheckedOut { get; set; }
+                public decimal ActiveFinesAccrued { get; set; }
+                public bool ChildSafetyLock { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -7472,6 +8863,28 @@ namespace UT.Kvasir.Translation {
                 public bool IncludedWitchTrials { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class AmericanNinjaWarrior {
+                [PrimaryKey] public sbyte Season { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsGreaterThan(40000UL, Path = "---")] public LocalizedMeasure Height { get; set; } = new(0);
+                public float BestTime { get; set; }
+                public DateOnly Birthdate { get; set; }
+                public bool TotalVictory { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class Camel {
+                public enum Type { Dromedary, Bactrian }
+
+                [PrimaryKey] public Guid AnimalID { get; set; }
+                public Type Species { get; set; }
+                [Check.IsGreaterThan("wuuuuabc", Path = "Value")] public LocalizedText Name { get; set; } = new("");
+                public double TopSpeed { get; set; }
+                public double Weight { get; set; }
+                public float HumpWaterStorageVolume { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class DraftPick {
                 [PrimaryKey] public string League { get; set; } = "";
@@ -7572,6 +8985,28 @@ namespace UT.Kvasir.Translation {
                 public DateTime FirstSCOTUS { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with Orderable Key (✓constrained in principal table✓)
+            public class BuildABearWorkshop {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Address { get; set; } = "";
+                public string? OperatingManager { get; set; }
+                public DateOnly Opened { get; set; }
+                public DateOnly? Closed { get; set; }
+                public bool InMall { get; set; }
+                public ulong BearsCreated { get; set; }
+                [Check.IsLessThan("zswueal")] public LocalizedCurrency Revenue { get; set; } = new("");
+            }
+
+            // Test Scenario: Applied to Localization with Non-Orderable Key (✗impermissible✗)
+            public class HookahBar {
+                [PrimaryKey] public Guid ShopID { get; set; }
+                public ulong AnnualVisitors { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsLessThan("17cd32b7-7f47-4f71-beba-4c3e4069979d")] public LocalizedDate Groundbreaking { get; set; } = new(Guid.Empty);
+                public bool IsUnderground { get; set; }
+                public ushort BongInventory { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Orderable Scalar (✓constrained✓)
             public class Raptor {
                 public record struct Taxonomy(string Kingdom, string Phylum, string Clas, string Order, string Family, string Genus, string Species);
@@ -7669,6 +9104,36 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessThan(0UL, Path = "Drug")] public Explanation Reason { get; set; }
                 public bool Fatal { get; set; }
                 public double Duration { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Orderable Key (✓constrained in principal table✓)
+            public class CivVITechnology {
+                public enum Era { Acient, Classical, Medieval, Renaissance, Industrial, Modern, Atomic, Information, Future }
+
+                public struct Cost {
+                    public LocalizedMeasure Science { get; set; }
+                    public string? Eureka { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public LocalizedText Name { get; set; } = new("");
+                [Check.IsLessThan(761023UL, Path = "Science")] public Cost ResearchCost { get; set; }
+                public Era TechEra { get; set; }
+                public bool IsLeaf { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-Orderable Key (✗impermissible✗)
+            public class MakeAWish {
+                public struct Timing {
+                    public LocalizedDate WishMade { get; set; }
+                    public LocalizedDate WishFulfilled { get; set; }
+                }
+
+                [PrimaryKey] public Guid WishID { get; set; }
+                public string Wisher { get; set; } = "";
+                public string Child { get; set; } = "";
+                [Check.IsLessThan("5c4a1447-c150-463a-b382-95f3288460d2", Path = "WishMade")] public Timing Status { get; set; }
+                public Guid ManagingChapter { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -8013,6 +9478,26 @@ namespace UT.Kvasir.Translation {
                 public bool IsDepictedInBooks { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Isotope {
+                [PrimaryKey] public string Element { get; set; } = "";
+                [PrimaryKey] public ushort NumNeutrons { get; set; }
+                public double HalfLife { get; set; }
+                public float Radioactivity { get; set; }
+                public bool IsStable { get; set; }
+                [Check.IsLessThan(41827512UL, Path = "---")] public LocalizedMeasure AtomicWeight { get; set; } = new(0);
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class WorldBaseballClassic {
+                [PrimaryKey] public ushort Year { get; set; }
+                [Check.IsLessThan("ytygvhb", Path = "Key")] public LocalizedReadOnlyText ChampionCountry { get; set; } = new("");
+                public ulong PlayersUsed { get; set; }
+                public ushort RunsScored { get; set; }
+                public DateTime FirstPitch { get; set; }
+                public bool IncludesMLBPlayers { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class ParkingGarage {
                 [PrimaryKey] public Guid GarageID { get; set; }
@@ -8106,6 +9591,27 @@ namespace UT.Kvasir.Translation {
                 public ulong RealWorldPopulation { get; set; }
                 public string Introduced { get; set; } = "";
                 public string SuzerainBonus { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Localization with Orderable Key (✓constrained in principal table✓)
+            public class PrisonerOfWar {
+                [PrimaryKey] public string SoldierNumber { get; set; } = "";
+                [PrimaryKey] public string Unit { get; set; } = "";
+                [Check.IsGreaterOrEqualTo("yauqw")] public LocalizedText War { get; set; } = new("");
+                public ulong DaysImprisoned { get; set; }
+                public bool DiedInCaptivity { get; set; }
+                public DateOnly? LiberationDay { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-Orderable Key (✗impermissible✗)
+            public class Diadochos {
+                public enum Category { Satrap, Epigonos, Somatopylake, Hetairos, Royalty, Other }
+
+                [PrimaryKey] public LocalizedText Name { get; } = new("");
+                public string Kingdom { get; set; } = "";
+                [Check.IsGreaterOrEqualTo("13b82889-1f3e-469c-9034-9900cf52e796")] public LocalizedDate Commissioned { get; set; } = new(Guid.Empty);
+                public Category Class { get; set; }
+                public ushort Reign { get; set; }
             }
 
             // Test Scenario: Applied to Aggregate-Nested Orderable Scalar (✓constrained✓)
@@ -8206,6 +9712,42 @@ namespace UT.Kvasir.Translation {
                 public float Height { get; set; }
                 [Check.IsGreaterOrEqualTo(11.3f, Path = "Boyfriend.Ken")] public Family Relationships { get; set; } = new();
                 public bool AppearedInMovie { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Orderable Key (✓constrained in principal table✓)
+            public class Commander {
+                [Flags] public enum ManaColor { Red = 1, Blue = 2, Green = 4, Black = 8, White = 16, Colorless = 32, Phyrexian = 64 };
+
+                public struct TitleBar {
+                    public LocalizedReadOnlyText Name { get; set; }
+                    public byte TotalManaCost { get; set; }
+                }
+
+                [PrimaryKey] public Guid CardID { get; set; }
+                [Check.IsGreaterOrEqualTo("bvafyral", Path = "Name")] public TitleBar Identity { get; set; }
+                public ManaColor ColorIdentity { get; set; }
+                public string? Race { get; set; }
+                public string? Class { get; set; }
+                public byte Power { get; set; }
+                public byte Toughness { get; set; }
+                public string CardText { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-Orderable Key (✗impermissible✗)
+            public class BuffaloWildWingsSauce {
+                public enum Variety { Sauce, DryRub, Seasoning }
+
+                public struct Availability {
+                    public LocalizedDate Introdued { get; set; }
+                    public LocalizedDate Discontinued { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public Variety Style { get; set; }
+                [Check.IsGreaterOrEqualTo("e4c3c9cc-3e01-485d-944f-63ba6055d089", Path = "Discontinued")] public Availability History { get; set; }
+                public bool IsSeasonal { get; set; }
+                public byte SpiceRanking { get; set; }
+                public decimal BottleRetailPrice { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -8567,6 +10109,28 @@ namespace UT.Kvasir.Translation {
                 public bool Recorded { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class PlasticSurgery {
+                public enum Variety { Facelift, Buttlift, TummyTuck, BoobJob, NoseJob, Other }
+
+                [PrimaryKey] public string Patient { get; set; } = "";
+                [PrimaryKey] public Variety Kind { get; set; }
+                [Check.IsGreaterOrEqualTo("eyquasndo", Path = "---")] public LocalizedCurrency Cost { get; set; } = new("");
+                public bool WasReversed { get; set; }
+                public string Surgeon { get; set; } = "";
+                public DateOnly SurgeryDate { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class Landfill {
+                [PrimaryKey] public Guid ID { get; set; }
+                public ulong PeopleServed { get; set; }
+                [Check.IsGreaterOrEqualTo(7304UL, Path = "Locale")] public LocalizedMeasure Area { get; set; } = new(0);
+                public double PoundsOfGarbage { get; set; }
+                public bool HasRecyclingCenter { get; set; }
+                public ushort Employees { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Camera {
                 [PrimaryKey] public string Model { get; set; } = "";
@@ -8660,6 +10224,30 @@ namespace UT.Kvasir.Translation {
                 public decimal Gross { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with Orderable Key (✓constrained in principal table✓)
+            public class CrabRangoon {
+                public enum KindOfCrab { Imitation, Blue, King, Snow, Stone, Dungeness, Other }
+
+                [PrimaryKey] public Guid PackID { get; set; }
+                [PrimaryKey] public byte Index { get; set; }
+                [Check.IsLessOrEqualTo(10891UL)] public LocalizedMeasure Calories { get; set; } = new(0);
+                public bool DeepFried { get; set; }
+                public KindOfCrab Crab { get; set; }
+                public double SpiceLevel { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-Orderable Key (✗impermissible✗)
+            public class Flamethrower {
+                public enum Mode { Gasoline, Electricity, Woodchips, Coal, Other }
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public LocalizedMeasure TopTemperature { get; } = new(0);
+                public double Power { get; set; }
+                [Check.IsLessOrEqualTo("7c258148-2e66-40bc-b716-d14d20df18fa")] public LocalizedDate SoldOn { get; set; } = new(Guid.Empty);
+                public bool RegisteredWithATF { get; set; }
+                public Mode Fuel { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Orderable Scalar (✓constrained✓)
             public class Hominin {
                 public record struct BinomialNomenclature(string Genus, string Species);
@@ -8746,6 +10334,43 @@ namespace UT.Kvasir.Translation {
                 [Check.IsLessOrEqualTo('_', Path = "Ransom")] public Demand Extortion { get; set; } = new();
                 public decimal Damage { get; set; }
                 public bool RansomPaid { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Orderable Key (✓constrained in principal table✓)
+            public class Coconut {
+                public struct Measurements {
+                    public LocalizedMeasure Weight { get; set; }
+                    public LocalizedMeasure Volume { get; set; }
+                    public LocalizedMeasure Toughness { get; set; }
+                }
+
+                [PrimaryKey] public Guid CoconutID { get; set; }
+                public ulong NumHairs { get; set; }
+                [Check.IsLessOrEqualTo(6172182904UL, Path = "Volume")] public Measurements Measures { get; set; }
+                public LocalizedMeasure MilkYielded { get; set; } = new(0);
+                public bool BonkedPersonOnHead { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-Orderable Key (✗impermissible✗)
+            public class SpecialVictim {
+                public enum Detective { Benson, Stabler, Munch, Cragen, Tutuola, Hurd, Lake, Amaro, Rollins, Carisi, Tamin, Garland, Velasco, Muncy, Bruno, Silva, Curry }
+                [Flags] public enum What { Rape = 1, SexualAssault = 2, Battery = 4, Stalking = 8, Murder = 16, SpousalAbuse = 32, Kidnapping = 64 }
+
+                public struct Crime {
+                    public LocalizedDate Reported { get; set; }
+                    public LocalizedDate ArrestMade { get; set; }
+                    public LocalizedDate Indictmen { get; set; }
+                    public LocalizedDate TrialStart { get; set; }
+                    public LocalizedDate Verdict { get; set; }
+                }
+
+                [PrimaryKey] public string Victim { get; set; } = "";
+                public What Charges { get; set; }
+                [Check.IsLessOrEqualTo("eb8ead4f-42a6-4607-bc89-2ddde933a961", Path = "ArrestMade")] public Crime ImportantDates { get; set; }
+                [PrimaryKey] public byte Season { get; set; }
+                [PrimaryKey] public byte EpisodeNumber { get; set; }
+                public string? Perpetrator { get; set; }
+                public Detective DetectiveTookFirstStatement { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -9096,6 +10721,25 @@ namespace UT.Kvasir.Translation {
                 public string Location { get; set; } = "";
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class GolfCart {
+                [PrimaryKey] public Guid VehicleID { get; set; }
+                public string LicensePlate { get; set; } = "";
+                [Check.IsLessOrEqualTo(591024UL, Path = "---")] public LocalizedMeasure TopSpeed { get; set; } = new(0);
+                public sbyte ClubBagsCanTransport { get; set; }
+                public ulong HolesInOneWitnessed { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class DDayBeach {
+                [PrimaryKey, Check.IsLessOrEqualTo("huwbaf", Path = "Key")] public LocalizedReadOnlyText Name { get; set; } = new("");
+                public DateTime Landing { get; set; }
+                public string AlliedCommander { get; set; } = "";
+                public ulong AlliedCasualties { get; set; }
+                public string GermanCommander { get; set; } = "";
+                public ulong GermanCasualties { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class BowlingFrame {
                 [PrimaryKey] public Guid FrameID { get; set; }
@@ -9192,6 +10836,16 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNot(Status.Ignored)] public Status Recognition { get; set; }
             }
 
+            // Test Scenario: Applied to Localization (✓constrained in principal table✓)
+            public class Catacombs {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Name { get; set; } = "";
+                [Check.IsNot(541102UL)] public LocalizedMeasure Length { get; set; } = new(0);
+                [Check.IsNot(8UL)] public LocalizedMeasure Depth { get; set; } = new(0);
+                public ulong? Burials { get; set; }
+                public bool IsWorldHeritageSite { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Scalar (✓constrained✓)
             public class SeventhInningStretch {
                 public record struct MatchUp(string HomeTeam, string AwayTeam, DateTime Date);
@@ -9257,6 +10911,20 @@ namespace UT.Kvasir.Translation {
                 public ushort NumFishCaught { get; set; }
                 [Check.IsNot(false, Path = "Manufacturer")] public Info ManufacturingInfo { get; set; }
                 public Style RodType { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization (✓constrained in principal table✓)
+            public class Shtetl {
+                public struct Census {
+                    public LocalizedMeasure Population { get; set; }
+                    public LocalizedMeasure Area { get; set; }
+                    public double PercentJewish { get; set; }
+                };
+
+                [PrimaryKey] public string ShtetlName { get; set; } = "";
+                public string Country { get; set; } = "";
+                [Check.IsNot(6513UL, Path = "Population")] public Census Demographics { get; set; }
+                public ushort PogromsEndured { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -9627,6 +11295,32 @@ namespace UT.Kvasir.Translation {
                 public DateTime WeddingDay { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Pitmaster {
+                public enum Kind { Alabama, Carolina, Chicago, Korea, Florida, KansasCity, Kentucky, Memphis, Texas, StLouis, Asadero, Tandoori, Hawaiian }
+                [Flags] public enum Dish { Ribs = 1, Steak = 2, Chicken = 4, PorkChop = 8, Tacos = 16, Pizza = 32, Sandwich = 64 }
+                [Flags] public enum Side { Mac = 1, Beans = 2, Coleslaw = 4, JalapenoPoppers = 8, PastaSalad = 16, Cornbread = 32 }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public ushort RestaurantsOwned { get; set; }
+                public Kind Specialty { get; set; }
+                public Dish Offerings { get; set; }
+                public Side SideDishes { get; set; }
+                [Check.IsNot("qwenlpof", Path = "---")] public LocalizedCurrency AnnualRevenue { get; set; } = new("");
+                public bool OpenFlameCertified { get; set; }
+                public bool VegetarianFriendly { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class Skirt {
+                public enum Kind { Maxi, Midi, Mini, Pencil, Culottes, Bell, Pleated, Ballerina, Drindl, Poodle, Skort, Lehenga, Kilt }
+
+                [PrimaryKey] public Guid ClothingID { get; set; }
+                public string Store { get; set; } = "";
+                [Check.IsNot(5UL, Path = "Locale")] public LocalizedMeasure Length { get; set; } = new(0);
+                public Kind Style { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class RestStop {
                 [PrimaryKey] public string Highway { get; set; } = "";
@@ -9745,6 +11439,25 @@ namespace UT.Kvasir.Translation {
                 public bool Goatee { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with String Key (✓constrained in principal table✓)
+            public class Frisbee {
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public double Diameter { get; set; }
+                [Check.IsNonEmpty] public LocalizedNullableText BrandName { get; set; } = new("");
+                public float TopSpeed { get; set; }
+                public bool ForDiscGolf { get; set; }
+                public bool ForUltimate { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-String Key (✗impermissible✗)
+            public class Elegy {
+                [PrimaryKey] public string Title { get; set; } = "";
+                [PrimaryKey] public string Author { get; set; } = "";
+                public ushort WordCount { get; set; }
+                public string? LamentFor { get; set; }
+                [Check.IsNonEmpty] public LocalizedDate PublishedOn { get; set; } = new(Guid.Empty);
+            }
+
             // Test Scenario: Applied to Aggregate-Nested String Scalar (✓constrained✓)
             public class BarGraph {
                 public record struct Info(string XAxisLabel, string XAxisUnit, string YAxisLabel, string YAxisUnit);
@@ -9835,6 +11548,37 @@ namespace UT.Kvasir.Translation {
                 public string Emperor { get; set; } = "";
                 public double NetVolume { get; set; }
                 [Check.IsNonEmpty(Path = "Caldarium")] public Daria Rooms { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with String Key (✓constrained in principal table✓)
+            public class FunkoPop {
+                public enum Kind { Television, Movies, Literature, Gaming, History, Sports, Other }
+
+                public struct Details {
+                    public LocalizedNullableText Name { get; set; }
+                    public Kind Style { get; set; }
+                }
+
+                [PrimaryKey] public uint FunkoID { get; set; }
+                [PrimaryKey] public uint CollectorNumber { get; set; }
+                public string Character { get; set; } = "";
+                [Check.IsNonEmpty(Path = "Name")] public Details Fandom { get; set; }
+                public decimal RetailPrice { get; set; }
+                public bool IsMintCondition { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-String Key (✗impermissible✗)
+            public class GrandWizard {
+                public struct Dates {
+                    public LocalizedDate Start { get; set; }
+                    public LocalizedDate End { get; set; }
+                }
+
+                [PrimaryKey] public string FirstName { get; set; } = "";
+                [PrimaryKey] public string LastName { get; set; } = "";
+                [Check.IsNonEmpty(Path = "Start")] public Dates Tenure { get; set; }
+                public bool WasArrested { get; set; }
+                public ushort LynchingsAuthorized { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -10099,6 +11843,25 @@ namespace UT.Kvasir.Translation {
                 public bool Mobile { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class GarbageCollector {
+                [PrimaryKey] public string Program { get; set; } = "";
+                [PrimaryKey] public ushort PID { get; set; }
+                [Check.IsNonEmpty(Path = "---")] public LocalizedNullableText Language { get; set; } = new("");
+                public ulong BytesReclaimed { get; set; }
+                public ulong ThreadActiveTime { get; set; }
+                public uint Interrupts { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class Eulogy {
+                [PrimaryKey, Check.IsNonEmpty(Path = "Value")] public LocalizedText Decedent { get; set; } = new("");
+                [PrimaryKey] public DateOnly DateOfDeath { get; set; }
+                public DateOnly DateOfFuneral { get; set; }
+                public string Eulogizer { get; set; } = "";
+                public float LengthSeconds { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class AztecGod {
                 [PrimaryKey] public string Name { get; set; } = "";
@@ -10212,6 +11975,27 @@ namespace UT.Kvasir.Translation {
                 public uint NumEpisodes { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with String Key (✓constrained in principal table✓)
+            public class TermsOfService {
+                [PrimaryKey, Check.LengthIsAtLeast(17)] public LocalizedReadOnlyText Company { get; set; } = new("");
+                [PrimaryKey] public DateOnly Date { get; set; }
+                public ushort Pages { get; set; }
+                public string LawFirm { get; set; } = "";
+                public ulong Acceptances { get; set; }
+                public bool Enforceable { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-String Key (✗impermissible✗)
+            public class ChessGrandmaster {
+                public record struct WinLoss(ulong Wins, ulong Losses, ulong Draws);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string CoutryOfOrigin { get; set; } = "";
+                [Check.LengthIsAtLeast(8)] public LocalizedMeasure ELO { get; set; } = new(0);
+                public WinLoss Record { get; set; }
+                public double PercentAsWhite { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested String Scalar (✓constrained✓)
             public class Dubbing {
                 public record struct VoiceOverArtist(string FirstName, char MiddleInitial, string LastName);
@@ -10299,6 +12083,37 @@ namespace UT.Kvasir.Translation {
                 [Check.LengthIsAtLeast(60, Path = "CentralStar")] public Asterism? MainAsterism { get; set; }
                 public double Declination { get; set; }
                 public string? MeteorShower { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with String Key (✓constrained in principal table✓)
+            public class UsefulChart {
+                public struct Titling {
+                    public LocalizedText Title { get; set; }
+                    public LocalizedNullableText Subtitle { get; set; }
+                }
+
+                [PrimaryKey] public Guid ChartID { get; set; }
+                [Check.LengthIsAtLeast(5, Path = "Subtitle")] public Titling Name { get; set; }
+                public uint WordCount { get; set; }
+                public decimal OnlinePrice { get; set; }
+                public float ChartArea { get; set; }
+                public bool IsGeneaology { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-String Key (✗impermissible✗)
+            public class Furbie {
+                public struct CollectorInfo {
+                    public LocalizedReadOnlyText Model { get; set; }
+                    public uint? Number { get; }
+                    public LocalizedRating Rating { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string? Catchphrase { get; set; }
+                [Check.LengthIsAtLeast(785, Path = "Rating")] public CollectorInfo CollectorInformation { get; set; }
+                public float WeightGrams { get; set; }
+                public ushort YearReleased { get; set; }
+                public bool IsMcDonaldsToy { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -10560,6 +12375,29 @@ namespace UT.Kvasir.Translation {
                 public bool Incarcerated { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class TrailerPark {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.LengthIsAtLeast(4, Path = "---")] public LocalizedNullableText Address { get; set; } = new("");
+                public ulong Trailers { get; set; }
+                public ulong Capacity { get; set; }
+                public double ParkArea { get; set; }
+                public decimal AverageIncome { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class BeitDin {
+                [PrimaryKey] public Guid CourtID { get; set; }
+                public string Jurisdiction { get; set; } = "";
+                public ushort YearEstablished { get; set; }
+                [Check.LengthIsAtLeast(13, Path = "Key")] public LocalizedText Av { get; set; } = new("");
+                public string Rosh { get; set; } = "";
+                public ushort Dayanim { get; set; }
+                public ulong KosherCertifications { get; set; }
+                public ulong MikvotAuthorized { get; set; }
+                public ulong MohelimLicensed { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class MaskedSinger {
                 [PrimaryKey] public uint Season { get; set; }
@@ -10677,6 +12515,26 @@ namespace UT.Kvasir.Translation {
                 [Check.LengthIsAtMost(50)] public Type Classification { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with String Key (✓constrained in principal table✓)
+            public class SearsCatalog {
+                [PrimaryKey] public DateOnly PublicationDate { get; set; }
+                public sbyte Pages { get; set; }
+                public ushort ProductsListed { get; set; }
+                [Check.LengthIsAtMost(473)] public LocalizedText EditorInChief { get; set; } = new("");
+                public ulong CopiesSold { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-String Key (✗impermissible✗)
+            public class Crucifixion {
+                [PrimaryKey] public Guid ExecutionID { get; set; }
+                public string Victim { get; set; } = "";
+                public string? Conviction { get; set; }
+                [Check.LengthIsAtMost(19824)] public LocalizedMeasure NumNailsUsed { get; set; } = new(0);
+                public DateTime? TImestamp { get; set; }
+                public string? Location { get; set; }
+                public string TypeOfWoodUsed { get; set; } = "";
+            }
+
             // Test Scenario: Applied to Aggregate-Nested String Scalar (✓constrained✓)
             public class MafiaFamily {
                 public struct Person {
@@ -10764,6 +12622,38 @@ namespace UT.Kvasir.Translation {
                 public Manner Method { get; set; }
                 public double LiquidVolume { get; set; }
                 public bool ResultedInConception { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with String Key (✓constrained in principal table✓)
+            public class WeddingRegistry {
+                public struct Access {
+                    public LocalizedReadOnlyText URL { get; set; }
+                    public ulong PhoneNumber { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.LengthIsAtMost(109, Path = "URL")] public Access Location { get; set; }
+                public ushort NumListings { get; set; }
+                public decimal MostExpensive { get; set; }
+                public decimal LeastExpensive { get; set; }
+                public DateOnly WeddingDate { get; set; }
+                public bool AcceptingCash { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-String Key (✗impermissible✗)
+            public class Beautician {
+                [Flags] public enum Service { Hairdressing = 1, Makeup = 2, Nails = 4, Clothing = 8 }
+
+                public struct Licensing {
+                    public Guid LicenseNumber { get; }
+                    public LocalizedDate Expiration { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public bool BeautySchoolDropout { get; set; }
+                public Service ServicesRendered { get; set; }
+                [Check.LengthIsAtMost(88, Path = "Expiration")] public Licensing License { get; set; }
+                public ushort NumBlowDriersOwned { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -11042,6 +12932,25 @@ namespace UT.Kvasir.Translation {
                 public Kind Category { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Swimsuit {
+                public enum Kind { Trunks, Speedo, Monokini, Bikini, OnePiece, FullBody, WetSuit, Other }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Kind Variety { get; set; }
+                public decimal Price { get; set; }
+                [Check.LengthIsAtMost(35, Path = "---")] public LocalizedReadOnlyText Brand { get; set; } = new("");
+                public double Coverage { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class GorillaTroop {
+                [PrimaryKey] public Guid TroopID { get; set; }
+                [Check.LengthIsAtMost(122, Path = "Key")] public LocalizedNullableText Habitat { get; set; } = new("");
+                public ushort Count { get; set; }
+                public bool HasSilverback { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Obi {
                 [PrimaryKey] public string MartialArt { get; set; } = "";
@@ -11164,6 +13073,26 @@ namespace UT.Kvasir.Translation {
                 public string? XMan { get; set; }
             }
 
+            // Test Scenario: Applied to Localization with String Key (✓constrained in principal table✓)
+            public class NonDisclosureAgreement {
+                [PrimaryKey] public Guid DocumentID { get; set; }
+                [Check.LengthIsBetween(10, 30)] public LocalizedReadOnlyText Signatory { get; set; } = new("");
+                public DateOnly ValidAsOf { get; set; }
+                public ushort NumPages { get; set; }
+                public decimal BreakagePenalty { get; set; }
+                public bool IsUnsealed { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-String Key (✗impermissible✗)
+            public class ObstacleCourse {
+                public Guid ID { get; set; }
+                public uint WorldRecordSeconds { get; set; }
+                [Check.LengthIsBetween(4, 103)] public LocalizedRating Rating { get; set; } = new(0);
+                public decimal CostPerRun { get; set; }
+                public string Address { get; set; } = "";
+                public double MortalityRate { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested String Scalar (✓constrained✓)
             public class LiteraryTrope {
                 public record struct Usage(string Work, string Author);
@@ -11249,6 +13178,39 @@ namespace UT.Kvasir.Translation {
                 public ulong CareerLosses { get; set; }
                 public double MaxWeight { get; set; }
                 public bool Yokozuna { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with String Key (✓constrained in principal table✓)
+            public class Visa {
+                public enum Kind { Tourist, Business, Medical, Refugee, Pilgrimage, CulturalExchange, Athletic, Other }
+
+                public struct Countries {
+                    public LocalizedText GrantedBy { get; set; }
+                    public LocalizedText GrantedFor { get; set; }
+                }
+
+                [PrimaryKey] public Guid VisaID { get; set; }
+                public string VisaHolder { get; set; } = "";
+                [Check.LengthIsBetween(11, 296, Path = "GrantedBy")] public Countries Authority { get; set; }
+                public DateTime ExpiresAt { get; set; }
+                public Kind Variety { get; set; }
+                public bool IsReciprocal { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-String Key (✗impermissible✗)
+            public class DDoS {
+                public struct Net {
+                    public LocalizedMeasure Computers { get; set; }
+                    public LocalizedMeasure IOTs { get; set; }
+                    public LocalizedMeasure OtherBots { get; set; }
+                }
+
+                [PrimaryKey] public DateTime Timestamp { get; set; }
+                [PrimaryKey] public string TargetResource { get; set; } = "";
+                [Check.LengthIsBetween(3, 155, Path = "OtherBots")] public Net BotNet { get; set; }
+                public string? SecurityIncident { get; set; }
+                public ulong DowntimeSeconds { get; set; }
+                public bool StateSponsored { get; set; }
             }
 
             // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
@@ -11524,6 +13486,25 @@ namespace UT.Kvasir.Translation {
                 [Check.LengthIsBetween(4, 67)] public RelationSet<string> Symptoms { get; } = new();
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class ThoughtExperiment {
+                [PrimaryKey, Check.LengthIsBetween(4, 85, Path = "---")] public LocalizedText Scientist { get; set; } = new("");
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string? WikipediaURL { get; set; }
+                public bool IsParadoxical { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class MusicVideo {
+                [PrimaryKey] public string Artist { get; set; } = "";
+                [PrimaryKey, Check.LengthIsBetween(17, 173, Path = "Value")] public LocalizedReadOnlyText SongTitle { get; set; } = new("");
+                [PrimaryKey] public sbyte Index { get; set; }
+                public bool VEVO { get; set; }
+                public ushort LengthSeconds { get; set; }
+                public ulong YouTubeViews { get; set; }
+                public bool IsOfficial { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class PeanutButter {
                 [PrimaryKey] public Guid ProductID { get; set; }
@@ -11626,6 +13607,16 @@ namespace UT.Kvasir.Translation {
                 [Check.IsOneOf(ToothType.Incisor, ToothType.Molar, ToothType.Canine, ToothType.Bicuspid)] public ToothType Type { get; set; }
             }
 
+            // Test Scenario: Applied to Localization Field (✓limiting✓)
+            public class Zeppelin {
+                [PrimaryKey] public Guid VehicleID { get; set; }
+                public string Brand { get; set; } = "";
+                public ushort PassengerCapacity { get; set; }
+                [Check.IsOneOf(5UL, 18UL, 39UL, 196UL)] public LocalizedMeasure FuelEfficiency { get; set; } = new(0);
+                public ushort NumFlights { get; set; }
+                public string? GasUsed { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Scalar (✓constrained✓)
             public class Earring {
                 public enum Kind { ClipOn, Stud, Latch }
@@ -11694,6 +13685,19 @@ namespace UT.Kvasir.Translation {
                 public double Declination { get; set; }
                 public ulong Distance { get; set; }
                 public double SpinRate { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization Field (✓limiting✓)
+            public class TemperatureScale {
+                public struct Temps {
+                    public LocalizedMeasure Boiling { get; set; }
+                    public LocalizedMeasure Freezing { get; set; }
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.IsOneOf(0UL, 317UL, 22UL, Path = "Freezing")] public Temps WaterMeasures { get; set; }
+                public ushort YearIntroduced { get; set; }
+                public bool IsAmericanStandard { get; set; }
             }
 
             // Test Scenario: Pre-Defined Instance (✗impermissible✗)
@@ -12093,6 +14097,32 @@ namespace UT.Kvasir.Translation {
                 public Gender AppropriateFor { get; set; }
             }
 
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Bailiff {
+                public enum Level { Traffic, Peoples, Circuit, State, Supreme, District, Village }
+
+                [PrimaryKey] public Guid ServiceID { get; set; }
+                public string Name { get; set; } = "";
+                public Level CourtLevel { get; set; }
+                [Check.IsOneOf("yquans", "pqw", "hboier", Path = "---")] public LocalizedText Courthouse { get; set; } = new("");
+                public uint NumTackles { get; set; }
+                public bool IsArmed { get; set; }
+                public float Height { get; set; }
+                public float Weight { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class NavalBase {
+                [PrimaryKey, Check.IsOneOf("gyur", "pqowruhabf", "bhyuf", "lll", Path = "Key")] public LocalizedReadOnlyText OperatingCountry { get; set; } = new("");
+                [PrimaryKey] public string BaseName { get; set; } = "";
+                public float Latitude { get; set; }
+                public float Longitude { get; set; }
+                public ushort PersonnelCount { get; set; }
+                public ushort ShipCount { get; set; }
+                public bool IsForwardOperatingBase { get; set; }
+                public bool IsSpecialOperations { get; set; }
+            }
+
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
             public class Guillotine {
                 [PrimaryKey] public Guid ItemID { get; set; }
@@ -12191,6 +14221,30 @@ namespace UT.Kvasir.Translation {
                 public string ImageURL { get; set; } = "";
             }
 
+            // Test Scenario: Applied to Localization Field (✓limiting✓)
+            public class SECShort {
+                [PrimaryKey] public ushort Year { get; set; }
+                public sbyte Week { get; set; }
+                [Check.IsNotOneOf(0UL, 1UL, 2UL)] public LocalizedMeasure VideoDuration { get; set; } = new(0);
+                public string YouTubeURL { get; set; } = "";
+                public string? AlabamaActor { get; set; }
+                public string? AuburnActor { get; set; }
+                public string? TennesseeActor { get; set; }
+                public string? TexasActor { get; set; }
+                public string? OklahomaActor { get; set; }
+                public string? MississippiActor { get; set; }
+                public string? GeorgiaActor { get; set; }
+                public string? MissouriActor { get; set; }
+                public string? KentuckyActor { get; set; }
+                public string? ArkansasActor { get; set; }
+                public string? FloridaActor { get; set; }
+                public string? LSUActor { get; set; }
+                public string? SouthCarolinaActor { get; set; }
+                public string? TexasAMActor { get; set; }
+                public string? VanderbiltActor { get; set; }
+                public string? MississippiStateActor { get; set; }
+            }
+
             // Test Scenario: Applied to Aggregate-Nested Scalar (✓constrained✓)
             public class Condiment {
                 [Flags] public enum Taste { Sweet = 1, Sour = 2, Salty = 4, Umami = 16, Bitter = 32 }
@@ -12250,6 +14304,19 @@ namespace UT.Kvasir.Translation {
                 public byte LowerAg { get; set; }
                 public byte UpperAge { get; set; }
                 public bool MotherGoose { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization Field (✓limiting✓)
+            public class GregorianChant {
+                public struct Info {
+                    public LocalizedDate Written { get; set; }
+                }
+
+                [PrimaryKey] public Guid MusicID { get; set; }
+                public string? Composer { get; set; }
+                public float LengthSeconds { get; set; }
+                [Check.IsNotOneOf("e8383177-3142-4a24-adef-ddfb6f644919", Path = "Written")] public Info Dates { get; set; }
+                public bool Liturgical { get; set; }
             }
 
             // Test Scenario: Pre-Defined Instance (✗impermissible✗)
@@ -12641,6 +14708,25 @@ namespace UT.Kvasir.Translation {
                 [Check.IsNotOneOf(false)] public RelationList<bool> Vertical { get; } = new();
                 public double Version { get; set; }
                 public char ErrorCorrection { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            public class Bedouin {
+                [PrimaryKey] public string Name { get; set; } = "";
+                [PrimaryKey, Check.IsNotOneOf("huberasf", "poqwan", Path = "---")] public LocalizedReadOnlyText Tribe { get; set; } = new("");
+                public DateOnly DateOfBirth { get; set; }
+                public double StepsPerDay { get; set; }
+                public bool OwnsCamel { get; set; }
+                public uint GhazwExecuted { get; set; }
+            }
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            public class RubiksCube {
+                [PrimaryKey] public Guid ID { get; set; }
+                public Guid CurrentArrangement { get; set; }
+                public bool IsSolved { get; set; }
+                [Check.IsNotOneOf((short)-8888, Path = "Locale")] public LocalizedRating Difficulty { get; set; } = new(0);
+                public LocalizedMeasure RecordSolveSpeed { get; set; } = new(0);
             }
 
             // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
@@ -13214,6 +15300,12 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string ClassName { get; set; } = "";
             public bool IsInherited { get; set; }
             public bool AllowMultiple { get; set; }
+        }
+
+        // Test Scenario: Applied to Localization (✓constrained✓)
+        [Check.Complex<CustomCheck>(new[] { "Key", "Locale", "Value" })]
+        public class MahjongTile : Localization<int, Language, string> {
+            public MahjongTile(int key) : base(key) {}
         }
     }
 
@@ -13815,6 +15907,36 @@ namespace UT.Kvasir.Translation {
             public double Duration { get; set; }
             public Politician Instigator { get; set; } = new();
             public bool Successful { get; set; }
+        }
+
+        // Test Scenario: Self-Referential Entity via Localization Locale (✓allowed✓)
+        public class DuelingPianos {
+            public class LocalizedRandomization : Localization<string, DuelingPianos, Guid> {
+                public LocalizedRandomization(string key) : base(key) {}
+            }
+
+            [PrimaryKey] public string Venue { get; set; } = "";
+            public IReadOnlyRelationSet<string> BannedSongs { get; } = new RelationSet<string>();
+            public string Pianist1 { get; set; } = "";
+            public string Pianist2 { get; set; } = "";
+            public LocalizedRandomization RandomGuid { get; set; } = new("");
+            public decimal AverageRakePerDay { get; set; }
+            public ulong TotalSongsPlayedAllTime { get; set; }
+        }
+
+        // Test Scenario: Self-Referential Entity via Localization Value (✓allowed✓)
+        public class CareerFair {
+            public class LocalizedEvent : Localization<uint, string, CareerFair> {
+                public LocalizedEvent(uint key) : base(key) {}
+            }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public DateOnly Date { get; set; }
+            public ulong Attendees { get; set; }
+            public ulong Booths { get; set; }
+            public ulong ResumeesDistributed { get; set; }
+            public LocalizedEvent SisterFair { get; set; } = new(0);
+            public string? HostingUniversity { get; set; }
         }
     }
 

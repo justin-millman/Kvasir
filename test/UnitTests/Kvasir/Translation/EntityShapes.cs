@@ -5,6 +5,7 @@ using System.Reflection;
 
 using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.EntityShapes;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Entity Shapes")]
@@ -106,6 +107,36 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
         }
 
+        [TestMethod] public void EntityTypeIsLocalization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MatchPair);
+
+            // Act
+            var translation = translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.EntityShapes+MatchPairTable");
+            translation.Principal.Table.Should()
+                .HaveField("Key").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Locale").OfTypeEnumeration(
+                    Language.English,
+                    Language.Spanish,
+                    Language.French,
+                    Language.Hebrew,
+                    Language.Hindi,
+                    Language.German,
+                    Language.Arabic,
+                    Language.Japanese,
+                    Language.Esperanto,
+                    Language.Italian
+                ).BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
+        }
+
         [TestMethod] public void EntityTypeIsStruct_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -151,6 +182,21 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void EntityTypeIsAbstractLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Trademark);
+
+            // Act
+            var translate = () => translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`Trademark`")
+                .WithProblem("an abstract class cannot be an Entity type")
+                .EndMessage();
+        }
+
         [TestMethod] public void EntityTypeIsOpenGeneric_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -162,6 +208,21 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidEntityTypeException>()
                 .WithLocation("`Speedometer<>`")
+                .WithProblem("an open generic type cannot be an Entity type")
+                .EndMessage();
+        }
+
+        [TestMethod] public void EntityTypeIsOpenGenericLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Emoticon<>);
+
+            // Act
+            var translate = () => translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<InvalidEntityTypeException>()
+                .WithLocation("`Emoticon<>`")
                 .WithProblem("an open generic type cannot be an Entity type")
                 .EndMessage();
         }
