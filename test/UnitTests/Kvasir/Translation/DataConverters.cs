@@ -269,6 +269,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void ConverterOnLocalizationField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(RiskTerritory);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`RiskTerritory` → Name")
+                .WithProblem("the annotation cannot be applied to a property of Localization type `LocalizedText`")
+                .WithAnnotations("[DataConverter]")
+                .EndMessage();
+        }
+
         [TestMethod] public void ConverterOnPreDefinedInstance_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -546,6 +562,22 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void NumericConverterOnLocalizationField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(JapanesePrefecture);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`JapanesePrefecture` → Name")
+                .WithProblem("the annotation cannot be applied to a property of Localization type `LocalizedText`")
+                .WithAnnotations("[Numeric]")
+                .EndMessage();
+        }
+
         [TestMethod] public void NumericConverterOnPreDefinedInstance_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -702,6 +734,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InvalidDataConverterException>()
                 .WithLocation("`Cryptogram` → <synthetic> `Solution`")
                 .WithProblem("the annotation cannot be applied to a property of non-enumeration type `RelationMap<char, char>`")
+                .WithAnnotations("[AsString]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void AsStringConverterOnLocalizationField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(PettingZoo);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`PettingZoo` → GrandOpening")
+                .WithProblem("the annotation cannot be applied to a property of Localization type `LocalizedDate`")
                 .WithAnnotations("[AsString]")
                 .EndMessage();
         }

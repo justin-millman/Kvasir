@@ -199,5 +199,44 @@ namespace UT.Kvasir.Translation {
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
         }
+
+        [TestMethod] public void EntityReferenceCycle_LocalizationLocale() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(DuelingPianos);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("Venue").OfTypeText().BeingNonNullable().And
+                .HaveField("Pianist1").OfTypeText().BeingNonNullable().And
+                .HaveField("Pianist2").OfTypeText().BeingNonNullable().And
+                .HaveField("RandomGuid").OfTypeText().BeingNonNullable().And
+                .HaveField("AverageRakePerDay").OfTypeDecimal().BeingNonNullable().And
+                .HaveField("TotalSongsPlayedAllTime").OfTypeUInt64().BeingNonNullable().And
+                .HaveNoOtherFields();
+        }
+
+        [TestMethod] public void EntityReferenceCycle_LocalizationValue() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CareerFair);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("Date").OfTypeDate().BeingNonNullable().And
+                .HaveField("Attendees").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("Booths").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("ResumeesDistributed").OfTypeUInt64().BeingNonNullable().And
+                .HaveField("SisterFair").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("HostingUniversity").OfTypeText().BeingNullable().And
+                .HaveNoOtherFields();
+        }
     }
 }

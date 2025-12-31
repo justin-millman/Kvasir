@@ -18,14 +18,14 @@ namespace Kvasir.Translation {
         /// </param>
         /// <param name="isReference">
         ///   <see langword="true"/> if the invalid property was a Reference-type property; if it was a Relation-type
-        ///   property, then <see langword="false"/>.
+        ///   property or a Localization-type property, then <see langword="false"/>.
         /// </param>
         public PreDefinedReferenceException(Context context, Type entityType,  bool isReference)
             : base(
                 new Location(context.ToString()),
                 new Problem(
                     "a Pre-Defined Entity cannot " +
-                    (isReference ? "reference " : "contain a Relation involving ") +
+                    (isReference ? "reference " : "contain a Relation or a Localization involving ") +
                     $"non-Pre-Defined Entity type {entityType.DisplayName()}"
                 )
               )

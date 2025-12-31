@@ -125,6 +125,36 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsGreaterThan_LocalizationFieldWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(IsraeliPrimeMinister);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("DomesticApproval", ComparisonOperator.GT, (short)17).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsGreaterThan_LocalizationFieldWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ArconiaMurder);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ArconiaMurder` → Date")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsGreaterThan_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -247,6 +277,37 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`BloodDrive` → SponsoredBy")
                 .WithPath("Hospital")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Hospital`")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsGreaterThan_NestedLocalizationWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Valkyrie);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Identifier.Name", ComparisonOperator.GT, "ytnavc").And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsGreaterThan_NestedLocalizationWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(LibraryCard);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LibraryCard` → DateOf")
+                .WithPath("Expiration")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
                 .WithAnnotations("[Check.IsGreaterThan]")
                 .EndMessage();
         }
@@ -680,6 +741,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsGreaterThan_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(AmericanNinjaWarrior);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`AmericanNinjaWarrior` → Height")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsGreaterThan_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Camel);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Camel` → Name")
+                .WithProblem("the path \"Value\" does not exist")
+                .WithAnnotations("[Check.IsGreaterThan]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsGreaterThan_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -824,6 +917,36 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsLessThan_LocalizationFieldWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BuildABearWorkshop);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Revenue", ComparisonOperator.LT, "zswueal").And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsLessThan_LocalizationFieldWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(HookahBar);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`HookahBar` → Groundbreaking")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsLessThan_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -948,6 +1071,37 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Hallucination` → Reason")
                 .WithPath("Drug")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Drug`")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsLessThan_NestedLocalizationWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CivVITechnology);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("ResearchCost.Science", ComparisonOperator.LT, 761023UL).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsLessThan_NestedLocalizationWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(MakeAWish);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`MakeAWish` → Status")
+                .WithPath("WishMade")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
                 .WithAnnotations("[Check.IsLessThan]")
                 .EndMessage();
         }
@@ -1382,6 +1536,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsLessThan_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Isotope);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Isotope` → AtomicWeight")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsLesThan_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(WorldBaseballClassic);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`WorldBaseballClassic` → ChampionCountry")
+                .WithProblem("the path \"Key\" does not exist")
+                .WithAnnotations("[Check.IsLessThan]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsLessThan_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1526,6 +1712,36 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsGreaterOrEqualTo_LocalizationFieldWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(PrisonerOfWar);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("War", ComparisonOperator.GTE, "yauqw").And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_LocalizationFieldWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Diadochos);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Diadochos` → Commissioned")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTO]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsGreaterOrEqualTo_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -1648,6 +1864,37 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Barbie` → Relationships")
                 .WithPath("Boyfriend.Ken")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Ken`")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_NestedLocalizationWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Commander);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Identity.Name", ComparisonOperator.GTE, "bvafyral").And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_NestedLocalizationWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BuffaloWildWingsSauce);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BuffaloWildWingsSauce` → History")
+                .WithPath("Discontinued")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
                 .WithAnnotations("[Check.IsGreaterOrEqualTo]")
                 .EndMessage();
         }
@@ -2079,6 +2326,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsGreaterOrEqualTo_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(PlasticSurgery);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`PlasticSurgery` → Cost")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsGreaterOrEqualTo_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Landfill);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Landfill` → Area")
+                .WithProblem("the path \"Locale\" does not exist")
+                .WithAnnotations("[Check.IsGreaterOrEqualTo]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsGreaterOrEqualTo_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -2224,6 +2503,36 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsLessOrEqualTo_LocalizationFieldWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CrabRangoon);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Calories", ComparisonOperator.LTE, 10891UL).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_LocalizationFieldWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Flamethrower);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Flamethrower` → SoldOn")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsLessOrEqualTo_AggregateNestedApplicableScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -2345,6 +2654,37 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`Ransomware` → Extortion")
                 .WithPath("Ransom")
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Ransom`")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_NestedLocalizationWithApplicableKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Coconut);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Measures.Volume", ComparisonOperator.LTE, 6172182904UL).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void IsLessOrEqualTo_NestedLocalizationWithInapplicableKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(SpecialVictim);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`SpecialVictim` → ImportantDates")
+                .WithPath("ArrestMade")
+                .WithProblem("the annotation cannot be applied to a Field of non-orderable type `Guid`")
                 .WithAnnotations("[Check.IsLessOrEqualTo]")
                 .EndMessage();
         }
@@ -2775,6 +3115,38 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void IsLessThanOrEqualTo_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(GolfCart);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`GolfCart` → TopSpeed")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsLessThanOrEqualTo_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(DDayBeach);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`DDayBeach` → Name")
+                .WithProblem("the path \"Key\" does not exist")
+                .WithAnnotations("[Check.IsLessOrEqualTo]")
+                .EndMessage();
+        }
+
         [TestMethod] public void IsLessOrEqualTo_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -2927,6 +3299,21 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void IsNot_LocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Catacombs);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Length", ComparisonOperator.NE, 541102UL).And
+                .HaveConstraint("Depth", ComparisonOperator.NE, 8UL).And
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void IsNot_AggregateNestedScalar() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -3021,6 +3408,20 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a property of Reference type `Company`")
                 .WithAnnotations("[Check.IsNot]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void IsNot_NestedLocalization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Shtetl);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint("Demographics.Population", ComparisonOperator.NE, 6513UL).And
+                .HaveNoOtherConstraints();
         }
 
         [TestMethod] public void IsNot_RelationNestedScalar() {
@@ -3471,6 +3872,38 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`BachelorParty` → <synthetic> `Destinations`")
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<Destination>`")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNot_NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Pitmaster);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Pitmaster` → AnnualRevenue")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.IsNot]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void IsNot_NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Skirt);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Skirt` → Length")
+                .WithProblem("the path \"Locale\" does not exist")
                 .WithAnnotations("[Check.IsNot]")
                 .EndMessage();
         }

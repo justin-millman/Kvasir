@@ -80,5 +80,25 @@ namespace Kvasir.Translation {
                 new Problem("a writeable property cannot be included in the data model for a Pre-Defined Entity")
               )
         {}
+
+        /// <summary>
+        ///   Constructs a new <see cref="InvalidPropertyInDataModelException"/> caused by a property in a derived
+        ///   Localization.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="Context"/> in which the writeable property was encountered.
+        /// </param>
+        /// <param name="_">
+        ///   <i>overload discriminator</i>
+        /// </param>
+        public InvalidPropertyInDataModelException(Context context, DerivedLocalizationTag _)
+            : base(
+                new Location(context.ToString()),
+                new Problem("a property in a derived Localization class cannot be included in the data model")
+              )
+        {}
     }
+
+    // Discrimination types
+    internal readonly struct DerivedLocalizationTag {}
 }

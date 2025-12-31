@@ -322,6 +322,24 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields();
         }
 
+        [TestMethod] public void DefaultOnLocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(ConfidentialInformant);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("InformantID").WithNoDefault().And
+                .HaveField("ManagingCop").WithNoDefault().And
+                .HaveField("ForImmunity").WithNoDefault().And
+                .HaveField("ArrestsFacilitated").WithNoDefault().And
+                .HaveField("TotalCompensation").WithDefault("localized-currency").And
+                .HaveNoOtherFields();
+        }
+
         [TestMethod] public void NullDefaultOnNonNullableScalar_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -451,6 +469,26 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationList<string>`")
                 .WithAnnotations("[Default]")
                 .EndMessage();
+        }
+
+        [TestMethod] public void DefaultOnNestedLocalizationField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Cantrip);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveField("SpellName").WithNoDefault().And
+                .HaveField("Effect.Damage").WithNoDefault().And
+                .HaveField("Effect.DamageAmount").WithDefault(1000UL).And
+                .HaveField("Effect.IsHealing").WithNoDefault().And
+                .HaveField("Range").WithNoDefault().And
+                .HaveField("MagicSchool").WithNoDefault().And
+                .HaveField("Prevalence").WithNoDefault().And
+                .HaveNoOtherFields();
         }
 
         [TestMethod] public void ArrayDefaultValue_IsError() {
@@ -884,6 +922,38 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InapplicableAnnotationException>()
                 .WithLocation("`LaundryDetergent` → <synthetic> `Ingredients`")
                 .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Default]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NonExistentPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(SportsCenter);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`SportsCenter` → AirDate")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Default]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NestedPathOnLocalization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Caddie);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Caddie` → CarryingCapacity")
+                .WithProblem("the path \"Value\" does not exist")
                 .WithAnnotations("[Default]")
                 .EndMessage();
         }

@@ -25,7 +25,7 @@ namespace Kvasir.Translation {
             if (self.IsByRef) {
                 return TypeCategory.ByRef;
             }
-            if (self == typeof(IRelation)) {
+            else if (self == typeof(IRelation)) {
                 return TypeCategory.IRelation;
             }
             else if (self.IsInstanceOf(typeof(IRelation))) {
@@ -74,6 +74,9 @@ namespace Kvasir.Translation {
             }
             else if (self.IsValueType) {
                 return TypeCategory.Struct;
+            }
+            else if (Translator.IsLocalizationType(self)) {
+                return TypeCategory.Localization;
             }
             else {
                 return TypeCategory.Class;
@@ -130,6 +133,7 @@ namespace Kvasir.Translation {
         public static TypeCategory Enumeration { get; } = new TypeCategory("an enumeration type");
         public static TypeCategory Interface { get; } = new TypeCategory("an interface");
         public static TypeCategory IRelation { get; } = new TypeCategory("the `IRelation` interface");
+        public static TypeCategory Localization { get; } = new TypeCategory("a class derived from Localization<,,>");
         public static TypeCategory Object { get; set; } = new TypeCategory("`object` (or `dynamic`)");
         public static TypeCategory OpenGeneric { get; set; } = new TypeCategory("an open generic type");
         public static TypeCategory Pointer { get; } = new TypeCategory("a pointer type");

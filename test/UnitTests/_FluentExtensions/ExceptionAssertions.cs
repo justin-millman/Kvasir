@@ -12,14 +12,32 @@ using System.Linq;
 
 namespace FluentAssertions {
     internal static partial class AssertionExtensions {
-        public static TranslationAssertions Should(this Func<EntityTranslation> self) {
-            return new TranslationAssertions(self);
+        public static EntityTranslationAssertions Should(this Func<EntityTranslation> self) {
+            return new EntityTranslationAssertions(self);
+        }
+        public static LocalizationTranslationAssertions Should(this Func<LocalizationTranslation> self) {
+            return new LocalizationTranslationAssertions(self);
         }
 
 
-        public class TranslationAssertions : FunctionAssertions<EntityTranslation> {
+        public class EntityTranslationAssertions : FunctionAssertions<EntityTranslation> {
             public new Func<EntityTranslation> Subject { get; }
-            public TranslationAssertions(Func<EntityTranslation> subject)
+            public EntityTranslationAssertions(Func<EntityTranslation> subject)
+                : base(subject, new AggregateExceptionExtractor()) {
+
+                Subject = subject;
+            }
+
+            public TranslationExceptionAssertions<TEx> FailWith<TEx>() where TEx : TranslationException {
+                var caught = this.ThrowExactly<TEx>();
+                return new TranslationExceptionAssertions<TEx>(caught.Subject.First());
+            }
+        }
+
+
+        public class LocalizationTranslationAssertions : FunctionAssertions<LocalizationTranslation> {
+            public new Func<LocalizationTranslation> Subject { get; }
+            public LocalizationTranslationAssertions(Func<LocalizationTranslation> subject)
                 : base(subject, new AggregateExceptionExtractor()) {
 
                 Subject = subject;

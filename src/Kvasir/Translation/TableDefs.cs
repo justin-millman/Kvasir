@@ -22,6 +22,17 @@ namespace Kvasir.Translation {
     );
 
     /// <summary>
+    ///   The definition of a Localization Table.
+    /// </summary>
+    /// 
+    /// <param name="Table">The schema model for the Localization Table.</param>
+    /// <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
+    internal sealed record class LocalizationTableDef(
+        ITable Table,
+        IReadOnlyList<object> PreDefinedInstances
+    );
+
+    /// <summary>
     ///   The definition of a Relation Table.
     /// </summary>
     /// 

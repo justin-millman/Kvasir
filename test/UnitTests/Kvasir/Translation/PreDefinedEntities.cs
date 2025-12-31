@@ -57,7 +57,6 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherFields().And
                 .HavePrimaryKey().OfFields("Name").And
                 .HaveNoOtherCandidateKeys().And
-                .HaveNoOtherForeignKeys().And
                 .HaveNoOtherForeignKeys();
             translation.Principal.PreDefinedInstances.Should().HaveCount(12);
             translation.Principal.PreDefinedInstances.Should().Contain(Disciple.SimonI);
@@ -72,6 +71,60 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Thaddeus);
             translation.Principal.PreDefinedInstances.Should().Contain(Disciple.SimonII);
             translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Judas);
+        }
+
+        [TestMethod] public void Localization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(FishFin);
+
+            // Act
+            var translation = translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.PreDefinedEntities+FishFinTable");
+            translation.Principal.Table.Should()
+                .HaveField("Key").OfTypeText().BeingNonNullable().And
+                .HaveField("Locale").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("Value").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HavePrimaryKey().OfFields("Key", "Locale").And
+                .HaveNoOtherCandidateKeys().And
+                .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().Contain(FishFin.Dorsal);
+            translation.Principal.PreDefinedInstances.Should().Contain(FishFin.Tail);
+            translation.Principal.PreDefinedInstances.Should().Contain(FishFin.Anal);
+            translation.Principal.PreDefinedInstances.Should().Contain(FishFin.Pectoral);
+            translation.Principal.PreDefinedInstances.Should().Contain(FishFin.Pelvic);
+            translation.Principal.PreDefinedInstances.Should().Contain(FishFin.Adipose);
+        }
+
+        [TestMethod] public void LocalizationProperties() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BrainLobe);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.PreDefinedEntities+BrainLobeTable");
+            translation.Principal.Table.Should()
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("MeSH").OfTypeText().BeingNonNullable().And
+                .HaveField("Function").OfTypeText().BeingNonNullable().And
+                .HaveField("Volume").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HavePrimaryKey().OfFields("Name").And
+                .HaveNoOtherCandidateKeys().And
+                .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(4);
+            translation.Principal.PreDefinedInstances.Should().Contain(BrainLobe.Occipital);
+            translation.Principal.PreDefinedInstances.Should().Contain(BrainLobe.Parietal);
+            translation.Principal.PreDefinedInstances.Should().Contain(BrainLobe.Temporal);
+            translation.Principal.PreDefinedInstances.Should().Contain(BrainLobe.Frontal);
         }
 
         [TestMethod] public void PubliclyWriteableFieldProperty_IsError() {
@@ -293,6 +346,88 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherForeignKeys();
         }
 
+        [TestMethod] public void LocalizationToPreDefinedEntity() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(DeadlySin);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.PreDefinedEntities+DeadlySinTable");
+            translation.Principal.Table.Should()
+                .HaveField("Index").OfTypeInt8().BeingNonNullable().And
+                .HaveField("Name").OfTypeText().BeingNonNullable().And
+                .HaveField("SummaMentions").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("AssociatedColor").OfTypeGuid().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HavePrimaryKey().OfFields("Index").And
+                .HaveNoOtherCandidateKeys().And
+                .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Lust);
+            translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Greed);
+            translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Gluttony);
+            translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Sloth);
+            translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Pride);
+            translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Envy);
+            translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Wrath);
+        }
+
+        [TestMethod] public void AggregateLocalizationToPreDefinedEntity() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(LunarPhase);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.PreDefinedEntities+LunarPhaseTable");
+            translation.Principal.Table.Should()
+                .HaveField("Phase").OfTypeText().BeingNonNullable().And
+                .HaveField("Visibility.Hemisphere").OfTypeText().BeingNonNullable().And
+                .HaveField("Visibility.Percentage").OfTypeDouble().BeingNonNullable().And
+                .HaveField("AverageMoonriseTime").OfTypeUInt16().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HavePrimaryKey().OfFields("Phase").And
+                .HaveNoOtherCandidateKeys().And
+                .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.New);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.WaxingCrescent);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.FirstQuarter);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.WaxingGibbous);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.Full);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.WaningGibbous);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.LastQuarter);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.WaningCrescent);
+            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.New);
+        }
+
+        [TestMethod] public void RelationNestedLocalizationToPreDefinedEntity() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Cyclade);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations.Should().HaveCount(1);
+            translation.Relations[0].Table.Should()
+                .HaveName("UT.Kvasir.Translation.PreDefinedEntities+Cyclade.MentionedByTable").And
+                .HaveField("Cyclade.IslandNumber").OfTypeUInt32().BeingNonNullable().And
+                .HaveField("Item").OfTypeDouble().BeingNonNullable().And
+                .HaveNoOtherFields().And
+                .HaveForeignKey("Cyclade.IslandNumber")
+                    .Against(translation.Principal.Table)
+                    .WithOnDeleteBehavior(OnDelete.Cascade)
+                    .WithOnUpdateBehavior(OnUpdate.Cascade).And
+                .HaveNoOtherForeignKeys();
+        }
+
         [TestMethod] public void ReferenceToNonPreDefinedEntity_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
@@ -350,7 +485,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<PreDefinedReferenceException>()
                 .WithLocation("`CivVIYield` → <synthetic> `ProducedBy` → Item")
-                .WithProblem("a Pre-Defined Entity cannot contain a Relation involving non-Pre-Defined Entity type `District`")
+                .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `District`")
                 .EndMessage();
         }
 
@@ -365,7 +500,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<PreDefinedReferenceException>()
                 .WithLocation("`StateOfMatter` → `Theory` (from \"ExplanatoryTheory\") → <synthetic> `Namesakes` → Item")
-                .WithProblem("a Pre-Defined Entity cannot contain a Relation involving non-Pre-Defined Entity type `Scientist`")
+                .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `Scientist`")
                 .EndMessage();
         }
 
@@ -381,7 +516,68 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<PreDefinedReferenceException>()
                 .WithLocation("`Primate` → `Journal` (from \"DedicatedJournal\") → <synthetic> `Studies` → Item")
-                .WithProblem("a Pre-Defined Entity cannot contain a Relation involving non-Pre-Defined Entity type `Study`")
+                .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `Study`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LocalizationToNonPreDefinedEntity_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(OpiumWar);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<PreDefinedReferenceException>()
+                .WithLocation("`OpiumWar` → `LocalizedBelligerent` (from \"Victor\") → Locale")
+                .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `Country`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void AggregatedNestedLocalizationToNonPreDefinedEntity_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(BronteSister);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<PreDefinedReferenceException>()
+                .WithLocation("`BronteSister` → `Bibliography` (from \"Works\") → `LocalizedLiterature` (from \"DebutNovel\") → Value")
+                .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `Novel`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void AggregateNestedLocalizationToNonPreDefinedEntity_PostMemoization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(CapriSun);
+
+            // Act
+            _ = translator[typeof(CapriSun.Brand)];
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<PreDefinedReferenceException>()
+                .WithLocation("`CapriSun` → `Corporation` (from \"DesignedBy\") → `LocalizedCompany` (from \"Company\") → Value")
+                .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `Company`")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationNestedLocalizationToNonPreDefinedEntity_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Muse);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<PreDefinedReferenceException>()
+                .WithLocation("`Muse` → <synthetic> `Parents` → `LocalizedGod` (from \"Item\") → Value")
+                .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `Deity`")
                 .EndMessage();
         }
     }

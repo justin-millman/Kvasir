@@ -37,7 +37,8 @@ namespace Kvasir.Translation {
         ///   The <see cref="Name"/> of the property.
         /// </param>
         /// <param name="source">
-        ///   The <see cref="SyntheticType"/> on which the property resides.
+        ///   The <see cref="Type"/> on which the property resides. This may or may not be a
+        ///   <see cref="SyntheticType"/>.
         /// </param>
         /// <param name="propertyType">
         ///   The <see cref="PropertyType">type</see> of the property.
@@ -45,7 +46,7 @@ namespace Kvasir.Translation {
         /// <param name="annotations">
         ///   The set of <see cref="Attribute">annotations</see> applied to the property, in any order.
         /// </param>
-        public SyntheticPropertyInfo(string name, SyntheticType source, Type propertyType, IEnumerable<Attribute> annotations) {
+        public SyntheticPropertyInfo(string name, Type source, Type propertyType, IEnumerable<Attribute> annotations) {
             Debug.Assert(name is not null && name != "");
             Debug.Assert(source is not null);
             Debug.Assert(propertyType is not null);
