@@ -17189,16 +17189,17 @@ namespace UT.Kvasir.Translation {
         // Scenario: Localization as Key of Deleted Element in Map Relation (✓key and values extracted per element✓)
         // (new, saved, and deleted entries)
         public class Radiologist {
-            public enum Certification { HighSchoolDiploma, BachelorsDegree, MatersDegree, MedicalDegree, MedialLicense }
+            [Flags] public enum Certification { HighSchoolDiploma = 1, BachelorsDegree = 2, MatersDegree = 4, MedicalDegree = 8, MedicalLicense = 16 }
 
             [PrimaryKey, Column(0)] public Guid ID { get; set; }
             [Column(1)] public string Name { get; set; } = "";
-            public RelationMap<Certification, LocalizedDate> CertificationDates { get; init; } = new();
-            [Column(2)] public decimal RadiationExposure { get; set; }
-            [Column(3)] public bool IsCancerSurvivor { get; set; }
-            [Column(4)] public bool ForHumans { get; set; }
-            [Column(5)] public string? CurrentHospital { get; set; }
-            [Column(6)] public ulong XRaysPerformed { get; set; }
+            [Column(2)] public Certification Certifications { get; set; }
+            public RelationMap<LocalizedText, bool> DeviceProficiencies { get; init; } = new();
+            [Column(3)] public double RadiationExposure { get; set; }
+            [Column(4)] public bool IsCancerSurvivor { get; set; }
+            [Column(5)] public bool ForHumans { get; set; }
+            [Column(6)] public string? CurrentHospital { get; set; }
+            [Column(7)] public ulong XRaysPerformed { get; set; }
         }
 
         // Scenario: Localization as Value of New Element in Map Relation (✓key and values extracted per element✓)

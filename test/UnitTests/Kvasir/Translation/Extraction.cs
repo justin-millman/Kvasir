@@ -1727,11 +1727,88 @@ namespace UT.Kvasir.Translation {
         }
 
         [TestMethod] public void RelationNestedLocalization_KeyOfSavedMapElement() {
-            Assert.Fail();
+            // Arrange
+            var dragonlord = new Dragonlord() {
+                HumanSoul = "Linden",
+                DragonSoul = "Rathan",
+                Age = 600,
+                HasSoulTwin = true,
+                Marking = "scar",
+                Councils = new RelationMap<LocalizedText, bool>()
+            };
+            var councilOfCasna = new LocalizedText("COUNCIL_OF_CASNA_LOC");
+            var greatCouncil = new LocalizedText("GREAT_COUNCIL_LOC");
+            dragonlord.Councils[councilOfCasna] = true;
+            dragonlord.Councils[greatCouncil] = false;
+            (dragonlord.Councils as IRelation).Canonicalize();
+            councilOfCasna[Language.English] = "Council of Casna";
+            councilOfCasna[Language.Spanish] = "Concilio de Casna";
+            greatCouncil[Language.English] = "The Great Council";
+            (councilOfCasna.Relation as IRelation).Canonicalize();
+            (greatCouncil.Relation as IRelation).Canonicalize();
+            councilOfCasna[Language.French] = "Concile du Casna";
+            greatCouncil.Delocalize(Language.English);
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Dragonlord)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(dragonlord);
+
+            // Assert
+            data.Insertions.Should().HaveCount(1);
+            data.Insertions.Should().ContainRow(councilOfCasna.Key, ConversionOf(Language.French), councilOfCasna[Language.French]);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(1);
+            data.Deletions.Should().ContainRow(greatCouncil.Key, ConversionOf(Language.English), "The Great Council");
         }
 
         [TestMethod] public void RelationNestedLocalization_KeyOfDeletedMapElement() {
-            Assert.Fail();
+            // Arrange
+            var radiologist = new Radiologist() {
+                ID = Guid.NewGuid(),
+                Name = "Dr. Anna Kotellian",
+                Certifications = Radiologist.Certification.HighSchoolDiploma | Radiologist.Certification.BachelorsDegree | Radiologist.Certification.MedicalDegree | Radiologist.Certification.MedicalLicense,
+                DeviceProficiencies = new RelationMap<LocalizedText, bool>(),
+                RadiationExposure = 93.184,
+                IsCancerSurvivor = false,
+                ForHumans = true,
+                CurrentHospital = null,
+                XRaysPerformed = 182491044
+            };
+            var mri = new LocalizedText("MRI_LOC");
+            var echocardiograph = new LocalizedText("ECHOCARDIOGRAPH_LOC");
+            var pet = new LocalizedText("PET_SCAN_LOC");
+            radiologist.DeviceProficiencies[mri] = true;
+            radiologist.DeviceProficiencies[echocardiograph] = false;
+            radiologist.DeviceProficiencies[pet] = true;
+            mri[Language.English] = "Magnetic Resonance Imaging";
+            mri[Language.Italian] = "Risonanza Magnetica per Immagini";
+            mri[Language.French] = "Imagerie par Résonance Magnétique";
+            (mri.Relation as IRelation).Canonicalize();
+            mri[Language.German] = "Magnetresonanztomographie";
+            echocardiograph[Language.English] = "Echocardiograph";
+            echocardiograph[Language.Esperanto] = "Eĥokardiografio";
+            pet[Language.English] = "Positron Emission Tomography";
+            (pet.Relation as IRelation).Canonicalize();
+            pet.Delocalize(Language.English);
+            (radiologist.DeviceProficiencies as IRelation).Canonicalize();
+            radiologist.DeviceProficiencies.Remove(mri);
+            radiologist.DeviceProficiencies.Remove(echocardiograph);
+            radiologist.DeviceProficiencies.Remove(pet);
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Radiologist)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(radiologist);
+
+            // Assert
+            data.Insertions.Should().HaveCount(0);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(4);
+            data.Deletions.Should().ContainRow(mri.Key, ConversionOf(Language.English), mri[Language.English]);
+            data.Deletions.Should().ContainRow(mri.Key, ConversionOf(Language.Italian), mri[Language.Italian]);
+            data.Deletions.Should().ContainRow(mri.Key, ConversionOf(Language.French), mri[Language.French]);
+            data.Deletions.Should().ContainRow(pet.Key, ConversionOf(Language.English), "Positron Emission Tomography");
         }
 
         [TestMethod] public void RelationNestedLocalization_ValueOfNewMapElement() {
@@ -1769,7 +1846,37 @@ namespace UT.Kvasir.Translation {
         }
 
         [TestMethod] public void RelationNestedLocalization_ValueOfSavedMapElement() {
-            Assert.Fail();
+            // Arrange
+            var neuron = new Neuron() {
+                Owner = "Casper T. Yawffenyawyaw",
+                NeuralNumber = 175718290128144,
+                Dendrites = new RelationMap<ulong, LocalizedMeasure>(),
+                SynapseSize = 0.0000000000000003f,
+                Variety = Neuron.Kind.Motor
+            };
+            neuron.Dendrites[38774] = new LocalizedMeasure(38774);
+            neuron.Dendrites[621300955] = new LocalizedMeasure(621300955);
+            (neuron.Dendrites as IRelation).Canonicalize();
+            neuron.Dendrites[38774][MeasurementSystem.Metric] = new Measurement(34, "nanometers");
+            neuron.Dendrites[38774][MeasurementSystem.Imperial] = new Measurement(0.1338583, "inches-neg-6");
+            (neuron.Dendrites[38774].Relation as IRelation).Canonicalize();
+            neuron.Dendrites[38774][MeasurementSystem.Imperial] = new Measurement(0.000001338583, "inches");
+            neuron.Dendrites[621300955][MeasurementSystem.Metric] = new Measurement(189, "nanometers");
+            neuron.Dendrites[621300955][MeasurementSystem.Imperial] = new Measurement(0.000007440945, "inches");
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Neuron)];
+            var data = translation.Localizations[0].Extractor.ExtractFrom(neuron);
+
+            // Assert
+            data.Insertions.Should().HaveCount(3);
+            data.Insertions.Should().ContainRow(neuron.Dendrites[38774].Key, ConversionOf(MeasurementSystem.Imperial), neuron.Dendrites[38774][MeasurementSystem.Imperial].Value, neuron.Dendrites[38774][MeasurementSystem.Imperial].Unit);
+            data.Insertions.Should().ContainRow(neuron.Dendrites[621300955].Key, ConversionOf(MeasurementSystem.Metric), neuron.Dendrites[621300955][MeasurementSystem.Metric].Value, neuron.Dendrites[621300955][MeasurementSystem.Metric].Unit);
+            data.Insertions.Should().ContainRow(neuron.Dendrites[621300955].Key, ConversionOf(MeasurementSystem.Imperial), neuron.Dendrites[621300955][MeasurementSystem.Imperial].Value, neuron.Dendrites[621300955][MeasurementSystem.Imperial].Unit);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(1);
+            data.Deletions.Should().ContainRow(neuron.Dendrites[38774].Key, ConversionOf(MeasurementSystem.Imperial), 0.1338583, "inches-neg-6");
         }
 
         [TestMethod] public void RelationNestedLocalization_ValueOfDeletedMapElement() {
