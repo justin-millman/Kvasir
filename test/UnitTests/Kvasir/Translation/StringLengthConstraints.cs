@@ -961,14 +961,14 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void LengthIsAtLeast_PathIsNull_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES);
-            var source = typeof(Localization);
+            var source = typeof(LocalizedData);
 
             // Act
             var translate = () => translator[source];
 
             // Assert
             translate.Should().FailWith<InvalidPathException>()
-                .WithLocation("`Localization` → LocalizedValue")
+                .WithLocation("`LocalizedData` → LocalizedValue")
                 .WithProblem("the path cannot be 'null'")
                 .WithAnnotations("[Check.LengthIsAtLeast]")
                 .EndMessage();
