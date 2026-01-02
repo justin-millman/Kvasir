@@ -96,7 +96,7 @@ namespace Kvasir.Translation {
                 }
             }
 
-            foreach (var property in source.GetProperties(PROPERTY_FLAGS).OrderBy(f => f.Name)) {
+            foreach (var property in PropertiesOf(source).OrderBy(f => f.Name)) {
                 using var propGuard = context.Push(property);
                 var propType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 var propCategory = property.TranslationCategory();
@@ -198,11 +198,20 @@ namespace Kvasir.Translation {
             return translation.Select(g => g.Clone()).ToList();
         }
 
-
-        private static readonly BindingFlags PROPERTY_FLAGS =
-            BindingFlags.Public |
-            BindingFlags.NonPublic |
-            BindingFlags.Instance |
-            BindingFlags.Static;
+        /// <summary>
+        ///   Gets the properties that may contribute to the schema of a CLR <see cref="Type"/>.
+        /// </summary>
+        /// <param name="source">
+        ///   The CLR <see cref="Type"/>.
+        /// </param>
+        /// <returns>
+        ///   The properties of <paramref name="source"/> that may contribute to its schema, in no particular order.
+        /// </returns>
+        private IEnumerable<PropertyInfo> PropertiesOf(Type source) {
+            BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+            foreach (var property in source.GetProperties(flags)) {
+                yield return property;
+            }
+        }
     }
 }

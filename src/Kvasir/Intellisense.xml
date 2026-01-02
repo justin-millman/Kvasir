@@ -8311,6 +8311,17 @@
               Pre-Defined Entity type.
             </exception>
         </member>
+        <member name="M:Kvasir.Translation.Translator.PropertiesOf(System.Type)">
+            <summary>
+              Gets the properties that may contribute to the schema of a CLR <see cref="T:System.Type"/>.
+            </summary>
+            <param name="source">
+              The CLR <see cref="T:System.Type"/>.
+            </param>
+            <returns>
+              The properties of <paramref name="source"/> that may contribute to its schema, in no particular order.
+            </returns>
+        </member>
         <member name="P:Kvasir.Translation.Translator.Item(System.Type)">
             <summary>
               Translates a CLR type, and any other type reference by it.

@@ -185,7 +185,7 @@ namespace Kvasir.Translation {
                 // through as [Nullable]. Therefore, if both are present, then we have a problem, and we have to catch
                 // it here to avoid an annotation conflict. And, to provide the description, we have to switch over the
                 // field names.
-                foreach (var prop in syntheticType.GetProperties(PROPERTY_FLAGS).OrderBy(f => f.Name)) {
+                foreach (var prop in PropertiesOf(syntheticType).OrderBy(f => f.Name)) {
                     using var guard = context.Push(prop);
                     if (prop.HasAttribute<NullableAttribute>() && prop.HasAttribute<NonNullableAttribute>()) {
                         if (prop.Name == "Item") {
