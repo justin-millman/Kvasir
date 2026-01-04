@@ -1398,5 +1398,51 @@
                <paramref name="derivedType"/> and <paramref name="ancestorType"/>; otherwise, <see langword="false"/>.
              </returns>
         </member>
+        <member name="M:Cybele.Extensions.TypeExtensions.GetPropertyNamed(System.Type,System.String)">
+            <summary>
+              Finds the property on a <see cref="T:System.Type"/> that has a specific name.
+            </summary>
+            <remarks>
+              <para>
+                This method is comprehensive: it searches public and non-public instance and static properties on the
+                given type, including properties inherited from base classes or from interfaces. This method can also
+                detect properties that are implemented through explicit interfaces, and it can detect the `this[]`
+                indexer property as well.
+              </para>
+              <para>
+                Under normal circumstances, there can only be one property with a given name visible through a
+                particular type. When a property hides another (with or without the use of the <c>new</c> keyword), the
+                one defined by the most-derived type will take precedence and be located. There are only two known
+                circumstances in which multiple properties of the same name can otherwise be detected: when there are
+                multiple overloads of the `this[]` indexer property, and when a type explicitly implements two
+                properties of the same name from different interfaces. In both of these circumstances, an
+                <see cref="T:System.Reflection.AmbiguousMatchException"/> will be raised. If a type has both an explicit interface
+                implementation and a vanilla property of the same name, the latter will be returned.
+              </para>
+              <para>
+                The only scenario in which this function will fail to locate a property that actually exists is if the
+                property is an explicit interface implementation on a base class of the target type.
+              </para>
+              <para>
+                This function is only guaranteed to work with bona fide CLR types. It may work with types that are
+                created through reflection, provided that the properties exposed have a non-<see langword="null"/>
+                <see cref="P:System.Reflection.MemberInfo.DeclaringType"><c>DeclaringType</c></see>, but it may also fail to function.
+              </para>
+            </remarks>
+            <param name="type">
+              The <see cref="T:System.Type"/> to search for properties.
+            </param>
+            <param name="propertyName">
+              The name of the target property.
+            </param>
+            <returns>
+              An engaged optional holding the <see cref="T:System.Reflection.PropertyInfo"/> of the property with name
+              <paramref name="propertyName"/>, if such a property exists on <paramref name="type"/>; otherwise, a
+              disengaged optional.
+            </returns>
+            <exception cref="T:System.Reflection.AmbiguousMatchException">
+              if multiple properties named <paramref name="propertyName"/> are found on <paramref name="type"/>.
+            </exception>
+        </member>
     </members>
 </doc>
