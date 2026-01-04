@@ -363,43 +363,13 @@ namespace Cybele.Core {
         ///   instance.
         /// </returns>
         private static Option<PropertyInfo> GetProperty(Type source, string name) {
-            // Here's why we have to use the branchy helper: GetProperty will throw an AmbiguousMatchException if the
-            // source type inherits a property and then hides it with the "new" keyword. However, we want to support
-            // this by finding the hiding property. We can't key on the DeclaringType up front, because that would
-            // wrongly filter out inherited properties, so we have to first winnow the set of all properties down to
-            // those matching the specified name and then check our three cases: none found (return null), exactly one
-            // found (return it), or multiple found (return the one declared by our source). Note that we could also do
-            // a "try" of GetProperty followed by a "catch" on the AmbiguousMatchException that does a GetProperties,
-            // but using exceptions for control flow is bad practice.
-            PropertyInfo? lookupProperty() {
-                var properties = source.GetProperties(ANY_PROPERTY).Where(p => p.Name == name).ToArray();
-                if (properties.Length == 0) {
-                    return null;
-                }
-                else if (properties.Length == 1) {
-                    return properties[0];
-                }
-                else {
-                    return properties.Single(p => p.DeclaringType == source);
-                }
-            }
-
-            var prop = lookupProperty();
-            if (prop is null || !prop.CanRead) {
-                return Option.None<PropertyInfo>();
-            }
-            return Option.Some(prop);
+            var property = source.GetPropertyNamed(name);
+            return property.Filter(p => p.CanRead);
         }
 
 
         private readonly List<PropertyInfo> chain_;
 
         private const string BAD_PROPERTY_MSG = $"All properties in a {nameof(PropertyChain)} must be readable";
-        private const BindingFlags ANY_PROPERTY =
-            BindingFlags.Public     |        // list public properties
-            BindingFlags.NonPublic  |        // list private, protected, internal, and internal protected properties
-            BindingFlags.Static     |        // list static properties
-            BindingFlags.Instance   |        // list non-static (instance) properties
-            BindingFlags.FlattenHierarchy;   // list properties that are declared by base classes and interfaces
     }
 }
