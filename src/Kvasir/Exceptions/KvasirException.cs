@@ -38,17 +38,5 @@ namespace Kvasir.Exceptions {
         /// </param>
         public KvasirException(string message, Exception innerException)
             : base(message, innerException) {}
-
-        /// <summary>
-        ///   Constructs a new instance of the <see cref="KvasirException"/> class from serialized data.
-        /// </summary>
-        /// <param name="info">
-        ///   The object that holds the serialized data.
-        /// </param>
-        /// <param name="context">
-        ///   The contextual information about the source or destination.
-        /// </param>
-        private KvasirException(SerializationInfo info, StreamingContext context)
-            : base(info, context) {}
     }
 }
