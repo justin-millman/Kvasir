@@ -1,4 +1,5 @@
-﻿using Cybele.Extensions;
+﻿using Cybele.Core;
+using Cybele.Extensions;
 using Kvasir.Annotations;
 using Kvasir.Core;
 using Kvasir.Extraction;
@@ -301,7 +302,7 @@ namespace Kvasir.Translation {
             }
             Debug.Assert(!pkCache_.ContainsKey(source));
 
-            // Localizations cannot induce a reference cycle on its own. The Key Type is required to be a primitive,
+            // Localizations cannot induce a reference cycle on their own. The Key Type is required to be a primitive,
             // which cannot be an Entity. The Locale Type and Value Types are allowed to be the same as the Entity on
             // which the Localization is found. We therefore reset the references on the Context to avoid detecting such
             // sequences as cycles.
@@ -352,14 +353,23 @@ namespace Kvasir.Translation {
 
             var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
 
+            var relationType = source.GetPropertyNamed("Relation").Unwrap().PropertyType;
+            var connectionType = (Type)relationType.GetPropertyNamed("ConnectionType").Unwrap().GetValue(null)!;
+            var valuesGroup = TranslateType(context, connectionType, traits);
+
+            var relationExtractor = new ReadPropertyExtractor(new PropertyChain(source, "Relation"));
+            var valuesExtractor = new DataExtractionPlan(valuesGroup.Select(g => g.Extractor));
+            var extractor = new RelationExtractionPlan(relationExtractor, valuesExtractor);
+            var extractionPlan = new LocalizationExtractionPlan(extractor);
+
             // Pre-Defined Entities don't get reconstituted like normal, since the data is expected to be effectively
             // hard-coded into the source. We use a KeyLookupCreator for those.
             if (!IsPreDefined(source)) {
-                principal = new LocalizationTableDef(table, new List<object>());
+                principal = new LocalizationTableDef(table, extractionPlan, []);
             }
             else {
                 var instances = GetPreDefinedInstances(context, source);
-                principal = new LocalizationTableDef(table, instances.ToList());
+                principal = new LocalizationTableDef(table, extractionPlan, instances.ToList());
             }
 
             localizationTableCache_.Add(source, principal);
