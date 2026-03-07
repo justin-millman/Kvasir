@@ -1322,17 +1322,6 @@
               The cause of the new exception.
             </param>
         </member>
-        <member name="M:Kvasir.Exceptions.KvasirException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-              Constructs a new instance of the <see cref="T:Kvasir.Exceptions.KvasirException"/> class from serialized data.
-            </summary>
-            <param name="info">
-              The object that holds the serialized data.
-            </param>
-            <param name="context">
-              The contextual information about the source or destination.
-            </param>
-        </member>
         <member name="T:Kvasir.Extraction.ConvertingExtractor">
             <summary>
               An <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that executes a <see cref="T:Cybele.Core.DataConverter"/> after extracting a value.
