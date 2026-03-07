@@ -1,6 +1,7 @@
 ﻿using Cybele.Core;
 using Cybele.Extensions;
 using Kvasir.Annotations;
+using Kvasir.Core;
 using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Optional;
@@ -68,6 +69,9 @@ namespace Kvasir.Translation {
             ProcessAnnotations(context);
 
             Extractor = new ReadPropertyExtractor(new PropertyChain(source).Append(metadata.RepresentativeProperty));
+            if (Extractor.ResultType.IsEnum) {
+                Extractor = new ConvertingExtractor(Extractor, new EnumToStringConverter(Extractor.ResultType).ConverterImpl);
+            }
 
             var reconstitutionGroup = new SingleFieldGroup(context, metadata.RepresentativeProperty);
             reconstitutionGroup.SetColumn(context, 0);

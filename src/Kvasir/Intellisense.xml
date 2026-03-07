@@ -1474,6 +1474,59 @@
         <member name="M:Kvasir.Extraction.ISingleExtractor.Kvasir#Extraction#IMultiExtractor#ExtractFrom(System.Object)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Extraction.LocalizationExtractionPlan">
+            <summary>
+              A plan that extracts rows of database values from a
+              <see cref="T:Kvasir.Localization.Localization`3">Localization</see> to be inserted, updated, and/or deleted
+              from a back-end table.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Extraction.LocalizationExtractionPlan.SourceType">
+            <summary>
+              The <see cref="T:System.Type"/> of object from which this <see cref="T:Kvasir.Extraction.LocalizationExtractionPlan"/> extracts values.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Extraction.LocalizationExtractionPlan.#ctor(Kvasir.Extraction.RelationExtractionPlan)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Extraction.LocalizationExtractionPlan"/>.
+            </summary>
+            <param name="valuesExtractor">
+              The <see cref="T:Kvasir.Extraction.RelationExtractionPlan"/> describing how to obtain localized values from the actual source
+              object.
+            </param>
+        </member>
+        <member name="M:Kvasir.Extraction.LocalizationExtractionPlan.ExtractFrom(System.Object)">
+            <summary>
+              Run the extraction logic over a CLR source object, producing <see cref="T:Kvasir.Extraction.LocalizationData"/>.
+            </summary>
+            <param name="source">
+              The CLR source object.
+            </param>
+            <returns>
+              The <see cref="T:Kvasir.Extraction.LocalizationData"/> containing the insertions, modifications, and deletions extracted from
+              <paramref name="source"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Extraction.LocalizationExtractionPlan.Canonicalize(System.Object)">
+            <summary>
+              Canonicalize the target <see cref="T:Kvasir.Localization.Localization`3">Localization</see> on a CLR
+              source.
+            </summary>
+            <param name="source">
+              The CLR source object.
+            </param>
+            <seealso cref="M:Kvasir.Relations.IRelation.Canonicalize"/>
+        </member>
+        <member name="T:Kvasir.Extraction.LocalizationData">
+            <summary>
+              A triple of lists describing the data <see cref="T:Kvasir.Extraction.LocalizationExtractionPlan">extracted from a Relation</see>.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Extraction.LocalizationData.#ctor(System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}},System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <summary>
+              A triple of lists describing the data <see cref="T:Kvasir.Extraction.LocalizationExtractionPlan">extracted from a Relation</see>.
+            </summary>
+        </member>
         <member name="T:Kvasir.Extraction.ReadPropertyExtractor">
             <summary>
               A <see cref="T:Kvasir.Extraction.ISingleExtractor"/> that produces its value by reading from a sequence of properties via
@@ -12132,18 +12185,23 @@
             </summary>
             
             <param name="Table">The schema model for the Localization Table.</param>
+            /// <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
         </member>
-        <member name="M:Kvasir.Translation.LocalizationTableDef.#ctor(Kvasir.Schema.ITable,System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Translation.LocalizationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.LocalizationExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
             <summary>
               The definition of a Localization Table.
             </summary>
             
             <param name="Table">The schema model for the Localization Table.</param>
+            /// <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.Table">
             <summary>The schema model for the Localization Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationTableDef.Extractor">
+            /// <summary>The plan that can extract the rows of data to be stored into the Localization Table.</summary>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.PreDefinedInstances">
             <summary>The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</summary>

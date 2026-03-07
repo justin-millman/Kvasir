@@ -16392,18 +16392,6 @@ namespace UT.Kvasir.Translation {
             [Column(3)] public string ExistentialSchool { get; set; } = "";
         }
 
-        // Scenario: Non-Null Relation Property becomes Null (✓no values extracted✓)
-        public class Orogene {
-            public enum Book { FifthSeason, ObeliskGate, StoneSky }
-
-            [PrimaryKey, Column(0)] public string FulcrumName { get; set; } = "";
-            [Column(1)] public string? BirthName { get; set; }
-            [Column(2)] public string? BirthComm { get; set; }
-            [Column(3)] public byte Rings { get; set; }
-            public RelationMap<Book, bool> Appearances { get; init; }
-            [Column(4)] public bool AtNodeStation { get; set; }
-        }
-
         // Scenario: Non-Null Relation Property with Nested Aggregate and At Least One Element (✓values extracted✓)
         public class OlympianBoon {
             public enum Deity { Ares, Athena, Aphrodite, Artemis, Demeter, Dionysus, Hermes, Poseidon, Zeus }
@@ -16510,6 +16498,205 @@ namespace UT.Kvasir.Translation {
             public RelationMap<DateTime, Listing> Readings { get; init; } = new();
             [Column(1)] public DateTime RangeLower { get; set; }
             [Column(2)] public DateTime RangeUpper { get; set; }
+        }
+
+        // Scenario: Non-Null Localization Property with Non-Enumeration Key (✓key extracted into Principal Table✓)
+        public class Orogene {
+            [Flags] public enum Book { FifthSeason = 1, ObeliskGate = 2, StoneSky = 4 }
+
+            [PrimaryKey, Column(0)] public string FulcrumName { get; set; } = "";
+            [Column(1)] public string? BirthName { get; set; }
+            [Column(2)] public string? BirthComm { get; set; }
+            [Column(3)] public LocalizedDate BirthDate { get; init; } = new(Guid.NewGuid());
+            [Column(4)] public byte Rings { get; set; }
+            [Column(5)] public Book Appearances { get; set; }
+            [Column(6)] public bool AtNodeStation { get; set; }
+        }
+
+        // Scenario: Non-Null Localization Property with Enumeration Key (✓key extracted into Principal Table✓)
+        public class DWTSCouple {
+            public enum Dance { Tango, ArgentineTango, VienneseWaltz, Foxtrot, ChaCha, Contemprorary, Freestyle, Jive, Jazz, Mambo, Salsa, Rumba, PasoDoble, Quicktstep }
+            public enum Judge { CarrieAnn, Bruno, Derek, Len, Guest }
+
+            public class LocalizedScore : Localization<Dance, Judge, int> {
+                public LocalizedScore(Dance key) : base(key) {}
+                public new int this[Judge locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [Column(0)] public byte Season { get; set; }
+            [PrimaryKey, Column(1)] public string Professional { get; set; } = "";
+            [PrimaryKey, Column(2)] public string Celebrity { get; set; } = "";
+            [Column(3)] public byte FinishingPlace { get; set; }
+            [Column(4)] public LocalizedScore BestScore { get; init; } = new((Dance)0);
+        }
+
+        // Scenario: Null Localization Property (✓null key extracted into Principal Table✓)
+        public class Arcanum {
+            public enum Domain { Moon, Sky, Sun, Earth, Ocean, Stars }
+
+            [PrimaryKey, Column(0)] public Domain PrimalSource { get; set; }
+            [Column(1)] public byte Season { get; set; }
+            [Column(2)] public string Elves { get; set; } = "";
+            [Column(3)] public string Archdragon { get; set; } = "";
+            [Column(4)] public ushort NumKnownSpells { get; set; }
+            [Column(5)] public LocalizedRating? XadianRanking { get; init; }
+        }
+
+        // Scenario: Aggregate-Nested Localization Property (✓key extracted into Principal Table✓)
+        public class CombatantCommand {
+            public record struct Naming(string Acronym, LocalizedText Full);
+
+            [PrimaryKey(Path = "Acronym"), Column(0)] public Naming Name { get; set; }
+            [Column(2)] public DateTime Founded { get; set; }
+            [Column(3)] public string HQ { get; set; } = "";
+            [Column(4)] public string Commander { get; set; } = "";
+            [Column(5)] public bool NuclearCapable { get; set; }
+        }
+
+        // Scenario: [Calculated] Localization (✓key extracted into Principal Table✓)
+        public class SapaInca {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public byte Index { get; set; }
+            [Calculated, Column(2)] public LocalizedDate ReignStart { get; init; } = new(Guid.NewGuid());
+            [Column(3)] public ulong ReignDays { get; set; }
+            [Column(4)] public char TocapuMotif { get; set; }
+            [Column(5)] public bool WasConquered { get; set; }
+        }
+
+        // Scenario: Localization as Element of List Relation (✓key extracted into Relation Table✓)
+        public class Dragonlord {
+            [PrimaryKey, Column(0)] public string HumanSoul { get; set; } = "";
+            [PrimaryKey, Column(1)] public string DragonSoul { get; set; } = "";
+            [Column(2)] public ulong Age { get; set; }
+            [Column(3)] public bool HasSoulTwin { get; set; }
+            [Column(4)] public string Marking { get; set; } = "";
+            public IReadOnlyRelationList<LocalizedText> Councils { get; init; } = new RelationList<LocalizedText>();
+        }
+
+        // Scenario: Localization as Element of Set Relation (✓key extracted into Relation Table✓)
+        public class Showstopper {
+            [PrimaryKey, Column(0)] public sbyte Series { get; set; }
+            [PrimaryKey, Column(1)] public sbyte Episode { get; set; }
+            [Column(2)] public string Challenge { get; set; } = "";
+            [Column(3)] public string WinningBaker { get; set; } = "";
+            [Column(4)] public string WorstBaker { get; set; } = "";
+            public RelationSet<LocalizedText> Ingredients { get; init; } = new();
+        }
+
+        // Scenario: Localization as Key of Map Relation (✓key extracted into Relation Table✓)
+        public class AntarcticExpedition {
+            [PrimaryKey, Column(0)] public Guid ExpeditionID { get; set; }
+            [Column(1)] public string Leader { get; set; } = "";
+            [Column(2)] public string LeadScientist { get; set; } = "";
+            [Column(3)] public string? ExpeditionName { get; set; }
+            [Column(4)] public bool WasSponsoredByRGS { get; set; }
+            public IReadOnlyRelationMap<LocalizedText, DateTime> Discoveries { get; init; } = new RelationMap<LocalizedText, DateTime>();
+            [Column(5)] public ushort NumShips { get; set; }
+            [Column(6)] public DateOnly StartDate { get; set; }
+        }
+
+        // Scenario: Localization as Value of Map Relation (✓key extracted into Relation Table✓)
+        public class Iditarod {
+            [PrimaryKey, Column(0)] public ushort Year { get; set; }
+            [Column(1)] public DateTime StartDate { get; set; }
+            [Column(2)] public DateTime EndDate { get; set; }
+            public RelationMap<string, LocalizedMeasure> RaceTimes { get; init; } = new();
+            [Column(3)] public uint TotalSledDogs { get; set; }
+            [Column(4)] public decimal PrizeMoney { get; set; }
+        }
+
+        // Scenario: Localization as Element of Ordered List Relation (✓key extracted into Relation Table✓)
+        public class Festigal {
+            [PrimaryKey, Column(0)] public ushort Year { get; set; }
+            [Column(1)] public string HostCity { get; set; } = "";
+            public RelationOrderedList<LocalizedText> Songs { get; init; } = new();
+            [Column(2)] public DateOnly Opening { get; set; }
+            [Column(3)] public string? Theme { get; set; }
+            [Column(4)] public ushort NumPerformers { get; set; }
+        }
+
+        // Scenario: Localization with Zero Elements (✓no values extracted into Localization Table✓)
+        public class Mural : Localization<Guid, Language, string> {
+            public Mural(Guid key) : base(key) {}
+            public new string this[Language locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Scenario: Localization with Only New Elements (✓values extracted into Localization Table✓)
+        public class Carpeting : Localization<string, int, string> {
+            public Carpeting(string key) : base(key) {}
+            public new string this[int locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Scenario: Localization with Only Saved Elements (✓values extracted into Localization Table✓)
+        public class Taste : Localization<char, Language, string> {
+            public Taste(char key) : base(key) {}
+            public new string this[Language locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Scenario: Localization with At Least One Deleted Element (✓values extracted into Localization Table✓)
+        public class HumanTrait : Localization<Guid, Language, string> {
+            public HumanTrait(Guid key) : base(key) {}
+            public new string this[Language locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+            public void Delocalize(Language locale) { base.RemoveLocalizationFor(locale); }
+        }
+
+        // Scenario: Localization with Nested Aggregate and At Least One Element (✓values extracted into Localization Table✓)
+        public record struct Position(string Name, decimal AverageSalary);
+        public class CSuitePosition : Localization<char, string, Position> {
+            public CSuitePosition(char key) : base(key) {}
+            public new Position this[string locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Scenario: Localization with Nested Reference and At Least One Element (✓values extracted into Localization Table✓)
+        public class KeeblerCookie {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [PrimaryKey, Column(1)] public bool Chocolatey { get; set; }
+            [Column(2)] public decimal RetailPrice { get; set; }
+            [Column(3)] public float CaloriesPerServing { get; set; }
+        }
+        public class CookieSchedule : Localization<string, DayOfWeek, KeeblerCookie> {
+            public CookieSchedule(string key) : base(key) {}
+            public new KeeblerCookie this[DayOfWeek locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Scenario: [PreDefined] Localization (✓values extracted into Localization Table✓)
+        [PreDefined] public class TaylorSwiftEra : Localization<string, Language, string> {
+            public static TaylorSwiftEra Fearless { get; } = new TaylorSwiftEra("Fearless", "Sin Miedo");
+            public static TaylorSwiftEra SpeakNow { get; } = new TaylorSwiftEra("Speak Now", "Habla Ahora");
+            public static TaylorSwiftEra _1989 { get; } = new TaylorSwiftEra("1989", "1989");
+            public static TaylorSwiftEra Red { get; } = new TaylorSwiftEra("Red", "Rojo");
+            public static TaylorSwiftEra Reptutation { get; } = new TaylorSwiftEra("Reputation", "Reputación");
+            public static TaylorSwiftEra Lover { get; } = new TaylorSwiftEra("Lover", "Amante");
+            public static TaylorSwiftEra Folklore { get; } = new TaylorSwiftEra("Folklore", "Folclore");
+            public static TaylorSwiftEra Evermore { get; } = new TaylorSwiftEra("Evermore", "Eternamente");
+            public static TaylorSwiftEra Midnights { get; } = new TaylorSwiftEra("Midnights", "Medianoches");
+            public static TaylorSwiftEra TorturedPoets { get; } = new TaylorSwiftEra("The Tortured Poets Department", "El Departamento de Poetas Torturados");
+
+            private TaylorSwiftEra(string english, string spanish) : base($"{english.ToUpper()}_LOC") {
+                base[Language.English] = english;
+                base[Language.Spanish] = spanish;
+            }
         }
     }
 

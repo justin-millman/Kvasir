@@ -44,6 +44,7 @@ Animal
 Animation (PowerPoint)
 Annuity
 Ant Colony
+Antarctic Expedition
 Antari
 Antibiotic
 Antihistamine
@@ -191,6 +192,7 @@ Butterfly
 Button (UI)
 Buzzer System
 C++ Header File
+C-Suite Position
 Cabaret
 Cabinet Department
 Cactus
@@ -227,6 +229,7 @@ Career Fair
 Caricature
 Carnival
 Carousel
+Carpeting
 Carpool Karaoke
 Cartel
 Cash Register
@@ -309,6 +312,7 @@ Coffee
 Coin
 Colonoscopy
 Color
+Combatant Center
 Comedian
 Comet
 Comic Book
@@ -381,6 +385,7 @@ D&D Spell
 D&D Weapon
 Dalai Lama
 Dam
+Dancing with the Stars Couple
 Dashavatara
 Data Center
 Data Structure
@@ -433,6 +438,7 @@ Dormitory
 Doula
 Draft Pick
 Dragon
+Dragonlord
 Dragon Rider (Eragon)
 Dream
 Dreidel
@@ -474,6 +480,7 @@ Epic Rap Battle of History
 EpiPen
 Episode
 Equestrian Statue
+Era (Taylor Swift)
 Escalator
 Escape Room
 Essay
@@ -503,6 +510,7 @@ Federal Reserve District
 Ferris Wheel
 Ferry
 Feruchemy
+Festigal
 Field Goal
 Fighter Jet
 Filibuster
@@ -656,6 +664,7 @@ Hourglass
 House Committee
 HTML Element
 HTTP Error
+Human Trait
 Hunger Games
 Hurricane
 Hypnotist
@@ -663,6 +672,7 @@ Ice Age
 Ice Cream Sundae
 Iconoclast
 IDE
+Iditarod
 Igloo
 IKEA Furniture
 Illithid Power (BG3)
@@ -716,6 +726,7 @@ Kami
 Kanji
 Kayak
 Kebab
+Keebler Cookie
 Kentucky Derby
 Key Signature
 Keystroke
@@ -795,6 +806,7 @@ Madrigal (Encanto)
 Mafia Family
 Magazine
 Magic System
+Magical Arcanum (Dragon Prince)
 Magical Preserve (Fablehaven)
 Mahjong Tile
 Make-a-Wish
@@ -870,6 +882,7 @@ Muffin
 Multiple Choice Question
 Mummy
 Muppet
+Mural
 Murder
 Muscle
 Muse
@@ -1133,6 +1146,7 @@ Safari
 Saint
 Salsa
 Samurai
+Sapa Inca
 Sarcophagus
 Satellite
 Scattergories Round
@@ -1177,6 +1191,7 @@ Shiva
 Shoe
 Shofar
 Shogunate
+Showstopper Challenge
 Shtetl
 Sign (ASL)
 Sign Language
@@ -1288,6 +1303,7 @@ Tar Pits
 Target (store)
 Tariff
 Tarot Card
+Taste
 Tattoo
 Tectonic Plate
 TED Talk

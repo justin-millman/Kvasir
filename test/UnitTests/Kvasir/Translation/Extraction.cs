@@ -8,6 +8,7 @@ using System;
 using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.DataExtraction;
 using static UT.Kvasir.Translation.TestConverters;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Extraction")]
@@ -966,28 +967,6 @@ namespace UT.Kvasir.Translation {
             data.Deletions.Should().BeEmpty();
         }
 
-        [TestMethod] public void NonNullRelationBecomesNull() {
-            // Arrange
-            var orogene = new Orogene() {
-                FulcrumName = "Alabaster",
-                BirthName = null,
-                BirthComm = null,
-                Rings = 10,
-                Appearances = null!,
-                AtNodeStation = false
-            };
-
-            // Act
-            var translator = new Translator(NO_ENTITIES);
-            var translation = translator[typeof(Orogene)];
-            var data = translation.Relations[0].Extractor.ExtractFrom(orogene);
-
-            // Assert
-            data.Insertions.Should().BeEmpty();
-            data.Modifications.Should().BeEmpty();
-            data.Deletions.Should().BeEmpty();
-        }
-
         [TestMethod] public void RelationNestedAggregate() {
             // Arrange
             var boon = new OlympianBoon() {
@@ -1187,6 +1166,495 @@ namespace UT.Kvasir.Translation {
             // Assert
             data.Insertions.Should().HaveCount(1);
             data.Insertions.Should().ContainRow(new DateTime(2024, 2, 3), "[gobbledy gook]", (int)'q', (int)'!', (int)'B', (int)'9');
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void NonNullLocalizationPropertyWithNonEnumerationKey() {
+            // Arrange
+            var orogene = new Orogene() {
+                FulcrumName = "Alabaster",
+                BirthName = null,
+                BirthComm = null,
+                BirthDate = new LocalizedDate(Guid.NewGuid()),
+                Rings = 10,
+                Appearances = Orogene.Book.FifthSeason | Orogene.Book.ObeliskGate | Orogene.Book.StoneSky,
+                AtNodeStation = false
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Orogene)];
+            var data = translation.Principal.Extractor.ExtractFrom(orogene);
+
+            // Assert
+            data.Should().HaveCount(7);
+            data[0].Datum.Should().Be(orogene.FulcrumName);
+            data[1].Datum.Should().Be(DBNull.Value);
+            data[2].Datum.Should().Be(DBNull.Value);
+            data[3].Datum.Should().Be(orogene.BirthDate.Key);
+            data[4].Datum.Should().Be(orogene.Rings);
+            data[5].Datum.Should().Be(ConversionOf(orogene.Appearances));
+            data[6].Datum.Should().Be(orogene.AtNodeStation);
+        }
+
+        [TestMethod] public void NonNullLocalizationPropertyWithEnumerationKey() {
+            // Arrange
+            var couple = new DWTSCouple() {
+                Season = 22,
+                Professional = "Peta Murgatroyd",
+                Celebrity = "Nyle DiMarco",
+                FinishingPlace = 1,
+                BestScore = new DWTSCouple.LocalizedScore(DWTSCouple.Dance.VienneseWaltz)
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(DWTSCouple)];
+            var data = translation.Principal.Extractor.ExtractFrom(couple);
+
+            // Assert
+            data.Should().HaveCount(5);
+            data[0].Datum.Should().Be(couple.Season);
+            data[1].Datum.Should().Be(couple.Professional);
+            data[2].Datum.Should().Be(couple.Celebrity);
+            data[3].Datum.Should().Be(couple.FinishingPlace);
+            data[4].Datum.Should().Be(ConversionOf(couple.BestScore.Key));
+        }
+
+        [TestMethod] public void NullLocalizationProperty() {
+            // Arrange
+            var arcanum = new Arcanum() {
+                PrimalSource = Arcanum.Domain.Sun,
+                Season = 3,
+                Elves = "Sunfire Elves",
+                Archdragon = "Sol Regem",
+                NumKnownSpells = 33,
+                XadianRanking = null
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Arcanum)];
+            var data = translation.Principal.Extractor.ExtractFrom(arcanum);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Datum.Should().Be(ConversionOf(arcanum.PrimalSource));
+            data[1].Datum.Should().Be(arcanum.Season);
+            data[2].Datum.Should().Be(arcanum.Elves);
+            data[3].Datum.Should().Be(arcanum.Archdragon);
+            data[4].Datum.Should().Be(arcanum.NumKnownSpells);
+            data[5].Datum.Should().Be(DBNull.Value);
+        }
+
+        [TestMethod] public void AggregateNestedLocalizationProperty() {
+            // Arrange
+            var command = new CombatantCommand() {
+                Name = new CombatantCommand.Naming("CENTCOM", new LocalizedText("CENTCOM_NAME_LOC")),
+                Founded = new DateTime(1983, 1, 1),
+                HQ = "MacDill Air Force Base (FL)",
+                Commander = "Admiral Charles B. Cooper II",
+                NuclearCapable = true
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(CombatantCommand)];
+            var data = translation.Principal.Extractor.ExtractFrom(command);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Datum.Should().Be(command.Name.Acronym);
+            data[1].Datum.Should().Be(command.Name.Full.Key);
+            data[2].Datum.Should().Be(command.Founded);
+            data[3].Datum.Should().Be(command.HQ);
+            data[4].Datum.Should().Be(command.Commander);
+            data[5].Datum.Should().Be(command.NuclearCapable);
+        }
+
+        [TestMethod] public void CalculatedLocalizationProperty() {
+            // Arrange
+            var sapa = new SapaInca() {
+                Name = "Pachacuti",
+                Index = 9,
+                ReignStart = new LocalizedDate(Guid.NewGuid()),
+                ReignDays = 12053,
+                TocapuMotif = '\0',
+                WasConquered = false
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(SapaInca)];
+            var data = translation.Principal.Extractor.ExtractFrom(sapa);
+
+            // Assert
+            data.Should().HaveCount(6);
+            data[0].Datum.Should().Be(sapa.Name);
+            data[1].Datum.Should().Be(sapa.Index);
+            data[2].Datum.Should().Be(sapa.ReignStart.Key);
+            data[3].Datum.Should().Be(sapa.ReignDays);
+            data[4].Datum.Should().Be(sapa.TocapuMotif);
+            data[5].Datum.Should().Be(sapa.WasConquered);
+        }
+
+        [TestMethod] public void LocalizationListElement() {
+            // Arrange
+            var dragonlord = new Dragonlord() {
+                HumanSoul = "Linden",
+                DragonSoul = "Rathan",
+                Age = 600,
+                HasSoulTwin = true,
+                Marking = "scar",
+                Councils = new RelationList<LocalizedText>() {
+                    new LocalizedText("GREAT_COUNCIL_LOC"),
+                    new LocalizedText("CASSORIN_COUNCIL_LOC"),
+                    new LocalizedText("COUNCIL_OF_THE_TRUEDRAGONS_LOC"),
+                    new LocalizedText("JEHANGLAN_PHOENIX_COUNCIL_LOC")
+                }
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Dragonlord)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(dragonlord);
+
+            // Assert
+            data.Insertions.Should().HaveCount(4);
+            data.Insertions.Should().ContainRow(dragonlord.Councils[0].Key);
+            data.Insertions.Should().ContainRow(dragonlord.Councils[1].Key);
+            data.Insertions.Should().ContainRow(dragonlord.Councils[2].Key);
+            data.Insertions.Should().ContainRow(dragonlord.Councils[3].Key);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationSetElement() {
+            // Arrange
+            var showstopper = new Showstopper() {
+                Series = 16,
+                Episode = 5,
+                Challenge = "Chocolate Fondue Display",
+                WinningBaker = "Aaron Mountford-Myles",
+                WorstBaker = "Nadia Mercuri",
+                Ingredients = new RelationSet<LocalizedText>() {
+                    new LocalizedText("CHOCOLATE_LOC"),
+                    new LocalizedText("RASPBERRY_LOC"),
+                    new LocalizedText("LEMON_LOC"),
+                    new LocalizedText("ALMONDS_LOC")
+                }
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Showstopper)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(showstopper);
+
+            // Assert
+            data.Insertions.Should().HaveCount(4);
+            data.Insertions.Should().ContainRow("CHOCOLATE_LOC");
+            data.Insertions.Should().ContainRow("RASPBERRY_LOC");
+            data.Insertions.Should().ContainRow("LEMON_LOC");
+            data.Insertions.Should().ContainRow("ALMONDS_LOC");
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationMapKey() {
+            // Arrange
+            var expedition = new AntarcticExpedition() {
+                ExpeditionID = Guid.NewGuid(),
+                Leader = "Ernest Shackelton",
+                LeadScientist = "Edgeworth Davis",
+                ExpeditionName = "Nimrod Expedition",
+                WasSponsoredByRGS = false,
+                Discoveries = new RelationMap<LocalizedText, DateTime>() {
+                    { new LocalizedText("BEARDMORE_GLACIER"), new DateTime(1908, 12, 3) },
+                    { new LocalizedText("MOUNT_EREBUS_PEAK"), new DateTime(1908, 3, 11) },
+                    { new LocalizedText("MAGNETIC_SOUTH_POLE"), new DateTime(1909, 1, 17) }
+                },
+                NumShips = 1,
+                StartDate = new DateOnly(1907, 8, 11)
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(AntarcticExpedition)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(expedition);
+
+            // Assert
+            data.Insertions.Should().HaveCount(3);
+            data.Insertions.Should().ContainRow("BEARDMORE_GLACIER", new DateTime(1908, 12, 3));
+            data.Insertions.Should().ContainRow("MOUNT_EREBUS_PEAK", new DateTime(1908, 3, 11));
+            data.Insertions.Should().ContainRow("MAGNETIC_SOUTH_POLE", new DateTime(1909, 1, 17));
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationMapValue() {
+            // Arrange
+            var iditarod = new Iditarod() {
+                Year = 2023,
+                StartDate = new DateTime(2023, 3, 4),
+                EndDate = new DateTime(2023, 3, 17),
+                RaceTimes = new RelationMap<string, LocalizedMeasure>() {
+                    { "Ryan Redington", new LocalizedMeasure(8211258) },
+                    { "Peter Kaiser", new LocalizedMeasure(8223640) },
+                    { "Richie Diehl", new LocalizedMeasure(8234020) },
+                    { "Matt Hall", new LocalizedMeasure(9022157) },
+                    { "Jessie Holmes", new LocalizedMeasure(9040853) },
+                    { "Kelly Maixner", new LocalizedMeasure(9050015) },
+                    { "Eddie Burke, Jr.", new LocalizedMeasure(9083754) },
+                    { "Matthew Failor", new LocalizedMeasure(9092036) },
+                    { "Millie Porsild", new LocalizedMeasure(9124232) },
+                    { "Wade Marrs", new LocalizedMeasure(9130756) },
+                    { "Hunter Keefe", new LocalizedMeasure(9233944) },
+                    { "Dan Kaduce", new LocalizedMeasure(10002304) },
+                    { "Christian Turner", new LocalizedMeasure(10011606) },
+                    { "Jessie Royer", new LocalizedMeasure(10013507) },
+                    { "Aaron Peck", new LocalizedMeasure(10031517) },
+                    { "KattiJo Deeter", new LocalizedMeasure(10064400) },
+                    { "Nicolas Petit", new LocalizedMeasure(10100918) },
+                    { "Riley Dyche", new LocalizedMeasure(10141146) },
+                    { "Ramey Smyth", new LocalizedMeasure(10152434) },
+                    { "Deke Naaktgeboren", new LocalizedMeasure(10190502) },
+                    { "Kristy Berington", new LocalizedMeasure(10235050) },
+                    { "Anna Berington", new LocalizedMeasure(10235106) },
+                    { "Michael Williams, Jr.", new LocalizedMeasure(11045716) },
+                    { "Bailey Vitello", new LocalizedMeasure(11164957) },
+                    { "Joanna Jagow", new LocalizedMeasure(11170723) },
+                    { "Gerhardt Thiart", new LocalizedMeasure(11210026) },
+                    { "Bridgett Watkins", new LocalizedMeasure(11210848) },
+                    { "Jed Stephensen", new LocalizedMeasure(12004424) },
+                    { "Jason Mackey", new LocalizedMeasure(12020307) }
+                },
+                TotalSledDogs = 462,
+                PrizeMoney = 500000M
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Iditarod)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(iditarod);
+
+            // Assert
+            data.Insertions.Should().HaveCount(29);
+            data.Insertions.Should().ContainRow("Ryan Redington", iditarod.RaceTimes["Ryan Redington"].Key);
+            data.Insertions.Should().ContainRow("Peter Kaiser", iditarod.RaceTimes["Peter Kaiser"].Key);
+            data.Insertions.Should().ContainRow("Richie Diehl", iditarod.RaceTimes["Richie Diehl"].Key);
+            data.Insertions.Should().ContainRow("Matt Hall", iditarod.RaceTimes["Matt Hall"].Key);
+            data.Insertions.Should().ContainRow("Jessie Holmes", iditarod.RaceTimes["Jessie Holmes"].Key);
+            data.Insertions.Should().ContainRow("Kelly Maixner", iditarod.RaceTimes["Kelly Maixner"].Key);
+            data.Insertions.Should().ContainRow("Eddie Burke, Jr.", iditarod.RaceTimes["Eddie Burke, Jr."].Key);
+            data.Insertions.Should().ContainRow("Matthew Failor", iditarod.RaceTimes["Matthew Failor"].Key);
+            data.Insertions.Should().ContainRow("Millie Porsild", iditarod.RaceTimes["Millie Porsild"].Key);
+            data.Insertions.Should().ContainRow("Wade Marrs", iditarod.RaceTimes["Wade Marrs"].Key);
+            data.Insertions.Should().ContainRow("Hunter Keefe", iditarod.RaceTimes["Hunter Keefe"].Key);
+            data.Insertions.Should().ContainRow("Dan Kaduce", iditarod.RaceTimes["Dan Kaduce"].Key);
+            data.Insertions.Should().ContainRow("Christian Turner", iditarod.RaceTimes["Christian Turner"].Key);
+            data.Insertions.Should().ContainRow("Jessie Royer", iditarod.RaceTimes["Jessie Royer"].Key);
+            data.Insertions.Should().ContainRow("Aaron Peck", iditarod.RaceTimes["Aaron Peck"].Key);
+            data.Insertions.Should().ContainRow("KattiJo Deeter", iditarod.RaceTimes["KattiJo Deeter"].Key);
+            data.Insertions.Should().ContainRow("Nicolas Petit", iditarod.RaceTimes["Nicolas Petit"].Key);
+            data.Insertions.Should().ContainRow("Riley Dyche", iditarod.RaceTimes["Riley Dyche"].Key);
+            data.Insertions.Should().ContainRow("Ramey Smyth", iditarod.RaceTimes["Ramey Smyth"].Key);
+            data.Insertions.Should().ContainRow("Deke Naaktgeboren", iditarod.RaceTimes["Deke Naaktgeboren"].Key);
+            data.Insertions.Should().ContainRow("Kristy Berington", iditarod.RaceTimes["Kristy Berington"].Key);
+            data.Insertions.Should().ContainRow("Anna Berington", iditarod.RaceTimes["Anna Berington"].Key);
+            data.Insertions.Should().ContainRow("Michael Williams, Jr.", iditarod.RaceTimes["Michael Williams, Jr."].Key);
+            data.Insertions.Should().ContainRow("Bailey Vitello", iditarod.RaceTimes["Bailey Vitello"].Key);
+            data.Insertions.Should().ContainRow("Joanna Jagow", iditarod.RaceTimes["Joanna Jagow"].Key);
+            data.Insertions.Should().ContainRow("Gerhardt Thiart", iditarod.RaceTimes["Gerhardt Thiart"].Key);
+            data.Insertions.Should().ContainRow("Bridgett Watkins", iditarod.RaceTimes["Bridgett Watkins"].Key);
+            data.Insertions.Should().ContainRow("Jed Stephensen", iditarod.RaceTimes["Jed Stephensen"].Key);
+            data.Insertions.Should().ContainRow("Jason Mackey", iditarod.RaceTimes["Jason Mackey"].Key);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationOrderedListElement() {
+            // Arrange
+            var festigal = new Festigal() {
+                Year = 2010,
+                HostCity = "Tel Aviv",
+                Songs = new RelationOrderedList<LocalizedText>() {
+                    new LocalizedText("Lailah M'toref Festigal"),
+                    new LocalizedText("Yeled Im Khalom"),
+                    new LocalizedText("LaGa'at Ba'avar"),
+                    new LocalizedText("Shir Ahavah Tzarafti"),
+                    new LocalizedText("Ahavah Rishonah"),
+                    new LocalizedText("Loko"),
+                    new LocalizedText("LaNetzakh Nisha'ar"),
+                    new LocalizedText("K'sh'emtza Otkha"),
+                    new LocalizedText("Al Tafsik Tigrov"),
+                    new LocalizedText("Nig'm'ru Li HaMilim")
+                },
+                Opening = new DateOnly(2010, 12, 2),
+                Theme = "History",
+                NumPerformers = 137
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Festigal)];
+            var data = translation.Relations[0].Extractor.ExtractFrom(festigal);
+
+            // Assert
+            data.Insertions.Should().HaveCount(10);
+            data.Insertions.Should().ContainRow(0U, "Lailah M'toref Festigal");
+            data.Insertions.Should().ContainRow(1U, "Yeled Im Khalom");
+            data.Insertions.Should().ContainRow(2U, "LaGa'at Ba'avar");
+            data.Insertions.Should().ContainRow(3U, "Shir Ahavah Tzarafti");
+            data.Insertions.Should().ContainRow(4U, "Ahavah Rishonah");
+            data.Insertions.Should().ContainRow(5U, "Loko");
+            data.Insertions.Should().ContainRow(6U, "LaNetzakh Nisha'ar");
+            data.Insertions.Should().ContainRow(7U, "K'sh'emtza Otkha");
+            data.Insertions.Should().ContainRow(8U, "Al Tafsik Tigrov");
+            data.Insertions.Should().ContainRow(9U, "Nig'm'ru Li HaMilim");
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationWithNoValues() {
+            // Arrange
+            var mural = new Mural(Guid.NewGuid());
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Mural), Translator.AsLocalzation];
+            var data = translation.Principal.Extractor.ExtractFrom(mural);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationWithOnlyNewValues() {
+            // Arrange
+            var carpeting = new Carpeting("POLYESTER_CARPET_LOC");
+            carpeting[7] = "Polyester Carpeting";
+            carpeting[-38124] = "Carpeting of Polyester";
+            carpeting[15516026] = "Polyestered Carpet";
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Carpeting), Translator.AsLocalzation];
+            var data = translation.Principal.Extractor.ExtractFrom(carpeting);
+
+            // Assert
+            data.Insertions.Should().HaveCount(3);
+            data.Insertions.Should().ContainRow(carpeting.Key, 7, carpeting[7]);
+            data.Insertions.Should().ContainRow(carpeting.Key, -38124, carpeting[-38124]);
+            data.Insertions.Should().ContainRow(carpeting.Key, 15516026, carpeting[15516026]);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationWithOnlySavedValues() {
+            // Arrange
+            var taste = new Taste('u');
+            taste[Language.English] = "umami";
+            taste[Language.Hebrew] = "אומאמי";
+            (taste.Relation as IRelation).Canonicalize();
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Taste), Translator.AsLocalzation];
+            var data = translation.Principal.Extractor.ExtractFrom(taste);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationWithDeletedValues() {
+            // Arrange
+            var trait = new HumanTrait(Guid.NewGuid());
+            trait[Language.Italian] = "Timidezza";
+            trait[Language.German] = "Schüchternheit";
+            trait[Language.Esperanto] = "Timemo";
+            trait[Language.Japanese] = "内気";
+            (trait.Relation as IRelation).Canonicalize();
+            trait.Delocalize(Language.Italian);
+            trait.Delocalize(Language.Esperanto);
+            trait.Delocalize(Language.Japanese);
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(HumanTrait), Translator.AsLocalzation];
+            var data = translation.Principal.Extractor.ExtractFrom(trait);
+
+            // Assert
+            data.Insertions.Should().BeEmpty();
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().HaveCount(3);
+            data.Deletions.Should().ContainRow(trait.Key, ConversionOf(Language.Italian), "Timidezza");
+            data.Deletions.Should().ContainRow(trait.Key, ConversionOf(Language.Esperanto), "Timemo");
+            data.Deletions.Should().ContainRow(trait.Key, ConversionOf(Language.Japanese), "内気");
+        }
+
+        [TestMethod] public void LocalizationWithNestedAggregate() {
+            // Arrange
+            var position = new CSuitePosition('e');
+            position["ND"] = new Position("CEO", 150970M);
+            position["AZ"] = new Position("Chief Execution Officer", 132964M);
+            position["GA"] = new Position("C.E.O.", 120479M);
+            position["HI"] = new Position("CEO", 148241M);
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(CSuitePosition), Translator.AsLocalzation];
+            var data = translation.Principal.Extractor.ExtractFrom(position);
+
+            // Assert
+            data.Insertions.Should().HaveCount(4);
+            data.Insertions.Should().ContainRow(position.Key, "ND", position["ND"].AverageSalary, position["ND"].Name);
+            data.Insertions.Should().ContainRow(position.Key, "AZ", position["AZ"].AverageSalary, position["AZ"].Name);
+            data.Insertions.Should().ContainRow(position.Key, "GA", position["GA"].AverageSalary, position["GA"].Name);
+            data.Insertions.Should().ContainRow(position.Key, "HI", position["HI"].AverageSalary, position["HI"].Name);
+            data.Modifications.Should().BeEmpty();
+            data.Deletions.Should().BeEmpty();
+        }
+
+        [TestMethod] public void LocalizationWithNestedReference() {
+            // Arrange
+            var cookie = new KeeblerCookie() {
+                Name = "Fudge Stripes",
+                Chocolatey = true,
+                RetailPrice = 5.72M,
+                CaloriesPerServing = 140
+            };
+            var schedule = new CookieSchedule("SCHED_A_LOC");
+            schedule[DayOfWeek.Wednesday] = cookie;
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(CookieSchedule), Translator.AsLocalzation];
+            var data = translation.Principal.Extractor.ExtractFrom(schedule);
+
+            // Assert
+            data.Insertions.Should().HaveCount(1);
+            data.Insertions.Should().ContainRow(schedule.Key, ConversionOf(DayOfWeek.Wednesday), cookie.Name, cookie.Chocolatey);
+            data.Modifications.Should().HaveCount(0);
+            data.Deletions.Should().HaveCount(0);
+        }
+
+        [TestMethod] public void PreDefinedLocalization() {
+            // Arrange
+            var era = TaylorSwiftEra.Folklore;
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(TaylorSwiftEra), Translator.AsLocalzation];
+            var data = translation.Principal.Extractor.ExtractFrom(era);
+
+            // Assert
+            data.Insertions.Should().HaveCount(2);
+            data.Insertions.Should().ContainRow(era.Key, ConversionOf(Language.English), era[Language.English]);
+            data.Insertions.Should().ContainRow(era.Key, ConversionOf(Language.Spanish), era[Language.Spanish]);
             data.Modifications.Should().BeEmpty();
             data.Deletions.Should().BeEmpty();
         }

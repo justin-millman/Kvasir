@@ -60,8 +60,10 @@ namespace Kvasir.Translation {
             // which holds the key-value pair from which we can extract the `Locale` and the `Value`.
             var keyProperty = baseProperties.Where(p => p.Name == "Key").First();
             var relationProperty = baseProperties.Where(p => p.Name == "Relation").First();
-            var localeProperty = ((Type)relationProperty.PropertyType.GetProperties(flags)[5]!.GetValue(null)!).GetProperty("Key", flags)!;
-            var valueProperty = ((Type)relationProperty.PropertyType.GetProperties(flags)[5]!.GetValue(null)!).GetProperty("Value", flags)!;
+            var relationType = relationProperty.PropertyType;
+            var connectionType = (Type)relationType.GetProperties(flags)[5]!.GetValue(null)!;
+            var localeProperty = connectionType.GetProperty("Key", flags)!;
+            var valueProperty = connectionType.GetProperty("Value", flags)!;
 
             var keyNullabilityInfo = new NullabilityInfoContext().Create(keyProperty);
             var relationNullabilityInfo = new NullabilityInfoContext().Create(relationProperty);
