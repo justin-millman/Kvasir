@@ -53,7 +53,11 @@ namespace Kvasir.Translation {
         /// <param name="source">
         ///   The CLR property backing the new <see cref="LocalizationKeyFieldGroup"/>.
         /// </param>
-        public LocalizationKeyFieldGroup(Context context, PropertyInfo source)
+        /// <param name="keyMatcher">
+        ///   The <see cref="KeyMatcher"/> to use when performing look-ups to Reconstitute data extracted from the new
+        ///   <see cref="ReferenceFieldGroup"/>.
+        /// </param>
+        public LocalizationKeyFieldGroup(Context context, PropertyInfo source, KeyMatcher keyMatcher)
             : base(source) {
 
             var metadata = LocalizationHelper.GetMetadataFor(source.PropertyType);
@@ -73,10 +77,7 @@ namespace Kvasir.Translation {
                 Extractor = new ConvertingExtractor(Extractor, new EnumToStringConverter(Extractor.ResultType).ConverterImpl);
             }
 
-            var reconstitutionGroup = new SingleFieldGroup(context, metadata.RepresentativeProperty);
-            reconstitutionGroup.SetColumn(context, 0);
-            var groups = Enumerable.Repeat(reconstitutionGroup, 1);
-            Creator = Option.Some<ICreator>(ReconstitutionHelper.MakeCreator(context, source.PropertyType, groups, false));
+            Creator = Option.Some<ICreator>(new KeyLookupCreator(keyMatcher));
         }
 
         /// <summary>

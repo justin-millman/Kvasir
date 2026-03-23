@@ -94,7 +94,8 @@ namespace Kvasir.Reconstitution {
                     cachedPossibleMatches_.Add(possibleMatch);
                     keyCache_[possibleMatchKey] = possibleMatch;
 
-                    if (dbValues.SequenceEqual(possibleMatchKey)) {
+                    //
+                    if (dbValues.Take(possibleMatchKey.Count).SequenceEqual(possibleMatchKey)) {
                         return possibleMatch;
                     }
                 }

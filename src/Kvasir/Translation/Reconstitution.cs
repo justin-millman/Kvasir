@@ -31,7 +31,11 @@ namespace Kvasir.Translation {
         ///   each of the <see cref="DBValue">database values</see> provided is <see cref="DBValue.NULL"/>. If
         ///   <see langword="false"/>, then such a set of values will result in a <see langword="null"/> object.
         /// </param>
-        public static ReconstitutingCreator MakeCreator(Context context, Type source, IEnumerable<FieldGroup> fields, bool forNullableField) {
+        /// <param name="forLocalizedValue">
+        ///   If <see langword="false"/>, then the <c>Key</c> constructor argument of the key-value pair will be
+        ///   recognized as representing the <c>Locale</c>. Otherwise, no special treatment is made.
+        /// </param>
+        public static ReconstitutingCreator MakeCreator(Context context, Type source, IEnumerable<FieldGroup> fields, bool forNullableField, bool forLocalizedValue) {
             // Strip any nullability wrapper from the source type
             source = Nullable.GetUnderlyingType(source) ?? source;
 
@@ -40,6 +44,10 @@ namespace Kvasir.Translation {
 
             Candidate MakeCandidate(ConstructorInfo constructor) {
                 var namesToFields = nonCalculatedFields.ToDictionary(g => g.ReconstitutionArgumentName.ToLower());
+                if (forLocalizedValue) {
+                    namesToFields["key"] = namesToFields["locale"];
+                    namesToFields.Remove("locale");
+                }
 
                 static CreatorFacade CreatorFor(FieldGroup group) {
                     return new CreatorFacade(group.Creator.Unwrap(), group.Column.Unwrap(), group.Size);

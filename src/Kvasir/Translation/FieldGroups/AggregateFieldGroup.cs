@@ -44,7 +44,7 @@ namespace Kvasir.Translation {
 
             if (!IsCalculated && Size > 0) {
                 using var guard = context.Push(Nullable.GetUnderlyingType(source.PropertyType) ?? source.PropertyType);
-                var creator = ReconstitutionHelper.MakeCreator(context, source.PropertyType, fields, IsNativelyNullable);
+                var creator = ReconstitutionHelper.MakeCreator(context, source.PropertyType, fields, IsNativelyNullable, false);
                 Creator = Option.Some<ICreator>(creator);
             }
         }

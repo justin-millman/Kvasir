@@ -26,11 +26,15 @@ namespace Kvasir.Translation {
     /// </summary>
     /// 
     /// <param name="Table">The schema model for the Localization Table.</param>
-    /// /// <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
+    /// <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
+    /// <param name="Reconstitutor">The plan that can rercreate a CLR object from the key of a Localization Table.</param>
+    /// <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</param>
     /// <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
     internal sealed record class LocalizationTableDef(
         ITable Table,
         LocalizationExtractionPlan Extractor,
+        DataReconstitutionPlan Reconstitutor,
+        RelationRepopulationPlan Repopulator,
         IReadOnlyList<object> PreDefinedInstances
     );
 

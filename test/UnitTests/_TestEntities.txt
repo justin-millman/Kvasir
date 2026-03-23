@@ -237,6 +237,7 @@ Casino
 Casserole
 Castle
 Catacombs
+Cathedral
 Cave
 Cave Painting
 Celtic God
@@ -262,6 +263,7 @@ Chemical Element
 Chess Grandmaster
 Chess Piece
 Chewing Gum
+Chinatown
 Chinese Character
 Chinese Dynasty
 Chipotle Order
@@ -331,6 +333,7 @@ Condom
 Confidence Interval
 Confidential Informant
 Conga Line
+Conjunction
 Conlang
 Connecting Wall
 Conquistador
@@ -418,6 +421,7 @@ Diaspora
 Dice Roll
 Diet
 Differential Equation
+Diminutive
 Dinosaur
 Diocese
 Directory (file system)
@@ -437,6 +441,7 @@ Donut
 Dormitory
 Doula
 Draft Pick
+Drag Queen
 Dragon
 Dragonlord
 Dragon Rider (Eragon)
@@ -618,6 +623,7 @@ Halide
 Hall of Fame
 Hall Pass
 Hamentaschen
+Handshake
 Happy Hour
 Hash Function
 Hash Map
@@ -644,12 +650,14 @@ Histogram
 Hoedown (WLIIA)
 Hogwarts House
 Holiday
+Holocaust Museum
 Hologram
 Holy Roman Emperor
 Home Run Derby
 Homeric Hymn
 Hominin
 Honest Trailer
+Honorific
 Hookah Bar
 Horcrux
 Hormone
@@ -782,6 +790,7 @@ Linux Distribution
 Lipstick
 Liquor
 Liquor Store
+Literary Genre
 Literary Trope
 Lobe of the Brain
 Locale (computing)
@@ -1010,6 +1019,7 @@ Piano
 Piano Sonata
 Pie
 Pigment (biology)
+Pillar of Islam
 Pillow
 Piñata
 Ping
@@ -1289,6 +1299,7 @@ Survivor
 Sushi Roll
 Sutra
 Swamp
+Swear Word
 Swimming Pool
 Swimsuit
 Sword
@@ -1322,6 +1333,7 @@ Therapist
 Thesis
 Thought Experiment
 Thumb War
+Thunderstorm
 Tic-Tac-Toe Game
 Ticket2Ride Route
 Tie-Dye
@@ -1373,6 +1385,7 @@ Tuxedo
 Tweet
 Typewriter
 Ubuntu Release
+Ultrasound
 Umbrella
 Umpire
 UN Resolution
@@ -1412,8 +1425,10 @@ Vulgarity
 W2 Tax Form
 Wadi
 Walkabout
+Wallpaper
 Waltz
 Waffle
+War Crime
 Water Bottle
 Water Park
 Water Slide

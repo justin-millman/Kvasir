@@ -59,7 +59,7 @@ namespace Kvasir.Translation {
                 // FieldGroup, which is why we skip it.
                 var elementFields = fields.OrderBy(g => g.Column.Unwrap()).Skip(1);
                 var syntheticSource = elementFields.First().Source.ReflectedType!;
-                var creator = ReconstitutionHelper.MakeCreator(context, syntheticSource, elementFields, false);
+                var creator = ReconstitutionHelper.MakeCreator(context, syntheticSource, elementFields, false, false);
                 Creator = Option.Some<ICreator>(creator);
             }
 

@@ -86,7 +86,7 @@ namespace Kvasir.Translation {
 
                 var property = current.GetPropertyNamed(propertyName).Unwrap();
                 context.Push(property);
-                current = property.PropertyType;
+                current = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             }
             context.Push(Property.PropertyType);
             return context;
