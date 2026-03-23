@@ -11,6 +11,7 @@ using System.Linq;
 using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.Reconstitution;
 using static UT.Kvasir.Translation.TestConverters;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Reconstitution")]
@@ -1075,7 +1076,7 @@ namespace UT.Kvasir.Translation {
             (chicken.RecommendedSauces is null).Should().BeTrue();
         }
 
-        [TestMethod] public void RelationNestedInNonNullAggregate() {
+        [TestMethod] public void NonNullAggregateNestedRelation() {
             // Arrange
             var limousineRow = new List<DBValue>() {
                 DBValue.Create("X4-POOC"),
@@ -1107,7 +1108,7 @@ namespace UT.Kvasir.Translation {
             limousine.People.LicensedDrivers.Contains((string)driverRows[3][1].Datum).Should().BeTrue();
         }
 
-        [TestMethod] public void RelationNestedInNullAggregate() {
+        [TestMethod] public void NullAggregateNestedRelation() {
             // Arrange
             var xenomorphRow = new List<DBValue>() {
                 DBValue.Create(Guid.NewGuid()),
@@ -1975,7 +1976,7 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void PublicPreDefinedInstance() {
+        [TestMethod] public void PublicPreDefinedEntityInstance() {
             // Arrange
             var flourRow = new List<DBValue>() {
                 DBValue.Create(Tortilla.Flour.Name),
@@ -2086,7 +2087,7 @@ namespace UT.Kvasir.Translation {
             reconstitute.Should().ThrowExactly<UnreachableException>();
         }
 
-        [TestMethod] public void NonExistentPreDefinedInstance_PathologicalError() {
+        [TestMethod] public void NonExistentPreDefinedEntityInstance_PathologicalError() {
             // Arrange
             var row = new List<DBValue>() {
                 DBValue.Create("Federative Republic of Brazil"),
@@ -2123,6 +2124,367 @@ namespace UT.Kvasir.Translation {
             // Assert
             pizzaRoll.Should().Be(PizzaRoll.Pepperoni);
             pizzaRoll.Ingredients.Count.Should().Be(3);
+        }
+
+        [TestMethod] public void WriteableProperties_NonNullLocalization() {
+            // Arrange
+            var establishmentDate = new LocalizedDate(Guid.NewGuid());
+            var row = new List<DBValue>() {
+                DBValue.Create(Guid.NewGuid()),
+                DBValue.Create("Yad VaShem"),
+                DBValue.Create(925000UL),
+                DBValue.Create(true),
+                DBValue.Create(establishmentDate.Key)
+            };
+
+            // Act
+            var depot = new EntityDepot();
+            depot.StoreEntity(establishmentDate);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(HolocaustMuseum)];
+            var museum = (HolocaustMuseum)translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            museum.Establishment.Should().BeSameAs(establishmentDate);
+        }
+
+        [TestMethod] public void WriteableProperties_NullLocalization() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create(Guid.NewGuid()),
+                DBValue.Create("Sandra Natyadella"),
+                DBValue.Create("Dr. Ivan Perulshnikov"),
+                DBValue.Create("Nu Swezniq"),
+                DBValue.Create(DBNull.Value),
+                DBValue.Create(true)
+            };
+
+            // Act
+            var depot = new EntityDepot();
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(Ultrasound)];
+            var ultrasound = (Ultrasound)translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            ultrasound.AverageFrequency.Should().BeNull();
+        }
+
+        [TestMethod] public void SingleViableConstructor_LocalizationProperty() {
+            // Arrange
+            var height = new LocalizedMeasure(81920492);
+            var row = new List<DBValue>() {
+                DBValue.Create("Onya Nurve"),
+                DBValue.Create("Justin C. Woody"),
+                DBValue.Create(ConversionOf(DragQueen.QueenGender.Male)),
+                DBValue.Create(height.Key),
+                DBValue.Create(true),
+                DBValue.Create((ushort)103)
+            };
+
+            // Arrange
+            var depot = new EntityDepot();
+            depot.StoreEntity(height);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(DragQueen)];
+            var queen = (DragQueen)translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Act
+            row[0].Datum.Should().Be(queen.DragName);
+            row[1].Datum.Should().Be(queen.BirthName);
+            row[2].Datum.Should().Be(ConversionOf(queen.Gender));
+            queen.Height.Should().BeSameAs(height);
+            row[4].Datum.Should().Be(queen.HasBeenOnRuPaulsDragRace);
+            row[5].Datum.Should().Be(queen.WigsOwned);
+        }
+
+        [TestMethod] public void NoViableConstructor_KeyTypeArgumentForLocalizationProperty_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Chinatown);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<ReconstitutionNotPossibleException>()
+                .WithLocation("`Chinatown`")
+                .WithProblem("there are no viable constructors")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NonNullAggregateNestedLocalization() {
+            // Arrange
+            var city = new LocalizedText("LOC_FLORENCE_NAME");
+            var country = new LocalizedText("LOC_ITALY_NAME");
+            var diocese = new LocalizedNullableText("LOC_ARCHIDOCESE_OF_FLORENCE_LOC");
+            var row = new List<DBValue>() {
+                DBValue.Create(8172059120215UL),
+                DBValue.Create("Cathedral of Saint Mary of the Flower"),
+                DBValue.Create(city.Key),
+                DBValue.Create(country.Key),
+                DBValue.Create(diocese.Key),
+                DBValue.Create(30000UL),
+                DBValue.Create("Gherardo Gambelli"),
+                DBValue.Create(true)
+            };
+
+            // Act
+            var depot = new EntityDepot();
+            depot.StoreEntity(city);
+            depot.StoreEntity(country);
+            depot.StoreEntity(diocese);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(Cathedral)];
+            var cathedral = (Cathedral)translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            cathedral.Location.City.Should().BeSameAs(city);
+            cathedral.Location.Country.Should().BeSameAs(country);
+            cathedral.Location.Diocese.Should().BeSameAs(diocese);
+        }
+
+        [TestMethod] public void NullAggregateNestedLocalization() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create(Guid.NewGuid()),
+                DBValue.Create(new DateTime(2025, 11, 17)),
+                DBValue.Create(new DateTime(2025, 11, 18)),
+                DBValue.Create(DBNull.Value),
+                DBValue.Create(DBNull.Value),
+                DBValue.Create(true),
+                DBValue.Create(false)
+            };
+
+            // Act
+            var depot = new EntityDepot();
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(Thunderstorm)];
+            var thunderstorm = (Thunderstorm)translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            thunderstorm.RainAndSnow.Should().BeNull();
+        }
+
+        [TestMethod] public void RelationNestedLocalization() {
+            // Arrange
+            var criminal0 = new LocalizedText("LOC_JOSEPH_GOEBBELS");
+            var criminal1 = new LocalizedText("LOC_ALBERT_SPEER");
+            var criminal2 = new LocalizedText("LOC_ADOLF_HITLER");
+            var crimeRow = new List<DBValue>() {
+                DBValue.Create(Guid.NewGuid()),
+                DBValue.Create("World War II"),
+                DBValue.Create(ConversionOf(WarCrime.Kind.Genocide)),
+                DBValue.Create(true),
+                DBValue.Create(false),
+                DBValue.Create(true)
+            };
+            var perpetratorRows = new List<List<DBValue>>() {
+                new() { crimeRow[0], DBValue.Create(criminal0.Key) },
+                new() { crimeRow[0], DBValue.Create(criminal1.Key) },
+                new() { crimeRow[0], DBValue.Create(criminal2.Key) }
+            };
+
+            // Act
+            var depot = new EntityDepot();
+            depot.StoreEntity(criminal0);
+            depot.StoreEntity(criminal1);
+            depot.StoreEntity(criminal2);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(WarCrime)];
+            var warCrime = (WarCrime)translation.Principal.Reconstitutor.ReconstituteFrom(crimeRow);
+            translation.Relations[0].Repopulator.Repopulate(warCrime, perpetratorRows);
+
+            // Assert
+            warCrime.Perpetrators.Count.Should().Be(3);
+            warCrime.Perpetrators[0].Should().Be(criminal0);
+            warCrime.Perpetrators[1].Should().Be(criminal1);
+            warCrime.Perpetrators[2].Should().Be(criminal2);
+        }
+
+        [TestMethod] public void ViableConstructor_Localization() {
+            // Arrange
+            var row = new List<DBValue>() { DBValue.Create(-71336) };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Conjunction), Translator.AsLocalzation];
+            var conjunction = (Conjunction)translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            row[0].Datum.Should().Be(conjunction.Key);
+        }
+
+        [TestMethod] public void NoViableConstructor_Localization_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES);
+            var source = typeof(Diminutive);
+
+            // Act
+            var translate = () => translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<ReconstitutionNotPossibleException>()
+                .WithLocation("`Diminutive`")
+                .WithProblem("there are no viable constructors")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NonNullLocalizedValues() {
+            // Arrange
+            var rows = new List<List<DBValue>>() {
+                new() { DBValue.Create(18294), DBValue.Create(ConversionOf(Language.English)), DBValue.Create("shit") },
+                new() { DBValue.Create(18294), DBValue.Create(ConversionOf(Language.Spanish)), DBValue.Create("mierda") },
+                new() { DBValue.Create(18294), DBValue.Create(ConversionOf(Language.French)), DBValue.Create("merde") }
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(SwearWord), Translator.AsLocalzation];
+            var swear = (SwearWord)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
+            translation.Principal.Repopulator.Repopulate(swear, rows);
+
+            // Assert
+            rows[0][0].Datum.Should().Be(swear.Key);
+            swear.Localizations.Count.Should().Be(3);
+            rows[0][2].Datum.Should().Be(swear[Language.English]);
+            rows[1][2].Datum.Should().Be(swear[Language.Spanish]);
+            rows[2][2].Datum.Should().Be(swear[Language.French]);
+        }
+
+        [TestMethod] public void NullLocalizedValues() {
+            // Arrange
+            var rows = new List<List<DBValue>>() {
+                new() { DBValue.Create("LOC_WP_CHECKERED"), DBValue.Create(104U), DBValue.Create(null) },
+                new() { DBValue.Create("LOC_WP_CHECKERED"), DBValue.Create(95125U), DBValue.Create(null) },
+                new() { DBValue.Create("LOC_WP_CHECKERED"), DBValue.Create(7612312U), DBValue.Create(null) },
+                new() { DBValue.Create("LOC_WP_CHECKERED"), DBValue.Create(4U), DBValue.Create(null) }
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Wallpaper), Translator.AsLocalzation];
+            var wallpaper = (Wallpaper)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
+            translation.Principal.Repopulator.Repopulate(wallpaper, rows);
+
+            // Assert
+            rows[0][0].Datum.Should().Be(wallpaper.Key);
+            wallpaper.Localizations.Count.Should().Be(4);
+            wallpaper[(uint)rows[0][1].Datum].Should().BeNull();
+            wallpaper[(uint)rows[1][1].Datum].Should().BeNull();
+            wallpaper[(uint)rows[2][1].Datum].Should().BeNull();
+            wallpaper[(uint)rows[3][1].Datum].Should().BeNull();
+        }
+
+        [TestMethod] public void LocalizationNestedAggregate() {
+            // Arrange
+            var rows = new List<List<DBValue>>() {
+                new() { DBValue.Create("LOC_SWISS_HANDSHAKE"), DBValue.Create(1), DBValue.Create("minutes"), DBValue.Create(0.0) },
+                new() { DBValue.Create("LOC_SWISS_HANDSHAKE"), DBValue.Create(2), DBValue.Create("minutes"), DBValue.Create(0.25) },
+                new() { DBValue.Create("LOC_SWISS_HANDSHAKE"), DBValue.Create(3), DBValue.Create("minutes"), DBValue.Create(0.75) },
+                new() { DBValue.Create("LOC_SWISS_HANDSHAKE"), DBValue.Create(4), DBValue.Create("minutes"), DBValue.Create(1.3) },
+                new() { DBValue.Create("LOC_SWISS_HANDSHAKE"), DBValue.Create(5), DBValue.Create("minutes"), DBValue.Create(7.9) }
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(Handshake), Translator.AsLocalzation];
+            var handshake = (Handshake)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
+            translation.Principal.Repopulator.Repopulate(handshake, rows);
+
+            // Assert
+            rows[0][0].Datum.Should().Be(handshake.Key);
+            handshake.Localizations.Count.Should().Be(5);
+            rows[0][2].Datum.Should().Be(handshake[(int)rows[0][1].Datum].Unit);
+            rows[0][3].Datum.Should().Be(handshake[(int)rows[0][1].Datum].Value);
+            rows[1][2].Datum.Should().Be(handshake[(int)rows[1][1].Datum].Unit);
+            rows[1][3].Datum.Should().Be(handshake[(int)rows[1][1].Datum].Value);
+            rows[2][2].Datum.Should().Be(handshake[(int)rows[2][1].Datum].Unit);
+            rows[2][3].Datum.Should().Be(handshake[(int)rows[2][1].Datum].Value);
+            rows[3][2].Datum.Should().Be(handshake[(int)rows[3][1].Datum].Unit);
+            rows[3][3].Datum.Should().Be(handshake[(int)rows[3][1].Datum].Value);
+            rows[4][2].Datum.Should().Be(handshake[(int)rows[4][1].Datum].Unit);
+            rows[4][3].Datum.Should().Be(handshake[(int)rows[4][1].Datum].Value);
+        }
+
+        [TestMethod] public void LocalizationNestedReference() {
+            // Arrange
+            var spelling0 = new Spelling() {
+                Letters = "Your Excellency",
+                Length = 15,
+                Standardized = true
+            };
+            var spelling1 = new Spelling() {
+                Letters = "Madam",
+                Length = 5,
+                Standardized = true
+            };
+            var rows = new List<List<DBValue>>() {
+                new() { DBValue.Create("LOC_IMPORTANT"), DBValue.Create('H'), DBValue.Create(spelling0.Letters) },
+                new() { DBValue.Create("LOC_IMPORTANT"), DBValue.Create('M'), DBValue.Create(spelling1.Letters) }
+            };
+
+            // Act
+            var depot = new EntityDepot();
+            depot.StoreEntity(spelling0);
+            depot.StoreEntity(spelling1);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(Honorific), Translator.AsLocalzation];
+            var honorific = (Honorific)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
+            translation.Principal.Repopulator.Repopulate(honorific, rows);
+
+            // Assert
+            rows[0][0].Datum.Should().Be(honorific.Key);
+            honorific.Localizations.Count.Should().Be(2);
+            honorific[(char)rows[0][1].Datum].Should().Be(spelling0);
+            honorific[(char)rows[1][1].Datum].Should().Be(spelling1);
+        }
+
+        [TestMethod] public void PublicPreDefinedLocalizationInstance() {
+            // Arrange
+            var mysteryRow = new List<DBValue>() {
+                DBValue.Create(LiteraryGenre.Mystery.Key),
+                DBValue.Create(ConversionOf(Language.Italian)),
+                DBValue.Create("mistero")
+            };
+            var folkloreRow = new List<DBValue>() {
+                DBValue.Create(LiteraryGenre.Folklore.Key),
+                DBValue.Create(ConversionOf(Language.Spanish)),
+                DBValue.Create("folclore")
+            };
+            var horrorRow = new List<DBValue>() {
+                DBValue.Create(LiteraryGenre.Horror.Key),
+                DBValue.Create(ConversionOf(Language.Hebrew)),
+                DBValue.Create("אימה")
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(LiteraryGenre), Translator.AsLocalzation];
+            var mysteryGenre = (LiteraryGenre)translation.Principal.Reconstitutor.ReconstituteFrom(mysteryRow);
+            var folkloreGenre = (LiteraryGenre)translation.Principal.Reconstitutor.ReconstituteFrom(folkloreRow);
+            var horrorGenre = (LiteraryGenre)translation.Principal.Reconstitutor.ReconstituteFrom(horrorRow);
+
+            // Assert
+            mysteryGenre.Should().Be(LiteraryGenre.Mystery);
+            folkloreGenre.Should().Be(LiteraryGenre.Folklore);
+            horrorGenre.Should().Be(LiteraryGenre.Horror);
+        }
+
+        [TestMethod] public void NonExistentPreDefinedLocalizationInstance_PathologicalError() {
+            // Arrange
+            var row = new List<DBValue>() {
+                DBValue.Create("LOC_RAMADAN_OBSERVANCE"),
+                DBValue.Create(ConversionOf(Language.English)),
+                DBValue.Create("Ramadan")
+            };
+
+            // Act
+            var translator = new Translator(NO_ENTITIES);
+            var translation = translator[typeof(PillarOfIslam), Translator.AsLocalzation];
+            var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
+
+            // Assert
+            reconstitute.Should().ThrowExactly<UnreachableException>();
         }
 
 

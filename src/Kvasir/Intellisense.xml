@@ -10868,7 +10868,7 @@
         <member name="P:Kvasir.Translation.LocalizationKeyFieldGroup.Creator">
             <inheritdoc/>
         </member>
-        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo)">
+        <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.#ctor(Kvasir.Translation.Context,System.Reflection.PropertyInfo,Kvasir.Reconstitution.KeyMatcher)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/>.
             </summary>
@@ -10878,6 +10878,10 @@
             </param>
             <param name="source">
               The CLR property backing the new <see cref="T:Kvasir.Translation.LocalizationKeyFieldGroup"/>.
+            </param>
+            <param name="keyMatcher">
+              The <see cref="T:Kvasir.Reconstitution.KeyMatcher"/> to use when performing look-ups to Reconstitute data extracted from the new
+              <see cref="T:Kvasir.Translation.ReferenceFieldGroup"/>.
             </param>
         </member>
         <member name="M:Kvasir.Translation.LocalizationKeyFieldGroup.#ctor(Kvasir.Translation.LocalizationKeyFieldGroup)">
@@ -11596,7 +11600,7 @@
               A helper class for evaluating a type's constructors for usability in Reconstitution.
             </summary>
         </member>
-        <member name="M:Kvasir.Translation.ReconstitutionHelper.MakeCreator(Kvasir.Translation.Context,System.Type,System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup},System.Boolean)">
+        <member name="M:Kvasir.Translation.ReconstitutionHelper.MakeCreator(Kvasir.Translation.Context,System.Type,System.Collections.Generic.IEnumerable{Kvasir.Translation.FieldGroup},System.Boolean,System.Boolean)">
             <summary>
               Create the <see cref="T:Kvasir.Reconstitution.ICreator"/> for a particular type, whose data model consists of a set of Fields.
             </summary>
@@ -11613,6 +11617,10 @@
               If <see langword="false"/>, then a new non-<see langword="null"/> CLR object will be constructed even if
               each of the <see cref="T:Kvasir.Schema.DBValue">database values</see> provided is <see cref="P:Kvasir.Schema.DBValue.NULL"/>. If
               <see langword="false"/>, then such a set of values will result in a <see langword="null"/> object.
+            </param>
+            <param name="forLocalizedValue">
+              If <see langword="false"/>, then the <c>Key</c> constructor argument of the key-value pair will be
+              recognized as representing the <c>Locale</c>. Otherwise, no special treatment is made.
             </param>
         </member>
         <member name="M:Kvasir.Translation.ReconstitutionHelper.AreCompatible(System.Reflection.ParameterInfo,Kvasir.Translation.FieldGroup)">
@@ -12185,23 +12193,33 @@
             </summary>
             
             <param name="Table">The schema model for the Localization Table.</param>
-            /// <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
+            <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
+            <param name="Reconstitutor">The plan that can rercreate a CLR object from the key of a Localization Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
         </member>
-        <member name="M:Kvasir.Translation.LocalizationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.LocalizationExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Translation.LocalizationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.LocalizationExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Reconstitution.RelationRepopulationPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
             <summary>
               The definition of a Localization Table.
             </summary>
             
             <param name="Table">The schema model for the Localization Table.</param>
-            /// <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
+            <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
+            <param name="Reconstitutor">The plan that can rercreate a CLR object from the key of a Localization Table.</param>
+            <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.Table">
             <summary>The schema model for the Localization Table.</summary>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.Extractor">
-            /// <summary>The plan that can extract the rows of data to be stored into the Localization Table.</summary>
+            <summary>The plan that can extract the rows of data to be stored into the Localization Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationTableDef.Reconstitutor">
+            <summary>The plan that can rercreate a CLR object from the key of a Localization Table.</summary>
+        </member>
+        <member name="P:Kvasir.Translation.LocalizationTableDef.Repopulator">
+            <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</summary>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.PreDefinedInstances">
             <summary>The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</summary>

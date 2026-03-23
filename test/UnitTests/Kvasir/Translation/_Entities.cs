@@ -17243,7 +17243,7 @@ namespace UT.Kvasir.Translation {
             [Column(6)] public Feature WindowFeatures { get; set; }
         }
 
-        // Scenario: Relation Nested in Null Aggregate (✓no reconstitution [should be impossible unless empty]✓)
+        // Scenario: Relation Nested in Null Aggregate (✓no reconstitution✓)
         public class Xenomorph {
             public struct Victims {
                 [Column(0)] public uint ConfirmedKills { get; set; }
@@ -17944,7 +17944,7 @@ namespace UT.Kvasir.Translation {
             }
         }
 
-        // Test Scenario: Public Pre-Defined Instance that was Marked as [IncludeInModel] (✓reconstituted✓)
+        // Scenario: Public Pre-Defined Instance that was Marked as [IncludeInModel] (✓reconstituted✓)
         [PreDefined] public class Symbiosis {
             public enum Cardinality { None, SingleBenefitNoHarm, SingleHarmNoBenefit, SingleBenefitSingleHarm, DoubleBenefit, DoubleHarm }
 
@@ -18034,7 +18034,7 @@ namespace UT.Kvasir.Translation {
             }
         }
 
-        // Test Scenario: Non-Public Pre-Defined Instance that was Marked as [CodeOnly] (✗pathologically fails✗)
+        // Scenario: Non-Public Pre-Defined Instance that was Marked as [CodeOnly] (✗pathologically fails✗)
         [PreDefined] public class LawAndOrder {
             [PrimaryKey, Column(0)] public ulong IMDbID { get; private init; }
             [Column(1)] public string Title { get; private init; }
@@ -18119,6 +18119,166 @@ namespace UT.Kvasir.Translation {
                 Rating = rating;
                 Ingredients = new RelationSet<string>(ingredients);
             }
+        }
+
+        // Scenario: Writeable Non-Null Localization (✓reconstituted✓)
+        public class HolocaustMuseum {
+            [PrimaryKey, Column(0)] public Guid MuseumID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public ulong AnnualVisitors { get; set; }
+            [Column(3)] public bool IsInIsrael { get; set; }
+            [Column(4)] public LocalizedDate Establishment { get; set; } = new(Guid.NewGuid());
+        }
+
+        // Scenario: Writeable Null Localization (✓reconstituted✓)
+        public class Ultrasound {
+            [PrimaryKey, Column(0)] public Guid ProcedureID { get; set; }
+            [Column(1)] public string Patient { get; set; } = "";
+            [Column(2)] public string Doctor { get; set; } = "";
+            [Column(3)] public string? AssistingTech { get; set; }
+            [Column(4)] public LocalizedMeasure? AverageFrequency { get; set; }
+            [Column(5)] public bool ForPregnancy { get; set; }
+        }
+
+        // Scenario: Read-Only Localization with Localization Constructor Argument (✓reconstituted✓)
+        public class DragQueen {
+            public enum QueenGender { Male, Female, TransMale, TransFemale, NonBinary, Genderfluid, Other }
+
+            [PrimaryKey, Column(0)] public string DragName { get; set; } = "";
+            [Column(1)] public string BirthName { get; set; } = "";
+            [Column(2)] public QueenGender Gender { get; set; }
+            [Column(3)] public LocalizedMeasure Height { get; init; }
+            [Column(4)] public bool HasBeenOnRuPaulsDragRace { get; set; }
+            [Column(5)] public ushort WigsOwned { get; set; }
+
+            public DragQueen(LocalizedMeasure height) {
+                Height = height;
+            }
+        }
+
+        // Scenario: Read-Only Localization with Key Type Constructor Argument (✗cannot reconstitute✗)
+        public class Chinatown {
+            [PrimaryKey, Column(0)] public string City { get; set; } = "";
+            [Column(1)] public ulong Population { get; set; }
+            [Column(2)] public LocalizedCurrency YearlyRevenue { get; init; }
+            [Column(3)] public double PercentFirstGeneration { get; set; }
+            [Column(4)] public string MainStreet { get; set; } = "";
+
+            public Chinatown(string yearlyRevenue) {
+                YearlyRevenue = new LocalizedCurrency(yearlyRevenue);
+            }
+        }
+
+        // Scenario: Localization Nested in Non-Null Aggregate (✓reconstituted✓)
+        public class Cathedral {
+            public record struct Place(LocalizedText City, LocalizedText Country, LocalizedNullableText Diocese);
+
+            [PrimaryKey, Column(0)] public ulong WorshipBuildingNumber { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public Place Location { get; set; }
+            [Column(5)] public ulong Capacity { get; set; }
+            [Column(6)] public string? CurrentBishop { get; set; }
+            [Column(7)] public bool IsGothic { get; set; }
+        }
+
+        // Scenario: Localization Nested in Null Aggreagte (✓no reconstitution✓)
+        public class Thunderstorm {
+            public enum Kind { AirMass, MultiCell, SquallLine, SuperCell, MesoscaleConvective }
+
+            public record struct Precipitation(LocalizedMeasure Rainfall, LocalizedMeasure Snowfall);
+
+            [PrimaryKey, Column(0)] public Guid StormID { get; set; }
+            [Column(1)] public DateTime StartTime { get; set; }
+            [Column(2)] public DateTime? EndTime { get; set; }
+            [Column(3)] public Precipitation? RainAndSnow { get; set; }
+            [Column(5)] public bool WithLightning { get; set; }
+            [Column(6)] public bool CausedBlackout { get; set; }
+        }
+
+        // Scenario: Localization Nested in Relation (✓reconstituted✓)
+        public class WarCrime {
+            public enum Kind { Genocide, SexualViolence, EthnicCleansing, NeutralityViolation, MistreatingPOWs, Other }
+
+            [PrimaryKey, Column(0)] public Guid ClaimIdentifier { get; set; }
+            [Column(1)] public string War { get; set; } = "";
+            [Column(2)] public Kind Variety { get; set; }
+            [Column(3)] public bool WasProsecuted { get; set; }
+            [Column(4)] public bool IsOngoing { get; set; }
+            public RelationList<LocalizedText> Perpetrators { get; init; } = new();
+            [Column(5)] public bool WasNazi { get; set; }
+        }
+
+        // Scenario: Viable Constructor for Localization (✓reconstituted✓)
+        public class Conjunction : Localization<int, Language, string> {
+            public Conjunction(int key) : base(key) {}
+        }
+
+        // Scenario: No Viable Constructor for Localization (✗cannot reconstitute✗)
+        public class Diminutive : Localization<string, Language, string> {
+            public Diminutive(string localizationKey) : base(localizationKey) {}
+            public Diminutive(string key, Language defaultLanguage, string defaultValue) : base(key) {
+                base[defaultLanguage] = defaultValue;
+            }
+        }
+
+        // Scenario: Non-Null Localized Values (✓values reconstituted per element✓)
+        public class SwearWord : Localization<int, Language, string> {
+            public SwearWord(int key) : base(key) {}
+        }
+
+        // Scenario: Null Localized Values (✓values reconstituted✓)
+        public class Wallpaper : Localization<string, uint, char?> {
+            public Wallpaper(string key) : base(key) {}
+        }
+
+        // Scenario: Localization-Nested Aggregate (✓values reconstituted per element✓)
+        public class Handshake : Localization<string, int, Measurement> {
+            public Handshake(string key) : base(key) {}
+        }
+
+        // Scenario: Localization-Nested Reference (✓values reconstituted per element✓)
+        public class Spelling {
+            [PrimaryKey, Column(0)] public string Letters { get; set; } = "";
+            [Column(1)] public uint Length { get; set; }
+            [Column(2)] public bool Standardized { get; set; }
+        }
+        public class Honorific : Localization<string, char, Spelling> {
+            public Honorific(string key) : base(key) {}
+        }
+
+        // Scenario: Existing Pre-Defined Localization Instance (✓reconstituted✓)
+        [PreDefined] public class LiteraryGenre : Localization<string, Language, string> {
+            public static LiteraryGenre Romance { get; } = new LiteraryGenre("LOC_ROMANCE_LIT");
+            public static LiteraryGenre Thriller { get; } = new LiteraryGenre("LOC_THRILLER_LIT");
+            public static LiteraryGenre Mystery { get; } = new LiteraryGenre("LOC_MYSTERY_LIT");
+            public static LiteraryGenre Erotica { get; } = new LiteraryGenre("LOC_EROTICA_LIT");
+            public static LiteraryGenre YoungAdult { get; } = new LiteraryGenre("LOC_YA_LIT");
+            public static LiteraryGenre Fanfiction { get; } = new LiteraryGenre("LOC_FANFIC_LIT");
+            public static LiteraryGenre ScienceFiction { get; } = new LiteraryGenre("LOC_SCIFI_LIT");
+            public static LiteraryGenre AlternateHistory { get; } = new LiteraryGenre("LOC_ALT_HISTORY_LIT");
+            public static LiteraryGenre Fantasy { get; } = new LiteraryGenre("LOC_FANTASY_LIT");
+            public static LiteraryGenre Bildungsroman { get; } = new LiteraryGenre("LOC_BILDUNGSROMAN_LIT");
+            public static LiteraryGenre Folklore { get; } = new LiteraryGenre("LOC_FOLKLORE_LIT");
+            public static LiteraryGenre Nonfiction { get; } = new LiteraryGenre("LOC_NONFICTION_LIT");
+            public static LiteraryGenre Biography { get; } = new LiteraryGenre("LOC_BIOGRAPHY_LIT");
+            public static LiteraryGenre Memoir { get; } = new LiteraryGenre("LOC_MEMOIR_LIT");
+            public static LiteraryGenre Satire { get; } = new LiteraryGenre("LOC_SATIRE_LIT");
+            public static LiteraryGenre Adventure { get; } = new LiteraryGenre("LOC_ADVENTURE_LIT");
+            public static LiteraryGenre Horror { get; } = new LiteraryGenre("LOC_HORROR_LIT");
+            public static LiteraryGenre Spy { get; } = new LiteraryGenre("LOC_SPY_LIT");
+
+            private LiteraryGenre(string key) : base(key) {}
+        }
+
+        // Scenario: Non-Existent Pre-Defined Localization Instance (✗pathologically fails✗)
+        [PreDefined] public class PillarOfIslam : Localization<string, Language, string> {
+            public static PillarOfIslam Shahada { get; } = new PillarOfIslam("LOC_SHAHADA_DECL_FAITH");
+            public static PillarOfIslam Salah { get; } = new PillarOfIslam("LOC_SALAH_PRAYER");
+            public static PillarOfIslam Zakat { get; } = new PillarOfIslam("LOC_ZAKAT_ALMSGIVING");
+            public static PillarOfIslam Sawm { get; } = new PillarOfIslam("LOC_SAWM_FASTING");
+            public static PillarOfIslam Hajj { get; } = new PillarOfIslam("LOC_HAJJ_PILGRIMAGE");
+
+            private PillarOfIslam(string key) : base(key) {}
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Cybele.Extensions;
+﻿using Cybele.Core;
+using Cybele.Extensions;
 using Kvasir.Annotations;
-using Kvasir.Schema;
+using Kvasir.Extraction;
+using Kvasir.Reconstitution;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -175,7 +177,14 @@ namespace Kvasir.Translation {
                             throw new NestedLocalizationException(context);
                         }
 
-                        translation.Add(new LocalizationKeyFieldGroup(context, property));
+                        if (!keyMatchers_.ContainsKey(propType)) {
+                            var extractor = new ReadPropertyExtractor(new PropertyChain(propType, "Key"));
+                            var plan = new DataExtractionPlan(Enumerable.Repeat(extractor, 1));
+                            var matcher = new KeyMatcher(() => entityLookup_(propType), plan);
+                            keyMatchers_.Add(propType, matcher);
+                        }
+
+                        translation.Add(new LocalizationKeyFieldGroup(context, property, keyMatchers_[propType]));
                         localizationTrackers.Add(new LocalizationTracker(property));
                     }
                     else if (typeCategory.Equals(TypeCategory.Struct)) {

@@ -124,7 +124,7 @@ namespace Kvasir.Translation {
             // Pre-Defined Entities don't get reconstituted like normal, since the data is expected to be effectively
             // hard-coded into the source. We use a KeyLookupCreator for those.
             if (!IsPreDefined(source)) {
-                var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false);
+                var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false, false);
                 var creator = new DataReconstitutionPlan(reconstitutor);
                 principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, new List<object>());
             }
@@ -344,7 +344,6 @@ namespace Kvasir.Translation {
             var pkDescriptors = schemas.Where(s => primaryKey.Fields.Contains(s.Field)).Select(s => s.Descriptor);
             var pkGroups = fieldGroups.Select(g => g.Filter(pkDescriptors)).Where(o => o.HasValue).Select(o => o.Unwrap());
             pkCache_[source] = pkGroups.ToList();
-            var pkExtractor = new DataExtractionPlan(pkGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
 
             var tableName = GetTableName(context, source);
             if (tableNameCache_.TryGetValue(tableName, out Type? match)) {
@@ -362,19 +361,31 @@ namespace Kvasir.Translation {
             var extractor = new RelationExtractionPlan(relationExtractor, valuesExtractor);
             var extractionPlan = new LocalizationExtractionPlan(extractor);
 
+            IRepopulator repopulator = IsPreDefined(source) ? new SkipRepopulator() : new DirectRepopulator();
+            var elementCreator = ReconstitutionHelper.MakeCreator(context, connectionType, fieldGroups.Skip(1), false, true);
+            var repopulationPlan = new RelationRepopulationPlan(relationExtractor, new DataReconstitutionPlan(elementCreator), repopulator);
+
+            var keyExtractor = new ReadPropertyExtractor(new PropertyChain(source, "Key"));
+            var keyPlan = new DataExtractionPlan(Enumerable.Repeat(keyExtractor, 1));
+            var keyMatcher = new KeyMatcher(() => entityLookup_(source), keyPlan);
+
             // Pre-Defined Entities don't get reconstituted like normal, since the data is expected to be effectively
             // hard-coded into the source. We use a KeyLookupCreator for those.
             if (!IsPreDefined(source)) {
-                principal = new LocalizationTableDef(table, extractionPlan, []);
+                var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups.Take(1), false, false);
+                var creator = new DataReconstitutionPlan(reconstitutor);
+                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, []);
             }
             else {
                 var instances = GetPreDefinedInstances(context, source);
-                principal = new LocalizationTableDef(table, extractionPlan, instances.ToList());
+                var matcher = new KeyMatcher(() => instances, keyPlan);
+                var creator = MakePreDefinedReconstitutionPlan(context, table, matcher, source);
+                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, instances.ToList());
             }
 
             localizationTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);
-            keyMatchers_.Add(source, new KeyMatcher(() => entityLookup_(source), pkExtractor));
+            keyMatchers_.Add(source, keyMatcher);
             return principal;
         }
 
