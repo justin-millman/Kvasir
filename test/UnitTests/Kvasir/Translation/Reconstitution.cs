@@ -633,22 +633,22 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void WriteableProperties_NonNullReferenceSingleFieldPrimaryKey() {
             // Arrange
-            var roosterRow1 = new List<DBValue>() {
-                DBValue.Create(Guid.NewGuid()),
-                DBValue.Create("Foghorn Leghorn"),
-                DBValue.Create(6.25),
-                DBValue.Create(214.8)
+            var rooster1 = new Cockfight.Rooster() {
+                AnimalID = Guid.NewGuid(),
+                Name = "Foghorn Leghorn",
+                Height = 6.25,
+                Weight = 214.8
             };
-            var roosterRow2 = new List<DBValue>() {
-                DBValue.Create(Guid.NewGuid()),
-                DBValue.Create("Panchito Pistoles"),
-                DBValue.Create(1.15),
-                DBValue.Create(35.666)
+            var rooster2 = new Cockfight.Rooster() {
+                AnimalID = Guid.NewGuid(),
+                Name = "Panchito Pistoles",
+                Height = 1.15,
+                Weight = 35.666
             };
-            var cockfightRow = new List<DBValue>() {
+            var row = new List<DBValue>() {
                 DBValue.Create(Guid.NewGuid()),
-                roosterRow1[0],
-                roosterRow2[0],
+                DBValue.Create(rooster1.AnimalID),
+                DBValue.Create(rooster2.AnimalID),
                 DBValue.Create(ConversionOf(Cockfight.Result.Suspended)),
                 DBValue.Create(158172591M),
                 DBValue.Create(58.3162241)
@@ -656,56 +656,51 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
-            var roosterTranslation = translator[typeof(Cockfight.Rooster)];
-            var rooster1 = (Cockfight.Rooster)roosterTranslation.Principal.Reconstitutor.ReconstituteFrom(roosterRow1);
-            var rooster2 = (Cockfight.Rooster)roosterTranslation.Principal.Reconstitutor.ReconstituteFrom(roosterRow2);
             depot.StoreEntity(rooster1);
             depot.StoreEntity(rooster2);
-            var cockfighTranslation = translator[typeof(Cockfight)];
-            var cockfight = (Cockfight)cockfighTranslation.Principal.Reconstitutor.ReconstituteFrom(cockfightRow);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(Cockfight)];
+            var cockfight = (Cockfight)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
             // Assert
-            cockfightRow[0].Datum.Should().Be(cockfight.FightID);
+            row[0].Datum.Should().Be(cockfight.FightID);
             cockfight.CompetitorA.Should().BeSameAs(rooster1);
             cockfight.CompetitorB.Should().BeSameAs(rooster2);
-            cockfightRow[3].Datum.Should().Be(ConversionOf(cockfight.Outcome));
-            cockfightRow[4].Datum.Should().Be(cockfight.Pot);
-            cockfightRow[5].Datum.Should().Be(cockfight.FightDuration);
+            row[3].Datum.Should().Be(ConversionOf(cockfight.Outcome));
+            row[4].Datum.Should().Be(cockfight.Pot);
+            row[5].Datum.Should().Be(cockfight.FightDuration);
         }
 
         [TestMethod] public void WriteableProperties_NonNullReferenceMultiFieldPrimaryKey() {
             // Arrange
-            var rangeRow = new List<DBValue>() {
-                DBValue.Create("Eastern Rift Mountains"),
-                DBValue.Create(ConversionOf(Glacier.Continent.Africa)),
-                DBValue.Create((ushort)1319),
-                DBValue.Create(4000UL),
-                DBValue.Create(5895UL)
+            var range = new Glacier.MountainRange() {
+                Name = "Eastern Rift Mountains",
+                HomeContinent = Glacier.Continent.Africa,
+                Discriminator = 1319,
+                Length = 4000,
+                MaxElevation = 5895
             };
-            var glacierRow = new List<DBValue>() {
+            var row = new List<DBValue>() {
                 DBValue.Create("Furtwängler Glacier"),
                 DBValue.Create(13.61),
-                rangeRow[0],
-                rangeRow[1],
-                rangeRow[2],
+                DBValue.Create(range.Name),
+                DBValue.Create(ConversionOf(range.HomeContinent)),
+                DBValue.Create(range.Discriminator),
                 DBValue.Create(false)
             };
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
-            var rangeTranslation = translator[typeof(Glacier.MountainRange)];
-            var range = (Glacier.MountainRange)rangeTranslation.Principal.Reconstitutor.ReconstituteFrom(rangeRow);
             depot.StoreEntity(range);
-            var glacierTranslation = translator[typeof(Glacier)];
-            var glacier = (Glacier)glacierTranslation.Principal.Reconstitutor.ReconstituteFrom(glacierRow);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(Glacier)];
+            var glacier = (Glacier)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
             // Assert
-            glacierRow[0].Datum.Should().Be(glacier.Name);
-            glacierRow[1].Datum.Should().Be(glacier.Length);
+            row[0].Datum.Should().Be(glacier.Name);
+            row[1].Datum.Should().Be(glacier.Length);
             glacier.Range.Should().BeSameAs(range);
-            glacierRow[5].Datum.Should().Be(glacier.HasMushroomRock);
+            row[5].Datum.Should().Be(glacier.HasMushroomRock);
         }
 
         [TestMethod] public void WriteableProperties_NullReferenceSingleFieldPrimaryKey() {
@@ -734,18 +729,18 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void WriteableProperties_NullReferenceMultiFieldPrimaryKey() {
             // Arrange
-            var personRow = new List<DBValue>() {
-                DBValue.Create("Stuart"),
-                DBValue.Create("Gaffolino"),
-                DBValue.Create(new DateTime(1961, 1, 19)),
-                DBValue.Create("Malta")
+            var person = new StripClub.Person() {
+                FirstName = "Stuart",
+                LastName = "Gaffolino",
+                DateOfBirth = new DateTime(1961, 1, 19),
+                CountryOfOrigin = "Malta"
             };
-            var clubRow = new List<DBValue>() {
+            var row = new List<DBValue>() {
                 DBValue.Create("The Naked Afternoon"),
                 DBValue.Create(new DateTime(2001, 9, 12)),
                 DBValue.NULL,
-                personRow[0],
-                personRow[1],
+                DBValue.Create(person.FirstName),
+                DBValue.Create(person.LastName),
                 DBValue.Create(287654.04M),
                 DBValue.NULL,
                 DBValue.NULL,
@@ -755,36 +750,34 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
-            var personTranslation = translator[typeof(StripClub.Person)];
-            var person = (StripClub.Person)personTranslation.Principal.Reconstitutor.ReconstituteFrom(personRow);
             depot.StoreEntity(person);
-            var clubTranslation = translator[typeof(StripClub)];
-            var stripClub = (StripClub)clubTranslation.Principal.Reconstitutor.ReconstituteFrom(clubRow);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(StripClub)];
+            var stripClub = (StripClub)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
             // Assert
-            clubRow[0].Datum.Should().Be(stripClub.Name);
-            clubRow[1].Datum.Should().Be(stripClub.Opened);
+            row[0].Datum.Should().Be(stripClub.Name);
+            row[1].Datum.Should().Be(stripClub.Opened);
             stripClub.Closed.Should().BeNull();
             stripClub.Proprietor.Should().BeSameAs(person);
-            clubRow[5].Datum.Should().Be(stripClub.AnnualRevenue);
+            row[5].Datum.Should().Be(stripClub.AnnualRevenue);
             stripClub.PrimaryStripper.Should().BeNull();
-            clubRow[8].Datum.Should().Be(stripClub.NumEmployees);
-            clubRow[9].Datum.Should().Be(stripClub.HasPrivateRoom);
+            row[8].Datum.Should().Be(stripClub.NumEmployees);
+            row[9].Datum.Should().Be(stripClub.HasPrivateRoom);
         }
 
         [TestMethod] public void ReferenceNestedDataConversion() {
             // Arrange
-            var painterRow = new List<DBValue>() {
-                DBValue.Create("MICHELANGELO"),
-                DBValue.Create(new DateTime(1475, 3, 6)),
-                DBValue.Create("Italy"),
-                DBValue.Create(true)
+            var painter = new Fresco.Painter() {
+                Name = "MICHELANGELO",
+                DateOfBirth = new DateTime(1475, 3, 6),
+                Country = "Italy",
+                DisplayedInTheLouvre = true
             };
-            var frescoRow = new List<DBValue>() {
+            var row = new List<DBValue>() {
                 DBValue.Create(Guid.NewGuid()),
                 DBValue.Create("The Creation of Adam"),
-                painterRow[0],
+                DBValue.Create(painter.Name),
                 DBValue.Create(9.167f),
                 DBValue.Create(18.667f),
                 DBValue.Create(ConversionOf(Fresco.Surface.Ceiling))
@@ -792,55 +785,51 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
-            var painterTranslation = translator[typeof(Fresco.Painter)];
-            var painter = (Fresco.Painter)painterTranslation.Principal.Reconstitutor.ReconstituteFrom(painterRow);
             depot.StoreEntity(painter);
-            var frescoTranslation = translator[typeof(Fresco)];
-            var fresco = (Fresco)frescoTranslation.Principal.Reconstitutor.ReconstituteFrom(frescoRow);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(Fresco)];
+            var fresco = (Fresco)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
             // Assert
-            frescoRow[0].Datum.Should().Be(fresco.PaintingID);
-            frescoRow[1].Datum.Should().Be(fresco.Title);
+            row[0].Datum.Should().Be(fresco.PaintingID);
+            row[1].Datum.Should().Be(fresco.Title);
             fresco.Artist.Should().BeSameAs(painter);
-            frescoRow[3].Datum.Should().Be(fresco.Length);
-            frescoRow[4].Datum.Should().Be(fresco.Width);
-            frescoRow[5].Datum.Should().Be(ConversionOf(fresco.PaintedOn));
+            row[3].Datum.Should().Be(fresco.Length);
+            row[4].Datum.Should().Be(fresco.Width);
+            row[5].Datum.Should().Be(ConversionOf(fresco.PaintedOn));
         }
 
         [TestMethod] public void CalculatedAndNonCalculatedReferenceInSameEntity() {
             // Arrange
-            var companyRow = new List<DBValue>() {
-                DBValue.Create("GO.KARTS.GLOBAL."),
-                DBValue.Create(285UL),
-                DBValue.NULL,
-                DBValue.Create(new DateTime(1987, 4, 14))
+            var company = new GoKart.Company() {
+                Name = "GO.KARTS.GLOBAL.",
+                Employees = 285,
+                TickerSymbol = null,
+                Incorporated = new DateTime(1987, 4, 14)
             };
-            var gokartRow = new List<DBValue>() {
+            var row = new List<DBValue>() {
                 DBValue.Create(Guid.NewGuid()),
                 DBValue.Create((ushort)35),
-                companyRow[0],
-                companyRow[0],
+                DBValue.Create(company.Name),
+                DBValue.Create(company.Name),
                 DBValue.Create(true),
                 DBValue.Create((byte)4)
             };
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
-            var companyTranslation = translator[typeof(GoKart.Company)];
-            var company = (GoKart.Company)companyTranslation.Principal.Reconstitutor.ReconstituteFrom(companyRow);
             depot.StoreEntity(company);
-            var gokartTranslation = translator[typeof(GoKart)];
-            var gokart = (GoKart)gokartTranslation.Principal.Reconstitutor.ReconstituteFrom(gokartRow);
+            var translator = new Translator(t => depot[t]);
+            var translation = translator[typeof(GoKart)];
+            var gokart = (GoKart)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
             // Assert
-            gokartRow[0].Datum.Should().Be(gokart.GoKartID);
-            gokartRow[1].Datum.Should().Be(gokart.TopSpeed);
+            row[0].Datum.Should().Be(gokart.GoKartID);
+            row[1].Datum.Should().Be(gokart.TopSpeed);
             gokart.Manufacturer.Should().BeSameAs(company);
             gokart.Operator.Should().BeSameAs(company);
-            gokartRow[4].Datum.Should().Be(gokart.DriverOnLeft);
-            gokartRow[5].Datum.Should().Be(gokart.NumWheels);
+            row[4].Datum.Should().Be(gokart.DriverOnLeft);
+            row[5].Datum.Should().Be(gokart.NumWheels);
         }
 
         [TestMethod] public void EmptyRelations() {
