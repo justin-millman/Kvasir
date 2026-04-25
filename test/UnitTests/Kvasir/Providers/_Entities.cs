@@ -1,4 +1,5 @@
 ﻿using Kvasir.Annotations;
+using Kvasir.Localization;
 using Kvasir.Relations;
 using System;
 
@@ -38,6 +39,11 @@ namespace UT.Kvasir.Providers {
                 LastName = last;
                 Birthdate = new DateTime(birthYear, birthMonth, birthDay);
             }
+        }
+
+        // Scenario: CREATE TABLE – Localization Table
+        public class MusicalNote : Localization<string, char, double> {
+            public MusicalNote(string key) : base(key) {}
         }
 
         // Scenario: SELECT * FROM – Principal Table
@@ -368,7 +374,7 @@ namespace UT.Kvasir.Providers {
             [Column(4)] public decimal Revenue { get; set; }
         }
 
-        // Scenario: Delete – All Rows of an Owning Entity from Multi-Key Associative Relation Table
+        // Scenario: DELETE – All Rows of an Owning Entity from Multi-Key Associative Relation Table
         public class Surrogate {
             public enum System { Imperial, Metric }
             public record struct Thing(string Key, System Culture0);
