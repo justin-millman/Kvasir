@@ -2563,6 +2563,28 @@ namespace UT.Kvasir.Providers {
             );
         }
 
+        [TestMethod] public void CreateTable_Localization() {
+            // Arrange
+            var source = typeof(MusicalNote);
+            var translator = new Translator(NO_ENTITIES);
+            var table = translator[source, Translator.AsLocalzation].Principal.Table;
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.CreateTableCommand;
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
+                "`Key` VARCHAR(255) NOT NULL\n" +
+                "`Locale` CHAR(1) NOT NULL\n" +
+                "`Value` DOUBLE NOT NULL\n" +
+                "PRIMARY KEY (`Key`, `Locale`);"
+            );
+        }
+
         [TestMethod] public void SelectAll_Principal() {
             // Arrange
             var source = typeof(CarDealership);
