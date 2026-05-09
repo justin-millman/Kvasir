@@ -3,12 +3,14 @@ using Kvasir.Core;
 using Kvasir.Relations;
 using Kvasir.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Mysqlx.Crud;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using static UT.Kvasir.Transaction.Insertion;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Transaction {
     [TestClass, TestCategory("Insertion")]
@@ -275,7 +277,68 @@ namespace UT.Kvasir.Transaction {
             fund2.Investors.Should().HaveUnsavedEntryCount(0);
         }
 
+        [TestMethod] public void SingleInstanceSingleLocalization() {
+            // Arrange
+            var password = new Password(Guid.NewGuid());
+            password[false] = "Th!s_IS_my_P@sSw0rd1";
+            password[true] = "u8124nlkASFi8124posdf-a09i128412";
+            var fixture = new TestFixture(typeof(Password));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { password });
+            var passwordCmd = fixture.PrincipalCommands<Password>().InsertCommand(ANY_ROWS);
+            var passwordInserts = fixture.InsertionsFor(passwordCmd);
+
+            // Assert
+            passwordCmd.Connection.Should().Be(fixture.Connection);
+            passwordCmd.Transaction.Should().Be(fixture.Transaction);
+            passwordInserts.Should().HaveCount(2);
+            passwordInserts.Should().ContainRow(password.Key, false, password[false]);
+            passwordInserts.Should().ContainRow(password.Key, true, password[true]);
+            fixture.ShouldBeOrdered(passwordCmd);
+            fixture.Transaction.Received(1).Commit();
+            password.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void MultipleInstancesSingleLocalization() {
+            // Arrange
+            var first = new Ordinal(1);
+            first[OrdinalMode.Suffixed] = "1st";
+            first[OrdinalMode.FullySpelled] = "first";
+            var twentyThird = new Ordinal(23);
+            twentyThird[OrdinalMode.Suffixed] = "23rd";
+            twentyThird[OrdinalMode.FullySpelled] = "twenty-third";
+            twentyThird[OrdinalMode.Symbolized] = "23°";
+            var eightMillionth = new Ordinal(8000000);
+            eightMillionth[OrdinalMode.Suffixed] = "8000000th";
+            eightMillionth[OrdinalMode.FullySpelled] = "eight millionth";
+            var fixture = new TestFixture(typeof(Ordinal));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { first, twentyThird, eightMillionth });
+            var ordinalCmd = fixture.PrincipalCommands<Ordinal>().InsertCommand(ANY_ROWS);
+            var ordinalInserts = fixture.InsertionsFor(ordinalCmd);
+
+            // Assert
+            ordinalCmd.Connection.Should().Be(fixture.Connection);
+            ordinalCmd.Transaction.Should().Be(fixture.Transaction);
+            ordinalInserts.Should().HaveCount(7);
+            ordinalInserts.Should().ContainRow(first.Key, ConversionOf(OrdinalMode.Suffixed), first[OrdinalMode.Suffixed]);
+            ordinalInserts.Should().ContainRow(first.Key, ConversionOf(OrdinalMode.FullySpelled), first[OrdinalMode.FullySpelled]);
+            ordinalInserts.Should().ContainRow(twentyThird.Key, ConversionOf(OrdinalMode.Suffixed), twentyThird[OrdinalMode.Suffixed]);
+            ordinalInserts.Should().ContainRow(twentyThird.Key, ConversionOf(OrdinalMode.FullySpelled), twentyThird[OrdinalMode.FullySpelled]);
+            ordinalInserts.Should().ContainRow(twentyThird.Key, ConversionOf(OrdinalMode.Symbolized), twentyThird[OrdinalMode.Symbolized]);
+            ordinalInserts.Should().ContainRow(eightMillionth.Key, ConversionOf(OrdinalMode.Suffixed), eightMillionth[OrdinalMode.Suffixed]);
+            ordinalInserts.Should().ContainRow(eightMillionth.Key, ConversionOf(OrdinalMode.FullySpelled), eightMillionth[OrdinalMode.FullySpelled]);
+            fixture.ShouldBeOrdered(ordinalCmd);
+            fixture.Transaction.Received(1).Commit();
+            first.Relation.Should().HaveUnsavedEntryCount(0);
+            twentyThird.Relation.Should().HaveUnsavedEntryCount(0);
+            eightMillionth.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
         [TestMethod] public void MultipleUnrelatedEntities() {
+            // Arrange
             var wheelchair = new Wheelchair() {
                 ProductID = Guid.NewGuid(),
                 Material = "Alloy Steel",
@@ -339,6 +402,57 @@ namespace UT.Kvasir.Transaction {
             invoiceInserts.Should().ContainRow(invoice.InvoiceNumber, invoice.Buyer, invoice.Seller, invoice.Amount, invoice.Date, invoice.IsElectronic);
             fixture.ShouldBeOrdered((wheelchairCmd, hakaCmd, bkadCmd, invoiceCmd));
             fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void MultipleUnrelatedLocalizations() {
+            // Arrange
+            var disclaimer = new Disclaimer(Guid.NewGuid());
+            disclaimer[Language.Italian] = "non ci assumiamo responsabilità per le ustioni";
+            disclaimer[Language.German] = "keine haftung für Verbrennungen";
+            var tagline = new Tagline(-81021295);
+            tagline[16] = "For When You Have Nothing Else";
+            tagline[3] = "When You've Nothing More, That";
+            tagline[109] = "At Times Of List Exhaustion";
+            var polynomial = new Polynomial("189x^3 - 44x^2 + 1703x + 4");
+            polynomial[0] = 4;
+            polynomial[1] = 1703;
+            polynomial[2] = -44;
+            polynomial[3] = 189;
+            var fixture = new TestFixture(typeof(Disclaimer), typeof(Tagline), typeof(Polynomial));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { disclaimer, tagline, polynomial });
+            var disclaimerCmd = fixture.PrincipalCommands<Disclaimer>().InsertCommand(ANY_ROWS);
+            var disclaimerInserts = fixture.InsertionsFor(disclaimerCmd);
+            var taglineCmd = fixture.PrincipalCommands<Tagline>().InsertCommand(ANY_ROWS);
+            var taglineInserts = fixture.InsertionsFor(taglineCmd);
+            var polynomialCmd = fixture.PrincipalCommands<Polynomial>().InsertCommand(ANY_ROWS);
+            var polynomialInserts = fixture.InsertionsFor(polynomialCmd);
+
+            // Assert
+            disclaimerCmd.Connection.Should().Be(fixture.Connection);
+            disclaimerCmd.Transaction.Should().Be(fixture.Transaction);
+            taglineCmd.Connection.Should().Be(fixture.Connection);
+            taglineCmd.Transaction.Should().Be(fixture.Transaction);
+            polynomialCmd.Connection.Should().Be(fixture.Connection);
+            polynomialCmd.Transaction.Should().Be(fixture.Transaction);
+            disclaimerInserts.Should().HaveCount(2);
+            disclaimerInserts.Should().ContainRow(disclaimer.Key, ConversionOf(Language.Italian), disclaimer[Language.Italian]);
+            disclaimerInserts.Should().ContainRow(disclaimer.Key, ConversionOf(Language.German), disclaimer[Language.German]);
+            taglineInserts.Should().HaveCount(3);
+            taglineInserts.Should().ContainRow(tagline.Key, 16, tagline[16]);
+            taglineInserts.Should().ContainRow(tagline.Key, 3, tagline[3]);
+            taglineInserts.Should().ContainRow(tagline.Key, 109, tagline[109]);
+            polynomialInserts.Should().HaveCount(4);
+            polynomialInserts.Should().ContainRow(polynomial.Key, (byte)0, polynomial[0]);
+            polynomialInserts.Should().ContainRow(polynomial.Key, (byte)1, polynomial[1]);
+            polynomialInserts.Should().ContainRow(polynomial.Key, (byte)2, polynomial[2]);
+            polynomialInserts.Should().ContainRow(polynomial.Key, (byte)3, polynomial[3]);
+            fixture.ShouldBeOrdered((disclaimerCmd, taglineCmd, polynomialCmd));
+            fixture.Transaction.Received(1).Commit();
+            disclaimer.Relation.Should().HaveUnsavedEntryCount(0);
+            tagline.Relation.Should().HaveUnsavedEntryCount(0);
+            polynomial.Relation.Should().HaveUnsavedEntryCount(0);
         }
 
         [TestMethod] public void MultipleEntitiesRelatedByReferenceChain() {
@@ -502,7 +616,185 @@ namespace UT.Kvasir.Transaction {
             coven.Witches.Should().HaveUnsavedEntryCount(0);
         }
 
-        [TestMethod] public void SelfReferentialRelation() {
+        [TestMethod] public void MultipleEntitiesRelatedByScalarLocalization() {
+            // Arrange
+            var measurement = new LocalizedMeasure(1825125444);
+            measurement[Translation.TestLocalizations.System.Imperial] = new Measurement(108, "MiB");
+            measurement[Translation.TestLocalizations.System.Metric] = new Measurement(108, "MiB");
+            var date = new LocalizedDate(Guid.NewGuid());
+            date[Calendar.Gregorian] = new DateOnly(2026, 7, 22);
+            var leak = new MemoryLeak() {
+                Program = "./foo_bar_baz.sh",
+                RunNumber = 10903336105,
+                MemoryLeaked = measurement,
+                DetectedBySanitizer = false,
+                IncidentDate = date
+            };
+            var fixture = new TestFixture(typeof(MemoryLeak), typeof(LocalizedMeasure), typeof(LocalizedDate));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { date, measurement, leak });
+            var dateCmd = fixture.PrincipalCommands<LocalizedDate>().InsertCommand(ANY_ROWS);
+            var dateInserts = fixture.InsertionsFor(dateCmd);
+            var measurementCmd = fixture.PrincipalCommands<LocalizedMeasure>().InsertCommand(ANY_ROWS);
+            var measurementInserts = fixture.InsertionsFor(measurementCmd);
+            var leakCmd = fixture.PrincipalCommands<MemoryLeak>().InsertCommand(ANY_ROWS);
+            var leakInserts = fixture.InsertionsFor(leakCmd);
+
+            // Assert
+            dateCmd.Connection.Should().Be(fixture.Connection);
+            dateCmd.Transaction.Should().Be(fixture.Transaction);
+            measurementCmd.Connection.Should().Be(fixture.Connection);
+            measurementCmd.Transaction.Should().Be(fixture.Transaction);
+            leakCmd.Connection.Should().Be(fixture.Connection);
+            leakCmd.Transaction.Should().Be(fixture.Transaction);
+            dateInserts.Should().HaveCount(1);
+            dateInserts.Should().ContainRow(date.Key, ConversionOf(Calendar.Gregorian), date[Calendar.Gregorian]);
+            measurementInserts.Should().HaveCount(2);
+            measurementInserts.Should().ContainRow(measurement.Key, ConversionOf(Translation.TestLocalizations.System.Imperial), "MiB", 108.0);
+            measurementInserts.Should().ContainRow(measurement.Key, ConversionOf(Translation.TestLocalizations.System.Metric), "MiB", 108.0);
+            leakInserts.Should().HaveCount(1);
+            leakInserts.Should().ContainRow(leak.Program, leak.RunNumber, leak.MemoryLeaked.Key, leak.DetectedBySanitizer, leak.IncidentDate.Key);
+            fixture.Transaction.Received(1).Commit();
+            measurement.Relation.Should().HaveUnsavedEntryCount(0);
+            date.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByReferenceLocalization() {
+            // Arrange
+            var id0 = new PoliceChase.Identifier() {
+                Text = "A78192FF-q",
+                Numeric = 819212412,
+                IsUniquelyIdentifying = true
+            };
+            var id1 = new PoliceChase.Identifier() {
+                Text = "1.a3p+99tth",
+                Numeric = 59192040102,
+                IsUniquelyIdentifying = true
+            };
+            var id2 = new PoliceChase.Identifier() {
+                Text = "THUAQWRPAS",
+                Numeric = 111,
+                IsUniquelyIdentifying = false
+            };
+            var localization = new PoliceChase.LocalizedID(Guid.NewGuid());
+            localization["Hafstadt-Glenberg"] = id0;
+            localization["ISO-8192"] = id1;
+            localization["Qwevnuryl"] = id2;
+            var chase = new PoliceChase() {
+                Timestamp = new DateTime(2008, 9, 17, 14, 9, 53),
+                DurationMinutes = 141.983,
+                DatabaseEntry = localization,
+                NumOfficersInvolved = 3,
+                Culprit = "Ga'Nen Flureid",
+                IsVehicular = true
+            };
+            var fixture = new TestFixture(typeof(PoliceChase), typeof(PoliceChase.Identifier), typeof(PoliceChase.LocalizedID));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { chase, id0, id1, id2, localization });
+            var chaseCmd = fixture.PrincipalCommands<PoliceChase>().InsertCommand(ANY_ROWS);
+            var chases = fixture.InsertionsFor(chaseCmd);
+            var identifierCmd = fixture.PrincipalCommands<PoliceChase.Identifier>().InsertCommand(ANY_ROWS);
+            var identifiers = fixture.InsertionsFor(identifierCmd);
+            var localizationCmd = fixture.PrincipalCommands<PoliceChase.LocalizedID>().InsertCommand(ANY_ROWS);
+            var localizations = fixture.InsertionsFor(localizationCmd);
+
+            // Assert
+            chaseCmd.Connection.Should().Be(fixture.Connection);
+            chaseCmd.Transaction.Should().Be(fixture.Transaction);
+            identifierCmd.Connection.Should().Be(fixture.Connection);
+            identifierCmd.Transaction.Should().Be(fixture.Transaction);
+            localizationCmd.Connection.Should().Be(fixture.Connection);
+            localizationCmd.Transaction.Should().Be(fixture.Transaction);
+            chases.Should().HaveCount(1);
+            chases.Should().ContainRow(chase.Timestamp, chase.DurationMinutes, chase.DatabaseEntry.Key, chase.NumOfficersInvolved, chase.Culprit, chase.IsVehicular);
+            identifiers.Should().HaveCount(3);
+            identifiers.Should().ContainRow(id0.Text, id0.Numeric, id0.IsUniquelyIdentifying);
+            identifiers.Should().ContainRow(id1.Text, id1.Numeric, id1.IsUniquelyIdentifying);
+            identifiers.Should().ContainRow(id2.Text, id2.Numeric, id2.IsUniquelyIdentifying);
+            localizations.Should().HaveCount(3);
+            localizations.Should().ContainRow(localization.Key, "Hafstadt-Glenberg", localization["Hafstadt-Glenberg"].Text, localization["Hafstadt-Glenberg"].Numeric);
+            localizations.Should().ContainRow(localization.Key, "ISO-8192", localization["ISO-8192"].Text, localization["ISO-8192"].Numeric);
+            localizations.Should().ContainRow(localization.Key, "Qwevnuryl", localization["Qwevnuryl"].Text, localization["Qwevnuryl"].Numeric);
+            fixture.ShouldBeOrdered((chaseCmd, identifierCmd));
+            fixture.ShouldBeOrdered(identifierCmd, localizationCmd);
+            fixture.Transaction.Received(1).Commit();
+            localization.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByRelationLocalization() {
+            // Arrange
+            var fiftyDollars = new LocalizedCurrency("$50");
+            fiftyDollars["dollar"] = 50M;
+            fiftyDollars["peso"] = 866.95M;
+            fiftyDollars["euro"] = 43.01M;
+            var sixtyDollars = new LocalizedCurrency("$60");
+            sixtyDollars["yen"] = 9519.99M;
+            sixtyDollars["shekel"] = 175.11M;
+            var seventyDollars = new LocalizedCurrency("$70");
+            seventyDollars["rupee"] = 6725.04M;
+            seventyDollars["yuan"] = 476.56M;
+            seventyDollars["pound"] = 52.51M;
+            seventyDollars["franc"] = 55.12M;
+            var takeover = new HostileTakeover() {
+                Company = "Der Pfluggenfeldr",
+                Date = new DateOnly(2008, 7, 14),
+                Executor = "Count Egzmur von Twarrendwelft-Schmulagon",
+                TradedShares = 8000000,
+                InitialPercentageControlled = 37.54f,
+                BuyPrices = new RelationSet<LocalizedCurrency>() {
+                    fiftyDollars,
+                    sixtyDollars,
+                     seventyDollars
+                },
+                WasSuccessful = false,
+                ProxyFight = true
+            };
+            var fixture = new TestFixture(typeof(HostileTakeover), typeof(LocalizedCurrency));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { takeover, fiftyDollars, sixtyDollars, seventyDollars });
+            var takeoverCmd = fixture.PrincipalCommands<HostileTakeover>().InsertCommand(ANY_ROWS);
+            var takeoverInserts = fixture.InsertionsFor(takeoverCmd);
+            var currencyCmd = fixture.PrincipalCommands<LocalizedCurrency>().InsertCommand(ANY_ROWS);
+            var currencyInserts = fixture.InsertionsFor(currencyCmd);
+            var pricesCmd = fixture.RelationCommands<HostileTakeover>(0).InsertCommand(ANY_ROWS);
+            var priceInserts = fixture.InsertionsFor(pricesCmd);
+
+            // Assert
+            takeoverCmd.Connection.Should().Be(fixture.Connection);
+            takeoverCmd.Transaction.Should().Be(fixture.Transaction);
+            currencyCmd.Connection.Should().Be(fixture.Connection);
+            currencyCmd.Transaction.Should().Be(fixture.Transaction);
+            pricesCmd.Connection.Should().Be(fixture.Connection);
+            pricesCmd.Transaction.Should().Be(fixture.Transaction);
+            takeoverInserts.Should().HaveCount(1);
+            takeoverInserts.Should().ContainRow(takeover.Company, takeover.Date, takeover.Executor, takeover.TradedShares, takeover.InitialPercentageControlled, takeover.WasSuccessful, takeover.ProxyFight);
+            currencyInserts.Should().HaveCount(9);
+            currencyInserts.Should().ContainRow(fiftyDollars.Key, "dollar", fiftyDollars["dollar"]);
+            currencyInserts.Should().ContainRow(fiftyDollars.Key, "peso", fiftyDollars["peso"]);
+            currencyInserts.Should().ContainRow(fiftyDollars.Key, "euro", fiftyDollars["euro"]);
+            currencyInserts.Should().ContainRow(sixtyDollars.Key, "yen", sixtyDollars["yen"]);
+            currencyInserts.Should().ContainRow(sixtyDollars.Key, "shekel", sixtyDollars["shekel"]);
+            currencyInserts.Should().ContainRow(seventyDollars.Key, "rupee", seventyDollars["rupee"]);
+            currencyInserts.Should().ContainRow(seventyDollars.Key, "yuan", seventyDollars["yuan"]);
+            currencyInserts.Should().ContainRow(seventyDollars.Key, "pound", seventyDollars["pound"]);
+            currencyInserts.Should().ContainRow(seventyDollars.Key, "franc", seventyDollars["franc"]);
+            priceInserts.Should().HaveCount(3);
+            priceInserts.Should().ContainRow(takeover.Company, takeover.Date, fiftyDollars.Key);
+            priceInserts.Should().ContainRow(takeover.Company, takeover.Date, sixtyDollars.Key);
+            priceInserts.Should().ContainRow(takeover.Company, takeover.Date, seventyDollars.Key);
+            fixture.ShouldBeOrdered(takeoverCmd, pricesCmd);
+            fixture.ShouldBeOrdered((takeoverCmd, currencyCmd));
+            fixture.ShouldBeOrdered((pricesCmd, currencyCmd));
+            fixture.Transaction.Received(1).Commit();
+            fiftyDollars.Relation.Should().HaveUnsavedEntryCount(0);
+            sixtyDollars.Relation.Should().HaveUnsavedEntryCount(0);
+            seventyDollars.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaRelation() {
             // Arrange
             var ixchel = new MayanGod() {
                 Name = "Ixchel",
@@ -555,6 +847,43 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
             yumKaax.Mothers.Should().HaveUnsavedEntryCount(0);
             yumKaax.Fathers.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaLocalization() {
+            // Arrange
+            var pizzeria = new Pizzeria() {
+                Franchise = "Olympian Pies",
+                StoreNumber = 37,
+                AnnualRevenue = 4871062M,
+                Operator = "Kristakos Panagonopoulous IV",
+                ParentStore = new Pizzeria.LocalizedStore(Guid.NewGuid()),
+                NumVarieties = 315,
+                PizzaStyle = Pizzeria.Style.ByTheSlice | Pizzeria.Style.ByThePie | Pizzeria.Style.Regular
+            };
+            pizzeria.ParentStore["official"] = pizzeria;
+            pizzeria.ParentStore["unofficial"] = pizzeria;
+            var fixture = new TestFixture(typeof(Pizzeria), typeof(Pizzeria.LocalizedStore));
+
+            // Act
+            fixture.Transactor.Insert(new object[] { pizzeria, pizzeria.ParentStore });
+            var pizzeriaCmd = fixture.PrincipalCommands<Pizzeria>().InsertCommand(ANY_ROWS);
+            var pizzeriaInserts = fixture.InsertionsFor(pizzeriaCmd);
+            var storeCmd = fixture.PrincipalCommands<Pizzeria.LocalizedStore>().InsertCommand(ANY_ROWS);
+            var storeInserts = fixture.InsertionsFor(storeCmd);
+
+            // Assert
+            pizzeriaCmd.Connection.Should().Be(fixture.Connection);
+            pizzeriaCmd.Transaction.Should().Be(fixture.Transaction);
+            storeCmd.Connection.Should().Be(fixture.Connection);
+            storeCmd.Transaction.Should().Be(fixture.Transaction);
+            pizzeriaInserts.Should().HaveCount(1);
+            pizzeriaInserts.Should().ContainRow(pizzeria.Franchise, pizzeria.StoreNumber, pizzeria.AnnualRevenue, pizzeria.Operator, pizzeria.ParentStore.Key, pizzeria.NumVarieties, ConversionOf(pizzeria.PizzaStyle));
+            storeInserts.Should().HaveCount(2);
+            storeInserts.Should().ContainRow(pizzeria.ParentStore.Key, "official", pizzeria.ParentStore["official"].Franchise, pizzeria.ParentStore["official"].StoreNumber);
+            storeInserts.Should().ContainRow(pizzeria.ParentStore.Key, "unofficial", pizzeria.ParentStore["unofficial"].Franchise, pizzeria.ParentStore["unofficial"].StoreNumber);
+            fixture.ShouldBeOrdered(pizzeriaCmd, storeCmd);
+            fixture.Transaction.Received(1).Commit();
+            pizzeria.ParentStore.Relation.Should().HaveUnsavedEntryCount(0);
         }
 
         [TestMethod] public void TransactionRolledBack() {

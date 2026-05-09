@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using static UT.Kvasir.Transaction.Deletion;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Transaction {
     [TestClass, TestCategory("Deletion")]
@@ -372,6 +373,123 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
         }
 
+        [TestMethod] public void SingleInstanceSingleLocalizationSavedValues() {
+            // Arrange
+            var showtime = new Showtime("LOC_SPAMALOT_SHOWTIME");
+            showtime["US_CENTRAL"] = 1900;
+            showtime["US_EASTERN"] = 2000;
+            showtime["GREENWICH_MEAN"] = 100;
+            (showtime.Relation as IRelation).Canonicalize();
+            var fixture = new TestFixture(typeof(Showtime));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { showtime });
+            var showtimeCmd = fixture.PrincipalCommands<Showtime>().DeleteCommand(ANY_ROWS);
+            var showtimeDeletions = fixture.DeletionsFor(showtimeCmd);
+
+            // Assert
+            showtimeCmd.Connection.Should().Be(fixture.Connection);
+            showtimeCmd.Transaction.Should().Be(fixture.Transaction);
+            showtimeDeletions.Should().HaveCount(1);
+            showtimeDeletions.Should().ContainRow(showtime.Key);
+            fixture.ShouldBeOrdered(showtimeCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void SingleInstanceSingleLocalizationDeletedValues() {
+            // Arrange
+            var termOfEndearment = new TermOfEndearment("LOC_SWEETHEART");
+            termOfEndearment[Language.English] = "Sweetheart";
+            (termOfEndearment.Relation as IRelation).Canonicalize();
+            termOfEndearment.Delocalize(Language.English);
+            var fixture = new TestFixture(typeof(TermOfEndearment));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { termOfEndearment });
+            var termOfEndearmentCmd = fixture.PrincipalCommands<TermOfEndearment>().DeleteCommand(ANY_ROWS);
+            var termOfEndearmentDeletions = fixture.DeletionsFor(termOfEndearmentCmd);
+
+            // Act
+            termOfEndearmentCmd.Connection.Should().Be(fixture.Connection);
+            termOfEndearmentCmd.Transaction.Should().Be(fixture.Transaction);
+            termOfEndearmentDeletions.Should().HaveCount(1);
+            termOfEndearmentDeletions.Should().ContainRow(termOfEndearment.Key);
+            fixture.ShouldBeOrdered(termOfEndearmentCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void SingleInstanceSingleLocalizationNewValues() {
+            // Arrange
+            var label = new Label(81929125024);
+            label['E'] = "Fragile but Unimportant Airborne Cargo";
+            label['q'] = "Destination: Nuuk Airport";
+            label['$'] = "Paid in Full";
+            var fixture = new TestFixture(typeof(Label));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { label });
+            var labelCmd = fixture.PrincipalCommands<Label>().DeleteCommand(ANY_ROWS);
+            var labelDeletions = fixture.DeletionsFor(labelCmd);
+
+            // Act
+            labelCmd.Connection.Should().Be(fixture.Connection);
+            labelCmd.Transaction.Should().Be(fixture.Transaction);
+            labelDeletions.Should().HaveCount(1);
+            labelDeletions.Should().ContainRow(label.Key);
+            fixture.ShouldBeOrdered(labelCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void SingleInstanceSingleLocalizationMixedValues() {
+            // Arrange
+            var verb = new ConjugatedVerb(-19033);
+            verb[1.10] = "(yo) tengo";
+            verb[1.11] = "(yo) tuve";
+            verb[1.12] = "(yo) tenía";
+            verb[1.13] = "(yo) tendría";
+            (verb.Relation as IRelation).Canonicalize();
+            verb.Delocalize(1.13);
+            verb[2.10] = "(nosotros) tenemos";
+            verb[2.11] = "(nosotros) tuvimos";
+            var fixture = new TestFixture(typeof(ConjugatedVerb));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { verb });
+            var conjugationCmd = fixture.PrincipalCommands<ConjugatedVerb>().DeleteCommand(ANY_ROWS);
+            var conjugationDeletions = fixture.DeletionsFor(conjugationCmd);
+
+            // Act
+            conjugationCmd.Connection.Should().Be(fixture.Connection);
+            conjugationCmd.Transaction.Should().Be(fixture.Transaction);
+            conjugationDeletions.Should().HaveCount(1);
+            conjugationDeletions.Should().ContainRow(verb.Key);
+            fixture.ShouldBeOrdered(conjugationCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void MultipleInstancesSingleLocalization() {
+            // Arrange
+            var coordinate0 = new Coordinate(Guid.NewGuid());
+            var coordinate1 = new Coordinate(Guid.NewGuid());
+            var coordinate2 = new Coordinate(Guid.NewGuid());
+            var fixture = new TestFixture(typeof(Coordinate));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { coordinate0, coordinate1, coordinate2 });
+            var coordinateCmd = fixture.PrincipalCommands<Coordinate>().DeleteCommand(ANY_ROWS);
+            var coordinateDeletions = fixture.DeletionsFor(coordinateCmd);
+
+            // Act
+            coordinateCmd.Connection.Should().Be(fixture.Connection);
+            coordinateCmd.Transaction.Should().Be(fixture.Transaction);
+            coordinateDeletions.Should().HaveCount(3);
+            coordinateDeletions.Should().ContainRow(coordinate0.Key);
+            coordinateDeletions.Should().ContainRow(coordinate1.Key);
+            coordinateDeletions.Should().ContainRow(coordinate2.Key);
+            fixture.ShouldBeOrdered(coordinateCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
         [TestMethod] public void MultipleUnrelatedEntities() {
             // Arrange
             var shanty = new SeaShanty() {
@@ -418,6 +536,50 @@ namespace UT.Kvasir.Transaction {
             cepheidDeletions.Should().HaveCount(1);
             cepheidDeletions.Should().ContainRow(cepheid.Name);
             fixture.ShouldBeOrdered((shantyCmd, marbleCmd, cepheidCmd));
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void MultipleUnrelatedLocalizations() {
+            // Arrange
+            var sunset = new Sunset(new DateOnly(1983, 4, 19));
+            sunset["CHICAGO"] = 2013;
+            sunset["BEIJING"] = 1429;
+            sunset["NAIROBI"] = 756;
+            var wingding = new Wingding(67);
+            wingding[1] = "👍︎";
+            wingding[2] = "👉︎";
+            wingding[3] = "⮓";
+            var sprite = new Sprite("LOC_PORTABELLO_MUSHROOM_SPRITE");
+            sprite["regular"] = Guid.NewGuid();
+            sprite["shiny"] = Guid.NewGuid();
+            sprite["shadowed"] = Guid.NewGuid();
+            sprite["glowing"] = Guid.NewGuid();
+            sprite["silhouette"] = Guid.NewGuid();
+            var fixture = new TestFixture(typeof(Sunset), typeof(Wingding), typeof(Sprite));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { sunset, wingding, sprite });
+            var sunsetCmd = fixture.PrincipalCommands<Sunset>().DeleteCommand(ANY_ROWS);
+            var sunsetDeletions = fixture.DeletionsFor(sunsetCmd);
+            var wingdingCmd = fixture.PrincipalCommands<Wingding>().DeleteCommand(ANY_ROWS);
+            var wingdingDeletions = fixture.DeletionsFor(wingdingCmd);
+            var spriteCmd = fixture.PrincipalCommands<Sprite>().DeleteCommand(ANY_ROWS);
+            var spriteDeletions = fixture.DeletionsFor(spriteCmd);
+
+            // Assert
+            sunsetCmd.Connection.Should().Be(fixture.Connection);
+            sunsetCmd.Transaction.Should().Be(fixture.Transaction);
+            wingdingCmd.Connection.Should().Be(fixture.Connection);
+            wingdingCmd.Transaction.Should().Be(fixture.Transaction);
+            spriteCmd.Connection.Should().Be(fixture.Connection);
+            spriteCmd.Transaction.Should().Be(fixture.Transaction);
+            sunsetDeletions.Should().HaveCount(1);
+            sunsetDeletions.Should().ContainRow(sunset.Key);
+            wingdingDeletions.Should().HaveCount(1);
+            wingdingDeletions.Should().ContainRow(wingding.Key);
+            spriteDeletions.Should().HaveCount(1);
+            spriteDeletions.Should().ContainRow(sprite.Key);
+            fixture.ShouldBeOrdered((sunsetCmd, wingdingCmd, spriteCmd));
             fixture.Transaction.Received(1).Commit();
         }
 
@@ -577,7 +739,148 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
         }
 
-        [TestMethod] public void SelfReferentialRelation() {
+        [TestMethod] public void MultipleEntitiesRelatedByScalarLocalization() {
+            // Arrange
+            var bandeirante = new Bandeirante() {
+                ID = Guid.NewGuid(),
+                YearsActive = 3,
+                HomeState = new LocalizedText("LOC_SAO_PAULO"),
+                TotalLooted = new LocalizedCurrency("LOC_TWO_MILLION_DOLLARS"),
+                IsMameluco = true,
+                SpokePaulistaGeneral = true
+            };
+            var fixture = new TestFixture(typeof(Bandeirante), typeof(LocalizedText), typeof(LocalizedCurrency));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { bandeirante, bandeirante.HomeState, bandeirante.TotalLooted });
+            var bandeiranteCmd = fixture.PrincipalCommands<Bandeirante>().DeleteCommand(ANY_ROWS);
+            var bandeiranteDeletions = fixture.DeletionsFor(bandeiranteCmd);
+            var textCmd = fixture.PrincipalCommands<LocalizedText>().DeleteCommand(ANY_ROWS);
+            var textDeletions = fixture.DeletionsFor(textCmd);
+            var currencyCmd = fixture.PrincipalCommands<LocalizedCurrency>().DeleteCommand(ANY_ROWS);
+            var currencyDeletions = fixture.DeletionsFor(currencyCmd);
+
+            // Assert
+            bandeiranteCmd.Connection.Should().Be(fixture.Connection);
+            bandeiranteCmd.Transaction.Should().Be(fixture.Transaction);
+            textCmd.Connection.Should().Be(fixture.Connection);
+            textCmd.Transaction.Should().Be(fixture.Transaction);
+            currencyCmd.Connection.Should().Be(fixture.Connection);
+            currencyCmd.Transaction.Should().Be(fixture.Transaction);
+            bandeiranteDeletions.Should().HaveCount(1);
+            bandeiranteDeletions.Should().ContainRow(bandeirante.ID);
+            textDeletions.Should().HaveCount(1);
+            textDeletions.Should().ContainRow(bandeirante.HomeState.Key);
+            currencyDeletions.Should().HaveCount(1);
+            currencyDeletions.Should().ContainRow(bandeirante.TotalLooted.Key);
+            fixture.ShouldBeOrdered((bandeiranteCmd, textCmd, currencyCmd));
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByReferenceLocalization() {
+            // Arrange
+            var yyyymmdd = new BirthdayParty.YearMonthDay() {
+                Year = 1873,
+                Month = 4,
+                Day = 11,
+                KnownAs = null,
+                Spelling = "1873-04-11"
+            };
+            var wordyDate = new BirthdayParty.YearMonthDay() {
+                Year = 1873,
+                Month = 4,
+                Day = 11,
+                KnownAs = null,
+                Spelling = "April 11th, 1873"
+            };
+            var party = new BirthdayParty() {
+                Person = "Gerbhardt von Lützütuttüle",
+                Date = new BirthdayParty.LocalizedYearMonthDay("LOC_1873|4|11"),
+                Location = "Hesse's Spittoon and Salamandery",
+                InvitationOnly = true,
+                Attendees = 58,
+                TotalGiftValue = 1873.09M
+            };
+            party.Date["YYYYMMDD"] = yyyymmdd;
+            party.Date["<month> <ordinal>, <year>"] = wordyDate;
+            (party.Date.Relation as IRelation).Canonicalize();
+            var fixture = new TestFixture(typeof(BirthdayParty), typeof(BirthdayParty.YearMonthDay), typeof(BirthdayParty.LocalizedYearMonthDay));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { yyyymmdd, wordyDate, party, party.Date });
+            var partyCmd = fixture.PrincipalCommands<BirthdayParty>().DeleteCommand(ANY_ROWS);
+            var partyDeletions = fixture.DeletionsFor(partyCmd);
+            var dateCmd = fixture.PrincipalCommands<BirthdayParty.YearMonthDay>().DeleteCommand(ANY_ROWS);
+            var dateDeletions = fixture.DeletionsFor(dateCmd);
+            var localizationCmd = fixture.PrincipalCommands<BirthdayParty.LocalizedYearMonthDay>().DeleteCommand(ANY_ROWS);
+            var localizationDeletions = fixture.DeletionsFor(localizationCmd);
+
+            // Assert
+            partyCmd.Connection.Should().Be(fixture.Connection);
+            partyCmd.Transaction.Should().Be(fixture.Transaction);
+            dateCmd.Connection.Should().Be(fixture.Connection);
+            dateCmd.Transaction.Should().Be(fixture.Transaction);
+            localizationCmd.Connection.Should().Be(fixture.Connection);
+            localizationCmd.Transaction.Should().Be(fixture.Transaction);
+            partyDeletions.Should().HaveCount(1);
+            partyDeletions.Should().ContainRow(party.Person);
+            dateDeletions.Should().HaveCount(2);
+            dateDeletions.Should().ContainRow(yyyymmdd.Year, yyyymmdd.Month, yyyymmdd.Day, yyyymmdd.Spelling);
+            dateDeletions.Should().ContainRow(wordyDate.Year, wordyDate.Month, wordyDate.Day, wordyDate.Spelling);
+            localizationDeletions.Should().HaveCount(1);
+            localizationDeletions.Should().ContainRow(party.Date.Key);
+            fixture.ShouldBeOrdered((partyCmd, localizationCmd));
+            fixture.ShouldBeOrdered(localizationCmd, dateCmd);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByRelationLocalization() {
+            // Arrange
+            var text0 = new LocalizedNullableText("LOC_SCANDERRA");
+            var text1 = new LocalizedNullableText("LOC_TA_FLUMIN");
+            var lawyer = new Lawyer() {
+                BarNumber = Guid.NewGuid(),
+                Name = "Lord Stanley Razzellon IV, Eighteenth Earl of Thornentonshire",
+                AlmaMater = "London Temporary Secondary School of Greengrass-upon-Thames-upon-Earth",
+                Employers = new RelationOrderedList<LocalizedNullableText>() {
+                    text0,
+                    text1
+                },
+                WinPercentage = 0.03,
+                AnnualSalary = 57000M,
+                HasBeenDisbarred = false,
+                IsJudge = false,
+                Practice = Lawyer.Field.Malpractice
+            };
+            var fixture = new TestFixture(typeof(Lawyer), typeof(LocalizedNullableText));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { text0, text1, lawyer });
+            var lawyerCmd = fixture.PrincipalCommands<Lawyer>().DeleteCommand(ANY_ROWS);
+            var lawyerDeletions = fixture.DeletionsFor(lawyerCmd);
+            var textCmd = fixture.PrincipalCommands<LocalizedNullableText>().DeleteCommand(ANY_ROWS);
+            var textDeletions = fixture.DeletionsFor(textCmd);
+            var employersCmd = fixture.RelationCommands<Lawyer>(0).DeleteCommand(ANY_ROWS);
+            var employersDeletions = fixture.DeletionsFor(employersCmd);
+
+            // Assert
+            lawyerCmd.Connection.Should().Be(fixture.Connection);
+            lawyerCmd.Transaction.Should().Be(fixture.Transaction);
+            textCmd.Connection.Should().Be(fixture.Connection);
+            textCmd.Transaction.Should().Be(fixture.Transaction);
+            employersCmd.Connection.Should().Be(fixture.Connection);
+            employersCmd.Transaction.Should().Be(fixture.Transaction);
+            lawyerDeletions.Should().HaveCount(1);
+            lawyerDeletions.Should().ContainRow(lawyer.BarNumber);
+            textDeletions.Should().HaveCount(2);
+            textDeletions.Should().ContainRow(text0.Key);
+            textDeletions.Should().ContainRow(text1.Key);
+            employersDeletions.Should().HaveCount(1);
+            employersDeletions.Should().ContainRow(lawyer.BarNumber);
+            fixture.ShouldBeOrdered(employersCmd, lawyerCmd);
+            fixture.ShouldBeOrdered((employersCmd, textCmd));
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaRelation() {
             // Arrange
             var masseuse0 = new Masseuse() {
                 LicenseNumber = Guid.NewGuid(),
@@ -632,6 +935,60 @@ namespace UT.Kvasir.Transaction {
             teachersDeletions.Should().ContainRow(masseuse1.LicenseNumber, ConversionOf(masseuse1.Style));
             teachersDeletions.Should().ContainRow(masseuse2.LicenseNumber, ConversionOf(masseuse2.Style));
             fixture.ShouldBeOrdered(teachersCmd, masseuseCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaLocalization() {
+            // Arrange
+            var radiologist0 = new Radiologist() {
+                MedicalID = Guid.NewGuid(),
+                Name = "Dr. Spence-ur Werriolotto",
+                CanUseMRI = true,
+                BecquerelsExposure = 49103.8082,
+                DoesCancerTreatment = false,
+                Hospital = null,
+                Superior = new Radiologist.OnCallEscalation(new DateOnly(2019, 6, 23))
+            };
+            var radiologist1 = new Radiologist() {
+                MedicalID = Guid.NewGuid(),
+                Name = "Dr. Horae Van't'Ulo",
+                CanUseMRI = true,
+                BecquerelsExposure = 0.0,
+                DoesCancerTreatment = true,
+                Hospital = "Our Holy Lady of the Savior of the Angel of the Oasis",
+                Superior = radiologist0.Superior
+            };
+            var radiologist2 = new Radiologist() {
+                MedicalID = Guid.NewGuid(),
+                Name = "Dr. Ez K. LaMoBavann",
+                CanUseMRI = false,
+                BecquerelsExposure = 1928129124.120412,
+                DoesCancerTreatment = false,
+                Hospital = "Mount Cozutto National Hospital",
+                Superior = radiologist0.Superior
+            };
+            radiologist0.Superior[1] = radiologist2;
+            (radiologist0.Superior.Relation as IRelation).Canonicalize();
+            var fixture = new TestFixture(typeof(Radiologist), typeof(Radiologist.OnCallEscalation));
+
+            // Act
+            fixture.Transactor.Delete(new object[] { radiologist0, radiologist1, radiologist2, radiologist0.Superior });
+            var radiologistCmd = fixture.PrincipalCommands<Radiologist>().DeleteCommand(ANY_ROWS);
+            var radiologistDeletions = fixture.DeletionsFor(radiologistCmd);
+            var onCallCmd = fixture.PrincipalCommands<Radiologist.OnCallEscalation>().DeleteCommand(ANY_ROWS);
+            var onCallDeletions = fixture.DeletionsFor(onCallCmd);
+
+            // Assert
+            radiologistCmd.Connection.Should().Be(fixture.Connection);
+            radiologistCmd.Transaction.Should().Be(fixture.Transaction);
+            onCallCmd.Connection.Should().Be(fixture.Connection);
+            onCallCmd.Transaction.Should().Be(fixture.Transaction);
+            radiologistDeletions.Should().HaveCount(3);
+            radiologistDeletions.Should().ContainRow(radiologist0.MedicalID);
+            radiologistDeletions.Should().ContainRow(radiologist1.MedicalID);
+            radiologistDeletions.Should().ContainRow(radiologist2.MedicalID);
+            onCallDeletions.Should().ContainRow(radiologist0.Superior.Key);
+            fixture.ShouldBeOrdered(onCallCmd, radiologistCmd);
             fixture.Transaction.Received(1).Commit();
         }
 

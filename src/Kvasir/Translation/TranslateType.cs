@@ -180,8 +180,16 @@ namespace Kvasir.Translation {
                         if (!keyMatchers_.ContainsKey(propType)) {
                             var extractor = new ReadPropertyExtractor(new PropertyChain(propType, "Key"));
                             var plan = new DataExtractionPlan(Enumerable.Repeat(extractor, 1));
-                            var matcher = new KeyMatcher(() => entityLookup_(propType), plan);
-                            keyMatchers_.Add(propType, matcher);
+
+                            if (!propType.HasAttribute<PreDefinedAttribute>()) {
+                                var matcher = new KeyMatcher(() => entityLookup_(propType), plan);
+                                keyMatchers_.Add(propType, matcher);
+                            }
+                            else {
+                                var instances = Translator.GetPreDefinedInstances(context, propType);
+                                var matcher = new KeyMatcher(() => instances, plan);
+                                keyMatchers_.Add(propType, matcher);
+                            }
                         }
 
                         translation.Add(new LocalizationKeyFieldGroup(context, property, keyMatchers_[propType]));
