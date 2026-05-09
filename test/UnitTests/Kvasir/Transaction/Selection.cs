@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 
 using static UT.Kvasir.Transaction.Selection;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Transaction {
     [TestClass, TestCategory("Selection")]
@@ -217,6 +218,69 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(deodorantQuery, scentsQuery);
         }
 
+        [TestMethod] public void SingleInstanceSingleLocalization() {
+            // Arrange
+            var vocalRange1 = new object[] { "LOC_ALTO", ConversionOf(Language.English), 37.9 };
+            var vocalRange2 = new object[] { "LOC_ALTO", ConversionOf(Language.Spanish), -9.656 };
+            var vocalRange3 = new object[] { "LOC_ALTO", ConversionOf(Language.Hindi), 102951258.62201 };
+            var fixture = new TestFixture(typeof(VocalRange))
+                .WithLocalizationRow<VocalRange>(vocalRange1)
+                .WithLocalizationRow<VocalRange>(vocalRange2)
+                .WithLocalizationRow<VocalRange>(vocalRange3);
+
+            // Act
+            fixture.Transactor.SelectAll();
+            var vocalRangeQuery = fixture.PrincipalCommands<VocalRange>().SelectAllQuery;
+            var vocalRanges = fixture.Depot[typeof(VocalRange)].Cast<VocalRange>().ToList();
+
+            // Assert
+            vocalRangeQuery.Connection.Should().Be(fixture.Connection);
+            vocalRanges.Should().HaveCount(1);
+            vocalRange1[0].Should().Be(vocalRanges[0].Key);
+            vocalRanges[0].Localizations.Should().HaveCount(3);
+            vocalRange1[2].Should().Be(vocalRanges[0][Language.English]);
+            vocalRange2[2].Should().Be(vocalRanges[0][Language.Spanish]);
+            vocalRange3[2].Should().Be(vocalRanges[0][Language.Hindi]);
+        }
+
+        [TestMethod] public void MultipleInstancesSingleLocalization() {
+            // Arrange
+            var pleasantry1 = new object[] { "LOC_THANKS", 'q', "Thank You" };
+            var pleasantry2 = new object[] { "LOC_THANKS", 'a', "Thank You Very Much" };
+            var pleasantry3 = new object[] { "LOC_THANKS", 'i', "Many Thanks" };
+            var pleasantry4 = new object[] { "LOC_GOOD_EVENING", 'q', "Good Evening" };
+            var pleasantry5 = new object[] { "LOC_GOOD_EVENING", 'h', "Night-Night" };
+            var pleasantry6 = new object[] { "LOC_MY_PLEASURE", 'q', "My Pleasure" };
+            var fixture = new TestFixture(typeof(Pleasantry))
+                .WithLocalizationRow<Pleasantry>(pleasantry1)
+                .WithLocalizationRow<Pleasantry>(pleasantry2)
+                .WithLocalizationRow<Pleasantry>(pleasantry3)
+                .WithLocalizationRow<Pleasantry>(pleasantry4)
+                .WithLocalizationRow<Pleasantry>(pleasantry5)
+                .WithLocalizationRow<Pleasantry>(pleasantry6);
+
+            // Act
+            fixture.Transactor.SelectAll();
+            var pleasantryQuery = fixture.PrincipalCommands<Pleasantry>().SelectAllQuery;
+            var pleasantries = fixture.Depot[typeof(Pleasantry)].Cast<Pleasantry>().ToList();
+
+            // Assert
+            pleasantryQuery.Connection.Should().Be(fixture.Connection);
+            pleasantries.Should().HaveCount(3);
+            pleasantry4[0].Should().Be(pleasantries[0].Key);
+            pleasantries[0].Localizations.Should().HaveCount(2);
+            pleasantry4[2].Should().Be(pleasantries[0]['q']);
+            pleasantry5[2].Should().Be(pleasantries[0]['h']);
+            pleasantry6[0].Should().Be(pleasantries[1].Key);
+            pleasantries[1].Localizations.Should().HaveCount(1);
+            pleasantry6[2].Should().Be(pleasantries[1]['q']);
+            pleasantry1[0].Should().Be(pleasantries[2].Key);
+            pleasantries[2].Localizations.Should().HaveCount(3);
+            pleasantry1[2].Should().Be(pleasantries[2]['q']);
+            pleasantry2[2].Should().Be(pleasantries[2]['a']);
+            pleasantry3[2].Should().Be(pleasantries[2]['i']);
+        }
+
         [TestMethod] public void MultipleUnrelatedEntities() {
             // Arrange
             var griselda = new object[] { (byte)3, (byte)2, "Griselda Blanco", "New Jersey", "Dan Harmon", new DateTime(2015, 9, 8) };
@@ -292,6 +356,61 @@ namespace UT.Kvasir.Transaction {
             colonoscopy[4].Should().Be(colonoscopies[0].Discomfort);
             colonoscopy[5].Should().Be(colonoscopies[0].Biopsy);
             fixture.ShouldBeOrdered((drunkHistoryQuery, allergenQuery, colonoscopyQuery));
+        }
+
+        [TestMethod] public void MultipleUnrelatedLocalizations() {
+            // Arrange
+            var wotd1 = new object[] { new DateOnly(2026, 5, 9), ConversionOf(Language.English), "antelope" };
+            var wotd2 = new object[] { new DateOnly(2026, 5, 9), ConversionOf(Language.Spanish), "antílope" };
+            var wotd3 = new object[] { new DateOnly(2026, 5, 9), ConversionOf(Language.Hebrew), "אַנְטִילוֹפָּה" };
+            var exclamation1 = new object[] { 14812, "wowza!", 91824124UL };
+            var exclamation2 = new object[] { 14812, "yikes!", 182515510UL };
+            var irrationalNumber1 = new object[] { "square root of 2", 5, 1.41421 };
+            var irrationalNumber2 = new object[] { "square root of 2", 11, 1.41421356237 };
+            var irrationalNumber3 = new object[] { "square root of 2", 0, 1.0 };
+            var irrationalNumber4 = new object[] { "square root of 2", 18, 1.414213562373095048 };
+            var fixture = new TestFixture(typeof(WordOfTheDay), typeof(Exclamation), typeof(IrrationalNumber))
+                .WithLocalizationRow<WordOfTheDay>(wotd1)
+                .WithLocalizationRow<WordOfTheDay>(wotd2)
+                .WithLocalizationRow<WordOfTheDay>(wotd3)
+                .WithLocalizationRow<Exclamation>(exclamation1)
+                .WithLocalizationRow<Exclamation>(exclamation2)
+                .WithLocalizationRow<IrrationalNumber>(irrationalNumber1)
+                .WithLocalizationRow<IrrationalNumber>(irrationalNumber2)
+                .WithLocalizationRow<IrrationalNumber>(irrationalNumber3)
+                .WithLocalizationRow<IrrationalNumber>(irrationalNumber4);
+
+            // Act
+            fixture.Transactor.SelectAll();
+            var wotdQuery = fixture.PrincipalCommands<WordOfTheDay>().SelectAllQuery;
+            var exclamationQuery = fixture.PrincipalCommands<Exclamation>().SelectAllQuery;
+            var irrationalNumberQuery = fixture.PrincipalCommands<IrrationalNumber>().SelectAllQuery;
+            var wotds = fixture.Depot[typeof(WordOfTheDay)].Cast<WordOfTheDay>().ToList();
+            var exclamations = fixture.Depot[typeof(Exclamation)].Cast<Exclamation>().ToList();
+            var irrationalNumbers = fixture.Depot[typeof(IrrationalNumber)].Cast<IrrationalNumber>().ToList();
+
+            // Assert
+            wotdQuery.Connection.Should().Be(fixture.Connection);
+            exclamationQuery.Connection.Should().Be(fixture.Connection);
+            irrationalNumberQuery.Connection.Should().Be(fixture.Connection);
+            wotds.Should().HaveCount(1);
+            wotd1[0].Should().Be(wotds[0].Key);
+            wotds[0].Localizations.Should().HaveCount(3);
+            wotd1[2].Should().Be(wotds[0][Language.English]);
+            wotd2[2].Should().Be(wotds[0][Language.Spanish]);
+            wotd3[2].Should().Be(wotds[0][Language.Hebrew]);
+            exclamations.Should().HaveCount(1);
+            exclamation1[0].Should().Be(exclamations[0].Key);
+            exclamations[0].Localizations.Should().HaveCount(2);
+            exclamation1[2].Should().Be(exclamations[0]["wowza!"]);
+            exclamation2[2].Should().Be(exclamations[0]["yikes!"]);
+            irrationalNumbers.Should().HaveCount(1);
+            irrationalNumber1[0].Should().Be(irrationalNumbers[0].Key);
+            irrationalNumbers[0].Localizations.Should().HaveCount(4);
+            irrationalNumber1[2].Should().Be(irrationalNumbers[0][5]);
+            irrationalNumber2[2].Should().Be(irrationalNumbers[0][11]);
+            irrationalNumber3[2].Should().Be(irrationalNumbers[0][0]);
+            irrationalNumber4[2].Should().Be(irrationalNumbers[0][18]);
         }
 
         [TestMethod] public void MultipleEntitiesRelatedByReferenceChain() {
@@ -474,7 +593,159 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered((playerQuery, hailMaryQuery), involvementQuery);
         }
 
-        [TestMethod] public void SelfReferentialRelation() {
+        [TestMethod] public void MultipleEntitiesRelatedByScalarLocalization() {
+            // Arrange
+            var currency0 = new object[] { "LOC_CURRENCY_0", "dollar", 38.00M };
+            var currency1 = new object[] { "LOC_CURRENCY_1", "dollar", 0.003M };
+            var date = new object[] { Guid.NewGuid(), ConversionOf(Calendar.Gregorian), new DateOnly(2026, 9, 18) };
+            var text = new object[] { "LOC_NYSE", ConversionOf(Language.English), "New York Stock Exchange" };
+            var contract = new object[] { Guid.NewGuid(), currency0[0], date[0], ConversionOf(EventContract.Category.Politics), text[0], currency1[0] };
+            var fixture = new TestFixture(typeof(EventContract), typeof(LocalizedCurrency), typeof(LocalizedDate), typeof(LocalizedNullableText))
+                .WithEntityRow<EventContract>(contract)
+                .WithLocalizationRow<LocalizedCurrency>(currency0)
+                .WithLocalizationRow<LocalizedCurrency>(currency1)
+                .WithLocalizationRow<LocalizedDate>(date)
+                .WithLocalizationRow<LocalizedNullableText>(text);
+
+            // Act
+            fixture.Transactor.SelectAll();
+            var contractQuery = fixture.PrincipalCommands<EventContract>().SelectAllQuery;
+            var currencyQuery = fixture.PrincipalCommands<LocalizedCurrency>().SelectAllQuery;
+            var dateQuery = fixture.PrincipalCommands<LocalizedDate>().SelectAllQuery;
+            var textQuery = fixture.PrincipalCommands<LocalizedNullableText>().SelectAllQuery;
+            var contracts = fixture.Depot[typeof(EventContract)].Cast<EventContract>().ToList();
+            var currencies = fixture.Depot[typeof(LocalizedCurrency)].Cast<LocalizedCurrency>().ToList();
+            var dates = fixture.Depot[typeof(LocalizedDate)].Cast<LocalizedDate>().ToList();
+            var texts = fixture.Depot[typeof(LocalizedNullableText)].Cast<LocalizedNullableText>().ToList();
+
+            // Assert
+            contractQuery.Connection.Should().Be(fixture.Connection);
+            currencyQuery.Connection.Should().Be(fixture.Connection);
+            dateQuery.Connection.Should().Be(fixture.Connection);
+            textQuery.Connection.Should().Be(fixture.Connection);
+            contracts.Should().HaveCount(1);
+            contract[0].Should().Be(contracts[0].SecurityID);
+            contract[1].Should().Be(contracts[0].StrikePrice.Key);
+            contract[2].Should().Be(contracts[0].Expiration.Key);
+            contract[3].Should().Be(ConversionOf(contracts[0].Categorization));
+            contract[4].Should().Be(contracts[0].ListingExchange.Key);
+            contract[5].Should().Be(contracts[0].Fee.Key);
+            currencies.Should().HaveCount(2);
+            currency0[0].Should().Be(currencies[0].Key);
+            currencies[0].Localizations.Should().HaveCount(1);
+            currency0[2].Should().Be(currencies[0]["dollar"]);
+            currency1[0].Should().Be(currencies[1].Key);
+            currencies[1].Localizations.Should().HaveCount(1);
+            currency1[2].Should().Be(currencies[1]["dollar"]);
+            dates.Should().HaveCount(1);
+            date[0].Should().Be(dates[0].Key);
+            dates[0].Localizations.Should().HaveCount(1);
+            date[2].Should().Be(dates[0][Calendar.Gregorian]);
+            texts.Should().HaveCount(1);
+            text[0].Should().Be(texts[0].Key);
+            texts[0].Localizations.Should().HaveCount(1);
+            text[2].Should().Be(texts[0][Language.English]);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByReferenceLocalization() {
+            // Arrange
+            var cost = new object[] { Guid.NewGuid(), 3600, 500.0M };
+            var localizedCost0 = new object[] { "LOC_VRANTZHAUS", ConversionOf(DJ.Event.Wedding), cost[0] };
+            var localizedCost1 = new object[] { localizedCost0[0], ConversionOf(DJ.Event.BneiMitzvah), cost[0] };
+            var dj = new object[] { Guid.NewGuid(), "Carlos Stweep", new DateOnly(1984, 5, 11), localizedCost0[0], 1258125UL, 25.443 };
+            var fixture = new TestFixture(typeof(DJ), typeof(DJ.Cost), typeof(DJ.LocalizedCost))
+                .WithEntityRow<DJ>(dj)
+                .WithEntityRow<DJ.Cost>(cost)
+                .WithLocalizationRow<DJ.LocalizedCost>(localizedCost0)
+                .WithLocalizationRow<DJ.LocalizedCost>(localizedCost1);
+
+            // Act
+            fixture.Transactor.SelectAll();
+            var djQuery = fixture.PrincipalCommands<DJ>().SelectAllQuery;
+            var costQuery = fixture.PrincipalCommands<DJ.Cost>().SelectAllQuery;
+            var localizedCostQuery = fixture.PrincipalCommands<DJ.LocalizedCost>().SelectAllQuery;
+            var djs = fixture.Depot[typeof(DJ)].Cast<DJ>().ToList();
+            var costs = fixture.Depot[typeof(DJ.Cost)].Cast<DJ.Cost>().ToList();
+            var localizedCosts = fixture.Depot[typeof(DJ.LocalizedCost)].Cast<DJ.LocalizedCost>().ToList();
+
+            // Assert
+            djQuery.Connection.Should().Be(fixture.Connection);
+            costQuery.Connection.Should().Be(fixture.Connection);
+            localizedCostQuery.Connection.Should().Be(fixture.Connection);
+            djs.Should().HaveCount(1);
+            dj[0].Should().Be(djs[0].EntertainerID);
+            dj[1].Should().Be(djs[0].Name);
+            dj[2].Should().Be(djs[0].BirthDate);
+            dj[3].Should().Be(djs[0].Charge.Key);
+            dj[4].Should().Be(djs[0].SongRepertoireSize);
+            dj[5].Should().Be(djs[0].AvgLoudness);
+            costs.Should().HaveCount(1);
+            cost[0].Should().Be(costs[0].Entry);
+            cost[1].Should().Be(costs[0].UnitSeconds);
+            cost[2].Should().Be(costs[0].Value);
+            localizedCosts.Should().HaveCount(1);
+            localizedCost0[0].Should().Be(localizedCosts[0].Key);
+            localizedCosts[0].Localizations.Should().HaveCount(2);
+            localizedCosts[0][DJ.Event.Wedding].Should().Be(costs[0]);
+            localizedCosts[0][DJ.Event.BneiMitzvah].Should().Be(costs[0]);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByRelationLocalization() {
+            // Arrange
+            var length0 = new object[] { 1825712UL, ConversionOf(Translation.TestLocalizations.System.Imperial), "feet", 13.9 };
+            var length1 = new object[] { length0[0], ConversionOf(Translation.TestLocalizations.System.Metric), "meters", 4.25 };
+            var weight0 = new object[] { 610UL, ConversionOf(Translation.TestLocalizations.System.Imperial), "pounds", 2650.0 };
+            var weight1 = new object[] { weight0[0], ConversionOf(Translation.TestLocalizations.System.Metric), "kilograms", 1200.0 };
+            var gestation = new object[] { 910000005UL, ConversionOf(Translation.TestLocalizations.System.Imperial), "months", 15.0 };
+            var whale = new object[] { "Narwhal", "Monodon", "monoceros", true, ConversionOf(Whale.IUCN.LeastConcern) };
+            var fixture = new TestFixture(typeof(Whale), typeof(LocalizedMeasure))
+                .WithEntityRow<Whale>(whale)
+                .WithLocalizationRow<LocalizedMeasure>(length0)
+                .WithLocalizationRow<LocalizedMeasure>(length1)
+                .WithLocalizationRow<LocalizedMeasure>(weight0)
+                .WithLocalizationRow<LocalizedMeasure>(weight1)
+                .WithLocalizationRow<LocalizedMeasure>(gestation)
+                .WithRelationRow<Whale>(0, new object[] { whale[0], ConversionOf(Whale.Dimension.Length), length0[0] })
+                .WithRelationRow<Whale>(0, new object[] { whale[0], ConversionOf(Whale.Dimension.Weight), weight0[0] })
+                .WithRelationRow<Whale>(0, new object[] { whale[0], ConversionOf(Whale.Dimension.GestationPeriod), gestation[0] });
+
+            // Act
+            fixture.Transactor.SelectAll();
+            var whaleQuery = fixture.PrincipalCommands<Whale>().SelectAllQuery;
+            var measureQuery = fixture.PrincipalCommands<LocalizedMeasure>().SelectAllQuery;
+            var measurementsQuery = fixture.RelationCommands<Whale>(0).SelectAllQuery;
+            var whales = fixture.Depot[typeof(Whale)].Cast<Whale>().ToList();
+            var measures = fixture.Depot[typeof(LocalizedMeasure)].Cast<LocalizedMeasure>().ToList();
+
+            // Assert
+            whaleQuery.Connection.Should().Be(fixture.Connection);
+            measureQuery.Connection.Should().Be(fixture.Connection);
+            measurementsQuery.Connection.Should().Be(fixture.Connection);
+            whales.Should().HaveCount(1);
+            whale[0].Should().Be(whales[0].CommonName);
+            whale[1].Should().Be(whales[0].Genus);
+            whale[2].Should().Be(whales[0].Species);
+            whale[3].Should().Be(whales[0].Toothed);
+            whale[4].Should().Be(ConversionOf(whales[0].Vulnerability));
+            measures.Should().HaveCount(3);
+            length0[2].Should().Be(measures[1][Translation.TestLocalizations.System.Imperial].Unit);
+            length0[3].Should().Be(measures[1][Translation.TestLocalizations.System.Imperial].Value);
+            length1[2].Should().Be(measures[1][Translation.TestLocalizations.System.Metric].Unit);
+            length1[3].Should().Be(measures[1][Translation.TestLocalizations.System.Metric].Value);
+            weight0[2].Should().Be(measures[0][Translation.TestLocalizations.System.Imperial].Unit);
+            weight0[3].Should().Be(measures[0][Translation.TestLocalizations.System.Imperial].Value);
+            weight1[2].Should().Be(measures[0][Translation.TestLocalizations.System.Metric].Unit);
+            weight1[3].Should().Be(measures[0][Translation.TestLocalizations.System.Metric].Value);
+            gestation[2].Should().Be(measures[2][Translation.TestLocalizations.System.Imperial].Unit);
+            gestation[3].Should().Be(measures[2][Translation.TestLocalizations.System.Imperial].Value);
+            whales[0].Measurements.Count.Should().Be(3);
+            length0[0].Should().Be(whales[0].Measurements[Whale.Dimension.Length].Key);
+            weight0[0].Should().Be(whales[0].Measurements[Whale.Dimension.Weight].Key);
+            gestation[0].Should().Be(whales[0].Measurements[Whale.Dimension.GestationPeriod].Key);
+            fixture.ShouldBeOrdered((whaleQuery, measureQuery), measurementsQuery);
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaRelation() {
             // Arrange
             var naderShah = new object[] { "Nader Shah", new DateTime(1736, 3, 8), new DateTime(1747, 6, 20), "Afsharid", "Tehran" };
             var abbas = new object[] { "Abbas III", new DateTime(1732, 4, 16), new DateTime(1736, 1, 22), "Safavid", "Tehran" };
@@ -517,6 +788,42 @@ namespace UT.Kvasir.Transaction {
             tahmasp[4].Should().Be(shahs[2].Capital);
             shahs[2].Predecessor.Count.Should().Be(0);
             fixture.ShouldBeOrdered(shahQuery, predecessorsQuery);
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaLocalization() {
+            // Arrange
+            var localizedCell = new object[] { '+', true, Guid.NewGuid() };
+            var stemCell0 = new object[] { localizedCell[2], localizedCell[0], 0.00945f, true, "Samson Houlie" };
+            var stemCell1 = new object[] { Guid.NewGuid(), DBNull.Value, 0.0000002f, false, "Dwight Edellian" };
+            var fixture = new TestFixture(typeof(StemCell), typeof(StemCell.LocalizedCell))
+                .WithEntityRow<StemCell>(stemCell0)
+                .WithEntityRow<StemCell>(stemCell1)
+                .WithLocalizationRow<StemCell.LocalizedCell>(localizedCell);
+
+            // Act
+            fixture.Transactor.SelectAll();
+            var stemCellQuery = fixture.PrincipalCommands<StemCell>().SelectAllQuery;
+            var localizedCellQuery = fixture.PrincipalCommands<StemCell.LocalizedCell>().SelectAllQuery;
+            var stemCells = fixture.Depot[typeof(StemCell)].Cast<StemCell>().ToList();
+            var localizedCells = fixture.Depot[typeof(StemCell.LocalizedCell)].Cast<StemCell.LocalizedCell>().ToList();
+
+            // Assert
+            stemCellQuery.Connection.Should().Be(fixture.Connection);
+            localizedCellQuery.Connection.Should().Be(fixture.Connection);
+            stemCells.Should().HaveCount(2);
+            stemCell0[0].Should().Be(stemCells[0].CellID);
+            stemCell0[1].Should().Be(stemCells[0].ParentCell!.Key);
+            stemCell0[2].Should().Be(stemCells[0].Length);
+            stemCell0[3].Should().Be(stemCells[0].IsPluripotent);
+            stemCell0[4].Should().Be(stemCells[0].Owner);
+            stemCell1[0].Should().Be(stemCells[1].CellID);
+            stemCells[1].ParentCell.Should().BeNull();
+            stemCell1[2].Should().Be(stemCells[1].Length);
+            stemCell1[3].Should().Be(stemCells[1].IsPluripotent);
+            stemCell1[4].Should().Be(stemCells[1].Owner);
+            localizedCells.Should().HaveCount(1);
+            localizedCell[0].Should().Be(localizedCells[0].Key);
+            localizedCell[2].Should().Be(localizedCells[0][true].CellID);
         }
 
 

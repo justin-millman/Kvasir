@@ -45,7 +45,7 @@ namespace Kvasir.Translation {
         ///   if any of the pre-defined instances of <paramref name="source"/> are annotated with an annotation other
         ///   than <c>[IncludeInModel]</c> or <c>[CodeOnly]</c>.
         /// </exception>
-        private static IEnumerable<object> GetPreDefinedInstances(Context context, Type source) {
+        public static IEnumerable<object> GetPreDefinedInstances(Context context, Type source) {
             var statics = source.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             var possibleInstances = statics.Where(p => p.PropertyType == source);
 

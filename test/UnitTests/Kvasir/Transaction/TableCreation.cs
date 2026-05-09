@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using static UT.Kvasir.Transaction.TableCreation;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Transaction {
     [TestClass, TestCategory("Table Creation")]
@@ -47,6 +48,21 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
         }
 
+        [TestMethod] public void SingleLocalization() {
+            // Arrange
+            var fixture = new TestFixture(typeof(Nickname));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var nicknameCmd = fixture.PrincipalCommands<Nickname>().CreateTableCommand;
+
+            // Assert
+            nicknameCmd.Connection.Should().Be(fixture.Connection);
+            nicknameCmd.Transaction.Should().Be(fixture.Transaction);
+            fixture.ShouldBeOrdered(nicknameCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
         [TestMethod] public void MultipleUnrelatedEntities() {
             // Arrange
             var fixture = new TestFixture(typeof(Gondola), typeof(Scooter), typeof(Muffin));
@@ -65,6 +81,24 @@ namespace UT.Kvasir.Transaction {
             muffinCmd.Connection.Should().Be(fixture.Connection);
             muffinCmd.Transaction.Should().Be(fixture.Transaction);
             fixture.ShouldBeOrdered((gondolaCmd, scooterCmd, muffinCmd));
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void MultipleUnrelatedLocalizations() {
+            // Arrange
+            var fixture = new TestFixture(typeof(Dosage), typeof(GUID));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var dosageCmd = fixture.PrincipalCommands<Dosage>().CreateTableCommand;
+            var guidCmd = fixture.PrincipalCommands<GUID>().CreateTableCommand;
+
+            // Assert
+            dosageCmd.Connection.Should().Be(fixture.Connection);
+            dosageCmd.Transaction.Should().Be(fixture.Transaction);
+            guidCmd.Connection.Should().Be(fixture.Connection);
+            guidCmd.Transaction.Should().Be(fixture.Transaction);
+            fixture.ShouldBeOrdered((dosageCmd, guidCmd));
             fixture.Transaction.Received(1).Commit();
         }
 
@@ -138,7 +172,68 @@ namespace UT.Kvasir.Transaction {
             fixture.Transaction.Received(1).Commit();
         }
 
-        [TestMethod] public void SelfReferentialEntity() {
+        [TestMethod] public void MultipleEntitiesRelatedByScalarLocalization() {
+            // Arrange
+            var fixture = new TestFixture(typeof(Quesadilla), typeof(LocalizedMeasure));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var quesadillaCmd = fixture.PrincipalCommands<Quesadilla>().CreateTableCommand;
+            var measureCmd = fixture.PrincipalCommands<LocalizedMeasure>().CreateTableCommand;
+
+            // Assert
+            quesadillaCmd.Connection.Should().Be(fixture.Connection);
+            quesadillaCmd.Transaction.Should().Be(fixture.Transaction);
+            measureCmd.Connection.Should().Be(fixture.Connection);
+            measureCmd.Transaction.Should().Be(fixture.Transaction);
+            fixture.ShouldBeOrdered((quesadillaCmd, measureCmd));
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByReferenceLocalization() {
+            // Arrange
+            var fixture = new TestFixture(typeof(Honmoon), typeof(Honmoon.DemonHunter), typeof(Honmoon.LocalizedHunter));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var honmoonCmd = fixture.PrincipalCommands<Honmoon>().CreateTableCommand;
+            var hunterCmd = fixture.PrincipalCommands<Honmoon.DemonHunter>().CreateTableCommand;
+            var localizationCmd = fixture.PrincipalCommands<Honmoon.LocalizedHunter>().CreateTableCommand;
+
+            // Assert
+            honmoonCmd.Connection.Should().Be(fixture.Connection);
+            honmoonCmd.Transaction.Should().Be(fixture.Transaction);
+            hunterCmd.Connection.Should().Be(fixture.Connection);
+            hunterCmd.Transaction.Should().Be(fixture.Transaction);
+            localizationCmd.Connection.Should().Be(fixture.Connection);
+            localizationCmd.Transaction.Should().Be(fixture.Transaction);
+            fixture.ShouldBeOrdered((honmoonCmd, hunterCmd));
+            fixture.ShouldBeOrdered((honmoonCmd, localizationCmd));
+            fixture.ShouldBeOrdered(hunterCmd, localizationCmd);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByRelationLocalization() {
+            // Arrange
+            var fixture = new TestFixture(typeof(LocalizedText), typeof(CrownJewel));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var textCmd = fixture.PrincipalCommands<LocalizedText>().CreateTableCommand;
+            var jewelCmd = fixture.PrincipalCommands<CrownJewel>().CreateTableCommand;
+            var componentsCmd = fixture.RelationCommands<CrownJewel>(0).CreateTableCommand;
+
+            // Assert
+            textCmd.Connection.Should().Be(fixture.Connection);
+            textCmd.Transaction.Should().Be(fixture.Transaction);
+            jewelCmd.Connection.Should().Be(fixture.Connection);
+            jewelCmd.Transaction.Should().Be(fixture.Transaction);
+            componentsCmd.Connection.Should().Be(fixture.Connection);
+            componentsCmd.Transaction.Should().Be(fixture.Transaction);
+            fixture.ShouldBeOrdered(jewelCmd, componentsCmd, textCmd);
+            fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaRelation() {
             // Arrange
             var fixture = new TestFixture(typeof(Matrix));
 
@@ -157,6 +252,28 @@ namespace UT.Kvasir.Transaction {
             inversesCmd.Transaction.Should().Be(fixture.Transaction);
             fixture.ShouldBeOrdered(matrixCmd, (eigenvaluesCmd, inversesCmd));
             fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaLocalization() {
+            // Arrange
+            var fixture = new TestFixture(typeof(ClassActionLawsuit), typeof(LocalizedDate), typeof(ClassActionLawsuit.LocalizedVerdict));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var lawsuitCmd = fixture.PrincipalCommands<ClassActionLawsuit>().CreateTableCommand;
+            var dateCmd = fixture.PrincipalCommands<LocalizedDate>().CreateTableCommand;
+            var verdictCmd = fixture.PrincipalCommands<ClassActionLawsuit.LocalizedVerdict>().CreateTableCommand;
+
+            // Assert
+            lawsuitCmd.Connection.Should().Be(fixture.Connection);
+            lawsuitCmd.Transaction.Should().Be(fixture.Transaction);
+            dateCmd.Connection.Should().Be(fixture.Connection);
+            dateCmd.Transaction.Should().Be(fixture.Transaction);
+            verdictCmd.Connection.Should().Be(fixture.Connection);
+            verdictCmd.Transaction.Should().Be(fixture.Transaction);
+            fixture.ShouldBeOrdered(lawsuitCmd, verdictCmd);
+            fixture.ShouldBeOrdered((lawsuitCmd, dateCmd));
+            fixture.ShouldBeOrdered((verdictCmd, dateCmd));
         }
 
         [TestMethod] public void PreDefinedEntity() {
@@ -185,6 +302,42 @@ namespace UT.Kvasir.Transaction {
             inserts.Should().ContainRow(Dashavatara.Krishna.Index, Dashavatara.Krishna.Name, Dashavatara.Krishna.Form);
             inserts.Should().ContainRow(Dashavatara.Buddha.Index, Dashavatara.Buddha.Name, Dashavatara.Buddha.Form);
             inserts.Should().ContainRow(Dashavatara.Kalki.Index, Dashavatara.Kalki.Name, Dashavatara.Kalki.Form);
+            fixture.ShouldBeOrdered(createCmd, insertCmd);
+            fixture.Transaction.Received(2).Commit();
+        }
+
+        [TestMethod] public void PreDefinedLocalization() {
+            // Arrange
+            var fixture = new TestFixture(typeof(CivVITerrain));
+
+            // Act
+            fixture.Transactor.CreateTables();
+            var createCmd = fixture.PrincipalCommands<CivVITerrain>().CreateTableCommand;
+            var insertCmd = fixture.PrincipalCommands<CivVITerrain>().InsertCommand(Enumerable.Empty<IReadOnlyList<DBValue>>());
+            var inserts = fixture.InsertionsFor(insertCmd);
+
+            // Assert
+            createCmd.Connection.Should().Be(fixture.Connection);
+            createCmd.Transaction.Should().Be(fixture.Transaction);
+            insertCmd.Connection.Should().Be(fixture.Connection);
+            insertCmd.Transaction.Should().Be(fixture.Transaction);
+            inserts.Should().HaveCount(16);
+            inserts.Should().ContainRow(CivVITerrain.Plains.Key, "FULL", CivVITerrain.Plains["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Plains.Key, "SHORT", CivVITerrain.Plains["SHORT"]);
+            inserts.Should().ContainRow(CivVITerrain.Grassland.Key, "FULL", CivVITerrain.Grassland["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Grassland.Key, "SHORT", CivVITerrain.Grassland["SHORT"]);
+            inserts.Should().ContainRow(CivVITerrain.Desert.Key, "FULL", CivVITerrain.Desert["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Desert.Key, "SHORT", CivVITerrain.Desert["SHORT"]);
+            inserts.Should().ContainRow(CivVITerrain.Tundra.Key, "FULL", CivVITerrain.Tundra["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Tundra.Key, "SHORT", CivVITerrain.Tundra["SHORT"]);
+            inserts.Should().ContainRow(CivVITerrain.Snow.Key, "FULL", CivVITerrain.Snow["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Snow.Key, "SHORT", CivVITerrain.Snow["SHORT"]);
+            inserts.Should().ContainRow(CivVITerrain.Mountain.Key, "FULL", CivVITerrain.Mountain["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Mountain.Key, "SHORT", CivVITerrain.Mountain["SHORT"]);
+            inserts.Should().ContainRow(CivVITerrain.Coast.Key, "FULL", CivVITerrain.Coast["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Coast.Key, "SHORT", CivVITerrain.Coast["SHORT"]);
+            inserts.Should().ContainRow(CivVITerrain.Ocean.Key, "FULL", CivVITerrain.Ocean["FULL"]);
+            inserts.Should().ContainRow(CivVITerrain.Ocean.Key, "SHORT", CivVITerrain.Ocean["SHORT"]);
             fixture.ShouldBeOrdered(createCmd, insertCmd);
             fixture.Transaction.Received(2).Commit();
         }

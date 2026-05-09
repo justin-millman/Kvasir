@@ -374,18 +374,24 @@ namespace Kvasir.Translation {
             if (!IsPreDefined(source)) {
                 var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups.Take(1), false, false);
                 var creator = new DataReconstitutionPlan(reconstitutor);
-                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, []);
+                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, keyPlan, []);
             }
             else {
                 var instances = GetPreDefinedInstances(context, source);
                 var matcher = new KeyMatcher(() => instances, keyPlan);
                 var creator = MakePreDefinedReconstitutionPlan(context, table, matcher, source);
-                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, instances.ToList());
+                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, keyPlan, instances.ToList());
             }
 
             localizationTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);
-            keyMatchers_.Add(source, keyMatcher);
+
+            // The `KeyMatcher` may have been added earlier by `TranslateType`, since we delay the actual translation of
+            // the full Localization but need the `KeyMatcher` for extraction logic
+            if (!keyMatchers_.ContainsKey(source)) {
+                keyMatchers_.Add(source, keyMatcher);
+            }
+
             return principal;
         }
 

@@ -36,8 +36,12 @@ namespace UT.Kvasir.Transaction {
 
             Connection.State.Returns(ConnectionState.Open);
 
-            var translations = types.Select(t => translator_[t]);
-            var tables = translations.SelectMany(x => x.Relations.Select(r => r.Table).Append(x.Principal.Table));
+            var entityTranslations = types.Where(t => !Translator.IsLocalizationType(t)).Select(t => translator_[t]);
+            var localizationTranslations = types.Where(t => Translator.IsLocalizationType(t)).Select(t => translator_[t, Translator.AsLocalzation]);
+            
+            var tables = entityTranslations.SelectMany(x => x.Relations.Select(r => r.Table).Append(x.Principal.Table));
+            tables = tables.Concat(localizationTranslations.Select(x => x.Principal.Table));
+
             foreach (var table in tables) {
                 var commands = Substitute.For<ICommands>();
 
@@ -81,7 +85,7 @@ namespace UT.Kvasir.Transaction {
                 dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();
             }
 
-            Transactor = new Transactor(translations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e));
+            Transactor = new Transactor(entityTranslations, localizationTranslations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e));
         }
         public TestFixture WithCommitError() {
             Transaction.When(x => x.Commit()).Throw<InvalidOperationException>();
@@ -115,10 +119,29 @@ namespace UT.Kvasir.Transaction {
             dbRows_[table] = rows.GetEnumerator();
             return this;
         }
+        public TestFixture WithLocalizationRow<TEntity>(object[] values) {
+            var table = translator_[typeof(TEntity), Translator.AsLocalzation].Principal.Table;
+            var rows = new List<IReadOnlyList<object>>();
+            while (dbRows_[table].MoveNext()) {
+                rows.Add(dbRows_[table].Current);
+            }
+            rows.Add(new List<object>(values));
+
+            dbRows_[table] = rows.GetEnumerator();
+            return this;
+        }
 
         public ICommands PrincipalCommands<TEntity>() {
-            var table = translator_[typeof(TEntity)].Principal.Table;
-            return commands_[table];
+            var type = typeof(TEntity);
+
+            if (!Translator.IsLocalizationType(type)) {
+                var table = translator_[type].Principal.Table;
+                return commands_[table];
+            }
+            else {
+                var table = translator_[type, Translator.AsLocalzation].Principal.Table;
+                return commands_[table];
+            }
         }
         public ICommands RelationCommands<TEntity>(int index) {
             var table = translator_[typeof(TEntity)].Relations[index].Table;

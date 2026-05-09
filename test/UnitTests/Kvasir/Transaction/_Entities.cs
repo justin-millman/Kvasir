@@ -1,6 +1,9 @@
 ﻿using Kvasir.Annotations;
+using Kvasir.Localization;
 using Kvasir.Relations;
 using System;
+
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Transaction {
     internal static class TableCreation {
@@ -24,6 +27,11 @@ namespace UT.Kvasir.Transaction {
             public Fruit Flavor { get; set; }
             public RelationMap<string, double> NutritionInfo { get; init; } = new();
             public RelationSet<Trait> Traits { get; init; } = new();
+        }
+
+        // Test Scenario: Single Localization
+        public class Nickname : Localization<string, Language, string> {
+            public Nickname(string key) : base(key) {}
         }
 
         // Test Scenario: Multiple Unrelated Entities
@@ -52,6 +60,14 @@ namespace UT.Kvasir.Transaction {
             public uint Calories { get; set; }
             public bool InBasket { get; set; }
             public bool FromBran { get; set; }
+        }
+
+        // Test Scenario: Multiple Unrelated Localizations
+        public class Dosage : Localization<string, bool, Measurement> {
+            public Dosage(string key) : base(key) {}
+        }
+        public class GUID : Localization<string, int, string> {
+            public GUID(string key) : base(key) {}
         }
 
         // Test Scenario: Multiple Entities Related via Reference Chain
@@ -129,6 +145,47 @@ namespace UT.Kvasir.Transaction {
             public string AdminCode { get; set; } = "";
         }
 
+        // Test Scenario: Multiple Entities Related via Scalar Localization
+        public class Quesadilla {
+            [Flags] public enum Topping { None = 0, Salsa = 1, Queso = 2, Guacamole = 4, SourCream = 8, QuesoFresco = 16, PicoDeGallo = 32 }
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public ushort Calories { get; set; }
+            public decimal Cost { get; set; }
+            public LocalizedMeasure AmountOfCheese { get; init; } = new(0);
+            public bool IsVegetarian { get; set; }
+            public Topping Toppings { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Localization
+        public class Honmoon {
+            public class DemonHunter {
+                [PrimaryKey] public string FirstName { get; set; } = "";
+                public string VocalRange { get; set; } = "";
+                public ushort Age { get; set; }
+            }
+
+            public class LocalizedHunter : Localization<uint, string, DemonHunter> {
+                public LocalizedHunter(uint key) : base(key) {}
+            }
+
+
+            [PrimaryKey] public Guid ID { get; set; }
+            public bool IsActive { get; set; }
+            public LocalizedHunter Creator { get; init; } = new(0);
+            public ulong DemonsPrevented { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation Localization
+        public class CrownJewel {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string KnownAs { get; set; } = "";
+            public RelationList<LocalizedText> Components { get; init; } = new();
+            public double WeightPounds { get; set; }
+            public string Monarchy { get; set; } = "";
+            public ulong? AgeYears { get; set; }
+        }
+
         // Test Scenario: Single Entity with Self-Referential Relation
         public class Matrix {
             [Flags] public enum Traits { None = 0, Identity = 1, Diagonal = 2, Triangular = 4, Square = 8, Definite = 16, Unitary = 32 }
@@ -139,6 +196,21 @@ namespace UT.Kvasir.Transaction {
             public IReadOnlyRelationList<double> Eigenvalues { get; init; } = new RelationList<double>();
             public RelationSet<Matrix> Inverses { get; init; } = new RelationSet<Matrix>();
             public Traits MatrixTraits { get; set; }
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Localization
+        public class ClassActionLawsuit {
+            public class LocalizedVerdict : Localization<Guid, ClassActionLawsuit, decimal> {
+                public LocalizedVerdict(Guid key) : base(key) {}
+            }
+
+
+            [PrimaryKey] public string CaseID { get; set; } = "";
+            public string Plaintiff { get; set; } = "";
+            public string Defendant { get; set; } = "";
+            public LocalizedDate Certification { get; init; } = new(Guid.NewGuid());
+            public LocalizedVerdict Verdict { get; init; } = new(Guid.NewGuid());
+            public ulong ClassSize { get; set; }
         }
 
         // Test Scenario: Pre-Defined Entity
@@ -162,6 +234,24 @@ namespace UT.Kvasir.Transaction {
                 Index = index;
                 Name = name;
                 Form = form;
+            }
+        }
+
+        // Test Scenario: Pre-Defined Localization
+        [PreDefined] public class CivVITerrain : Localization<string, string, string> {
+            public static CivVITerrain Plains { get; } = new CivVITerrain("LOC_PLAINS", "Plains", "PLN");
+            public static CivVITerrain Grassland { get; } = new CivVITerrain("LOC_GRASSLAND", "Grassland", "GRS");
+            public static CivVITerrain Desert { get; } = new CivVITerrain("LOC_DESERT", "Desert", "DES");
+            public static CivVITerrain Tundra { get; } = new CivVITerrain("LOC_TUNDRA", "Tundra", "TND");
+            public static CivVITerrain Snow { get; } = new CivVITerrain("LOC_SNOW", "Snow", "SNW");
+            public static CivVITerrain Mountain { get; } = new CivVITerrain("LOC_MOUNTAIN", "Mountain", "MNT");
+            public static CivVITerrain Coast { get; } = new CivVITerrain("LOC_COAST", "Coast", "CST");
+            public static CivVITerrain Ocean { get; } = new CivVITerrain("LOC_OCEAN", "Ocean", "OCN");
+
+
+            private CivVITerrain(string key, string full, string shortened) : base(key) {
+                this["FULL"] = full;
+                this["SHORT"] = shortened;
             }
         }
 
@@ -258,6 +348,16 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public bool Antipersperant { get; set; }
         }
 
+        // Test Scenario: Single Instance of Single Localization
+        public class VocalRange : Localization<string, Language, double> {
+            public VocalRange(string key) : base(key) {}
+        }
+
+        // Test Scenario: Multiple Instances of Single Localization
+        public class Pleasantry : Localization<string, char, string> {
+            public Pleasantry(string key) : base(key) {}
+        }
+
         // Test Scenario: Multiple Unrelated Entities
         public class DrunkHistory {
             [PrimaryKey, Column(0)] public byte Season { get; set; }
@@ -283,6 +383,17 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public bool IsPreventative { get; set; }
             [Column(4)] public sbyte Discomfort { get; set; }
             [Column(5)] public bool Biopsy { get; set; }
+        }
+
+        // Test Scenario: Multiple Unrelated Localizations
+        public class WordOfTheDay : Localization<DateOnly, Language, string> {
+            public WordOfTheDay(DateOnly key) : base(key) {}
+        }
+        public class Exclamation : Localization<int, string, ulong> {
+            public Exclamation(int key) : base(key) {}
+        }
+        public class IrrationalNumber : Localization<string, int, double> {
+            public IrrationalNumber(string key) : base(key) {}
         }
 
         // Test Scenario: Multiple Entities Related via Reference Chain
@@ -361,6 +472,53 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public bool ResultedInTouchdown { get; set; }
         }
 
+        // Test Scenario: Multiple Entities Related via Scalar Localization
+        public class EventContract {
+            [Flags] public enum Category { Politics = 1, Sports = 2, Weather = 4, Entertainment = 8, Media = 16, Economics = 32, WorldEvents = 64, Other = 128 }
+
+            [PrimaryKey, Column(0)] public Guid SecurityID { get; set; }
+            [Column(1)] public LocalizedCurrency StrikePrice { get; init; } = new("");
+            [Column(2)] public LocalizedDate Expiration { get; init; } = new(Guid.NewGuid());
+            [Column(3)] public Category Categorization { get; set; }
+            [Column(4)] public LocalizedNullableText ListingExchange { get; init; } = new("");
+            [Column(5)] public LocalizedCurrency Fee { get; init; } = new("");
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Localization
+        public class DJ {
+            public enum Event { Wedding, Graduation, BneiMitzvah, SportingEvent, Concert, Other }
+
+            public class Cost {
+                [PrimaryKey, Column(0)] public Guid Entry { get; set; }
+                [Column(1)] public int UnitSeconds { get; set; }
+                [Column(2)] public decimal Value { get; set; }
+            }
+
+            public class LocalizedCost : Localization<string, Event, Cost> {
+                public LocalizedCost(string key) : base(key) {}
+            }
+
+            [PrimaryKey, Column(0)] public Guid EntertainerID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public DateOnly BirthDate { get; set; }
+            [Column(3)] public LocalizedCost Charge { get; set; } = new("");
+            [Column(4)] public ulong SongRepertoireSize { get; set; }
+            [Column(5)] public double AvgLoudness { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation Localization
+        public class Whale {
+            public enum Dimension { Weight, Height, Length, Lifespan, GestationPeriod }
+            public enum IUCN { Extinct, ExtinctInTheWild, CriticallyEndangered, Endangered, Vulnerable, NearThreatened, LeastConcern }
+
+            [PrimaryKey, Column(0)] public string CommonName { get; set; } = "";
+            [Column(1)] public string Genus { get; set; } = "";
+            [Column(2)] public string Species { get; set; } = "";
+            public IReadOnlyRelationMap<Dimension, LocalizedMeasure> Measurements { get; init; } = new RelationMap<Dimension, LocalizedMeasure>();
+            [Column(3)] public bool Toothed { get; set; }
+            [Column(4)] public IUCN Vulnerability { get; set; }
+        }
+
         // Test Scenario: Single Entity with Self-Referential Relation
         public class IranianShah {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
@@ -369,6 +527,20 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public string RoyalHouse { get; set; } = "";
             [Column(4)] public string Capital { get; set; } = "";
             public IReadOnlyRelationSet<IranianShah> Predecessor { get; init; } = new RelationSet<IranianShah>();
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Localization
+        public class StemCell {
+            public class LocalizedCell : Localization<char, bool, StemCell> {
+                public LocalizedCell(char key) : base(key) {}
+            }
+
+
+            [PrimaryKey, Column(0)] public Guid CellID { get; set; }
+            [Column(1)] public LocalizedCell? ParentCell { get; init; } = new('\0');
+            [Column(2)] public float Length { get; set; }
+            [Column(3)] public bool IsPluripotent { get; set; }
+            [Column(4)] public string Owner { get; set; } = "";
         }
     }
 
@@ -433,6 +605,25 @@ namespace UT.Kvasir.Transaction {
             [Column(4)] public double ManagementFee { get; set; }
         }
 
+        // Test Scenario: Single Instance of Single Localization
+        public class Password : Localization<Guid, bool, string> {
+            public Password(Guid key) : base(key) {}
+            public new string this[bool locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Test Scenario: Multiple Instances of Single Localization
+        public enum OrdinalMode { Suffixed, FullySpelled, Symbolized }
+        public class Ordinal : Localization<int, OrdinalMode, string> {
+            public Ordinal(int key) : base(key) {}
+            public new string this[OrdinalMode locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
         // Test Scenario: Multiple Unrelated Entities
         public class Wheelchair {
             [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
@@ -466,6 +657,29 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public decimal Amount { get; set; }
             [Column(4)] public DateTime Date { get; set; }
             [Column(5)] public bool IsElectronic { get; set; }
+        }
+
+        // Test Scenario: Multiple Unrelated Localizations
+        public class Disclaimer : Localization<Guid, Language, string> {
+            public Disclaimer(Guid key) : base(key) {}
+            public new string this[Language locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+        public class Tagline : Localization<int, int, string> {
+            public Tagline(int key) : base(key) {}
+            public new string this[int locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+        public class Polynomial : Localization<string, byte, int> {
+            public Polynomial(string key) : base(key) {}
+            public new int this[byte locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
         }
 
         // Test Scenario: Multiple Entities Related via Reference Chain
@@ -524,6 +738,51 @@ namespace UT.Kvasir.Transaction {
             [Column(2)] public bool OwnsCauldron { get; set; }
         }
 
+        // Test Scenario: Multiple Entities Related via Scalar Localization
+        public class MemoryLeak {
+            [PrimaryKey, Column(0)] public string Program { get; set; } = "";
+            [PrimaryKey, Column(1)] public ulong RunNumber { get; set; }
+            [Column(2)] public LocalizedMeasure MemoryLeaked { get; init; } = new(0);
+            [Column(3)] public bool DetectedBySanitizer { get; set; }
+            [Column(4)] public LocalizedDate IncidentDate { get; init; } = new(Guid.NewGuid());
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Localization
+        public class PoliceChase {
+            public class Identifier {
+                [PrimaryKey, Column(0)] public string Text { get; set; } = "";
+                [PrimaryKey, Column(1)] public ulong Numeric { get; set; }
+                [Column(2)] public bool IsUniquelyIdentifying { get; set; }
+            }
+
+            public class LocalizedID : Localization<Guid, string, Identifier> {
+                public LocalizedID(Guid key) : base(key) {}
+                public new Identifier this[string locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [PrimaryKey, Column(0)] public DateTime Timestamp { get; set; }
+            [Column(1)] public double DurationMinutes { get; set; }
+            [Column(2)] public LocalizedID DatabaseEntry { get; init; } = new LocalizedID(Guid.NewGuid());
+            [Column(3)] public ushort NumOfficersInvolved { get; set; }
+            [Column(4)] public string Culprit { get; set; } = "";
+            [Column(5)] public bool IsVehicular { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation Localization
+        public class HostileTakeover {
+            [PrimaryKey, Column(0)] public string Company { get; set; } = "";
+            [PrimaryKey, Column(1)] public DateOnly Date { get; set; }
+            [Column(2)] public string Executor { get; set; } = "";
+            [Column(3)] public ulong TradedShares { get; set; }
+            [Column(4)] public float InitialPercentageControlled { get; set; }
+            public RelationSet<LocalizedCurrency> BuyPrices { get; init; } = new();
+            [Column(5)] public bool WasSuccessful { get; set; }
+            [Column(6)] public bool ProxyFight { get; set; }
+        }
+
         // Test Scenario: Single Entity with Self-Referential Relation
         public class MayanGod {
             [Flags] public enum Source { PopolVuh = 1, ChilamBilam = 2, MadridCodex = 4, Lacandon = 8, DiegoDeLanda = 16 }
@@ -533,6 +792,27 @@ namespace UT.Kvasir.Transaction {
             public IReadOnlyRelationSet<MayanGod> Fathers { get; init; } = new RelationSet<MayanGod>();
             [Column(1)] public Source Attestations { get; set; }
             [Column(2)] public string Domain { get; set; } = "";
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Localization
+        public class Pizzeria {
+            [Flags] public enum Style { ByTheSlice = 1, ByThePie = 2, Buffet = 4, ThinCrust = 8, Regular = 16, DeepDish = 32, NewYork = 64, Detroit = 128, Bagel = 256 }
+
+            public class LocalizedStore : Localization<Guid, string, Pizzeria> {
+                public LocalizedStore(Guid key) : base(key) {}
+                public new Pizzeria this[string locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [PrimaryKey, Column(0)] public string Franchise { get; set; } = "";
+            [PrimaryKey, Column(1)] public ulong StoreNumber { get; set; }
+            [Column(2)] public decimal AnnualRevenue { get; set; }
+            [Column(3)] public string Operator { get; set; } = "";
+            [Column(4)] public LocalizedStore? ParentStore { get; init; } = new(Guid.NewGuid());
+            [Column(5)] public ushort NumVarieties { get; set; }
+            [Column(6)] public Style PizzaStyle { get; set; }
         }
 
         // Test Scenario: Transaction Rolled Back
@@ -655,6 +935,58 @@ namespace UT.Kvasir.Transaction {
             public RelationOrderedList<string> Employees { get; init; } = new();
         }
 
+        // Test Scenario: Single Instance of Single Localization with Saved Values
+        public class Showtime : Localization<string, string, uint> {
+            public Showtime(string key) : base(key) {}
+            public new uint this[string locale] {
+                get { return  base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Test Scenario: Single Instance of Single Localization with Deleted Values
+        public class TermOfEndearment : Localization<string, Language, string> {
+            public TermOfEndearment(string key) : base(key) {}
+            public new string this[Language locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+            public void Delocalize(Language locale) {
+                RemoveLocalizationFor(locale);
+            }
+        }
+
+        // Test Scenario: Single Instance of Single Localization with New Values
+        public class Label : Localization<ulong, char, string> {
+            public Label(ulong key) : base(key) {}
+            public new string this[char locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Test Scenario: Single Instance of Single Localization with Mixed-Status Values
+        public class ConjugatedVerb : Localization<int, double, string> {
+            public ConjugatedVerb(int key) : base(key) {}
+            public new string this[double locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+            public void Delocalize(double locale) {
+                RemoveLocalizationFor(locale);
+            }
+        }
+
+        // Test Scenario: Multiple Instances of Single Localization
+        public enum CoordinateForm { Cartesian, Polar, English }
+        public class Coordinate : Localization<Guid, CoordinateForm, string> {
+            public Coordinate(Guid key) : base(key) {}
+            public new string this[CoordinateForm locale] {
+                get { return this[locale]; }
+                set { this[locale] = value; }
+            }
+        }
+
         // Test Scenario: Multiple Unrelated Entities
         public class SeaShanty {
             public enum Type { LongDrag, ShortDrag, SweatingUp, HandOverHand, Bunt, Capstan, Pump, Windlass, Coastwise, Longshore, Misc }
@@ -680,6 +1012,29 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public double Mass { get; set; }
             [Column(4)] public ulong Luminosity { get; set; }
             [Column(5)] public Type Class { get; set; }
+        }
+
+        // Test Scenario: Multiple Unrelated Localizations
+        public class Sunset : Localization<DateOnly, string, int> {
+            public Sunset(DateOnly key) : base(key) {}
+            public new int this[string locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+        public class Wingding : Localization<int, byte, string> {
+            public Wingding(int key) : base(key) {}
+            public new string this[byte locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+        public class Sprite : Localization<string, string, Guid> {
+            public Sprite(string key) : base(key) {}
+            public new Guid this[string locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
         }
 
         // Test Scenario: Multiple Entities Related via Reference Chain
@@ -742,6 +1097,57 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public bool PartOfPleaDeal { get; set; }
         }
 
+        // Test Scenario: Multiple Entities Related via Scalar Localization
+        public class Bandeirante {
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public ushort YearsActive { get; set; }
+            [Column(2)] public LocalizedText HomeState { get; init; } = new("");
+            [Column(3)] public LocalizedCurrency TotalLooted { get; init; } = new("");
+            [Column(4)] public bool IsMameluco { get; set; }
+            [Column(5)] public bool SpokePaulistaGeneral { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Localization
+        public class BirthdayParty {
+            public class YearMonthDay {
+                [PrimaryKey, Column(0)] public ushort Year { get; set; }
+                [PrimaryKey, Column(1)] public sbyte Month { get; set; }
+                [PrimaryKey, Column(2)] public sbyte Day { get; set; }
+                [Column(3)] public string? KnownAs { get; set; }
+                [PrimaryKey, Column(4)] public string Spelling { get; set; } = "";
+            }
+
+            public class LocalizedYearMonthDay : Localization<string, string, YearMonthDay> {
+                public LocalizedYearMonthDay(string key) : base(key) {}
+                public new YearMonthDay this[string locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [PrimaryKey, Column(0)] public string Person { get; set; } = "";
+            [Column(1)] public LocalizedYearMonthDay Date { get; init; } = new("");
+            [Column(2)] public string Location { get; set; } = "";
+            [Column(3)] public bool InvitationOnly { get; set; }
+            [Column(4)] public ulong Attendees { get; set; }
+            [Column(5)] public decimal TotalGiftValue { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation Localization
+        public class Lawyer {
+            public enum Field { Corporate, Copyright, Broadcast, Family, RealEstate, Criminal, Defense, PersonalInjury, Malpractice, Other }
+
+            [PrimaryKey, Column(0)] public Guid BarNumber { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public string AlmaMater { get; set; } = "";
+            public RelationOrderedList<LocalizedNullableText> Employers { get; init; } = new();
+            [Column(3)] public double WinPercentage { get; set; }
+            [Column(4)] public decimal AnnualSalary { get; set; }
+            [Column(5)] public bool HasBeenDisbarred { get; set; }
+            [Column(6)] public bool IsJudge { get; set; }
+            [Column(7)] public Field Practice { get; set; }
+        }
+
         // Test Scenario: Single Entity with Self-Referential Relation
         public class Masseuse {
             public enum Kind { Shiatsu, DeepTissue, Acupuncture, Sports, Erotic, Reflexology, Swedish, Other }
@@ -752,6 +1158,25 @@ namespace UT.Kvasir.Transaction {
             public IReadOnlyRelationSet<Masseuse> Teachers { get; init; } = new RelationSet<Masseuse>();
             [Column(3)] public bool IsFreelance { get; set; }
             [Column(4)] public sbyte NumTables { get; set; }
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Localization
+        public class Radiologist {
+            public class OnCallEscalation : Localization<DateOnly, byte, Radiologist> {
+                public OnCallEscalation(DateOnly key) : base(key) {}
+                public new Radiologist this[byte locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [PrimaryKey, Column(0)] public Guid MedicalID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public bool CanUseMRI { get; set; }
+            [Column(3)] public double BecquerelsExposure { get; set; }
+            [Column(4)] public bool DoesCancerTreatment { get; set; }
+            [Column(5)] public string? Hospital { get; set; }
+            [Column(6)] public OnCallEscalation Superior { get; init; } = new(DateOnly.FromDateTime(DateTime.Now));
         }
 
         // Test Scenario: Transaction Rolled Back
@@ -900,6 +1325,58 @@ namespace UT.Kvasir.Transaction {
             public RelationMap<string, DateRange> Bishops { get; init; } = new();
         }
 
+        // Test Scenario: Single Instance of Single Localization with Saved Values
+        public class Placement : Localization<string, int, string> {
+            public Placement(string key) : base(key) {}
+            public new string this[int locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Test Scenario: Single Instance of Single Localization with Deleted Values
+        [Flags] public enum Operation { None = 0, CanRead = 1, CanWrite = 2, CanModify = 4, CanDelete = 8, CanCreate = 16, CanAdmin = 32 }
+        public class Permissions : Localization<string, string, Operation> {
+            public Permissions(string key) : base(key) {}
+            public new Operation this[string locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+            public void Delocalize(string locale) {
+                RemoveLocalizationFor(locale);
+            }
+        }
+
+        // Test Scenario: Single Instance of Single Localization with New Values
+        public class BinaryValue : Localization<string, bool, string> {
+            public BinaryValue(string key) : base(key) {}
+            public new string this[bool locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
+        // Test Scenario: Single Instance of Single Localization with Mixed-Status Values
+        public class BigBad : Localization<string, sbyte, string> {
+            public BigBad(string key) : base(key) {}
+            public new string this[sbyte locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+            public void Delocalize(sbyte locale) {
+                RemoveLocalizationFor(locale);
+            }
+        }
+
+        // Test Scenario: Multiple Instances of Single Localization
+        public class MinimumWage : Localization<string, short, decimal> {
+            public MinimumWage(string key) : base(key) {}
+            public new decimal this[short locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+
         // Test Scenario: Multiple Unrelated Entities
         public class Waltz {
             [PrimaryKey, Column(0)] public string PieceTitle { get; set; } = "";
@@ -927,6 +1404,29 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public uint Campers { get; set; }
             [Column(4)] public sbyte NumCabins { get; set; }
             [Column(5)] public string FirstAppearance { get; set; } = "";
+        }
+
+        // Test Scenario: Multiple Unrelated Localizations
+        public class Philosophy : Localization<string, Language, string> {
+            public Philosophy(string key) : base(key) {}
+            public new string this[Language locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+        public class AlterEgo : Localization<string, string, string> {
+            public AlterEgo(string key) : base(key) {}
+            public new string this[string locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+        }
+        public class Pain : Localization<int, string, double> {
+            public Pain(int key) : base(key) {}
+            public new double this[string locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
         }
 
         // Test Scenario: Multiple Entities Related via Reference Chain
@@ -997,6 +1497,53 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public string President { get; set; } = "";
         }
 
+        // Test Scenario: Multiple Entities Related via Scalar Localization
+        public class Daemon {
+            [PrimaryKey, Column(0)] public string Human { get; set; } = "";
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public LocalizedText Animal { get; init; } = new("");
+            [Column(3)] public bool IsZombi { get; set; }
+            [Column(4)] public bool CompletedAkterrakeh { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Reference Localization
+        public class Vasectomy {
+            public enum Stage { Anesthetic, Surgery, Recovery, Monitoring }
+
+            public class Doctor {
+                [PrimaryKey, Column(0)] public Guid MedicalID { get; set; }
+                [Column(1)] public string Name { get; set; } = "";
+                [Column(2)] public string AlmaMater { get; set; } = "";
+                [Column(3)] public string Specialty { get; set; } = "";
+            }
+
+            public class LocalizedStage : Localization<Guid, Stage, Doctor> {
+                public LocalizedStage(Guid key) : base(key) {}
+                public new Doctor this[Stage locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [PrimaryKey, Column(0)] public Guid SurgeryID { get; set; }
+            [Column(1)] public string Patient { get; set; } = "";
+            [Column(2)] public DateOnly Date { get; set; }
+            [Column(3)] public LocalizedStage Doctors { get; init; } = new(Guid.NewGuid());
+            [Column(4)] public bool Reversible { get; set; }
+        }
+
+        // Test Scenario: Multiple Entities Related via Relation Localization
+        public class Harbor {
+            public enum Flow { InFlow, OutFlow }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public ulong ShippingTons { get; set; }
+            [Column(2)] public double DraftDepth { get; set; }
+            [Column(3)] public double AirDraft { get; set; }
+            public RelationMap<LocalizedText, Flow> Rivers { get; init; } = new();
+            [Column(4)] public string OperatedBy { get; set; } = "";
+        }
+
         // Test Scenario: Single Entity with Self-Referential Relation
         public class Pandava {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
@@ -1004,6 +1551,27 @@ namespace UT.Kvasir.Transaction {
             [Column(2)] public ulong MahabharataMentions { get; set; }
             public RelationList<Pandava> Brothers { get; init; } = new();
             [Column(3)] public string PrimaryWeapon { get; set; } = "";
+        }
+
+        // Test Scenario: Single Entity with Self-Referential Localization
+        public class DisneyPrincess {
+            [Flags] public enum Parent { None = 0, Mother = 1, Father = 2 };
+
+            public class Opinion : Localization<string, DisneyPrincess, double> {
+                public Opinion(string key) : base(key) {}
+                public new double this[DisneyPrincess locale] {
+                    get { return base[locale]; }
+                    set { base[locale] = value; }
+                }
+            }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string FilmSeries { get; set; } = "";
+            [Column(2)] public ushort TotalAppearances { get; set; }
+            [Column(3)] public double Height { get; set; }
+            [Column(4)] public bool HasAnimalSidekick { get; set; }
+            [Column(5)] public Parent LivingParents { get; set; }
+            [Column(6)] public Opinion ThoughtsOnOthers { get; init; } = new("");
         }
 
         // Test Scenario: Transaction Rolled Back

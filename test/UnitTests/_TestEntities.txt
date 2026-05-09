@@ -30,6 +30,7 @@ Allomancy
 Almanac
 Alpha Monster
 Alphabet
+Alter Ego
 Amazon Service
 Ambassador
 Amber Alert
@@ -100,6 +101,7 @@ Balk
 Ballerina
 Ballet
 Balsamic Vinegar
+Bandeirante
 Bank
 Bank Account
 Bank Robber
@@ -134,16 +136,19 @@ Better Know a District
 Biblical Plague
 Bibliography
 Bicycle
+Big Bad
 Big Block of Cheese Day
 Big Fat Quiz of the Year
 Billiard Ball
 Billionaire
 Binary Test
+Binary Value
 Bingo Card
 Biography
 Biological Cycle
 Biome
 Birth Control
+Birthday Party
 Birthstone
 Black Hole
 Black Op
@@ -292,7 +297,9 @@ Civilization VI District
 Civilization VI Military Unit
 Civilization VI Policy Card
 Civilization VI Technology
+Civilization VI Terrain
 Civilization VI Yield
+Class Action Lawsuit
 Click Consonant
 Cliff
 Climate
@@ -333,6 +340,7 @@ Condom
 Confidence Interval
 Confidential Informant
 Conga Line
+Conjugated Verb
 Conjunction
 Conlang
 Connecting Wall
@@ -345,6 +353,7 @@ Constructor
 Contact Lens
 Convenience Store
 Cookbook
+Coordinate
 Coral Reef
 Corn Maze
 Costume Party
@@ -361,6 +370,7 @@ Credit Card
 Credit Report
 Crossbow
 Crossword Clue
+Crown Jewel
 Crucifixion
 Cruise
 Crusade
@@ -386,6 +396,7 @@ D&D Character
 D&D Monster
 D&D Spell
 D&D Weapon
+Daemon (His Dark Materials)
 Dalai Lama
 Dam
 Dancing with the Stars Couple
@@ -426,10 +437,13 @@ Dinosaur
 Diocese
 Directory (file system)
 Disciple of Jesus
+Disclaimer
 Discworld Guild
+Disney Princess
 Disneyland
 Distribution (probability)
 District Attorney
+DJ
 DLL
 DMZ
 Docker Container
@@ -439,6 +453,7 @@ Dog Show
 Domino
 Donut
 Dormitory
+Dosage
 Doula
 Draft Pick
 Drag Queen
@@ -494,7 +509,9 @@ Etiology
 Eulogy
 Eunuch
 Eurovision Song Contest
+Event Contract
 Excel Range
+Exclamation
 Execution
 Executive Order
 Existentialist
@@ -605,6 +622,7 @@ Grenade
 Grilled Cheese
 Ground Meat
 Guacamole
+GUID
 Guillotine
 Guitar
 Gulag
@@ -625,6 +643,7 @@ Hall Pass
 Hamentaschen
 Handshake
 Happy Hour
+Harbor
 Hash Function
 Hash Map
 Hawaiian God
@@ -657,6 +676,7 @@ Home Run Derby
 Homeric Hymn
 Hominin
 Honest Trailer
+Honmoon
 Honorific
 Hookah Bar
 Horcrux
@@ -664,6 +684,7 @@ Hormone
 Horoscope
 Hospital
 Hostage Situation
+Hostile Takeover
 Hot Air Balloon
 Hot Spring
 Hot Tub
@@ -714,6 +735,7 @@ Iowa Caucus
 IP Address
 iPhone
 IPO
+Irrational Number
 Iron Chef
 ISO Standard
 Isotope
@@ -749,6 +771,7 @@ Knife
 Knock-Knock Joke
 Knot
 Kosher Agency
+Label
 Labor of Heracles
 Lagerstätte
 Lagoon
@@ -765,6 +788,7 @@ Law & Order
 Law Firm
 Lawn Gnome
 Lawn Mower
+Lawyer
 Layer of Skin
 Lazarus Pit
 Lease
@@ -853,6 +877,7 @@ Megafauna
 Menorah
 Meme
 Memory Buffer
+Memory Leak
 Merger
 Merit Badge
 Mermaid
@@ -866,6 +891,7 @@ Military Base
 Militia
 Milkshake
 Mime
+Minimum Wage
 Minion (Hearthstone)
 Mint (currency)
 Mirror
@@ -923,6 +949,7 @@ Neurotransmitter
 News Anchor
 Newscast
 Newspaper
+Nickname
 Nightclub
 Niqqud
 Nobel Prize
@@ -959,6 +986,7 @@ Orchestra
 Organ Procurement Organization
 Organelle
 Orgasm
+Ordinal
 Origami
 Orisha
 Orogene
@@ -971,6 +999,7 @@ Pacemaker
 PACER Test
 Package (software)
 Pagoda
+Pain
 Paintball Gun
 Painting
 Pajamas
@@ -986,6 +1015,7 @@ Parking Ticket
 Particle Accelerator
 Parole Hearing
 Passport
+Password
 Pasta Sauce
 Patent
 Patreon
@@ -1002,6 +1032,7 @@ Pentomino
 PEP
 Pepper
 Perfume
+Permissions
 Person of the Year (Time)
 Personality Test
 Petroglyph
@@ -1010,6 +1041,7 @@ Pharaoh
 Pharmacy
 Phase Diagram
 Philosopher
+Philosophy
 Phobia
 Phone Boook
 Phone Booth
@@ -1029,7 +1061,9 @@ Pirate Ship
 Pitmaster
 Pizza
 Pizza Roll
+Pizzeria
 Placebo
+Placement
 Plane of Existence (D&D)
 Planeswalker
 Planetarium
@@ -1037,6 +1071,7 @@ Plastic Surgery
 Platonic Dialogue
 Playing Card
 Playlist
+Pleasantry
 Plumber
 PO Box
 Poacher
@@ -1045,12 +1080,14 @@ Poet Laurete
 Pokémon
 Poker Hand
 Polar Vortex
+Police Chase
 Police Officer
 Political Rally
 Poll
 Polygon
 Polygraph Test
 Polyhedron
+Polynomial
 Pond
 Ponzi Scheme
 Pop Tart
@@ -1100,12 +1137,14 @@ Quark
 Quarterback
 Quasar
 Quatrain
+Quesadilla
 Quilt
 Quinceañera
 Rabbi
 Racehorse
 Racetrack (auto racing)
 Radio Station
+Radiologist
 Rain Delay
 Rainbow
 Rainforest
@@ -1203,6 +1242,7 @@ Shoe
 Shofar
 Shogunate
 Showstopper Challenge
+Showtime
 Shtetl
 Sign (ASL)
 Sign Language
@@ -1255,6 +1295,7 @@ Sports Bet
 SportsCenter
 Sprachbund
 Spring (mechanics)
+Sprite
 SQL Query
 Squash
 Squintern
@@ -1270,6 +1311,7 @@ State of Matter
 State of the Union
 State Quarter
 Steak
+Stem Cell
 Step Pyramid
 Stock
 Stock Index
@@ -1286,6 +1328,7 @@ Sudoku Puzzle
 Sukkah
 Sumo Wrestler
 Sundial
+Sunset
 Sunscreen
 Super Bowl
 Superintendent
@@ -1308,6 +1351,7 @@ Syllabary
 Symbiosis
 Symphony
 Synagogue
+Tagline
 Talk Show
 Tamagotchi
 Tapestry
@@ -1327,6 +1371,7 @@ Tennis Match
 Teppanyaki
 Tepui
 Terminator
+Term of Endearment
 Terms of Service
 Territory (Pendragon)
 Terrorist Organization
@@ -1405,6 +1450,7 @@ Valet
 Valkyrie
 Vampire Slayer
 Vase
+Vasectomy
 Vault (bank)
 Venmo Request
 Venus Fly Trap
@@ -1415,6 +1461,7 @@ Vigenère Cipher
 Vineyard
 Visa
 Vitamin
+Vocal Range
 Voicemail
 Voir Dire
 Volcano
@@ -1443,6 +1490,7 @@ Weird Al Parody
 Well
 Welsh God
 Werewolf
+Whale
 Wheelchair
 Where's Waldo?
 White Walker
@@ -1450,6 +1498,7 @@ Who Wants to Be a Millionaire? Question
 Wikipedia Page
 Wildfire
 Windmill
+Wingding
 Winery
 WinForm
 Winter Storm
@@ -1457,6 +1506,7 @@ Wiretap
 Witch Hunt
 Wizard
 Woodshop
+Word of the Day
 Word Search
 Wordle
 World Baseball Classic

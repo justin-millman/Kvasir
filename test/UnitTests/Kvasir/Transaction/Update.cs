@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using static UT.Kvasir.Transaction.Update;
+using static UT.Kvasir.Translation.TestLocalizations;
 
 namespace UT.Kvasir.Transaction {
     [TestClass, TestCategory("Modification")]
@@ -461,6 +462,197 @@ namespace UT.Kvasir.Transaction {
             perth.Bishops.Should().HaveUnsavedEntryCount(0);
         }
 
+        [TestMethod] public void SingleInstanceSingleLocalizationSavedValues() {
+            // Arrange
+            var placement = new Placement("LOC_HORSE_RACING");
+            placement[1] = "win";
+            placement[2] = "place";
+            placement[3] = "show";
+            (placement.Relation as IRelation).Canonicalize();
+            var fixture = new TestFixture(typeof(Placement));
+
+            // Act
+            fixture.Transactor.Update(new object[] { placement });
+            var placementInsertCmd = fixture.PrincipalCommands<Placement>().InsertCommand(ANY_ROWS);
+            var placementInsertions = fixture.InsertionsFor(placementInsertCmd);
+            var placementDeleteCmd = fixture.PrincipalCommands<Placement>().DeleteCommand(ANY_ROWS);
+            var placementDeletions = fixture.DeletionsFor(placementDeleteCmd);
+            var placementUpdateCmd = fixture.PrincipalCommands<Placement>().UpdateCommand(ANY_ROWS);
+            var placementUpdates = fixture.UpdatesFor(placementUpdateCmd);
+
+            // Assert
+            placementInsertCmd.Connection.Should().Be(fixture.Connection);
+            placementInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            placementDeleteCmd.Connection.Should().Be(fixture.Connection);
+            placementDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            placementInsertions.Should().HaveCount(0);
+            placementDeletions.Should().HaveCount(0);
+            placementUpdates.Should().HaveCount(0);
+            placement.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SingleInstanceSingleLocalizationDeletedValues() {
+            // Arrange
+            var permissions = new Permissions("LOC_ESTHER_GROENBERGEN");
+            permissions["production"] = Operation.CanRead;
+            permissions["development"] = Operation.CanRead | Operation.CanWrite | Operation.CanModify | Operation.CanDelete | Operation.CanCreate;
+            permissions["qa"] = Operation.CanRead | Operation.CanCreate;
+            permissions["cloud-test"] = Operation.CanAdmin;
+            (permissions.Relation as IRelation).Canonicalize();
+            permissions.Delocalize("cloud-test");
+            permissions.Delocalize("qa");
+            var fixture = new TestFixture(typeof(Permissions));
+
+            // Act
+            fixture.Transactor.Update(new object[] { permissions });
+            var permissionsInsertCmd = fixture.PrincipalCommands<Permissions>().InsertCommand(ANY_ROWS);
+            var permissionsInsertions = fixture.InsertionsFor(permissionsInsertCmd);
+            var permissionsDeleteCmd = fixture.PrincipalCommands<Permissions>().DeleteCommand(ANY_ROWS);
+            var permissionsDeletions = fixture.DeletionsFor(permissionsDeleteCmd);
+            var permissionsUpdateCmd = fixture.PrincipalCommands<Permissions>().UpdateCommand(ANY_ROWS);
+            var permissionsUpdates = fixture.UpdatesFor(permissionsUpdateCmd);
+
+            // Assert
+            permissionsInsertCmd.Connection.Should().Be(fixture.Connection);
+            permissionsInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            permissionsDeleteCmd.Connection.Should().Be(fixture.Connection);
+            permissionsDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            permissionsInsertions.Should().HaveCount(0);
+            permissionsDeletions.Should().HaveCount(2);
+            permissionsDeletions.Should().ContainRow(permissions.Key, "qa");
+            permissionsDeletions.Should().ContainRow(permissions.Key, "cloud-test");
+            permissionsUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered(permissionsDeleteCmd);
+            fixture.Transaction.Received(1).Commit();
+            permissions.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SingleInstanceSingleLocalizationNewValues() {
+            // Arrange
+            var binary = new BinaryValue("LOC_ON/OFF");
+            binary[true] = "on";
+            binary[false] = "off";
+            var fixture = new TestFixture(typeof(BinaryValue));
+
+            // Act
+            fixture.Transactor.Update(new object[] { binary });
+            var binaryInsertCmd = fixture.PrincipalCommands<BinaryValue>().InsertCommand(ANY_ROWS);
+            var binaryInsertions = fixture.InsertionsFor(binaryInsertCmd);
+            var binaryDeleteCmd = fixture.PrincipalCommands<BinaryValue>().DeleteCommand(ANY_ROWS);
+            var binaryDeletions = fixture.DeletionsFor(binaryDeleteCmd);
+            var binaryUpdateCmd = fixture.PrincipalCommands<BinaryValue>().DeleteCommand(ANY_ROWS);
+            var binaryUpdates = fixture.UpdatesFor(binaryUpdateCmd);
+
+            // Assert
+            binaryInsertCmd.Connection.Should().Be(fixture.Connection);
+            binaryInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            binaryDeleteCmd.Connection.Should().Be(fixture.Connection);
+            binaryDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            binaryInsertions.Should().HaveCount(2);
+            binaryInsertions.Should().ContainRow(binary.Key, true, binary[true]);
+            binaryInsertions.Should().ContainRow(binary.Key, false, binary[false]);
+            binaryDeletions.Should().HaveCount(0);
+            binaryUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered(binaryInsertCmd);
+            fixture.Transaction.Received(1).Commit();
+            binary.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SingleInstanceSingleLocalizationMixedValues() {
+            // Arrange
+            var bigBad = new BigBad("LOC_BUFFY");
+            bigBad[0] = "The Master";
+            bigBad[1] = "Spike & Drusilla";
+            bigBad[2] = "Mayor Richard Wilkins III";
+            bigBad[3] = "Adam (and the Initiative)";
+            bigBad[4] = "Glorificus (a.k.a. Glory)";
+            (bigBad.Relation as IRelation).Canonicalize();
+            bigBad[1] = "Angelus";
+            bigBad[5] = "Dark Willow";
+            bigBad[6] = "The First Evil";
+            var fixture = new TestFixture(typeof(BigBad));
+
+            // Act
+            fixture.Transactor.Update(new object[] { bigBad });
+            var bigBadInsertCmd = fixture.PrincipalCommands<BigBad>().InsertCommand(ANY_ROWS);
+            var bigBadInsertions = fixture.InsertionsFor(bigBadInsertCmd);
+            var bigBadDeleteCmd = fixture.PrincipalCommands<BigBad>().DeleteCommand(ANY_ROWS);
+            var bigBadDeletions = fixture.DeletionsFor(bigBadDeleteCmd);
+            var bigBadUpdateCmd = fixture.PrincipalCommands<BigBad>().UpdateCommand(ANY_ROWS);
+            var bigBadUpdates = fixture.UpdatesFor(bigBadUpdateCmd);
+
+            // Assert
+            bigBadInsertCmd.Connection.Should().Be(fixture.Connection);
+            bigBadInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            bigBadDeleteCmd.Connection.Should().Be(fixture.Connection);
+            bigBadDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            bigBadInsertions.Should().HaveCount(3);
+            bigBadInsertions.Should().ContainRow(bigBad.Key, (sbyte)1, bigBad[1]);
+            bigBadInsertions.Should().ContainRow(bigBad.Key, (sbyte)5, bigBad[5]);
+            bigBadInsertions.Should().ContainRow(bigBad.Key, (sbyte)6, bigBad[6]);
+            bigBadDeletions.Should().HaveCount(1);
+            bigBadDeletions.Should().ContainRow(bigBad.Key, (sbyte)1);
+            bigBadUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered(bigBadDeleteCmd, bigBadInsertCmd);
+            fixture.Transaction.Received(1).Commit();
+            bigBad.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void MultipleInstancesSingleLocalization() {
+            // Arrange
+            var illinois = new MinimumWage("LOC_ILLINOIS");
+            illinois[1972] = 1.40M;
+            illinois[1976] = 2.10M;
+            illinois[1979] = 2.30M;
+            illinois[2025] = 15.0M;
+            illinois[1998] = 5.15M;
+            var federal = new MinimumWage("LOC_FEDERAL");
+            federal[1938] = 0.25M;
+            federal[2009] = 7.25M;
+            federal[1968] = 1.60M;
+            var hawaii = new MinimumWage("LOC_HAWAII");
+            hawaii[2018] = 10.10M;
+            hawaii[2022] = 12.00M;
+            hawaii[2024] = 14.00M;
+            hawaii[2026] = 16.00M;
+            var fixture = new TestFixture(typeof(MinimumWage));
+
+            // Act
+            fixture.Transactor.Update(new object[] { illinois, federal, hawaii });
+            var wageInsertCmd = fixture.PrincipalCommands<MinimumWage>().InsertCommand(ANY_ROWS);
+            var wageInsertions = fixture.InsertionsFor(wageInsertCmd);
+            var wageDeleteCmd = fixture.PrincipalCommands<MinimumWage>().DeleteCommand(ANY_ROWS);
+            var wageDeletions = fixture.DeletionsFor(wageDeleteCmd);
+            var wageUpdateCmd = fixture.PrincipalCommands<MinimumWage>().UpdateCommand(ANY_ROWS);
+            var wageUpdates = fixture.UpdatesFor(wageUpdateCmd);
+
+            // Assert
+            wageInsertCmd.Connection.Should().Be(fixture.Connection);
+            wageInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            wageDeleteCmd.Connection.Should().Be(fixture.Connection);
+            wageDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            wageInsertions.Should().HaveCount(12);
+            wageInsertions.Should().ContainRow(illinois.Key, (short)1972, illinois[1972]);
+            wageInsertions.Should().ContainRow(illinois.Key, (short)1976, illinois[1976]);
+            wageInsertions.Should().ContainRow(illinois.Key, (short)1979, illinois[1979]);
+            wageInsertions.Should().ContainRow(illinois.Key, (short)2025, illinois[2025]);
+            wageInsertions.Should().ContainRow(illinois.Key, (short)1998, illinois[1998]);
+            wageInsertions.Should().ContainRow(federal.Key, (short)1938, federal[1938]);
+            wageInsertions.Should().ContainRow(federal.Key, (short)2009, federal[2009]);
+            wageInsertions.Should().ContainRow(federal.Key, (short)1968, federal[1968]);
+            wageInsertions.Should().ContainRow(hawaii.Key, (short)2018, hawaii[2018]);
+            wageInsertions.Should().ContainRow(hawaii.Key, (short)2022, hawaii[2022]);
+            wageInsertions.Should().ContainRow(hawaii.Key, (short)2024, hawaii[2024]);
+            wageInsertions.Should().ContainRow(hawaii.Key, (short)2026, hawaii[2026]);
+            wageDeletions.Should().HaveCount(0);
+            wageUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered(wageInsertCmd);
+            fixture.Transaction.Received(1).Commit();
+            illinois.Relation.Should().HaveUnsavedEntryCount(0);
+            federal.Relation.Should().HaveUnsavedEntryCount(0);
+            hawaii.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
         [TestMethod] public void MultipleUnrelatedEntities() {
             // Arrange
             var waltz = new Waltz() {
@@ -512,6 +704,79 @@ namespace UT.Kvasir.Transaction {
             campUpdates.Should().ContainRow(camp.Name, camp.Location, ConversionOf(camp.Mythology), camp.Campers, camp.NumCabins, camp.FirstAppearance);
             fixture.ShouldBeOrdered((waltzCmd, pacemakerCmd, campCmd));
             fixture.Transaction.Received(1).Commit();
+        }
+
+        [TestMethod] public void MultipleUnrelatedLocalizations() {
+            // Arrange
+            var philosophy = new Philosophy("LOC_EXISTENTIALISM");
+            philosophy[Language.English] = "existentialism";
+            var alterEgo = new AlterEgo("LOC_AE1");
+            alterEgo["general public"] = "Fernando Ollallalla";
+            alterEgo["family & friends"] = "Gabriel Zurpp";
+            alterEgo["the media"] = "Willie C. Uvu";
+            var pain = new Pain(679093324);
+            pain["shoulder"] = 1.53;
+            pain["groin"] = 3.11;
+            pain["head"] = 9.76;
+            pain["elbow"] = 5.90;
+            var fixture = new TestFixture(typeof(Philosophy), typeof(AlterEgo), typeof(Pain));
+
+            // Act
+            fixture.Transactor.Update(new object[] { philosophy, alterEgo, pain });
+            var philosophyInsertCmd = fixture.PrincipalCommands<Philosophy>().InsertCommand(ANY_ROWS);
+            var philosophyInsertions = fixture.InsertionsFor(philosophyInsertCmd);
+            var philosophyDeleteCmd = fixture.PrincipalCommands<Philosophy>().DeleteCommand(ANY_ROWS);
+            var philosophyDeletions = fixture.DeletionsFor(philosophyDeleteCmd);
+            var philosophyUpdateCmd = fixture.PrincipalCommands<Philosophy>().UpdateCommand(ANY_ROWS);
+            var philosophyUpdates = fixture.UpdatesFor(philosophyUpdateCmd);
+            var alterEgoInsertCmd = fixture.PrincipalCommands<AlterEgo>().InsertCommand(ANY_ROWS);
+            var alterEgoInsertions = fixture.InsertionsFor(alterEgoInsertCmd);
+            var alterEgoDeleteCmd = fixture.PrincipalCommands<AlterEgo>().DeleteCommand(ANY_ROWS);
+            var alterEgoDeletions = fixture.DeletionsFor(alterEgoDeleteCmd);
+            var alterEgoUpdateCmd = fixture.PrincipalCommands<AlterEgo>().UpdateCommand(ANY_ROWS);
+            var alterEgoUpdates = fixture.UpdatesFor(alterEgoUpdateCmd);
+            var painInsertCmd = fixture.PrincipalCommands<Pain>().InsertCommand(ANY_ROWS);
+            var painInsertions = fixture.InsertionsFor(painInsertCmd);
+            var painDeleteCmd = fixture.PrincipalCommands<Pain>().DeleteCommand(ANY_ROWS);
+            var painDeletions = fixture.DeletionsFor(painDeleteCmd);
+            var painUpdateCmd = fixture.PrincipalCommands<Pain>().UpdateCommand(ANY_ROWS);
+            var painUpdates = fixture.UpdatesFor(painUpdateCmd);
+
+            // Assert
+            philosophyInsertCmd.Connection.Should().Be(fixture.Connection);
+            philosophyInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            philosophyDeleteCmd.Connection.Should().Be(fixture.Connection);
+            philosophyDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            alterEgoInsertCmd.Connection.Should().Be(fixture.Connection);
+            alterEgoInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            alterEgoDeleteCmd.Connection.Should().Be(fixture.Connection);
+            alterEgoDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            painInsertCmd.Connection.Should().Be(fixture.Connection);
+            painInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            painDeleteCmd.Connection.Should().Be(fixture.Connection);
+            painDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            philosophyInsertions.Should().HaveCount(1);
+            philosophyInsertions.Should().ContainRow(philosophy.Key, ConversionOf(Language.English), philosophy[Language.English]);
+            philosophyDeletions.Should().HaveCount(0);
+            philosophyUpdates.Should().HaveCount(0);
+            alterEgoInsertions.Should().HaveCount(3);
+            alterEgoInsertions.Should().ContainRow(alterEgo.Key, "general public", alterEgo["general public"]);
+            alterEgoInsertions.Should().ContainRow(alterEgo.Key, "family & friends", alterEgo["family & friends"]);
+            alterEgoInsertions.Should().ContainRow(alterEgo.Key, "the media", alterEgo["the media"]);
+            alterEgoDeletions.Should().HaveCount(0);
+            alterEgoUpdates.Should().HaveCount(0);
+            painInsertions.Should().HaveCount(4);
+            painInsertions.Should().ContainRow(pain.Key, "shoulder", pain["shoulder"]);
+            painInsertions.Should().ContainRow(pain.Key, "groin", pain["groin"]);
+            painInsertions.Should().ContainRow(pain.Key, "head", pain["head"]);
+            painInsertions.Should().ContainRow(pain.Key, "elbow", pain["elbow"]);
+            painDeletions.Should().HaveCount(0);
+            painUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered((philosophyInsertCmd, alterEgoInsertCmd, painInsertCmd));
+            fixture.Transaction.Received(1).Commit();
+            philosophy.Relation.Should().HaveUnsavedEntryCount(0);
+            alterEgo.Relation.Should().HaveUnsavedEntryCount(0);
+            pain.Relation.Should().HaveUnsavedEntryCount(0);
         }
 
         [TestMethod] public void MultipleEntitiesRelatedByReferenceChain() {
@@ -691,7 +956,181 @@ namespace UT.Kvasir.Transaction {
             games.Killers.Should().HaveUnsavedEntryCount(0);
         }
 
-        [TestMethod] public void SelfReferentialRelation() {
+        [TestMethod] public void MultipleEntitiesRelatedByScalarLocalization() {
+            // Arrange
+            var daemon = new Daemon() {
+                Human = "Lyra (Belacqua) Silvertongue",
+                Name = "Pantalaimon",
+                Animal = new LocalizedText("LOC_PINE_MARTEN"),
+                IsZombi = false,
+                CompletedAkterrakeh = false
+            };
+            (daemon.Animal.Relation as IRelation).Canonicalize();
+            daemon.Animal[Language.English] = "Pine Marten";
+            var fixture = new TestFixture(typeof(Daemon), typeof(LocalizedText));
+
+            // Act
+            fixture.Transactor.Update(new object[] { daemon, daemon.Animal });
+            var daemonCmd = fixture.PrincipalCommands<Daemon>().UpdateCommand(ANY_ROWS);
+            var daemonUpdates = fixture.UpdatesFor(daemonCmd);
+            var textInsertCmd = fixture.PrincipalCommands<LocalizedText>().InsertCommand(ANY_ROWS);
+            var textInsertions = fixture.InsertionsFor(textInsertCmd);
+            var textDeleteCmd = fixture.PrincipalCommands<LocalizedText>().DeleteCommand(ANY_ROWS);
+            var textDeletions = fixture.DeletionsFor(textDeleteCmd);
+            var textUpdateCmd = fixture.PrincipalCommands<LocalizedText>().UpdateCommand(ANY_ROWS);
+            var textUpdates = fixture.UpdatesFor(textUpdateCmd);
+
+            // Assert
+            daemonCmd.Connection.Should().Be(fixture.Connection);
+            daemonCmd.Transaction.Should().Be(fixture.Transaction);
+            textInsertCmd.Connection.Should().Be(fixture.Connection);
+            textInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            textDeleteCmd.Connection.Should().Be(fixture.Connection);
+            textDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            daemonUpdates.Should().HaveCount(1);
+            daemonUpdates.Should().ContainRow(daemon.Human, daemon.Name, daemon.Animal.Key, daemon.IsZombi, daemon.CompletedAkterrakeh);
+            textInsertions.Should().HaveCount(1);
+            textInsertions.Should().ContainRow(daemon.Animal.Key, ConversionOf(Language.English), daemon.Animal[Language.English]);
+            textDeletions.Should().HaveCount(0);
+            textUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered((daemonCmd, textInsertCmd));
+            fixture.Transaction.Received(1).Commit();
+            daemon.Animal.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByReferenceLocalization() {
+            // Arrange
+            var doctor0 = new Vasectomy.Doctor() {
+                MedicalID = Guid.NewGuid(),
+                Name = "Dr. Edmond Duilleierres",
+                AlmaMater = "Paris School for Medical Professionals of Arrondissement #8",
+                Specialty = "holistic medicine"
+            };
+            var doctor1 = new Vasectomy.Doctor() {
+                MedicalID = Guid.NewGuid(),
+                Name = "Dr. Salla O'Uiell",
+                AlmaMater = "Dublin College of Surgical Sciences",
+                Specialty = "surgery"
+            };
+            var vasectomy = new Vasectomy() {
+                SurgeryID = Guid.NewGuid(),
+                Patient = "Barry Hluek",
+                Date = new DateOnly(1993, 4, 19),
+                Doctors = new Vasectomy.LocalizedStage(Guid.NewGuid()),
+                Reversible = true
+            };
+            vasectomy.Doctors[Vasectomy.Stage.Anesthetic] = doctor0;
+            vasectomy.Doctors[Vasectomy.Stage.Surgery] = doctor1;
+            vasectomy.Doctors[Vasectomy.Stage.Recovery] = doctor0;
+            vasectomy.Doctors[Vasectomy.Stage.Monitoring] = doctor0;
+            var fixture = new TestFixture(typeof(Vasectomy), typeof(Vasectomy.Doctor), typeof(Vasectomy.LocalizedStage));
+
+            // Act
+            fixture.Transactor.Update(new object[] { doctor0, doctor1, vasectomy, vasectomy.Doctors });
+            var doctorUpdateCmd = fixture.PrincipalCommands<Vasectomy.Doctor>().UpdateCommand(ANY_ROWS);
+            var doctorUpdates = fixture.UpdatesFor(doctorUpdateCmd);
+            var vasectomyUpdateCmd = fixture.PrincipalCommands<Vasectomy>().UpdateCommand(ANY_ROWS);
+            var vasectomyUpdates = fixture.UpdatesFor(vasectomyUpdateCmd);
+            var stageInsertCmd = fixture.PrincipalCommands<Vasectomy.LocalizedStage>().InsertCommand(ANY_ROWS);
+            var stageInsertions = fixture.InsertionsFor(stageInsertCmd);
+            var stageDeleteCmd = fixture.PrincipalCommands<Vasectomy.LocalizedStage>().DeleteCommand(ANY_ROWS);
+            var stageDeletions = fixture.DeletionsFor(stageDeleteCmd);
+            var stageUpdateCmd = fixture.PrincipalCommands<Vasectomy.LocalizedStage>().UpdateCommand(ANY_ROWS);
+            var stageUpdates = fixture.UpdatesFor(stageUpdateCmd);
+
+            // Assert
+            doctorUpdateCmd.Connection.Should().Be(fixture.Connection);
+            doctorUpdateCmd.Transaction.Should().Be(fixture.Transaction);
+            vasectomyUpdateCmd.Connection.Should().Be(fixture.Connection);
+            vasectomyUpdateCmd.Transaction.Should().Be(fixture.Transaction);
+            stageInsertCmd.Connection.Should().Be(fixture.Connection);
+            stageInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            stageDeleteCmd.Connection.Should().Be(fixture.Connection);
+            stageDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            doctorUpdates.Should().HaveCount(2);
+            doctorUpdates.Should().ContainRow(doctor0.MedicalID, doctor0.Name, doctor0.AlmaMater, doctor0.Specialty);
+            doctorUpdates.Should().ContainRow(doctor1.MedicalID, doctor1.Name, doctor1.AlmaMater, doctor1.Specialty);
+            vasectomyUpdates.Should().HaveCount(1);
+            vasectomyUpdates.Should().ContainRow(vasectomy.SurgeryID, vasectomy.Patient, vasectomy.Date, vasectomy.Doctors.Key, vasectomy.Reversible);
+            stageInsertions.Should().HaveCount(4);
+            stageInsertions.Should().ContainRow(vasectomy.Doctors.Key, ConversionOf(Vasectomy.Stage.Anesthetic), vasectomy.Doctors[Vasectomy.Stage.Anesthetic].MedicalID);
+            stageInsertions.Should().ContainRow(vasectomy.Doctors.Key, ConversionOf(Vasectomy.Stage.Surgery), vasectomy.Doctors[Vasectomy.Stage.Surgery].MedicalID);
+            stageInsertions.Should().ContainRow(vasectomy.Doctors.Key, ConversionOf(Vasectomy.Stage.Recovery), vasectomy.Doctors[Vasectomy.Stage.Recovery].MedicalID);
+            stageInsertions.Should().ContainRow(vasectomy.Doctors.Key, ConversionOf(Vasectomy.Stage.Monitoring), vasectomy.Doctors[Vasectomy.Stage.Monitoring].MedicalID);
+            stageDeletions.Should().HaveCount(0);
+            stageUpdates.Should().HaveCount(0);
+
+            fixture.ShouldBeOrdered((vasectomyUpdateCmd, stageInsertCmd));
+            fixture.ShouldBeOrdered(doctorUpdateCmd, stageInsertCmd);
+            fixture.Transaction.Received(1).Commit();
+            vasectomy.Doctors.Relation.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void MultipleEntitiesRelatedByRelationLocalization() {
+            // Arrange
+            var petapsco = new LocalizedText("LOC_PETAPSCO");
+            petapsco[Language.English] = "Petapsco River";
+            petapsco[Language.Spanish] = "Río Petapsco";
+            var harbor = new Harbor() {
+                Name = "Baltimore Harbor",
+                ShippingTons = 50000000,
+                DraftDepth = 50,
+                AirDraft = 182,
+                Rivers = new RelationMap<LocalizedText, Harbor.Flow>() {
+                    { petapsco, Harbor.Flow.OutFlow }
+                },
+                OperatedBy = "Maryland Port Administration"
+            };
+            var fixture = new TestFixture(typeof(Harbor), typeof(LocalizedText));
+
+            // Act
+            fixture.Transactor.Update(new object[] { petapsco, harbor });
+            var harborCmd = fixture.PrincipalCommands<Harbor>().UpdateCommand(ANY_ROWS);
+            var harborUpdates = fixture.UpdatesFor(harborCmd);
+            var textInsertCmd = fixture.PrincipalCommands<LocalizedText>().InsertCommand(ANY_ROWS);
+            var textInsertions = fixture.InsertionsFor(textInsertCmd);
+            var textDeleteCmd = fixture.PrincipalCommands<LocalizedText>().DeleteCommand(ANY_ROWS);
+            var textDeletions = fixture.InsertionsFor(textDeleteCmd);
+            var textUpdateCmd = fixture.PrincipalCommands<LocalizedText>().UpdateCommand(ANY_ROWS);
+            var textUpdates = fixture.UpdatesFor(textUpdateCmd);
+            var riversInsertCmd = fixture.RelationCommands<Harbor>(0).InsertCommand(ANY_ROWS);
+            var riversInsertions = fixture.InsertionsFor(riversInsertCmd);
+            var riversDeleteCmd = fixture.RelationCommands<Harbor>(0).DeleteCommand(ANY_ROWS);
+            var riversDeletions = fixture.DeletionsFor(riversDeleteCmd);
+            var riversUpdateCmd = fixture.RelationCommands<Harbor>(0).UpdateCommand(ANY_ROWS);
+            var riversUpdates = fixture.UpdatesFor(riversUpdateCmd);
+
+            // Assert
+            harborCmd.Connection.Should().Be(fixture.Connection);
+            harborCmd.Transaction.Should().Be(fixture.Transaction);
+            textInsertCmd.Connection.Should().Be(fixture.Connection);
+            textInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            textDeleteCmd.Connection.Should().Be(fixture.Connection);
+            textDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            riversInsertCmd.Connection.Should().Be(fixture.Connection);
+            riversInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            riversDeleteCmd.Connection.Should().Be(fixture.Connection);
+            riversDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            riversUpdateCmd.Connection.Should().Be(fixture.Connection);
+            riversUpdateCmd.Transaction.Should().Be(fixture.Transaction);
+            harborUpdates.Should().HaveCount(1);
+            harborUpdates.Should().ContainRow(harbor.Name, harbor.ShippingTons, harbor.DraftDepth, harbor.AirDraft, harbor.OperatedBy);
+            textInsertions.Should().HaveCount(2);
+            textInsertions.Should().ContainRow(petapsco.Key, ConversionOf(Language.English), petapsco[Language.English]);
+            textInsertions.Should().ContainRow(petapsco.Key, ConversionOf(Language.Spanish), petapsco[Language.Spanish]);
+            textDeletions.Should().HaveCount(0);
+            textUpdates.Should().HaveCount(0);
+            riversInsertions.Should().HaveCount(1);
+            riversInsertions.Should().ContainRow(harbor.Name, petapsco.Key, ConversionOf(harbor.Rivers[petapsco]));
+            riversDeletions.Should().HaveCount(0);
+            riversUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered((harborCmd, riversInsertCmd), riversInsertCmd);
+            fixture.Transaction.Received(1).Commit();
+            petapsco.Relation.Should().HaveUnsavedEntryCount(0);
+            harbor.Rivers.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaRelation() {
             // Arrange
             var yudhishthira = new Pandava() {
                 Name = "Yudhishthira",
@@ -780,6 +1219,66 @@ namespace UT.Kvasir.Transaction {
             arjuna.Brothers.Should().HaveUnsavedEntryCount(0);
             bhima.Brothers.Should().HaveUnsavedEntryCount(0);
             nakula.Brothers.Should().HaveUnsavedEntryCount(0);
+        }
+
+        [TestMethod] public void SelfReferentialEntityViaLocalization() {
+            // Arrange
+            var jasmine = new DisneyPrincess() {
+                Name = "Jasmine",
+                FilmSeries = "Aladdin",
+                TotalAppearances = 70,
+                Height = 5.33,
+                HasAnimalSidekick = true,
+                LivingParents = DisneyPrincess.Parent.Father,
+                ThoughtsOnOthers = new DisneyPrincess.Opinion("LOC_JASMINE_OPINION")
+            };
+            var nala = new DisneyPrincess() {
+                Name = "Nala",
+                FilmSeries = "The Lion King",
+                TotalAppearances = 32,
+                Height = 3.75,
+                HasAnimalSidekick = false,
+                LivingParents = DisneyPrincess.Parent.Mother | DisneyPrincess.Parent.Father,
+                ThoughtsOnOthers = new DisneyPrincess.Opinion("LOC_NALA_OPINOIN")
+            };
+            jasmine.ThoughtsOnOthers[jasmine] = 10.0;
+            jasmine.ThoughtsOnOthers[nala] = 8.9;
+            nala.ThoughtsOnOthers[nala] = 10.0;
+            nala.ThoughtsOnOthers[jasmine] = 7.1;
+            var fixture = new TestFixture(typeof(DisneyPrincess), typeof(DisneyPrincess.Opinion));
+
+            // Act
+            fixture.Transactor.Update(new object[] { jasmine, jasmine.ThoughtsOnOthers, nala, nala.ThoughtsOnOthers });
+            var princessUpdateCmd = fixture.PrincipalCommands<DisneyPrincess>().UpdateCommand(ANY_ROWS);
+            var princessUpdates = fixture.UpdatesFor(princessUpdateCmd);
+            var opinionInsertCmd = fixture.PrincipalCommands<DisneyPrincess.Opinion>().InsertCommand(ANY_ROWS);
+            var opinionInsertions = fixture.InsertionsFor(opinionInsertCmd);
+            var opinionDeleteCmd = fixture.PrincipalCommands<DisneyPrincess.Opinion>().DeleteCommand(ANY_ROWS);
+            var opinionDeletions = fixture.DeletionsFor(opinionDeleteCmd);
+            var opinionUpdateCmd = fixture.PrincipalCommands<DisneyPrincess.Opinion>().UpdateCommand(ANY_ROWS);
+            var opinionUpdates = fixture.UpdatesFor(opinionUpdateCmd);
+
+            // Assert
+            princessUpdateCmd.Connection.Should().Be(fixture.Connection);
+            princessUpdateCmd.Transaction.Should().Be(fixture.Transaction);
+            opinionInsertCmd.Connection.Should().Be(fixture.Connection);
+            opinionInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            opinionDeleteCmd.Connection.Should().Be(fixture.Connection);
+            opinionDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            princessUpdates.Should().HaveCount(2);
+            princessUpdates.Should().ContainRow(jasmine.Name, jasmine.FilmSeries, jasmine.TotalAppearances, jasmine.Height, jasmine.HasAnimalSidekick, ConversionOf(jasmine.LivingParents), jasmine.ThoughtsOnOthers.Key);
+            princessUpdates.Should().ContainRow(nala.Name, nala.FilmSeries, nala.TotalAppearances, nala.Height, nala.HasAnimalSidekick, ConversionOf(nala.LivingParents), nala.ThoughtsOnOthers.Key);
+            opinionInsertions.Should().HaveCount(4);
+            opinionInsertions.Should().ContainRow(jasmine.ThoughtsOnOthers.Key, jasmine.Name, jasmine.ThoughtsOnOthers[jasmine]);
+            opinionInsertions.Should().ContainRow(jasmine.ThoughtsOnOthers.Key, nala.Name, jasmine.ThoughtsOnOthers[nala]);
+            opinionInsertions.Should().ContainRow(nala.ThoughtsOnOthers.Key, nala.Name, nala.ThoughtsOnOthers[nala]);
+            opinionInsertions.Should().ContainRow(nala.ThoughtsOnOthers.Key, jasmine.Name, nala.ThoughtsOnOthers[jasmine]);
+            opinionDeletions.Should().HaveCount(0);
+            opinionUpdates.Should().HaveCount(0);
+            fixture.ShouldBeOrdered(princessUpdateCmd, opinionInsertCmd);
+            fixture.Transaction.Received(1).Commit();
+            jasmine.ThoughtsOnOthers.Relation.Should().HaveUnsavedEntryCount(0);
+            nala.ThoughtsOnOthers.Relation.Should().HaveUnsavedEntryCount(0);
         }
 
         [TestMethod] public void TransactionRolledBack() {
