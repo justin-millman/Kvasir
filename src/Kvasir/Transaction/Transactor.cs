@@ -391,13 +391,15 @@ namespace Kvasir.Transaction {
                         canonicalizations.Add(() => relation.Extractor.Canonicalize(entity));
                     }
 
-                    var deleteCommand = commands_[tables_[relation.Table]].DeleteCommand(deleteRows);
-                    var updateCommand = commands_[tables_[relation.Table]].UpdateCommand(updateRows);
-                    var insertCommand = commands_[tables_[relation.Table]].InsertCommand(insertRows);
-                    foreach (var command in new IDbCommand[] { deleteCommand, updateCommand, insertCommand }) {
-                        command.Connection = connection_;
-                        command.Transaction = transaction;
-                        command.ExecuteNonQuery();
+                    var deleteCommand = (deleteRows.IsEmpty(), commands_[tables_[relation.Table]].DeleteCommand(deleteRows));
+                    var updateCommand = (updateRows.IsEmpty(), commands_[tables_[relation.Table]].UpdateCommand(updateRows));
+                    var insertCommand = (insertRows.IsEmpty(), commands_[tables_[relation.Table]].InsertCommand(insertRows));
+                    foreach (var (isEmpty, command) in new[] { deleteCommand, updateCommand, insertCommand }) {
+                        if (!isEmpty) {
+                            command.Connection = connection_;
+                            command.Transaction = transaction;
+                            command.ExecuteNonQuery();
+                        }
                     }
                 }
             }
@@ -420,12 +422,14 @@ namespace Kvasir.Transaction {
                     canonicalizations.Add(() => translation.Principal.Extractor.Canonicalize(entity));
                 }
 
-                var deleteCommand = commands_[tables_[translation.Principal.Table]].DeleteCommand(deleteRows);
-                var insertCommand = commands_[tables_[translation.Principal.Table]].InsertCommand(insertRows);
-                foreach (var command in new IDbCommand[] { deleteCommand, insertCommand }) {
-                    command.Connection = connection_;
-                    command.Transaction = transaction;
-                    command.ExecuteNonQuery();
+                var deleteCommand = (deleteRows.IsEmpty(), commands_[tables_[translation.Principal.Table]].DeleteCommand(deleteRows));
+                var insertCommand = (insertRows.IsEmpty(), commands_[tables_[translation.Principal.Table]].InsertCommand(insertRows));
+                foreach (var (isEmpty, command) in new[] { deleteCommand, insertCommand }) {
+                    if (!isEmpty) {
+                        command.Connection = connection_;
+                        command.Transaction = transaction;
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
 
@@ -472,7 +476,6 @@ namespace Kvasir.Transaction {
                     // does mean that we'll issue a DELETE command for empty Localizations.
                     rows.Add(translation.Principal.KeyExtractor.ExtractFrom(entity));
                 }
-
                 var command = commands_[tables_[translation.Principal.Table]].DeleteCommand(rows);
                 command.Connection = connection_;
                 command.Transaction = transaction;
