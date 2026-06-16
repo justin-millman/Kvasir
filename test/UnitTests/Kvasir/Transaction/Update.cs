@@ -481,10 +481,9 @@ namespace UT.Kvasir.Transaction {
             var placementUpdates = fixture.UpdatesFor(placementUpdateCmd);
 
             // Assert
-            placementInsertCmd.Connection.Should().Be(fixture.Connection);
-            placementInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            placementDeleteCmd.Connection.Should().Be(fixture.Connection);
-            placementDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            placementInsertCmd.Received(0).ExecuteNonQuery();
+            placementDeleteCmd.Received(0).ExecuteNonQuery();
+            placementUpdateCmd.Received(0).ExecuteNonQuery();
             placementInsertions.Should().HaveCount(0);
             placementDeletions.Should().HaveCount(0);
             placementUpdates.Should().HaveCount(0);
@@ -513,10 +512,10 @@ namespace UT.Kvasir.Transaction {
             var permissionsUpdates = fixture.UpdatesFor(permissionsUpdateCmd);
 
             // Assert
-            permissionsInsertCmd.Connection.Should().Be(fixture.Connection);
-            permissionsInsertCmd.Transaction.Should().Be(fixture.Transaction);
+            permissionsInsertCmd.Received(0).ExecuteNonQuery();
             permissionsDeleteCmd.Connection.Should().Be(fixture.Connection);
             permissionsDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            permissionsUpdateCmd.Received(0).ExecuteNonQuery();
             permissionsInsertions.Should().HaveCount(0);
             permissionsDeletions.Should().HaveCount(2);
             permissionsDeletions.Should().ContainRow(permissions.Key, "qa");
@@ -546,8 +545,8 @@ namespace UT.Kvasir.Transaction {
             // Assert
             binaryInsertCmd.Connection.Should().Be(fixture.Connection);
             binaryInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            binaryDeleteCmd.Connection.Should().Be(fixture.Connection);
-            binaryDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            binaryDeleteCmd.Received(0).ExecuteNonQuery();
+            binaryUpdateCmd.Received(0).ExecuteNonQuery();
             binaryInsertions.Should().HaveCount(2);
             binaryInsertions.Should().ContainRow(binary.Key, true, binary[true]);
             binaryInsertions.Should().ContainRow(binary.Key, false, binary[false]);
@@ -629,8 +628,8 @@ namespace UT.Kvasir.Transaction {
             // Assert
             wageInsertCmd.Connection.Should().Be(fixture.Connection);
             wageInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            wageDeleteCmd.Connection.Should().Be(fixture.Connection);
-            wageDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            wageDeleteCmd.Received(0).ExecuteNonQuery();
+            wageUpdateCmd.Received(0).ExecuteNonQuery();
             wageInsertions.Should().HaveCount(12);
             wageInsertions.Should().ContainRow(illinois.Key, (short)1972, illinois[1972]);
             wageInsertions.Should().ContainRow(illinois.Key, (short)1976, illinois[1976]);
@@ -745,16 +744,16 @@ namespace UT.Kvasir.Transaction {
             // Assert
             philosophyInsertCmd.Connection.Should().Be(fixture.Connection);
             philosophyInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            philosophyDeleteCmd.Connection.Should().Be(fixture.Connection);
-            philosophyDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            philosophyDeleteCmd.Received(0).ExecuteNonQuery();
+            philosophyUpdateCmd.Received(0).ExecuteNonQuery();
             alterEgoInsertCmd.Connection.Should().Be(fixture.Connection);
             alterEgoInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            alterEgoDeleteCmd.Connection.Should().Be(fixture.Connection);
-            alterEgoDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            alterEgoDeleteCmd.Received(0).ExecuteNonQuery();
+            alterEgoUpdateCmd.Received(0).ExecuteNonQuery();
             painInsertCmd.Connection.Should().Be(fixture.Connection);
             painInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            painDeleteCmd.Connection.Should().Be(fixture.Connection);
-            painDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            painDeleteCmd.Received(0).ExecuteNonQuery();
+            painUpdateCmd.Received(0).ExecuteNonQuery();
             philosophyInsertions.Should().HaveCount(1);
             philosophyInsertions.Should().ContainRow(philosophy.Key, ConversionOf(Language.English), philosophy[Language.English]);
             philosophyDeletions.Should().HaveCount(0);
@@ -985,8 +984,8 @@ namespace UT.Kvasir.Transaction {
             daemonCmd.Transaction.Should().Be(fixture.Transaction);
             textInsertCmd.Connection.Should().Be(fixture.Connection);
             textInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            textDeleteCmd.Connection.Should().Be(fixture.Connection);
-            textDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            textDeleteCmd.Received(0).ExecuteNonQuery();
+            textUpdateCmd.Received(0).ExecuteNonQuery();
             daemonUpdates.Should().HaveCount(1);
             daemonUpdates.Should().ContainRow(daemon.Human, daemon.Name, daemon.Animal.Key, daemon.IsZombi, daemon.CompletedAkterrakeh);
             textInsertions.Should().HaveCount(1);
@@ -1045,8 +1044,8 @@ namespace UT.Kvasir.Transaction {
             vasectomyUpdateCmd.Transaction.Should().Be(fixture.Transaction);
             stageInsertCmd.Connection.Should().Be(fixture.Connection);
             stageInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            stageDeleteCmd.Connection.Should().Be(fixture.Connection);
-            stageDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            stageDeleteCmd.Received(0).ExecuteNonQuery();
+            stageUpdateCmd.Received(0).ExecuteNonQuery();
             doctorUpdates.Should().HaveCount(2);
             doctorUpdates.Should().ContainRow(doctor0.MedicalID, doctor0.Name, doctor0.AlmaMater, doctor0.Specialty);
             doctorUpdates.Should().ContainRow(doctor1.MedicalID, doctor1.Name, doctor1.AlmaMater, doctor1.Specialty);
@@ -1105,14 +1104,12 @@ namespace UT.Kvasir.Transaction {
             harborCmd.Transaction.Should().Be(fixture.Transaction);
             textInsertCmd.Connection.Should().Be(fixture.Connection);
             textInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            textDeleteCmd.Connection.Should().Be(fixture.Connection);
-            textDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            textDeleteCmd.Received(0).ExecuteNonQuery();
+            textUpdateCmd.Received(0).ExecuteNonQuery();
             riversInsertCmd.Connection.Should().Be(fixture.Connection);
             riversInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            riversDeleteCmd.Connection.Should().Be(fixture.Connection);
-            riversDeleteCmd.Transaction.Should().Be(fixture.Transaction);
-            riversUpdateCmd.Connection.Should().Be(fixture.Connection);
-            riversUpdateCmd.Transaction.Should().Be(fixture.Transaction);
+            riversDeleteCmd.Received(0).ExecuteNonQuery();
+            riversUpdateCmd.Received(0).ExecuteNonQuery();
             harborUpdates.Should().HaveCount(1);
             harborUpdates.Should().ContainRow(harbor.Name, harbor.ShippingTons, harbor.DraftDepth, harbor.AirDraft, harbor.OperatedBy);
             textInsertions.Should().HaveCount(2);
@@ -1263,8 +1260,8 @@ namespace UT.Kvasir.Transaction {
             princessUpdateCmd.Transaction.Should().Be(fixture.Transaction);
             opinionInsertCmd.Connection.Should().Be(fixture.Connection);
             opinionInsertCmd.Transaction.Should().Be(fixture.Transaction);
-            opinionDeleteCmd.Connection.Should().Be(fixture.Connection);
-            opinionDeleteCmd.Transaction.Should().Be(fixture.Transaction);
+            opinionDeleteCmd.Received(0).ExecuteNonQuery();
+            opinionUpdateCmd.Received(0).ExecuteNonQuery();
             princessUpdates.Should().HaveCount(2);
             princessUpdates.Should().ContainRow(jasmine.Name, jasmine.FilmSeries, jasmine.TotalAppearances, jasmine.Height, jasmine.HasAnimalSidekick, ConversionOf(jasmine.LivingParents), jasmine.ThoughtsOnOthers.Key);
             princessUpdates.Should().ContainRow(nala.Name, nala.FilmSeries, nala.TotalAppearances, nala.Height, nala.HasAnimalSidekick, ConversionOf(nala.LivingParents), nala.ThoughtsOnOthers.Key);
