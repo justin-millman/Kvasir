@@ -5,6 +5,7 @@ using Kvasir.Core;
 using Kvasir.Extraction;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,9 +62,11 @@ namespace Kvasir.Translation {
             // Memoization
             if (principalTableCache_.TryGetValue(source, out PrincipalTableDef? principal)) {
                 Debug.Assert(pkCache_.ContainsKey(source));
+                logger_.LogDebug("{} already translated; returning memoization from `TranslatePrincipalTable`", source.Name);
                 return principal;
             }
             Debug.Assert(!pkCache_.ContainsKey(source));
+            logger_.LogDebug("Translating Principal Table for {} . . .", source.Name);
 
             // The error checking for invalid Entity types has to be here rather than in operator[], because the latter
             // is invoked only from the top-level API whereas the former is invoked from both the top-level API (via the
@@ -138,6 +141,7 @@ namespace Kvasir.Translation {
             principalTableCache_.Add(source, principal);
             tableNameCache_.Add(tableName, source);
             keyMatchers_.Add(source, new KeyMatcher(() => entityLookup_(source), pkExtractor));
+            logger_.LogDebug("Translation of Principal Table for {} complete!", source.Name);
             return principal;
         }
 
@@ -169,6 +173,8 @@ namespace Kvasir.Translation {
             Debug.Assert(pkCache_.ContainsKey(source));
             Debug.Assert(relationTrackersCache_.ContainsKey(source));
 
+            logger_.LogDebug("Translating Relation Tables of {} . . .", source.Name);
+
             // Because a Relation Table is translated from the combination of a particular Entity Type and a particular
             // nested property, there's no need for memoization: each combination will only ever be translated once.
             // However, the owning Entity will have been memoized when initially translated, and the element type will
@@ -180,6 +186,7 @@ namespace Kvasir.Translation {
                 var property = tracker.Property;
                 var syntheticType = SyntheticType.MakeSyntheticType(source, tracker);
                 var context = new Context(syntheticType);
+                logger_.LogDebug("Translating Relation Table for {} . . .", syntheticType.Name);
 
                 // A Relation-type property cannot be natively nullable unless it has a [NonNullable] annotation
                 // attached
@@ -260,9 +267,11 @@ namespace Kvasir.Translation {
                 relationTables.Add(def);
 
                 relationTypes.Add(syntheticType);
+                logger_.LogDebug("Translation of Relation Table for {} complete!", syntheticType.Name);
             }
 
             relationTypesFromEntity_[source] = relationTypes;
+            logger_.LogDebug("Translation of Relation Tables of {} complete!", source.Name);
             return relationTables;
         }
 
@@ -298,9 +307,11 @@ namespace Kvasir.Translation {
             // Memoization
             if (localizationTableCache_.TryGetValue(source, out LocalizationTableDef? principal)) {
                 Debug.Assert(pkCache_.ContainsKey(source));
+                logger_.LogDebug("{} already translated; returning memoization from `TranslateLocalizationTable`", source.Name);
                 return principal;
             }
             Debug.Assert(!pkCache_.ContainsKey(source));
+            logger_.LogDebug("Translating Principal Table for {} . . .", source.Name);
 
             // Localizations cannot induce a reference cycle on their own. The Key Type is required to be a primitive,
             // which cannot be an Entity. The Locale Type and Value Types are allowed to be the same as the Entity on
@@ -392,6 +403,7 @@ namespace Kvasir.Translation {
                 keyMatchers_.Add(source, keyMatcher);
             }
 
+            logger_.LogDebug("Translation of Principal Table for {} . . .", source.Name);
             return principal;
         }
 

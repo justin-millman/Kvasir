@@ -4,6 +4,7 @@ using FluentAssertions;
 using Kvasir.Core;
 using Kvasir.Schema;
 using Kvasir.Translation;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace UT.Kvasir.Translation {
     public class CustomConstraintTests {
         [TestMethod] public void Check_DefaultConstructed() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(VampireSlayer);
 
             // Act
@@ -46,7 +47,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_ConstructedFromArguments() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Lyric);
 
             // Act
@@ -71,7 +72,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_AppliedToAggregateNestedScalar() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Asteroid);
 
             // Act
@@ -107,7 +108,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_AppliedToNestedAggregate_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Vineyard);
 
             // Act
@@ -124,7 +125,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_AppliedToReferenceNestedScalar() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Stock);
 
             // Act
@@ -149,7 +150,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_AppliedToNestedReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Werewolf);
 
             // Act
@@ -166,7 +167,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_AppliedToPreDefinedInstance_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Ubuntu);
 
             // Act
@@ -182,7 +183,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_AppliedToRelationNestedScalar() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CareBear);
 
             // Act
@@ -207,7 +208,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_AppliedToNestedRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(RiverWalk);
 
             // Act
@@ -224,7 +225,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_ScalarConstrainedMultipleTimes() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(TarotCard);
 
             // Act
@@ -250,7 +251,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_DataConvertedField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(DataStructure);
 
             // Act
@@ -273,7 +274,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NameChangedField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(AronKodesh);
 
             // Act
@@ -296,7 +297,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_ConstraintGeneratorNoViableDefaultConstructor_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Seizure);
 
             // Act
@@ -312,7 +313,7 @@ namespace UT.Kvasir.Translation {
         
         [TestMethod] public void Check_ConstraintGeneratorNoViableArgumentsConstructor_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Transistor);
 
             // Act
@@ -328,7 +329,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_ConstraintGeneratorDefaultConstructorThrows_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Buffet);
 
             // Act
@@ -344,7 +345,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_ConstraintGeneratorArgumentsConstructorThrows_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(BasketballPlayer);
 
             // Act
@@ -360,7 +361,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_ConstraintGeneratorGenerationThrows_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Aquarium);
 
             // Act
@@ -376,7 +377,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_PathIsNull_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Trilogy);
 
             // Act
@@ -392,7 +393,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_PathOnScalar_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(TarPits);
 
             // Act
@@ -408,7 +409,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NonExistentPathOnAggregate_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(StarCrossedLovers);
 
             // Act
@@ -424,7 +425,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NoPathOnAggregate_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Zombie);
 
             // Act
@@ -440,7 +441,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NonExistentPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Piano);
 
             // Act
@@ -456,7 +457,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NonPrimaryKeyFieldPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Exorcism);
 
             // Act
@@ -472,7 +473,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NoPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Pond);
 
             // Act
@@ -488,7 +489,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NonExistentPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CanadianProvince);
 
             // Act
@@ -504,7 +505,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NonAnchorPrimaryKeyPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Skydiver);
 
             // Act
@@ -520,7 +521,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void Check_NoPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Spring);
 
             // Act
@@ -539,7 +540,7 @@ namespace UT.Kvasir.Translation {
     public class ComplexConstraintTests {
         [TestMethod] public void ComplexCheck_DefaultConstructed() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CanterburyTale);
 
             // Act
@@ -564,7 +565,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_ConstructedFromArguments() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Pope);
 
             // Act
@@ -590,7 +591,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_NoFields_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Terminator);
 
             // Act
@@ -606,7 +607,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_MultipleFieldsInOneConstraint() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(LinuxDistribution);
 
             // Act
@@ -632,7 +633,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_SingleFieldMultipleTimesInOneConstraint() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Muppet);
 
             // Act
@@ -659,7 +660,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_NameSwappedFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PastaSauce);
 
             // Act
@@ -684,7 +685,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_OriginalNameOfSwappedField_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Dam);
 
             // Act
@@ -700,7 +701,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_UnrecognizedField_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PeaceTreaty);
 
             // Act
@@ -716,7 +717,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_DataConvertedFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Massacre);
 
             // Act
@@ -742,7 +743,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_RepeatedConstraint() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Musical);
 
             // Act
@@ -779,7 +780,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_ConstraintGeneratorNoViableArgumentsConstructor_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CookingOil);
 
             // Act
@@ -795,7 +796,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_ConstraintGeneratorArgumentsConstructorThrows_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Pirate);
 
             // Act
@@ -811,7 +812,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_ConstraintGeneratorGenerationThrows_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(ComplexCheckConstraints.Attribute);
 
             // Act
@@ -827,7 +828,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ComplexCheck_OnLocalization() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(MahjongTile);
 
             // Act

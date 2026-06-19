@@ -7546,7 +7546,7 @@
               entities and a particular back-end provider/system.
             </summary>
         </member>
-        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object})">
+        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Microsoft.Extensions.Logging.ILogger)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
@@ -7568,8 +7568,11 @@
             <param name="entityStorage">
               The functor through which reconstituted Entities will be stored for later look-up.
             </param>
+            <param name="logger">
+              The <see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
+            </param>
         </member>
-        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings)">
+        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings,Microsoft.Extensions.Logging.ILogger)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
@@ -7593,6 +7596,9 @@
             </param>
             <param name="settings">
               The <see cref="T:Kvasir.Core.Settings"/> according to which to perform the transaction activity.
+            </param>
+            <param name="logger">
+              The <see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
             </param>
             <remarks>
               Note that the settings are not currently used for anything; in fact, there are no traits available in the
@@ -8652,15 +8658,18 @@
               <see langword="false"/>.
             </returns>
         </member>
-        <member name="M:Kvasir.Translation.Translator.#ctor(System.Func{System.Type,System.Collections.Generic.IEnumerable{System.Object}})">
+        <member name="M:Kvasir.Translation.Translator.#ctor(System.Func{System.Type,System.Collections.Generic.IEnumerable{System.Object}},Microsoft.Extensions.Logging.ILogger)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
             <param name="entityLookup">
               The function used to look up the collection of existing Entities for a given <see cref="T:System.Type"/>.
             </param>
+            <param name="logger">
+              The<see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
+            </param>
         </member>
-        <member name="M:Kvasir.Translation.Translator.#ctor(System.Func{System.Type,System.Collections.Generic.IEnumerable{System.Object}},Kvasir.Core.Settings)">
+        <member name="M:Kvasir.Translation.Translator.#ctor(System.Func{System.Type,System.Collections.Generic.IEnumerable{System.Object}},Kvasir.Core.Settings,Microsoft.Extensions.Logging.ILogger)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
@@ -8669,6 +8678,9 @@
             </param>
             <param name="settings">
               The <see cref="T:Kvasir.Core.Settings"/> according to which to perform the translation.
+            </param>
+            <param name="logger">
+              The <see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
             </param>
             <remarks>
               Note that the settings are not currently used for anything; in fact, there are no traits available in the

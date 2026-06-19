@@ -2,6 +2,7 @@
 using Kvasir.Localization;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +39,7 @@ namespace Kvasir.Translation {
                 Debug.Assert(!IsLocalizationType(source));
 
                 if (translationCache_.TryGetValue(source, out var translation)) {
+                    logger_.LogDebug("{} already translated; returning memoization from `operator[]`", source.Name);
                     return translation;
                 }
 
@@ -83,6 +85,7 @@ namespace Kvasir.Translation {
                 Debug.Assert(IsLocalizationType(source));
 
                 if (localizationCache_.TryGetValue(source, out var translation)) {
+                    logger_.LogDebug("{} already translated; returning memoization from `operator[]`", source.Name);
                     return translation;
                 }
 
@@ -123,8 +126,11 @@ namespace Kvasir.Translation {
         /// <param name="entityLookup">
         ///   The function used to look up the collection of existing Entities for a given <see cref="Type"/>.
         /// </param>
-        public Translator(Func<Type, IEnumerable<object>> entityLookup)
-            : this(entityLookup, Settings.Default) {
+        /// <param name="logger">
+        ///   The<see cref="ILogger">logger</see> with which to issue diagnostics.
+        /// </param>
+        public Translator(Func<Type, IEnumerable<object>> entityLookup, ILogger logger)
+            : this(entityLookup, Settings.Default, logger) {
 
             // Need to reset this because the constructor delegation causes the "calling assembly" to actually be the
             // one of the Translator itself, but we need it to be the assembly that initially called into the Translator
@@ -140,14 +146,18 @@ namespace Kvasir.Translation {
         /// <param name="settings">
         ///   The <see cref="Settings"/> according to which to perform the translation.
         /// </param>
+        /// <param name="logger">
+        ///   The <see cref="ILogger">logger</see> with which to issue diagnostics.
+        /// </param>
         /// <remarks>
         ///   Note that the settings are not currently used for anything; in fact, there are no traits available in the
         ///   <see cref="Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
         ///   us to provide customization of behaviors in the future without necessitating a significant redesign.
         /// </remarks>
-        public Translator(Func<Type, IEnumerable<object>> entityLookup, Settings settings) {
+        public Translator(Func<Type, IEnumerable<object>> entityLookup, Settings settings, ILogger logger) {
             Debug.Assert(entityLookup is not null);
             Debug.Assert(settings is not null);
+            Debug.Assert(logger is not null);
 
             settings_ = settings;
             callingAssembly_ = Assembly.GetCallingAssembly();
@@ -163,6 +173,7 @@ namespace Kvasir.Translation {
             localizationTrackersCache_ = new Dictionary<Type, IReadOnlyList<LocalizationTracker>>();
             keyMatchers_ = new Dictionary<Type, KeyMatcher>();
             relationTypesFromEntity_ = new Dictionary<Type, IReadOnlyList<Type>>();
+            logger_ = logger;
         }
 
 
@@ -180,6 +191,7 @@ namespace Kvasir.Translation {
         private readonly Dictionary<Type, IReadOnlyList<LocalizationTracker>> localizationTrackersCache_;
         private readonly Dictionary<Type, KeyMatcher> keyMatchers_;
         private readonly Dictionary<Type, IReadOnlyList<Type>> relationTypesFromEntity_;
+        private readonly ILogger logger_;
     }
 
 

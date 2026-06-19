@@ -2,6 +2,7 @@
 using Kvasir.Core;
 using Kvasir.Schema;
 using Kvasir.Translation;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Garden)];
             var garden = (Garden)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -53,7 +54,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Dormitory)];
             var dormitory = (Dormitory)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -78,7 +79,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(KingOfFrance)];
             var king = (KingOfFrance)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -103,7 +104,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(MathematicalProof)];
             var proof = (MathematicalProof)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -128,7 +129,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Banshee)];
             var banshee = (Banshee)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -154,7 +155,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Neighborhood)];
             var neighborhood = (Neighborhood)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -180,7 +181,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Patreon)];
             var patreon = (Patreon)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -206,7 +207,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(EmergencyRoom)];
             var room = (EmergencyRoom)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -231,7 +232,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Accountant)];
             var accountant = (Accountant)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -255,7 +256,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Prenup)];
             var prenup = (Prenup)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -283,7 +284,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Penguin)];
             var penguin = (Penguin)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -307,7 +308,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Trampoline)];
             var trampoline = (Trampoline)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -329,7 +330,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Quilt)];
             var quilt = (Quilt)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -353,7 +354,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(MetraRoute)];
             var route = (MetraRoute)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -377,7 +378,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Loa)];
             var loa = (Loa)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -398,7 +399,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(LED)];
             var led = (LED)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -420,7 +421,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(ConspiracyTheory)];
             var theory = (ConspiracyTheory)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -451,7 +452,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Mermaid)];
             var mermaid = (Mermaid)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -484,7 +485,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Cheese)];
             var cheese = (Cheese)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -509,7 +510,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(EpiPen)];
             var epipen = (EpiPen)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -536,7 +537,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Hacker)];
             var hacker = (Hacker)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -564,7 +565,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Iconoclast)];
             var iconoclast = (Iconoclast)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -591,7 +592,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(AlphaMonster)];
             var alpha = (AlphaMonster)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -618,7 +619,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Empanada)];
             var empanada = (Empanada)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -659,7 +660,7 @@ namespace UT.Kvasir.Translation {
             var depot = new EntityDepot();
             depot.StoreEntity(rooster1);
             depot.StoreEntity(rooster2);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Cockfight)];
             var cockfight = (Cockfight)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -693,7 +694,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var depot = new EntityDepot();
             depot.StoreEntity(range);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Glacier)];
             var glacier = (Glacier)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -716,7 +717,7 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Allegory)];
             var allegory = (Allegory)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -752,7 +753,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var depot = new EntityDepot();
             depot.StoreEntity(person);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(StripClub)];
             var stripClub = (StripClub)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -787,7 +788,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var depot = new EntityDepot();
             depot.StoreEntity(painter);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Fresco)];
             var fresco = (Fresco)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -820,7 +821,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var depot = new EntityDepot();
             depot.StoreEntity(company);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(GoKart)];
             var gokart = (GoKart)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -846,7 +847,7 @@ namespace UT.Kvasir.Translation {
             var usageRows = new List<List<DBValue>>();
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(CharcuterieBoard)];
             var board = (CharcuterieBoard)translation.Principal.Reconstitutor.ReconstituteFrom(boardRow);
             translation.Relations[0].Repopulator!.Repopulate(board, cheeseRows);
@@ -892,7 +893,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Mutant)];
             var mutant = (Mutant)translation.Principal.Reconstitutor.ReconstituteFrom(mutantRow);
             translation.Relations[0].Repopulator!.Repopulate(mutant, appearanceRows);
@@ -943,7 +944,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(WaterPark)];
             var park = (WaterPark)translation.Principal.Reconstitutor.ReconstituteFrom(parkRow);
             translation.Relations[0].Repopulator!.Repopulate(park, admissionRows);
@@ -976,7 +977,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Seance)];
             var seance = (Seance)translation.Principal.Reconstitutor.ReconstituteFrom(seanceRow);
             translation.Relations[0].Repopulator!.Repopulate(seance, spiritRows);
@@ -1021,7 +1022,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Dermatologist)];
             var dermatologist = (Dermatologist)translation.Principal.Reconstitutor.ReconstituteFrom(dermatologistRow);
             translation.Relations[0].Repopulator!.Repopulate(dermatologist, almaMatersRow);
@@ -1065,7 +1066,7 @@ namespace UT.Kvasir.Translation {
             var sauceRows = new List<List<DBValue>>() {};
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(FriedChicken)];
             var chicken = (FriedChicken)translation.Principal.Reconstitutor.ReconstituteFrom(chickenRow);
             translation.Relations[0].Repopulator!.Repopulate(chicken, sauceRows);
@@ -1095,7 +1096,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Limousine)];
             var limousine = (Limousine)translation.Principal.Reconstitutor.ReconstituteFrom(limousineRow);
             translation.Relations[0].Repopulator!.Repopulate(limousine, driverRows);
@@ -1121,7 +1122,7 @@ namespace UT.Kvasir.Translation {
             var impregnationRows = new List<List<DBValue>>() {};
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Xenomorph)];
             var xenomorph = (Xenomorph)translation.Principal.Reconstitutor.ReconstituteFrom(xenomorphRow);
             translation.Relations[0].Repopulator!.Repopulate(xenomorph, impregnationRows);
@@ -1153,7 +1154,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(EpicPoem)];
             var poem = (EpicPoem)translation.Principal.Reconstitutor.ReconstituteFrom(poemRow);
             translation.Relations[0].Repopulator!.Repopulate(poem, sectionRows);
@@ -1222,7 +1223,7 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var officerTranslation = translator[typeof(TrafficStop.PoliceOfficer)];
             var officer1 = (TrafficStop.PoliceOfficer)officerTranslation.Principal.Reconstitutor.ReconstituteFrom(officerRow1);
             var officer2 = (TrafficStop.PoliceOfficer)officerTranslation.Principal.Reconstitutor.ReconstituteFrom(officerRow2);
@@ -1264,7 +1265,7 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Poacher)];
             var poacher1 = (Poacher)translation.Principal.Reconstitutor.ReconstituteFrom(poacherRow1);
             var poacher2 = (Poacher)translation.Principal.Reconstitutor.ReconstituteFrom(poacherRow2);
@@ -1294,7 +1295,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(MichelinGuide)];
             var guide = (MichelinGuide)translation.Principal.Reconstitutor.ReconstituteFrom(guideRow);
             translation.Relations[0].Repopulator!.Repopulate(guide, restaurantRows);
@@ -1323,7 +1324,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Stove)];
             var stove = (Stove)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1348,7 +1349,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Cannibal)];
             var cannibal = (Cannibal)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1372,7 +1373,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Menorah)];
             var menorah = (Menorah)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1397,7 +1398,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Wedding)];
             var wedding = (Wedding)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1422,7 +1423,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(GoFundMe)];
             var goFundMe = (GoFundMe)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1437,7 +1438,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_AllWriteableProperties_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Tractor);
 
             // Act
@@ -1452,7 +1453,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_NoneWithReadOnlyProperties_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Deposition);
 
             // Act
@@ -1467,7 +1468,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_MultipleWithReadOnlyProperties_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Hypnotist);
 
             // Act
@@ -1482,7 +1483,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_ConvertibleArgument_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Paycheck);
 
             // Act
@@ -1497,7 +1498,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_InconvertibleArgument_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Disneyland);
 
             // Act
@@ -1512,7 +1513,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_NonNullableArgumentForNullableField_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Bakery);
 
             // Act
@@ -1527,7 +1528,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_MultipleArgumentsMatchSameField_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(ParticleAccelerator);
 
             // Act
@@ -1550,7 +1551,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(CovalentBond)];
             var bond = (CovalentBond)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1573,7 +1574,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(AmericanGirlDoll)];
             var doll = (AmericanGirlDoll)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1588,7 +1589,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void MultipleViableConstructors_SameAritySameFields_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Ambulance);
 
             // Act
@@ -1603,7 +1604,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void MultipleViableConstructors_SameArityDifferentFields_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CustomerServiceLine);
 
             // Act
@@ -1629,7 +1630,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Winery)];
             var winery = (Winery)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1655,7 +1656,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Constructor)];
             var constructor = (Constructor)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1680,7 +1681,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Petroglyph)];
             var petroglyph = (Petroglyph)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1704,7 +1705,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(PaintballGun)];
             var gun = (PaintballGun)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1729,7 +1730,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(BaobabTree)];
             var baobab = (BaobabTree)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1757,7 +1758,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(GPU)];
             var gpu = (GPU)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1774,7 +1775,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_AggregateWithAllWriteableProperties_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Gargoyle);
 
             // Act
@@ -1789,7 +1790,7 @@ namespace UT.Kvasir.Translation {
         
         [TestMethod] public void NoViableConstructor_AggregateWithReadOnlyProperties_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(SecurityClearance);
 
             // Act
@@ -1815,7 +1816,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(IllithidPower)];
             var power = (IllithidPower)translation.Principal.Reconstitutor.ReconstituteFrom(powerRow);
             translation.Relations[0].Repopulator!.Repopulate(power, featureRows);
@@ -1842,7 +1843,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Requiem)];
             var requiem = (Requiem)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1867,7 +1868,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Beekeeper)];
             var beekeeper = (Beekeeper)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1892,7 +1893,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Nightclub)];
             var nightclub = (Nightclub)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1907,7 +1908,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ReconstituteThrough_NonViableConstructor_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Condom);
 
             // Act
@@ -1923,7 +1924,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ReconstituteThrough_MultipleConstructors_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(AntColony);
 
             // Act
@@ -1948,7 +1949,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Aphrodisiac)];
             var aphrodisiac = (Aphrodisiac)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -1962,7 +1963,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void ReconstituteThrough_PreDefinedEntity_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Vertebra);
 
             // Act
@@ -2000,7 +2001,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Tortilla)];
             var flourTortilla = (Tortilla)translation.Principal.Reconstitutor.ReconstituteFrom(flourRow);
             var cornTortilla = (Tortilla)translation.Principal.Reconstitutor.ReconstituteFrom(cornRow);
@@ -2024,7 +2025,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Symbiosis)];
             var symbiosis = (Symbiosis)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2042,7 +2043,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(MetricPrefix)];
             var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2060,7 +2061,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Organelle)];
             var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2079,7 +2080,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(LawAndOrder)];
             var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2096,7 +2097,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(BrazilianState)];
             var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2116,7 +2117,7 @@ namespace UT.Kvasir.Translation {
             );
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(PizzaRoll)];
             var pizzaRoll = (PizzaRoll)translation.Principal.Reconstitutor.ReconstituteFrom(pizzaRollRow);
             translation.Relations[0].Repopulator!.Repopulate(pizzaRoll, ingredientsRow);
@@ -2140,7 +2141,7 @@ namespace UT.Kvasir.Translation {
             // Act
             var depot = new EntityDepot();
             depot.StoreEntity(establishmentDate);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(HolocaustMuseum)];
             var museum = (HolocaustMuseum)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2161,7 +2162,7 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Ultrasound)];
             var ultrasound = (Ultrasound)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2184,7 +2185,7 @@ namespace UT.Kvasir.Translation {
             // Arrange
             var depot = new EntityDepot();
             depot.StoreEntity(height);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(DragQueen)];
             var queen = (DragQueen)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2199,7 +2200,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_KeyTypeArgumentForLocalizationProperty_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Chinatown);
 
             // Act
@@ -2233,7 +2234,7 @@ namespace UT.Kvasir.Translation {
             depot.StoreEntity(city);
             depot.StoreEntity(country);
             depot.StoreEntity(diocese);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Cathedral)];
             var cathedral = (Cathedral)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2257,7 +2258,7 @@ namespace UT.Kvasir.Translation {
 
             // Act
             var depot = new EntityDepot();
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Thunderstorm)];
             var thunderstorm = (Thunderstorm)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2289,7 +2290,7 @@ namespace UT.Kvasir.Translation {
             depot.StoreEntity(criminal0);
             depot.StoreEntity(criminal1);
             depot.StoreEntity(criminal2);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(WarCrime)];
             var warCrime = (WarCrime)translation.Principal.Reconstitutor.ReconstituteFrom(crimeRow);
             translation.Relations[0].Repopulator.Repopulate(warCrime, perpetratorRows);
@@ -2306,7 +2307,7 @@ namespace UT.Kvasir.Translation {
             var row = new List<DBValue>() { DBValue.Create(-71336) };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Conjunction), Translator.AsLocalzation];
             var conjunction = (Conjunction)translation.Principal.Reconstitutor.ReconstituteFrom(row);
 
@@ -2316,7 +2317,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NoViableConstructor_Localization_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Diminutive);
 
             // Act
@@ -2338,7 +2339,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(SwearWord), Translator.AsLocalzation];
             var swear = (SwearWord)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
             translation.Principal.Repopulator.Repopulate(swear, rows);
@@ -2361,7 +2362,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Wallpaper), Translator.AsLocalzation];
             var wallpaper = (Wallpaper)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
             translation.Principal.Repopulator.Repopulate(wallpaper, rows);
@@ -2386,7 +2387,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(Handshake), Translator.AsLocalzation];
             var handshake = (Handshake)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
             translation.Principal.Repopulator.Repopulate(handshake, rows);
@@ -2427,7 +2428,7 @@ namespace UT.Kvasir.Translation {
             var depot = new EntityDepot();
             depot.StoreEntity(spelling0);
             depot.StoreEntity(spelling1);
-            var translator = new Translator(t => depot[t]);
+            var translator = new Translator(t => depot[t], NullLogger.Instance);
             var translation = translator[typeof(Honorific), Translator.AsLocalzation];
             var honorific = (Honorific)translation.Principal.Reconstitutor.ReconstituteFrom(rows[0]);
             translation.Principal.Repopulator.Repopulate(honorific, rows);
@@ -2458,7 +2459,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(LiteraryGenre), Translator.AsLocalzation];
             var mysteryGenre = (LiteraryGenre)translation.Principal.Reconstitutor.ReconstituteFrom(mysteryRow);
             var folkloreGenre = (LiteraryGenre)translation.Principal.Reconstitutor.ReconstituteFrom(folkloreRow);
@@ -2479,7 +2480,7 @@ namespace UT.Kvasir.Translation {
             };
 
             // Act
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var translation = translator[typeof(PillarOfIslam), Translator.AsLocalzation];
             var reconstitute = () => translation.Principal.Reconstitutor.ReconstituteFrom(row);
 

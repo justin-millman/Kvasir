@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Translation;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static UT.Kvasir.Translation.Globals;
@@ -11,7 +12,7 @@ namespace UT.Kvasir.Translation {
     public class NullabilityTests {
         [TestMethod] public void NonNullableScalarsMarkedNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Timestamp);
 
             // Act
@@ -31,7 +32,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NonNullableAggregateMarkedNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Bankruptcy);
 
             // Act
@@ -51,7 +52,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NonNullableReferenceMarkedNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Jukebox);
 
             // Act
@@ -75,7 +76,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NullableScalarsMarkedNonNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Bone);
 
             // Act
@@ -92,7 +93,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NullableAggregateMarkedNonNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Orchestra);
 
             // Act
@@ -120,7 +121,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NullableReferenceMarkedNonNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Bodhisattva);
 
             // Act
@@ -147,7 +148,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NullableScalarsMarkedAsNullable_Redundant() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CivMilitaryUnit);
 
             // Act
@@ -165,7 +166,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NonNullableScalarsMarkedAsNonNullable_Redundant() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Patent);
 
             // Act
@@ -182,7 +183,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void CombinedAnnotation_NullableAndNonNullable_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(RetailProduct);
 
             // Act
@@ -198,7 +199,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NativelyNullableAggregateContainsOnlyNullableFields_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Waffle);
 
             // Act
@@ -213,7 +214,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void AnnotatedNullableAggregateContainsOnlyNullableFields_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(iPhone);
 
             // Act
@@ -229,7 +230,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NullableRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Forecast);
 
             // Act
@@ -243,7 +244,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationWithNullableElements() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PostOffice);
 
             // Act
@@ -285,7 +286,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationListWithNullableElement_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Hibakusha);
 
             // Act
@@ -299,7 +300,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationSetWithNullableElement_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Earthworks);
 
             // Act
@@ -313,7 +314,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationMapWithNullableKey_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Naiad);
 
             // Act
@@ -327,7 +328,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationElementNullableAggregateContainsOnlyNullableFields_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Parabola);
 
             // Act
@@ -343,7 +344,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationMarkedNonNullable_Redundant() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Squintern);
 
             // Act
@@ -367,7 +368,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void RelationMarkedNullable_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Axiom);
 
             // Act
@@ -382,7 +383,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void PreDefinedInstanceMarkedNonNullable_Redundant() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Rugrat);
 
             // Act
@@ -399,7 +400,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void PreDefinedInstanceMarkedNullable_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Cutlery);
 
             // Act
@@ -415,7 +416,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void NullableLocalization() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Madrigal);
 
             // Act
@@ -433,7 +434,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void LocalizationWithNullableKey_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Alignment);
 
             // Act
@@ -447,7 +448,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void LocalizationWithNullableLocale_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Halide);
 
             // Act
@@ -461,7 +462,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void LocalizationWithNullableValue() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Rhyme);
 
             // Act
@@ -478,7 +479,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void LocalizationMarkedNonNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CivVIPolicy);
 
             // Act
@@ -510,7 +511,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void LocalizationMarkedNullable() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Superintendent);
 
             // Act
