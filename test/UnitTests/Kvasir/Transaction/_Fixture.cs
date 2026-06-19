@@ -4,6 +4,7 @@ using FluentAssertions.Execution;
 using Kvasir.Schema;
 using Kvasir.Transaction;
 using Kvasir.Translation;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.Core;
 using System;
@@ -30,7 +31,7 @@ namespace UT.Kvasir.Transaction {
             Connection = Substitute.For<IDbConnection>();
             Transaction = Connection.BeginTransaction();
             Depot = types.ToDictionary(t => t, _ => new List<object>());
-            translator_ = new Translator(t => Depot[t]);
+            translator_ = new Translator(t => Depot[t], NullLogger.Instance);
             ordering_ = new Dictionary<IDbCommand, int>();
             invocationArgs_ = new Dictionary<IDbCommand, IReadOnlyList<IReadOnlyList<DBValue>>>();
 
@@ -85,7 +86,7 @@ namespace UT.Kvasir.Transaction {
                 dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();
             }
 
-            Transactor = new Transactor(entityTranslations, localizationTranslations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e));
+            Transactor = new Transactor(entityTranslations, localizationTranslations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e), NullLogger.Instance);
         }
         public TestFixture WithCommitError() {
             Transaction.When(x => x.Commit()).Throw<InvalidOperationException>();

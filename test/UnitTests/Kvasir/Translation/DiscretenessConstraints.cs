@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Kvasir.Schema;
 using Kvasir.Translation;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -13,7 +14,7 @@ namespace UT.Kvasir.Translation {
     public class IsOneOfTests {
         [TestMethod] public void IsOneOf_NumericFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CoralReef);
 
             // Act
@@ -35,7 +36,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_TextualFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Encyclopedia);
 
             // Act
@@ -54,7 +55,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_BooleanField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Astronaut);
 
             // Act
@@ -70,7 +71,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DecimalField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(CiderMill);
 
             // Act
@@ -86,7 +87,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DateishField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Hospital);
 
             // Act
@@ -105,7 +106,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_GuidField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Tsunami);
 
             // Act
@@ -119,7 +120,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_EnumerationField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Tooth);
 
             // Act
@@ -144,7 +145,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_LocalizationField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Zeppelin);
 
             // Act
@@ -160,7 +161,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_AggregateNestedScalarField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Earring);
 
             // Act
@@ -176,7 +177,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NestedAggregateProperty_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PhoneticAlphabet);
 
             // Act
@@ -193,7 +194,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_ReferenceNestedScalarField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(FerrisWheel);
 
             // Act
@@ -209,7 +210,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NestedReferenceProperty_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Pulsar);
 
             // Act
@@ -226,7 +227,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NestedLocalizationField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(TemperatureScale);
 
             // Act
@@ -242,7 +243,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_RelationNestedScalarField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Dinosaur);
 
             // Act
@@ -259,7 +260,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_PreDefinedInstance_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(WorldWonder);
 
             // Act
@@ -275,7 +276,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_OriginalOnReferenceNestedScalar() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PullRequest);
 
             // Act
@@ -288,7 +289,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NestedRelationProperty_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Cheerleader);
 
             // Act
@@ -305,7 +306,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NullableFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Wildfire);
 
             // Act
@@ -324,7 +325,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DuplicatedValues() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(HealingPotion);
 
             // Act
@@ -340,7 +341,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_InconvertibleValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Battery);
 
             // Act
@@ -356,7 +357,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_ConvertibleValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(TennisMatch);
 
             // Act
@@ -372,7 +373,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_InvalidEnumerator_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(SpeedLimit);
 
             // Act
@@ -388,7 +389,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_ArrayValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Flashcard);
 
             // Act
@@ -404,7 +405,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NullValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Prophet);
 
             // Act
@@ -420,7 +421,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DecimalValueIsNotDouble_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Carousel);
 
             // Act
@@ -436,7 +437,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DecimalValueIsOutOfRange_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Borate);
 
             // Act
@@ -452,7 +453,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DateTimeValueIsNotString_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(DalaiLama);
 
             // Act
@@ -468,7 +469,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DateTimeValueIsMalformatted_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Voicemail);
 
             // Act
@@ -484,7 +485,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DateTimeValueIsOutOfRange_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(FinalJeopardy);
 
             // Act
@@ -500,7 +501,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_GuidValueIsNotString_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(BiologicalCycle);
 
             // Act
@@ -516,7 +517,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_GuidValueIsMalformatted_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(WaterBottle);
 
             // Act
@@ -532,7 +533,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_ValueMatchesDataConversionSourceType_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Burrito);
 
             // Act
@@ -548,7 +549,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_ValueMatchesDataConversionTargetType() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(WaterSlide);
 
             // Act
@@ -564,7 +565,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_ScalarConstrainedMultipleTimes() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Cannon);
 
             // Act
@@ -580,7 +581,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_SingleEnumeratorAllowed() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Treehouse);
 
             // Act
@@ -603,7 +604,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_PathIsNull_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Dragon);
 
             // Act
@@ -619,7 +620,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_PathOnScalar_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(HomericHymn);
 
             // Act
@@ -635,7 +636,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NonExistentPathOnAggregate_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(MarbleLeague);
 
             // Act
@@ -651,7 +652,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NoPathOnAggregate_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Artery);
 
             // Act
@@ -667,7 +668,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NonExistentPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Safari);
 
             // Act
@@ -683,7 +684,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NonPrimaryKeyPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Adverb);
 
             // Act
@@ -699,7 +700,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NoPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Swamp);
 
             // Act
@@ -715,7 +716,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NonExistentPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PawnShop);
 
             // Act
@@ -731,7 +732,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NonAnchorPrimaryKeyPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(DrinkingFountain);
 
             // Act
@@ -747,7 +748,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NoPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Hairstyle);
 
             // Act
@@ -763,7 +764,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NonExistentPathOnLocalization_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Bailiff);
 
             // Act
@@ -779,7 +780,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_NestedPathOnLocalization_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(NavalBase);
 
             // Act
@@ -795,7 +796,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Guillotine);
 
             // Act
@@ -811,7 +812,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsOneOf_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(IKEAFurniture);
 
             // Act
@@ -831,7 +832,7 @@ namespace UT.Kvasir.Translation {
     public class IsNotOneOfTests {
         [TestMethod] public void IsNotOneOf_NumericFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(NationalAnthem);
 
             // Act
@@ -853,7 +854,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_TextualFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Taxi);
 
             // Act
@@ -872,7 +873,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_BooleanField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(BirthControl);
 
             // Act
@@ -886,7 +887,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DecimalField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(HouseCommittee);
 
             // Act
@@ -902,7 +903,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DateishField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(GamingConsole);
 
             // Act
@@ -921,7 +922,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_GuidField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Podcast);
 
             // Act
@@ -937,7 +938,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_EnumerationField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(RorschachInkBlot);
 
             // Act
@@ -960,7 +961,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_LocalizationField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(SECShort);
 
             // Act
@@ -976,7 +977,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_AggregateNestedScalarField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Condiment);
 
             // Act
@@ -992,7 +993,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NestedAggregateProperty_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Tattoo);
 
             // Act
@@ -1009,7 +1010,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_ReferenceNestedScalarField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Lifeguard);
 
             // Act
@@ -1025,7 +1026,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_PreDefinedInstance() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Pentomino);
 
             // Act
@@ -1041,7 +1042,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_OriginalOnReferenceNestedScalar() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(SearchWarrant);
 
             // Act
@@ -1054,7 +1055,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NestedReferenceProperty_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(NurseryRhyme);
 
             // Act
@@ -1071,7 +1072,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NestedLocalizationField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(GregorianChant);
 
             // Act
@@ -1085,7 +1086,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_RelationNestedScalarField() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Infomercial);
 
             // Act
@@ -1101,7 +1102,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NestedRelationProperty_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PersonOfTheYear);
 
             // Act
@@ -1118,7 +1119,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NullableFields() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PIERoot);
 
             // Act
@@ -1137,7 +1138,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DuplicatedValues() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Tweet);
 
             // Act
@@ -1153,7 +1154,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_InconvertibleValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Cancer);
 
             // Act
@@ -1169,7 +1170,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_ConvertibleValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Avatar);
 
             // Act
@@ -1185,7 +1186,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_InvalidEnumerator_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Emotion);
 
             // Act
@@ -1201,7 +1202,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_ArrayValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Wristwatch);
 
             // Act
@@ -1217,7 +1218,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NullValue_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Ballet);
 
             // Act
@@ -1233,7 +1234,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DecimalValueIsNotDouble_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(AmericanIdol);
 
             // Act
@@ -1249,7 +1250,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DecimalValueIsOutOfRange_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(RussianTsar);
 
             // Act
@@ -1265,7 +1266,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DateTimeValueIsNotString_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Mayor);
 
             // Act
@@ -1281,7 +1282,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DateTimeValueIsMalformatted_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Inator);
 
             // Act
@@ -1297,7 +1298,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DateTimeValueIsOutOfRange_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Museum);
 
             // Act
@@ -1313,7 +1314,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_GuidValueIsNotString_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Cruise);
 
             // Act
@@ -1329,7 +1330,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_GuidValueIsMalformatted_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Union);
 
             // Act
@@ -1345,7 +1346,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_ValueMatchesDataConversionSourceType_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Guitar);
 
             // Act
@@ -1361,7 +1362,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_ValueMatchesDataConversionTargetType() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(SoccerTeam);
 
             // Act
@@ -1377,7 +1378,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_BothBooleansDisallowed_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Transformer);
 
             // Act
@@ -1392,7 +1393,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_AllEnumeratorsDisallowed_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(ProgrammingLanguage);
 
             // Act
@@ -1407,7 +1408,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_ScalarConstrainedMultipleTimes() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Eurovision);
 
             // Act
@@ -1423,7 +1424,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_PathIsNull_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Tuxedo);
 
             // Act
@@ -1439,7 +1440,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_PathOnScalar_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Donut);
 
             // Act
@@ -1455,7 +1456,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NonExistentPathOnAggregate_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Necktie);
 
             // Act
@@ -1471,7 +1472,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NoPathOnAggregate_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Scattergories);
 
             // Act
@@ -1487,7 +1488,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NonExistentPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Pencil);
 
             // Act
@@ -1503,7 +1504,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NonPrimaryKeyPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Mitzvah);
 
             // Act
@@ -1519,7 +1520,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NoPathOnReference_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Eunuch);
 
             // Act
@@ -1535,7 +1536,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NonExistentPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(PhoneBook);
 
             // Act
@@ -1551,7 +1552,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NonAnchorPrimaryKeyPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Bakugan);
 
             // Act
@@ -1567,7 +1568,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NoPathOnRelation_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(QRCode);
 
             // Act
@@ -1583,7 +1584,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NonExistentPathOnLocalization_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Bedouin);
 
             // Act
@@ -1599,7 +1600,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_NestedPathOnLocalization_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(RubiksCube);
 
             // Act
@@ -1615,7 +1616,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_DefaultValueDoesNotSatisfyConstraint_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Pie);
 
             // Act
@@ -1631,7 +1632,7 @@ namespace UT.Kvasir.Translation {
 
         [TestMethod] public void IsNotOneOf_ValidDefaultValueIsInvalidatedByConstraint_IsError() {
             // Arrange
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(GirlScoutCookie);
 
             // Act

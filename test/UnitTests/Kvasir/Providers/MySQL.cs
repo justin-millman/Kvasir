@@ -4,6 +4,7 @@ using Kvasir.Exceptions;
 using Kvasir.Providers.MySQL;
 using Kvasir.Schema;
 using Kvasir.Transcription;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
@@ -2496,7 +2497,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void CreateTable_Principal() {
             // Arrange
             var source = typeof(Mutiny);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
 
             // Act
@@ -2520,7 +2521,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void CreateTable_Relation() {
             // Arrange
             var source = typeof(CyrillicLetter);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var principalTable = translator[source].Principal.Table;
             var relationTable = translator[source].Relations[0].Table;
 
@@ -2544,7 +2545,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void CreateTable_PreDefinedEntity() {
             // Arrange
             var source = typeof(BackstreetBoy);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
 
             // Act
@@ -2566,7 +2567,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void CreateTable_Localization() {
             // Arrange
             var source = typeof(MusicalNote);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source, Translator.AsLocalzation].Principal.Table;
 
             // Act
@@ -2588,7 +2589,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void SelectAll_Principal() {
             // Arrange
             var source = typeof(CarDealership);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
 
             // Act
@@ -2604,7 +2605,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void SelectAll_Relation() {
             // Arrange
             var source = typeof(Hadith);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
 
             // Act
@@ -2620,7 +2621,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void SelectAll_WithCalculatedField() {
             // Arrange
             var source = typeof(Grenade);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
 
             // Act
@@ -2636,7 +2637,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_TextEnumerations() {
             // Arrange
             var source = typeof(ChipotleOrder);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2682,7 +2683,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_IntegersBooleans() {
             // Arrange
             var source = typeof(RegularExpression);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2718,7 +2719,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_FloatingPoint() {
             // Arrange
             var source = typeof(Tariff);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2758,7 +2759,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_DateGuid() {
             // Arrange
             var source = typeof(ExecutiveOrder);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2796,7 +2797,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_Null() {
             // Arrange
             var source = typeof(Codex);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2830,7 +2831,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_TwoRows() {
             // Arrange
             var source = typeof(Choreographer);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2875,7 +2876,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_ThreePlusRows() {
             // Arrange
             var source = typeof(Nachos);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2961,7 +2962,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Insert_Relation() {
             // Arrange
             var source = typeof(Manicure);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -2999,7 +3000,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_SingleFieldPrimaryKey() {
             // Arrange
             var source = typeof(SignLanguage);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3034,7 +3035,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_MultiFieldPrimaryKey() {
             // Arrange
             var source = typeof(Diaspora);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3069,7 +3070,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_AllFieldsPrimaryKey() {
             // Arrange
             var source = typeof(Click);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3093,7 +3094,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_TwoRows() {
             // Arrange
             var source = typeof(CutthroatKitchenSabotage);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3148,7 +3149,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_ThreePlusRows() {
             // Arrange
             var source = typeof(WelshGod);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3223,7 +3224,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_NullValue() {
             // Arrange
             var source = typeof(Curry);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3260,7 +3261,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_NonAssociativeRelation() {
             // Arrange
             var source = typeof(Overture);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3285,7 +3286,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_SingleKeyAssociativeRelation() {
             // Arrange
             var source = typeof(Supermodel);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3316,7 +3317,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Update_MultiKeyAssociativeRelation() {
             // Arrange
             var source = typeof(StockIndex);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3349,7 +3350,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_SingleFieldPrimaryKey() {
             // Arrange
             var source = typeof(Mansa);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3375,7 +3376,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_MultiFieldPrimaryKey() {
             // Arrange
             var source = typeof(Hamentaschen);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3407,7 +3408,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_AllFieldsPrimaryKey() {
             // Arrange
             var source = typeof(Tirthankara);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3437,7 +3438,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_TwoRows() {
             // Arrange
             var source = typeof(FoodTruck);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3472,7 +3473,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_ThreePlusRows() {
             // Arrange
             var source = typeof(Iyalet);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Principal.Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3513,7 +3514,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_NonAssociativeRelation() {
             // Arrange
             var source = typeof(BuzzerSystem);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3541,7 +3542,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_SingleKeyAssociativeRelation() {
             // Arrange
             var source = typeof(LineDance);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3571,7 +3572,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_MultiKeyAssociativeRelation() {
             // Arrange
             var source = typeof(CochlearImplant);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3605,7 +3606,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_OwningEntity_NonAssociativeRelation() {
             // Arrange
             var source = typeof(CongaLine);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3631,7 +3632,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_OwningEntity_SingleKeyAssociativeRelation() {
             // Arrange
             var source = typeof(Rodeo);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3662,7 +3663,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_OwningEntity_MultiKeyAssociativeRelation() {
             // Arrange
             var source = typeof(Surrogate);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {
@@ -3704,7 +3705,7 @@ namespace UT.Kvasir.Providers {
         [TestMethod] public void Delete_MixedStyleFromRelation() {
             // Arrange
             var source = typeof(AbortionClinic);
-            var translator = new Translator(NO_ENTITIES);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var table = translator[source].Relations[0].Table;
             var rows = new List<List<DBValue>>() {
                 new() {

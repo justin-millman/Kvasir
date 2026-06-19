@@ -3,6 +3,7 @@ using Kvasir.Core;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
 using Kvasir.Translation;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -36,14 +37,18 @@ namespace Kvasir.Transaction {
         /// <param name="entityStorage">
         ///   The functor through which reconstituted Entities will be stored for later look-up.
         /// </param>
+        /// <param name="logger">
+        ///   The <see cref="ILogger">logger</see> with which to issue diagnostics.
+        /// </param>
         public Transactor(
             IEnumerable<EntityTranslation> entityTranslations,
             IEnumerable<LocalizationTranslation> localizationTranslations,
             IDbConnection connection,
             ICommandsFactory commandsFactory,
-            Action<object> entityStorage
+            Action<object> entityStorage,
+            ILogger logger
         )
-            : this(entityTranslations, localizationTranslations, connection, commandsFactory, entityStorage, Settings.Default) {}
+            : this(entityTranslations, localizationTranslations, connection, commandsFactory, entityStorage, Settings.Default, logger) {}
 
         /// <summary>
         ///   Constructs a new <see cref="Translator"/> that uses custom <see cref="Settings"/>.
@@ -69,6 +74,9 @@ namespace Kvasir.Transaction {
         /// <param name="settings">
         ///   The <see cref="Settings"/> according to which to perform the transaction activity.
         /// </param>
+        /// <param name="logger">
+        ///   The <see cref="ILogger">logger</see> with which to issue diagnostics.
+        /// </param>
         /// <remarks>
         ///   Note that the settings are not currently used for anything; in fact, there are no traits available in the
         ///   <see cref="Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
@@ -80,7 +88,8 @@ namespace Kvasir.Transaction {
             IDbConnection connection,
             ICommandsFactory commandsFactory,
             Action<object> entityStorage,
-            Settings settings
+            Settings settings,
+            ILogger logger
         ) {
             Debug.Assert(entityTranslations is not null);
             Debug.Assert(localizationTranslations is not null);
@@ -89,6 +98,7 @@ namespace Kvasir.Transaction {
             Debug.Assert(commandsFactory is not null);
             Debug.Assert(entityStorage is not null);
             Debug.Assert(settings is not null);
+            Debug.Assert(logger is not null);
 
             settings_ = settings;
             entityTranslations_ = entityTranslations.ToDictionary(t => t.CLRSource, t => t);
@@ -96,6 +106,9 @@ namespace Kvasir.Transaction {
             connection_ = connection;
             commandsFactory_ = commandsFactory;
             entityStorage_ = entityStorage;
+            logger_ = logger;
+
+            logger_.LogDebug("Transactor created for {} regular Entities and {} Localizations", entityTranslations_.Count, localizationTranslations_.Count);
 
             var principalCommands = new List<ICommands>();
             var relationCommands = new List<ICommands>();
@@ -104,16 +117,19 @@ namespace Kvasir.Transaction {
             foreach (var principal in Topology.OrderEntities(entityTranslations.ToList())) {
                 tables[principal.Table] = principalCommands.Count;
                 principalCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
+                logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count, principal.Extractor.SourceType.Name);
 
                 // using `Extractor.SourceType` is a little awkward here, but it's the best we have
                 foreach (var relation in entityTranslations_[principal.Extractor.SourceType].Relations) {
                     tables[relation.Table] = entityTranslations_.Count + relationCommands.Count;
                     relationCommands.Add(commandsFactory_.CreateCommands(relation.Table, isPrincipalTable: false));
+                    logger_.LogDebug("Relation #{} is for table {}", relationCommands.Count, relation.Table.Name);
                 }
             }
             foreach (var principal in localizationTranslations.Select(x => x.Principal)) {
                 tables[principal.Table] = principalCommands.Count + relationCommands.Count + localizationCommands.Count;
                 localizationCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
+                logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count + localizationCommands.Count, principal.Extractor.SourceType.Name);
             }
 
             // The order here is Regular Entities -> Relations -> Localizations, with the former in topological order.
@@ -142,6 +158,7 @@ namespace Kvasir.Transaction {
             foreach (var command in commands_.Select(c => c.CreateTableCommand)) {
                 command.Connection = connection_;
                 command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
             }
             TryCommitTransaction(transaction);
@@ -170,6 +187,7 @@ namespace Kvasir.Transaction {
             var locInstByKey = new List<Dictionary<DBValue, object>>();
             for (int idx = 0; idx < numLocalizationTypes; ++idx) {
                 var query = commands_[idx + localizationStartIdx_].SelectAllQuery;
+                logger_.LogDebug("Executing SQL: {}", query.CommandText);
                 query.Connection = connection_;
                 var reader = query.ExecuteReader();
 
@@ -189,6 +207,7 @@ namespace Kvasir.Transaction {
 
                 locRowsByKey.Add(rows);
                 locInstByKey.Add(instances);
+                logger_.LogDebug("{} instances of {} loaded", instances.Count, localizationTranslations[idx].Principal.Reconstitutor.ResultType.Name);
             }
             foreach (var dict in locInstByKey) {
                 foreach (var (_, instance) in dict.OrderBy(kvp => kvp.Key.Datum)) {
@@ -199,6 +218,7 @@ namespace Kvasir.Transaction {
             // Load all the data from Principal Tables and create the Entity instances second
             for (int idx = 0; idx < numEntityTypes; ++idx) {
                 var query = commands_[idx].SelectAllQuery;
+                logger_.LogDebug("Executing SQL: {}", query.CommandText);
                 query.Connection = connection_;
                 var reader = query.ExecuteReader();
 
@@ -209,7 +229,9 @@ namespace Kvasir.Transaction {
                     entityStorage_(entity);
                     creations.Add(entity);
                 }
+                
                 allEntities[idx] = creations;
+                logger_.LogDebug("{} instances of {} loaded", creations.Count, entityTranslations[idx].Principal.Reconstitutor.ResultType.Name);
             }
 
             // Load all the data from Relation Tables and repopulate the Relations third
@@ -220,6 +242,7 @@ namespace Kvasir.Transaction {
 
                 foreach (var relation in translation.Relations) {
                     var query = commands_[tables_[relation.Table]].SelectAllQuery;
+                    logger_.LogDebug("Executing SQL: {}", query.CommandText);
                     query.Connection = connection_;
                     var reader = query.ExecuteReader();
 
@@ -280,6 +303,7 @@ namespace Kvasir.Transaction {
                 var command = commands_[tables_[translation.Principal.Table]].InsertCommand(rows);
                 command.Connection = connection_;
                 command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
             }
 
@@ -303,6 +327,7 @@ namespace Kvasir.Transaction {
                     var command = commands_[tables_[relation.Table]].InsertCommand(rows);
                     command.Connection = connection_;
                     command.Transaction = transaction;
+                    logger_.LogDebug("Executing SQL: {}", command.CommandText);
                     command.ExecuteNonQuery();
                 }
             }
@@ -324,6 +349,7 @@ namespace Kvasir.Transaction {
                 var command = commands_[tables_[translation.Principal.Table]].InsertCommand(rows);
                 command.Connection = connection_;
                 command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
             }
 
@@ -369,6 +395,7 @@ namespace Kvasir.Transaction {
                 var command = commands_[tables_[translation.Principal.Table]].UpdateCommand(rows);
                 command.Connection = connection_;
                 command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
             }
 
@@ -398,6 +425,7 @@ namespace Kvasir.Transaction {
                         if (!isEmpty) {
                             command.Connection = connection_;
                             command.Transaction = transaction;
+                            logger_.LogDebug("Executing SQL: {}", command.CommandText);
                             command.ExecuteNonQuery();
                         }
                     }
@@ -428,6 +456,7 @@ namespace Kvasir.Transaction {
                     if (!isEmpty) {
                         command.Connection = connection_;
                         command.Transaction = transaction;
+                        logger_.LogDebug("Executing SQL: {}", command.CommandText);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -479,6 +508,7 @@ namespace Kvasir.Transaction {
                 var command = commands_[tables_[translation.Principal.Table]].DeleteCommand(rows);
                 command.Connection = connection_;
                 command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
             }
 
@@ -499,6 +529,7 @@ namespace Kvasir.Transaction {
                     var command = commands_[tables_[relation.Table]].DeleteCommand(rows);
                     command.Connection = connection_;
                     command.Transaction = transaction;
+                    logger_.LogDebug("Executing SQL: {}", command.CommandText);
                     command.ExecuteNonQuery();
                 }
             }
@@ -513,6 +544,7 @@ namespace Kvasir.Transaction {
                 var command = commands_[tables_[translation.Principal.Table]].DeleteCommand(rows);
                 command.Connection = connection_;
                 command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
             }
 
@@ -534,15 +566,18 @@ namespace Kvasir.Transaction {
         /// <exception cref="AggregateException">
         ///   if the attempt to commit <paramref name="transaction"/> fails, and the attempt to roll it back also fails.
         /// </exception>
-        private static void TryCommitTransaction(IDbTransaction transaction) {
+        private void TryCommitTransaction(IDbTransaction transaction) {
             try {
+                logger_.LogDebug("Committing Transaction");
                 transaction.Commit();
             }
             catch (InvalidOperationException commitEx) {
                 try {
+                    logger_.LogError("Rolling Back Transaction (cause: {})", commitEx.Message);
                     transaction.Rollback();
                 }
                 catch (InvalidOperationException rollbackEx) {
+                    logger_.LogError("Roll Back Failed (cause: {})", rollbackEx.Message);
                     throw new AggregateException(commitEx, rollbackEx);
                 }
 
@@ -561,5 +596,6 @@ namespace Kvasir.Transaction {
         private readonly IDbConnection connection_;
         private readonly ICommandsFactory commandsFactory_;
         private readonly Action<object> entityStorage_;
+        private readonly ILogger logger_;
     }
 }
