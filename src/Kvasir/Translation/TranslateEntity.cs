@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
@@ -79,7 +80,7 @@ namespace Kvasir.Translation {
             // `translateType` on a Reference property, and in the latter case we have already performed the necessary
             // checking to ensure that this check will not fail.
             var category = source.TranslationCategory();
-            if (!category.Equals(TypeCategory.Class)) {
+            if (!category.Equals(TypeCategory.Class) && !category.Equals(TypeCategory.Administrative)) {
                 throw new InvalidEntityTypeException(context, category);
             }
 
@@ -431,8 +432,13 @@ namespace Kvasir.Translation {
             var annotation = source.GetCustomAttribute<TableAttribute>();
             var excludeNS = source.HasAttribute<ExcludeNamespaceFromNameAttribute>();
 
-            if (annotation is not null && (annotation.Name is null || annotation.Name == "")) {
-                throw new InvalidNameException(context, annotation);
+            if (annotation is not null) {
+                if (annotation.Name is null || annotation.Name == "") {
+                    throw new InvalidNameException(context, annotation);
+                }
+                else if (!source.TranslationCategory().Equals(TypeCategory.Administrative) && annotation.Name.StartsWith("_Kvasir_")) {
+                    throw new InvalidNameException(context, annotation);
+                }
             }
 
             if (annotation is null) {

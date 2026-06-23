@@ -142,7 +142,7 @@ namespace Kvasir.Translation {
             Debug.Assert(context is not null);
             Debug.Assert(!relationTableName_.HasValue);
 
-            if (annotation.Name is null || annotation.Name == "") {
+            if (annotation.Name is null || annotation.Name == "" || annotation.Name.StartsWith("_Kvasir_")) {
                 throw new InvalidNameException(context, annotation);
             }
             relationTableName_ = Option.Some(annotation.Name);
