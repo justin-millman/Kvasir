@@ -118,6 +118,22 @@ namespace UT.Kvasir.Translation {
                 .WithAnnotations("[Table]")
                 .EndMessage();
         }
+        
+        [TestMethod] public void PrimaryTable_NameChangedToReservedPrefix_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(SpiderWeb);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`SpiderWeb`")
+                .WithProblem("the name of a Primary Table cannot begin with the reserved prefix '_Kvasir_'")
+                .WithAnnotations("[Table]")
+                .EndMessage();
+        }
 
         [TestMethod] public void CombinedAnnotation_TableAndExcludeNamespaceFromName_Equivalent_IsError() {
             // Arrange
@@ -237,6 +253,22 @@ namespace UT.Kvasir.Translation {
             translate.Should().FailWith<InvalidNameException>()
                 .WithLocation("`Rodent` → <synthetic> `Taxonomy`")
                 .WithProblem("the name of a Relation Table cannot be empty")
+                .WithAnnotations("[RelationTable]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void RelationTable_NameChangedToReservedPrefix_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Neuron);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidNameException>()
+                .WithLocation("`Neuron` → <synthetic> `NeurotransmittersSupported`")
+                .WithProblem("the name of a Relation Table cannot begin with the reserved prefix '_Kvasir_")
                 .WithAnnotations("[RelationTable]")
                 .EndMessage();
         }

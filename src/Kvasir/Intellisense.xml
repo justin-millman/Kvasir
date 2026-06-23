@@ -4,6 +4,22 @@
         <name>Kvasir</name>
     </assembly>
     <members>
+        <member name="T:Kvasir.Administration.TableHash">
+            <summary>
+              The CLR object representation of the administrative table for managing <see cref="T:Kvasir.Schema.ITable">Table</see> schemas.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Administration.TableHash.TableName">
+            <summary>
+              The name of the <see cref="T:Kvasir.Schema.ITable">Table</see>.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Administration.TableHash.Hash">
+            <summary>
+              The hash value for the <see cref="T:Kvasir.Schema.ITable">Table</see>, synthesized from all the constituent pieces
+              (fields, keys, and constraints).
+            </summary>
+        </member>
         <member name="T:Kvasir.Annotations.INestableAnnotation">
             <summary>
               The base interface to be implemented by any Kvasir annotations that expose a <c>Path</c> property for nested
@@ -9448,6 +9464,18 @@
             <param name="annotation">
               The invalid <see cref="T:Kvasir.Annotations.UniqueAttribute">[Unique]</see> annotation.
             </param>
+        </member>
+        <member name="M:Kvasir.Translation.InvalidNameException.TableErrorMessageReason(System.String)">
+            <summary>
+              Produces the reason that a particular table name string is invalid.
+            </summary>
+            <param name="name">
+              The table name string.
+            </param>
+            <returns>
+              The portion of the error message after "cannot" that explains why <paramref name="name"/> is not a valid
+              table name.
+            </returns>
         </member>
         <member name="T:Kvasir.Translation.InvalidNativeNullabilityException">
             <summary>

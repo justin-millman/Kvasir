@@ -2766,6 +2766,17 @@ namespace UT.Kvasir.Translation {
             public string Password { get; set; } = "";
         }
 
+        // Test Scenario: Name Changed to Contain the Prefix `_Kvasir_` (✗illegal✗)
+        [Table("_Kvasir_SpiderWebs")]
+        public class SpiderWeb {
+            [PrimaryKey] public Guid WebID { get; set; }
+            public double Height { get; set; }
+            public double Length { get; set; }
+            public string CreatorSpecies { get; set; } = "";
+            public uint InsectsCaught { get; set; }
+            public bool IsIndoors { get; set; }
+        }
+
         // Test Scenario: Principal Table Name Change and [ExcludeNamespaceFromName], Equivalent (✗illegal✗)
         [Table("UT.Kvasir.Translation.TableNaming+"), ExcludeNamespaceFromName]
         public class Umbrella {
@@ -2867,6 +2878,15 @@ namespace UT.Kvasir.Translation {
             public bool MakesGoodPet { get; set; }
             public IUCN ConservationStatus { get; set; }
             public ulong GlobalPopulation { get; set; }
+        }
+
+        // Test Scenario: Relation Name Changed to Contain the Prefix `_Kvasir_` (✗illegal✗)
+        public class Neuron {
+            [PrimaryKey] public Guid NeuronID { get; set; }
+            public float Length { get; set; }
+            [RelationTable("_Kvasir_Transmitters")] public RelationSet<string> NeurotransmittersSupported { get; init; } = new();
+            public float Potential { get; set; }
+            public ulong NumDendrites { get; set; }
         }
 
         // Test Scenario: Duplicate Relation Table Name (✗duplication✗)

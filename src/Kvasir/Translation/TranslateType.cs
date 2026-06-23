@@ -99,7 +99,7 @@ namespace Kvasir.Translation {
             var localizationTrackers = new List<LocalizationTracker>();
 
             void performAssemblyCheck(Type type) {
-                if (type.Assembly != callingAssembly_) {
+                if (!type.TranslationCategory().Equals(TypeCategory.Administrative) && type.Assembly != callingAssembly_) {
                     throw new InvalidPropertyInDataModelException(context, type, callingAssembly_);
                 }
             }

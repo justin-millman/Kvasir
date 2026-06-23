@@ -53,7 +53,7 @@ namespace Kvasir.Translation {
         public InvalidNameException(Context context, TableAttribute annotation)
             : base(
                 new Location(context.ToString()),
-                new Problem("the name of a Primary Table cannot be " + (annotation.Name is null ? "'null'" : "empty")),
+                new Problem($"the name of a Primary Table cannot {TableErrorMessageReason(annotation.Name)}"),
                 new Annotation(Display.AnnotationDisplayName(typeof(TableAttribute)))
               )
         {}
@@ -89,7 +89,7 @@ namespace Kvasir.Translation {
         public InvalidNameException(Context context, RelationTableAttribute annotation)
             : base(
                 new Location(context.ToString()),
-                new Problem("the name of a Relation Table cannot be " + (annotation.Name is null ? "'null'" : "empty")),
+                new Problem($"the name of a Relation Table cannot {TableErrorMessageReason(annotation.Name)}"),
                 new Annotation(Display.AnnotationDisplayName(typeof(RelationTableAttribute)))
               )
         {}
@@ -116,5 +116,27 @@ namespace Kvasir.Translation {
                 new Annotation(Display.AnnotationDisplayName(typeof(UniqueAttribute)))
               )
         {}
+
+        /// <summary>
+        ///   Produces the reason that a particular table name string is invalid.
+        /// </summary>
+        /// <param name="name">
+        ///   The table name string.
+        /// </param>
+        /// <returns>
+        ///   The portion of the error message after "cannot" that explains why <paramref name="name"/> is not a valid
+        ///   table name.
+        /// </returns>
+        private static string TableErrorMessageReason(string? name) {
+            if (name is null) {
+                return "be 'null'";
+            }
+            else if (name == "") {
+                return "be empty";
+            }
+            else {
+                return "begin with the reserved prefix '_Kvasir_'";
+            }
+        }
     }
 }

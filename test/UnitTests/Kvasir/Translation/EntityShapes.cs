@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Kvasir.Administration;
 using Kvasir.Translation;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,6 +12,23 @@ using static UT.Kvasir.Translation.TestLocalizations;
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Entity Shapes")]
     public class EntityShapeTests {
+        [TestMethod] public void EntityTypeIsAdministrative() {
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(TableHash);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("_Kvasir_TableSchemaAdmin");
+            translation.Principal.Table.Should()
+                .HaveField("TableName").OfTypeText().BeingNonNullable().And
+                .HaveField("Hash").OfTypeInt32().BeingNonNullable().And
+                .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
+        }
+
         [TestMethod] public void EntityTypeIsRecordClass() {
             // Arrange
             var translator = new Translator(NO_ENTITIES, NullLogger.Instance);

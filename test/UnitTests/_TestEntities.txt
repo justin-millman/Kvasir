@@ -944,6 +944,7 @@ Necktie
 Necromancer
 Ned's Declassified School Survival Guide Tip
 Neighborhood
+Neuron
 Neurotoxin
 Neurotransmitter
 News Anchor
@@ -1287,6 +1288,7 @@ Speed Limit
 Speedometer
 Spelling Bee
 Spider
+Spider Web
 Spider-Man
 Spoonerism
 Sporcle Quiz
