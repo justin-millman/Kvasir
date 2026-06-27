@@ -1,6 +1,7 @@
 using Cybele.Extensions;
 using FluentAssertions.Execution;
 using FluentAssertions.Specialized;
+using Kvasir.Transaction;
 using Kvasir.Translation;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ namespace FluentAssertions {
         }
         public static LocalizationTranslationAssertions Should(this Func<LocalizationTranslation> self) {
             return new LocalizationTranslationAssertions(self);
+        }
+        public static TransactorAssertions Should(this Func<Transactor> self) {
+            return new TransactorAssertions(self);
         }
 
 
@@ -38,6 +42,20 @@ namespace FluentAssertions {
         public class LocalizationTranslationAssertions : FunctionAssertions<LocalizationTranslation> {
             public new Func<LocalizationTranslation> Subject { get; }
             public LocalizationTranslationAssertions(Func<LocalizationTranslation> subject)
+                : base(subject, new AggregateExceptionExtractor()) {
+
+                Subject = subject;
+            }
+
+            public TranslationExceptionAssertions<TEx> FailWith<TEx>() where TEx : TranslationException {
+                var caught = this.ThrowExactly<TEx>();
+                return new TranslationExceptionAssertions<TEx>(caught.Subject.First());
+            }
+        }
+
+        public class TransactorAssertions : FunctionAssertions<Transactor> {
+            public new Func<Transactor> Subject { get; }
+            public TransactorAssertions(Func<Transactor> subject)
                 : base(subject, new AggregateExceptionExtractor()) {
 
                 Subject = subject;

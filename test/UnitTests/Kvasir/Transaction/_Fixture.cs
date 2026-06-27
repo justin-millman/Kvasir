@@ -1,6 +1,7 @@
 ﻿using Cybele.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Kvasir.Administration;
 using Kvasir.Schema;
 using Kvasir.Transaction;
 using Kvasir.Translation;
@@ -21,8 +22,14 @@ namespace UT.Kvasir.Transaction {
         public IDbConnection Connection { get; }
         public IDbTransaction Transaction { get; }
         public Dictionary<Type, List<object>> Depot { get; }
-        public Transactor Transactor { get; }
+        public Transactor Transactor {
+            get {
+                EnsureTransactorInitialized();
+                return transactor_!;
+            }
+        }
 
+        public int AdminCommits { get; private set; }
 
         public TestFixture(params Type[] types) {
             commands_ = new Dictionary<ITable, ICommands>();
@@ -37,11 +44,15 @@ namespace UT.Kvasir.Transaction {
 
             Connection.State.Returns(ConnectionState.Open);
 
+            var adminTypes = new Type[] { typeof(TableHash) };
+
             var entityTranslations = types.Where(t => !Translator.IsLocalizationType(t)).Select(t => translator_[t]);
             var localizationTranslations = types.Where(t => Translator.IsLocalizationType(t)).Select(t => translator_[t, Translator.AsLocalzation]);
+            var adminTranslations = adminTypes.Select(t => translator_[t]);
             
             var tables = entityTranslations.SelectMany(x => x.Relations.Select(r => r.Table).Append(x.Principal.Table));
             tables = tables.Concat(localizationTranslations.Select(x => x.Principal.Table));
+            tables = tables.Concat(adminTranslations.Select(x => x.Principal.Table));
 
             foreach (var table in tables) {
                 var commands = Substitute.For<ICommands>();
@@ -81,12 +92,13 @@ namespace UT.Kvasir.Transaction {
                 commands.UpdateCommand(Arg.Any<Rows>()).Returns(update);
                 commands.When(c => c.UpdateCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, update));
 
-                commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t == table), Arg.Any<bool>()).Returns(commands);
+                commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t.Name == table.Name), Arg.Any<bool>()).Returns(commands);
                 commands_[table] = commands;
                 dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();
             }
 
-            Transactor = new Transactor(entityTranslations, localizationTranslations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e), NullLogger.Instance);
+            transactor_ = null!;
+            transactorInitializer_ = () => transactor_ = new Transactor(entityTranslations, localizationTranslations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e), NullLogger.Instance);            
         }
         public TestFixture WithCommitError() {
             Transaction.When(x => x.Commit()).Throw<InvalidOperationException>();
@@ -133,6 +145,7 @@ namespace UT.Kvasir.Transaction {
         }
 
         public ICommands PrincipalCommands<TEntity>() {
+            EnsureTransactorInitialized();
             var type = typeof(TEntity);
 
             if (!Translator.IsLocalizationType(type)) {
@@ -145,6 +158,7 @@ namespace UT.Kvasir.Transaction {
             }
         }
         public ICommands RelationCommands<TEntity>(int index) {
+            EnsureTransactorInitialized();
             var table = translator_[typeof(TEntity)].Relations[index].Table;
             return commands_[table];
         }
@@ -166,6 +180,13 @@ namespace UT.Kvasir.Transaction {
                 return value;
             }
             return Enumerable.Empty<IReadOnlyList<DBValue>>();
+        }
+
+        public ITable PrincipalTableOf<TEntity>() {
+            return translator_[typeof(TEntity)].Principal.Table;
+        }
+        public ITable RelationTableOf<TEntity>(int index) {
+            return translator_[typeof(TEntity)].Relations[index].Table;
         }
 
         [CustomAssertion]
@@ -210,6 +231,13 @@ namespace UT.Kvasir.Transaction {
                 invocationArgs_[cmd] = rows;
             }
         }
+        private void EnsureTransactorInitialized() {
+            if (transactor_ is null) {
+                transactorInitializer_();
+                AdminCommits = Transaction.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "Commit");
+                Transaction.ClearReceivedCalls();
+            }
+        }
 
 
         private readonly ICommandsFactory commandsFactory_;
@@ -218,5 +246,10 @@ namespace UT.Kvasir.Transaction {
         private readonly Dictionary<ITable, IEnumerator<IReadOnlyList<object>>> dbRows_;
         private readonly Dictionary<IDbCommand, int> ordering_;
         private readonly Dictionary<IDbCommand, IReadOnlyList<IReadOnlyList<DBValue>>> invocationArgs_;
+
+        // We need to be able to lazily initialize the Transactor so that we can set up the contents of administrative
+        // tables. This is a little janky, but I don't care at this point.
+        private Transactor transactor_;
+        private readonly Action transactorInitializer_;
     }
 }

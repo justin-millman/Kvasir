@@ -1594,4 +1594,118 @@ namespace UT.Kvasir.Transaction {
             [Column(5)] public string? MedicalSchool { get; set; }
         }
     }
+
+    internal static class Administration {
+        // Scenario: Schema Management Table Does Not Yet Exist
+        public class DogWalker {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Name { get; set; } = "";
+            public decimal HourlyRate { get; set; }
+            public byte MaxDogsAtOnce { get; set; }
+            public ulong NumPoopBagsCarrying { get; set; }
+            public bool WillWalkPitbulls { get; set; }
+            public ushort NumCurrentEngagements { get; set; }
+        }
+
+        // Scenario: Schema Management Table is Unpopulated
+        public class MapProjection {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public ushort IntroducedIn { get; set; }
+            public double TissotsEccentricity { get; set; }
+            public bool NorthernHemisphereAtTop { get; set; }
+            public float LongitudeCenter { get; set; }
+            public float LatitudeCenter { get; set; }
+            public IReadOnlyRelationSet<string> Designers { get; init; } = new RelationSet<string>();
+        }
+        public class Hymn {
+            [PrimaryKey] public string Title { get; set; } = "";
+            public bool IsChristian { get; set; }
+            public string Incipit { get; set; } = "";
+            public bool IsChoral { get; set; }
+        }
+
+        // Scenario: Schema Management Table is Fully Populated
+        public class Amulet {
+            [PrimaryKey] public Guid JewelryID { get; set; }
+            public string PrimaryColor { get; set; } = "";
+            public decimal MarketValue { get; set; }
+            public string? Gemstone { get; set; }
+            public float ChainLength { get; set; }
+            public bool IsCursed { get; set; }
+        }
+        public class Outlier {
+            [PrimaryKey] public Guid DataSetID { get; set; }
+            [PrimaryKey] public ulong DataPoint { get; set; }
+            public double Value { get; set; }
+            public double ZScore { get; set; }
+        }
+        public class Shaman {
+            public enum Variety { MedicineMan, Spiritualist, Soulcatcher, Other }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public Variety Kind { get; set; }
+            public ushort YearsPracticing { get; set; }
+            public bool UsesDrugs { get; set; }
+        }
+
+        // Scenario: Schema Management Table is Missing at Least One Principal Table
+        public class IndenturedServant {
+            [PrimaryKey] public string Name { get; set; } = "";
+            public DateOnly DateOfIndeturitude { get; set; }
+            public ushort DaysServitude { get; set; }
+            public bool IsManumitted { get; set; }
+            public string Overseer { get; set; } = "";
+        }
+        public class Oatmeal {
+            [PrimaryKey] public Guid ID { get; set; }
+            public string Brand { get; set; } = "";
+            public string Flavor { get; set; } = "";
+            public bool Instant { get; set; }
+            public bool WholeGrains { get; set; }
+        }
+
+        // Scenario: Schema Management Table is Missing at Least One Relation Table
+        public class LorcanaCharacter {
+            public enum Color { Amber, Amethyst, Emerald, Ruby, Sapphire, Steel }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public sbyte Strength { get; set; }
+            public sbyte Willpower { get; set; }
+            public sbyte Lore { get; set; }
+            public Color InkColor { get; set; }
+            public RelationOrderedList<string> Effects { get; init; } = new();
+        }
+
+        // Scenario: Schema Management Table Contains Mismatched Hash for at Least One Principal Table (✗error✗)
+        public class GrandRelic {
+            public enum School { Abjuration, Conjuration, Divination, Enchantment, Evocation, Illusion, Necromancy, Transmutation }
+
+            [PrimaryKey] public string Name { get; set; } = "";
+            public sbyte EpisodeIntroduced { get; set; }
+            public string? DiscoveringSeeker { get; set; }
+            public School SchoolOfMagic { get; set; }
+            public bool IsDestroyed { get; set; }
+        }
+
+        // Scenario: Schema Management Table Contains Mismatched Hash for at Least One Relation Table (✗error✗)
+        public class Metazooa {
+            [PrimaryKey] public uint GameID { get; set; }
+            public DateTime GameRelease { get; set; }
+            public string SolutionCommon { get; set; } = "";
+            public RelationMap<string, string> SolutionScientific { get; init; } = new();
+            public double AverageGuesses { get; set; }
+        }
+
+        // Scenario: Schema Management Table Contains a Hash for a Non-Existent Table (✗error✗)
+        public class PillPocket {
+            [Flags] public enum Pet { Dog = 1, Cat = 2, Ferret = 4, Chinchilla = 8, Rabbit = 16, Pig = 32, Horse = 64, Iguana = 128 }
+
+            [PrimaryKey] public Guid BatchID { get; set; }
+            [PrimaryKey] public uint ItemNumber { get; set; }
+            public float Weight { get; set; }
+            public string Flavor { get; set; } = "";
+            public Pet PetsSafeFor { get; set; }
+            public double PillVolume { get; set; }
+        }
+    }
 }

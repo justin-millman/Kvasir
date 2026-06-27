@@ -7688,6 +7688,20 @@
               fails.
             </exception>
         </member>
+        <member name="M:Kvasir.Transaction.Transactor.ManageAdministration">
+            <summary>
+              Executes all of the administrative business logic.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transaction.Transactor.ManageSchemaMigration(Kvasir.Translation.Translator)">
+            <summary>
+              Determines if any schemas have migrated, and updates the administrative back-end database table with data
+              for any new tables.
+            </summary>
+            <param name="translator">
+              The <see cref="T:Kvasir.Translation.Translator"/> with which to translate any administrative Entity types.
+            </param>
+        </member>
         <member name="M:Kvasir.Transaction.Transactor.TryCommitTransaction(System.Data.IDbTransaction)">
             <summary>
               Attempts to commit a <see cref="T:System.Data.IDbTransaction">database transaction</see>. If the commit operation fails,
@@ -9824,6 +9838,33 @@
             </summary>
             <param name="context">
               The <see cref="T:Kvasir.Translation.Context"/> in which the reference cycle was detected, consisting of the full cycle.
+            </param>
+        </member>
+        <member name="T:Kvasir.Translation.SchemaMigrationException">
+            <summary>
+              An exception that is raised when the framework detects that the schema translated from the current code of a
+              CLR type does not match the schema of its table that already exists in the back-end database.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.SchemaMigrationException.#ctor(System.Type,Kvasir.Schema.ITable)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.SchemaMigrationException"/> indicating that the schema of a table has changed
+              in the CLR.
+            </summary>
+            <param name="source">
+              The source CLR <see cref="T:System.Type"/> that is the source of the migrated schema.
+            </param>
+            <param name="table">
+              The <see cref="T:Kvasir.Schema.ITable">table</see> whose schema migrated.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.SchemaMigrationException.#ctor(System.String)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.SchemaMigrationException"/> indicating that the CLR source of a table has been
+              deleted.
+            </summary>
+            <param name="tableName">
+              The name of the <see cref="T:Kvasir.Schema.ITable">table</see> whose CLR source was deleted.
             </param>
         </member>
         <member name="T:Kvasir.Translation.TranslationException">
