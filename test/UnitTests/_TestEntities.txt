@@ -40,6 +40,7 @@ American Idol
 American Ninja Warrior
 Amicus Brief
 Amino Acid
+Amulet
 Amusement Park
 Animal
 Animation (PowerPoint)
@@ -75,7 +76,7 @@ Arthurian Knight
 Artificial Intelligence
 Artiodactyl
 Assassination
-Asteroid
+Asteroid-
 Astronaut
 Atmospheric Layer
 Atoll
@@ -272,12 +273,12 @@ Chinatown
 Chinese Character
 Chinese Dynasty
 Chipotle Order
+Chiropractor
 Chocolate
 Choir
 Chopped Basket
 Chopsticks
 Choreographer
-Chiropractor
 Christian Denomination
 Christmas Carol
 Chrome Extension
@@ -450,6 +451,7 @@ Docker Container
 Doctor (Doctor Who)
 Documentary
 Dog Show
+Dog Walker
 Domino
 Donut
 Dormitory
@@ -612,6 +614,7 @@ Government Shutdown
 GPU
 Grammatical Case
 Grand Prix
+Grand Relic
 Grand Wizard of the KKK
 Grasslands
 Great Old One
@@ -696,6 +699,7 @@ HTTP Error
 Human Trait
 Hunger Games
 Hurricane
+Hymn
 Hypnotist
 Ice Age
 Ice Cream Sundae
@@ -713,6 +717,7 @@ Impeachment
 Impractical Joke
 Improv Troupe
 Inator
+Indentured Servant
 Indictment
 Infinity Stone
 Influenza
@@ -825,6 +830,7 @@ Log-In Credentials
 Logic Puzzle
 Lollipop
 Longbow
+Lorcana Character
 Lottery Ticket
 Luau
 Lunar Crater
@@ -847,6 +853,7 @@ Mall Santa
 Manicure
 Mansa of the Mali Empire
 Maori God
+Map Projection
 Marathon
 Marble League
 Margarita
@@ -882,6 +889,7 @@ Merger
 Merit Badge
 Mermaid
 Mesopotamian God
+Metazooa
 Metra Route
 Metric Prefix
 Mezuzah
@@ -963,6 +971,7 @@ NuGet Package
 Nursery Rhyme
 Nymph
 Oasis
+Oatmeal
 Obelisk
 Obi
 Obstacle Course
@@ -992,6 +1001,7 @@ Origami
 Orisha
 Orogene
 Orphanage
+Outlier
 Ovarian Cyst
 Overlord
 Overnight Camp
@@ -1053,6 +1063,7 @@ Piano
 Piano Sonata
 Pie
 Pigment (biology)
+Pill Pocket
 Pillar of Islam
 Pillow
 Piñata
@@ -1230,6 +1241,7 @@ Set Card
 Seventh Inning Stretch
 Sexuality
 Shah of Iran
+Shaman
 Shampoo
 Shard of Adonalsium
 Shark Tank Pitch

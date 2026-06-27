@@ -1,4 +1,5 @@
 ﻿using Cybele.Extensions;
+using Kvasir.Administration;
 using Kvasir.Core;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
@@ -7,8 +8,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
+using System.Transactions;
 
 namespace Kvasir.Transaction {
     /// <summary>
@@ -114,20 +117,24 @@ namespace Kvasir.Transaction {
             var relationCommands = new List<ICommands>();
             var localizationCommands = new List<ICommands>();
             var tables = new Dictionary<ITable, int>();
+            var sourceTypes = new Dictionary<ITable, Type>();
             foreach (var principal in Topology.OrderEntities(entityTranslations.ToList())) {
                 tables[principal.Table] = principalCommands.Count;
+                sourceTypes[principal.Table] = principal.Extractor.SourceType;
                 principalCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
                 logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count, principal.Extractor.SourceType.Name);
 
                 // using `Extractor.SourceType` is a little awkward here, but it's the best we have
                 foreach (var relation in entityTranslations_[principal.Extractor.SourceType].Relations) {
                     tables[relation.Table] = entityTranslations_.Count + relationCommands.Count;
+                    sourceTypes[relation.Table] = relation.Extractor.SourceType;
                     relationCommands.Add(commandsFactory_.CreateCommands(relation.Table, isPrincipalTable: false));
                     logger_.LogDebug("Relation #{} is for table {}", relationCommands.Count, relation.Table.Name);
                 }
             }
             foreach (var principal in localizationTranslations.Select(x => x.Principal)) {
                 tables[principal.Table] = principalCommands.Count + relationCommands.Count + localizationCommands.Count;
+                sourceTypes[principal.Table] = principal.Extractor.SourceType;
                 localizationCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
                 logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count + localizationCommands.Count, principal.Extractor.SourceType.Name);
             }
@@ -140,6 +147,15 @@ namespace Kvasir.Transaction {
             localizationStartIdx_ = principalCommands.Count + relationCommands.Count;
             commands_ = principalCommands.Concat(relationCommands).Concat(localizationCommands).ToList();
             tables_ = tables;
+            sourceTypes_ = sourceTypes;
+
+            // There is administrative work that has to be done before any other queries can be executed. This work
+            // involves tables reserved by the framework. However, if any of the types being transacted upon is itself
+            // an administrative type, then we're already in the process of managing administration and don't want to
+            // get ourselves into an infinite loop.
+            if (entityTranslations.Select(t => t.Principal.Extractor.SourceType).All(t => !t.TranslationCategory().Equals(TypeCategory.Administrative))) {
+                ManageAdministration();
+            }
         }
 
         /// <summary>
@@ -554,6 +570,70 @@ namespace Kvasir.Transaction {
         }
 
         /// <summary>
+        ///   Executes all of the administrative business logic.
+        /// </summary>
+        private void ManageAdministration() {
+            // I don't love that we have to create our own Translator here, but the administrative CLR types are not
+            // provided on construction and we need to translate them. We'll use default settings since we're only
+            // dealing with framework-controlled Tables anyway, and we know that the table names are reserved. There
+            // also won't be any referential fields, so we don't have to worry about the Entity lookup.
+            var translator = new Translator(t => Enumerable.Empty<object>(), logger_);
+
+            ManageSchemaMigration(translator);
+        }
+
+        /// <summary>
+        ///   Determines if any schemas have migrated, and updates the administrative back-end database table with data
+        ///   for any new tables.
+        /// </summary>
+        /// <param name="translator">
+        ///   The <see cref="Translator"/> with which to translate any administrative Entity types.
+        /// </param>
+        private void ManageSchemaMigration(Translator translator) {
+            // We are going to need direct access to the reconstituted `TableHash` instances to perform the migration
+            // check. The `entityStorage_` functor that *this* Transactor is using is opaque to us, so we'll use an
+            // entirely different one.
+            var hashes = new Dictionary<string, int>();
+            Action<object> hashStorage = o => hashes[((TableHash)o).TableName] = ((TableHash)o).Hash;
+
+            // We need a translation of the `TableHash` administrative type in order to create a Transactor.
+            var translation = translator[typeof(TableHash)];
+            var transactor = new Transactor([translation], [], connection_, commandsFactory_, hashStorage, logger_);
+
+            // First, create the tables; this will create the administrative table if it does not yet exist. Then,
+            // select all the data; this will load all existing administrative hashes into the `hashes` dictionary.
+            transactor.CreateTables();
+            transactor.SelectAll();
+
+            // For each table that *this* Transactor is responsible for, we have to look up its expected hash in the
+            // existing data. It's okay for a table to not exist in the administrative data yet: that just means it is
+            // new, which is allowed. If there are any mismatches, we throw an exception. Then, any new tables are added
+            // using the secondary Transactor. If, after evaluating all the Tables, there are hashes for tables that are
+            // unaccounted for, that is also an error, as it means something has been deleted.
+            var tablesToRecord = new List<TableHash>();
+            foreach (var table in tables_.Keys) {
+                var name = table.Name.ToString();
+                var expectedHash = table.GetHashCode();
+
+                if (hashes.TryGetValue(name, out int hash)) {
+                    if (hash != expectedHash) {
+                        throw new SchemaMigrationException(sourceTypes_[table], table);
+                    }
+                    hashes.Remove(name);
+                }
+                else {
+                    tablesToRecord.Add(new TableHash() { TableName = name, Hash = expectedHash });
+                }
+            }
+            if (!hashes.IsEmpty()) {
+                throw new SchemaMigrationException(hashes.Keys.First());
+            }
+            if (!tablesToRecord.IsEmpty()) {
+                transactor.Insert(tablesToRecord);
+            }
+        }
+
+        /// <summary>
         ///   Attempts to commit a <see cref="IDbTransaction">database transaction</see>. If the commit operation fails,
         ///   an attempt to roll the transaction back is made.
         /// </summary>
@@ -593,6 +673,7 @@ namespace Kvasir.Transaction {
         private readonly IReadOnlyDictionary<Type, EntityTranslation> entityTranslations_;
         private readonly IReadOnlyDictionary<Type, LocalizationTranslation> localizationTranslations_;
         private readonly IReadOnlyDictionary<ITable, int> tables_;          // maps to index in `commands_` list
+        private readonly IReadOnlyDictionary<ITable, Type> sourceTypes_;
         private readonly IDbConnection connection_;
         private readonly ICommandsFactory commandsFactory_;
         private readonly Action<object> entityStorage_;
