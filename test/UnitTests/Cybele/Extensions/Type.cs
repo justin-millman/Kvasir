@@ -279,7 +279,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(char));
+            property.Unwrap().PropertyType.Should().Be<char>();
         }
 
         [TestMethod] public void PrivateInstanceProperty() {
@@ -295,7 +295,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(ushort));
+            property.Unwrap().PropertyType.Should().Be<ushort>();
         }
 
         [TestMethod] public void InternalInstanceProperty() {
@@ -311,7 +311,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(long));
+            property.Unwrap().PropertyType.Should().Be<long>();
         }
 
         [TestMethod] public void ProtectedInstanceProperty() {
@@ -327,7 +327,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(ulong));
+            property.Unwrap().PropertyType.Should().Be<ulong>();
         }
 
         [TestMethod] public void PublicStaticProperty() {
@@ -343,7 +343,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(uint));
+            property.Unwrap().PropertyType.Should().Be<uint>();
         }
 
         [TestMethod] public void PrivateStaticProperty() {
@@ -359,7 +359,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(byte));
+            property.Unwrap().PropertyType.Should().Be<byte>();
         }
 
         [TestMethod] public void InternalStaticProperty() {
@@ -375,7 +375,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(sbyte));
+            property.Unwrap().PropertyType.Should().Be<sbyte>();
         }
 
         [TestMethod] public void ProtectedStaticProperty() {
@@ -391,7 +391,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(decimal));
+            property.Unwrap().PropertyType.Should().Be<decimal>();
         }
 
         [TestMethod] public void InheritedProperty() {
@@ -405,9 +405,9 @@ namespace UT.Cybele.Extensions {
             // Assert
             property.HasValue.Should().BeTrue();
             property.Unwrap().Name.Should().Be(propertyName);
-            property.Unwrap().DeclaringType.Should().Be(typeof(FooBase));
+            property.Unwrap().DeclaringType.Should().Be<FooBase>();
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(double));
+            property.Unwrap().PropertyType.Should().Be<double>();
         }
 
         [TestMethod] public void OverridingProperty() {
@@ -421,9 +421,9 @@ namespace UT.Cybele.Extensions {
             // Assert
             property.HasValue.Should().BeTrue();
             property.Unwrap().Name.Should().Be(propertyName);
-            property.Unwrap().DeclaringType.Should().Be(typeof(Foo));
+            property.Unwrap().DeclaringType.Should().Be<Foo>();
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(string));
+            property.Unwrap().PropertyType.Should().Be<string>();
         }
 
         [TestMethod] public void AbstractProperty() {
@@ -437,9 +437,9 @@ namespace UT.Cybele.Extensions {
             // Assert
             property.HasValue.Should().BeTrue();
             property.Unwrap().Name.Should().Be(propertyName);
-            property.Unwrap().DeclaringType.Should().Be(typeof(FooBase));
+            property.Unwrap().DeclaringType.Should().Be<FooBase>();
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(short));
+            property.Unwrap().PropertyType.Should().Be<short>();
         }
 
         [TestMethod] public void ImplicitInterfaceProperty() {
@@ -453,9 +453,9 @@ namespace UT.Cybele.Extensions {
             // Assert
             property.HasValue.Should().BeTrue();
             property.Unwrap().Name.Should().Be(propertyName);
-            property.Unwrap().DeclaringType.Should().Be(typeof(Foo));
+            property.Unwrap().DeclaringType.Should().Be<Foo>();
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(int));
+            property.Unwrap().PropertyType.Should().Be<int>();
         }
 
         [TestMethod] public void ExplicitInterfaceProperty() {
@@ -469,9 +469,9 @@ namespace UT.Cybele.Extensions {
             // Assert
             property.HasValue.Should().BeTrue();
             property.Unwrap().Name.Should().EndWith($".{propertyName}");
-            property.Unwrap().DeclaringType.Should().Be(typeof(Foo));
+            property.Unwrap().DeclaringType.Should().Be<Foo>();
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(bool));
+            property.Unwrap().PropertyType.Should().Be<bool>();
         }
 
         [TestMethod] public void ExplicitInterfacePropertyAndRegularProperty_IsError() {
@@ -511,7 +511,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(Type));
+            property.Unwrap().PropertyType.Should().Be<Type>();
         }
 
         [TestMethod] public void InheritedNewHidingProperty() {
@@ -525,9 +525,9 @@ namespace UT.Cybele.Extensions {
             // Assert
             property.HasValue.Should().BeTrue();
             property.Unwrap().Name.Should().Be(propertyName);
-            property.Unwrap().DeclaringType.Should().Be(typeof(FooIntermediate));
+            property.Unwrap().DeclaringType.Should().Be<FooIntermediate>();
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(DateTime));
+            property.Unwrap().PropertyType.Should().Be<DateTime>();
         }
 
         [TestMethod] public void SingleIndexer() {
@@ -543,7 +543,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(bool?));
+            property.Unwrap().PropertyType.Should().Be<bool?>();
         }
 
         [TestMethod] public void MultipleIndexers_IsError() {
@@ -571,7 +571,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(ushort?));
+            property.Unwrap().PropertyType.Should().Be<ushort?>();
         }
 
         [TestMethod] public void ReadOnlyProperty() {
@@ -587,7 +587,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(int?));
+            property.Unwrap().PropertyType.Should().Be<int?>();
         }
 
         [TestMethod] public void WriteOnlyProperty() {
@@ -603,7 +603,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(char?));
+            property.Unwrap().PropertyType.Should().Be<char?>();
         }
 
         [TestMethod] public void InitOnlyProperty() {
@@ -619,7 +619,7 @@ namespace UT.Cybele.Extensions {
             property.Unwrap().Name.Should().Be(propertyName);
             property.Unwrap().DeclaringType.Should().Be(type);
             property.Unwrap().ReflectedType.Should().Be(type);
-            property.Unwrap().PropertyType.Should().Be(typeof(double?));
+            property.Unwrap().PropertyType.Should().Be<double?>();
         }
 
 

@@ -95,11 +95,11 @@ namespace Kvasir.Schema {
             Debug.Assert(checkConstraints.All(c => c.Condition.GetDependentFields().All(f => fields.Contains(f))));
 
             Name = name;
-            Fields = new List<IField>(fields);
+            Fields = [..fields];
             PrimaryKey = primaryKey;
-            CandidateKeys = new List<CandidateKey>(candidateKeys);
-            ForeignKeys = new List<ForeignKey>(foreignKeys);
-            CheckConstraints = new List<CheckConstraint>(checkConstraints);
+            CandidateKeys = [..candidateKeys];
+            ForeignKeys = [..foreignKeys];
+            CheckConstraints = [..checkConstraints];
         }
 
         /* Because Table is record type, the following methods are synthesized automatically by the compiler:

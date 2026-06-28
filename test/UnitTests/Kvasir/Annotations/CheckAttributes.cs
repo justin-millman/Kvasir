@@ -142,7 +142,7 @@ namespace UT.Kvasir.Annotations {
             var constraintType = typeof(ErrorConstraint);
 
             // Act
-            var attr = new Check.ComplexAttribute<ErrorConstraint>(new string[] { "F0", "F1" });
+            var attr = new Check.ComplexAttribute<ErrorConstraint>(["F0", "F1"]);
 
             // Assert
             attr.UserError.Should()

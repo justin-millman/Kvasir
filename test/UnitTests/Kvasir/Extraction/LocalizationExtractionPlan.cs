@@ -238,8 +238,8 @@ namespace UT.Kvasir.Extraction {
         private static DataExtractionPlan MakePlanFor<T>() {
             var identity = Substitute.For<IMultiExtractor>();
             identity.SourceType.Returns(typeof(T));
-            identity.ExtractFrom(Arg.Any<T>()).Returns(args => new object?[] { args[0] });
-            return new DataExtractionPlan(new IMultiExtractor[] { identity });
+            identity.ExtractFrom(Arg.Any<T>()).Returns(args => [args[0]]);
+            return new DataExtractionPlan([identity]);
         }
     }
 }

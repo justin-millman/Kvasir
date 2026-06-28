@@ -113,9 +113,9 @@ namespace Kvasir.Relations {
         ///   default initial capacity, and uses the default equality comparer for the key type.
         /// </summary>
         public RelationMap() {
-            impl_ = new Dictionary<TKey, TValue>();
-            statuses_ = new Dictionary<TKey, Status>();
-            deletions_ = new Dictionary<TKey, TValue>();
+            impl_ = [];
+            statuses_ = [];
+            deletions_ = [];
         }
 
         /// <summary>
@@ -502,7 +502,7 @@ namespace Kvasir.Relations {
 
         /// <inheritdoc/>
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item) {
-            if (impl_.ContainsKey(item.Key) && Equals(impl_[item.Key], item.Value)) {
+            if (impl_.TryGetValue(item.Key, out TValue? value) && Equals(value, item.Value)) {
                 Remove(item.Key);
                 return true;
             }
@@ -581,8 +581,10 @@ namespace Kvasir.Relations {
         // ************************************ HELPER FUNCTIONS ************************************
 
         private Status BookkeepAddition(TKey keyAddition, TValue valueAddition) {
-            var addedStatus = deletions_.ContainsKey(keyAddition) && deletions_[keyAddition]!.Equals(valueAddition)
-                ? Status.Saved : Status.New;
+            var addedStatus = Status.New;
+            if (deletions_.TryGetValue(keyAddition, out TValue? deletedValue) && Equals(deletedValue, valueAddition)) {
+                addedStatus = Status.Saved;
+            }
 
             if (addedStatus == Status.Saved) {
                 deletions_.Remove(keyAddition);

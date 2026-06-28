@@ -84,11 +84,11 @@ namespace UT.Kvasir.Schema {
 
 
         static PrimaryKeyTests() {
-            fields_ = new List<IField>() {
+            fields_ = [
                 new BasicField(new FieldName("Field0"), DBType.Int32, IsNullable.No, Option.None<DBValue>()),
                 new BasicField(new FieldName("Field1"), DBType.DateTime, IsNullable.No, Option.None<DBValue>()),
                 new BasicField(new FieldName("Field2"), DBType.Boolean, IsNullable.No, Option.None<DBValue>())
-            };
+            ];
         }
 
         private static readonly IEnumerable<IField> fields_;

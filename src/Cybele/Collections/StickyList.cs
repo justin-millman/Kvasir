@@ -89,7 +89,7 @@ namespace Cybele.Collections {
         ///   for <typeparamref name="T"/> for comparison purposes.
         /// </summary>
         public StickyList()
-            : this(Enumerable.Empty<T>()) {}
+            : this([]) {}
 
         /// <summary>
         ///   Constructs a new <see cref="StickyList{T}"/> that uses the default <see cref="IEqualityComparer"/> for
@@ -111,7 +111,7 @@ namespace Cybele.Collections {
         ///   The <see cref="IEqualityComparer{T}"/> that the new StickyList should use for comparisons.
         /// </param>
         public StickyList(IEqualityComparer<T> comparer)
-            : this(Enumerable.Empty<T>(), comparer) {}
+            : this([], comparer) {}
 
         /// <summary>
         ///   Constructs a new <see cref="StickyList{T}"/> that uses a custom <see cref="IEqualityComparer{T}"/> for
@@ -128,7 +128,7 @@ namespace Cybele.Collections {
             Guard.Against.Null(enumerable, nameof(enumerable));
             Guard.Against.Null(comparer, nameof(comparer));
 
-            elements_ = enumerable.Select(i => Option.Some((i, false))).ToList();
+            elements_ = [..enumerable.Select(i => Option.Some((i, false)))];
             comparer_ = comparer;
 
             Count = elements_.Count;

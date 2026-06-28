@@ -84,11 +84,11 @@ namespace Kvasir.Translation {
             ActualType = actualType;
             IsNativelyNullable = nativelyNullable;
             Assembly = assmebly;
-            properties_ = properties(this).ToList();
+            properties_ = [..properties(this)];
 
             // We want to be able to construct a SyntheticType, conceptually, from just the element; the first property
             // is always that of the owning Entity
-            constructors_ = new ConstructorInfo[] { new SyntheticConstructorInfo(this, properties_.Skip(1)) };
+            constructors_ = [new SyntheticConstructorInfo(this, properties_.Skip(1))];
 
             Debug.Assert(properties_.Count >= 2);
         }
@@ -238,12 +238,12 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
-            return new List<CustomAttributeData>();
+            return [];
         }
 
         /// <inheritdoc/>
         public sealed override Type[] GetInterfaces() {
-            return Array.Empty<Type>();
+            return [];
         }
 
         /// <inheritdoc/>
@@ -251,7 +251,7 @@ namespace Kvasir.Translation {
             Debug.Assert(bindingAttr.HasFlag(BindingFlags.Public) && bindingAttr.HasFlag(BindingFlags.NonPublic));
             Debug.Assert(bindingAttr.HasFlag(BindingFlags.Instance) && bindingAttr.HasFlag(BindingFlags.Static));
 
-            return properties_.ToArray();
+            return [..properties_];
         }
 
         /// <inheritdoc/>

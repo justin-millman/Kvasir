@@ -8,7 +8,7 @@ namespace Kvasir.Translation {
     internal sealed class SyntheticReturnInfo : ParameterInfo {
         /// <inheritdoc/>
         public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
-            return new List<CustomAttributeData>();
+            return [];
         }
     }
 }

@@ -12,7 +12,7 @@
         public ReferenceCycleException(Context context)
             : base(
                 new Location(context.ToString()),
-                new Problem($"reference cycle detected")
+                new Problem("reference cycle detected")
               )
         {}
     }

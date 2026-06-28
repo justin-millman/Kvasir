@@ -65,7 +65,7 @@ namespace Cybele.Extensions {
                 if (str.StartsWith("1E")) {
                     return str;
                 }
-                else if (str.EndsWith("∞") || str.EndsWith("Infinity")) {
+                else if (str.EndsWith('∞') || str.EndsWith("Infinity")) {
                     // The representation of various infinities is different on Windows vs. Ubuntu
                     return str;
                 }

@@ -39,7 +39,7 @@ namespace Kvasir.Reconstitution {
 
             constructFromAllNulls_ = allowAllNulls;
             constructor_ = ctor;
-            argumentCreators_ = new List<ICreator>(argumentCreators);
+            argumentCreators_ = [..argumentCreators];
             ResultType = constructor_.ReflectedType!;
         }
 
@@ -58,7 +58,7 @@ namespace Kvasir.Reconstitution {
             }
             else {
                 var arguments = argumentCreators_.Select(c => c.CreateFrom(dbValues));
-                return constructor_.Invoke(arguments.ToArray());
+                return constructor_.Invoke([..arguments]);
             }
         }
 

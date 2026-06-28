@@ -66,7 +66,7 @@ namespace Kvasir.Schema {
             Debug.Assert(!fields.IsEmpty());
 
             Name = name;
-            Fields = new List<IField>(fields);
+            Fields = [..fields];
 
             // We have to use a List as opposed to, e.g., a HashSet because the order of the Fields within a Key is
             // important. Even though the order doesn't have any impact on the generated SQL (i.e. the Key [A,B] is

@@ -114,7 +114,7 @@ namespace Kvasir.Translation {
             // an additional clone
             var pkDescriptors = schemas.Where(s => primaryKey.Fields.Contains(s.Field)).Select(s => s.Descriptor);
             var pkGroups = fieldGroups.Select(g => g.Filter(pkDescriptors)).Where(o => o.HasValue).Select(o => o.Unwrap());
-            pkCache_[source] = pkGroups.ToList();
+            pkCache_[source] = [..pkGroups];
             var pkExtractor = new DataExtractionPlan(pkGroups.OrderBy(g => g.Column.Unwrap()).Select(g => g.Extractor));
 
             var tableName = GetTableName(context, source);
@@ -130,13 +130,13 @@ namespace Kvasir.Translation {
             if (!IsPreDefined(source)) {
                 var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false, false);
                 var creator = new DataReconstitutionPlan(reconstitutor);
-                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, new List<object>());
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, []);
             }
             else {
                 var instances = GetPreDefinedInstances(context, source);
                 var matcher = new KeyMatcher(() => instances, pkExtractor);
                 var creator = MakePreDefinedReconstitutionPlan(context, table, matcher, source);
-                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, instances.ToList());
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, [..instances]);
             }
 
             principalTableCache_.Add(source, principal);
@@ -355,7 +355,7 @@ namespace Kvasir.Translation {
             // an additional clone
             var pkDescriptors = schemas.Where(s => primaryKey.Fields.Contains(s.Field)).Select(s => s.Descriptor);
             var pkGroups = fieldGroups.Select(g => g.Filter(pkDescriptors)).Where(o => o.HasValue).Select(o => o.Unwrap());
-            pkCache_[source] = pkGroups.ToList();
+            pkCache_[source] = [..pkGroups];
 
             var tableName = GetTableName(context, source);
             if (tableNameCache_.TryGetValue(tableName, out Type? match)) {
@@ -392,7 +392,7 @@ namespace Kvasir.Translation {
                 var instances = GetPreDefinedInstances(context, source);
                 var matcher = new KeyMatcher(() => instances, keyPlan);
                 var creator = MakePreDefinedReconstitutionPlan(context, table, matcher, source);
-                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, keyPlan, instances.ToList());
+                principal = new LocalizationTableDef(table, extractionPlan, creator, repopulationPlan, keyPlan, [..instances]);
             }
 
             localizationTableCache_.Add(source, principal);
@@ -400,9 +400,7 @@ namespace Kvasir.Translation {
 
             // The `KeyMatcher` may have been added earlier by `TranslateType`, since we delay the actual translation of
             // the full Localization but need the `KeyMatcher` for extraction logic
-            if (!keyMatchers_.ContainsKey(source)) {
-                keyMatchers_.Add(source, keyMatcher);
-            }
+            keyMatchers_.TryAdd(source, keyMatcher);
 
             logger_.LogDebug("Translation of Principal Table for {} . . .", source.Name);
             return principal;

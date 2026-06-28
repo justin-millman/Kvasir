@@ -11,14 +11,14 @@ namespace Kvasir.Translation {
             : base(context, source) {
 
             Debug.Assert(FieldType == typeof(bool));
-            SetDomain(new object[] { true, false });
+            SetDomain([true, false]);
         }
 
         public BooleanFieldDescriptor(Context context, PropertyInfo source, DataConverterAttribute annotation)
             : base(context, source, annotation) {
 
             Debug.Assert(FieldType == typeof(bool));
-            SetDomain(new object[] { true, false });
+            SetDomain([true, false]);
         }
 
         public sealed override BooleanFieldDescriptor Clone() {

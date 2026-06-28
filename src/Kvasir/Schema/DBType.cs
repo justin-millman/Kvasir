@@ -256,10 +256,10 @@ namespace Kvasir.Schema {
         static DBType() {
             ENUM_SENTINEL = typeof(Enum);
 
-            STRING_FORMS = new string[] {
+            STRING_FORMS = [
                 "Int32", "Boolean", "Character", "Date/Time", "Decimal", "Double", "Enumeration", "GUID", "Int8",
                 "Int16", "Int64", "Single", "Text", "UInt8", "UInt16", "UInt32", "UInt64", "Date"
-            };
+            ];
 
             Debug.Assert(default(byte) == 0, $"Sequence of IDs for {nameof(DBType)} is not starting at 0");
             Int32 = new DBType(default);
@@ -339,7 +339,7 @@ namespace Kvasir.Schema {
 
 
         private readonly byte id_;
-        private static readonly IReadOnlyDictionary<Type, DBType> lookup_;
+        private static readonly Dictionary<Type, DBType> lookup_;
         private static readonly Type ENUM_SENTINEL;
         private static readonly string[] STRING_FORMS;
     }

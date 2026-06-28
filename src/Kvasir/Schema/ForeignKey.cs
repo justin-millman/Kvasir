@@ -167,7 +167,7 @@ namespace Kvasir.Schema {
             Debug.Assert(OnUpdate.IsValid());
 
             Name = name;
-            ReferencingFields = new List<IField>(fields);
+            ReferencingFields = [..fields];
             ReferencedTable = reference;
             OnDelete = onDelete;
             OnUpdate = onUpdate;

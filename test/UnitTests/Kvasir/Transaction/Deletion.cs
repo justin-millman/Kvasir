@@ -26,7 +26,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Pinata));
 
             // Act
-            fixture.Transactor.Delete(new object[] { pinata });
+            fixture.Transactor.Delete([pinata]);
             var pinataCmd = fixture.PrincipalCommands<Pinata>().DeleteCommand(ANY_ROWS);
             var pinataDeletions = fixture.DeletionsFor(pinataCmd);
 
@@ -53,7 +53,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Choir));
 
             // Act
-            fixture.Transactor.Delete(new object[] { choir });
+            fixture.Transactor.Delete([choir]);
             var choirCmd = fixture.PrincipalCommands<Choir>().DeleteCommand(ANY_ROWS);
             var choirDeletions = fixture.DeletionsFor(choirCmd);
 
@@ -98,7 +98,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(EquityOption));
 
             // Act
-            fixture.Transactor.Delete(new object[] { microsoft, nvidia, disney });
+            fixture.Transactor.Delete([microsoft, nvidia, disney]);
             var optionCmd = fixture.PrincipalCommands<EquityOption>().DeleteCommand(ANY_ROWS);
             var optionDeletions = fixture.DeletionsFor(optionCmd);
 
@@ -134,7 +134,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(K401));
 
             // Act
-            fixture.Transactor.Delete(new object[] { k401 });
+            fixture.Transactor.Delete([k401]);
             var k401Cmd = fixture.PrincipalCommands<K401>().DeleteCommand(ANY_ROWS);
             var k401Deletions = fixture.DeletionsFor(k401Cmd);
             var depositsCmd = fixture.RelationCommands<K401>(0).DeleteCommand(ANY_ROWS);
@@ -170,7 +170,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(JumpBall));
 
             // Act
-            fixture.Transactor.Delete(new object[] { jumpBall });
+            fixture.Transactor.Delete([jumpBall]);
             var jumpBallCmd = fixture.PrincipalCommands<JumpBall>().DeleteCommand(ANY_ROWS);
             var jumpBallDeletions = fixture.DeletionsFor(jumpBallCmd);
             var participantsCmd = fixture.RelationCommands<JumpBall>(0).DeleteCommand(ANY_ROWS);
@@ -201,17 +201,17 @@ namespace UT.Kvasir.Transaction {
                     { Guid.NewGuid(), 5819725.93M },
                     { Guid.NewGuid(), 871.20M }
                 },
-                Combination = new RelationOrderedList<sbyte>() {
+                Combination = [
                     61,
                     34,
                     17,
                     96
-                }
+                ]
             };
             var fixture = new TestFixture(typeof(BankVault));
 
             // Act
-            fixture.Transactor.Delete(new object[] { vault });
+            fixture.Transactor.Delete([vault]);
             var vaultCmd = fixture.PrincipalCommands<BankVault>().DeleteCommand(ANY_ROWS);
             var vaultDeletions = fixture.DeletionsFor(vaultCmd);
             var combinationCmd = fixture.RelationCommands<BankVault>(0).DeleteCommand(ANY_ROWS);
@@ -239,12 +239,12 @@ namespace UT.Kvasir.Transaction {
                 Restaurant = "The Koi Pond",
                 Price = 15.99M,
                 RiceType = SushiRoll.Color.White,
-                Ingredients = new RelationSet<string>() {
+                Ingredients = [
                     "King Crab",
                     "Tobiko",
                     "Cucumber",
                     "Cream Cheese"
-                }
+                ]
             };
             (sushi.Ingredients as IRelation).Canonicalize();
             sushi.Ingredients.Add("Avocado");
@@ -253,7 +253,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(SushiRoll));
 
             // Act
-            fixture.Transactor.Delete(new object[] { sushi });
+            fixture.Transactor.Delete([sushi]);
             var sushiCmd = fixture.PrincipalCommands<SushiRoll>().DeleteCommand(ANY_ROWS);
             var sushiDeletions = fixture.DeletionsFor(sushiCmd);
             var ingredientsCmd = fixture.RelationCommands<SushiRoll>(0).DeleteCommand(ANY_ROWS);
@@ -279,13 +279,13 @@ namespace UT.Kvasir.Transaction {
                 Owner = "Mariah Sroru",
                 TotalIncidents = 35,
                 InsuranceCoverage = 275000M,
-                Tools = new RelationSet<string>(),
-                TypesOfWood = new RelationOrderedList<Woodshop.Wood>()
+                Tools = [],
+                TypesOfWood = []
             };
             var fixture = new TestFixture(typeof(Woodshop));
 
             // Act
-            fixture.Transactor.Delete(new object[] { woodshop });
+            fixture.Transactor.Delete([woodshop]);
             var woodshopCmd = fixture.PrincipalCommands<Woodshop>().DeleteCommand(ANY_ROWS);
             var woodshopDeletions = fixture.DeletionsFor(woodshopCmd);
             var toolsCmd = fixture.RelationCommands<Woodshop>(0).DeleteCommand(ANY_ROWS);
@@ -319,11 +319,11 @@ namespace UT.Kvasir.Transaction {
                     { "Pizza Slice", 13.00M },
                     { "Cigarettes", 18.34M }
                 },
-                Employees = new RelationOrderedList<string>() {
+                Employees = [
                     "Donald Evervass",
                     "Kathleen Tuasaa",
                     "Bri'Ann Camelson"
-                }
+                ]
             };
             var store1 = new ConvenienceStore() {
                 StoreBrand = "La Bodegita",
@@ -334,9 +334,9 @@ namespace UT.Kvasir.Transaction {
                     { "Fountain Drink", 1.50M },
                     { "Churro", 0.75M }
                 },
-                Employees = new RelationOrderedList<string>() {
+                Employees = [
                     "Carl X. Wassel"
-                }
+                ]
             };
             (store0.Products as IRelation).Canonicalize();
             (store0.Employees as IRelation).Canonicalize();
@@ -345,7 +345,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(ConvenienceStore));
 
             // Act
-            fixture.Transactor.Delete(new object[] { store0, store1 });
+            fixture.Transactor.Delete([store0, store1]);
             var storeCmd = fixture.PrincipalCommands<ConvenienceStore>().DeleteCommand(ANY_ROWS);
             var storeDeletions = fixture.DeletionsFor(storeCmd);
             var employeesCmd = fixture.RelationCommands<ConvenienceStore>(0).DeleteCommand(ANY_ROWS);
@@ -383,7 +383,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Showtime));
 
             // Act
-            fixture.Transactor.Delete(new object[] { showtime });
+            fixture.Transactor.Delete([showtime]);
             var showtimeCmd = fixture.PrincipalCommands<Showtime>().DeleteCommand(ANY_ROWS);
             var showtimeDeletions = fixture.DeletionsFor(showtimeCmd);
 
@@ -405,7 +405,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(TermOfEndearment));
 
             // Act
-            fixture.Transactor.Delete(new object[] { termOfEndearment });
+            fixture.Transactor.Delete([termOfEndearment]);
             var termOfEndearmentCmd = fixture.PrincipalCommands<TermOfEndearment>().DeleteCommand(ANY_ROWS);
             var termOfEndearmentDeletions = fixture.DeletionsFor(termOfEndearmentCmd);
 
@@ -427,7 +427,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Label));
 
             // Act
-            fixture.Transactor.Delete(new object[] { label });
+            fixture.Transactor.Delete([label]);
             var labelCmd = fixture.PrincipalCommands<Label>().DeleteCommand(ANY_ROWS);
             var labelDeletions = fixture.DeletionsFor(labelCmd);
 
@@ -454,7 +454,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(ConjugatedVerb));
 
             // Act
-            fixture.Transactor.Delete(new object[] { verb });
+            fixture.Transactor.Delete([verb]);
             var conjugationCmd = fixture.PrincipalCommands<ConjugatedVerb>().DeleteCommand(ANY_ROWS);
             var conjugationDeletions = fixture.DeletionsFor(conjugationCmd);
 
@@ -475,7 +475,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Coordinate));
 
             // Act
-            fixture.Transactor.Delete(new object[] { coordinate0, coordinate1, coordinate2 });
+            fixture.Transactor.Delete([coordinate0, coordinate1, coordinate2]);
             var coordinateCmd = fixture.PrincipalCommands<Coordinate>().DeleteCommand(ANY_ROWS);
             var coordinateDeletions = fixture.DeletionsFor(coordinateCmd);
 
@@ -514,7 +514,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(SeaShanty), typeof(ElginMarble), typeof(CepheidVariable));
 
             // Act
-            fixture.Transactor.Delete(new object[] { shanty, marble, cepheid });
+            fixture.Transactor.Delete([shanty, marble, cepheid]);
             var shantyCmd = fixture.PrincipalCommands<SeaShanty>().DeleteCommand(ANY_ROWS);
             var shantyDeletions = fixture.DeletionsFor(shantyCmd);
             var marbleCmd = fixture.PrincipalCommands<ElginMarble>().DeleteCommand(ANY_ROWS);
@@ -558,7 +558,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Sunset), typeof(Wingding), typeof(Sprite));
 
             // Act
-            fixture.Transactor.Delete(new object[] { sunset, wingding, sprite });
+            fixture.Transactor.Delete([sunset, wingding, sprite]);
             var sunsetCmd = fixture.PrincipalCommands<Sunset>().DeleteCommand(ANY_ROWS);
             var sunsetDeletions = fixture.DeletionsFor(sunsetCmd);
             var wingdingCmd = fixture.PrincipalCommands<Wingding>().DeleteCommand(ANY_ROWS);
@@ -606,7 +606,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(CostumeParty), typeof(CostumeParty.Partygoer), typeof(CostumeParty.Costume));
 
             // Act
-            fixture.Transactor.Delete(new object[] { costume, party, partygoer });
+            fixture.Transactor.Delete([costume, party, partygoer]);
             var costumeCmd = fixture.PrincipalCommands<CostumeParty.Costume>().DeleteCommand(ANY_ROWS);
             var costumeDeletios = fixture.DeletionsFor(costumeCmd);
             var partygoerCmd = fixture.PrincipalCommands<CostumeParty.Partygoer>().DeleteCommand(ANY_ROWS);
@@ -654,7 +654,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(WeirdAlParody), typeof(WeirdAlParody.Song), typeof(WeirdAlParody.Album));
 
             // Act
-            fixture.Transactor.Delete(new object[] {album, beatIt, eatIt});
+            fixture.Transactor.Delete([album, beatIt, eatIt]);
             var albumCmd = fixture.PrincipalCommands<WeirdAlParody.Album>().DeleteCommand(ANY_ROWS);
             var albumDeletions = fixture.DeletionsFor(albumCmd);
             var songCmd = fixture.PrincipalCommands<WeirdAlParody.Song>().DeleteCommand(ANY_ROWS);
@@ -712,7 +712,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Affidavit), typeof(Affidavit.Lawyer));
 
             // Act
-            fixture.Transactor.Delete(new object[] { affidavit, lawyer0, lawyer1, lawyer2 });
+            fixture.Transactor.Delete([affidavit, lawyer0, lawyer1, lawyer2]);
             var affidavitCmd = fixture.PrincipalCommands<Affidavit>().DeleteCommand(ANY_ROWS);
             var affidavitDeletions = fixture.DeletionsFor(affidavitCmd);
             var lawyerCmd = fixture.PrincipalCommands<Affidavit.Lawyer>().DeleteCommand(ANY_ROWS);
@@ -752,7 +752,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Bandeirante), typeof(LocalizedText), typeof(LocalizedCurrency));
 
             // Act
-            fixture.Transactor.Delete(new object[] { bandeirante, bandeirante.HomeState, bandeirante.TotalLooted });
+            fixture.Transactor.Delete([bandeirante, bandeirante.HomeState, bandeirante.TotalLooted]);
             var bandeiranteCmd = fixture.PrincipalCommands<Bandeirante>().DeleteCommand(ANY_ROWS);
             var bandeiranteDeletions = fixture.DeletionsFor(bandeiranteCmd);
             var textCmd = fixture.PrincipalCommands<LocalizedText>().DeleteCommand(ANY_ROWS);
@@ -807,7 +807,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(BirthdayParty), typeof(BirthdayParty.YearMonthDay), typeof(BirthdayParty.LocalizedYearMonthDay));
 
             // Act
-            fixture.Transactor.Delete(new object[] { yyyymmdd, wordyDate, party, party.Date });
+            fixture.Transactor.Delete([yyyymmdd, wordyDate, party, party.Date]);
             var partyCmd = fixture.PrincipalCommands<BirthdayParty>().DeleteCommand(ANY_ROWS);
             var partyDeletions = fixture.DeletionsFor(partyCmd);
             var dateCmd = fixture.PrincipalCommands<BirthdayParty.YearMonthDay>().DeleteCommand(ANY_ROWS);
@@ -841,10 +841,10 @@ namespace UT.Kvasir.Transaction {
                 BarNumber = Guid.NewGuid(),
                 Name = "Lord Stanley Razzellon IV, Eighteenth Earl of Thornentonshire",
                 AlmaMater = "London Temporary Secondary School of Greengrass-upon-Thames-upon-Earth",
-                Employers = new RelationOrderedList<LocalizedNullableText>() {
+                Employers = [
                     text0,
                     text1
-                },
+                ],
                 WinPercentage = 0.03,
                 AnnualSalary = 57000M,
                 HasBeenDisbarred = false,
@@ -854,7 +854,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Lawyer), typeof(LocalizedNullableText));
 
             // Act
-            fixture.Transactor.Delete(new object[] { text0, text1, lawyer });
+            fixture.Transactor.Delete([text0, text1, lawyer]);
             var lawyerCmd = fixture.PrincipalCommands<Lawyer>().DeleteCommand(ANY_ROWS);
             var lawyerDeletions = fixture.DeletionsFor(lawyerCmd);
             var textCmd = fixture.PrincipalCommands<LocalizedNullableText>().DeleteCommand(ANY_ROWS);
@@ -917,7 +917,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Masseuse));
 
             // Act
-            fixture.Transactor.Delete(new object[] { masseuse0, masseuse1, masseuse2 });
+            fixture.Transactor.Delete([masseuse0, masseuse1, masseuse2]);
             var masseuseCmd = fixture.PrincipalCommands<Masseuse>().DeleteCommand(ANY_ROWS);
             var masseuseDeletions = fixture.DeletionsFor(masseuseCmd);
             var teachersCmd = fixture.RelationCommands<Masseuse>(0).DeleteCommand(ANY_ROWS);
@@ -972,7 +972,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Radiologist), typeof(Radiologist.OnCallEscalation));
 
             // Act
-            fixture.Transactor.Delete(new object[] { radiologist0, radiologist1, radiologist2, radiologist0.Superior });
+            fixture.Transactor.Delete([radiologist0, radiologist1, radiologist2, radiologist0.Superior]);
             var radiologistCmd = fixture.PrincipalCommands<Radiologist>().DeleteCommand(ANY_ROWS);
             var radiologistDeletions = fixture.DeletionsFor(radiologistCmd);
             var onCallCmd = fixture.PrincipalCommands<Radiologist.OnCallEscalation>().DeleteCommand(ANY_ROWS);
@@ -1003,7 +1003,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Gazebo)).WithCommitError();
 
             // Act
-            var action = () => fixture.Transactor.Insert(new object[] { gazebo });
+            var action = () => fixture.Transactor.Insert([gazebo]);
 
             // Assert
             action.Should().ThrowExactly<InvalidOperationException>();
@@ -1023,7 +1023,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Moai)).WithRollbackError();
 
             // Act
-            var action = () => fixture.Transactor.Delete(new object[] { moai });
+            var action = () => fixture.Transactor.Delete([moai]);
 
             // Assert
             action.Should().ThrowExactly<AggregateException>();
@@ -1036,6 +1036,6 @@ namespace UT.Kvasir.Transaction {
             var converter = new EnumToStringConverter(typeof(T)).ConverterImpl;
             return (string)converter.Convert(enumerator)!;
         }
-        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = Enumerable.Empty<IReadOnlyList<DBValue>>();
+        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = [];
     }
 }

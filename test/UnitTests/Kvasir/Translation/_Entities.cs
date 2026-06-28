@@ -115,7 +115,7 @@ namespace UT.Kvasir.Translation {
         public class Eigenvector {
             [PrimaryKey] public Guid ID { get; set; }
             public float Eigenvalue { get; set; }
-            public ArrayList Vector { get; set; } = new();
+            public ArrayList Vector { get; set; } = [];
         }
 
         // Test Scenario: Struct Type from the C# Standard Library (✓recognized✓)
@@ -175,7 +175,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid BadgeID { get; set; }
             public string Name { get; set; } = "";
             public Group AwardedBy { get; set; }
-            public uint[] PointsRequired { get; set; } = new uint[] {};
+            public uint[] PointsRequired { get; set; } = [];
             public double PercentAcquired { get; set; }
             public DateTime Introduced { get; set; }
         }
@@ -395,10 +395,10 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string Project { get; set; } = "";
             [PrimaryKey] public string TargetName { get; set; } = "";
-            public RelationList<string> Files { get; init; } = new();
-            public RelationSet<Macro> Macros { get; init; } = new();
-            public RelationMap<Mode, int> OptimizationLevel { get; init; } = new();
-            public RelationOrderedList<string> LinkAgainst { get; init; } = new();
+            public RelationList<string> Files { get; init; } = [];
+            public RelationSet<Macro> Macros { get; init; } = [];
+            public RelationMap<Mode, int> OptimizationLevel { get; init; } = [];
+            public RelationOrderedList<string> LinkAgainst { get; init; } = [];
         }
 
         // Test Scenario: Read-Only Relations (✓recognized✓)
@@ -451,8 +451,8 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Identifier { get; set; } = "";
             public string? Constellation { get; set; }
             public string? Galaxy { get; set; }
-            public RelationSet<string> AKAs { get; init; } = new();
-            public RelationMap<string, RelationMap<string, double>> Measurements { get; init; } = new();
+            public RelationSet<string> AKAs { get; init; } = [];
+            public RelationMap<string, RelationMap<string, double>> Measurements { get; init; } = [];
         }
 
         // Test Scenario: Relation as Localization Locale (✗not permitted✗)
@@ -529,7 +529,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid PollID { get; set; }
             public string PollTitle { get; set; } = "";
             public string? Pollster { get; set; }
-            public RelationList<Question> Questions { get; init; } = new();
+            public RelationList<Question> Questions { get; init; } = [];
             public ulong Responses { get; set; }
             public double ReponseRate { get; set; }
         }
@@ -561,7 +561,7 @@ namespace UT.Kvasir.Translation {
             public DateTime Date { get; set; }
             public string BirthdayGirl { get; set; } = "";
             public Gift BestGift { get; set; }
-            public RelationMap<string, Gift> Presents { get; } = new();
+            public RelationMap<string, Gift> Presents { get; } = [];
             public bool InMexico { get; set; }
         }
 
@@ -576,7 +576,7 @@ namespace UT.Kvasir.Translation {
             }
 
             public sealed class LocalizedCitation : Localization<string, Version, Citation> {
-                public LocalizedCitation(string key) : base(key) { }
+                public LocalizedCitation(string key) : base(key) {}
             }
 
             [PrimaryKey] public Guid ParableID { get; set; }
@@ -593,7 +593,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid ID { get; set; }
             public string Subject { get; set; } = "";
             public string Artist { get; set; } = "";
-            public RelationSet<KeyValuePair<DateTime, decimal>> SaleHistory { get; init; } = new();
+            public RelationSet<KeyValuePair<DateTime, decimal>> SaleHistory { get; init; } = [];
             public double HeadSize { get; set; }
             public bool Certified { get; set; }
             public Location Source { get; set; }
@@ -613,14 +613,14 @@ namespace UT.Kvasir.Translation {
         public class BugZapper {
             [PrimaryKey] public Guid ProductID { get; set; }
             public decimal RetailPrice { get; set; }
-            public RelationSet<string> SusceptibleSpecies { get; set; } = new();
+            public RelationSet<string> SusceptibleSpecies { get; set; } = [];
             public bool IsScented { get; set; }
             public float MaxVoltage { get; set; }
         }
 
         // Test Scenario: Aggregate Consisting of Only Relations (✓recognized✓)
         public class Loch {
-            public record struct Geography {
+            public readonly record struct Geography {
                 public RelationMap<char, float> Coordinates { get; }
                 public IReadOnlyRelationSet<string> Shires { get; }
             }
@@ -674,7 +674,7 @@ namespace UT.Kvasir.Translation {
         public class AdventCalendar {
             [PrimaryKey] public Guid CalendarID { get; set; }
             public decimal Price { get; set; }
-            public RelationMap<LocalizedDate, string> Gifts { get; } = new();
+            public RelationMap<LocalizedDate, string> Gifts { get; } = [];
             public bool IsPhysical { get; set; }
         }
 
@@ -683,7 +683,7 @@ namespace UT.Kvasir.Translation {
             public enum Means { LethalInjection, ElectricChair, FiringSquad, Guillotine, DrawnAndQuartered, Hanged, Vigilante, Other }
 
             public class LocalizedCrime : Localization<string, LocalizedText, bool> {
-                public LocalizedCrime(string key) : base(key) { }
+                public LocalizedCrime(string key) : base(key) {}
             }
 
             [PrimaryKey] public ushort Year { get; set; }
@@ -908,7 +908,7 @@ namespace UT.Kvasir.Translation {
 
         // Test Scenario: Abstract Localization (✗not permitted✗)
         public abstract class Trademark : Localization<int, Language, string> {
-            protected Trademark(int key) : base(key) { }
+            protected Trademark(int key) : base(key) {}
         }
 
         // Test Scenario: Generic Type (✗not permitted✗)
@@ -1287,7 +1287,7 @@ namespace UT.Kvasir.Translation {
                 GameID = id;
                 Title = title;
                 ReleaseDate = release;
-                Modes = new RelationSet<GamingMode>() { GamingMode.SinglePlayer, GamingMode.MultiPlayer };
+                Modes = [GamingMode.SinglePlayer, GamingMode.MultiPlayer];
             }
         }
 
@@ -1807,7 +1807,7 @@ namespace UT.Kvasir.Translation {
             }
 
             public class LocalizedCompany : Localization<string, char, Company> {
-                public LocalizedCompany(string key) : base(key) { }
+                public LocalizedCompany(string key) : base(key) {}
             }
 
             public struct Corporation {
@@ -2501,9 +2501,9 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string City { get; set; } = "";
             public ulong PersonsImpacted { get; set; }
-            public RelationList<SingleDay> Dailies { get; init; } = new();
+            public RelationList<SingleDay> Dailies { get; init; } = [];
             public RelationSet<string>? Meteorologists { get; init; }
-            public RelationOrderedList<Extremity> ExtremeWeather { get; init; } = new();
+            public RelationOrderedList<Extremity> ExtremeWeather { get; init; } = [];
         }
 
         // Test Scenario: Relations with Nullable Element Types (✓respected✓)
@@ -2514,9 +2514,9 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid ID { get; set; }
             public string Address { get; set; } = "";
             public ulong MailVolume { get; set; }
-            public RelationMap<short, string?> POBoxes { get; } = new();
-            public RelationMap<DateTime, Stamp?> Stamps { get; } = new();
-            public RelationOrderedList<decimal?> Budgets { get; } = new();
+            public RelationMap<short, string?> POBoxes { get; } = [];
+            public RelationMap<DateTime, Stamp?> Stamps { get; } = [];
+            public RelationOrderedList<decimal?> Budgets { get; } = [];
         }
 
         // Test Scenario: RelationList with Nullable Element (✗illegal✗)
@@ -2537,7 +2537,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public Guid AnthropologicalIdentifier { get; set; }
             public string? Culture { get; set; }
-            public RelationSet<Coordinate?> Locations { get; init; } = new();
+            public RelationSet<Coordinate?> Locations { get; init; } = [];
             public double TotalArea { get; set; }
             public Kind Varieties { get; set; }
         }
@@ -2546,10 +2546,10 @@ namespace UT.Kvasir.Translation {
         public class Naiad {
             public enum Source { Fountain, Spring, Brook, Stream, Well, Other }
 
-            [PrimaryKey] public string Name { get; set; }
+            [PrimaryKey] public string Name { get; set; } = "";
             [PrimaryKey] public byte Discriminator { get; set; }
             public Source FreshwaterSource { get; set; }
-            public RelationMap<string?, string?> Relationships { get; init; }
+            public RelationMap<string?, string?> Relationships { get; init; } = new();
             public string? DeityConsort { get; set; }
         }
 
@@ -2562,7 +2562,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Point Vertex { get; set; }
             [PrimaryKey] public float Eccentricity { get; set; }
             public Direction Concavity { get; set; }
-            public RelationOrderedList<MaybePoint?> Points { get; } = new();
+            public RelationOrderedList<MaybePoint?> Points { get; } = [];
         }
 
         // Test Scenario: Relation Property Marked as [NonNullable] (✓becomes non-nullable✓)
@@ -2572,7 +2572,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string FirstName { get; set; } = "";
             [PrimaryKey] public string LastName { get; set; } = "";
             public bool IsFemale { get; set; }
-            [NonNullable] public RelationList<Episode>? Appearances { get; } = new();
+            [NonNullable] public RelationList<Episode>? Appearances { get; } = [];
             public bool HasTemperancesApproval { get; set; }
         }
 
@@ -2582,7 +2582,7 @@ namespace UT.Kvasir.Translation {
             public string Formulation { get; set; } = "";
             public string? PostulatedBy { get; set; }
             public bool IsLogical { get; set; }
-            [Nullable] public RelationSet<string> DerivedTheories { get; } = new();
+            [Nullable] public RelationSet<string> DerivedTheories { get; } = [];
         }
 
         // Test Scenario: Pre-Defined Instance Property Marked as [NonNullable] (✓redundant✓)
@@ -2712,8 +2712,8 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid SwapID { get; set; }
             public string PartyA { get; set; } = "";
             public string PartyB { get; set; } = "";
-            public RelationSet<ushort> AtoB { get; } = new();
-            public RelationSet<ushort> BtoA { get; } = new();
+            public RelationSet<ushort> AtoB { get; } = [];
+            public RelationSet<ushort> BtoA { get; } = [];
             public DateTime Executed { get; set; }
             public bool Covert { get; set; }
         }
@@ -2832,7 +2832,7 @@ namespace UT.Kvasir.Translation {
         // Test Scenario: New Relation Table Name (✓renamed✓)
         public class MagicalPreserve {
             [PrimaryKey] public string Name { get; set; } = "";
-            [RelationTable("CreaturesTable")] public RelationMap<string, int> Population { get; } = new();
+            [RelationTable("CreaturesTable")] public RelationMap<string, int> Population { get; } = [];
             public string SecretArtifact { get; set; } = "";
             public DateTime? Founding { get; set; }
             public string PrimaryCaretaker { get; set; } = "";
@@ -2849,7 +2849,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string School { get; set; } = "";
             [PrimaryKey] public ushort Year { get; set; }
-            [RelationTable("UT.Kvasir.Translation.TableNaming+PacerTest.LapsCompletedTable")] public RelationMap<Student, byte> LapsCompleted { get; } = new();
+            [RelationTable("UT.Kvasir.Translation.TableNaming+PacerTest.LapsCompletedTable")] public RelationMap<Student, byte> LapsCompleted { get; } = [];
             public DateTime AdministeredOn { get; set; }
         }
 
@@ -2858,7 +2858,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid DwarfID { get; set; }
             public bool IsFictional { get; set; }
             public string Name { get; set; } = "";
-            [RelationTable(null!)] public RelationMap<DateTime, string> LifeEvents { get; } = new();
+            [RelationTable(null!)] public RelationMap<DateTime, string> LifeEvents { get; } = [];
             public byte Height { get; set; }
             public bool WieldsSword { get; set; }
             public double ShoeSize { get; set; }
@@ -2870,7 +2870,7 @@ namespace UT.Kvasir.Translation {
             public enum IUCN { Extinct, CaptivityOnly, CriticallyEndangered, Endangered, Vulnerable, NearThreatened, LeastConcern }
 
             [PrimaryKey] public string CommonName { get; set; } = "";
-            [RelationTable("")] public RelationMap<Taxon, string> Taxonomy { get; } = new();
+            [RelationTable("")] public RelationMap<Taxon, string> Taxonomy { get; } = [];
             public double AverageAdultMaleWeight { get; set; }
             public double AverageAdultFemaleWeight { get; set; }
             public float TailLength { get; set; }
@@ -2884,7 +2884,7 @@ namespace UT.Kvasir.Translation {
         public class Neuron {
             [PrimaryKey] public Guid NeuronID { get; set; }
             public float Length { get; set; }
-            [RelationTable("_Kvasir_Transmitters")] public RelationSet<string> NeurotransmittersSupported { get; init; } = new();
+            [RelationTable("_Kvasir_Transmitters")] public RelationSet<string> NeurotransmittersSupported { get; init; } = [];
             public float Potential { get; set; }
             public ulong NumDendrites { get; set; }
         }
@@ -2899,8 +2899,8 @@ namespace UT.Kvasir.Translation {
             public bool Closed { get; set; }
             public bool Long { get; set; }
             public Feature Features { get; set; }
-            [RelationTable("AuxiliaryVowelTable")] public RelationSet<string> Languages { get; } = new();
-            [RelationTable("AuxiliaryVowelTable")] public RelationMap<char, char> Diacritics { get; } = new();
+            [RelationTable("AuxiliaryVowelTable")] public RelationSet<string> Languages { get; } = [];
+            [RelationTable("AuxiliaryVowelTable")] public RelationMap<char, char> Diacritics { get; } = [];
         }
 
         // Test Scenario: Table Name Duplicated between Principal Table and Relation Table (✗duplication✗)
@@ -2911,7 +2911,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string IP { get; set; } = "";
             public Kind Type { get; set; }
             public bool PasswordProtected { get; set; }
-            [RelationTable("OfficialInfoVPN")] public RelationList<Guid> AuthorizedUsers { get; } = new();
+            [RelationTable("OfficialInfoVPN")] public RelationList<Guid> AuthorizedUsers { get; } = [];
         }
 
         // Test Scenario: [RelationTable] Applied to Numeric Field (✗impermissible✗)
@@ -3243,20 +3243,20 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid KidneyStoneID { get; set; }
             public float Size { get; set; }
             public string Patient { get; set; } = "";
-            [Name("MaterialsTable")] public RelationSet<string> Composition { get; } = new();
+            [Name("MaterialsTable")] public RelationSet<string> Composition { get; } = [];
             public bool HasPassed { get; set; }
         }
 
         // Test Scenario: Change Relation-Nested Field Name to New Value (✓renamed✓)
         public class SwissCanton {
             [PrimaryKey] public Guid ID { get; set; }
-            [Name("Canton", Path = "SwissCanton")] public RelationMap<string, string> Names { get; } = new();
+            [Name("Canton", Path = "SwissCanton")] public RelationMap<string, string> Names { get; } = [];
             public ulong Area { get; set; }
             public ulong Population { get; set; }
             public string CantonCapital { get; set; } = "";
             public ushort YearJoinedSwissConfederation { get; set; }
-            [Name("CantonID", Path = "SwissCanton.ID"), Name("Councilor", Path = "Item")] public RelationSet<string> Councilors { get; } = new();
-            [Name("Religion", Path = "Key"), Name("%PCNT", Path = "Value")] public RelationMap<string, double> Religions { get; } = new();
+            [Name("CantonID", Path = "SwissCanton.ID"), Name("Councilor", Path = "Item")] public RelationSet<string> Councilors { get; } = [];
+            [Name("Religion", Path = "Key"), Name("%PCNT", Path = "Value")] public RelationMap<string, double> Religions { get; } = [];
         }
 
         // Test Scenario: Change Nested Relation Name (✓affects name of Table✓)
@@ -3324,8 +3324,8 @@ namespace UT.Kvasir.Translation {
                 public string DishName { get; set; } = "";
                 public ushort PrepTime { get; set; }
                 public ushort CookTime { get; set; }
-                public RelationMap<string, Measure> Ingredients { get; } = new();
-                public RelationOrderedList<string> Steps { get; } = new();
+                public RelationMap<string, Measure> Ingredients { get; } = [];
+                public RelationOrderedList<string> Steps { get; } = [];
             }
 
             [PrimaryKey] public string ISBN { get; set; } = "";
@@ -3333,7 +3333,7 @@ namespace UT.Kvasir.Translation {
             public string Author { get; set; } = "";
             public DateTime PublicationDate { get; set; }
             public string AmazonURL { get; set; } = "";
-            [Name("Cookbook.ISBN", Path = "Item.RecipeID")] public RelationList<Recipe> Recipes { get; } = new();
+            [Name("Cookbook.ISBN", Path = "Item.RecipeID")] public RelationList<Recipe> Recipes { get; } = [];
         }
 
         // Test Scenario: Change Two Field Names to Same Value in Relation Table (✗duplication✗)
@@ -3348,7 +3348,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid IncidentID { get; set; }
             public string Location { get; set; } = "";
             public Person HostageTaker { get; set; } = new();
-            [Name("Value", Path = "HostageSituation.IncidentID"), Name("Value", Path = "Item.SSN")] public RelationList<Person> Hostages { get; } = new();
+            [Name("Value", Path = "HostageSituation.IncidentID"), Name("Value", Path = "Item.SSN")] public RelationList<Person> Hostages { get; } = [];
             public ushort Casualties { get; set; }
         }
 
@@ -3482,14 +3482,14 @@ namespace UT.Kvasir.Translation {
             public class Spell {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public string Incantation { get; set; } = "";
-                public RelationSet<string> Components { get; } = new();
+                public RelationSet<string> Components { get; } = [];
                 public bool TimeSensitive { get; set; }
             }
 
             [PrimaryKey] public Guid MagicUserID { get; set; }
             public string? Name { get; set; }
             public AlignedAs Alignment { get; set; }
-            [Name("Spellbook"), Name("Spellbook")] public RelationSet<Spell> Spells { get; } = new();
+            [Name("Spellbook"), Name("Spellbook")] public RelationSet<Spell> Spells { get; } = [];
             public ulong Resurrections { get; set; }
             public byte Level { get; set; }
         }
@@ -3502,7 +3502,7 @@ namespace UT.Kvasir.Translation {
             public string Identifier { get; set; } = "";
             public string EthnicGroup { get; set; } = "";
             public ulong DeathCount { get; set; }
-            [Name("TimelineOfEvents"), Name("Calendar")] public RelationMap<DateTime, Event> Timeline { get; } = new();
+            [Name("TimelineOfEvents"), Name("Calendar")] public RelationMap<DateTime, Event> Timeline { get; } = [];
             public ushort ICCIndictments { get; set; }
         }
 
@@ -3612,7 +3612,7 @@ namespace UT.Kvasir.Translation {
             public string Name { get; set; } = "";
             public string Country { get; set; } = "";
             public ulong Age { get; set; }
-            [Name("TotalArea", Path = "Item.TotalSpace")] public RelationSet<PointOfInterest> Ruins { get; } = new();
+            [Name("TotalArea", Path = "Item.TotalSpace")] public RelationSet<PointOfInterest> Ruins { get; } = [];
         }
 
         // Test Scenario: [Name] Change on Nested Aggregate that Already Has [Name] Change (✓renamed✓)
@@ -3654,7 +3654,7 @@ namespace UT.Kvasir.Translation {
 
         // Test Scenario: [Name] Change on Nested Relation that Already Has [Name] Change (✓affects name of Table✓)
         public class PolarVortex {
-            public struct Temps {
+            public readonly struct Temps {
                 [Name("HighTemps")] public RelationMap<DateTime, double> Highs { get; }
                 [Name("LowTemps")] public RelationMap<DateTime, double> Lows { get; }
             }
@@ -3835,7 +3835,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Identifier { get; set; } = "";
             public Operation AllowedOperations { get; set; }
             public short Size { get; set; }
-            [Name("eax?", Path = "---")] public RelationSet<string> Architectures { get; } = new();
+            [Name("eax?", Path = "---")] public RelationSet<string> Architectures { get; } = [];
             public bool StackPointer { get; set; }
         }
 
@@ -3849,7 +3849,7 @@ namespace UT.Kvasir.Translation {
             public Denom Denomination { get; set; }
             public string ChiefRabbi { get; set; } = "";
             public DateTime Founded { get; set; }
-            [Name("HomeCity", Path = "Yeshiva.City")] public RelationList<Student> Students { get; } = new();
+            [Name("HomeCity", Path = "Yeshiva.City")] public RelationList<Student> Students { get; } = [];
         }
 
         // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
@@ -4054,15 +4054,15 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Image { get; set; } = "";
             [PrimaryKey, Default(0)] public int PID { get; set; }
             public string EntryPoint { get; set; } = "";
-            public RelationMap<Directory, string> Mounts { get; } = new();
+            public RelationMap<Directory, string> Mounts { get; } = [];
         }
 
         // Test Scenario: Default on Relation-Nested Field (✓valid✓)
         public class Kami {
             [PrimaryKey] public string Name { get; set; } = "";
             public string CultCenter { get; set; } = "";
-            [Default("n/a", Path = "Item")] public RelationSet<string> AKAs { get; } = new();
-            [Default("Susano'o", Path = "Kami.Name"), Default((short)19, Path = "Value")] public RelationMap<string, short> Appearances { get; } = new();
+            [Default("n/a", Path = "Item")] public RelationSet<string> AKAs { get; } = [];
+            [Default("Susano'o", Path = "Kami.Name"), Default((short)19, Path = "Value")] public RelationMap<string, short> Appearances { get; } = [];
             public string? PrimaryTorii { get; set; }
             public bool Female { get; set; }
         }
@@ -4081,7 +4081,7 @@ namespace UT.Kvasir.Translation {
             public ushort HatchTime { get; set; }
             public byte Age { get; set; }
             public uint Weight { get; set; }
-            [Default(3.75, Path = "Item.Cost")] public RelationList<Accessory> Accessories { get; } = new();
+            [Default(3.75, Path = "Item.Cost")] public RelationList<Accessory> Accessories { get; } = [];
         }
 
         // Test Scenario: Default on Localization Field (✓valid✓)
@@ -4191,7 +4191,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string LastName { get; set; } = "";
             public DateTime BirthDate { get; set; }
             [Default("Marty McFly", Path = "Owners")] public Machine TimeMachine { get; set; }
-            public RelationSet<DateTime> Visitations { get; } = new();
+            public RelationSet<DateTime> Visitations { get; } = [];
             public uint ParadoxesCaused { get; set; }
         }
 
@@ -4479,7 +4479,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid SerialNumber { get; set; }
             public string Title { get; set; } = "";
             public string Name { get; set; } = "";
-            [Default(0.00, Path = "---")] public RelationMap<string, double> HighScores { get; } = new();
+            [Default(0.00, Path = "---")] public RelationMap<string, double> HighScores { get; } = [];
             public ushort NumLevels { get; set; }
             public bool IsSports { get; set; }
         }
@@ -4489,7 +4489,7 @@ namespace UT.Kvasir.Translation {
             public enum Operation { Map, Join, Unit, Bind, Constructor }
 
             [PrimaryKey] public string Name { get; set; } = "";
-            [Default((sbyte)77, Path = "Monad.ModelsOption")] public RelationMap<Operation, string> Traits { get; } = new();
+            [Default((sbyte)77, Path = "Monad.ModelsOption")] public RelationMap<Operation, string> Traits { get; } = [];
             public bool ModelsOption { get; set; }
         }
 
@@ -4498,7 +4498,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid DetergentID { get; set; }
             public string Brand { get; set; } = "";
             public double VolumePerLoad { get; set; }
-            [Default(null)] public RelationSet<string> Ingredients { get; } = new();
+            [Default(null)] public RelationSet<string> Ingredients { get; } = [];
             public bool ToxiToConsume { get; set; }
         }
 
@@ -4588,9 +4588,9 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Issuer { get; set; } = "";
             public short SecurityCode { get; set; }
             public decimal DebitLimit { get; set; }
-            public RelationMap<string, Permission> Account { get; } = new();
+            public RelationMap<string, Permission> Account { get; } = [];
             public DateTime Expiration { get; set; }
-            public RelationList<Transaction> Transactions { get; } = new();
+            public RelationList<Transaction> Transactions { get; } = [];
         }
 
         // Test Scenario: Relation Fields are Manually Ordered (✗impermissible✗)
@@ -4598,7 +4598,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid TapestryID { get; set; }
             public double Length { get; set; }
             public double Width { get; set; }
-            [Column(6)] public RelationList<string> Depictions { get; } = new();
+            [Column(6)] public RelationList<string> Depictions { get; } = [];
             public string? Artist { get; set; }
             public ulong ThreadCount { get; set; }
         }
@@ -4666,7 +4666,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(3)] public Guid DeviceID { get; set; }
             [PrimaryKey, Column(0)] public DateTime Timestamp { get; set; }
             public Result Outcome { get; set; }
-            public RelationList<string> Notifications { get; } = new();
+            public RelationList<string> Notifications { get; } = [];
             public short PassCode { get; set; }
             public bool Mobile { get; set; }
         }
@@ -4867,7 +4867,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public short Year { get; set; }
             [PrimaryKey] public string Country { get; set; } = "";
-            [PrimaryKey(Path = "GrandPrix.Year"), PrimaryKey(Path = "GrandPrix.Country"), PrimaryKey(Path = "Key.CarNumber")] public RelationMap<Driver, short> Results { get; } = new();
+            [PrimaryKey(Path = "GrandPrix.Year"), PrimaryKey(Path = "GrandPrix.Country"), PrimaryKey(Path = "Key.CarNumber")] public RelationMap<Driver, short> Results { get; } = [];
             public byte NumLaps { get; set; }
             public ulong TrackLength { get; set; }
             public uint NumCrashes { get; set; }
@@ -5062,10 +5062,10 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Address { get; set; } = "";
             public string Country { get; set; } = "";
             public string? Proprietor { get; set; }
-            public RelationList<string> Employees { get; } = new();
+            public RelationList<string> Employees { get; } = [];
             public decimal YearlyRevenue { get; set; }
             public bool IsLegal { get; set; }
-            public RelationSet<Service> Services { get; } = new();
+            public RelationSet<Service> Services { get; } = [];
         }
 
         // Test Scenario: Default Deduction for Map Relation (✓identified✓)
@@ -5076,7 +5076,7 @@ namespace UT.Kvasir.Translation {
             public string Leader { get; set; } = "";
             public DateTime Founded { get; set; }
             public DateTime? Shuttered { get; set; }
-            public RelationMap<string, Info> Members { get; } = new();
+            public RelationMap<string, Info> Members { get; } = [];
             public bool FederallyMonitored { get; set; }
             public ulong AttributableDeaths { get; set; }
         }
@@ -5095,7 +5095,7 @@ namespace UT.Kvasir.Translation {
             public double Duration { get; set; }
             public TimeSignature Signature { get; set; }
             public sbyte Movements { get; set; }
-            public RelationOrderedList<Note> Score { get; } = new();
+            public RelationOrderedList<Note> Score { get; } = [];
         }
 
         // Test Scenario: Single Candidate Key on Relation Including Anchor (✓identified✓)
@@ -5105,7 +5105,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid ExtensionID { get; set; }
             public string ExtensionName { get; set; } = "";
             public ulong Downloads { get; set; }
-            [Unique("Key", Path = "ChromeExtension.ExtensionID"), Unique("Key", Path = "Item.Reviewer")] public RelationList<Rating> Reviews { get; } = new();
+            [Unique("Key", Path = "ChromeExtension.ExtensionID"), Unique("Key", Path = "Item.Reviewer")] public RelationList<Rating> Reviews { get; } = [];
             public string CurrentVersion { get; set; } = "";
             public ulong Size { get; set; }
             public bool ByGoogle { get; set; }
@@ -5119,7 +5119,7 @@ namespace UT.Kvasir.Translation {
             public ulong MaxHeight { get; set; }
             public ulong MinHeight { get; set; }
             public float TopSpeed { get; set; }
-            [Unique(Path = "Item")] public RelationSet<string> Precautions { get; } = new();
+            [Unique(Path = "Item")] public RelationSet<string> Precautions { get; } = [];
             public bool Aquatic { get; set; }
             public bool Forested { get; set; }
         }
@@ -5258,7 +5258,7 @@ namespace UT.Kvasir.Translation {
             public float Longitude { get; set; }
             public DateTime CarbonDating { get; set; }
             public string GeologicEra { get; set; } = "";
-            public RelationSet<Fossil> Fossils { get; } = new();
+            public RelationSet<Fossil> Fossils { get; } = [];
         }
 
         // Test Scenario: Primary Key on Relation Table with Candidate Keys Cannot Be Deduced (✗illegal✗)
@@ -5267,7 +5267,7 @@ namespace UT.Kvasir.Translation {
             public string Manager { get; set; } = "";
             public DateTime Opened { get; set; }
             public DateTime? Closed { get; set; }
-            [Unique("V", Path = "Blockbuster.ID"), Unique("V", Path = "Value")] public RelationMap<string, string> Rentals { get; } = new();
+            [Unique("V", Path = "Blockbuster.ID"), Unique("V", Path = "Value")] public RelationMap<string, string> Rentals { get; } = [];
             public ushort TotalVideos { get; set; }
             public decimal LifetimeRevenue { get; set; }
             public bool IsFranchise { get; set; }
@@ -5410,7 +5410,7 @@ namespace UT.Kvasir.Translation {
             public Terrain LaunchedFrom { get; set; }
             public Terrain Targeting { get; set; }
             public ulong MaxRange { get; set; }
-            [PrimaryKey(Path = "---")] public RelationSet<string> Manufacturers { get; } = new();
+            [PrimaryKey(Path = "---")] public RelationSet<string> Manufacturers { get; } = [];
         }
 
         // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
@@ -5421,7 +5421,7 @@ namespace UT.Kvasir.Translation {
             public string? Author { get; set; }
             public decimal TreasureValue { get; set; }
             public Coordinate X { get; set; }
-            [PrimaryKey(Path = "TreasureMap.X")] public RelationList<Coordinate> SuggestedPath { get; } = new();
+            [PrimaryKey(Path = "TreasureMap.X")] public RelationList<Coordinate> SuggestedPath { get; } = [];
             public bool Damaged { get; set; }
         }
 
@@ -5430,7 +5430,7 @@ namespace UT.Kvasir.Translation {
             public Guid ID { get; set; }
             public double Height { get; set; }
             public double AspectRatio { get; set; }
-            [PrimaryKey] public RelationMap<short, string> Copyrights { get; } = new();
+            [PrimaryKey] public RelationMap<short, string> Copyrights { get; } = [];
             public bool ThreeDimensional { get; set; }
         }
 
@@ -5766,7 +5766,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public ushort Episode { get; set; }
             public string ChiefOfStaff { get; set; } = "";
-            [PrimaryKey(Path = "Key.Time"), Unique("X", Path = "BigBlockOfCheeseDay"), Unique("X", Path = "Key.Organization")] public RelationMap<Slot, string> Schedule { get; } = new();
+            [PrimaryKey(Path = "Key.Time"), Unique("X", Path = "BigBlockOfCheeseDay"), Unique("X", Path = "Key.Organization")] public RelationMap<Slot, string> Schedule { get; } = [];
             public double PercentCrackpots { get; set; }
         }
 
@@ -5799,7 +5799,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public DateTime WarStart { get; set; }
             public DateTime WarEnd { get; set; }
-            [PrimaryKey(Path = "Intifada.Name"), PrimaryKey(Path = "Item.CountryName")] public RelationSet<Country> Belligerents { get; } = new();
+            [PrimaryKey(Path = "Intifada.Name"), PrimaryKey(Path = "Item.CountryName")] public RelationSet<Country> Belligerents { get; } = [];
             public ulong Casualties { get; set; }
         }
 
@@ -5811,7 +5811,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid VoodooID { get; set; }
             public string Target { get; set; } = "";
             public string? PatronLoa { get; set; }
-            [PrimaryKey(Path = "VoodooDoll.VoodooID"), PrimaryKey(Path = "Value"), Unique("Unique", Path = "VoodooDoll.VoodooID"), Unique("Unique", Path = "Key")] public RelationMap<Color, string> Pins { get; } = new();
+            [PrimaryKey(Path = "VoodooDoll.VoodooID"), PrimaryKey(Path = "Value"), Unique("Unique", Path = "VoodooDoll.VoodooID"), Unique("Unique", Path = "Key")] public RelationMap<Color, string> Pins { get; } = [];
             public bool Effective { get; set; }
             public Thing Material { get; set; }
         }
@@ -5826,14 +5826,14 @@ namespace UT.Kvasir.Translation {
             public ulong LungsProcessed { get; set; }
             public ulong LiversProcessed { get; set; }
             public ulong KidneysProcessed { get; set; }
-            [PrimaryKey(Path = "OPO.ID"), PrimaryKey(Path = "Item"), Unique("Unique", Path = "OPO.ID"), Unique("Unique", Path = "Index")] public RelationOrderedList<string> Administrators { get; } = new();
+            [PrimaryKey(Path = "OPO.ID"), PrimaryKey(Path = "Item"), Unique("Unique", Path = "OPO.ID"), Unique("Unique", Path = "Index")] public RelationOrderedList<string> Administrators { get; } = [];
         }
 
         // Test Scenario: Localization Field in Candidate Key (✓recognized✓)
         public class ToDoList {
             [PrimaryKey] public Guid ID { get; set; }
             [Unique] public LocalizedDate Deadline { get; set; } = new(Guid.Empty);
-            public RelationOrderedList<string> Things { get; } = new();
+            public RelationOrderedList<string> Things { get; } = [];
             public string Doer { get; set; } = "";
             public bool IsCompleted { get; set; }
         }
@@ -6035,7 +6035,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Name { get; set; } = "";
             public string Formula { get; set; } = "";
             public double Bioavalability { get; set; }
-            [Unique(Path = "---")] public RelationMap<string, string> MedicalIdentifiers { get; } = new();
+            [Unique(Path = "---")] public RelationMap<string, string> MedicalIdentifiers { get; } = [];
             public Symptom SymptomsRelieved { get; set; }
         }
 
@@ -6044,7 +6044,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public float Latitude { get; set; }
             [PrimaryKey] public float Longitude { get; set; }
             public ulong Water { get; set; }
-            [Unique(Path = "Oasis.Water")] public RelationSet<string> TreeSpecies { get; } = new();
+            [Unique(Path = "Oasis.Water")] public RelationSet<string> TreeSpecies { get; } = [];
             public double AverageTemperature { get; set; }
         }
 
@@ -6223,7 +6223,7 @@ namespace UT.Kvasir.Translation {
         public class Bank {
             [PrimaryKey] public uint FDICNumber { get; set; }
             public string Name { get; set; } = "";
-            [DataConverter<ToInt<RelationMap<ulong, decimal>>>] public RelationMap<ulong, decimal> Accounts { get; } = new();
+            [DataConverter<ToInt<RelationMap<ulong, decimal>>>] public RelationMap<ulong, decimal> Accounts { get; } = [];
             public string VaultModel { get; set; } = "";
             public sbyte NumTellers { get; set; }
             public decimal CashOnHand { get; set; }
@@ -6436,7 +6436,7 @@ namespace UT.Kvasir.Translation {
             public ulong Length { get; set; }
             public ulong Elevation { get; set; }
             public Coordinate? Mouth { get; set; }
-            [Numeric] public RelationSet<string> MineralDeposits { get; } = new();
+            [Numeric] public RelationSet<string> MineralDeposits { get; } = [];
             public sbyte NumOases { get; set; }
         }
 
@@ -6566,7 +6566,7 @@ namespace UT.Kvasir.Translation {
             public DateTime Published { get; set; }
             public string Author { get; set; } = "";
             public string EncryptedText { get; set; } = "";
-            [AsString] public RelationMap<char, char> Solution { get; } = new();
+            [AsString] public RelationMap<char, char> Solution { get; } = [];
         }
 
         // Test Scenario: [AsString] Applied to Localization Field (✗impermissible✗)
@@ -6930,7 +6930,7 @@ namespace UT.Kvasir.Translation {
                 public Type Category { get; set; }
                 public DateTime Debut { get; set; }
                 [Check.IsPositive(Path = "SupportedVersions.Item")] public Support Versions { get; set; }
-                public RelationSet<string> Creators { get; } = new();
+                public RelationSet<string> Creators { get; } = [];
                 public bool CanPassTuringTest { get; set; }
             }
 
@@ -6948,7 +6948,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid MargaritaID { get; set; }
                 public string Tequila { get; set; } = "";
                 public Rimming Rim { get; set; }
-                [Check.IsPositive(Path = "Item.ID")] public RelationSet<Ingredient> Ingredients { get; } = new();
+                [Check.IsPositive(Path = "Item.ID")] public RelationSet<Ingredient> Ingredients { get; } = [];
                 public double AlcoholVolume { get; set; }
                 public decimal Price { get; set; }
             }
@@ -7095,7 +7095,7 @@ namespace UT.Kvasir.Translation {
                 public float Height { get; set; }
                 public float Width { get; set; }
                 public float Length { get; set; }
-                [Check.IsPositive(Path = "---")] public RelationMap<string, short> Builders { get; } = new();
+                [Check.IsPositive(Path = "---")] public RelationMap<string, short> Builders { get; } = [];
                 public bool IsPermanent { get; set; }
                 public int AmountSkakh { get; set; }
                 public DateTime Constructed { get; set; }
@@ -7115,7 +7115,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string FirstName { get; set; } = "";
                 [PrimaryKey] public string LastName { get; set; } = "";
                 public DateTime Birthdate { get; set; }
-                [Check.IsPositive(Path = "Item.WordCount")] public RelationList<Script> Scripts { get; } = new();
+                [Check.IsPositive(Path = "Item.WordCount")] public RelationList<Script> Scripts { get; } = [];
                 public decimal Salary { get; set; }
                 public bool WGAMember { get; set; }
             }
@@ -7123,7 +7123,7 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
             public class Typewriter {
                 [PrimaryKey] public Guid TypewriterID { get; set; }
-                [Check.IsPositive] public RelationSet<char> MissingKeys { get;  } = new();
+                [Check.IsPositive] public RelationSet<char> MissingKeys { get;  } = [];
                 public bool OwnedByTomHanks { get; set; }
                 public DateTime Created { get; set; }
                 public uint ClickSoundNumber { get; set; }
@@ -7502,7 +7502,7 @@ namespace UT.Kvasir.Translation {
                 public string Title { get; set; } = "";
                 public string Author { get; set; } = "";
                 public DateTime Copyright { get; set; }
-                [Check.IsNegative(Path = "Item.PageEnd")] public RelationList<Section> Sections { get; } = new();
+                [Check.IsNegative(Path = "Item.PageEnd")] public RelationList<Section> Sections { get; } = [];
                 public ushort NumImages { get; set; }
             }
 
@@ -7670,7 +7670,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public string? DeityHonored { get; set; }
                 public bool Drunken { get; set; }
-                [Check.IsNegative(Path = "---")] public RelationSet<DateTime> PossibleDates { get; } = new();
+                [Check.IsNegative(Path = "---")] public RelationSet<DateTime> PossibleDates { get; } = [];
                 public string? GreekEquivalent { get; set; }
             }
 
@@ -7681,7 +7681,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid AlertID { get; set; }
                 public string ChildsName { get; set; } = "";
                 public DateTime Issued { get; set; }
-                [Check.IsNegative(Path = "AmberAlert.EmergencyContactNumber")] public RelationMap<Category, string> VehicleDescription { get; } = new();
+                [Check.IsNegative(Path = "AmberAlert.EmergencyContactNumber")] public RelationMap<Category, string> VehicleDescription { get; } = [];
                 public ushort EmergencyContactNumber { get; set; }
             }
 
@@ -7700,7 +7700,7 @@ namespace UT.Kvasir.Translation {
                 public DateTime? Disbanded { get; set; }
                 public DateTime? Renunited { get; set; }
                 public ulong RecordsSold { get; set; }
-                [Check.IsNegative] public RelationList<Singer> Members { get; } = new();
+                [Check.IsNegative] public RelationList<Singer> Members { get; } = [];
                 public ushort NumAlbums { get; set; }
                 public ulong InstagramFollowers { get; set; }
             }
@@ -8032,7 +8032,7 @@ namespace UT.Kvasir.Translation {
                 public string Tradition { get; set; } = "";
                 public double Duration { get; set; }
                 public ushort? MaxParticipants { get; set; }
-                [Check.IsNonZero(Path = "Key")] public RelationMap<uint, string> Steps { get; } = new();
+                [Check.IsNonZero(Path = "Key")] public RelationMap<uint, string> Steps { get; } = [];
             }
 
             // Test Scenario: Applied to Relation-Nested Non-Numeric Scalar (✗impermissible✗)
@@ -8050,7 +8050,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public DateTime Established { get; set; }
                 public char CertificationSymbol { get; set; }
-                [Check.IsNonZero(Path = "Item.ID")] public RelationSet<Company> CertifiedCompanies { get; } = new();
+                [Check.IsNonZero(Path = "Item.ID")] public RelationSet<Company> CertifiedCompanies { get; } = [];
                 public Judaism Branch { get; set; }
             }
 
@@ -8217,7 +8217,7 @@ namespace UT.Kvasir.Translation {
                 public string IssuedBy { get; set; } = "";
                 public string School { get; set; } = "";
                 public DateTime LastIssued { get; set; }
-                [Check.IsNonZero(Path = "---")] public RelationList<string> PermittedLocations { get; } = new();
+                [Check.IsNonZero(Path = "---")] public RelationList<string> PermittedLocations { get; } = [];
                 public bool IsExpired { get; set; }
             }
 
@@ -8229,14 +8229,14 @@ namespace UT.Kvasir.Translation {
                 public string Name { get; set; } = "";
                 public Kind Cuisine { get; set; }
                 public float IdealPanDepth { get; set; }
-                [Check.IsNonZero(Path = "Casserole.IdealPanDepth")] public RelationMap<string, bool> Ingredients { get; } = new();
+                [Check.IsNonZero(Path = "Casserole.IdealPanDepth")] public RelationMap<string, bool> Ingredients { get; } = [];
                 public bool IsGratin { get; set; }
             }
 
             // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
             public class GarbageTruck {
                 [PrimaryKey] public string LicensePlate { get; set; } = "";
-                [Check.IsNonZero] public RelationSet<string> RouteStops { get; } = new();
+                [Check.IsNonZero] public RelationSet<string> RouteStops { get; } = [];
                 public ulong TonnesProcessed { get; set; }
                 public string ManagementCompany { get; set; } = "";
                 public string Driver { get; set; } = "";
@@ -8547,7 +8547,7 @@ namespace UT.Kvasir.Translation {
                 public string LegalName { get; set; } = "";
                 public string Sector { get; set; } = "";
                 public string VoiceActor { get; set; } = "";
-                [Check.IsGreaterThan('@', Path = "Key"), Check.IsGreaterThan(0L, Path = "KidNextDoor.Number")] public RelationMap<char, string> DebutMission { get; } = new();
+                [Check.IsGreaterThan('@', Path = "Key"), Check.IsGreaterThan(0L, Path = "KidNextDoor.Number")] public RelationMap<char, string> DebutMission { get; } = [];
                 public string? ArchNemesis { get; set; } = "";
             }
 
@@ -8565,7 +8565,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public LNDN London { get; set; }
                 public Element StrongestElement { get; set; }
-                [Check.IsGreaterThan("9dc286f1-3ce5-4bd6-9afa-5bb6049e0ffe", Path = "Item.SpellID")] public RelationList<Spell> KnownSpells { get; } = new();
+                [Check.IsGreaterThan("9dc286f1-3ce5-4bd6-9afa-5bb6049e0ffe", Path = "Item.SpellID")] public RelationList<Spell> KnownSpells { get; } = [];
                 public DateTime Birthdate { get; set; }
                 public bool Deceased { get; set; }
                 public byte? BestEssenTaschPlacement { get; set; }
@@ -8855,7 +8855,7 @@ namespace UT.Kvasir.Translation {
                 public string Owner { get; set; } = "";
                 public string? URL { get; set; }
                 public ushort MaxSeating { get; set; }
-                [Check.IsGreaterThan(18752.53f, Path = "---")] public RelationList<MenuItem> MenuItems { get; } = new();
+                [Check.IsGreaterThan(18752.53f, Path = "---")] public RelationList<MenuItem> MenuItems { get; } = [];
                 public bool OffersCatering { get; set; }
                 public bool JewishStyle { get; set; }
             }
@@ -8867,8 +8867,8 @@ namespace UT.Kvasir.Translation {
                 public record struct Card(FaceValue Value, CardSuit Suit);
 
                 [PrimaryKey] public Guid HandID { get; set; }
-                public RelationSet<Card> PlayerCards { get; } = new();
-                [Check.IsGreaterThan(17512UL, Path = "BlackjackHand.TotalPot")] public RelationSet<Card> DealerCards { get; } = new();
+                public RelationSet<Card> PlayerCards { get; } = [];
+                [Check.IsGreaterThan(17512UL, Path = "BlackjackHand.TotalPot")] public RelationSet<Card> DealerCards { get; } = [];
                 public ulong TotalPot { get; set; }
                 public bool DoubleDown { get; set; }
             }
@@ -8879,7 +8879,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public DateTime End { get; set; }
                 public string OfficialTitle { get; set; } = "";
                 public string GrandInquisitor { get; set; } = "";
-                [Check.IsGreaterThan("Religious Persecution")] public RelationSet<string> Victims { get; } = new();
+                [Check.IsGreaterThan("Religious Persecution")] public RelationSet<string> Victims { get; } = [];
                 public bool IncludedWitchTrials { get; set; }
             }
 
@@ -9202,7 +9202,7 @@ namespace UT.Kvasir.Translation {
                 public ulong WishesGranted { get; set; }
                 public Color HairColor { get; set; }
                 public Color EyeColor { get; set; }
-                [Check.IsLessThan("Warmonger", Path = "FairyGodparent.Name"), Check.IsLessThan((ushort)1851, Path = "Key"), Check.IsLessThan((ushort)42144, Path = "Value")] public RelationMap<ushort, ushort> LinesByEpisode { get; } = new();
+                [Check.IsLessThan("Warmonger", Path = "FairyGodparent.Name"), Check.IsLessThan((ushort)1851, Path = "Key"), Check.IsLessThan((ushort)42144, Path = "Value")] public RelationMap<ushort, ushort> LinesByEpisode { get; } = [];
                 public uint TimesDaRulesBroken { get; set; }
             }
 
@@ -9214,7 +9214,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ID { get; set; }
                 public DateTime Instituted { get; set; }
                 public DateTime? Lifted { get; set; }
-                [Check.IsLessThan(AquaKind.Swamp, Path = "Item.Kind")] public RelationSet<Waterway> WaterwaysAffected { get; } = new();
+                [Check.IsLessThan(AquaKind.Swamp, Path = "Item.Kind")] public RelationSet<Waterway> WaterwaysAffected { get; } = [];
                 public decimal EconomicImpact { get; set; }
                 public bool ActOfWar { get; set; }
                 public ushort NumShips { get; set; }
@@ -9222,7 +9222,7 @@ namespace UT.Kvasir.Translation {
 
             // Test Scenario: Applied to Nested Relation (✗impermissible✗)
             public class Blacksmith {
-                public struct Inventory {
+                public readonly struct Inventory {
                     public RelationSet<string> Metals { get; }
                     public RelationSet<string> Hammers { get; }
                 }
@@ -9231,7 +9231,7 @@ namespace UT.Kvasir.Translation {
                 public string Address { get; set; } = "";
                 public DateTime Birthdate { get; set; }
                 [Check.IsLessThan(1000, Path = "Hammers")] public Inventory Materials { get; set; }
-                public RelationMap<string, decimal> Prices { get; } = new();
+                public RelationMap<string, decimal> Prices { get; } = [];
                 public double SlagPerDay { get; set; }
                 public ushort BenchPress { get; set; }
             }
@@ -9475,7 +9475,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid MimeID { get; set; }
                 public string FullName { get; set; } = "";
                 public DateTime Birthdate { get; set; }
-                [Check.IsLessThan(0L, Path = "---")] public RelationList<Performance> Performances { get; } = new();
+                [Check.IsLessThan(0L, Path = "---")] public RelationList<Performance> Performances { get; } = [];
                 public ulong LifetimeWordsSpoken { get; set; }
                 public string GoToMiming { get; set; } = "";
             }
@@ -9487,14 +9487,14 @@ namespace UT.Kvasir.Translation {
                 public DateTime Birthdate { get; set; }
                 public DateTime? DeathDate { get; set; }
                 public DateTime Elevation { get; set; }
-                [Check.IsLessThan("2657-03-19", Path = "CatholicCardinal.DeathDate")] public RelationSet<DateTime> Conclaves { get; } = new();
+                [Check.IsLessThan("2657-03-19", Path = "CatholicCardinal.DeathDate")] public RelationSet<DateTime> Conclaves { get; } = [];
                 public bool PreviouslyArchbishop { get; set; }
             }
 
             // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
             public class Hemalurgy {
                 [PrimaryKey] public string Metal { get; set; } = "";
-                [Check.IsLessThan("Allomantic Powers")] public RelationSet<string> Steals { get; } = new();
+                [Check.IsLessThan("Allomantic Powers")] public RelationSet<string> Steals { get; } = [];
                 public bool IsDepictedInBooks { get; set; }
             }
 
@@ -9821,7 +9821,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ID { get; set; }
                 public string ShowTitle { get; set; } = "";
                 public double ShowLength { get; set; }
-                [Check.IsGreaterOrEqualTo("Elmo", Path = "Item.Name"), Check.IsGreaterOrEqualTo(22.5, Path = "Item.Value")] public RelationSet<Puppet> Puppets { get; } = new();
+                [Check.IsGreaterOrEqualTo("Elmo", Path = "Item.Name"), Check.IsGreaterOrEqualTo(22.5, Path = "Item.Value")] public RelationSet<Puppet> Puppets { get; } = [];
                 public decimal TicketPrice { get; set; }
                 public ushort Attendees { get; set; }
             }
@@ -9834,7 +9834,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Victim { get; set; } = "";
                 public bool AvadaKedavra { get; set; }
                 public string Object { get; set; } = "";
-                [Check.IsGreaterOrEqualTo(false, Path = "Value.Discovered")] public RelationMap<string, Pair> HidingPlaces { get; } = new();
+                [Check.IsGreaterOrEqualTo(false, Path = "Value.Discovered")] public RelationMap<string, Pair> HidingPlaces { get; } = [];
             }
 
             // Test Scenario: Applied to Nested Relation (✗impermissible✗)
@@ -10102,7 +10102,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public DateTime FirstDeath { get; set; }
                 public double Quickening { get; set; }
-                [Check.IsGreaterOrEqualTo("MacLeod", Path = "---")] public RelationSet<Guid> Swords { get; } = new();
+                [Check.IsGreaterOrEqualTo("MacLeod", Path = "---")] public RelationSet<Guid> Swords { get; } = [];
                 public double Height { get; set; }
             }
 
@@ -10113,7 +10113,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ID { get; set; }
                 public Judaism Denomination { get; set; }
                 public ulong SquareFootage { get; set; }
-                [Check.IsGreaterOrEqualTo("%999u$", Path = "Synagogue.Denomination")] public RelationSet<string> Congregants { get; } = new();
+                [Check.IsGreaterOrEqualTo("%999u$", Path = "Synagogue.Denomination")] public RelationSet<string> Congregants { get; } = [];
                 public DateTime NeirTamidInstalled { get; set; }
                 public uint BneiMitzvot { get; set; }
                 public string SeniorRabbi { get; set; } = "";
@@ -10125,7 +10125,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public DateTime Delivered { get; set; }
                 public string Topic { get; set; } = "";
                 public bool Religious { get; set; }
-                [Check.IsGreaterOrEqualTo(68174)] public RelationMap<int, string> Lines { get; } = new();
+                [Check.IsGreaterOrEqualTo(68174)] public RelationMap<int, string> Lines { get; } = [];
                 public bool Recorded { get; set; }
             }
 
@@ -10438,7 +10438,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Language { get; set; } = "";
                 public DateTime? Created { get; set; }
                 public ulong WorldwideUsers { get; set; }
-                [Check.IsLessOrEqualTo('|', Path = "Value")] public RelationMap<char, char> IPA { get; } = new();
+                [Check.IsLessOrEqualTo('|', Path = "Value")] public RelationMap<char, char> IPA { get; } = [];
                 public bool IsAlphasyllabary { get; set; }
             }
 
@@ -10450,8 +10450,8 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public byte EpisodeNumber { get; set; }
                 public DateTime AirDate { get; set; }
                 public bool IsParody { get; set; }
-                public RelationMap<string, Role> Cast { get; } = new();
-                [Check.IsLessOrEqualTo("Robert", Path = "Value")] public RelationMap<string, Role> Crew { get; } = new();
+                public RelationMap<string, Role> Cast { get; } = [];
+                [Check.IsLessOrEqualTo("Robert", Path = "Value")] public RelationMap<string, Role> Crew { get; } = [];
                 public string Segment1Title { get; set; } = "";
                 public string Segment2Title { get; set; } = "";
                 public string Segment3Title { get; set; } = "";
@@ -10711,7 +10711,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ThumbWarID { get; set; }
                 public uint Player1 { get; set; }
                 public uint Player2 { get; set; }
-                [Check.IsLessOrEqualTo(105, Path = "---")] public RelationList<Play> PlayByPlay { get; } = new();
+                [Check.IsLessOrEqualTo(105, Path = "---")] public RelationList<Play> PlayByPlay { get; } = [];
                 public Result Outcome { get; set; }
             }
 
@@ -10722,7 +10722,7 @@ namespace UT.Kvasir.Translation {
 
                 [PrimaryKey] public Guid ID { get; set; }
                 public Stone Centerpiece { get; set; }
-                [Check.IsLessOrEqualTo(285712905UL, Path = "EngagementRing.Centerpiece")] public RelationMap<string, Measurement> Measurements { get; } = new();
+                [Check.IsLessOrEqualTo(285712905UL, Path = "EngagementRing.Centerpiece")] public RelationMap<string, Measurement> Measurements { get; } = [];
                 public decimal Price { get; set; }
                 public bool FamilyHeirloom { get; set; }
                 public string Wearer { get; set; } = "";
@@ -10734,7 +10734,7 @@ namespace UT.Kvasir.Translation {
 
                 [PrimaryKey] public Guid JokeID { get; set; }
                 public Joker ImpracticalJoker { get; set; }
-                [Check.IsLessOrEqualTo((short)7512)] public RelationSet<string> JokeTargets { get; } = new();
+                [Check.IsLessOrEqualTo((short)7512)] public RelationSet<string> JokeTargets { get; } = [];
                 public double ComedyRating { get; set; }
                 public double JokeLength { get; set; }
                 public bool IsPhysicalComedy { get; set; }
@@ -10996,7 +10996,7 @@ namespace UT.Kvasir.Translation {
 
                 [PrimaryKey] public string FirstName { get; set; } = "";
                 [PrimaryKey] public string LastName { get; set; } = "";
-                [Check.IsNot(Kind.Other, Path = "Item.Kind"), Check.IsNot(false, Path = "Item.NSFW")] public RelationList<Joke> Jokes { get; } = new();
+                [Check.IsNot(Kind.Other, Path = "Item.Kind"), Check.IsNot(false, Path = "Item.NSFW")] public RelationList<Joke> Jokes { get; } = [];
                 public DateTime FirstShow { get; set; }
                 public bool LateNightHost { get; set; }
                 public ulong TwitterFollowers { get; set; }
@@ -11004,7 +11004,7 @@ namespace UT.Kvasir.Translation {
 
             // Test Scenario: Applied to Nested Relation (✗impermissible✗)
             public class Interview {
-                public struct Course {
+                public readonly struct Course {
                     public RelationMap<string, double> Questions { get; }
                 }
 
@@ -11285,9 +11285,9 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public DateTime Date { get; set; }
                 public string Sponsor { get; set; } = "";
                 public string Religion { get; set; } = "";
-                public RelationSet<string> BooksBurned { get; } = new();
-                public RelationSet<string> PeopleBurned { get; } = new();
-                [Check.IsNot("Mona Lisa", Path = "---")] public RelationSet<string> ArtworkBurned { get; } = new();
+                public RelationSet<string> BooksBurned { get; } = [];
+                public RelationSet<string> PeopleBurned { get; } = [];
+                [Check.IsNot("Mona Lisa", Path = "---")] public RelationSet<string> ArtworkBurned { get; } = [];
             }
 
             // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
@@ -11298,7 +11298,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public DateTime DateOfDream { get; set; }
                 [PrimaryKey] public uint SequenceNumber { get; set; }
                 public sbyte Length { get; set; }
-                [Check.IsNot("Hercules", Path = "Dream.REM")] public RelationList<string> Cameos { get; } = new();
+                [Check.IsNot("Hercules", Path = "Dream.REM")] public RelationList<string> Cameos { get; } = [];
                 public bool REM { get; set; }
             }
 
@@ -11310,7 +11310,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Bachelor { get; set; } = "";
                 [PrimaryKey] public DateTime Date { get; set; }
                 public sbyte Attendees { get; set; }
-                [Check.IsNot((byte)121)] public RelationList<Destination> Destinations { get; } = new();
+                [Check.IsNot((byte)121)] public RelationList<Destination> Destinations { get; } = [];
                 public bool FianceeSanctioned { get; set; }
                 public DateTime WeddingDay { get; set; }
             }
@@ -11422,7 +11422,7 @@ namespace UT.Kvasir.Translation {
             public class Fudge {
                 [PrimaryKey] public Guid ID { get; set; }
                 [Check.IsNonEmpty] public DateOnly Baked { get; set; }
-                public string Flavor { get; set; }
+                public string Flavor { get; set; } = "";
                 public double CaloriesPerGram { get; set; }
                 public decimal PricePerPound { get; set; }
                 public bool IsEaten { get; set; }
@@ -11666,7 +11666,7 @@ namespace UT.Kvasir.Translation {
                 public DateTime Started { get; set; }
                 public DateTime? Ended { get; set; }
                 public ulong Participants { get; set; }
-                [Check.IsNonEmpty(Path = "Item")] public RelationSet<string> Sponsors { get; } = new();
+                [Check.IsNonEmpty(Path = "Item")] public RelationSet<string> Sponsors { get; } = [];
                 public bool BDS { get; set; }
                 public decimal Damage { get; set; }
             }
@@ -11686,7 +11686,7 @@ namespace UT.Kvasir.Translation {
                 public string FirstName { get; set; } = "";
                 public char MiddleInitial { get; set; }
                 public string LastName { get; set; } = "";
-                [Check.IsNonEmpty(Path = "Value.MallID")] public RelationMap<ushort, Mall> Jobs { get; } = new();
+                [Check.IsNonEmpty(Path = "Value.MallID")] public RelationMap<ushort, Mall> Jobs { get; } = [];
                 public ulong TotalKids { get; set; }
                 public bool NaturalBeard { get; set; }
             }
@@ -11834,7 +11834,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string EnglishName { get; set; } = "";
                 public string GreekName { get; set; } = "";
                 public Variety Category { get; set; }
-                [Check.IsNonEmpty(Path = "---")] public RelationSet<sbyte> MetamorphosesAppearances { get; } = new();
+                [Check.IsNonEmpty(Path = "---")] public RelationSet<sbyte> MetamorphosesAppearances { get; } = [];
                 public bool Virgin { get; set; }
                 public string? TurnedInto { get; set; }
             }
@@ -11847,7 +11847,7 @@ namespace UT.Kvasir.Translation {
                 public string CEO { get; set; } = "";
                 public DateTime Launched { get; set; }
                 public ulong Users { get; set; }
-                [Check.IsNonEmpty(Path = "DatingApp.CEO")] public RelationList<Pair> CouplesFormed { get; } = new();
+                [Check.IsNonEmpty(Path = "DatingApp.CEO")] public RelationList<Pair> CouplesFormed { get; } = [];
                 public bool SwipeBased { get; set; }
                 public decimal? MonthlyFee { get; set; }
             }
@@ -11859,7 +11859,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public ulong Downloads { get; set; }
                 public bool Free { get; set; }
-                [Check.IsNonEmpty] public RelationSet<AdType> EffectiveAgainst { get; } = new();
+                [Check.IsNonEmpty] public RelationSet<AdType> EffectiveAgainst { get; } = [];
                 public bool Mobile { get; set; }
             }
 
@@ -12184,15 +12184,15 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public DateTime TermBegin { get; set; }
                 public DateTime? TermEnd { get; set; }
-                [Check.LengthIsAtLeast(6, Path = "Item.Title")] public RelationList<Resolution> ResolutionsPassed { get; } = new();
-                [Check.LengthIsAtLeast(17, Path = "UNSecretaryGeneral.Name")] public RelationSet<string> CountriesAdmitted { get; } = new();
+                [Check.LengthIsAtLeast(6, Path = "Item.Title")] public RelationList<Resolution> ResolutionsPassed { get; } = [];
+                [Check.LengthIsAtLeast(17, Path = "UNSecretaryGeneral.Name")] public RelationSet<string> CountriesAdmitted { get; } = [];
             }
 
             // Test Scenario: Applied to Relation-Nested Non-String Scalar (✗impermissible✗)
             public class MemoryBuffer {
                 [PrimaryKey] public ulong StartAddress { get; set; }
                 [PrimaryKey] public ulong EndAddress { get; set; }
-                [Check.LengthIsAtLeast(489, Path = "MemoryBuffer.EndAddress")] public RelationList<bool> Bits { get; } = new();
+                [Check.LengthIsAtLeast(489, Path = "MemoryBuffer.EndAddress")] public RelationList<bool> Bits { get; } = [];
                 public string IntendedType { get; set; } = "";
                 public bool HeapAllocated { get; set; }
             }
@@ -12364,7 +12364,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid CigarID { get; set; }
                 public float Length { get; set; }
                 public bool IsCuban { get; set; }
-                [Check.LengthIsAtLeast(52, Path = "---")] public RelationMap<Tobacco, double> Contents { get; } = new();
+                [Check.LengthIsAtLeast(52, Path = "---")] public RelationMap<Tobacco, double> Contents { get; } = [];
             }
 
             // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
@@ -12379,7 +12379,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid StrainID { get; set; }
                 public string StrainName { get; set; } = "";
                 public DateTime Created { get; set; }
-                [Check.LengthIsAtLeast(4, Path = "MarijuanaStrain.StrainName")] public RelationSet<Dispensary> SoldAt { get; } = new();
+                [Check.LengthIsAtLeast(4, Path = "MarijuanaStrain.StrainName")] public RelationSet<Dispensary> SoldAt { get; } = [];
                 public double Addictiveness { get; set; }
             }
 
@@ -12390,7 +12390,7 @@ namespace UT.Kvasir.Translation {
 
                 [PrimaryKey] public string Name { get; set; } = "";
                 public Guid? FBINumber { get; set; }
-                [Check.LengthIsAtLeast(87)] public RelationList<Robbery> Robberies { get; } = new();
+                [Check.LengthIsAtLeast(87)] public RelationList<Robbery> Robberies { get; } = [];
                 public ushort MurdersCommitted { get; set; }
                 public bool Incarcerated { get; set; }
             }
@@ -12739,7 +12739,7 @@ namespace UT.Kvasir.Translation {
             public class Golem {
                 [PrimaryKey] public Guid ID { get; set; }
                 public DateTime Created { get; set; }
-                [Check.LengthIsAtMost(26, Path = "Item")] public RelationSet<string> Materials { get; } = new();
+                [Check.LengthIsAtMost(26, Path = "Item")] public RelationSet<string> Materials { get; } = [];
                 public float ShemSize { get; set; }
                 public string OwningRabbi { get; set; } = "";
                 public ulong Weight { get; set; }
@@ -12755,14 +12755,14 @@ namespace UT.Kvasir.Translation {
                 public string Flavor { get; set; } = "";
                 public double Volume { get; set; }
                 public DateTime ExpirationDate { get; set; }
-                [Check.LengthIsAtMost(255, Path = "Item.Grams")] public RelationSet<Ingredient> Ingredients { get; } = new();
+                [Check.LengthIsAtMost(255, Path = "Item.Grams")] public RelationSet<Ingredient> Ingredients { get; } = [];
                 public Color BalsamicColor { get; set; }
                 public bool DOP { get; set; }
             }
 
             // Test Scenario: Applied to Nested Relation (✗impermissible✗)
             public class TerroristOrganization {
-                public struct Record {
+                public readonly struct Record {
                     public RelationMap<string, DateTime> Entities { get; }
                 }
 
@@ -12923,7 +12923,7 @@ namespace UT.Kvasir.Translation {
                 public DateTime TermBegin { get; set; }
                 public DateTime TermEnd { get; set; }
                 public string RuledFrom { get; set; } = "";
-                [Check.LengthIsAtMost(30, Path = "---")] public RelationList<string> CardinalsCreated { get; } = new();
+                [Check.LengthIsAtMost(30, Path = "---")] public RelationList<string> CardinalsCreated { get; } = [];
                 public bool Excommunicated { get; set; }
             }
 
@@ -12935,7 +12935,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid CabaretID { get; set; }
                 public DateTime Date { get; set; }
                 public Loc Venue { get; set; }
-                [Check.LengthIsAtMost(102, Path = "Cabaret.Venue.Name")] public RelationMap<string, string> Performers { get; } = new();
+                [Check.LengthIsAtMost(102, Path = "Cabaret.Venue.Name")] public RelationMap<string, string> Performers { get; } = [];
                 public bool Drag { get; set; }
                 public bool Burlesque { get; set; }
             }
@@ -12948,7 +12948,7 @@ namespace UT.Kvasir.Translation {
                 public string Creator { get; set; } = "";
                 public ushort Length { get; set; }
                 public bool Viral { get; set; }
-                [Check.LengthIsAtMost(100000)] public RelationMap<string, ulong> Views { get; } = new();
+                [Check.LengthIsAtMost(100000)] public RelationMap<string, ulong> Views { get; } = [];
                 public Kind Category { get; set; }
             }
 
@@ -13189,7 +13189,7 @@ namespace UT.Kvasir.Translation {
                     [PrimaryKey] public ulong Integral { get; set; }
                     [PrimaryKey] public double Decimal { get; set; }
                 }
-                public record struct Date(Number Year, Number Month, Number day);
+                public record struct Date(Number Year, Number Month, Number Day);
 
                 [PrimaryKey] public Guid SumoID { get; set; }
                 public string Name { get; set; } = "";
@@ -13283,7 +13283,7 @@ namespace UT.Kvasir.Translation {
                 public string Series { get; set; } = "";
                 public Pub Publisher { get; set; }
                 public DateTime Published { get; set; }
-                [Check.LengthIsBetween(4, 37, Path = "Item"), Check.LengthIsBetween(8, 19, Path = "ComicBook.Title")] public RelationSet<string> Characters { get; } = new();
+                [Check.LengthIsBetween(4, 37, Path = "Item"), Check.LengthIsBetween(8, 19, Path = "ComicBook.Title")] public RelationSet<string> Characters { get; } = [];
                 public decimal Price { get; set; }
                 public bool Vintage { get; set; }
             }
@@ -13295,7 +13295,7 @@ namespace UT.Kvasir.Translation {
 
                 [PrimaryKey] public Guid ID { get; set; }
                 public Kind Variety { get; set; }
-                [Check.LengthIsBetween(14, 99, Path = "Item.Z")] public RelationSet<Location> ConnectedLocations { get; } = new();
+                [Check.LengthIsBetween(14, 99, Path = "Item.Z")] public RelationSet<Location> ConnectedLocations { get; } = [];
                 public double Radius { get; set; }
                 public ulong Density { get; set; }
             }
@@ -13476,7 +13476,7 @@ namespace UT.Kvasir.Translation {
                 public DateTime Launched { get; set; }
                 public decimal Budget { get; set; }
                 public string SpaceAgency { get; set; } = "";
-                [Check.LengthIsBetween(177, 179, Path = "---")] public RelationList<Specimen> SpecimensCollected { get; } = new();
+                [Check.LengthIsBetween(177, 179, Path = "---")] public RelationList<Specimen> SpecimensCollected { get; } = [];
                 public double Height { get; set; }
                 public double Length { get; set; }
                 public double Width { get; set; }
@@ -13491,7 +13491,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Name { get; set; } = "";
                 public string Country { get; set; } = "";
                 public Branch MilitaryBranch { get; set; }
-                [Check.LengthIsBetween(6, 29, Path = "BlackOp.Country")] public RelationSet<string> Participants { get; } = new();
+                [Check.LengthIsBetween(6, 29, Path = "BlackOp.Country")] public RelationSet<string> Participants { get; } = [];
                 public DateTime Executed { get; set; }
                 public DateTime Declassified { get; set; }
                 public ushort Casualites { get; set; }
@@ -13503,7 +13503,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public string Victim { get; set; } = "";
                 [PrimaryKey] public DateTime Occurrence { get; set; }
                 public bool Fatal { get; set; }
-                [Check.LengthIsBetween(4, 67)] public RelationSet<string> Symptoms { get; } = new();
+                [Check.LengthIsBetween(4, 67)] public RelationSet<string> Symptoms { get; } = [];
             }
 
             // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
@@ -13775,7 +13775,7 @@ namespace UT.Kvasir.Translation {
                 public Period MesozoicPeriod { get; set; }
                 public Hips Clade { get; set; }
                 public Diet FoodPreference { get; set; }
-                [Check.IsOneOf("Americas", "Eurasia", "Middle East", "Africa", "Australia", "Pacific Islands", "Arctic", "Antarctica", "Oceans", Path = "Item")] public RelationSet<string> FossilLocations { get; } = new();
+                [Check.IsOneOf("Americas", "Eurasia", "Middle East", "Africa", "Australia", "Pacific Islands", "Arctic", "Antarctica", "Oceans", Path = "Item")] public RelationSet<string> FossilLocations { get; } = [];
                 public int FacialHorns { get; set; }
                 public int NumTeeth { get; set; }
             }
@@ -14084,11 +14084,11 @@ namespace UT.Kvasir.Translation {
                 public record struct Object(string Name, Status Status, decimal Appraisal, DateTime Acquired);
 
                 [PrimaryKey] public string ShopName { get; set; } = "";
-                public RelationList<string> Employees { get; } = new();
+                public RelationList<string> Employees { get; } = [];
                 public sbyte Floors { get; set; }
                 public DateTime Opened { get; set; }
                 public Guid License { get; set; }
-                [Check.IsOneOf('A', '7', '_', '/', '=', '~', Path = "---")] public RelationList<Object> Inventory { get; } = new();
+                [Check.IsOneOf('A', '7', '_', '/', '=', '~', Path = "---")] public RelationList<Object> Inventory { get; } = [];
                 public decimal Revenue { get; set; }
             }
 
@@ -14100,7 +14100,7 @@ namespace UT.Kvasir.Translation {
                 public bool EcoFriendly { get; set; }
                 public double WaterPressure { get; set; }
                 public ulong VolumeDispensed { get; set; }
-                [Check.IsOneOf(37.6, 1158.44, 0.919, 63.6666, Path = "DrinkingFountain.WaterPressure")] public RelationSet<DateTime> Inspections { get; } = new();
+                [Check.IsOneOf(37.6, 1158.44, 0.919, 63.6666, Path = "DrinkingFountain.WaterPressure")] public RelationSet<DateTime> Inspections { get; } = [];
                 public bool MotionSensored { get; set; }
             }
 
@@ -14111,7 +14111,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ID { get; set; }
                 public string Name { get; set; } = "";
                 public string Description { get; set; } = "";
-                [Check.IsOneOf(true, false)] public RelationMap<Guid, bool> Certifications { get; } = new();
+                [Check.IsOneOf(true, false)] public RelationMap<Guid, bool> Certifications { get; } = [];
                 public DateTime? FirstDocumented { get; set; }
                 public string? Culture { get; set; } = "";
                 public Gender AppropriateFor { get; set; }
@@ -14387,7 +14387,7 @@ namespace UT.Kvasir.Translation {
             public class Infomercial {
                 [PrimaryKey] public Guid ID { get; set; }
                 public string Product { get; set; } = "";
-                [Check.IsNotOneOf("2022-03-17", "1965-11-14", "1333-01-02", Path = "Value")] public RelationMap<uint, DateTime> Broadcasts { get; } = new();
+                [Check.IsNotOneOf("2022-03-17", "1965-11-14", "1333-01-02", Path = "Value")] public RelationMap<uint, DateTime> Broadcasts { get; } = [];
                 public string Hawker { get; set; } = "";
                 public double Discount { get; set; }
                 public double CommercialLength { get; set; }
@@ -14705,7 +14705,7 @@ namespace UT.Kvasir.Translation {
                 public DateTime Published { get; set; }
                 public string Region { get; set; } = "";
                 public ulong PageCount { get; set; }
-                [Check.IsNotOneOf(8471294811, 2056178955, 8005882340, Path = "---")] public RelationMap<string, ulong> PhoneNumbers { get; } = new();
+                [Check.IsNotOneOf(8471294811, 2056178955, 8005882340, Path = "---")] public RelationMap<string, ulong> PhoneNumbers { get; } = [];
                 public double Weight { get; set; }
             }
 
@@ -14716,7 +14716,7 @@ namespace UT.Kvasir.Translation {
                 [PrimaryKey] public Guid ID { get; set; }
                 public string BakuganName { get; set; } = "";
                 public Attribute BakuganAttribute { get; set; }
-                [Check.IsNotOneOf("Counterspell", "Basic Island", "Lightning Bolt", Path = "Bakugan.BakuganName")] public RelationSet<string> AbilityCards { get; } = new();
+                [Check.IsNotOneOf("Counterspell", "Basic Island", "Lightning Bolt", Path = "Bakugan.BakuganName")] public RelationSet<string> AbilityCards { get; } = [];
                 public bool InAnime { get; set; }
             }
 
@@ -14724,8 +14724,8 @@ namespace UT.Kvasir.Translation {
             public class QRCode {
                 [PrimaryKey] public Guid ID { get; set; }
                 public string URL { get; set; } = "";
-                public RelationList<bool> Horizontal { get; } = new();
-                [Check.IsNotOneOf(false)] public RelationList<bool> Vertical { get; } = new();
+                public RelationList<bool> Horizontal { get; } = [];
+                [Check.IsNotOneOf(false)] public RelationList<bool> Vertical { get; } = [];
                 public double Version { get; set; }
                 public char ErrorCorrection { get; set; }
             }
@@ -14928,7 +14928,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Bear { get; set; } = "";
             public string Color { get; set; } = "";
             public char TummySymbol { get; set; }
-            [Check<CustomCheck>(Path = "Item")] public RelationSet<string> MediaAppearances { get; } = new();
+            [Check<CustomCheck>(Path = "Item")] public RelationSet<string> MediaAppearances { get; } = [];
             public string LeadDesigner { get; set; } = "";
         }
 
@@ -15156,7 +15156,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string Name { get; set; } = "";
             public Kind Classification { get; set; }
-            [Check<CustomCheck>(Path = "---")] public RelationList<City> Cities { get; } = new();
+            [Check<CustomCheck>(Path = "---")] public RelationList<City> Cities { get; } = [];
             public string PostalCode { get; set; } = "";
             public Language OfficialLanguages { get; set; }
             public Reps Representation { get; set; }
@@ -15170,14 +15170,14 @@ namespace UT.Kvasir.Translation {
             public string Name { get; set; } = "";
             public double Height { get; set; }
             public double Weight { get; set; }
-            [Check<CustomCheck>(Path = "Skydiver.Height")] public RelationMap<DateTime, long> Dives { get; } = new();
+            [Check<CustomCheck>(Path = "Skydiver.Height")] public RelationMap<DateTime, long> Dives { get; } = [];
             public Vehicle HasJumpedFrom { get; set; }
         }
 
         // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
         public class Spring {
             [PrimaryKey] public Guid ID { get; set; }
-            [Check<CustomCheck>] public RelationSet<string> ConstituentMetals { get; } = new();
+            [Check<CustomCheck>] public RelationSet<string> ConstituentMetals { get; } = [];
             public double SpringConstant { get; set; }
             public ushort NumCoils { get; set; }
         }
@@ -15185,7 +15185,7 @@ namespace UT.Kvasir.Translation {
 
     internal static class ComplexCheckConstraints {
         // Test Scenario: No Constructor Arguments (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "FirstLine" })]
+        [Check.Complex<CustomCheck>(["FirstLine"])]
         public class CanterburyTale {
             [PrimaryKey] public int Index { get; set; }
             public string Whose { get; set; } = "";
@@ -15194,7 +15194,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Constructor Arguments (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "ConclaveRounds" }, -93, true, 'X')]
+        [Check.Complex<CustomCheck>(["ConclaveRounds"], -93, true, 'X')]
         public class Pope {
             [PrimaryKey] public string PapalName { get; set; } = "";
             [PrimaryKey] public uint PapalNumber { get; set; }
@@ -15205,7 +15205,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Zero Fields (✗illegal✗)
-        [Check.Complex<CustomCheck>(new string[] {})]
+        [Check.Complex<CustomCheck>([])]
         public class Terminator {
             [PrimaryKey] public string Model { get; set; } = "";
             [PrimaryKey] public ushort Number { get; set; }
@@ -15215,7 +15215,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Multiple Distinct Fields (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "Major", "Minor", "Patch" })]
+        [Check.Complex<CustomCheck>(["Major", "Minor", "Patch"])]
         public class LinuxDistribution {
             [PrimaryKey] public string Name { get; set; } = "";
             [PrimaryKey] public ulong Major { get; set; }
@@ -15227,7 +15227,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Single Field Multiple Times (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "Name", "Name", "Name", "Name" })]
+        [Check.Complex<CustomCheck>(["Name", "Name", "Name", "Name"])]
         public class Muppet {
             [PrimaryKey] public string Name { get; set; } = "";
             public DateTime Debut { get; set; }
@@ -15237,7 +15237,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Name-Swapped Fields (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "Cuisine", "ContainsTomatoes" })]
+        [Check.Complex<CustomCheck>(["Cuisine", "ContainsTomatoes"])]
         public class PastaSauce {
             [PrimaryKey] public string Name { get; set; } = "";
             public bool IsMotherSauce { get; set; }
@@ -15249,7 +15249,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Name-Changed Field with Original Name (✗illegal✗)
-        [Check.Complex<CustomCheck>(new string[] { "Width" })]
+        [Check.Complex<CustomCheck>(["Width"])]
         public class Dam {
             [PrimaryKey] public Guid ID { get; set; }
             public string Name { get; set; } = "";
@@ -15261,7 +15261,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Unrecognized Field (✗illegal✗)
-        [Check.Complex<CustomCheck>(new string[] { "Belligerents" })]
+        [Check.Complex<CustomCheck>(["Belligerents"])]
         public class PeaceTreaty {
             [PrimaryKey] public string TreatyName { get; set; } = "";
             public DateTime Signed { get; set; }
@@ -15271,7 +15271,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Covers Data-Converted Field (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "When", "Casualties", "When" })]
+        [Check.Complex<CustomCheck>(["When", "Casualties", "When"])]
         public class Massacre {
             [PrimaryKey] public string Name { get; set; } = "";
             public ulong Casualties { get; set; }
@@ -15280,9 +15280,9 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Applied to Single Entity Type Multiple Times (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "LengthMinutes" })]
-        [Check.Complex<CustomCheck>(new[] { "SungThrough" })]
-        [Check.Complex<CustomCheck>(new[] { "SungThrough" })]
+        [Check.Complex<CustomCheck>(["LengthMinutes"])]
+        [Check.Complex<CustomCheck>(["SungThrough"])]
+        [Check.Complex<CustomCheck>(["SungThrough"])]
         public class Musical {
             [PrimaryKey] public string Title { get; set; } = "";
             public bool SungThrough { get; set; }
@@ -15292,7 +15292,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Constraint Generator Cannot Be Constructed (✗illegal✗)
-        [Check.Complex<PrivateCheck>(new[] { "Omega3s", "Omega6s" }, 'O', 'I', 'L', '!')]
+        [Check.Complex<PrivateCheck>(["Omega3s", "Omega6s"], 'O', 'I', 'L', '!')]
         public class CookingOil {
             [PrimaryKey] public string Type { get; set; } = "";
             public decimal SmokePoint { get; set; }
@@ -15302,7 +15302,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Constraint Generator Throws Error upon Construction (✗propagated✗)
-        [Check.Complex<UnconstructibleCheck>(new[] { "Born", "Died" }, "Lifespan", 2918.01f, true)]
+        [Check.Complex<UnconstructibleCheck>(["Born", "Died"], "Lifespan", 2918.01f, true)]
         public class Pirate {
             [PrimaryKey] public string PirateName { get; set; } = "";
             [PrimaryKey] public string LandName { get; set; } = "";
@@ -15314,7 +15314,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Constraint Generator Throws Error when Creating Constraint (✗propagated✗)
-        [Check.Complex<UnusableCheck>(new[] { "Namespace", "ClassName" })]
+        [Check.Complex<UnusableCheck>(["Namespace", "ClassName"])]
         public class Attribute {
             [PrimaryKey] public string Namespace { get; set; } = "";
             [PrimaryKey] public string ClassName { get; set; } = "";
@@ -15323,7 +15323,7 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Applied to Localization (✓constrained✓)
-        [Check.Complex<CustomCheck>(new[] { "Key", "Locale", "Value" })]
+        [Check.Complex<CustomCheck>(["Key", "Locale", "Value"])]
         public class MahjongTile : Localization<int, Language, string> {
             public MahjongTile(int key) : base(key) {}
         }
@@ -15877,9 +15877,9 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public string Hash { get; set; } = "";
             public string Name { get; set; } = "";
             public string Version { get; set; } = "";
-            public RelationMap<string, bool> Flags { get; } = new();
-            public RelationSet<SoftwarePackage> BuildDependencies { get; } = new();
-            public RelationSet<SoftwarePackage> RunDependencies { get; } = new();
+            public RelationMap<string, bool> Flags { get; } = [];
+            public RelationSet<SoftwarePackage> BuildDependencies { get; } = [];
+            public RelationSet<SoftwarePackage> RunDependencies { get; } = [];
             public bool Secure { get; set; }
         }
 
@@ -15892,7 +15892,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public ulong IndictmentNumber { get; set; }
             [PrimaryKey] public string Defendant { get; set; } = "";
             public DateTime Issued { get; set; }
-            public RelationList<Charge> Charges { get; } = new();
+            public RelationList<Charge> Charges { get; } = [];
             public Level Government { get; set; }
             public bool? Conviction { get; set; }
         }
@@ -15908,7 +15908,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public Guid ID { get; set; }
             public sbyte FrameNumber { get; set; }
-            public RelationList<Breakpoint> Breakpoints { get; } = new();
+            public RelationList<Breakpoint> Breakpoints { get; } = [];
             public string Debugger { get; set; } = "";
             public double Memory { get; set; }
         }
@@ -15918,7 +15918,7 @@ namespace UT.Kvasir.Translation {
             public class Politician {
                 [PrimaryKey] public string FullName { get; set; } = "";
                 public DateTime FirstElected { get; set; }
-                public RelationSet<Filibuster> FilibustersBroken { get; } = new();
+                public RelationSet<Filibuster> FilibustersBroken { get; } = [];
             }
 
             [PrimaryKey] public Guid FilibusterID { get; set; }
@@ -16336,7 +16336,7 @@ namespace UT.Kvasir.Translation {
         public class Pretzel {
             [PrimaryKey, Column(0)] public Guid PretzelID { get; set; }
             [Column(1)] public string Name { get; set; } = "";
-            public RelationSet<string> Toppings { get; init;  } = new();
+            public RelationSet<string> Toppings { get; init; } = [];
             [Column(2)] public decimal RetailPrice { get; set; }
             [Column(3)] public string DoughSource { get; set; } = "";
         }
@@ -16345,8 +16345,8 @@ namespace UT.Kvasir.Translation {
         public class Teppanyaki {
             [PrimaryKey, Column(0)] public Guid GrillID { get; set; }
             [Column(1)] public double GrillSurfaceArea { get; set; }
-            public RelationSet<string> AuthorizedChefs { get; init; } = new();
-            public RelationList<string> SupportedFoods { get; init; } = new();
+            public RelationSet<string> AuthorizedChefs { get; init; } = [];
+            public RelationList<string> SupportedFoods { get; init; } = [];
             [Column(2)] public float MaxTemperature { get; set; }
             [Column(3)] public string? Restaurant { get; set; }
             [Column(4)] public bool IsHibachi { get; set; }
@@ -16357,7 +16357,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public ushort Year { get; set; }
             [Column(1)] public byte NumRounds { get; set; }
             [Column(2)] public string Champion { get; set; } = "";
-            public RelationMap<uint, string> EliminationWords { get; init; } = new();
+            public RelationMap<uint, string> EliminationWords { get; init; } = [];
         }
 
         // Scenario: Non-Null Ordered List Relation Property with Only New Elements (✓values extracted per element✓)
@@ -16365,7 +16365,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public DateTime Created { get; set; }
             [Column(2)] public uint NumShows { get; set; }
-            public RelationOrderedList<string> Lineup { get; init; } = new();
+            public RelationOrderedList<string> Lineup { get; init; } = [];
             [Column(3)] public string Location { get; set; } = "";
             [Column(4)] public string URL { get; set; } = "";
         }
@@ -16375,13 +16375,13 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public Guid ID { get; set; }
             public string Category { get; set; } = "";
             public string Tip { get; set; } = "";
-            public RelationSet<string> For { get; init; } = new();
+            public RelationSet<string> For { get; init; } = [];
         }
 
         // Scenario: Non-Null Relation Property with At Least One Modified Element (✓values extracted per element✓)
         public class PendragonTerritory {
             [PrimaryKey] public string Name { get; set; } = "";
-            public RelationOrderedList<string> Travellers { get; init; } = new();
+            public RelationOrderedList<string> Travellers { get; init; } = [];
             public string FirstAppearance { get; set; } = "";
             public string Capital { get; set; } = "";
         }
@@ -16393,7 +16393,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public ushort Year { get; set; }
             [PrimaryKey] public PoliticalParty Party { get; set; }
             public DateTime Date { get; set; }
-            public RelationMap<string, double> DelegatesEarned { get; init; } = new();
+            public RelationMap<string, double> DelegatesEarned { get; init; } = [];
             public bool Bellwether { get; set; }
         }
 
@@ -16406,7 +16406,7 @@ namespace UT.Kvasir.Translation {
             }
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
-            public RelationOrderedList<Thesis> DoctoralTheses { get; init; }
+            public RelationOrderedList<Thesis> DoctoralTheses { get; init; } = new();
             [Column(1)] public DateTime DateOfBirth { get; set; }
             [Column(2)] public DateTime? DateOfDeath { get; set; }
             [Column(3)] public string ExistentialSchool { get; set; } = "";
@@ -16425,7 +16425,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string BoonName { get; set; } = "";
             [Column(1)] public Deity Benefactor { get; set; }
             [Column(2)] public Ability AbilityAffected { get; set; }
-            public RelationOrderedList<Benefit> Progressions { get; init; } = new();
+            public RelationOrderedList<Benefit> Progressions { get; init; } = [];
             [Column(3)] public double Likelihood { get; set; }
         }
 
@@ -16446,7 +16446,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string Official { get; set; } = "";
             [Column(1)] public string Position { get; set; } = "";
             [PrimaryKey, Column(2)] public DateTime Commenced { get; set; }
-            public RelationList<Count> Counts { get; init; } = new();
+            public RelationList<Count> Counts { get; init; } = [];
             [Calculated, Column(3)] public bool Convicted => Counts.Any(c => c.Guilty);
         }
 
@@ -16456,7 +16456,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public string Domain { get; set; } = "";
-            public RelationMap<MaoriGod, Relation> Family { get; init; } = new();
+            public RelationMap<MaoriGod, Relation> Family { get; init; } = [];
             [Column(2)] public bool IsAtua { get; set; }
             [Column(3)] public bool EncounteredMaui { get; set; }
         }
@@ -16496,9 +16496,10 @@ namespace UT.Kvasir.Translation {
             [Calculated] public RelationOrderedList<Eye> Eyes { get; init; }
 
             public Chameleon() {
-                Eyes = new RelationOrderedList<Eye>();
-                Eyes.Add(new Eye() { ConeDensity = 8571, RodDensity = 4409, VisionRange = 360 });
-                Eyes.Add(new Eye() { ConeDensity = 12099, RodDensity = 6776, VisionRange = 360 });
+                Eyes = [
+                    new Eye() { ConeDensity = 8571, RodDensity = 4409, VisionRange = 360 },
+                    new Eye() { ConeDensity = 12099, RodDensity = 6776, VisionRange = 360 }
+                ];
             }
         }
 
@@ -16515,7 +16516,7 @@ namespace UT.Kvasir.Translation {
             }
 
             [PrimaryKey, Column(0)] public Zodiac Sign { get; set; }
-            public RelationMap<DateTime, Listing> Readings { get; init; } = new();
+            public RelationMap<DateTime, Listing> Readings { get; init; } = [];
             [Column(1)] public DateTime RangeLower { get; set; }
             [Column(2)] public DateTime RangeUpper { get; set; }
         }
@@ -16603,7 +16604,7 @@ namespace UT.Kvasir.Translation {
             [Column(2)] public string Challenge { get; set; } = "";
             [Column(3)] public string WinningBaker { get; set; } = "";
             [Column(4)] public string WorstBaker { get; set; } = "";
-            public RelationSet<LocalizedText> Ingredients { get; init; } = new();
+            public RelationSet<LocalizedText> Ingredients { get; init; } = [];
         }
 
         // Scenario: Localization as Key of Map Relation (✓key extracted into Relation Table✓)
@@ -16623,7 +16624,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public ushort Year { get; set; }
             [Column(1)] public DateTime StartDate { get; set; }
             [Column(2)] public DateTime EndDate { get; set; }
-            public RelationMap<string, LocalizedMeasure> RaceTimes { get; init; } = new();
+            public RelationMap<string, LocalizedMeasure> RaceTimes { get; init; } = [];
             [Column(3)] public uint TotalSledDogs { get; set; }
             [Column(4)] public decimal PrizeMoney { get; set; }
         }
@@ -16632,7 +16633,7 @@ namespace UT.Kvasir.Translation {
         public class Festigal {
             [PrimaryKey, Column(0)] public ushort Year { get; set; }
             [Column(1)] public string HostCity { get; set; } = "";
-            public RelationOrderedList<LocalizedText> Songs { get; init; } = new();
+            public RelationOrderedList<LocalizedText> Songs { get; init; } = [];
             [Column(2)] public DateOnly Opening { get; set; }
             [Column(3)] public string? Theme { get; set; }
             [Column(4)] public ushort NumPerformers { get; set; }
@@ -16843,13 +16844,13 @@ namespace UT.Kvasir.Translation {
             [Column(2)] public string Spouse2 { get; set; } = "";
             [Calculated] public RelationSet<DateTime> VestingSchedule {
                 get {
-                    return new RelationSet<DateTime>() {
+                    return [
                         new DateTime(2035, 1, 1),
                         new DateTime(2036, 1, 1),
                         new DateTime(2037, 1, 1),
                         new DateTime(2038, 1, 1),
                         new DateTime(2039, 1, 1),
-                    };
+                    ];
                 }
             }
             [Column(3)] public decimal TotalNetWorth { get; set; }
@@ -17050,7 +17051,7 @@ namespace UT.Kvasir.Translation {
         public class Empanada {
             public struct Filling {
                 [Column(0)] public string Contents { get; set; }
-                [Calculated, Column(1)] public double Percentage => 100.0;
+                [Calculated, Column(1)] public readonly double Percentage => 100.0;
             }
 
             [PrimaryKey, Column(0)] public Guid EmpanadaID { get; set; }
@@ -17176,18 +17177,18 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public Guid ID { get; set; }
             [Column(1)] public string BoardMaterial { get; set; } = "";
             [Column(2)] public double BoardArea { get; set; }
-            public RelationList<string> Cheeses { get; } = new();
-            public RelationSet<string> Meats { get; } = new();
-            public RelationOrderedList<string> Sauces { get; } = new();
-            public RelationMap<DateTime, uint> Usages { get; } = new();
+            public RelationList<string> Cheeses { get; } = [];
+            public RelationSet<string> Meats { get; } = [];
+            public RelationOrderedList<string> Sauces { get; } = [];
+            public RelationMap<DateTime, uint> Usages { get; } = [];
         }
 
         // Scenario: List/Set Relation Elements (✓values reconstituted per element✓)
         public class Mutant {
             [PrimaryKey, Column(0)] public string CodeName { get; set; } = "";
             [Column(1)] public string BirthName { get; set; } = "";
-            public RelationList<string> Powers { get; } = new();
-            public RelationSet<DateTime> Appearances { get; } = new();
+            public RelationList<string> Powers { get; } = [];
+            public RelationSet<DateTime> Appearances { get; } = [];
             [Column(2)] public bool InXMenMovies { get; set; }
         }
 
@@ -17197,17 +17198,17 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey, Column(0)] public Guid WaterParkID { get; set; }
             [Column(1)] public string Name { get; set; } = "";
-            public RelationMap<string, double> WaterSlides { get; } = new();
+            public RelationMap<string, double> WaterSlides { get; } = [];
             [Column(2)] public bool LazyRiver { get; set; }
             [Column(3)] public ulong GallonsWater { get; set; }
-            public RelationMap<Customer, decimal> AdmissionPrices { get; } = new();
+            public RelationMap<Customer, decimal> AdmissionPrices { get; } = [];
         }
 
         // Scenario: Ordered List Relation Elements (✓values reconstituted per element✓)
         public class Seance {
             [PrimaryKey, Column(0)] public DateTime Timestamp { get; set; }
             [PrimaryKey, Column(1)] public string Medium { get; set; } = "";
-            public RelationOrderedList<string> SpiritsContacted { get; } = new();
+            public RelationOrderedList<string> SpiritsContacted { get; } = [];
             [Column(2)] public decimal PriceTag { get; set; }
             [Column(3)] public ushort NumCandles { get; set; }
         }
@@ -17252,7 +17253,7 @@ namespace UT.Kvasir.Translation {
                 [Column(2)] public string? DecalMaker { get; set; }
 
                 public Personnel() {
-                    LicensedDrivers = new RelationSet<string>();
+                    LicensedDrivers = [];
                 }
             }
 
@@ -17289,7 +17290,7 @@ namespace UT.Kvasir.Translation {
             [Column(1)] public string Author { get; set; } = "";
             [Column(2)] public DateTime Published { get; set; }
             [Column(3)] public uint StanzaCount { get; set; }
-            public RelationOrderedList<Section> Sections { get; } = new();
+            public RelationOrderedList<Section> Sections { get; } = [];
             [Column(4)] public string Language { get; set; } = "";
         }
 
@@ -17304,7 +17305,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey, Column(0)] public DateTime Timestamp { get; set; }
             [Column(1)] public string Driver { get; set; } = "";
-            public RelationList<PoliceOfficer> Officers { get; } = new();
+            public RelationList<PoliceOfficer> Officers { get; } = [];
             [Column(2)] public bool TicketIssued { get; set; }
             [Column(3)] public bool ArrestMade { get; set; }
         }
@@ -17317,7 +17318,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string Name { get; set; } = "";
             [Column(1)] public Continent ActiveLocations { get; set; }
             [Column(2)] public AnimalType Targets { get; set; }
-            public RelationSet<Poacher> PoachingGroup { get; } = new();
+            public RelationSet<Poacher> PoachingGroup { get; } = [];
             [Column(3)] public decimal Income { get; set; }
         }
 
@@ -17330,7 +17331,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey, Column(0)] public ushort Year { get; set; }
             [Column(1)] public uint PageCount { get; set; }
-            public RelationMap<string, Rating> Restaurants { get; } = new();
+            public RelationMap<string, Rating> Restaurants { get; } = [];
             [Column(2)] public bool IsGreenGuide { get; set; }
         }
 
@@ -17695,7 +17696,7 @@ namespace UT.Kvasir.Translation {
         public class GPU {
             public enum Field { Gaming, CloudGaming, Workstation, CloudWorkstation, AI, DriverlessCars, Other }
 
-            public struct Spec {
+            public readonly struct Spec {
                 [Column(0)] public Field PrimaryField { get; }
                 [Column(1)] public ushort MegaHertz { get; }
                 [Column(2)] public ushort GigaBytes { get; }
@@ -17771,7 +17772,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey, Column(0)] public string PowerName { get; set; } = "";
             [Column(1)] public Act ActUnlocked { get; set; }
             [Column(2)] public Kind KindOfPower { get; set; }
-            public RelationList<Feature> Features { get; } = new RelationList<Feature>();
+            public RelationList<Feature> Features { get; } = [];
         }
 
         // Scenario: No Viable Constructor for Aggregate Type Backing only [Calculated] Properties (✓reconstituted✓)
@@ -18224,7 +18225,7 @@ namespace UT.Kvasir.Translation {
             [Column(2)] public Kind Variety { get; set; }
             [Column(3)] public bool WasProsecuted { get; set; }
             [Column(4)] public bool IsOngoing { get; set; }
-            public RelationList<LocalizedText> Perpetrators { get; init; } = new();
+            public RelationList<LocalizedText> Perpetrators { get; init; } = [];
             [Column(5)] public bool WasNazi { get; set; }
         }
 

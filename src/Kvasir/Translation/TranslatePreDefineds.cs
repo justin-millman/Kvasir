@@ -49,7 +49,7 @@ namespace Kvasir.Translation {
             var statics = source.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             var possibleInstances = statics.Where(p => p.PropertyType == source);
 
-            List<object> instances = new List<object>();
+            List<object> instances = [];
             foreach (var candidate in possibleInstances) {
                 using var propGuard = context.Push(candidate);
 
@@ -134,7 +134,7 @@ namespace Kvasir.Translation {
             }
 
             var creator = new PreDefinedCreator(table, matcher);
-            var reconstitutor = new ReconstitutingCreator(creator, Enumerable.Empty<IMutator>());
+            var reconstitutor = new ReconstitutingCreator(creator, []);
             return new DataReconstitutionPlan(reconstitutor);
         }
     }

@@ -735,7 +735,7 @@ namespace UT.Kvasir.Translation {
             var pretzel = new Pretzel() {
                 PretzelID = Guid.NewGuid(),
                 Name = "Plain Pretzel",
-                Toppings = new(),
+                Toppings = [],
                 RetailPrice = 2.75M,
                 DoughSource = "Flour"
             };
@@ -756,12 +756,12 @@ namespace UT.Kvasir.Translation {
             var teppanyaki = new Teppanyaki() {
                 GrillID = Guid.NewGuid(),
                 GrillSurfaceArea = 88.5,
-                AuthorizedChefs = new() {
+                AuthorizedChefs = [
                     "Daisuke Orinaka",
                     "Kaidon Hotosata",
                     "Hideki Iwanatsuo",
-                },
-                SupportedFoods = new() {
+                ],
+                SupportedFoods = [
                     "Chicken",
                     "Beef",
                     "Onion",
@@ -769,7 +769,7 @@ namespace UT.Kvasir.Translation {
                     "Shrimp",
                     "Daikon",
                     "Fried Rice"
-                },
+                ],
                 MaxTemperature = 140,
                 Restaurant = null,
                 IsHibachi = false
@@ -974,12 +974,12 @@ namespace UT.Kvasir.Translation {
                 BoonName = "Curse of Pain",
                 Benefactor = OlympianBoon.Deity.Ares,
                 AbilityAffected = OlympianBoon.Ability.Special,
-                Progressions = new() {
+                Progressions = [
                     new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 60 },
                     new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 80 },
                     new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 100 },
                     new OlympianBoon.Benefit() { ParameterName = "Damage", ParameterValue = 120 }
-                },
+                ],
                 Likelihood = 0.2
             };
 
@@ -1004,7 +1004,7 @@ namespace UT.Kvasir.Translation {
                 Official = "Samuel Chase",
                 Position = "Associate Justice of the U.S. Supreme Court",
                 Commenced = new DateTime(1804, 3, 12),
-                Counts = new() {
+                Counts = [
                     new Impeachment.Count() {
                         ID = Guid.NewGuid(),
                         Claim = new Impeachment.Charge() {
@@ -1029,7 +1029,7 @@ namespace UT.Kvasir.Translation {
                         },
                         Guilty = false
                     }
-                }
+                ]
             };
 
             // Act
@@ -1051,7 +1051,7 @@ namespace UT.Kvasir.Translation {
             var god = new MaoriGod() {
                 Name = "Tangaroa",
                 Domain = "Sea",
-                Family = new(),
+                Family = [],
                 IsAtua = true,
                 EncounteredMaui = true
             };
@@ -1085,12 +1085,12 @@ namespace UT.Kvasir.Translation {
                     Machines = new DataCenter.Computers() {
                         NumCabinets = 50,
                         RacksPerCabinet = 25,
-                        Brands = new() {
+                        Brands = [
                             "Apple",
                             "Microsoft",
                             "Lenovo",
                             "Dell"
-                        }
+                        ]
                     }
                 }
             };
@@ -1339,12 +1339,12 @@ namespace UT.Kvasir.Translation {
                 Challenge = "Chocolate Fondue Display",
                 WinningBaker = "Aaron Mountford-Myles",
                 WorstBaker = "Nadia Mercuri",
-                Ingredients = new RelationSet<LocalizedText>() {
+                Ingredients = [
                     new LocalizedText("CHOCOLATE_LOC"),
                     new LocalizedText("RASPBERRY_LOC"),
                     new LocalizedText("LEMON_LOC"),
                     new LocalizedText("ALMONDS_LOC")
-                }
+                ]
             };
 
             // Act
@@ -1479,7 +1479,7 @@ namespace UT.Kvasir.Translation {
             var festigal = new Festigal() {
                 Year = 2010,
                 HostCity = "Tel Aviv",
-                Songs = new RelationOrderedList<LocalizedText>() {
+                Songs = [
                     new LocalizedText("Lailah M'toref Festigal"),
                     new LocalizedText("Yeled Im Khalom"),
                     new LocalizedText("LaGa'at Ba'avar"),
@@ -1490,7 +1490,7 @@ namespace UT.Kvasir.Translation {
                     new LocalizedText("K'sh'emtza Otkha"),
                     new LocalizedText("Al Tafsik Tigrov"),
                     new LocalizedText("Nig'm'ru Li HaMilim")
-                },
+                ],
                 Opening = new DateOnly(2010, 12, 2),
                 Theme = "History",
                 NumPerformers = 137

@@ -32,15 +32,15 @@ namespace UT.Kvasir.Transaction {
         public int AdminCommits { get; private set; }
 
         public TestFixture(params Type[] types) {
-            commands_ = new Dictionary<ITable, ICommands>();
-            dbRows_ = new Dictionary<ITable, IEnumerator<IReadOnlyList<object>>>();
+            commands_ = [];
+            dbRows_ = [];
             commandsFactory_ = Substitute.For<ICommandsFactory>();
             Connection = Substitute.For<IDbConnection>();
             Transaction = Connection.BeginTransaction();
             Depot = types.ToDictionary(t => t, _ => new List<object>());
             translator_ = new Translator(t => Depot[t], NullLogger.Instance);
-            ordering_ = new Dictionary<IDbCommand, int>();
-            invocationArgs_ = new Dictionary<IDbCommand, IReadOnlyList<IReadOnlyList<DBValue>>>();
+            ordering_ = [];
+            invocationArgs_ = [];
 
             Connection.State.Returns(ConnectionState.Open);
 
@@ -116,7 +116,7 @@ namespace UT.Kvasir.Transaction {
             while (dbRows_[table].MoveNext()) {
                 rows.Add(dbRows_[table].Current);
             }
-            rows.Add(new List<object>(values));
+            rows.Add([..values]);
 
             dbRows_[table] = rows.GetEnumerator();
             return this;
@@ -127,7 +127,7 @@ namespace UT.Kvasir.Transaction {
             while (dbRows_[table].MoveNext()) {
                 rows.Add(dbRows_[table].Current);
             }
-            rows.Add(new List<object>(values));
+            rows.Add([..values]);
 
             dbRows_[table] = rows.GetEnumerator();
             return this;
@@ -138,7 +138,7 @@ namespace UT.Kvasir.Transaction {
             while (dbRows_[table].MoveNext()) {
                 rows.Add(dbRows_[table].Current);
             }
-            rows.Add(new List<object>(values));
+            rows.Add([..values]);
 
             dbRows_[table] = rows.GetEnumerator();
             return this;
@@ -167,19 +167,19 @@ namespace UT.Kvasir.Transaction {
             if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
                 return value;
             }
-            return Enumerable.Empty<IReadOnlyList<DBValue>>();
+            return [];
         }
         public Rows UpdatesFor(IDbCommand command) {
             if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
                 return value;
             }
-            return Enumerable.Empty<IReadOnlyList<DBValue>>();
+            return [];
         }
         public Rows DeletionsFor(IDbCommand command) {
             if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
                 return value;
             }
-            return Enumerable.Empty<IReadOnlyList<DBValue>>();
+            return [];
         }
 
         public ITable PrincipalTableOf<TEntity>() {

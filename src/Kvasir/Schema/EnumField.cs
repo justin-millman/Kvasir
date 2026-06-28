@@ -87,7 +87,7 @@ namespace Kvasir.Schema {
             DataType = DBType.Enumeration;
             Nullability = nullability;
             DefaultValue = defaultValue;
-            Enumerators = new List<DBValue>(enumerators);
+            Enumerators = [..enumerators];
 
             // These two Asserts are placed after the constructor body so that we can refer to the DataType property
             // after its value is set, eliminating some duplication of the constant value

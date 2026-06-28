@@ -32,7 +32,7 @@ namespace Kvasir.Core {
 
             var underlyingType = Enum.GetUnderlyingType(enumType);
             var maker = MAKE_IMPL_FN.MakeGenericMethod(enumType, underlyingType);
-            impl_ = (DataConverter)maker.Invoke(null, Array.Empty<object?>())!;
+            impl_ = (DataConverter)maker.Invoke(null, [])!;
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Kvasir.Core {
             Debug.Assert(enumType.IsEnum);
 
             var maker = MAKE_IMPL_FN.MakeGenericMethod(enumType);
-            impl_ = (DataConverter)maker.Invoke(null, Array.Empty<object?>())!;
+            impl_ = (DataConverter)maker.Invoke(null, [])!;
         }
 
         /// <summary>

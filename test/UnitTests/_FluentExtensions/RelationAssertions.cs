@@ -39,7 +39,7 @@ namespace FluentAssertions {
                 : base(subject) {
 
                 Subject = subject;
-                SubjectList = new List<(object Item, Status status)>();
+                SubjectList = [];
 
                 var iter = subject.GetEnumerator();
                 while (iter.MoveNext()) {
@@ -89,7 +89,7 @@ namespace FluentAssertions {
                 var flags = BindingFlags.Static | BindingFlags.NonPublic;
                 var name = nameof(IRelation.ConnectionType);
                 var reader = Subject.GetType().GetProperties(flags).First(p => p.Name.Contains(name))!.GetMethod!;
-                var connectionType = (Type)reader.Invoke(null, new object?[] {})!;
+                var connectionType = (Type)reader.Invoke(null, [])!;
 
                 Execute.Assertion
                     .BecauseOf(because, becauseArgs)

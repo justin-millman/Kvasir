@@ -45,7 +45,7 @@ namespace Kvasir.Transaction {
             // that the graph is acyclic.
             var adjacencyMatrix = new List<List<bool>>();
             for (int i = 0; i < translations.Count; ++i) {
-                adjacencyMatrix.Add(Enumerable.Repeat(false, translations.Count).ToList());
+                adjacencyMatrix.Add([..Enumerable.Repeat(false, translations.Count)]);
             }
 
             // We're also going to keep a degree counter; this will make our topological sort algorithm slightly more

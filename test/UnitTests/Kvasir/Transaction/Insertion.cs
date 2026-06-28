@@ -28,7 +28,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Crossbow));
 
             // Act
-            fixture.Transactor.Insert(new object[] { crossbow });
+            fixture.Transactor.Insert([crossbow]);
             var crossbowCmd = fixture.PrincipalCommands<Crossbow>().InsertCommand(ANY_ROWS);
             var crossbowInserts = fixture.InsertionsFor(crossbowCmd);
 
@@ -53,7 +53,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(GoogleDoodle));
 
             // Act
-            fixture.Transactor.Insert(new object[] { doodle });
+            fixture.Transactor.Insert([doodle]);
             var doodleCmd = fixture.PrincipalCommands<GoogleDoodle>().InsertCommand(ANY_ROWS);
             var doodleInserts = fixture.InsertionsFor(doodleCmd);
 
@@ -86,7 +86,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(CountOlafDisguise));
 
             // Act
-            fixture.Transactor.Insert(new object[] { funcoot, genghis, sham });
+            fixture.Transactor.Insert([funcoot, genghis, sham]);
             var disguiseCmd = fixture.PrincipalCommands<CountOlafDisguise>().InsertCommand(ANY_ROWS);
             var disguiseInserts = fixture.InsertionsFor(disguiseCmd);
 
@@ -117,7 +117,7 @@ namespace UT.Kvasir.Transaction {
                     { "Dr. Pepper", false },
                     { "Barq's Root Beer", true }
                 },
-                Inspections = new RelationOrderedList<DateTime>() {
+                Inspections = [
                     new DateTime(2024, 1, 3),
                     new DateTime(2024, 2, 18),
                     new DateTime(2024, 3, 11),
@@ -129,12 +129,12 @@ namespace UT.Kvasir.Transaction {
                     new DateTime(2024, 10, 15),
                     new DateTime(2024, 11, 9),
                     new DateTime(2024, 12, 6)
-                }
+                ]
             };
             var fixture = new TestFixture(typeof(SodaFountain));
 
             // Act
-            fixture.Transactor.Insert(new object[] { fountain });
+            fixture.Transactor.Insert([fountain]);
             var fountainCmd = fixture.PrincipalCommands<SodaFountain>().InsertCommand(ANY_ROWS);
             var fountainInserts = fixture.InsertionsFor(fountainCmd);
             var inspectionsCmd = fixture.RelationCommands<SodaFountain>(0).InsertCommand(ANY_ROWS);
@@ -190,7 +190,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(LetterOfRecommendation));
 
             // Act
-            fixture.Transactor.Insert(new object[] { recLetter });
+            fixture.Transactor.Insert([recLetter]);
             var letterCmd = fixture.PrincipalCommands<LetterOfRecommendation>().InsertCommand(ANY_ROWS);
             var letterInserts = fixture.InsertionsFor(letterCmd);
             var wordsCmd = fixture.RelationCommands<LetterOfRecommendation>(0).InsertCommand(ANY_ROWS);
@@ -246,7 +246,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(MutualFund));
 
             // Act
-            fixture.Transactor.Insert(new object[] { fund0, fund1, fund2 });
+            fixture.Transactor.Insert([fund0, fund1, fund2]);
             var fundCmd = fixture.PrincipalCommands<MutualFund>().InsertCommand(ANY_ROWS);
             var fundInserts = fixture.InsertionsFor(fundCmd);
             var investorsCmd = fixture.RelationCommands<MutualFund>(0).InsertCommand(ANY_ROWS);
@@ -285,7 +285,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Password));
 
             // Act
-            fixture.Transactor.Insert(new object[] { password });
+            fixture.Transactor.Insert([password]);
             var passwordCmd = fixture.PrincipalCommands<Password>().InsertCommand(ANY_ROWS);
             var passwordInserts = fixture.InsertionsFor(passwordCmd);
 
@@ -315,7 +315,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Ordinal));
 
             // Act
-            fixture.Transactor.Insert(new object[] { first, twentyThird, eightMillionth });
+            fixture.Transactor.Insert([first, twentyThird, eightMillionth]);
             var ordinalCmd = fixture.PrincipalCommands<Ordinal>().InsertCommand(ANY_ROWS);
             var ordinalInserts = fixture.InsertionsFor(ordinalCmd);
 
@@ -373,7 +373,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Wheelchair), typeof(Haka), typeof(BetterKnowADistrict), typeof(Invoice));
 
             // Act
-            fixture.Transactor.Insert(new object[] { wheelchair, haka, bkad, invoice });
+            fixture.Transactor.Insert([wheelchair, haka, bkad, invoice]);
             var wheelchairCmd = fixture.PrincipalCommands<Wheelchair>().InsertCommand(ANY_ROWS);
             var wheelchairInserts = fixture.InsertionsFor(wheelchairCmd);
             var hakaCmd = fixture.PrincipalCommands<Haka>().InsertCommand(ANY_ROWS);
@@ -421,7 +421,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Disclaimer), typeof(Tagline), typeof(Polynomial));
 
             // Act
-            fixture.Transactor.Insert(new object[] { disclaimer, tagline, polynomial });
+            fixture.Transactor.Insert([disclaimer, tagline, polynomial]);
             var disclaimerCmd = fixture.PrincipalCommands<Disclaimer>().InsertCommand(ANY_ROWS);
             var disclaimerInserts = fixture.InsertionsFor(disclaimerCmd);
             var taglineCmd = fixture.PrincipalCommands<Tagline>().InsertCommand(ANY_ROWS);
@@ -479,7 +479,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Rhinoceros), typeof(Rhinoceros.Zoo), typeof(Rhinoceros.Person));
 
             // Act
-            fixture.Transactor.Insert(new object[] { rhino, zookeeper, zoo });
+            fixture.Transactor.Insert([rhino, zookeeper, zoo]);
             var zookeeperCmd = fixture.PrincipalCommands<Rhinoceros.Person>().InsertCommand(ANY_ROWS);
             var zookeeperInserts = fixture.InsertionsFor(zookeeperCmd);
             var zooCmd = fixture.PrincipalCommands<Rhinoceros.Zoo>().InsertCommand(ANY_ROWS);
@@ -525,7 +525,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Sheriff), typeof(Sheriff.Badge), typeof(Sheriff.Election));
 
             // Act
-            fixture.Transactor.Insert(new object[] { sheriff, election, badge });
+            fixture.Transactor.Insert([sheriff, election, badge]);
             var badgeCmd = fixture.PrincipalCommands<Sheriff.Badge>().InsertCommand(ANY_ROWS);
             var badgeInserts = fixture.InsertionsFor(badgeCmd);
             var electionCmd = fixture.PrincipalCommands<Sheriff.Election>().InsertCommand(ANY_ROWS);
@@ -585,7 +585,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Coven), typeof(Coven.Witch));
 
             // Act
-            fixture.Transactor.Insert(new object[] { witch0, coven, witch1, witch2, witch3 });
+            fixture.Transactor.Insert([witch0, coven, witch1, witch2, witch3]);
             var covenCmd = fixture.PrincipalCommands<Coven>().InsertCommand(ANY_ROWS);
             var covenInserts = fixture.InsertionsFor(covenCmd);
             var witchCmd = fixture.PrincipalCommands<Coven.Witch>().InsertCommand(ANY_ROWS);
@@ -633,7 +633,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(MemoryLeak), typeof(LocalizedMeasure), typeof(LocalizedDate));
 
             // Act
-            fixture.Transactor.Insert(new object[] { date, measurement, leak });
+            fixture.Transactor.Insert([date, measurement, leak]);
             var dateCmd = fixture.PrincipalCommands<LocalizedDate>().InsertCommand(ANY_ROWS);
             var dateInserts = fixture.InsertionsFor(dateCmd);
             var measurementCmd = fixture.PrincipalCommands<LocalizedMeasure>().InsertCommand(ANY_ROWS);
@@ -692,7 +692,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(PoliceChase), typeof(PoliceChase.Identifier), typeof(PoliceChase.LocalizedID));
 
             // Act
-            fixture.Transactor.Insert(new object[] { chase, id0, id1, id2, localization });
+            fixture.Transactor.Insert([chase, id0, id1, id2, localization]);
             var chaseCmd = fixture.PrincipalCommands<PoliceChase>().InsertCommand(ANY_ROWS);
             var chases = fixture.InsertionsFor(chaseCmd);
             var identifierCmd = fixture.PrincipalCommands<PoliceChase.Identifier>().InsertCommand(ANY_ROWS);
@@ -743,18 +743,18 @@ namespace UT.Kvasir.Transaction {
                 Executor = "Count Egzmur von Twarrendwelft-Schmulagon",
                 TradedShares = 8000000,
                 InitialPercentageControlled = 37.54f,
-                BuyPrices = new RelationSet<LocalizedCurrency>() {
+                BuyPrices = [
                     fiftyDollars,
                     sixtyDollars,
-                     seventyDollars
-                },
+                    seventyDollars
+                ],
                 WasSuccessful = false,
                 ProxyFight = true
             };
             var fixture = new TestFixture(typeof(HostileTakeover), typeof(LocalizedCurrency));
 
             // Act
-            fixture.Transactor.Insert(new object[] { takeover, fiftyDollars, sixtyDollars, seventyDollars });
+            fixture.Transactor.Insert([takeover, fiftyDollars, sixtyDollars, seventyDollars]);
             var takeoverCmd = fixture.PrincipalCommands<HostileTakeover>().InsertCommand(ANY_ROWS);
             var takeoverInserts = fixture.InsertionsFor(takeoverCmd);
             var currencyCmd = fixture.PrincipalCommands<LocalizedCurrency>().InsertCommand(ANY_ROWS);
@@ -820,7 +820,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(MayanGod));
 
             // Act
-            fixture.Transactor.Insert(new object[] { ixchel, itzamna, yumKaax });
+            fixture.Transactor.Insert([ixchel, itzamna, yumKaax]);
             var godCmd = fixture.PrincipalCommands<MayanGod>().InsertCommand(ANY_ROWS);
             var godInserts = fixture.InsertionsFor(godCmd);
             var fathersCmd = fixture.RelationCommands<MayanGod>(0).InsertCommand(ANY_ROWS);
@@ -865,7 +865,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Pizzeria), typeof(Pizzeria.LocalizedStore));
 
             // Act
-            fixture.Transactor.Insert(new object[] { pizzeria, pizzeria.ParentStore });
+            fixture.Transactor.Insert([pizzeria, pizzeria.ParentStore]);
             var pizzeriaCmd = fixture.PrincipalCommands<Pizzeria>().InsertCommand(ANY_ROWS);
             var pizzeriaInserts = fixture.InsertionsFor(pizzeriaCmd);
             var storeCmd = fixture.PrincipalCommands<Pizzeria.LocalizedStore>().InsertCommand(ANY_ROWS);
@@ -897,7 +897,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Blister)).WithCommitError();
 
             // Act
-            var action = () => fixture.Transactor.Insert(new object[] { blister });
+            var action = () => fixture.Transactor.Insert([blister]);
 
             // Assert
             action.Should().ThrowExactly<InvalidOperationException>();
@@ -917,7 +917,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Chainsaw)).WithRollbackError();
 
             // Act
-            var action = () => fixture.Transactor.Insert(new object[] { chainsaw });
+            var action = () => fixture.Transactor.Insert([chainsaw]);
 
             // Assert
             action.Should().ThrowExactly<AggregateException>();
@@ -930,6 +930,6 @@ namespace UT.Kvasir.Transaction {
             var converter = new EnumToStringConverter(typeof(T)).ConverterImpl;
             return (string)converter.Convert(enumerator)!;
         }
-        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = Enumerable.Empty<IReadOnlyList<DBValue>>();
+        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = [];
     }
 }

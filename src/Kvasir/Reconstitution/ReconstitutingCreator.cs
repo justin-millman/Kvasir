@@ -30,7 +30,7 @@ namespace Kvasir.Reconstitution {
             Debug.Assert(mutators.All(m => creator.ResultType.IsInstanceOf(m.SourceType)));
 
             creator_ = creator;
-            mutators_ = new List<IMutator>(mutators);
+            mutators_ = [..mutators];
             ResultType = creator_.ResultType;
         }
 

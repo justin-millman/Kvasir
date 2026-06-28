@@ -22,10 +22,10 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var creator = new IdentityCreator(typeof(string));
-            var value = creator.CreateFrom(new DBValue[] { source });
+            var value = creator.CreateFrom([source]);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(string));
+            creator.ResultType.Should().Be<string>();
             value.Should().BeNull();
         }
 
@@ -42,38 +42,38 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var sbyteCreator = new IdentityCreator(typeof(sbyte));
-            var sbyteValue = sbyteCreator.CreateFrom(new DBValue[] { sbyteSource });
+            var sbyteValue = sbyteCreator.CreateFrom([sbyteSource]);
             var byteCreator = new IdentityCreator(typeof(byte));
-            var byteValue = byteCreator.CreateFrom(new DBValue[] { byteSource });
+            var byteValue = byteCreator.CreateFrom([byteSource]);
             var shortCreator = new IdentityCreator(typeof(short));
-            var shortValue = shortCreator.CreateFrom(new DBValue[] { shortSource });
+            var shortValue = shortCreator.CreateFrom([shortSource]);
             var ushortCreator = new IdentityCreator(typeof(ushort));
-            var ushortValue = ushortCreator.CreateFrom(new DBValue[] { ushortSource });
+            var ushortValue = ushortCreator.CreateFrom([ushortSource]);
             var intCreator = new IdentityCreator(typeof(int));
-            var intValue = intCreator.CreateFrom(new DBValue[] { intSource });
+            var intValue = intCreator.CreateFrom([intSource]);
             var uintCreator = new IdentityCreator(typeof(uint));
-            var uintValue = uintCreator.CreateFrom(new DBValue[] { uintSource });
+            var uintValue = uintCreator.CreateFrom([uintSource]);
             var longCreator = new IdentityCreator(typeof(long));
-            var longValue = longCreator.CreateFrom(new DBValue[] { longSource });
+            var longValue = longCreator.CreateFrom([longSource]);
             var ulongCreator = new IdentityCreator(typeof(ulong));
-            var ulongValue = ulongCreator.CreateFrom(new DBValue[] { ulongSource });
+            var ulongValue = ulongCreator.CreateFrom([ulongSource]);
 
             // Assert
-            sbyteCreator.ResultType.Should().Be(typeof(sbyte));
+            sbyteCreator.ResultType.Should().Be<sbyte>();
             sbyteValue.Should().Be(sbyteSource.Datum);
-            byteCreator.ResultType.Should().Be(typeof(byte));
+            byteCreator.ResultType.Should().Be<byte>();
             byteValue.Should().Be(byteSource.Datum);
-            shortCreator.ResultType.Should().Be(typeof(short));
+            shortCreator.ResultType.Should().Be<short>();
             shortValue.Should().Be(shortSource.Datum);
-            ushortCreator.ResultType.Should().Be(typeof(ushort));
+            ushortCreator.ResultType.Should().Be<ushort>();
             ushortValue.Should().Be(ushortSource.Datum);
-            intCreator.ResultType.Should().Be(typeof(int));
+            intCreator.ResultType.Should().Be<int>();
             intValue.Should().Be(intSource.Datum);
-            uintCreator.ResultType.Should().Be(typeof(uint));
+            uintCreator.ResultType.Should().Be<uint>();
             uintValue.Should().Be(uintSource.Datum);
-            longCreator.ResultType.Should().Be(typeof(long));
+            longCreator.ResultType.Should().Be<long>();
             longValue.Should().Be(longSource.Datum);
-            ulongCreator.ResultType.Should().Be(typeof(ulong));
+            ulongCreator.ResultType.Should().Be<ulong>();
             ulongValue.Should().Be(ulongSource.Datum);
         }
 
@@ -84,14 +84,14 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var charCreator = new IdentityCreator(typeof(char));
-            var charValue = charCreator.CreateFrom(new DBValue[] { charSource });
+            var charValue = charCreator.CreateFrom([charSource]);
             var stringCreator = new IdentityCreator(typeof(string));
-            var stringValue = stringCreator.CreateFrom(new DBValue[] { stringSource });
+            var stringValue = stringCreator.CreateFrom([stringSource]);
 
             // Assert
-            charCreator.ResultType.Should().Be(typeof(char));
+            charCreator.ResultType.Should().Be<char>();
             charValue.Should().Be(charSource.Datum);
-            stringCreator.ResultType.Should().Be(typeof(string));
+            stringCreator.ResultType.Should().Be<string>();
             stringValue.Should().Be(stringSource.Datum);
         }
 
@@ -103,18 +103,18 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var boolCreator = new IdentityCreator(typeof(bool));
-            var boolValue = boolCreator.CreateFrom(new DBValue[] { boolSource });
+            var boolValue = boolCreator.CreateFrom([boolSource]);
             var datetimeCreator = new IdentityCreator(typeof(DateTime));
-            var datetimeValue = datetimeCreator.CreateFrom(new DBValue[] { datetimeSource });
+            var datetimeValue = datetimeCreator.CreateFrom([datetimeSource]);
             var guidCreator = new IdentityCreator(typeof(Guid));
-            var guidValue = guidCreator.CreateFrom(new DBValue[] { guidSource });
+            var guidValue = guidCreator.CreateFrom([guidSource]);
 
             // Assert
-            boolCreator.ResultType.Should().Be(typeof(bool));
+            boolCreator.ResultType.Should().Be<bool>();
             boolValue.Should().Be(boolSource.Datum);
-            datetimeCreator.ResultType.Should().Be(typeof(DateTime));
+            datetimeCreator.ResultType.Should().Be<DateTime>();
             datetimeValue.Should().Be(datetimeSource.Datum);
-            guidCreator.ResultType.Should().Be(typeof(Guid));
+            guidCreator.ResultType.Should().Be<Guid>();
             guidValue.Should().Be(guidSource.Datum);
         }
     }
@@ -229,7 +229,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(MemoryStream));
+            creator.ResultType.Should().Be<MemoryStream>();
             value.Should().BeOfType<MemoryStream>();
             (value as MemoryStream)!.CanRead.Should().Be(true);
             (value as MemoryStream)!.CanWrite.Should().Be(true);
@@ -281,7 +281,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(Tuple<string, float, DateTime>));
+            creator.ResultType.Should().Be<Tuple<string, float, DateTime>>();
             value.Should().BeOfType<Tuple<string, float, DateTime>>();
             (value as Tuple<string, float, DateTime>)!.Item1.Should().Be(first);
             (value as Tuple<string, float, DateTime>)!.Item2.Should().Be(second);
@@ -320,7 +320,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(ApplicationId));
+            creator.ResultType.Should().Be<ApplicationId>();
             value.Should().BeOfType<ApplicationId>();
             (value as ApplicationId)!.PublicKeyToken.Should().BeEquivalentTo(publicKeyToken);
             (value as ApplicationId)!.Name.Should().Be(name);
@@ -353,7 +353,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(Tuple<string?, DateTime?, uint?>));
+            creator.ResultType.Should().Be<Tuple<string?, DateTime?, uint?>>();
             value.Should().BeOfType<Tuple<string?, DateTime?, uint?>>();
             (value as Tuple<string?, DateTime?, uint?>)!.Item1.Should().BeNull();
             (value as Tuple<string?, DateTime?, uint?>)!.Item2.Should().BeNull();
@@ -377,7 +377,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(ApplicationException));
+            creator.ResultType.Should().Be<ApplicationException>();
             value.Should().BeNull();
             arg0creator.DidNotReceive().CreateFrom(Arg.Any<IReadOnlyList<DBValue>>());
         }
@@ -397,7 +397,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(DateTime));
+            creator.ResultType.Should().Be<DateTime>();
             value.Should().BeOfType<DateTime>();
             ((DateTime)value!).Ticks.Should().Be(ticks);
             arg0creator.Received().CreateFrom(row);
@@ -499,11 +499,11 @@ namespace UT.Kvasir.Reconstitution {
 
             // Act
             var row = new DBValue[] { DBValue.Create("Hackensack") };
-            var creator = new ReconstitutingCreator(originalCreator, Array.Empty<IMutator>());
+            var creator = new ReconstitutingCreator(originalCreator, []);
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(string));
+            creator.ResultType.Should().Be<string>();
             value.Should().Be(str);
         }
 
@@ -523,7 +523,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(string));
+            creator.ResultType.Should().Be<string>();
             value.Should().Be(str);
             mutator.Received().Mutate(value, row);
         }
@@ -548,7 +548,7 @@ namespace UT.Kvasir.Reconstitution {
             var value = creator.CreateFrom(row);
 
             // Assert
-            creator.ResultType.Should().Be(typeof(Type));
+            creator.ResultType.Should().Be<Type>();
             value.Should().Be(type);
             Received.InOrder(() => { mutator0.Mutate(value, row); mutator1.Mutate(value, row); mutator2.Mutate(value, row); });
         }
@@ -566,13 +566,13 @@ namespace UT.Kvasir.Reconstitution {
             keyExtractor.ExtractFrom(options[1]).Returns(keys[1]);
             keyExtractor.ExtractFrom(options[2]).Returns(keys[2]);
             keyExtractor.ExtractFrom(options[3]).Returns(keys[3]);
-            var keyPlan = new DataExtractionPlan(new IMultiExtractor[] { keyExtractor });
+            var keyPlan = new DataExtractionPlan([keyExtractor]);
 
             // Act
             var key = keys[0];
             var matcher = new KeyMatcher(() => options, keyPlan);
             var creator = new KeyLookupCreator(matcher);
-            var value = creator.CreateFrom(key.Select(v => DBValue.Create(v)).ToList());
+            var value = creator.CreateFrom([..key.Select(v => DBValue.Create(v))]);
 
             // Assert
             matcher.ResultType.Should().Be(keyPlan.SourceType);
@@ -594,13 +594,13 @@ namespace UT.Kvasir.Reconstitution {
             keyExtractor.ExtractFrom(options[1]).Returns(keys[1]);
             keyExtractor.ExtractFrom(options[2]).Returns(keys[2]);
             keyExtractor.ExtractFrom(options[3]).Returns(keys[3]);
-            var keyPlan = new DataExtractionPlan(new IMultiExtractor[] { keyExtractor });
+            var keyPlan = new DataExtractionPlan([keyExtractor]);
 
             // Act
             var key = keys[1];
             var matcher = new KeyMatcher(() => options, keyPlan);
             var creator = new KeyLookupCreator(matcher);
-            var value = creator.CreateFrom(key.Select(v => DBValue.Create(v)).ToList());
+            var value = creator.CreateFrom([..key.Select(v => DBValue.Create(v))]);
 
             // Assert
             matcher.ResultType.Should().Be(keyPlan.SourceType);
@@ -621,13 +621,13 @@ namespace UT.Kvasir.Reconstitution {
             keyExtractor.ExtractFrom(options[0]).Returns(keys[0]);
             keyExtractor.ExtractFrom(options[1]).Returns(keys[1]);
             keyExtractor.ExtractFrom(options[2]).Returns(keys[2]);
-            var keyPlan = new DataExtractionPlan(new IMultiExtractor[] { keyExtractor });
+            var keyPlan = new DataExtractionPlan([keyExtractor]);
 
             // Act
             var key = keys[^1];
             var matcher = new KeyMatcher(() => options, keyPlan);
             var creator = new KeyLookupCreator(matcher);
-            var value = creator.CreateFrom(key.Select(v => DBValue.Create(v)).ToList());
+            var value = creator.CreateFrom([..key.Select(v => DBValue.Create(v))]);
 
             // Assert
             matcher.ResultType.Should().Be(keyPlan.SourceType);
@@ -648,14 +648,14 @@ namespace UT.Kvasir.Reconstitution {
             keyExtractor.ExtractFrom(options[1]).Returns(keys[1]);
             keyExtractor.ExtractFrom(options[2]).Returns(keys[2]);
             keyExtractor.ExtractFrom(options[3]).Returns(keys[3]);
-            var keyPlan = new DataExtractionPlan(new IMultiExtractor[] { keyExtractor });
+            var keyPlan = new DataExtractionPlan([keyExtractor]);
 
             // Act
             var key = keys[1];
             var matcher = new KeyMatcher(() => options, keyPlan);
             var creator = new KeyLookupCreator(matcher);
-            var firstValue = creator.CreateFrom(key.Select(v => DBValue.Create(v)).ToList());
-            var secondValue = creator.CreateFrom(key.Select(v => DBValue.Create(v)).ToList());
+            var firstValue = creator.CreateFrom([..key.Select(v => DBValue.Create(v))]);
+            var secondValue = creator.CreateFrom([..key.Select(v => DBValue.Create(v))]);
 
             // Assert
             matcher.ResultType.Should().Be(keyPlan.SourceType);
@@ -677,15 +677,15 @@ namespace UT.Kvasir.Reconstitution {
             keyExtractor.ExtractFrom(options[0]).Returns(keys[0]);
             keyExtractor.ExtractFrom(options[1]).Returns(keys[1]);
             keyExtractor.ExtractFrom(options[2]).Returns(keys[2]);
-            var keyPlan = new DataExtractionPlan(new IMultiExtractor[] { keyExtractor });
+            var keyPlan = new DataExtractionPlan([keyExtractor]);
 
             // Act
             var firstKey = keys[1];
             var secondKey = keys[2];
             var matcher = new KeyMatcher(() => options, keyPlan);
             var creator = new KeyLookupCreator(matcher);
-            var firstValue = creator.CreateFrom(firstKey.Select(v => DBValue.Create(v)).ToList());
-            var secondValue = creator.CreateFrom(secondKey.Select(v => DBValue.Create(v)).ToList());
+            var firstValue = creator.CreateFrom([..firstKey.Select(v => DBValue.Create(v))]);
+            var secondValue = creator.CreateFrom([..secondKey.Select(v => DBValue.Create(v))]);
 
             // Assert
             matcher.ResultType.Should().Be(keyPlan.SourceType);
@@ -701,12 +701,12 @@ namespace UT.Kvasir.Reconstitution {
             // Arrange
             var options = new List<string>() { "Lelydorp", "Shizuoka", "Trieste", "Mississauga" };
             var keyExtractor = Substitute.For<IMultiExtractor>();
-            var keyPlan = new DataExtractionPlan(new IMultiExtractor[] { keyExtractor });
+            var keyPlan = new DataExtractionPlan([keyExtractor]);
 
             // Act
             var matcher = new KeyMatcher(() => options, keyPlan);
             var creator = new KeyLookupCreator(matcher);
-            var value = creator.CreateFrom(new List<DBValue>() { DBValue.NULL, DBValue.NULL });
+            var value = creator.CreateFrom([DBValue.NULL, DBValue.NULL]);
 
             // Assert
             matcher.ResultType.Should().Be(keyPlan.SourceType);

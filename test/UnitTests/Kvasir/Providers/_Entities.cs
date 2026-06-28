@@ -17,7 +17,7 @@ namespace UT.Kvasir.Providers {
         // Scenario: CREATE TABLE – Relation Table
         public class CyrillicLetter {
             [PrimaryKey, Column(0)] public string LetterName { get; set; } = "";
-            public RelationMap<ulong, char> Glyphs { get; } = new();
+            public RelationMap<ulong, char> Glyphs { get; } = [];
             [Column(1)] public ushort NumericalValue { get; set; }
             [Column(2)] public bool IsVowel { get; set; }
         }
@@ -172,7 +172,7 @@ namespace UT.Kvasir.Providers {
             [PrimaryKey, Column(0)] public string Manicurist { get; set; } = "";
             [PrimaryKey, Column(1)] public string Manicuree { get; set; } = "";
             [PrimaryKey, Column(2)] public DateTime Timestamp { get; set; }
-            public RelationMap<Finger, bool> WasPainted { get; } = new();
+            public RelationMap<Finger, bool> WasPainted { get; } = [];
             [Column(3)] public bool ManiPedi { get; set; }
             [Column(4)] public decimal Cost { get; set; }
         }
@@ -257,7 +257,7 @@ namespace UT.Kvasir.Providers {
             [Column(3)] public Color HairColor { get; set; }
             [Column(4)] public bool HasBeenSICoverModel { get; set; }
             [Column(5)] public decimal NetWorth { get; set; }
-            public RelationOrderedList<string> Agencies { get; } = new();
+            public RelationOrderedList<string> Agencies { get; } = [];
         }
 
         // Scenario: UPDATE – Multi-Key Associative Relation Table
@@ -267,7 +267,7 @@ namespace UT.Kvasir.Providers {
             [PrimaryKey, Column(0)] public string IndexName { get; set; } = "";
             [Column(1)] public decimal MarketCap { get; set; }
             [Column(2)] public string? NYSESymbol { get; set; }
-            public RelationMap<Stock, float> Constituents { get; } = new();
+            public RelationMap<Stock, float> Constituents { get; } = [];
             [Column(3)] public double YearOverYear { get; set; }
         }
 
@@ -351,7 +351,7 @@ namespace UT.Kvasir.Providers {
             [Column(3)] public double RecoveryPercent { get; set; }
             [Column(4)] public DateTime Istallation { get; set; }
             [PrimaryKey, Column(5)] public uint Iteration { get; set; }
-            public RelationMap<AudioExam, double> ExamResults { get; } = new();
+            public RelationMap<AudioExam, double> ExamResults { get; } = [];
         }
 
         // Scenario: DELETE – All Rows of an Owning Entity from Non-Associative Relation Table
@@ -370,7 +370,7 @@ namespace UT.Kvasir.Providers {
             [Column(1)] public string Location { get; set; } = "";
             [Column(2)] public string Promoter { get; set; } = "";
             [Column(3)] public string Bull { get; set; } = "";
-            public RelationMap<string, float> Bullriders { get; } = new();
+            public RelationMap<string, float> Bullriders { get; } = [];
             [Column(4)] public decimal Revenue { get; set; }
         }
 
@@ -384,7 +384,7 @@ namespace UT.Kvasir.Providers {
             [Column(2)] public string Name { get; set; } = "";
             [Column(3)] public ushort ChildrenBirthed { get; set; }
             [Column(4)] public DateTime FirstPregnancy { get; set; }
-            public RelationMap<Thing, double> BioStats { get; } = new();
+            public RelationMap<Thing, double> BioStats { get; } = [];
             [Column(5)] public decimal Cost { get; set; }
         }
 
@@ -392,7 +392,7 @@ namespace UT.Kvasir.Providers {
         public class AbortionClinic {
             [PrimaryKey, Column(0)] public Guid ID { get; set; }
             [Column(1)] public bool IsPlannedParenthood { get; set; }
-            public RelationSet<string> Doctors { get; } = new();
+            public RelationSet<string> Doctors { get; } = [];
             [Column(2)] public uint AbortionsPerformed { get; set; }
             [Column(3)] public decimal Budget { get; set; }
             [Column(4)] public string Address { get; set; } = "";

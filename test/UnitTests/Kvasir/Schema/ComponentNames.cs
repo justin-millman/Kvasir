@@ -69,7 +69,7 @@ namespace UT.Kvasir.Schema {
 
         private static T Create(string rawName) {
             try {
-                return (T)Activator.CreateInstance(typeof(T), new object?[] { rawName })!;
+                return (T)Activator.CreateInstance(typeof(T), [rawName])!;
             }
             catch (TargetInvocationException ex) {
                 throw ex.GetBaseException();

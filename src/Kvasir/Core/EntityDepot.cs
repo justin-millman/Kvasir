@@ -27,7 +27,7 @@ namespace Kvasir.Core {
         ///   Constructs a new <see cref="EntityDepot"/> with no stored Entities.
         /// </summary>
         public EntityDepot() {
-            entities_ = new Dictionary<Type, HashSet<object>>();
+            entities_ = [];
         }
 
         /// <summary>

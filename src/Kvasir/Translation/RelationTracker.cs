@@ -42,9 +42,9 @@ namespace Kvasir.Translation {
 
             AnnotatedName = Option.None<string>();
             Property = source;
-            contextualizedAccessPath_ = new List<string>() { source.Name.Split('.')[^1] };
-            decontextualizedAccessPath_ = new List<string>() { source.Name.Split('.')[^1] };
-            annotations_ = new Dictionary<string, List<Attribute>>();
+            contextualizedAccessPath_ = [source.Name.Split('.')[^1]];
+            decontextualizedAccessPath_ = [source.Name.Split('.')[^1]];
+            annotations_ = [];
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Kvasir.Translation {
                 var field = annotation.NextPath;
                 var stepped = annotation.Step();
                 var effective = stepped.Annotation.WithPath(stepped.NextPath);
-                annotations_.TryAdd(field, new List<Attribute>());
+                annotations_.TryAdd(field, []);
                 annotations_[field].Add((effective as Attribute)!);
             }
         }
@@ -198,7 +198,7 @@ namespace Kvasir.Translation {
 
 
         private readonly IReadOnlyList<string> contextualizedAccessPath_;
-        private readonly IReadOnlyList<string> decontextualizedAccessPath_;
+        private readonly List<string> decontextualizedAccessPath_;
         private readonly Dictionary<string, List<Attribute>> annotations_;
     }
 }

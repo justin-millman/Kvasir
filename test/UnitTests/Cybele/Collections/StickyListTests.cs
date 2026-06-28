@@ -112,10 +112,11 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void InsertStickyDisplaceNonStickyToEnd() {
             // Arrange
-            var list = new StickyList<string>();
-            list.Add("Harrisburg");
-            list.Add("Scottsdale");
-            list.Add("Bentonville");
+            var list = new StickyList<string>() {
+                "Harrisburg",
+                "Scottsdale",
+                "Bentonville"
+            };
 
             // Act
             list.HasGaps.Should().BeFalse();
@@ -131,8 +132,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void InsertStickyDisplaceNonStickToGap() {
             // Arrange
-            var list = new StickyList<string>();
-            list.Add("Bakersfield");
+            var list = new StickyList<string>() { "Bakersfield" };
             list[2] = "Lincoln";
 
             // Act
@@ -177,8 +177,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void RemoveFromEnd() {
             // Arrange
-            var list = new StickyList<DateTime>();
-            list.Add(new DateTime(1984, 7, 12));
+            var list = new StickyList<DateTime>() { new DateTime(1984, 7, 12) };
             list.Insert(8, new DateTime(2021, 7, 23));
             list.Add(new DateTime(1988, 9, 17));
             list.Insert(4, new DateTime(2000, 9, 15));
@@ -200,8 +199,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void RemoveCreateGaps() {
             // Arrange
-            var list = new StickyList<char>();
-            list.Add('*');
+            var list = new StickyList<char>() { '*' };
             list.Insert(3, '+');
             list.Add('0');
             list.Add('\'');
@@ -259,10 +257,11 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void RemoveMissingElement() {
             // Arrange
-            var list = new StickyList<int>();
-            list[8] = 192;
-            list[2] = 192;
-            list[17] = 192;
+            var list = new StickyList<int>() {
+                [8] = 192,
+                [2] = 192,
+                [17] = 192
+            };
 
             // Act
             var result = list.Remove(2);
@@ -301,8 +300,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void Clear() {
             // Arrange
-            var list = new StickyList<char>();
-            list.Add('&');
+            var list = new StickyList<char>() { '&' };
             list.Insert(4, '%');
             list.Add('E');
             list.Add('=');
@@ -334,10 +332,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void GetItemOutOfBounds() {
             // Arrange
-            var list = new StickyList<int>();
-            list.Add(35);
-            list.Add(-1);
-            list.Add(0);
+            var list = new StickyList<int>() { 35, -1, 0 };
 
             // Act
             Func<int> actPos = () => list[25];
@@ -364,11 +359,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void IndexOfExistingItem() {
             // Arrange
-            var list = new StickyList<char>();
-            list.Add('7');
-            list.Add('u');
-            list.Add('_');
-            list.Add('í');
+            var list = new StickyList<char>() { '7', 'u', '_', 'í' };
 
             // Act
             var idx0 = list.IndexOf('7');        // the order of these is guarnated because no removals have occurred
@@ -385,10 +376,11 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void IndexOfExistingItemCustomComparer() {
             // Arrange
-            var list = new StickyList<string>(StringComparer.OrdinalIgnoreCase);
-            list.Add("Lubbock");
-            list.Add("Kalamazoo");
-            list.Add("Mobile");
+            var list = new StickyList<string>(StringComparer.OrdinalIgnoreCase) {
+                "Lubbock",
+                "Kalamazoo",
+                "Mobile"
+            };
 
             // Act
             var idx0 = list.IndexOf("LuBbOCK");  // the order of these is guaranteed because no removals have ocurred
@@ -403,10 +395,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void IndexOfMissingItem() {
             // Arrange
-            var list = new StickyList<double>();
-            list.Add(double.MinValue);
-            list.Add(double.MaxValue);
-            list.Add(double.Epsilon);
+            var list = new StickyList<double>() { double.MinValue, double.MaxValue, double.Epsilon };
 
             // Act
             var idx0 = list.IndexOf(38);
@@ -419,8 +408,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void ContainsExistingItem() {
             // Arrange
-            var list = new StickyList<string>();
-            list.Add("South Bend");
+            var list = new StickyList<string>() { "South Bend" };
             list.Insert(0, "Pasadena");
             list.Insert(4, "Fargo");
 
@@ -469,12 +457,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void QuerySlotsPastTheEnd() {
             // Arrange
-            var list = new StickyList<int>();
-            list.Add(2);
-            list.Add(-110);
-            list.Add(int.MaxValue);
-            list.Add(int.MinValue);
-            list.Add(0);
+            var list = new StickyList<int>() { 2, -110, int.MaxValue, int.MinValue, 0 };
 
             // Act & Assert
             for (var i = list.Count; i < list.Count + 100; ++i) {
@@ -501,9 +484,7 @@ namespace UT.Cybele.Collections {
 
         [TestMethod] public void CopyToArray() {
             // Arrange
-            var list = new StickyList<char>();
-            list.Add('h');
-            list.Add('~');
+            var list = new StickyList<char>() { 'h', '~' };
             list.Insert(37, '(');
             list.Insert(44, ')');
             list.Add(',');

@@ -162,17 +162,17 @@ namespace Kvasir.Translation {
             settings_ = settings;
             callingAssembly_ = Assembly.GetCallingAssembly();
             entityLookup_ = entityLookup;
-            typeCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
-            translationCache_ = new Dictionary<Type, EntityTranslation>();
-            localizationCache_ = new Dictionary<Type, LocalizationTranslation>();
-            principalTableCache_ = new Dictionary<Type, PrincipalTableDef>();
-            localizationTableCache_ = new Dictionary<Type, LocalizationTableDef>();
-            tableNameCache_ = new Dictionary<TableName, Type>();
-            pkCache_ = new Dictionary<Type, IReadOnlyList<FieldGroup>>();
-            relationTrackersCache_ = new Dictionary<Type, IReadOnlyList<RelationTracker>>();
-            localizationTrackersCache_ = new Dictionary<Type, IReadOnlyList<LocalizationTracker>>();
-            keyMatchers_ = new Dictionary<Type, KeyMatcher>();
-            relationTypesFromEntity_ = new Dictionary<Type, IReadOnlyList<Type>>();
+            typeCache_ = [];
+            translationCache_ = [];
+            localizationCache_ = [];
+            principalTableCache_ = [];
+            localizationTableCache_ = [];
+            tableNameCache_ = [];
+            pkCache_ = [];
+            relationTrackersCache_ = [];
+            localizationTrackersCache_ = [];
+            keyMatchers_ = [];
+            relationTypesFromEntity_ = [];
             logger_ = logger;
         }
 

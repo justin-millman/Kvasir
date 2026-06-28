@@ -8,7 +8,7 @@ namespace UT.Cybele.Core {
     [TestClass, TestCategory("PropertyChain")]
     public sealed class PropertyChainTests {
         [TestMethod] public void ConstructFromReadableProperty() {
-            void evaluate(string propertyName) {
+            static void evaluate(string propertyName) {
                 // Arrange
                 var property = typeof(Leaf).GetProperty(propertyName, ANY_PROPERTY)!;
 
@@ -48,7 +48,7 @@ namespace UT.Cybele.Core {
         }
 
         [TestMethod] public void ConstructFromReadablePropertyName() {
-            void evaluate(string propertyName) {
+            static void evaluate(string propertyName) {
                 // Arrange
                 var property = typeof(Leaf).GetProperty(propertyName, ANY_PROPERTY)!;
 
@@ -83,8 +83,8 @@ namespace UT.Cybele.Core {
             var chain = new PropertyChain(typeof(Leaf), nameof(Leaf.Hide));
 
             // Assert
-            chain.ReflectedType.Should().Be(typeof(Leaf));
-            chain.PropertyType.Should().Be(typeof(DateTimeOffset));
+            chain.ReflectedType.Should().Be<Leaf>();
+            chain.PropertyType.Should().Be<DateTimeOffset>();
             chain.Length.Should().Be(1);
         }
 
@@ -121,7 +121,7 @@ namespace UT.Cybele.Core {
         }
 
         [TestMethod] public void ImplicitConvertFromReadableProperty() {
-            void evaluate(string propertyName) {
+            static void evaluate(string propertyName) {
                 // Arrange
                 var property = typeof(Leaf).GetProperty(propertyName, ANY_PROPERTY)!;
 
@@ -164,7 +164,7 @@ namespace UT.Cybele.Core {
             // Scenario: Given a PropertyChain whose current PropertyType is T, append a PropertyInfo that represents a
             //   readable property obtained via reflection on exactly T
 
-            void evaluate(string propertyName) {
+            static void evaluate(string propertyName) {
                 // Arrange
                 var original = new PropertyChain(typeof(Leaf), nameof(Leaf.Self));
                 var property = typeof(Leaf).GetProperty(propertyName, ANY_PROPERTY)!;
@@ -291,7 +291,7 @@ namespace UT.Cybele.Core {
             // Scenario: Given a PropertyChain whose current PropertyType is T, append a property by name that is first
             //   defined by T
 
-            void evaluate(string propertyName) {
+            static void evaluate(string propertyName) {
                 // Arrange
                 var original = new PropertyChain(typeof(Leaf), nameof(Leaf.Self));
                 var property = typeof(Leaf).GetProperty(propertyName, ANY_PROPERTY)!;
@@ -349,7 +349,7 @@ namespace UT.Cybele.Core {
             // Assert
             chain.Should().NotBeSameAs(original);
             chain.ReflectedType.Should().Be(original.ReflectedType);
-            chain.PropertyType.Should().Be(typeof(DateTimeOffset));
+            chain.PropertyType.Should().Be<DateTimeOffset>();
             chain.Length.Should().Be(original.Length + 1);
         }
 
@@ -1051,7 +1051,7 @@ namespace UT.Cybele.Core {
         }
 
         [TestMethod] public void GetValueFromNonPublicProperty() {
-            void evaluate(string propertyName, string expectedValue) {
+            static void evaluate(string propertyName, string expectedValue) {
                 // Arrange
                 var chain = new PropertyChain(typeof(Leaf), propertyName);
                 var input = new Leaf();
@@ -1070,7 +1070,7 @@ namespace UT.Cybele.Core {
         }
 
         [TestMethod] public void GetValueFromStaticProperty() {
-            void evaluate(string propertyName, int expectedValue) {
+            static void evaluate(string propertyName, int expectedValue) {
                 // Arrange
                 var chain = new PropertyChain(typeof(Leaf), propertyName);
                 var input = new Leaf();

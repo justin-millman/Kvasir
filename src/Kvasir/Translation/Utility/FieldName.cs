@@ -37,7 +37,7 @@ namespace Kvasir.Translation {
             Debug.Assert(name is not null && name != "");
 
             namePart_ = name;
-            prefixPart_ = new List<string>();
+            prefixPart_ = [];
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Kvasir.Translation {
             Debug.Assert(source is not null);
 
             namePart_ = source.namePart_;
-            prefixPart_ = new List<string>(source.prefixPart_);
+            prefixPart_ = [..source.prefixPart_];
         }
 
         /// <summary>

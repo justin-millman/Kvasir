@@ -15,11 +15,11 @@ namespace Kvasir.Providers.MySQL {
         /// </summary>
         public TableBuilder() {
             declaration_ = TEMPLATE;
-            fields_ = new List<FieldDecl>();
-            candidateKeys_ = new List<SqlSnippet>();
-            constraints_ = new List<IConstraintDecl>();
-            foreignKeys_ = new List<SqlSnippet>();
-            fieldIndexFromName_ = new Dictionary<FieldName, int>();
+            fields_ = [];
+            candidateKeys_ = [];
+            constraints_ = [];
+            foreignKeys_ = [];
+            fieldIndexFromName_ = [];
         }
 
         /// <inheritdoc/>
@@ -118,10 +118,10 @@ namespace Kvasir.Providers.MySQL {
             FKS_PLACEHOLDER;
 
         private string declaration_;
-        private List<FieldDecl> fields_;
-        private List<SqlSnippet> candidateKeys_;
-        private List<IConstraintDecl> constraints_;
-        private List<SqlSnippet> foreignKeys_;
-        private Dictionary<FieldName, int> fieldIndexFromName_;
+        private readonly List<FieldDecl> fields_;
+        private readonly List<SqlSnippet> candidateKeys_;
+        private readonly List<IConstraintDecl> constraints_;
+        private readonly List<SqlSnippet> foreignKeys_;
+        private readonly Dictionary<FieldName, int> fieldIndexFromName_;
     }
 }

@@ -26,7 +26,7 @@ namespace Kvasir.Extraction {
             Debug.Assert(extractors is not null && !extractors.IsEmpty());
             Debug.Assert(extractors.AllSame(e => e.SourceType));
 
-            extractors_ = new List<IMultiExtractor>(extractors);
+            extractors_ = [..extractors];
             SourceType = extractors_[0].SourceType;
         }
 

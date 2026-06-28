@@ -54,7 +54,7 @@ namespace Kvasir.Reconstitution {
             Debug.Assert(start_ + length_ <= dbValues.Count);
 
             var view = dbValues.Skip(start_).Take(length_);
-            return creator_.CreateFrom(view.ToList());
+            return creator_.CreateFrom([..view]);
         }
 
 

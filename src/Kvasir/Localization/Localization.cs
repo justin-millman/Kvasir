@@ -124,7 +124,7 @@ namespace Kvasir.Localization {
             Guard.Against.Null(localizationKey);
 
             Key = localizationKey;
-            Relation = new RelationMap<TLocale, TValue>();
+            Relation = [];
         }
 
         /// <summary>

@@ -16,8 +16,8 @@ namespace UT.Cybele.Core {
             var converter = DataConverter.Create(fn);
 
             // Assert
-            converter.SourceType.Should().Be(typeof(int));
-            converter.ResultType.Should().Be(typeof(string));
+            converter.SourceType.Should().Be<int>();
+            converter.ResultType.Should().Be<string>();
             converter.IsBidirectional.Should().BeFalse();
         }
 
@@ -30,8 +30,8 @@ namespace UT.Cybele.Core {
             var converter = DataConverter.Create(fwd, bwd);
 
             // Assert
-            converter.SourceType.Should().Be(typeof(int));
-            converter.ResultType.Should().Be(typeof(string));
+            converter.SourceType.Should().Be<int>();
+            converter.ResultType.Should().Be<string>();
             converter.IsBidirectional.Should().BeTrue();
         }
 
@@ -46,7 +46,7 @@ namespace UT.Cybele.Core {
             var conversion = converter.Convert(source);
 
             // Assert
-            conversion!.GetType().Should().Be(typeof(int));
+            conversion!.GetType().Should().Be<int>();
             conversion.Should().Be(expected);
         }
 
@@ -61,7 +61,7 @@ namespace UT.Cybele.Core {
             var conversion = converter.Convert(source);
 
             // Assert
-            conversion!.GetType().Should().Be(typeof(string));
+            conversion!.GetType().Should().Be<string>();
             conversion.Should().Be(expected);
         }
 
@@ -76,7 +76,7 @@ namespace UT.Cybele.Core {
             var conversion = converter.Convert(source);
 
             // Assert
-            conversion!.GetType().Should().Be(typeof(int));
+            conversion!.GetType().Should().Be<int>();
             conversion.Should().Be(expected);
         }
 
@@ -92,7 +92,7 @@ namespace UT.Cybele.Core {
             var reversion = converter.Revert(result);
 
             // Assert
-            reversion!.GetType().Should().Be(typeof(string));
+            reversion!.GetType().Should().Be<string>();
             reversion.Should().Be(expected);
         }
 
@@ -108,13 +108,13 @@ namespace UT.Cybele.Core {
             var reversion = converter.Revert(result);
 
             // Assert
-            reversion!.GetType().Should().Be(typeof(string));
+            reversion!.GetType().Should().Be<string>();
             reversion.Should().Be(expected);
         }
 
         [TestMethod] public void BackwardConversionImplementationType() {
             // Arrange
-            Converter<int, IReadOnlyList<string>> fwd = i => Enumerable.Repeat("???", i).ToList();
+            Converter<int, IReadOnlyList<string>> fwd = i => [..Enumerable.Repeat("???", i)];
             Converter<IReadOnlyList<string>, int> bwd = e => e.Count;
             var converter = DataConverter.Create(fwd, bwd);
             var result = new List<string>() { "Toledo", "Norfolk", "Carson City", "Minneapolis", "Miami" };
@@ -124,7 +124,7 @@ namespace UT.Cybele.Core {
             var reversion = converter.Revert(result);
 
             // Assert
-            reversion!.GetType().Should().Be(typeof(int));
+            reversion!.GetType().Should().Be<int>();
             reversion.Should().Be(expected);
         }
         
@@ -175,8 +175,8 @@ namespace UT.Cybele.Core {
             var reversion = converter.Revert(conversion);
 
             // Assert
-            converter.SourceType.Should().Be(typeof(double));
-            converter.ResultType.Should().Be(typeof(double));
+            converter.SourceType.Should().Be<double>();
+            converter.ResultType.Should().Be<double>();
             converter.IsBidirectional.Should().BeTrue();
             conversion.Should().Be(source);
             reversion.Should().Be(source);
@@ -192,8 +192,8 @@ namespace UT.Cybele.Core {
             var reversion = converter.Revert(conversion);
 
             // Assert
-            converter.SourceType.Should().Be(typeof(double));
-            converter.ResultType.Should().Be(typeof(double));
+            converter.SourceType.Should().Be<double>();
+            converter.ResultType.Should().Be<double>();
             converter.IsBidirectional.Should().BeTrue();
             conversion.Should().Be(source);
             reversion.Should().Be(source);

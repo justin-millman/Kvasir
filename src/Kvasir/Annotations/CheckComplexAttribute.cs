@@ -71,7 +71,7 @@ namespace Kvasir.Annotations {
             ///   imposed by this annotation applies.
             /// </param>
             public ComplexAttribute(string[] fieldNames)
-                : this(fieldNames, Array.Empty<object?>()) {}
+                : this(fieldNames, []) {}
 
             /// <summary>
             ///   Constructs a new instance of the <see cref="ComplexAttribute{TConstraintGenerator}"/> class.
@@ -85,7 +85,7 @@ namespace Kvasir.Annotations {
             /// </param>
             public ComplexAttribute(string[] fieldNames, params object?[] args) {
                 impl_ = new CheckAttribute<TConstraintGenerator>(args);
-                fieldNames_ = fieldNames.Select(n => new FieldName(n)).ToList();
+                fieldNames_ = [..fieldNames.Select(n => new FieldName(n))];
             }
 
 

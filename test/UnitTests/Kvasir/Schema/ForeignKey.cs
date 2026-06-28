@@ -113,7 +113,7 @@ namespace UT.Kvasir.Schema {
             mockKeyField1.Nullability.Returns(IsNullable.No);
             mockKeyField1.DataType.Returns(DBType.Text);
 
-            fields_ = new List<IField>() { mockKeyField0, mockKeyField1 };
+            fields_ = [mockKeyField0, mockKeyField1];
 
             var pk = new PrimaryKey(fields_);
             var mockTable = Substitute.For<ITable>();
