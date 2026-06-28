@@ -55,7 +55,7 @@ namespace Atropos {
                     // The first argument to `MethodInfo.Invoke` is the `this` parameter for the method. These
                     // operators are all static, so the `this` parameter is irrelevant; this is fortuitous, because we
                     // don't have a way to obtain a guaranteed-non-null instance of T.
-                    result = (l, r) => (bool)method.Invoke(null, new object?[] { l, r })!;
+                    result = (l, r) => (bool)method.Invoke(null, [l, r])!;
                 }
 
                 // Memoize the result so that we only perform the reflection on time per type per operator
@@ -87,8 +87,8 @@ namespace Atropos {
         private delegate bool BinaryOp(object? lhs, object? rhs);
         private enum Operator : byte { EQ, NEQ, LT, GT, LTE, GTE };
 
-        private static readonly IDictionary<(Type, Operator), BinaryOp?> memoizer_;
-        private static readonly IReadOnlyDictionary<Operator, string> opNames_;
+        private static readonly ConcurrentDictionary<(Type, Operator), BinaryOp?> memoizer_;
+        private static readonly Dictionary<Operator, string> opNames_;
         private static readonly BindingFlags OPERATOR_FLAGS;
     }
 }

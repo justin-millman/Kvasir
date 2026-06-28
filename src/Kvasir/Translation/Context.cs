@@ -32,9 +32,9 @@ namespace Kvasir.Translation {
 
             frozen_ = false;
             initialType_ = initial;
-            history_ = new List<PropertyInfo>();
+            history_ = [];
             current_ = Option.None<PropertyInfo>();
-            references_ = new List<Type>() { initial };
+            references_ = [initial];
             TranslatingEntity = true;
         }
 
@@ -49,9 +49,9 @@ namespace Kvasir.Translation {
 
             frozen_ = true;
             initialType_ = source.initialType_;
-            history_ = new List<PropertyInfo>(source.history_);
+            history_ = [..source.history_];
             current_ = source.current_;
-            references_ = new List<Type>(source.references_);
+            references_ = [..source.references_];
             TranslatingEntity = source.TranslatingEntity;
         }
 

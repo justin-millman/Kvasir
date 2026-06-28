@@ -45,7 +45,7 @@ namespace Kvasir.Annotations {
                 Debug.Assert(!anchor.IsEmpty());
 
                 Operator = op;
-                Anchor = anchor.Select(v => v ?? DBNull.Value).ToArray();
+                Anchor = [..anchor.Select(v => v ?? DBNull.Value)];
             }
 
             /// <summary>

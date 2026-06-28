@@ -33,7 +33,7 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
-            return new List<CustomAttributeData>();
+            return [];
         }
     }
 }

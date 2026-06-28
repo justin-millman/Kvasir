@@ -33,7 +33,7 @@ namespace UT.Atropos {
             }
 
 
-            private readonly IDictionary<CallKey, int> tracker_;
+            private readonly ConcurrentDictionary<CallKey, int> tracker_;
         }
         protected sealed class Controller {
             public enum EqFailureKey { LeqR, ReqL, LneqR, RneqL, LstrongR, RstrongL, LweakR, RweakL, Hash };
@@ -115,8 +115,8 @@ namespace UT.Atropos {
             }
 
 
-            private readonly IReadOnlyDictionary<EqFailureKey, CallKey> equalityFamilies_;
-            private readonly IReadOnlyDictionary<CompFailureKey, CallKey> comparisonFamilies_;
+            private readonly Dictionary<EqFailureKey, CallKey> equalityFamilies_;
+            private readonly Dictionary<CompFailureKey, CallKey> comparisonFamilies_;
             private int hashCodeInvokeCount_;
         }
 

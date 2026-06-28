@@ -20,10 +20,10 @@ namespace FluentAssertions {
                 : base(subject)
             {
                 Subject = subject;
-                checkedFields_ = new();
-                checkedKeys_ = new();
-                checkedConstraints_ = new();
-                checkedForeignKeys_ = new();
+                checkedFields_ = [];
+                checkedKeys_ = [];
+                checkedConstraints_ = [];
+                checkedForeignKeys_ = [];
             }
             protected override string Identifier => "Table";
 

@@ -110,7 +110,7 @@ namespace Cybele.Extensions {
             // If the enum type is a regular enum, as opposed to a flags enum, then we can just return the result of the
             // standard library's Enum.GetValues() function, as there is no combinatorics involved
             if (!isFlags) {
-                return Enum.GetValues(self).Cast<Enum>().ToArray();
+                return [..Enum.GetValues(self).Cast<Enum>()];
             }
 
             var flags = Enum.GetValues(self)                    // get named enumerators
@@ -145,7 +145,7 @@ namespace Cybele.Extensions {
             }
 
             // Memoize the results
-            valuesMemoizer_[self] = results.ToArray();
+            valuesMemoizer_[self] = [..results];
             return valuesMemoizer_[self];
         }
 
@@ -186,8 +186,8 @@ namespace Cybele.Extensions {
         }
 
 
-        private static readonly IDictionary<Type, bool> isFlagsMemoizer_;
-        private static readonly IDictionary<Type, long> bitsMemoizer_;
-        private static readonly IDictionary<Type, Enum[]> valuesMemoizer_;
+        private static readonly ConcurrentDictionary<Type, bool> isFlagsMemoizer_;
+        private static readonly ConcurrentDictionary<Type, long> bitsMemoizer_;
+        private static readonly ConcurrentDictionary<Type, Enum[]> valuesMemoizer_;
     }
 }

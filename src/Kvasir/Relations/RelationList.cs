@@ -100,9 +100,9 @@ namespace Kvasir.Relations {
         ///   initial capacity.
         /// </summary>
         public RelationList() {
-            impl_ = new List<T>();
-            statuses_ = new List<Status>();
-            deletions_ = new List<T>();
+            impl_ = [];
+            statuses_ = [];
+            deletions_ = [];
         }
 
         /// <summary>
@@ -113,9 +113,9 @@ namespace Kvasir.Relations {
         ///   The element whose names are copied to the new list.
         /// </param>
         public RelationList(IEnumerable<T> collection) {
-            impl_ = new List<T>(collection);
-            statuses_ = Enumerable.Repeat(Status.New, impl_.Count).ToList();
-            deletions_ = new List<T>();
+            impl_ = [..collection];
+            statuses_ = [..Enumerable.Repeat(Status.New, impl_.Count)];
+            deletions_ = [];
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Kvasir.Relations {
         public RelationList(int capacity) {
             impl_ = new List<T>(capacity);
             statuses_ = new List<Status>(capacity);
-            deletions_ = new List<T>();
+            deletions_ = [];
         }
 
         // **************************************** METHODS *****************************************
@@ -1006,7 +1006,7 @@ namespace Kvasir.Relations {
         /// </returns>
         [ExcludeFromCodeCoverage]
         public T[] ToArray() {
-            return impl_.ToArray();
+            return [..impl_];
         }
 
         /// <inheritdoc/>

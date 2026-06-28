@@ -228,14 +228,14 @@ namespace Kvasir.Translation {
             }
 
             AssignColumns(context, translation);
-            typeCache_[source] = translation.ToList();
+            typeCache_[source] = [..translation];
             relationTrackersCache_[source] = relationTrackers;
             localizationTrackersCache_[source] = localizationTrackers;
 
             // It's important to return a concrete collection here rather than the result of a LINQ query because we do
             // not want to re-evaluate the `Clone()` operation multiple times. Doing so will cause issues with Primary
             // Key extraction due to the use of identity equality.
-            return translation.Select(g => g.Clone()).ToList();
+            return [..translation.Select(g => g.Clone())];
         }
 
         /// <summary>

@@ -170,6 +170,6 @@ namespace UT.Kvasir.Transaction {
         }
 
 
-        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = Enumerable.Empty<IReadOnlyList<DBValue>>();
+        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = [];
     }
 }

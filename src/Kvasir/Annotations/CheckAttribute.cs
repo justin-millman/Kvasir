@@ -79,7 +79,7 @@ namespace Kvasir.Annotations {
         ///   Constructs a new instance of the <see cref="CheckAttribute{TConstraintGenerator}"/> class.
         /// </summary>
         public CheckAttribute()
-            : this(Array.Empty<object>()) {}
+            : this([]) {}
 
         /// <summary>
         ///   Constructs a new instance of the <see cref="CheckAttribute{TConstraintGenerator}"/> class.

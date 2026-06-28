@@ -517,7 +517,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`ChristianDenomination` → Founded")
-                .WithProblem($"unable to parse `string` value \"0001_01_01\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"0001_01_01\" as a `DateTime`")
                 .WithAnnotations("[Check.IsGreaterThan]")
                 .EndMessage();
         }
@@ -533,7 +533,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`GraduateThesis` → Argued")
-                .WithProblem($"unable to parse `string` value \"1873-15-12\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"1873-15-12\" as a `DateTime`")
                 .WithAnnotations("[Check.IsGreaterThan]")
                 .EndMessage();
         }
@@ -1312,7 +1312,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`Shogunate` → Established")
-                .WithProblem($"unable to parse `string` value \"Wednesday, August 18, 1988\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"Wednesday, August 18, 1988\" as a `DateTime`")
                 .WithAnnotations("[Check.IsLessThan]")
                 .EndMessage();
         }
@@ -1328,7 +1328,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`ISOStandard` → Adopted")
-                .WithProblem($"unable to parse `string` value \"1735-02-48\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"1735-02-48\" as a `DateTime`")
                 .WithAnnotations("[Check.IsLessThan]")
                 .EndMessage();
         }
@@ -2102,7 +2102,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`WorldCup` → ChampionshipDate")
-                .WithProblem($"unable to parse `string` value \"1111(11)11\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"1111(11)11\" as a `DateTime`")
                 .WithAnnotations("[Check.IsGreaterOrEqualTo]")
                 .EndMessage();
         }
@@ -2118,7 +2118,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`SharkTankPitch` → AirDate")
-                .WithProblem($"unable to parse `string` value \"91237-00-16\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"91237-00-16\" as a `DateTime`")
                 .WithAnnotations("[Check.IsGreaterOrEqualTo]")
                 .EndMessage();
         }
@@ -2891,7 +2891,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`KentuckyDerby` → Racetime")
-                .WithProblem($"unable to parse `string` value \"2317-04-19 @ 2:00pm\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"2317-04-19 @ 2:00pm\" as a `DateTime`")
                 .WithAnnotations("[Check.IsLessOrEqualTo]")
                 .EndMessage();
         }
@@ -2907,7 +2907,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`Firearm` → Manufactured")
-                .WithProblem($"unable to parse `string` value \"1927-03-109\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"1927-03-109\" as a `DateTime`")
                 .WithAnnotations("[Check.IsLessOrEqualTo]")
                 .EndMessage();
         }
@@ -3604,7 +3604,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`Mosque` → Established")
-                .WithProblem($"unable to parse `string` value \"1.4.5.0.1.0.3.0\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"1.4.5.0.1.0.3.0\" as a `DateTime`")
                 .WithAnnotations("[Check.IsNot]")
                 .EndMessage();
         }
@@ -3620,7 +3620,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidConstraintValueException>()
                 .WithLocation("`Lease` → StartDate")
-                .WithProblem($"unable to parse `string` value \"1637-07-8819\" as a `DateTime`")
+                .WithProblem("unable to parse `string` value \"1637-07-8819\" as a `DateTime`")
                 .WithAnnotations("[Check.IsNot]")
                 .EndMessage();
         }

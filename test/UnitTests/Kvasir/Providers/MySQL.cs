@@ -24,7 +24,7 @@ namespace UT.Kvasir.Providers {
 
             // Act
             var builder = new KeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             var sql = builder.Build();
 
             // Assert
@@ -40,7 +40,7 @@ namespace UT.Kvasir.Providers {
             // Act
             var builder = new KeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             var sql = builder.Build();
 
             // Assert
@@ -58,7 +58,7 @@ namespace UT.Kvasir.Providers {
 
             // Act
             var builder = new KeyBuilder();
-            builder.SetFields(new[] { field0, field1, field2 });
+            builder.SetFields([field0, field1, field2]);
             var sql = builder.Build();
 
             // Assert
@@ -76,7 +76,7 @@ namespace UT.Kvasir.Providers {
             // Act
             var builder = new KeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field0, field1 });
+            builder.SetFields([field0, field1]);
             var sql = builder.Build();
 
             // Assert
@@ -90,7 +90,7 @@ namespace UT.Kvasir.Providers {
 
             // Act
             var builder = new KeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field ]);
             builder.SetAsPrimaryKey();
             var sql = builder.Build();
 
@@ -107,7 +107,7 @@ namespace UT.Kvasir.Providers {
             // Act
             var builder = new KeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetAsPrimaryKey();
             var sql = builder.Build();
 
@@ -128,7 +128,7 @@ namespace UT.Kvasir.Providers {
 
             // Act
             var builder = new KeyBuilder();
-            builder.SetFields(new[] { field0, field1, field2, field3 });
+            builder.SetFields([field0, field1, field2, field3]);
             builder.SetAsPrimaryKey();
             var sql = builder.Build();
 
@@ -147,7 +147,7 @@ namespace UT.Kvasir.Providers {
             // Act
             var builder = new KeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field0, field1 });
+            builder.SetFields([field0, field1]);
             builder.SetAsPrimaryKey();
             var sql = builder.Build();
 
@@ -164,7 +164,7 @@ namespace UT.Kvasir.Providers {
             // Act
             var builder = new KeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             var sql = builder.Build();
 
             // Assert
@@ -198,12 +198,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("OtherTable"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Clanton"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             var sql = builder.Build();
 
@@ -224,13 +224,13 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("TableBeingReferenced"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Baldur's Gate"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             var sql = builder.Build();
 
@@ -255,12 +255,12 @@ namespace UT.Kvasir.Providers {
             pkField0.Name.Returns(new FieldName("Ciudad Juárez"));
             var pkField1 = Substitute.For<IField>();
             pkField1.Name.Returns(new FieldName("Bandung"));
-            var pk = new PrimaryKey(new[] { pkField0, pkField1 });
+            var pk = new PrimaryKey([pkField0, pkField1]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field0, field1 });
+            builder.SetFields([field0, field1]);
             builder.SetReferencedTable(table);
             var sql = builder.Build();
 
@@ -289,13 +289,13 @@ namespace UT.Kvasir.Providers {
             pkField1.Name.Returns(new FieldName("Belém"));
             var pkField2 = Substitute.For<IField>();
             pkField2.Name.Returns(new FieldName("Donetsk"));
-            var pk = new PrimaryKey(new[] { pkField0, pkField1, pkField2 });
+            var pk = new PrimaryKey([pkField0, pkField1, pkField2]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field0, field1, field2 });
+            builder.SetFields([field0, field1, field2]);
             builder.SetReferencedTable(table);
             var sql = builder.Build();
 
@@ -316,12 +316,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("TableNumber2"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Katowice"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnDeleteBehavior(OnDelete.Cascade);
             builder.SetOnUpdateBehavior(OnUpdate.Cascade);
@@ -345,12 +345,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("AdjacentTable"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Bhopal"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnDeleteBehavior(OnDelete.Prevent);
             builder.SetOnUpdateBehavior(OnUpdate.Prevent);
@@ -374,12 +374,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("NotThisTable"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Almaty"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnDeleteBehavior(OnDelete.NoAction);
             builder.SetOnUpdateBehavior(OnUpdate.NoAction);
@@ -403,12 +403,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("PartnerTable"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Kumasi"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnDeleteBehavior(OnDelete.SetDefault);
             builder.SetOnUpdateBehavior(OnUpdate.SetDefault);
@@ -432,12 +432,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("TableTheSecond"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Soweto"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnDeleteBehavior(OnDelete.SetNull);
             builder.SetOnUpdateBehavior(OnUpdate.SetNull);
@@ -461,12 +461,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("TableNumeroDos"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Tunisia"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnDeleteBehavior(OnDelete.Cascade);
             builder.SetOnUpdateBehavior(OnUpdate.SetNull);
@@ -490,12 +490,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("ThatOtherTableOverThere"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Cuernavaca"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnDeleteBehavior(OnDelete.NoAction);
             var sql = builder.Build();
@@ -517,12 +517,12 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("GodTable"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Bulawayo"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             builder.SetOnUpdateBehavior(OnUpdate.Prevent);
             var sql = builder.Build();
@@ -545,13 +545,13 @@ namespace UT.Kvasir.Providers {
             table.Name.Returns(new TableName("CousinTable"));
             var pkField = Substitute.For<IField>();
             pkField.Name.Returns(new FieldName("Curitiba"));
-            var pk = new PrimaryKey(new[] { pkField });
+            var pk = new PrimaryKey([pkField]);
             table.PrimaryKey.Returns(pk);
 
             // Act
             var builder = new ForeignKeyBuilder();
             builder.SetName(keyName);
-            builder.SetFields(new[] { field });
+            builder.SetFields([field]);
             builder.SetReferencedTable(table);
             var sql = builder.Build();
 
@@ -1240,7 +1240,7 @@ namespace UT.Kvasir.Providers {
             field1.DataType.Returns(DBType.Int32);
             var clause0 = new CrossFieldClause(new FieldExpression(field0), ComparisonOperator.EQ, new FieldExpression(field1));
             var clause1 = new ConstantClause(new FieldExpression(field1), ComparisonOperator.GTE, DBValue.Create(73));
-            var clause2 = new InclusionClause(new FieldExpression(field0), InclusionOperator.In, new[] { DBValue.Create(0), DBValue.Create(1), DBValue.Create(2), DBValue.Create(3), DBValue.Create(4) });
+            var clause2 = new InclusionClause(new FieldExpression(field0), InclusionOperator.In, [DBValue.Create(0), DBValue.Create(1), DBValue.Create(2), DBValue.Create(3), DBValue.Create(4)]);
             var clause3 = new ConstantClause(new FieldExpression(field1), ComparisonOperator.GT, DBValue.Create(16));
             var clause4 = new ConstantClause(new FieldExpression(field1), ComparisonOperator.LT, DBValue.Create(41));
 
@@ -3757,6 +3757,6 @@ namespace UT.Kvasir.Providers {
             var converter = new EnumToStringConverter(typeof(T)).ConverterImpl;
             return (string)converter.Convert(enumerator)!;
         }
-        private static Func<Type, IEnumerable<object>> NO_ENTITIES => _ => Array.Empty<object>();
+        private readonly static Func<Type, IEnumerable<object>> NO_ENTITIES = _ => [];
     }    
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Kvasir.Annotations {
     /// <summary>
@@ -28,7 +29,7 @@ namespace Kvasir.Annotations {
         ///   Constructs a new instance of the <see cref="UniqueAttribute"/> class with an implementation-defined name.
         /// </summary>
         public UniqueAttribute() {
-            lock (LOCK) {
+            lock (lock_) {
                 Name = $"{ANONYMOUS_PREFIX}UNIQUE_FIELD_{sequence_++}";
             }
             IsAnonymous = true;
@@ -76,7 +77,7 @@ namespace Kvasir.Annotations {
         }
 
 
-        private static readonly object LOCK = new();
+        private static readonly Lock lock_ = new();
         private static int sequence_ = 0;
         private static readonly string SYNTHETIC_NAME = $"{ANONYMOUS_PREFIX}-SYNTHETIC";
     }

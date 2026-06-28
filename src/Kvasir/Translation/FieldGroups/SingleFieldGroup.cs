@@ -207,7 +207,7 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         public sealed override IEnumerable<ReferenceFieldGroup> References() {
-            return Enumerable.Empty<ReferenceFieldGroup>();
+            return [];
         }
 
         /// <inheritdoc/>
@@ -270,7 +270,7 @@ namespace Kvasir.Translation {
             Debug.Assert(prefix is not null && !prefix.IsEmpty());
             Debug.Assert(prefix.None(s => s is null || s == ""));
 
-            field_.SetNamePrefix(context, new List<string>(prefix));
+            field_.SetNamePrefix(context, [..prefix]);
             // changing the name prefix is only done for nested fields, so it doesn't affect the Reconstitution argument
         }
 

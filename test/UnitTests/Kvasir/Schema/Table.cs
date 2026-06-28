@@ -111,17 +111,15 @@ namespace UT.Kvasir.Schema {
             mockField2.DataType.Returns(DBType.Enumeration);
             mockField2.GenerateDeclaration(Arg.Any<IFieldDeclBuilder<SqlSnippet>>()).Returns(snippet_);
 
-            var pkey = new PrimaryKey(new IField[] { mockField0 });
-            var ckey = new CandidateKey(new IField[] { mockField1 });
+            var pkey = new PrimaryKey([mockField0]);
+            var ckey = new CandidateKey([mockField1]);
             var check = new CheckConstraint(Substitute.For<Clause>());
 
             var mockReferenceTable = Substitute.For<ITable>();
             mockReferenceTable.PrimaryKey.Returns(pkey);
             var fkey = new ForeignKey(mockReferenceTable, pkey.Fields, OnDelete.SetNull, OnUpdate.NoAction);
 
-            table_ = new Table(new TableName("TABLE"),
-                new IField[] { mockField1, mockField2, mockField0 }, pkey,
-                new CandidateKey[] { ckey }, new ForeignKey[] { fkey }, new CheckConstraint[] { check });
+            table_ = new Table(new TableName("TABLE"), [mockField1, mockField2, mockField0], pkey, [ckey], [fkey], [check]);
         }
         
         private static readonly Table table_;

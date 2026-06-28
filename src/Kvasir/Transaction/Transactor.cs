@@ -118,7 +118,7 @@ namespace Kvasir.Transaction {
             var localizationCommands = new List<ICommands>();
             var tables = new Dictionary<ITable, int>();
             var sourceTypes = new Dictionary<ITable, Type>();
-            foreach (var principal in Topology.OrderEntities(entityTranslations.ToList())) {
+            foreach (var principal in Topology.OrderEntities([..entityTranslations])) {
                 tables[principal.Table] = principalCommands.Count;
                 sourceTypes[principal.Table] = principal.Extractor.SourceType;
                 principalCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
@@ -145,7 +145,7 @@ namespace Kvasir.Transaction {
             // one another. The relative order of the Relation Tables is likewise not relevant because they cannot
             // reference each other, either.
             localizationStartIdx_ = principalCommands.Count + relationCommands.Count;
-            commands_ = principalCommands.Concat(relationCommands).Concat(localizationCommands).ToList();
+            commands_ = [..principalCommands.Concat(relationCommands).Concat(localizationCommands)];
             tables_ = tables;
             sourceTypes_ = sourceTypes;
 
@@ -184,7 +184,7 @@ namespace Kvasir.Transaction {
             var preDefineds = entityTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances);
             preDefineds = preDefineds.Concat(localizationTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances));
             if (!preDefineds.IsEmpty()) {
-                Insert(preDefineds.ToList());
+                Insert([..preDefineds]);
             }
         }
 
@@ -213,8 +213,8 @@ namespace Kvasir.Transaction {
                 while (reader.Read()) {
                     var fields = Enumerable.Range(0, reader.FieldCount).Select(i => DBValue.Create(reader[i])).ToList();
                     if (!rows.TryGetValue(fields[0], out List<List<DBValue>>? currentRows)) {
-                        currentRows = new List<List<DBValue>>();
-                        var instance = localizationTranslations[idx].Principal.Reconstitutor.ReconstituteFrom(fields.Take(1).ToList());
+                        currentRows = [];
+                        var instance = localizationTranslations[idx].Principal.Reconstitutor.ReconstituteFrom([..fields.Take(1)]);
                         rows[fields[0]] = currentRows;
                         instances[fields[0]] = instance;
                     }
@@ -425,7 +425,7 @@ namespace Kvasir.Transaction {
                     foreach (var entity in mapping[translation.CLRSource]) {
                         var ownerFields = translation.Principal.KeyExtractor.ExtractFrom(entity);
                         var relationFields = relation.Extractor.ExtractFrom(entity);
-                        var relationPKFieldsCount = relation.Table.PrimaryKey.Fields.Count - ownerFields.Count();
+                        var relationPKFieldsCount = relation.Table.PrimaryKey.Fields.Count - ownerFields.Count;
 
                         deleteRows.AddRange(relationFields.Deletions.Select(r => ownerFields.Concat(r.Take(relationPKFieldsCount)).ToList()));
                         updateRows.AddRange(relationFields.Modifications.Select(r => ownerFields.Concat(r).ToList()));
@@ -577,7 +577,7 @@ namespace Kvasir.Transaction {
             // provided on construction and we need to translate them. We'll use default settings since we're only
             // dealing with framework-controlled Tables anyway, and we know that the table names are reserved. There
             // also won't be any referential fields, so we don't have to worry about the Entity lookup.
-            var translator = new Translator(t => Enumerable.Empty<object>(), logger_);
+            var translator = new Translator(t => [], logger_);
 
             ManageSchemaMigration(translator);
         }
@@ -673,7 +673,7 @@ namespace Kvasir.Transaction {
         private readonly IReadOnlyDictionary<Type, EntityTranslation> entityTranslations_;
         private readonly IReadOnlyDictionary<Type, LocalizationTranslation> localizationTranslations_;
         private readonly IReadOnlyDictionary<ITable, int> tables_;          // maps to index in `commands_` list
-        private readonly IReadOnlyDictionary<ITable, Type> sourceTypes_;
+        private readonly Dictionary<ITable, Type> sourceTypes_;
         private readonly IDbConnection connection_;
         private readonly ICommandsFactory commandsFactory_;
         private readonly Action<object> entityStorage_;

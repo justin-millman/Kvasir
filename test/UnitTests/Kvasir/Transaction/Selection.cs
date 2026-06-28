@@ -558,8 +558,8 @@ namespace UT.Kvasir.Transaction {
                 .WithEntityRow<HailMary>(miracle)
                 .WithEntityRow<HailMary.FootballPlayer>(aaron)
                 .WithEntityRow<HailMary.FootballPlayer>(richard)
-                .WithRelationRow<HailMary>(0, new object[] { miracle[0], miracle[1], aaron[0], aaron[1] })
-                .WithRelationRow<HailMary>(0, new object[] { miracle[0], miracle[1], richard[0], richard[1] });
+                .WithRelationRow<HailMary>(0, [miracle[0], miracle[1], aaron[0], aaron[1]])
+                .WithRelationRow<HailMary>(0, [miracle[0], miracle[1], richard[0], richard[1]]);
 
             // Act
             fixture.Transactor.SelectAll();
@@ -705,9 +705,9 @@ namespace UT.Kvasir.Transaction {
                 .WithLocalizationRow<LocalizedMeasure>(weight0)
                 .WithLocalizationRow<LocalizedMeasure>(weight1)
                 .WithLocalizationRow<LocalizedMeasure>(gestation)
-                .WithRelationRow<Whale>(0, new object[] { whale[0], ConversionOf(Whale.Dimension.Length), length0[0] })
-                .WithRelationRow<Whale>(0, new object[] { whale[0], ConversionOf(Whale.Dimension.Weight), weight0[0] })
-                .WithRelationRow<Whale>(0, new object[] { whale[0], ConversionOf(Whale.Dimension.GestationPeriod), gestation[0] });
+                .WithRelationRow<Whale>(0, [whale[0], ConversionOf(Whale.Dimension.Length), length0[0]])
+                .WithRelationRow<Whale>(0, [whale[0], ConversionOf(Whale.Dimension.Weight), weight0[0]])
+                .WithRelationRow<Whale>(0, [whale[0], ConversionOf(Whale.Dimension.GestationPeriod), gestation[0]]);
 
             // Act
             fixture.Transactor.SelectAll();
@@ -754,8 +754,8 @@ namespace UT.Kvasir.Transaction {
                 .WithEntityRow<IranianShah>(naderShah)
                 .WithEntityRow<IranianShah>(abbas)
                 .WithEntityRow<IranianShah>(tahmasp)
-                .WithRelationRow<IranianShah>(0, new object[] { naderShah[0], abbas[0] })
-                .WithRelationRow<IranianShah>(0, new object[] { abbas[0], tahmasp[0] });
+                .WithRelationRow<IranianShah>(0, [naderShah[0], abbas[0]])
+                .WithRelationRow<IranianShah>(0, [abbas[0], tahmasp[0]]);
 
             // Act
             fixture.Transactor.SelectAll();

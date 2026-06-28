@@ -19,7 +19,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(byte));
+            impl.ResultType.Should().Be<byte>();
             conversion.Should().Be((byte)1);
             reversion.Should().Be(enumerator);
         }
@@ -37,7 +37,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(int));
+            impl.ResultType.Should().Be<int>();
             conversion.Should().Be(3);
             reversion.Should().Be(enumerator);
         }
@@ -55,7 +55,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(long));
+            impl.ResultType.Should().Be<long>();
             conversion.Should().Be(2L);
             reversion.Should().Be(enumerator);
         }
@@ -73,7 +73,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(sbyte));
+            impl.ResultType.Should().Be<sbyte>();
             conversion.Should().Be((sbyte)2);
             reversion.Should().Be(enumerator);
         }
@@ -91,7 +91,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(short));
+            impl.ResultType.Should().Be<short>();
             conversion.Should().Be((short)1);
             reversion.Should().Be(enumerator);
         }
@@ -109,7 +109,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(uint));
+            impl.ResultType.Should().Be<uint>();
             conversion.Should().Be(0U);
             reversion.Should().Be(enumerator);
         }
@@ -127,7 +127,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(ulong));
+            impl.ResultType.Should().Be<ulong>();
             conversion.Should().Be(3UL);
             reversion.Should().Be(enumerator);
         }
@@ -145,7 +145,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(ushort));
+            impl.ResultType.Should().Be<ushort>();
             conversion.Should().Be((ushort)2);
             reversion.Should().Be(enumerator);
         }
@@ -163,7 +163,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(byte));
+            impl.ResultType.Should().Be<byte>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -181,7 +181,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(int));
+            impl.ResultType.Should().Be<int>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -199,7 +199,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(long));
+            impl.ResultType.Should().Be<long>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -217,7 +217,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(sbyte));
+            impl.ResultType.Should().Be<sbyte>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -235,7 +235,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(short));
+            impl.ResultType.Should().Be<short>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -253,7 +253,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(uint));
+            impl.ResultType.Should().Be<uint>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -271,7 +271,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(ulong));
+            impl.ResultType.Should().Be<ulong>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -289,7 +289,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(ushort));
+            impl.ResultType.Should().Be<ushort>();
             conversion.Should().Be(null);
             reversion.Should().Be(enumerator);
         }
@@ -307,7 +307,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(string));
+            impl.ResultType.Should().Be<string>();
             conversion.Should().Be("Water");
             reversion.Should().Be(enumerator);
         }
@@ -325,7 +325,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(string));
+            impl.ResultType.Should().Be<string>();
             conversion.Should().Be("Disabled");
             reversion.Should().Be(enumerator);
         }
@@ -343,7 +343,7 @@ namespace UT.Kvasir.Core {
 
             // Assert
             impl.SourceType.Should().Be(type);
-            impl.ResultType.Should().Be(typeof(string));
+            impl.ResultType.Should().Be<string>();
             conversion.Should().Be("On|Enabled|Mixed");
             reversion.Should().Be(enumerator);
         }

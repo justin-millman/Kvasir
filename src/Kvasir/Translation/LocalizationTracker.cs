@@ -25,7 +25,7 @@ namespace Kvasir.Translation {
             Debug.Assert(Translator.IsLocalizationType(source.PropertyType));
 
             Property = source;
-            decontextualizedAccessPath_ = new List<string>() { source.Name.Split('.')[^1] };
+            decontextualizedAccessPath_ = [source.Name.Split('.')[^1]];
         }
 
         /// <summary>

@@ -83,7 +83,7 @@ namespace Kvasir.Translation {
         ///   modified (i.e. already <see cref="FieldGroup.Clone">cloned</see>).
         /// </param>
         protected MultiFieldGroup(Context context, PropertyInfo source, IEnumerable<FieldGroup> fields)
-            : this(context, source, fields, Enumerable.Empty<RelationTracker>()) {}
+            : this(context, source, fields, []) {}
 
         /// <summary>
         ///   Constructs a new <see cref="MultiFieldGroup"/> that may, but does not necessarily, have at least one
@@ -125,7 +125,7 @@ namespace Kvasir.Translation {
             fields_ = fields.ToDictionary(f => f.Source.Name.Split('.')[^1], f => f);
             trackers_ = trackers.ToDictionary(t => t.Property.Name.Split('.')[^1], t => t);
             IsCalculated = source.HasAttribute<CalculatedAttribute>();
-            SetNamePrefix(context, new List<string>() {});
+            SetNamePrefix(context, []);
             ProcessAnnotations(context);
 
             // The if-block is only skipped if we have an Aggregate consisting of only Relations, in which case it will
@@ -570,6 +570,6 @@ namespace Kvasir.Translation {
         private bool nullabilityAnnotated_;
         private bool nameAnnotated_;
         private readonly IReadOnlyDictionary<string, FieldGroup> fields_;
-        private readonly IReadOnlyDictionary<string, RelationTracker> trackers_;
+        private readonly Dictionary<string, RelationTracker> trackers_;
     }
 }

@@ -68,7 +68,7 @@ namespace Kvasir.Reconstitution {
             keyExtractor_ = keyExtractor;
             domainGenerator_ = domainGenerator;
             keyCache_ = new(new ListEqualityComparer());
-            cachedPossibleMatches_ = new HashSet<object>();
+            cachedPossibleMatches_ = [];
             ResultType = keyExtractor_.SourceType;
         }
 

@@ -492,11 +492,11 @@ namespace Kvasir.Translation {
             converter_ = source.converter_;
             default_ = source.default_;
             inPrimaryKey_ = source.inPrimaryKey_;
-            keyMemberships_ = new HashSet<KeyName>(source.keyMemberships_);
-            allowedValues_ = new HashSet<object>(source.allowedValues_);
-            disallowedValues_ = new HashSet<object>(source.disallowedValues_);
-            restrictedDomain_ = new HashSet<object>(source.restrictedDomain_);
-            checks_ = new List<(CheckAttribute, Context)>(source.checks_);
+            keyMemberships_ = [..source.keyMemberships_];
+            allowedValues_ = [..source.allowedValues_];
+            disallowedValues_ = [..source.disallowedValues_];
+            restrictedDomain_ = [..source.restrictedDomain_];
+            checks_ = [..source.checks_];
             annotationsSeen_ = Annotation.None;
 
             // Only the [Check.IsPositive] and [Check.IsNegative] annotations carry over. Those annotations get
@@ -531,11 +531,11 @@ namespace Kvasir.Translation {
             converter_ = source.converter_;
             default_ = Option.None<object?>();
             inPrimaryKey_ = false;
-            keyMemberships_ = new HashSet<KeyName>();
-            allowedValues_ = new HashSet<object>();
-            disallowedValues_ = new HashSet<object>();
-            restrictedDomain_ = new HashSet<object>(source.restrictedDomain_);
-            checks_ = new List<(CheckAttribute, Context)>();
+            keyMemberships_ = [];
+            allowedValues_ = [];
+            disallowedValues_ = [];
+            restrictedDomain_ = [..source.restrictedDomain_];
+            checks_ = [];
             annotationsSeen_ = Annotation.None;
         }
 
@@ -558,11 +558,11 @@ namespace Kvasir.Translation {
             converter_ = Option.None<DataConverter>();
             default_ = Option.None<object?>();
             inPrimaryKey_ = false;
-            keyMemberships_ = new HashSet<KeyName>();
-            allowedValues_ = new HashSet<object>();
-            disallowedValues_ = new HashSet<object>();
-            restrictedDomain_ = new HashSet<object>();
-            checks_ = new List<(CheckAttribute, Context)>();
+            keyMemberships_ = [];
+            allowedValues_ = [];
+            disallowedValues_ = [];
+            restrictedDomain_ = [];
+            checks_ = [];
             annotationsSeen_ = Annotation.None;
         }
 
@@ -617,14 +617,14 @@ namespace Kvasir.Translation {
             // won't be a restricted image; instead, the enumerators are fed through the Data Converter and the results
             // become the set of allowed values, as if via a [Check.IsOneOf] constraint
             if (conv.SourceType.IsEnum && !conv.ResultType.IsEnum) {
-                restrictedDomain_ = conv.SourceType.ValidValues().Select(e => conv.TryConvert(e, context)!).ToHashSet();
+                restrictedDomain_ = [..conv.SourceType.ValidValues().Select(e => conv.TryConvert(e, context)!)];
             }
 
             // Similarly, if the CLR type of the property is `bool` but the result of the Data Converter is not, then
             // we have to pass { true, false } through the Data Converter for the results to become the set of allowed
             // values.
             else if (conv.SourceType == typeof(bool) && conv.ResultType != typeof(bool)) {
-                restrictedDomain_ = new bool[] { true, false }.Select(b => conv.TryConvert(b, context)!).ToHashSet();
+                restrictedDomain_ = [..BOOLEANS.Select(b => conv.TryConvert(b, context)!)];
             }
         }
 
@@ -658,7 +658,7 @@ namespace Kvasir.Translation {
             // won't be a restricted image; instead, the enumerators are fed through the Data Converter and the results
             // become the set of allowed values, as if via a [Check.IsOneOf] constraint
             if (converter.SourceType.IsEnum && !converter.ResultType.IsEnum) {
-                restrictedDomain_ = converter.SourceType.ValidValues().Select(e => converter.TryConvert(e, context)!).ToHashSet();
+                restrictedDomain_ = [..converter.SourceType.ValidValues().Select(e => converter.TryConvert(e, context)!)];
             }
 
             // No need for a Boolean check here, because the only annotations that can trigger this constructor are
@@ -1005,6 +1005,7 @@ namespace Kvasir.Translation {
         private readonly HashSet<object> restrictedDomain_;
         private readonly List<(CheckAttribute Annotation, Context Context)> checks_;
         private Annotation annotationsSeen_;
+        private static readonly List<bool> BOOLEANS = [true, false];
 
 
         // A discriminator for the constructor to indicate that metadata should be reset

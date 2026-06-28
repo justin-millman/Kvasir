@@ -44,7 +44,7 @@ namespace Kvasir.Translation {
             Debug.Assert(type is not SyntheticType && type.IsValueType);
 
             DeclaringType = type;
-            parameters_ = Array.Empty<SyntheticParameterInfo>();
+            parameters_ = [];
         }
 
         /// <summary>
@@ -62,12 +62,12 @@ namespace Kvasir.Translation {
             Debug.Assert(properties is not null);
 
             DeclaringType = type;
-            parameters_ = properties.Select(p => new SyntheticParameterInfo(this, p.Name, p.PropertyType)).ToArray();
+            parameters_ = [..properties.Select(p => new SyntheticParameterInfo(this, p.Name, p.PropertyType))];
         }
 
         /// <inheritdoc/>
         public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
-            return new List<CustomAttributeData>();
+            return [];
         }
 
         /// <inheritdoc/>

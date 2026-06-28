@@ -176,7 +176,7 @@ namespace UT.Cybele.Extensions {
 
         [TestMethod] public void DispalyEmptyArray() {
             // Arrange
-            var array = new object[] {};
+            var array = Array.Empty<object>();
 
             // Act
             var arrayDisplay = array.ForDisplay();

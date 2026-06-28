@@ -78,7 +78,7 @@ namespace Cybele.Core {
                 throw new ArgumentException(BAD_PROPERTY_MSG, nameof(firstProperty));
             }
 
-            chain_ = new List<PropertyInfo>() { firstProperty };
+            chain_ = [firstProperty];
         }
 
         /// <summary>

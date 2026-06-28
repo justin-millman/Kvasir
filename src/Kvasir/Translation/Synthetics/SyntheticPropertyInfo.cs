@@ -56,7 +56,7 @@ namespace Kvasir.Translation {
             Name = name;
             PropertyType = propertyType;
             getter_ = new SyntheticMethodInfo(this);
-            annotations_ = annotations.ToList();
+            annotations_ = [..annotations];
         }
 
         /// <inheritdoc/>
@@ -73,7 +73,7 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         public sealed override IList<CustomAttributeData> GetCustomAttributesData() {
-            return new List<CustomAttributeData>();
+            return [];
         }
 
         /// <inheritdoc/>
@@ -83,7 +83,7 @@ namespace Kvasir.Translation {
 
         /// <inheritdoc/>
         public sealed override ParameterInfo[] GetIndexParameters() {
-            return Array.Empty<ParameterInfo>();
+            return [];
         }
 
         /// <inheritdoc/>

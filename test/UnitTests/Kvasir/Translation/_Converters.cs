@@ -32,8 +32,8 @@ namespace UT.Kvasir.Translation {
         }
         public class MakeDate<T> : IDataConverter<T, DateTime> where T : notnull {
             public MakeDate() {
-                conversions_ = new Dictionary<T, DateTime>();
-                reversions_ = new Dictionary<DateTime, T>();
+                conversions_ = [];
+                reversions_ = [];
                 lastDate_ = new DateTime(2000, 1, 1);
             }
             public DateTime Convert(T source) {

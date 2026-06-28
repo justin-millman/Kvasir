@@ -283,7 +283,7 @@ namespace UT.Kvasir.Transaction {
             // Act
             fixture.Transactor.CreateTables();
             var createCmd = fixture.PrincipalCommands<Dashavatara>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<Dashavatara>().InsertCommand(Enumerable.Empty<IReadOnlyList<DBValue>>());
+            var insertCmd = fixture.PrincipalCommands<Dashavatara>().InsertCommand([]);
             var inserts = fixture.InsertionsFor(insertCmd);
 
             // Assert
@@ -313,7 +313,7 @@ namespace UT.Kvasir.Transaction {
             // Act
             fixture.Transactor.CreateTables();
             var createCmd = fixture.PrincipalCommands<CivVITerrain>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<CivVITerrain>().InsertCommand(Enumerable.Empty<IReadOnlyList<DBValue>>());
+            var insertCmd = fixture.PrincipalCommands<CivVITerrain>().InsertCommand([]);
             var inserts = fixture.InsertionsFor(insertCmd);
 
             // Assert

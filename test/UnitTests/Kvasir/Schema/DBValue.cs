@@ -180,7 +180,7 @@ namespace UT.Kvasir.Schema {
 
         [TestMethod] public void CreateFromGuidDirectly() {
             // Arrange
-            var rawValue = new Guid(0, 1, 1, new byte[] { 2, 3, 5, 8, 13, 21, 34, 55 });
+            var rawValue = new Guid(0, 1, 1, [2, 3, 5, 8, 13, 21, 34, 55]);
             var expectedType = DBType.Guid;
 
             // Act
@@ -429,7 +429,7 @@ namespace UT.Kvasir.Schema {
 
         [TestMethod] public void CreateFromGuidIndirectly() {
             // Arrange
-            var rawValue = new Guid(0, 1, 1, new byte[] { 2, 3, 5, 8, 13, 21, 34, 55 });
+            var rawValue = new Guid(0, 1, 1, [2, 3, 5, 8, 13, 21, 34, 55]);
             var expectedType = DBType.Guid;
 
             // Act
@@ -609,10 +609,10 @@ namespace UT.Kvasir.Schema {
 
         [TestMethod] public void ZeroIsInstanceOfAnyNumeric() {
             // Arrange
-            DBType[] numerics = new DBType[] {
+            DBType[] numerics = [
                 DBType.Int8, DBType.Int16, DBType.Int32, DBType.Int64, DBType.UInt8, DBType.UInt16, DBType.UInt32,
                 DBType.UInt64, DBType.Single, DBType.Double
-            };
+            ];
             var zero = DBValue.Create(0);
 
             // Act & Assert

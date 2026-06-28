@@ -25,7 +25,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(DifferentialEquation));
 
             // Act
-            fixture.Transactor.Update(new object[] { diffEq });
+            fixture.Transactor.Update([diffEq]);
             var diffEqCmd = fixture.PrincipalCommands<DifferentialEquation>().UpdateCommand(ANY_ROWS);
             var diffEqUpdates = fixture.UpdatesFor(diffEqCmd);
 
@@ -55,7 +55,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Conquistador));
 
             // Act
-            fixture.Transactor.Update(new object[] { cortes, pizarro });
+            fixture.Transactor.Update([cortes, pizarro]);
             var conquistadorCmd = fixture.PrincipalCommands<Conquistador>().UpdateCommand(ANY_ROWS);
             var conquistadorUpdates = fixture.UpdatesFor(conquistadorCmd);
 
@@ -86,7 +86,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(BigFatQuiz));
 
             // Act
-            fixture.Transactor.Update(new object[] { quiz });
+            fixture.Transactor.Update([quiz]);
             var quizCmd = fixture.PrincipalCommands<BigFatQuiz>().UpdateCommand(ANY_ROWS);
             var quizUpdates = fixture.UpdatesFor(quizCmd);
             var teamsInsertCmd = fixture.RelationCommands<BigFatQuiz>(0).InsertCommand(ANY_ROWS);
@@ -115,20 +115,20 @@ namespace UT.Kvasir.Transaction {
                 Preparer = "Chef Miguel C. Espadillo",
                 NumServings = 4,
                 MadeInMolcajete = true,
-                Ingredients = new RelationSet<string>() {
+                Ingredients = [
                     "Avocado",
                     "Cilantro",
                     "Jalapeño",
                     "Lime Juice",
                     "Salt"
-                }
+                ]
             };
             (guacamole.Ingredients as IRelation).Canonicalize();
             guacamole.Ingredients.Clear();
             var fixture = new TestFixture(typeof(Guacamole));
 
             // Act
-            fixture.Transactor.Update(new object[] { guacamole });
+            fixture.Transactor.Update([guacamole]);
             var guacamoleCmd = fixture.PrincipalCommands<Guacamole>().UpdateCommand(ANY_ROWS);
             var guacamoleUpdates = fixture.UpdatesFor(guacamoleCmd);
             var ingredientsInsertCmd = fixture.RelationCommands<Guacamole>(0).InsertCommand(ANY_ROWS);
@@ -181,7 +181,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(EyeDrops));
 
             // Act
-            fixture.Transactor.Update(new object[] { eyeDrops });
+            fixture.Transactor.Update([eyeDrops]);
             var eyeDropsCmd = fixture.PrincipalCommands<EyeDrops>().UpdateCommand(ANY_ROWS);
             var eyeDropsUpdates = fixture.UpdatesFor(eyeDropsCmd);
             var treatmentsInsertCmd = fixture.RelationCommands<EyeDrops>(0).InsertCommand(ANY_ROWS);
@@ -228,7 +228,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(EquestrianStatue));
 
             // Act
-            fixture.Transactor.Update(new object[] { statue });
+            fixture.Transactor.Update([statue]);
             var statueCmd = fixture.PrincipalCommands<EquestrianStatue>().UpdateCommand(ANY_ROWS);
             var statueUpdates = fixture.UpdatesFor(statueCmd);
             var dimensionsInsertCmd = fixture.RelationCommands<EquestrianStatue>(0).InsertCommand(ANY_ROWS);
@@ -262,7 +262,7 @@ namespace UT.Kvasir.Transaction {
                 For = "Anticoagulant Properties of Cnidarian Saliva on Gluten-Free Females Aged 17-23",
                 Style = Bibliography.Standard.Harvard,
                 NumPages = 218,
-                References = new RelationOrderedList<Bibliography.Reference>() {
+                References = [
                     new Bibliography.Reference() {
                         Title = "Nervous Systems of the Animal Kingdom",
                         Author = "F. Maury Cappaneck",
@@ -278,14 +278,14 @@ namespace UT.Kvasir.Transaction {
                         Author = "Gary Zedersztrom",
                         TypeOfWork = Bibliography.Literature.Newscast
                     }
-                }
+                ]
             };
             (bibliography.References as IRelation).Canonicalize();
             bibliography.References[1] = bibliography.References[1] with { TypeOfWork = Bibliography.Literature.Interview };
             var fixture = new TestFixture(typeof(Bibliography));
 
             // Act
-            fixture.Transactor.Update(new object[] { bibliography });
+            fixture.Transactor.Update([bibliography]);
             var bibliographyCmd = fixture.PrincipalCommands<Bibliography>().UpdateCommand(ANY_ROWS);
             var bibliographyUpdates = fixture.UpdatesFor(bibliographyCmd);
             var referencesInsertCmd = fixture.RelationCommands<Bibliography>(0).InsertCommand(ANY_ROWS);
@@ -318,13 +318,13 @@ namespace UT.Kvasir.Transaction {
                 FirmName = "Akuna Capital",
                 NetCapital = 618000000M,
                 IsDesignated = false,
-                Symbols = new RelationOrderedList<string>() {
+                Symbols = [
                     "NVDA",
                     "IBIT",
                     "APL",
                     "TSLA",
                     "MSFT"
-                }
+                ]
             };
             (akuna.Symbols as IRelation).Canonicalize();
             akuna.Symbols[2] = "AAPL";
@@ -332,7 +332,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(MarketMaker));
 
             // Act
-            fixture.Transactor.Update(new object[] { akuna });
+            fixture.Transactor.Update([akuna]);
             var marketMakerCmd = fixture.PrincipalCommands<MarketMaker>().UpdateCommand(ANY_ROWS);
             var marketMakerUpdates = fixture.UpdatesFor(marketMakerCmd);
             var symbolsInsertCmd = fixture.RelationCommands<MarketMaker>(0).InsertCommand(ANY_ROWS);
@@ -369,12 +369,12 @@ namespace UT.Kvasir.Transaction {
                 ScrollLanguage = DeadSeaScroll.Language.Hebrew,
                 BiblicalSource = "Ezekiel 16:31-33",
                 DiscoveryYear = 1952,
-                VerifiedAuthors = new RelationSet<string>()
+                VerifiedAuthors = []
             };
             var fixture = new TestFixture(typeof(DeadSeaScroll));
 
             // Act
-            fixture.Transactor.Update(new object[] { scroll });
+            fixture.Transactor.Update([scroll]);
             var scrollCmd = fixture.PrincipalCommands<DeadSeaScroll>().UpdateCommand(ANY_ROWS);
             var scrollUpdates = fixture.UpdatesFor(scrollCmd);
             var authorsInsertCmd = fixture.RelationCommands<DeadSeaScroll>(0).InsertCommand(ANY_ROWS);
@@ -429,7 +429,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Diocese));
 
             // Act
-            fixture.Transactor.Update(new object[] { chicago, derby, perth });
+            fixture.Transactor.Update([chicago, derby, perth]);
             var dioceseCmd = fixture.PrincipalCommands<Diocese>().UpdateCommand(ANY_ROWS);
             var dioceseUpdates = fixture.UpdatesFor(dioceseCmd);
             var bishopsInsertCmd = fixture.RelationCommands<Diocese>(0).InsertCommand(ANY_ROWS);
@@ -472,7 +472,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Placement));
 
             // Act
-            fixture.Transactor.Update(new object[] { placement });
+            fixture.Transactor.Update([placement]);
             var placementInsertCmd = fixture.PrincipalCommands<Placement>().InsertCommand(ANY_ROWS);
             var placementInsertions = fixture.InsertionsFor(placementInsertCmd);
             var placementDeleteCmd = fixture.PrincipalCommands<Placement>().DeleteCommand(ANY_ROWS);
@@ -503,7 +503,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Permissions));
 
             // Act
-            fixture.Transactor.Update(new object[] { permissions });
+            fixture.Transactor.Update([permissions]);
             var permissionsInsertCmd = fixture.PrincipalCommands<Permissions>().InsertCommand(ANY_ROWS);
             var permissionsInsertions = fixture.InsertionsFor(permissionsInsertCmd);
             var permissionsDeleteCmd = fixture.PrincipalCommands<Permissions>().DeleteCommand(ANY_ROWS);
@@ -534,7 +534,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(BinaryValue));
 
             // Act
-            fixture.Transactor.Update(new object[] { binary });
+            fixture.Transactor.Update([binary]);
             var binaryInsertCmd = fixture.PrincipalCommands<BinaryValue>().InsertCommand(ANY_ROWS);
             var binaryInsertions = fixture.InsertionsFor(binaryInsertCmd);
             var binaryDeleteCmd = fixture.PrincipalCommands<BinaryValue>().DeleteCommand(ANY_ROWS);
@@ -572,7 +572,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(BigBad));
 
             // Act
-            fixture.Transactor.Update(new object[] { bigBad });
+            fixture.Transactor.Update([bigBad]);
             var bigBadInsertCmd = fixture.PrincipalCommands<BigBad>().InsertCommand(ANY_ROWS);
             var bigBadInsertions = fixture.InsertionsFor(bigBadInsertCmd);
             var bigBadDeleteCmd = fixture.PrincipalCommands<BigBad>().DeleteCommand(ANY_ROWS);
@@ -617,7 +617,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(MinimumWage));
 
             // Act
-            fixture.Transactor.Update(new object[] { illinois, federal, hawaii });
+            fixture.Transactor.Update([illinois, federal, hawaii]);
             var wageInsertCmd = fixture.PrincipalCommands<MinimumWage>().InsertCommand(ANY_ROWS);
             var wageInsertions = fixture.InsertionsFor(wageInsertCmd);
             var wageDeleteCmd = fixture.PrincipalCommands<MinimumWage>().DeleteCommand(ANY_ROWS);
@@ -680,7 +680,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Waltz), typeof(Pacemaker), typeof(DemigodCamp));
 
             // Act
-            fixture.Transactor.Update(new object[] { waltz, pacemaker, camp });
+            fixture.Transactor.Update([waltz, pacemaker, camp]);
             var waltzCmd = fixture.PrincipalCommands<Waltz>().UpdateCommand(ANY_ROWS);
             var waltzUpdates = fixture.UpdatesFor(waltzCmd);
             var pacemakerCmd = fixture.PrincipalCommands<Pacemaker>().UpdateCommand(ANY_ROWS);
@@ -721,7 +721,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Philosophy), typeof(AlterEgo), typeof(Pain));
 
             // Act
-            fixture.Transactor.Update(new object[] { philosophy, alterEgo, pain });
+            fixture.Transactor.Update([philosophy, alterEgo, pain]);
             var philosophyInsertCmd = fixture.PrincipalCommands<Philosophy>().InsertCommand(ANY_ROWS);
             var philosophyInsertions = fixture.InsertionsFor(philosophyInsertCmd);
             var philosophyDeleteCmd = fixture.PrincipalCommands<Philosophy>().DeleteCommand(ANY_ROWS);
@@ -802,7 +802,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(PromoCode), typeof(PromoCode.Discout), typeof(PromoCode.Company));
 
             // Act
-            fixture.Transactor.Update(new object[] { company, discount, promoCode });
+            fixture.Transactor.Update([company, discount, promoCode]);
             var promoCodeCmd = fixture.PrincipalCommands<PromoCode>().UpdateCommand(ANY_ROWS);
             var promoCodeUpdates = fixture.UpdatesFor(promoCodeCmd);
             var companyCmd = fixture.PrincipalCommands<PromoCode.Company>().UpdateCommand(ANY_ROWS);
@@ -856,7 +856,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(WritOfCertiorari), typeof(WritOfCertiorari.Justice), typeof(WritOfCertiorari.Case), typeof(WritOfCertiorari.President));
 
             // Act
-            fixture.Transactor.Update(new object[] { writ, justice, courtCase, president });
+            fixture.Transactor.Update([writ, justice, courtCase, president]);
             var writeCmd = fixture.PrincipalCommands<WritOfCertiorari>().UpdateCommand(ANY_ROWS);
             var writUpdates = fixture.UpdatesFor(writeCmd);
             var justiceCmd = fixture.PrincipalCommands<WritOfCertiorari.Justice>().UpdateCommand(ANY_ROWS);
@@ -919,7 +919,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(HungerGames), typeof(HungerGames.PanemCitizen));
 
             // Act
-            fixture.Transactor.Update(new object[] { games, katniss, rue, marvel });
+            fixture.Transactor.Update([games, katniss, rue, marvel]);
             var hungerGamesCmd = fixture.PrincipalCommands<HungerGames>().UpdateCommand(ANY_ROWS);
             var hungerGamesUpdates = fixture.UpdatesFor(hungerGamesCmd);
             var citizenCmd = fixture.PrincipalCommands<HungerGames.PanemCitizen>().UpdateCommand(ANY_ROWS);
@@ -969,7 +969,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Daemon), typeof(LocalizedText));
 
             // Act
-            fixture.Transactor.Update(new object[] { daemon, daemon.Animal });
+            fixture.Transactor.Update([daemon, daemon.Animal]);
             var daemonCmd = fixture.PrincipalCommands<Daemon>().UpdateCommand(ANY_ROWS);
             var daemonUpdates = fixture.UpdatesFor(daemonCmd);
             var textInsertCmd = fixture.PrincipalCommands<LocalizedText>().InsertCommand(ANY_ROWS);
@@ -1025,7 +1025,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Vasectomy), typeof(Vasectomy.Doctor), typeof(Vasectomy.LocalizedStage));
 
             // Act
-            fixture.Transactor.Update(new object[] { doctor0, doctor1, vasectomy, vasectomy.Doctors });
+            fixture.Transactor.Update([doctor0, doctor1, vasectomy, vasectomy.Doctors]);
             var doctorUpdateCmd = fixture.PrincipalCommands<Vasectomy.Doctor>().UpdateCommand(ANY_ROWS);
             var doctorUpdates = fixture.UpdatesFor(doctorUpdateCmd);
             var vasectomyUpdateCmd = fixture.PrincipalCommands<Vasectomy>().UpdateCommand(ANY_ROWS);
@@ -1083,7 +1083,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Harbor), typeof(LocalizedText));
 
             // Act
-            fixture.Transactor.Update(new object[] { petapsco, harbor });
+            fixture.Transactor.Update([petapsco, harbor]);
             var harborCmd = fixture.PrincipalCommands<Harbor>().UpdateCommand(ANY_ROWS);
             var harborUpdates = fixture.UpdatesFor(harborCmd);
             var textInsertCmd = fixture.PrincipalCommands<LocalizedText>().InsertCommand(ANY_ROWS);
@@ -1134,49 +1134,49 @@ namespace UT.Kvasir.Transaction {
                 Father = "Dharma Raja",
                 MahabharataMentions = 204,
                 PrimaryWeapon = "spear",
-                Brothers = new RelationList<Pandava>()
+                Brothers = []
             };
             var arjuna = new Pandava() {
                 Name = "Arjuna",
                 Father = "Indra",
                 MahabharataMentions = 320,
                 PrimaryWeapon = "bow and arrow",
-                Brothers = new RelationList<Pandava>() { yudhishthira }
+                Brothers = [yudhishthira]
             };
             var bhima = new Pandava() {
                 Name = "Bhima",
                 Father = "Vayu",
                 MahabharataMentions = 141,
                 PrimaryWeapon = "mace",
-                Brothers = new RelationList<Pandava>() { yudhishthira, arjuna }
+                Brothers = [yudhishthira, arjuna]
             };
             var nakula = new Pandava() {
                 Name = "Nakula",
                 Father = "Nasatya",
                 MahabharataMentions = 13,
                 PrimaryWeapon = "sword",
-                Brothers = new RelationList<Pandava>() { yudhishthira, arjuna, bhima }
+                Brothers = [yudhishthira, arjuna, bhima]
             };
             var sahadeva = new Pandava() {
                 Name = "Sahadeva",
                 Father = "Kumara",
                 MahabharataMentions = 16,
                 PrimaryWeapon = "sword",
-                Brothers = new RelationList<Pandava>() { yudhishthira, arjuna, bhima, nakula }
+                Brothers = [yudhishthira, arjuna, bhima, nakula]
             };
             (yudhishthira.Brothers as IRelation).Canonicalize();
             (arjuna.Brothers as IRelation).Canonicalize();
             (bhima.Brothers as IRelation).Canonicalize();
             (nakula.Brothers as IRelation).Canonicalize();
             (sahadeva.Brothers as IRelation).Canonicalize();
-            yudhishthira.Brothers.AddRange(new Pandava[] { arjuna, bhima, nakula, sahadeva });
-            arjuna.Brothers.AddRange(new Pandava[] {bhima, nakula, sahadeva });
-            bhima.Brothers.AddRange(new Pandava[] { nakula, sahadeva });
-            nakula.Brothers.AddRange(new Pandava[] { sahadeva });
+            yudhishthira.Brothers.AddRange([arjuna, bhima, nakula, sahadeva]);
+            arjuna.Brothers.AddRange([bhima, nakula, sahadeva]);
+            bhima.Brothers.AddRange([nakula, sahadeva]);
+            nakula.Brothers.AddRange([sahadeva]);
             var fixture = new TestFixture(typeof(Pandava));
 
             // Act
-            fixture.Transactor.Update(new object[] { yudhishthira, arjuna, bhima, nakula, sahadeva });
+            fixture.Transactor.Update([yudhishthira, arjuna, bhima, nakula, sahadeva]);
             var pandavaCmd = fixture.PrincipalCommands<Pandava>().UpdateCommand(ANY_ROWS);
             var pandavaUpdates = fixture.UpdatesFor(pandavaCmd);
             var brothersInsertCmd = fixture.RelationCommands<Pandava>(0).InsertCommand(ANY_ROWS);
@@ -1245,7 +1245,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(DisneyPrincess), typeof(DisneyPrincess.Opinion));
 
             // Act
-            fixture.Transactor.Update(new object[] { jasmine, jasmine.ThoughtsOnOthers, nala, nala.ThoughtsOnOthers });
+            fixture.Transactor.Update([jasmine, jasmine.ThoughtsOnOthers, nala, nala.ThoughtsOnOthers]);
             var princessUpdateCmd = fixture.PrincipalCommands<DisneyPrincess>().UpdateCommand(ANY_ROWS);
             var princessUpdates = fixture.UpdatesFor(princessUpdateCmd);
             var opinionInsertCmd = fixture.PrincipalCommands<DisneyPrincess.Opinion>().InsertCommand(ANY_ROWS);
@@ -1291,7 +1291,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(ChatBot)).WithCommitError();
 
             // Act
-            var action = () => fixture.Transactor.Insert(new object[] { chatbot });
+            var action = () => fixture.Transactor.Insert([chatbot]);
 
             // Assert
             action.Should().ThrowExactly<InvalidOperationException>();
@@ -1312,7 +1312,7 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(SurgeonGeneral)).WithRollbackError();
 
             // Act
-            var action = () => fixture.Transactor.Update(new object[] { surgeonGeneral });
+            var action = () => fixture.Transactor.Update([surgeonGeneral]);
 
             // Assert
             action.Should().ThrowExactly<AggregateException>();
@@ -1325,6 +1325,6 @@ namespace UT.Kvasir.Transaction {
             var converter = new EnumToStringConverter(typeof(T)).ConverterImpl;
             return (string)converter.Convert(enumerator)!;
         }
-        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = Enumerable.Empty<IReadOnlyList<DBValue>>();
+        private static readonly IEnumerable<IReadOnlyList<DBValue>> ANY_ROWS = [];
     }
 }

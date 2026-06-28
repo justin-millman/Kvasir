@@ -5,3 +5,8 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0090:'new' expression can be simplified", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0039:Use local function", Scope = "module")]
+[assembly: SuppressMessage("Style", "CA1873:Evaluation of this argument may be expensive and unnecessary if logging is disabled", Scope = "module")]

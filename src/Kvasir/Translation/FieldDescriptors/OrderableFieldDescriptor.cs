@@ -142,19 +142,19 @@ namespace Kvasir.Translation {
 
         private Interval comparisonConstraint_;
 
-        private static readonly object[] MINIMA = new object[] {
+        private static readonly object[] MINIMA = [
             byte.MinValue, sbyte.MinValue,
             ushort.MinValue, short.MinValue,
             uint.MinValue, int.MinValue,
             ulong.MinValue, ulong.MinValue,
             double.MinValue, float.MinValue, decimal.MinValue
-        };
-        private static readonly object[] MAXIMA = new object[] {
+        ];
+        private static readonly object[] MAXIMA = [
             byte.MaxValue, sbyte.MaxValue,
             ushort.MaxValue, short.MaxValue,
             uint.MaxValue, int.MaxValue,
             ulong.MaxValue, ulong.MaxValue,
             double.MaxValue, float.MaxValue, decimal.MaxValue
-        };
+        ];
     }
 }

@@ -72,9 +72,9 @@ namespace Kvasir.Relations {
         ///   equality comparer for the set type.
         /// </summary>
         public RelationSet() {
-            impl_ = new HashSet<T>();
-            statuses_ = new Dictionary<T, Status>();
-            deletions_ = new List<T>();
+            impl_ = [];
+            statuses_ = [];
+            deletions_ = [];
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Kvasir.Relations {
         public RelationSet(int capacity) {
             impl_ = new HashSet<T>(capacity);
             statuses_ = new Dictionary<T, Status>(capacity);
-            deletions_ = new List<T>();
+            deletions_ = [];
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace Kvasir.Relations {
         ///   The collection whose elements are copied to the new set.
         /// </param>
         public RelationSet(IEnumerable<T> collection) {
-            impl_ = new HashSet<T>(collection);
+            impl_ = [..collection];
             statuses_ = new Dictionary<T, Status>(impl_.Select(v => new KeyValuePair<T, Status>(v, Status.New)));
-            deletions_ = new List<T>();
+            deletions_ = [];
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Kvasir.Relations {
         public RelationSet(IEqualityComparer<T>? comparer) {
             impl_ = new HashSet<T>(comparer);
             statuses_ = new Dictionary<T, Status>(comparer);
-            deletions_ = new List<T>();
+            deletions_ = [];
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Kvasir.Relations {
         public RelationSet(int capacity, IEqualityComparer<T>? comparer) {
             impl_ = new HashSet<T>(capacity, comparer);
             statuses_ = new Dictionary<T, Status>(capacity, comparer);
-            deletions_ = new List<T>();
+            deletions_ = [];
         }
 
         /// <summary>
@@ -153,10 +153,8 @@ namespace Kvasir.Relations {
         /// </param>
         public RelationSet(IEnumerable<T> collection, IEqualityComparer<T>? comparer) {
             impl_ = new HashSet<T>(collection, comparer);
-            statuses_ = new Dictionary<T, Status>(
-                impl_.Select(v => new KeyValuePair<T, Status>(v, Status.New)), comparer
-            );
-            deletions_ = new List<T>();
+            statuses_ = new Dictionary<T, Status>(impl_.Select(v => new KeyValuePair<T, Status>(v, Status.New)), comparer);
+            deletions_ = [];
         }
 
         // **************************************** METHODS *****************************************

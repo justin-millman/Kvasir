@@ -204,7 +204,7 @@ namespace Atropos {
 
                         var method = typeof(FullCheck).GetMethod(funcName, funcFlags)!;
                         var target = method.MakeGenericMethod(arg);
-                        var result = (Option<string>)target.Invoke(null, new object?[] { lhs, rhs, trichotomy })!;
+                        var result = (Option<string>)target.Invoke(null, [lhs, rhs, trichotomy])!;
 
                         if (result.HasValue) {
                             return result;

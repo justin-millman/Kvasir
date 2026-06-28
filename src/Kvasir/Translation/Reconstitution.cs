@@ -77,7 +77,7 @@ namespace Kvasir.Translation {
                     return new Candidate() {
                         Constructor = constructor,
                         Arguments = arguments,
-                        Mutations = mutators.Values.Select(g => new WritePropertyMutator(g.Source, CreatorFor(g))).ToList(),
+                        Mutations = [..mutators.Values.Select(g => new WritePropertyMutator(g.Source, CreatorFor(g)))],
                         IsViable = true
                     };
                 }
@@ -90,7 +90,7 @@ namespace Kvasir.Translation {
             var constructors = source.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (source.IsValueType && constructors.IsEmpty()) {
                 var defaultCtor = new SyntheticConstructorInfo(source);
-                constructors = new ConstructorInfo[] { defaultCtor };
+                constructors = [defaultCtor];
             }
 
             // Make one candidate per constructor; not all will be viable
@@ -159,8 +159,8 @@ namespace Kvasir.Translation {
             public static Candidate Failure(ConstructorInfo constructor) {
                 return new Candidate() {
                     Constructor = constructor,
-                    Arguments = new List<CreatorFacade>(),
-                    Mutations = new List<WritePropertyMutator>(),
+                    Arguments = [],
+                    Mutations = [],
                     IsViable = false
                 };
             }

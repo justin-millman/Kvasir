@@ -57,7 +57,7 @@ namespace UT.Kvasir.Schema {
             clause.LHS.Should().Be(expr);
             clause.Operator.Should().Be(op);
             clause.RHS.Should().Be(value);
-            fields.Should().BeEquivalentTo(new IField[] { mockField });
+            fields.Should().BeEquivalentTo([mockField]);
         }
 
         [TestMethod, TestCategory("SimpleClauses")]
@@ -201,7 +201,7 @@ namespace UT.Kvasir.Schema {
             clause.LHS.Should().Be(expr);
             clause.Operator.Should().Be(op);
             clause.RHS.Should().Be(expr);
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
         }
 
         [TestMethod, TestCategory("SimpleClauses")]
@@ -341,7 +341,7 @@ namespace UT.Kvasir.Schema {
             clause.LHS.Should().Be(expr);
             clause.Operator.Should().Be(op);
             clause.RHS.Should().BeEquivalentTo(values);
-            fields.Should().BeEquivalentTo(new IField[] { mockField });
+            fields.Should().BeEquivalentTo([mockField]);
         }
 
         [TestMethod, TestCategory("SimpleClauses")]
@@ -400,7 +400,7 @@ namespace UT.Kvasir.Schema {
             clause.LHS.Field.Should().Be(mockField);
             clause.LHS.Function.Should().NotHaveValue();
             clause.Operator.Should().Be(op);
-            fields.Should().BeEquivalentTo(new IField[] { mockField });
+            fields.Should().BeEquivalentTo([mockField]);
         }
 
         [TestMethod, TestCategory("SimpleClauses")]
@@ -454,7 +454,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.AddClause(lhs.Matcher());
@@ -482,7 +482,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.AddClause(lhsNeg.Matcher());
@@ -508,7 +508,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.AddClause(lhs.Matcher());
@@ -536,7 +536,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.AddClause(lhsNeg.Matcher());
@@ -564,7 +564,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.StartClause();
@@ -600,7 +600,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.StartClause();
@@ -635,7 +635,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.AddClause(subseq.Matcher());
@@ -662,7 +662,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.AddClause(subseqNeg.Matcher());
@@ -690,7 +690,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.StartClause();
@@ -726,7 +726,7 @@ namespace UT.Kvasir.Schema {
             clause.AddDeclarationTo(mockBuilder);
 
             // Assert
-            fields.Should().BeEquivalentTo(new IField[] { mockField, mockField });
+            fields.Should().BeEquivalentTo([mockField, mockField]);
             Received.InOrder(() => {
                 mockBuilder.StartClause();
                 mockBuilder.StartClause();

@@ -15,7 +15,7 @@ namespace UT.Kvasir.Translation {
             static CustomCheck() {
                 Generator = Substitute.For<IConstraintGenerator>();
                 Clause = Substitute.For<Clause>();
-                LastCtorArgs = Array.Empty<object?>();
+                LastCtorArgs = [];
 
                 Generator.MakeConstraint(
                     Arg.Any<IEnumerable<IField>>(),

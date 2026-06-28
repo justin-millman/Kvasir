@@ -103,8 +103,8 @@ namespace Kvasir.Relations {
         ///   default initial capacity.
         /// </summary>
         public RelationOrderedList() {
-            impl_ = new List<T>();
-            lastSaved_ = new List<T>();
+            impl_ = [];
+            lastSaved_ = [];
         }
 
         /// <summary>
@@ -115,8 +115,8 @@ namespace Kvasir.Relations {
         ///   The element whose names are copied to the new list.
         /// </param>
         public RelationOrderedList(IEnumerable<T> collection) {
-            impl_ = new List<T>(collection);
-            lastSaved_ = new List<T>();
+            impl_ = [..collection];
+            lastSaved_ = [];
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Kvasir.Relations {
         /// </exception>
         public RelationOrderedList(int capacity) {
             impl_ = new List<T>(capacity);
-            lastSaved_ = new List<T>();
+            lastSaved_ = [];
         }
 
         // **************************************** METHODS *****************************************
@@ -954,7 +954,7 @@ namespace Kvasir.Relations {
         /// </returns>
         [ExcludeFromCodeCoverage]
         public T[] ToArray() {
-            return impl_.ToArray();
+            return [..impl_];
         }
 
         /// <inheritdoc/>

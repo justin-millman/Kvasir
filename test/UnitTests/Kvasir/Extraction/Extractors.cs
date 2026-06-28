@@ -28,7 +28,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(path.ReflectedType);
             extractor.ResultType.Should().Be(path.PropertyType);
             datum.Should().Be(source.Nanosecond);
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void ExtractFromDerived() {
@@ -45,12 +45,12 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(path.ReflectedType);
             extractor.ResultType.Should().Be(path.PropertyType);
             datum.Should().Be(source.Message);
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void ExtractFromImplementation() {
             // Arrange
-            var path = new PropertyChain(typeof(ICollection<string>), nameof(ICollection<string>.Count));
+            var path = new PropertyChain(typeof(ICollection<string>), nameof(ICollection<>.Count));
 
             // Act
             var source = new List<string>() { "Pisa", "Manaus", "İzmir", "Abbottabad", "Split" };
@@ -62,7 +62,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(path.ReflectedType);
             extractor.ResultType.Should().Be(path.PropertyType);
             datum.Should().Be(source.Count);
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void ExtractFromNull() {
@@ -78,7 +78,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(path.ReflectedType);
             extractor.ResultType.Should().Be(path.PropertyType);
             datum.Should().BeNull();
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void ExtractFromNonPublicProperty() {
@@ -95,7 +95,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(path.ReflectedType);
             extractor.ResultType.Should().Be(path.PropertyType);
             datum.Should().Be(source.ToString());
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void ExtractFromStaticProperty() {
@@ -112,7 +112,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(path.ReflectedType);
             extractor.ResultType.Should().Be(path.PropertyType);
             datum.Should().Be(DBValue.NULL);
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void ExtractionProducesNull() {
@@ -129,7 +129,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(path.ReflectedType);
             extractor.ResultType.Should().Be(path.PropertyType);
             datum.Should().BeNull();
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void ExtractionPropertyTypeIsNullable() {
@@ -142,7 +142,7 @@ namespace UT.Kvasir.Extraction {
 
             // Assert
             extractor.SourceType.Should().Be(type);
-            extractor.ResultType.Should().Be(typeof(char));
+            extractor.ResultType.Should().Be<char>();
         }
     }
 
@@ -167,7 +167,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(originalExtractor.SourceType);
             extractor.ResultType.Should().Be(converter.ResultType);
             datum.Should().Be(converter.Convert(unconvertedValue));
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
             originalExtractor.Received().ExtractFrom(source);
         }
 
@@ -190,7 +190,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(originalExtractor.SourceType);
             extractor.ResultType.Should().Be(converter.ResultType);
             datum.Should().Be(converter.Convert(unconvertedValue));
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
             originalExtractor.Received().ExtractFrom(source);
         }
 
@@ -213,7 +213,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(originalExtractor.SourceType);
             extractor.ResultType.Should().Be(converter.ResultType);
             datum.Should().Be(converter.Convert(unconvertedValue));
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
             originalExtractor.Received().ExtractFrom(source);
         }
 
@@ -234,7 +234,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(originalExtractor.SourceType);
             extractor.ResultType.Should().Be(converter.ResultType);
             datum.Should().BeNull();
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
         }
 
         [TestMethod] public void OriginalExtractionProducesNull() {
@@ -255,7 +255,7 @@ namespace UT.Kvasir.Extraction {
             extractor.SourceType.Should().Be(originalExtractor.SourceType);
             extractor.ResultType.Should().Be(converter.ResultType);
             datum.Should().BeNull();
-            multiDatum.Should().BeEquivalentTo(new object?[] { datum });
+            multiDatum.Should().BeEquivalentTo([datum]);
             originalExtractor.Received().ExtractFrom(source);
         }
 
@@ -270,8 +270,8 @@ namespace UT.Kvasir.Extraction {
             var extractor = new ConvertingExtractor(originalExtractor, converter);
 
             // Assert
-            extractor.SourceType.Should().Be(typeof(int));
-            extractor.ResultType.Should().Be(typeof(int));
+            extractor.SourceType.Should().Be<int>();
+            extractor.ResultType.Should().Be<int>();
         }
     }
 
@@ -290,7 +290,7 @@ namespace UT.Kvasir.Extraction {
 
             // Act
             var source = new Queue<string>();
-            var extractor = new DecomposingExtractor(new IMultiExtractor[] { firstSubExtractor, secondSubExtractor });
+            var extractor = new DecomposingExtractor([firstSubExtractor, secondSubExtractor]);
             var data = extractor.ExtractFrom(source);
 
             // Assert
@@ -309,7 +309,7 @@ namespace UT.Kvasir.Extraction {
 
             // Act
             var source = typeof(PropertyInfo).GetProperties()[0];
-            var extractor = new DecomposingExtractor(new IMultiExtractor[] { firstSubExtractor });
+            var extractor = new DecomposingExtractor([firstSubExtractor]);
             var data = extractor.ExtractFrom(source);
 
             // Assert
@@ -335,7 +335,7 @@ namespace UT.Kvasir.Extraction {
 
             // Act
             var source = "Mayagüez";
-            var extractor = new DecomposingExtractor(new IMultiExtractor[] { firstSubExtractor, secondSubExtractor, thirdSubExtractor });
+            var extractor = new DecomposingExtractor([firstSubExtractor, secondSubExtractor, thirdSubExtractor]);
             var data = extractor.ExtractFrom(source);
 
             // Assert
@@ -354,7 +354,7 @@ namespace UT.Kvasir.Extraction {
             firstSubExtractor.ExtractFrom(null).Returns(firstValues);
 
             // Act
-            var extractor = new DecomposingExtractor(new IMultiExtractor[] { firstSubExtractor });
+            var extractor = new DecomposingExtractor([firstSubExtractor]);
             var data = extractor.ExtractFrom(null);
 
             // Assert
@@ -375,7 +375,7 @@ namespace UT.Kvasir.Extraction {
             secondSubExtractor.ExtractFrom(null).Returns(secondValues);
 
             // Act
-            var extractor = new DecomposingExtractor(new IMultiExtractor[] { firstSubExtractor, secondSubExtractor });
+            var extractor = new DecomposingExtractor([firstSubExtractor, secondSubExtractor]);
             var data = extractor.ExtractFrom(null);
 
             // Assert

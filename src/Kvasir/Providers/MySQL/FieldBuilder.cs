@@ -58,7 +58,7 @@ namespace Kvasir.Providers.MySQL {
         }
 
 
-        private static ulong MAX_LENGTH_UPPER_BOUND = 65535;
+        private static readonly ulong MAX_LENGTH_UPPER_BOUND = 65535;
         private string declaration_;
     }
 
@@ -186,7 +186,7 @@ namespace Kvasir.Providers.MySQL {
             // This isn't the prettiest, but for some reason I find this more logical than having an Optional that is
             // guaranteed to be eventually populated. This logic falls apart if there is a backtick in the actual name
             // of the Field, but I'm pretty sure that's not permitted.
-            var name = new FieldName(declaration_[1..declaration_.IndexOf("`", 1)]);
+            var name = new FieldName(declaration_[1..declaration_.IndexOf('`', 1)]);
             return new FieldDecl(name, declaration_);
         }
 

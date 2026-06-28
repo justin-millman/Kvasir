@@ -188,7 +188,7 @@ namespace Kvasir.Providers.MySQL {
         private readonly static string PREDICATE_PLACEHOLDER = "{:P:}";
         private readonly static string CONSTRAINT_TEMPLATE = $"{NAME_PLACEHOLDER}CHECK ({PREDICATE_PLACEHOLDER})";
 
-        private Stack<string> clauses_;
+        private readonly Stack<string> clauses_;
         private string declaration_;
         private Option<MaxLengthConstraintDecl> maxLengthDecl_;
     }

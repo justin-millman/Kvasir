@@ -19,11 +19,11 @@ namespace UT.Kvasir.Reconstitution {
             extractor.ResultType.Returns(typeof(IRelation));
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
-            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, []));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act
-            var rows = new List<DBValue>[] { new() { DBValue.Create(100) } };
+            var rows = new List<DBValue>[] { [DBValue.Create(100)] };
             var plan = new RelationRepopulationPlan(extractor, reconstitutor, repopulator);
             plan.Repopulate(null, rows);
 
@@ -43,7 +43,7 @@ namespace UT.Kvasir.Reconstitution {
             extractor.ExtractFrom(Arg.Any<object?>()).Returns(relation);
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
-            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, []));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act
@@ -68,12 +68,12 @@ namespace UT.Kvasir.Reconstitution {
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
             creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(elements[0]);
-            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, []));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act
             var source = typeof(Type);
-            var rows = new List<DBValue>[] { new() { DBValue.Create(100) } };
+            var rows = new List<DBValue>[] { [DBValue.Create(100)] };
             var plan = new RelationRepopulationPlan(extractor, reconstitutor, repopulator);
             plan.Repopulate(source, rows);
 
@@ -93,7 +93,7 @@ namespace UT.Kvasir.Reconstitution {
             var creator = Substitute.For<ICreator>();
             creator.ResultType.Returns(typeof(ushort));
             creator.CreateFrom(Arg.Any<IReadOnlyList<DBValue>>()).Returns(elements[0], elements[1..]);
-            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, Array.Empty<IMutator>()));
+            var reconstitutor = new DataReconstitutionPlan(new ReconstitutingCreator(creator, []));
             var repopulator = Substitute.For<IRepopulator>();
 
             // Act

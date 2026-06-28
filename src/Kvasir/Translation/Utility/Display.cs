@@ -122,7 +122,7 @@ namespace Kvasir.Translation {
                 // Anything else
                 else {
                     var generic = self.GetGenericTypeDefinition().Name;
-                    return $"`{generic[..generic.IndexOf("`")]}<{string.Join(", ", args)}>`";
+                    return $"`{generic[..generic.IndexOf('`')]}<{string.Join(", ", args)}>`";
                 }
             }
 

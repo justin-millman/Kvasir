@@ -152,6 +152,8 @@ namespace Kvasir.Translation {
         private TypeCategory(string description) { description_ = description; }
         public override string ToString() { return description_; }
         public bool Equals(TypeCategory rhs) { return description_ == rhs.description_; }
+        public override bool Equals(object? rhs) { return (rhs is TypeCategory r) && Equals(r); }
+        public override int GetHashCode() { return description_.GetHashCode(); }
         private readonly string description_;
     }
 
@@ -169,6 +171,8 @@ namespace Kvasir.Translation {
         private PropertyCategory(string description) { description_ = description; }
         public override string ToString() { return description_;  }
         public bool Equals(PropertyCategory rhs) { return description_ == rhs.description_; }
+        public override bool Equals(object? rhs) { return (rhs is PropertyCategory r) && Equals(r); }
+        public override int GetHashCode() { return description_.GetHashCode(); }
         private readonly string description_;
     }
 }
