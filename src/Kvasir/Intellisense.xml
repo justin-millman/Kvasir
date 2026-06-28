@@ -1854,6 +1854,31 @@
         <member name="M:Kvasir.Providers.MySQL.CommandsFactory.CreateCommands(Kvasir.Schema.ITable,System.Boolean)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.ConnectionPool">
+            <summary>
+              The <see cref="T:Kvasir.Transaction.IConnectionPool"/> implementation for the MySQL provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConnectionPool.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+              Creates a new MySQL <see cref="T:Kvasir.Providers.MySQL.ConnectionPool"/>.
+            </summary>
+            <param name="server">
+              The database server.
+            </param>
+            <param name="database">
+              The database name.
+            </param>
+            <param name="username">
+              The connection username.
+            </param>
+            <param name="password">
+              The connection password.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConnectionPool.MakeConnection">
+            <see cref="M:Kvasir.Transaction.IConnectionPool.MakeConnection"/>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.IConstraintDecl">
             <summary>
               A type tag to be used as the return value for a MySQL <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/>
@@ -7530,6 +7555,25 @@
               An <see cref="T:Kvasir.Transaction.ICommands"/> instance that can be used to manipulate and query <paramref name="table"/>.
             </returns>
         </member>
+        <member name="T:Kvasir.Transaction.IConnectionPool">
+            <summary>
+              The interface that abstracts the creation of <see cref="T:System.Data.IDbConnection">database connections</see> without
+              exposing details about the connection or the back-end provider.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Transaction.IConnectionPool.MakeConnection">
+            <summary>
+              Creates a connection.
+            </summary>
+            <remarks>
+              It is recommended that clients leverage connection within a <c>using</c> statement so that it
+              automatically closes when it is no longer being used. The connection returned is guaranteed to be open,
+              and it *may* be the same object as returned on previous invocations, though that is not requried.
+            </remarks>
+            <returns>
+              An open <see cref="T:System.Data.IDbConnection">database connection</see>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Transaction.Topology">
             <summary>
               Some utility functions for performing topological queries needed by the Transaction Layer.
@@ -7562,7 +7606,7 @@
               entities and a particular back-end provider/system.
             </summary>
         </member>
-        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Microsoft.Extensions.Logging.ILogger)">
+        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},Kvasir.Transaction.IConnectionPool,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Microsoft.Extensions.Logging.ILogger)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
@@ -7574,8 +7618,8 @@
               The set of <see cref="T:Kvasir.Translation.LocalizationTranslation">translations</see> for Localization types that define the
               schema of the back-end database on which the new <see cref="T:Kvasir.Transaction.Transactor"/> will operate.
             </param>
-            <param name="connection">
-              The database connection through which all commands and queries will be executed.
+            <param name="connectionPool">
+              The <see cref="T:Kvasir.Transaction.IConnectionPool">connection pool</see> with which to create database connections as needed.
             </param>
             <param name="commandsFactory">
               The <see cref="T:Kvasir.Transaction.ICommandsFactory"/> with which to create the necessary commands and queries to interact
@@ -7588,7 +7632,7 @@
               The <see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
             </param>
         </member>
-        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},System.Data.IDbConnection,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings,Microsoft.Extensions.Logging.ILogger)">
+        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},Kvasir.Transaction.IConnectionPool,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings,Microsoft.Extensions.Logging.ILogger)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
@@ -7600,8 +7644,8 @@
               The set of <see cref="T:Kvasir.Translation.LocalizationTranslation">translations</see> for Localization types that define the
               schema of the back-end database on which the new <see cref="T:Kvasir.Transaction.Transactor"/> will operate.
             </param>
-            <param name="connection">
-              The database connection through which all commands and queries will be executed.
+            <param name="connectionPool">
+              The <see cref="T:Kvasir.Transaction.IConnectionPool">connection pool</see> with which to create database connections as needed.
             </param>
             <param name="commandsFactory">
               The <see cref="T:Kvasir.Transaction.ICommandsFactory"/> with which to create the necessary commands and queries to interact

@@ -8,10 +8,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
-using System.Transactions;
 
 namespace Kvasir.Transaction {
     /// <summary>
@@ -30,8 +28,8 @@ namespace Kvasir.Transaction {
         ///   The set of <see cref="LocalizationTranslation">translations</see> for Localization types that define the
         ///   schema of the back-end database on which the new <see cref="Transactor"/> will operate.
         /// </param>
-        /// <param name="connection">
-        ///   The database connection through which all commands and queries will be executed.
+        /// <param name="connectionPool">
+        ///   The <see cref="IConnectionPool">connection pool</see> with which to create database connections as needed.
         /// </param>
         /// <param name="commandsFactory">
         ///   The <see cref="ICommandsFactory"/> with which to create the necessary commands and queries to interact
@@ -46,12 +44,12 @@ namespace Kvasir.Transaction {
         public Transactor(
             IEnumerable<EntityTranslation> entityTranslations,
             IEnumerable<LocalizationTranslation> localizationTranslations,
-            IDbConnection connection,
+            IConnectionPool connectionPool,
             ICommandsFactory commandsFactory,
             Action<object> entityStorage,
             ILogger logger
         )
-            : this(entityTranslations, localizationTranslations, connection, commandsFactory, entityStorage, Settings.Default, logger) {}
+            : this(entityTranslations, localizationTranslations, connectionPool, commandsFactory, entityStorage, Settings.Default, logger) {}
 
         /// <summary>
         ///   Constructs a new <see cref="Translator"/> that uses custom <see cref="Settings"/>.
@@ -64,8 +62,8 @@ namespace Kvasir.Transaction {
         ///   The set of <see cref="LocalizationTranslation">translations</see> for Localization types that define the
         ///   schema of the back-end database on which the new <see cref="Transactor"/> will operate.
         /// </param>
-        /// <param name="connection">
-        ///   The database connection through which all commands and queries will be executed.
+        /// <param name="connectionPool">
+        ///   The <see cref="IConnectionPool">connection pool</see> with which to create database connections as needed.
         /// </param>
         /// <param name="commandsFactory">
         ///   The <see cref="ICommandsFactory"/> with which to create the necessary commands and queries to interact
@@ -88,7 +86,7 @@ namespace Kvasir.Transaction {
         public Transactor(
             IEnumerable<EntityTranslation> entityTranslations,
             IEnumerable<LocalizationTranslation> localizationTranslations,
-            IDbConnection connection,
+            IConnectionPool connectionPool,
             ICommandsFactory commandsFactory,
             Action<object> entityStorage,
             Settings settings,
@@ -97,7 +95,7 @@ namespace Kvasir.Transaction {
             Debug.Assert(entityTranslations is not null);
             Debug.Assert(localizationTranslations is not null);
             Debug.Assert(!entityTranslations.IsEmpty() || !localizationTranslations.IsEmpty());
-            Debug.Assert(connection is not null && connection.State == ConnectionState.Open);
+            Debug.Assert(connectionPool is not null);
             Debug.Assert(commandsFactory is not null);
             Debug.Assert(entityStorage is not null);
             Debug.Assert(settings is not null);
@@ -106,7 +104,7 @@ namespace Kvasir.Transaction {
             settings_ = settings;
             entityTranslations_ = entityTranslations.ToDictionary(t => t.CLRSource, t => t);
             localizationTranslations_ = localizationTranslations.ToDictionary(t => t.CLRSource, t => t);
-            connection_ = connection;
+            connectionPool_ = connectionPool;
             commandsFactory_ = commandsFactory;
             entityStorage_ = entityStorage;
             logger_ = logger;
@@ -170,9 +168,10 @@ namespace Kvasir.Transaction {
         ///   fails.
         /// </exception>
         public void CreateTables() {
-            using var transaction = connection_.BeginTransaction();
+            using var connection = connectionPool_.MakeConnection();
+            using var transaction = connection.BeginTransaction();
             foreach (var command in commands_.Select(c => c.CreateTableCommand)) {
-                command.Connection = connection_;
+                command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
@@ -192,6 +191,8 @@ namespace Kvasir.Transaction {
         ///   Selects all of the data out of the back-end database and creates corresponding CLR objects.
         /// </summary>
         public void SelectAll() {
+            using var connection = connectionPool_.MakeConnection();
+
             var entityTranslations = entityTranslations_.Values.OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = localizationTranslations_.Values.ToList();
             int numEntityTypes = entityTranslations_.Count;
@@ -204,7 +205,7 @@ namespace Kvasir.Transaction {
             for (int idx = 0; idx < numLocalizationTypes; ++idx) {
                 var query = commands_[idx + localizationStartIdx_].SelectAllQuery;
                 logger_.LogDebug("Executing SQL: {}", query.CommandText);
-                query.Connection = connection_;
+                query.Connection = connection;
                 var reader = query.ExecuteReader();
 
                 var rows = new Dictionary<DBValue, List<List<DBValue>>>();
@@ -235,7 +236,7 @@ namespace Kvasir.Transaction {
             for (int idx = 0; idx < numEntityTypes; ++idx) {
                 var query = commands_[idx].SelectAllQuery;
                 logger_.LogDebug("Executing SQL: {}", query.CommandText);
-                query.Connection = connection_;
+                query.Connection = connection;
                 var reader = query.ExecuteReader();
 
                 var creations = new List<object>();
@@ -259,7 +260,7 @@ namespace Kvasir.Transaction {
                 foreach (var relation in translation.Relations) {
                     var query = commands_[tables_[relation.Table]].SelectAllQuery;
                     logger_.LogDebug("Executing SQL: {}", query.CommandText);
-                    query.Connection = connection_;
+                    query.Connection = connection;
                     var reader = query.ExecuteReader();
 
                     var rows = options.ToDictionary(e => e, _ => new List<IReadOnlyList<DBValue>>());
@@ -307,7 +308,8 @@ namespace Kvasir.Transaction {
             var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
 
-            using var transaction = connection_.BeginTransaction();
+            using var connection = connectionPool_.MakeConnection();
+            using var transaction = connection.BeginTransaction();
 
             // Insert all the data into Principal Tables first
             foreach (var translation in entityTranslations) {
@@ -317,7 +319,7 @@ namespace Kvasir.Transaction {
                 }
 
                 var command = commands_[tables_[translation.Principal.Table]].InsertCommand(rows);
-                command.Connection = connection_;
+                command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
@@ -341,7 +343,7 @@ namespace Kvasir.Transaction {
                     }
 
                     var command = commands_[tables_[relation.Table]].InsertCommand(rows);
-                    command.Connection = connection_;
+                    command.Connection = connection;
                     command.Transaction = transaction;
                     logger_.LogDebug("Executing SQL: {}", command.CommandText);
                     command.ExecuteNonQuery();
@@ -363,7 +365,7 @@ namespace Kvasir.Transaction {
                 }
 
                 var command = commands_[tables_[translation.Principal.Table]].InsertCommand(rows);
-                command.Connection = connection_;
+                command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
@@ -399,7 +401,8 @@ namespace Kvasir.Transaction {
             var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
 
-            using var transaction = connection_.BeginTransaction();
+            using var connection = connectionPool_.MakeConnection();
+            using var transaction = connection.BeginTransaction();
 
             // Update all the data in Principal Tables first
             foreach (var translation in entityTranslations) {
@@ -409,7 +412,7 @@ namespace Kvasir.Transaction {
                 }
 
                 var command = commands_[tables_[translation.Principal.Table]].UpdateCommand(rows);
-                command.Connection = connection_;
+                command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
@@ -439,7 +442,7 @@ namespace Kvasir.Transaction {
                     var insertCommand = (insertRows.IsEmpty(), commands_[tables_[relation.Table]].InsertCommand(insertRows));
                     foreach (var (isEmpty, command) in new[] { deleteCommand, updateCommand, insertCommand }) {
                         if (!isEmpty) {
-                            command.Connection = connection_;
+                            command.Connection = connection;
                             command.Transaction = transaction;
                             logger_.LogDebug("Executing SQL: {}", command.CommandText);
                             command.ExecuteNonQuery();
@@ -470,7 +473,7 @@ namespace Kvasir.Transaction {
                 var insertCommand = (insertRows.IsEmpty(), commands_[tables_[translation.Principal.Table]].InsertCommand(insertRows));
                 foreach (var (isEmpty, command) in new[] { deleteCommand, insertCommand }) {
                     if (!isEmpty) {
-                        command.Connection = connection_;
+                        command.Connection = connection;
                         command.Transaction = transaction;
                         logger_.LogDebug("Executing SQL: {}", command.CommandText);
                         command.ExecuteNonQuery();
@@ -508,7 +511,8 @@ namespace Kvasir.Transaction {
             var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
 
-            using var transaction = connection_.BeginTransaction();
+            using var connection = connectionPool_.MakeConnection();
+            using var transaction = connection.BeginTransaction();
 
             // Delete all the data from Localization Tables first
             foreach (var translation in localizationTranslations) {
@@ -522,7 +526,7 @@ namespace Kvasir.Transaction {
                     rows.Add(translation.Principal.KeyExtractor.ExtractFrom(entity));
                 }
                 var command = commands_[tables_[translation.Principal.Table]].DeleteCommand(rows);
-                command.Connection = connection_;
+                command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
@@ -543,7 +547,7 @@ namespace Kvasir.Transaction {
                     }
 
                     var command = commands_[tables_[relation.Table]].DeleteCommand(rows);
-                    command.Connection = connection_;
+                    command.Connection = connection;
                     command.Transaction = transaction;
                     logger_.LogDebug("Executing SQL: {}", command.CommandText);
                     command.ExecuteNonQuery();
@@ -558,7 +562,7 @@ namespace Kvasir.Transaction {
                 }
 
                 var command = commands_[tables_[translation.Principal.Table]].DeleteCommand(rows);
-                command.Connection = connection_;
+                command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
                 command.ExecuteNonQuery();
@@ -598,7 +602,7 @@ namespace Kvasir.Transaction {
 
             // We need a translation of the `TableHash` administrative type in order to create a Transactor.
             var translation = translator[typeof(TableHash)];
-            var transactor = new Transactor([translation], [], connection_, commandsFactory_, hashStorage, logger_);
+            var transactor = new Transactor([translation], [], connectionPool_, commandsFactory_, hashStorage, logger_);
 
             // First, create the tables; this will create the administrative table if it does not yet exist. Then,
             // select all the data; this will load all existing administrative hashes into the `hashes` dictionary.
@@ -674,7 +678,7 @@ namespace Kvasir.Transaction {
         private readonly IReadOnlyDictionary<Type, LocalizationTranslation> localizationTranslations_;
         private readonly IReadOnlyDictionary<ITable, int> tables_;          // maps to index in `commands_` list
         private readonly Dictionary<ITable, Type> sourceTypes_;
-        private readonly IDbConnection connection_;
+        private readonly IConnectionPool connectionPool_;
         private readonly ICommandsFactory commandsFactory_;
         private readonly Action<object> entityStorage_;
         private readonly ILogger logger_;

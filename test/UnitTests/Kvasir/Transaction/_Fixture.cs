@@ -19,7 +19,7 @@ using Rows = System.Collections.Generic.IEnumerable<System.Collections.Generic.I
 namespace UT.Kvasir.Transaction {
     internal sealed class TestFixture {
         public IReadOnlyDictionary<ITable, ICommands> Commands => commands_;
-        public IDbConnection Connection { get; }
+        public IDbConnection Connection { get; } = Substitute.For<IDbConnection>();
         public IDbTransaction Transaction { get; }
         public Dictionary<Type, List<object>> Depot { get; }
         public Transactor Transactor {
@@ -34,6 +34,7 @@ namespace UT.Kvasir.Transaction {
         public TestFixture(params Type[] types) {
             commands_ = [];
             dbRows_ = [];
+            connectionPool_ = Substitute.For<IConnectionPool>();
             commandsFactory_ = Substitute.For<ICommandsFactory>();
             Connection = Substitute.For<IDbConnection>();
             Transaction = Connection.BeginTransaction();
@@ -42,7 +43,7 @@ namespace UT.Kvasir.Transaction {
             ordering_ = [];
             invocationArgs_ = [];
 
-            Connection.State.Returns(ConnectionState.Open);
+            connectionPool_.MakeConnection().Returns(Connection);
 
             var adminTypes = new Type[] { typeof(TableHash) };
 
@@ -98,7 +99,7 @@ namespace UT.Kvasir.Transaction {
             }
 
             transactor_ = null!;
-            transactorInitializer_ = () => transactor_ = new Transactor(entityTranslations, localizationTranslations, Connection, commandsFactory_, e => Depot[e.GetType()].Add(e), NullLogger.Instance);            
+            transactorInitializer_ = () => transactor_ = new Transactor(entityTranslations, localizationTranslations, connectionPool_, commandsFactory_, e => Depot[e.GetType()].Add(e), NullLogger.Instance);            
         }
         public TestFixture WithCommitError() {
             Transaction.When(x => x.Commit()).Throw<InvalidOperationException>();
@@ -240,6 +241,7 @@ namespace UT.Kvasir.Transaction {
         }
 
 
+        private readonly IConnectionPool connectionPool_;
         private readonly ICommandsFactory commandsFactory_;
         private readonly Translator translator_;
         private readonly Dictionary<ITable, ICommands> commands_;
