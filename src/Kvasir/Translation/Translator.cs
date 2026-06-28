@@ -130,12 +130,7 @@ namespace Kvasir.Translation {
         ///   The<see cref="ILogger">logger</see> with which to issue diagnostics.
         /// </param>
         public Translator(Func<Type, IEnumerable<object>> entityLookup, ILogger logger)
-            : this(entityLookup, Settings.Default, logger) {
-
-            // Need to reset this because the constructor delegation causes the "calling assembly" to actually be the
-            // one of the Translator itself, but we need it to be the assembly that initially called into the Translator
-            callingAssembly_ = Assembly.GetCallingAssembly();
-        }
+            : this(entityLookup, Settings.Default, logger) {}
 
         /// <summary>
         ///   Constructs a new <see cref="Translator"/> that uses custom <see cref="Settings"/>.
@@ -160,7 +155,6 @@ namespace Kvasir.Translation {
             Debug.Assert(logger is not null);
 
             settings_ = settings;
-            callingAssembly_ = Assembly.GetCallingAssembly();
             entityLookup_ = entityLookup;
             typeCache_ = [];
             translationCache_ = [];
@@ -174,6 +168,20 @@ namespace Kvasir.Translation {
             keyMatchers_ = [];
             relationTypesFromEntity_ = [];
             logger_ = logger;
+
+            // We want the `callingAssembly_` to be the *user's* assembly, not our own, even though the `Translator` is
+            // `internal` and therefore can only be constructed by Kvasir itself. (There's even a delegating
+            // constructor!) To do this, we walk the call stack until we find the first non-Kvasir assembly. This also
+            // should help guard against certain kinds of inlining and JIT.
+            var selfAssembly = typeof(Translator).Assembly;
+            foreach (var frame in new StackTrace().GetFrames()) {
+                var assembly = frame.GetMethod()?.DeclaringType?.Assembly;
+                if (assembly != selfAssembly) {
+                    callingAssembly_ = assembly!;
+                    break;
+                }
+            }
+            Debug.Assert(callingAssembly_ is not null, "the user must have been involved somewhere!");
         }
 
 
