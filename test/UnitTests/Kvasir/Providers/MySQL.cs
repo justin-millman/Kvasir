@@ -3758,5 +3758,5 @@ namespace UT.Kvasir.Providers {
             return (string)converter.Convert(enumerator)!;
         }
         private readonly static Func<Type, IEnumerable<object>> NO_ENTITIES = _ => [];
-    }    
+    }
 }
