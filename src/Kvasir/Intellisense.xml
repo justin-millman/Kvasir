@@ -1876,8 +1876,8 @@
               The connection password.
             </param>
         </member>
-        <member name="M:Kvasir.Providers.MySQL.ConnectionPool.MakeConnection">
-            <see cref="M:Kvasir.Transaction.IConnectionPool.MakeConnection"/>
+        <member name="M:Kvasir.Providers.MySQL.ConnectionPool.MakeConnectionAsync">
+            <see cref="M:Kvasir.Transaction.IConnectionPool.MakeConnectionAsync"/>
         </member>
         <member name="T:Kvasir.Providers.MySQL.IConstraintDecl">
             <summary>
@@ -7557,11 +7557,11 @@
         </member>
         <member name="T:Kvasir.Transaction.IConnectionPool">
             <summary>
-              The interface that abstracts the creation of <see cref="T:System.Data.IDbConnection">database connections</see> without
+              The interface that abstracts the creation of <see cref="T:System.Data.Common.DbConnection">database connections</see> without
               exposing details about the connection or the back-end provider.
             </summary>
         </member>
-        <member name="M:Kvasir.Transaction.IConnectionPool.MakeConnection">
+        <member name="M:Kvasir.Transaction.IConnectionPool.MakeConnectionAsync">
             <summary>
               Creates a connection.
             </summary>
@@ -7571,7 +7571,7 @@
               and it *may* be the same object as returned on previous invocations, though that is not requried.
             </remarks>
             <returns>
-              An open <see cref="T:System.Data.IDbConnection">database connection</see>.
+              A task that, when `await`ed, resolves to an open <see cref="T:System.Data.Common.DbConnection">database connection</see>.
             </returns>
         </member>
         <member name="T:Kvasir.Transaction.Topology">
@@ -7606,9 +7606,9 @@
               entities and a particular back-end provider/system.
             </summary>
         </member>
-        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},Kvasir.Transaction.IConnectionPool,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Microsoft.Extensions.Logging.ILogger)">
+        <member name="M:Kvasir.Transaction.Transactor.New(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},Kvasir.Transaction.IConnectionPool,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Microsoft.Extensions.Logging.ILogger)">
             <summary>
-              Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
+              Creates a new <see cref="T:Kvasir.Translation.Translator"/> that uses default <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
             <param name="entityTranslations">
               The set of <see cref="T:Kvasir.Translation.EntityTranslation">translations</see> for non-Localization types that define the
@@ -7631,8 +7631,12 @@
             <param name="logger">
               The <see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
             </param>
+            <returns>
+              An <see langword="await"/>able <see cref="T:System.Threading.Tasks.Task"/> that, upon completion, yields a new
+              <see cref="T:Kvasir.Transaction.Transactor"/>.
+            </returns>
         </member>
-        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},Kvasir.Transaction.IConnectionPool,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings,Microsoft.Extensions.Logging.ILogger)">
+        <member name="M:Kvasir.Transaction.Transactor.New(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},Kvasir.Transaction.IConnectionPool,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings,Microsoft.Extensions.Logging.ILogger)">
             <summary>
               Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses custom <see cref="T:Kvasir.Core.Settings"/>.
             </summary>
@@ -7660,6 +7664,10 @@
             <param name="logger">
               The <see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
             </param>
+            <returns>
+              An <see langword="await"/>able <see cref="T:System.Threading.Tasks.Task"/> that, upon completion, yields a new
+              <see cref="T:Kvasir.Transaction.Transactor"/>.
+            </returns>
             <remarks>
               Note that the settings are not currently used for anything; in fact, there are no traits available in the
               <see cref="T:Kvasir.Core.Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
@@ -7732,6 +7740,40 @@
               fails.
             </exception>
         </member>
+        <member name="M:Kvasir.Transaction.Transactor.#ctor(System.Collections.Generic.IEnumerable{Kvasir.Translation.EntityTranslation},System.Collections.Generic.IEnumerable{Kvasir.Translation.LocalizationTranslation},Kvasir.Transaction.IConnectionPool,Kvasir.Transaction.ICommandsFactory,System.Action{System.Object},Kvasir.Core.Settings,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.Translator"/> that uses specific <see cref="T:Kvasir.Core.Settings"/>.
+            </summary>
+            <param name="entityTranslations">
+              The set of <see cref="T:Kvasir.Translation.EntityTranslation">translations</see> for non-Localization types that define the
+              schema of the back-end database on which the new <see cref="T:Kvasir.Transaction.Transactor"/> will operate.
+            </param>
+            <param name="localizationTranslations">
+              The set of <see cref="T:Kvasir.Translation.LocalizationTranslation">translations</see> for Localization types that define the
+              schema of the back-end database on which the new <see cref="T:Kvasir.Transaction.Transactor"/> will operate.
+            </param>
+            <param name="connectionPool">
+              The <see cref="T:Kvasir.Transaction.IConnectionPool">connection pool</see> with which to create database connections as needed.
+            </param>
+            <param name="commandsFactory">
+              The <see cref="T:Kvasir.Transaction.ICommandsFactory"/> with which to create the necessary commands and queries to interact
+              with the tables for <paramref name="entityTranslations"/> and <paramref name="localizationTranslations"/>.
+            </param>
+            <param name="entityStorage">
+              The functor through which reconstituted Entities will be stored for later look-up.
+            </param>
+            <param name="settings">
+              The <see cref="T:Kvasir.Core.Settings"/> according to which to perform the transaction activity.
+            </param>
+            <param name="logger">
+              The <see cref="T:Microsoft.Extensions.Logging.ILogger">logger</see> with which to issue diagnostics.
+            </param>
+            <remarks>
+              Note that the settings are not currently used for anything; in fact, there are no traits available in the
+              <see cref="T:Kvasir.Core.Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
+              us to provide customization of behaviors in the future without necessitating a significant redesign.
+            </remarks>
+        </member>
         <member name="M:Kvasir.Transaction.Transactor.ManageAdministration">
             <summary>
               Executes all of the administrative business logic.
@@ -7746,7 +7788,7 @@
               The <see cref="T:Kvasir.Translation.Translator"/> with which to translate any administrative Entity types.
             </param>
         </member>
-        <member name="M:Kvasir.Transaction.Transactor.TryCommitTransaction(System.Data.IDbTransaction)">
+        <member name="M:Kvasir.Transaction.Transactor.TryCommitTransaction(System.Data.Common.DbTransaction)">
             <summary>
               Attempts to commit a <see cref="T:System.Data.IDbTransaction">database transaction</see>. If the commit operation fails,
               an attempt to roll the transaction back is made.

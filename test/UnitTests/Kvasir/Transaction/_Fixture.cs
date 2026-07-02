@@ -10,22 +10,22 @@ using NSubstitute;
 using NSubstitute.Core;
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 using Rows = System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<Kvasir.Schema.DBValue>>;
 
 namespace UT.Kvasir.Transaction {
     internal sealed class TestFixture {
         public IReadOnlyDictionary<ITable, ICommands> Commands => commands_;
-        public IDbConnection Connection { get; } = Substitute.For<IDbConnection>();
-        public IDbTransaction Transaction { get; }
+        public DbConnection Connection { get; } = Substitute.For<DbConnection>();
+        public DbTransaction Transaction { get; }
         public Dictionary<Type, List<object>> Depot { get; }
         public Transactor Transactor {
             get {
-                EnsureTransactorInitialized();
-                return transactor_!;
+                return transactor_;
             }
         }
 
@@ -36,14 +36,18 @@ namespace UT.Kvasir.Transaction {
             dbRows_ = [];
             connectionPool_ = Substitute.For<IConnectionPool>();
             commandsFactory_ = Substitute.For<ICommandsFactory>();
-            Connection = Substitute.For<IDbConnection>();
-            Transaction = Connection.BeginTransaction();
+            Connection = Substitute.For<DbConnection>();
+            Transaction = Substitute.For<DbTransaction>();
             Depot = types.ToDictionary(t => t, _ => new List<object>());
             translator_ = new Translator(t => Depot[t], NullLogger.Instance);
             ordering_ = [];
             invocationArgs_ = [];
 
-            connectionPool_.MakeConnection().Returns(Connection);
+            withCommitError_ = false;
+            withRollbackError_ = false;
+
+            connectionPool_.MakeConnectionAsync().Returns(Connection);
+            Connection.BeginTransactionAsync().Returns(Transaction);
 
             var adminTypes = new Type[] { typeof(TableHash) };
 
@@ -58,38 +62,38 @@ namespace UT.Kvasir.Transaction {
             foreach (var table in tables) {
                 var commands = Substitute.For<ICommands>();
 
-                var createTable = Substitute.For<IDbCommand>();
+                var createTable = Substitute.For<DbCommand>();
                 createTable.CommandText = $"CREATE TABLE {table.Name}";
-                createTable.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[createTable] = ordering_.Count + 1);
+                createTable.When(c => c.ExecuteNonQueryAsync()).Do(_ => ordering_[createTable] = ordering_.Count + 1);
                 commands.CreateTableCommand.Returns(createTable);
 
-                var reader = Substitute.For<IDataReader>();
+                var reader = Substitute.For<DbDataReader>();
                 reader.Read().Returns(_ => dbRows_[table].MoveNext());
                 reader.FieldCount.Returns(_ => dbRows_[table].Current.Count);
                 reader[Arg.Any<int>()].Returns(args => dbRows_[table].Current[args.ArgAt<int>(0)]);
                 reader.ClearReceivedCalls();
 
-                var selectAll = Substitute.For<IDbCommand>();
+                var selectAll = Substitute.For<DbCommand>();
                 selectAll.CommandText = $"SELECT * FROM {table.Name}";
-                selectAll.ExecuteReader().Returns(reader);
-                selectAll.When(c => c.ExecuteReader()).Do(_ => ordering_[selectAll] = ordering_.Count + 1);
+                selectAll.ExecuteReaderAsync().Returns(reader);
+                selectAll.When(c => c.ExecuteReaderAsync()).Do(_ => ordering_[selectAll] = ordering_.Count + 1);
                 commands.SelectAllQuery.Returns(selectAll);
 
-                var insert = Substitute.For<IDbCommand>();
+                var insert = Substitute.For<DbCommand>();
                 insert.CommandText = $"INSERT INTO {table.Name}";
-                insert.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[insert] = ordering_.Count + 1);
+                insert.When(c => c.ExecuteNonQueryAsync()).Do(_ => ordering_[insert] = ordering_.Count + 1);
                 commands.InsertCommand(Arg.Any<Rows>()).Returns(insert);
                 commands.When(c => c.InsertCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, insert));
 
-                var delete = Substitute.For<IDbCommand>();
+                var delete = Substitute.For<DbCommand>();
                 delete.CommandText = $"DELETE FROM {table.Name}";
-                delete.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[delete] = ordering_.Count + 1);
+                delete.When(c => c.ExecuteNonQueryAsync()).Do(_ => ordering_[delete] = ordering_.Count + 1);
                 commands.DeleteCommand(Arg.Any<Rows>()).Returns(delete);
                 commands.When(c => c.DeleteCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, delete));
 
-                var update = Substitute.For<IDbCommand>();
+                var update = Substitute.For<DbCommand>();
                 update.CommandText = $"UPDATE {table.Name}";
-                update.When(c => c.ExecuteNonQuery()).Do(_ => ordering_[update] = ordering_.Count + 1);
+                update.When(c => c.ExecuteNonQueryAsync()).Do(_ => ordering_[update] = ordering_.Count + 1);
                 commands.UpdateCommand(Arg.Any<Rows>()).Returns(update);
                 commands.When(c => c.UpdateCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, update));
 
@@ -99,15 +103,30 @@ namespace UT.Kvasir.Transaction {
             }
 
             transactor_ = null!;
-            transactorInitializer_ = () => transactor_ = new Transactor(entityTranslations, localizationTranslations, connectionPool_, commandsFactory_, e => Depot[e.GetType()].Add(e), NullLogger.Instance);            
+            transactorInitializer_ = async () => transactor_ = await Transactor.New(entityTranslations, localizationTranslations, connectionPool_, commandsFactory_, e => Depot[e.GetType()].Add(e), NullLogger.Instance);            
         }
+        public async Task InitializeSchema() {
+            if (transactor_ is null) {
+                await transactorInitializer_();
+                AdminCommits = Transaction.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "CommitAsync");
+                Transaction.ClearReceivedCalls();
+
+                if (withCommitError_) {
+                    Transaction.When(x => x.CommitAsync()).Throw<InvalidOperationException>();
+                }
+                if (withRollbackError_) {
+                    Transaction.When(x => x.RollbackAsync()).Throw<InvalidOperationException>();
+                }
+            }
+        }
+
         public TestFixture WithCommitError() {
-            Transaction.When(x => x.Commit()).Throw<InvalidOperationException>();
+            withCommitError_ = true;
             return this;
         }
         public TestFixture WithRollbackError() {
-            WithCommitError();
-            Transaction.When(x => x.Rollback()).Throw<InvalidOperationException>();
+            withCommitError_ = true;
+            withRollbackError_ = true;
             return this;
         }
 
@@ -146,7 +165,6 @@ namespace UT.Kvasir.Transaction {
         }
 
         public ICommands PrincipalCommands<TEntity>() {
-            EnsureTransactorInitialized();
             var type = typeof(TEntity);
 
             if (!Translator.IsLocalizationType(type)) {
@@ -159,24 +177,23 @@ namespace UT.Kvasir.Transaction {
             }
         }
         public ICommands RelationCommands<TEntity>(int index) {
-            EnsureTransactorInitialized();
             var table = translator_[typeof(TEntity)].Relations[index].Table;
             return commands_[table];
         }
 
-        public Rows InsertionsFor(IDbCommand command) {
+        public Rows InsertionsFor(DbCommand command) {
             if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
                 return value;
             }
             return [];
         }
-        public Rows UpdatesFor(IDbCommand command) {
+        public Rows UpdatesFor(DbCommand command) {
             if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
                 return value;
             }
             return [];
         }
-        public Rows DeletionsFor(IDbCommand command) {
+        public Rows DeletionsFor(DbCommand command) {
             if (invocationArgs_.TryGetValue(command, out IReadOnlyList<IReadOnlyList<DBValue>>? value)) {
                 return value;
             }
@@ -192,7 +209,7 @@ namespace UT.Kvasir.Transaction {
 
         [CustomAssertion]
         public void ShouldBeOrdered(params object[] commands) {
-            int getOrderingOf(IDbCommand cmd) {
+            int getOrderingOf(DbCommand cmd) {
                 if (!ordering_.TryGetValue(cmd, out int order)) {
                     Execute.Assertion
                         .ForCondition(false)
@@ -203,7 +220,7 @@ namespace UT.Kvasir.Transaction {
 
             var previousOrdering = -1;
             foreach (var command in commands) {
-                if (command is IDbCommand cmd) {
+                if (command is DbCommand cmd) {
                     int order = getOrderingOf(cmd);
                     if (order < previousOrdering) {
                         Execute.Assertion
@@ -214,7 +231,7 @@ namespace UT.Kvasir.Transaction {
                 }
                 else {
                     var group = command as ITuple;
-                    var items = Enumerable.Range(0, group!.Length).Select(i => group[i]).Cast<IDbCommand>();
+                    var items = Enumerable.Range(0, group!.Length).Select(i => group[i]).Cast<DbCommand>();
                     var sorted = items.Select(Command => (Command, Order: getOrderingOf(Command))).OrderBy(p => p.Order);
                     if (sorted.First().Order < previousOrdering) {
                         Execute.Assertion
@@ -226,17 +243,10 @@ namespace UT.Kvasir.Transaction {
             }
         }
 
-        private void SetInvocationArguments(CallInfo info, IDbCommand cmd) {
+        private void SetInvocationArguments(CallInfo info, DbCommand cmd) {
             var rows = info.ArgAt<Rows>(0).ToList();
             if (!rows.IsEmpty()) {
                 invocationArgs_[cmd] = rows;
-            }
-        }
-        private void EnsureTransactorInitialized() {
-            if (transactor_ is null) {
-                transactorInitializer_();
-                AdminCommits = Transaction.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "Commit");
-                Transaction.ClearReceivedCalls();
             }
         }
 
@@ -246,12 +256,15 @@ namespace UT.Kvasir.Transaction {
         private readonly Translator translator_;
         private readonly Dictionary<ITable, ICommands> commands_;
         private readonly Dictionary<ITable, IEnumerator<IReadOnlyList<object>>> dbRows_;
-        private readonly Dictionary<IDbCommand, int> ordering_;
-        private readonly Dictionary<IDbCommand, IReadOnlyList<IReadOnlyList<DBValue>>> invocationArgs_;
+        private readonly Dictionary<DbCommand, int> ordering_;
+        private readonly Dictionary<DbCommand, IReadOnlyList<IReadOnlyList<DBValue>>> invocationArgs_;
+
+        private bool withCommitError_;
+        private bool withRollbackError_;
 
         // We need to be able to lazily initialize the Transactor so that we can set up the contents of administrative
         // tables. This is a little janky, but I don't care at this point.
         private Transactor transactor_;
-        private readonly Action transactorInitializer_;
+        private readonly Func<Task> transactorInitializer_;
     }
 }
