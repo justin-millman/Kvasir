@@ -184,6 +184,40 @@ namespace Kvasir.Translation {
             Debug.Assert(callingAssembly_ is not null, "the user must have been involved somewhere!");
         }
 
+        /// <summary>
+        ///   Exposes all of the <see cref="EntityTranslation">translations of non-Localization Entities</see> that
+        ///   have been made.
+        /// </summary>
+        /// <returns>
+        ///   A collection of <see cref="EntityTranslation"/> instances, in no particular order, for all translations
+        ///   made by this <see cref="Translator"/>.
+        /// </returns>
+        /// <remarks>
+        ///   The returned enumerable does not just contain the set of all translations returned by <c>this[...]</c>.
+        ///   Any Entity types that are translated after being encountered as references, or within Relations, will be
+        ///   exposed as well.
+        /// </remarks>
+        public IEnumerable<EntityTranslation> GetEntityTranslations() {
+            return translationCache_.Values;
+        }
+
+        /// <summary>
+        ///   Exposes all of the <see cref="EntityTranslation">translations of Localization Entities</see> that have
+        ///   been made.
+        /// </summary>
+        /// <returns>
+        ///   A collection of <see cref="EntityTranslation"/> instances, in no particular order, for all translations
+        ///   made by this <see cref="Translator"/>.
+        /// </returns>
+        /// <remarks>
+        ///   The returned enumerable does not just contain the set of all translations returned by <c>this[...]</c>.
+        ///   Any Localization types that are translated after being encountered as references, or within Relations,
+        ///   will be exposed as well.
+        /// </remarks>
+        public IEnumerable<LocalizationTranslation> GetLocalizationTranslations() {
+            return localizationCache_.Values;
+        }
+
 
         private readonly Settings settings_;
         private readonly Assembly callingAssembly_;
