@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using static UT.Kvasir.Transaction.Selection;
 using static UT.Kvasir.Translation.TestLocalizations;
@@ -11,33 +12,35 @@ using static UT.Kvasir.Translation.TestLocalizations;
 namespace UT.Kvasir.Transaction {
     [TestClass, TestCategory("Selection")]
     public class SelectionTests {
-        [TestMethod] public void ZeroInstances() {
+        [TestMethod] public async Task ZeroInstances() {
             var fixture = new TestFixture(typeof(Samurai));
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var samuraiQuery = fixture.PrincipalCommands<Samurai>().SelectAllQuery;
             var samurais = fixture.Depot[typeof(Samurai)].Cast<Samurai>().ToList();
 
             // Assert
             samuraiQuery.Connection.Should().Be(fixture.Connection);
-            samuraiQuery.Received(1).ExecuteReader();
+            await samuraiQuery.Received(1).ExecuteReaderAsync();
             samurais.Should().HaveCount(0);
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNoNullsNoRelations() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNoNullsNoRelations() {
             // Arrange
             var diaper = new object[] { Guid.NewGuid(), false, 12.5f, "Huggies", false };
             var fixture = new TestFixture(typeof(Diaper)).WithEntityRow<Diaper>(diaper);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var diaperQuery = fixture.PrincipalCommands<Diaper>().SelectAllQuery;
             var diapers = fixture.Depot[typeof(Diaper)].Cast<Diaper>().ToList();
 
             // Assert
             diaperQuery.Connection.Should().Be(fixture.Connection);
-            diaperQuery.Received(1).ExecuteReader();
+            await diaperQuery.Received(1).ExecuteReaderAsync();
             diapers.Should().HaveCount(1);
             diaper[0].Should().Be(diapers[0].DiaperID);
             diaper[1].Should().Be(diapers[0].IsUsed);
@@ -46,19 +49,20 @@ namespace UT.Kvasir.Transaction {
             diaper[4].Should().Be(diapers[0].ForAdults);
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNullsNoRelations() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNullsNoRelations() {
             // Arrange
             var test = new object[] { "MBTI", 94U, DBNull.Value, (byte)16, false, DBNull.Value };
             var fixture = new TestFixture(typeof(PersonalityTest)).WithEntityRow<PersonalityTest>(test);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var testQuery = fixture.PrincipalCommands<PersonalityTest>().SelectAllQuery;
             var tests = fixture.Depot[typeof(PersonalityTest)].Cast<PersonalityTest>().ToList();
 
             // Assert
             testQuery.Connection.Should().Be(fixture.Connection);
-            testQuery.Received(1).ExecuteReader();
+            await testQuery.Received(1).ExecuteReaderAsync();
             tests.Should().HaveCount(1);
             test[0].Should().Be(tests[0].TestName);
             test[1].Should().Be(tests[0].NumQuestions);
@@ -68,7 +72,7 @@ namespace UT.Kvasir.Transaction {
             tests[0].DebutYear.Should().BeNull();
         }
 
-        [TestMethod] public void MultipleInstancesSingleEntityNoRelations() {
+        [TestMethod] public async Task MultipleInstancesSingleEntityNoRelations() {
             // Arrange
             var carotid = new object[] { "Carotid", (byte)2, 115U, "Internal Jugular" };
             var femoral = new object[] { "Femoral", (byte)2, 115U, "Femoral" };
@@ -79,13 +83,14 @@ namespace UT.Kvasir.Transaction {
                 .WithEntityRow<Artery>(aorta);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var arteryQuery = fixture.PrincipalCommands<Artery>().SelectAllQuery;
             var arteries = fixture.Depot[typeof(Artery)].Cast<Artery>().ToList();
 
             // Assert
             arteryQuery.Connection.Should().Be(fixture.Connection);
-            arteryQuery.Received(1).ExecuteReader();
+            await arteryQuery.Received(1).ExecuteReaderAsync();
             arteries.Should().HaveCount(3);
             carotid[0].Should().Be(arteries[0].Name);
             carotid[1].Should().Be(arteries[0].NumPerPerson);
@@ -101,7 +106,7 @@ namespace UT.Kvasir.Transaction {
             aorta[3].Should().Be(arteries[2].Vein);
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelations() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNonEmptyScalarRelations() {
             // Arrange
             var table = new object[] { "PLT1TR4", (ushort)2021, true };
             var femaleRow0 = new object[] { table[0], table[1], 82, .056911 };
@@ -116,7 +121,8 @@ namespace UT.Kvasir.Transaction {
                 .WithRelationRow<ActuarialTable>(1, maleRow2);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var tableQuery = fixture.PrincipalCommands<ActuarialTable>().SelectAllQuery;
             var femaleQuery = fixture.RelationCommands<ActuarialTable>(0).SelectAllQuery;
             var maleQuery = fixture.RelationCommands<ActuarialTable>(1).SelectAllQuery;
@@ -139,13 +145,14 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(tableQuery, (femaleQuery, maleQuery));
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityEmptyScalarRelations() {
+        [TestMethod] public async Task SingleInstanceSingleEntityEmptyScalarRelations() {
             // Arrange
             var quasar = new object[] { "3C 273", "Virgo", 0.158339, 2433000000UL };
             var fixture = new TestFixture(typeof(Quasar)).WithEntityRow<Quasar>(quasar);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var quasarQuery = fixture.PrincipalCommands<Quasar>().SelectAllQuery;
             var discoverersQuery = fixture.RelationCommands<Quasar>(0).SelectAllQuery;
             var quasars = fixture.Depot[typeof(Quasar)].Cast<Quasar>().ToList();
@@ -162,7 +169,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(quasarQuery, discoverersQuery);
         }
 
-        [TestMethod] public void MultipleInstancesSingleEntityScalarRelations() {
+        [TestMethod] public async Task MultipleInstancesSingleEntityScalarRelations() {
             // Arrange
             var oldSpice = new object[] { Guid.NewGuid(), "Old Spice", 17.99M, false };
             var degreeUltra = new object[] { Guid.NewGuid(), "Degree Ultra", 24.99M, false };
@@ -185,7 +192,8 @@ namespace UT.Kvasir.Transaction {
                 .WithRelationRow<Deodorant>(0, mango);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var deodorantQuery = fixture.PrincipalCommands<Deodorant>().SelectAllQuery;
             var scentsQuery = fixture.RelationCommands<Deodorant>(0).SelectAllQuery;
             var deodorants = fixture.Depot[typeof(Deodorant)].Cast<Deodorant>().ToList();
@@ -218,7 +226,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(deodorantQuery, scentsQuery);
         }
 
-        [TestMethod] public void SingleInstanceSingleLocalization() {
+        [TestMethod] public async Task SingleInstanceSingleLocalization() {
             // Arrange
             var vocalRange1 = new object[] { "LOC_ALTO", ConversionOf(Language.English), 37.9 };
             var vocalRange2 = new object[] { "LOC_ALTO", ConversionOf(Language.Spanish), -9.656 };
@@ -229,7 +237,8 @@ namespace UT.Kvasir.Transaction {
                 .WithLocalizationRow<VocalRange>(vocalRange3);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var vocalRangeQuery = fixture.PrincipalCommands<VocalRange>().SelectAllQuery;
             var vocalRanges = fixture.Depot[typeof(VocalRange)].Cast<VocalRange>().ToList();
 
@@ -243,7 +252,7 @@ namespace UT.Kvasir.Transaction {
             vocalRange3[2].Should().Be(vocalRanges[0][Language.Hindi]);
         }
 
-        [TestMethod] public void MultipleInstancesSingleLocalization() {
+        [TestMethod] public async Task MultipleInstancesSingleLocalization() {
             // Arrange
             var pleasantry1 = new object[] { "LOC_THANKS", 'q', "Thank You" };
             var pleasantry2 = new object[] { "LOC_THANKS", 'a', "Thank You Very Much" };
@@ -260,7 +269,8 @@ namespace UT.Kvasir.Transaction {
                 .WithLocalizationRow<Pleasantry>(pleasantry6);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var pleasantryQuery = fixture.PrincipalCommands<Pleasantry>().SelectAllQuery;
             var pleasantries = fixture.Depot[typeof(Pleasantry)].Cast<Pleasantry>().ToList();
 
@@ -281,7 +291,7 @@ namespace UT.Kvasir.Transaction {
             pleasantry3[2].Should().Be(pleasantries[2]['i']);
         }
 
-        [TestMethod] public void MultipleUnrelatedEntities() {
+        [TestMethod] public async Task MultipleUnrelatedEntities() {
             // Arrange
             var griselda = new object[] { (byte)3, (byte)2, "Griselda Blanco", "New Jersey", "Dan Harmon", new DateTime(2015, 9, 8) };
             var cooper = new object[] { (byte)5, (byte)7, "D.B. Cooper", "Drunk Mystery", "Kyle Mooney", new DateTime(2018, 3, 6) };
@@ -300,7 +310,8 @@ namespace UT.Kvasir.Transaction {
                 .WithEntityRow<Colonscopy>(colonoscopy);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var drunkHistoryQuery = fixture.PrincipalCommands<DrunkHistory>().SelectAllQuery;
             var allergenQuery = fixture.PrincipalCommands<Allergen>().SelectAllQuery;
             var colonoscopyQuery = fixture.PrincipalCommands<Colonscopy>().SelectAllQuery;
@@ -358,7 +369,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered((drunkHistoryQuery, allergenQuery, colonoscopyQuery));
         }
 
-        [TestMethod] public void MultipleUnrelatedLocalizations() {
+        [TestMethod] public async Task MultipleUnrelatedLocalizations() {
             // Arrange
             var wotd1 = new object[] { new DateOnly(2026, 5, 9), ConversionOf(Language.English), "antelope" };
             var wotd2 = new object[] { new DateOnly(2026, 5, 9), ConversionOf(Language.Spanish), "antílope" };
@@ -381,7 +392,8 @@ namespace UT.Kvasir.Transaction {
                 .WithLocalizationRow<IrrationalNumber>(irrationalNumber4);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var wotdQuery = fixture.PrincipalCommands<WordOfTheDay>().SelectAllQuery;
             var exclamationQuery = fixture.PrincipalCommands<Exclamation>().SelectAllQuery;
             var irrationalNumberQuery = fixture.PrincipalCommands<IrrationalNumber>().SelectAllQuery;
@@ -413,7 +425,7 @@ namespace UT.Kvasir.Transaction {
             irrationalNumber4[2].Should().Be(irrationalNumbers[0][18]);
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByReferenceChain() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByReferenceChain() {
             // Arrange
             var male = new object[] { 'M', "male", 47.259 };
             var female = new object[] { 'F', "female", 46.8114 };
@@ -434,7 +446,8 @@ namespace UT.Kvasir.Transaction {
                 .WithEntityRow<Annuity.Gender>(female);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var genderQuery = fixture.PrincipalCommands<Annuity.Gender>().SelectAllQuery;
             var personQuery = fixture.PrincipalCommands<Annuity.Person>().SelectAllQuery;
             var companyQuery = fixture.PrincipalCommands<Annuity.Company>().SelectAllQuery;
@@ -490,7 +503,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(genderQuery, personQuery, companyQuery, annuityQuery);
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByReferenceTree() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByReferenceTree() {
             // Arrange
             var elvis = new object[] { Guid.NewGuid(), "Elvis", "Presley" };
             var taylor = new object[] { Guid.NewGuid(), "Taylor", "Swift" };
@@ -505,7 +518,8 @@ namespace UT.Kvasir.Transaction {
                 .WithEntityRow<ACapellaGroup>(group);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var songwriterQuery = fixture.PrincipalCommands<ACapellaGroup.Songwriter>().SelectAllQuery;
             var universityQuery = fixture.PrincipalCommands<ACapellaGroup.University>().SelectAllQuery;
             var songQuery = fixture.PrincipalCommands<ACapellaGroup.Song>().SelectAllQuery;
@@ -549,7 +563,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(universityQuery, groupQuery);
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByRelation() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByRelation() {
             // Arrange
             var aaron = new object[] { "GB", 12, "Aaron Rodgers", "QB" };
             var richard = new object[] { "GB", 82, "Richard Rodgers", "TE" };
@@ -562,7 +576,8 @@ namespace UT.Kvasir.Transaction {
                 .WithRelationRow<HailMary>(0, [miracle[0], miracle[1], richard[0], richard[1]]);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var hailMaryQuery = fixture.PrincipalCommands<HailMary>().SelectAllQuery;
             var playerQuery = fixture.PrincipalCommands<HailMary.FootballPlayer>().SelectAllQuery;
             var involvementQuery = fixture.RelationCommands<HailMary>(0).SelectAllQuery;
@@ -593,7 +608,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered((playerQuery, hailMaryQuery), involvementQuery);
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByScalarLocalization() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByScalarLocalization() {
             // Arrange
             var currency0 = new object[] { "LOC_CURRENCY_0", "dollar", 38.00M };
             var currency1 = new object[] { "LOC_CURRENCY_1", "dollar", 0.003M };
@@ -608,7 +623,8 @@ namespace UT.Kvasir.Transaction {
                 .WithLocalizationRow<LocalizedNullableText>(text);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var contractQuery = fixture.PrincipalCommands<EventContract>().SelectAllQuery;
             var currencyQuery = fixture.PrincipalCommands<LocalizedCurrency>().SelectAllQuery;
             var dateQuery = fixture.PrincipalCommands<LocalizedDate>().SelectAllQuery;
@@ -647,7 +663,7 @@ namespace UT.Kvasir.Transaction {
             text[2].Should().Be(texts[0][Language.English]);
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByReferenceLocalization() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByReferenceLocalization() {
             // Arrange
             var cost = new object[] { Guid.NewGuid(), 3600, 500.0M };
             var localizedCost0 = new object[] { "LOC_VRANTZHAUS", ConversionOf(DJ.Event.Wedding), cost[0] };
@@ -660,7 +676,8 @@ namespace UT.Kvasir.Transaction {
                 .WithLocalizationRow<DJ.LocalizedCost>(localizedCost1);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var djQuery = fixture.PrincipalCommands<DJ>().SelectAllQuery;
             var costQuery = fixture.PrincipalCommands<DJ.Cost>().SelectAllQuery;
             var localizedCostQuery = fixture.PrincipalCommands<DJ.LocalizedCost>().SelectAllQuery;
@@ -690,7 +707,7 @@ namespace UT.Kvasir.Transaction {
             localizedCosts[0][DJ.Event.BneiMitzvah].Should().Be(costs[0]);
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByRelationLocalization() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByRelationLocalization() {
             // Arrange
             var length0 = new object[] { 1825712UL, ConversionOf(Translation.TestLocalizations.System.Imperial), "feet", 13.9 };
             var length1 = new object[] { length0[0], ConversionOf(Translation.TestLocalizations.System.Metric), "meters", 4.25 };
@@ -710,7 +727,8 @@ namespace UT.Kvasir.Transaction {
                 .WithRelationRow<Whale>(0, [whale[0], ConversionOf(Whale.Dimension.GestationPeriod), gestation[0]]);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var whaleQuery = fixture.PrincipalCommands<Whale>().SelectAllQuery;
             var measureQuery = fixture.PrincipalCommands<LocalizedMeasure>().SelectAllQuery;
             var measurementsQuery = fixture.RelationCommands<Whale>(0).SelectAllQuery;
@@ -745,7 +763,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered((whaleQuery, measureQuery), measurementsQuery);
         }
 
-        [TestMethod] public void SelfReferentialEntityViaRelation() {
+        [TestMethod] public async Task SelfReferentialEntityViaRelation() {
             // Arrange
             var naderShah = new object[] { "Nader Shah", new DateTime(1736, 3, 8), new DateTime(1747, 6, 20), "Afsharid", "Tehran" };
             var abbas = new object[] { "Abbas III", new DateTime(1732, 4, 16), new DateTime(1736, 1, 22), "Safavid", "Tehran" };
@@ -758,7 +776,8 @@ namespace UT.Kvasir.Transaction {
                 .WithRelationRow<IranianShah>(0, [abbas[0], tahmasp[0]]);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var shahQuery = fixture.PrincipalCommands<IranianShah>().SelectAllQuery;
             var predecessorsQuery = fixture.RelationCommands<IranianShah>(0).SelectAllQuery;
             var shahs = fixture.Depot[typeof(IranianShah)].Cast<IranianShah>().ToList();
@@ -790,7 +809,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(shahQuery, predecessorsQuery);
         }
 
-        [TestMethod] public void SelfReferentialEntityViaLocalization() {
+        [TestMethod] public async Task SelfReferentialEntityViaLocalization() {
             // Arrange
             var localizedCell = new object[] { '+', true, Guid.NewGuid() };
             var stemCell0 = new object[] { localizedCell[2], localizedCell[0], 0.00945f, true, "Samson Houlie" };
@@ -801,7 +820,8 @@ namespace UT.Kvasir.Transaction {
                 .WithLocalizationRow<StemCell.LocalizedCell>(localizedCell);
 
             // Act
-            fixture.Transactor.SelectAll();
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
             var stemCellQuery = fixture.PrincipalCommands<StemCell>().SelectAllQuery;
             var localizedCellQuery = fixture.PrincipalCommands<StemCell.LocalizedCell>().SelectAllQuery;
             var stemCells = fixture.Depot[typeof(StemCell)].Cast<StemCell>().ToList();

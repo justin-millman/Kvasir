@@ -1,6 +1,6 @@
 ﻿using Kvasir.Schema;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 
 namespace Kvasir.Transaction {
     /// <summary>
@@ -10,13 +10,13 @@ namespace Kvasir.Transaction {
         /// <summary>
         ///   The command that creates the target <see cref="Table"/> in the back-end database.
         /// </summary>
-        IDbCommand CreateTableCommand { get; }
+        DbCommand CreateTableCommand { get; }
 
         /// <summary>
         ///   The command that selects all data from the target <see cref="Table"/>. The rows should be returned in
         ///   key-sorted order, which for Relation Tables guarantees that the rows are grouped by "owning Entity."
         /// </summary>
-        IDbCommand SelectAllQuery { get; }
+        DbCommand SelectAllQuery { get; }
 
         /// <summary>
         ///   Produce a command that, when executed against a back-end database and committed, inserts one or more rows
@@ -25,7 +25,7 @@ namespace Kvasir.Transaction {
         /// <param name="rows">
         ///   The rows of data to be inserted.
         /// </param>
-        IDbCommand InsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
+        DbCommand InsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
 
         /// <summary>
         ///   Produce a command that, when executed against a back-end database and committed, updates the values of one
@@ -41,7 +41,7 @@ namespace Kvasir.Transaction {
         /// <param name="rows">
         ///   The full rows of data that should exist in the back-end database after the update.
         /// </param>
-        IDbCommand UpdateCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
+        DbCommand UpdateCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
 
         /// <summary>
         ///   Produce a command that, when executed against a back-end database and committed, deleted one or more rows
@@ -72,6 +72,6 @@ namespace Kvasir.Transaction {
         ///   Fields are of the same type). If the Primary Key is, in fact, the full row, then obviously the full row
         ///   can be provided, though the Fields must be present in the order matching that of the Primary Key.
         /// </note>
-        IDbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> keys);
+        DbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> keys);
     }
 }

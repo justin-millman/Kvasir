@@ -8,8 +8,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Kvasir.Transaction {
     /// <summary>
@@ -18,7 +20,7 @@ namespace Kvasir.Transaction {
     /// </summary>
     internal sealed class Transactor {
         /// <summary>
-        ///   Constructs a new <see cref="Translator"/> that uses default <see cref="Settings"/>.
+        ///   Creates a new <see cref="Translator"/> that uses default <see cref="Settings"/>.
         /// </summary>
         /// <param name="entityTranslations">
         ///   The set of <see cref="EntityTranslation">translations</see> for non-Localization types that define the
@@ -41,15 +43,20 @@ namespace Kvasir.Transaction {
         /// <param name="logger">
         ///   The <see cref="ILogger">logger</see> with which to issue diagnostics.
         /// </param>
-        public Transactor(
+        /// <returns>
+        ///   An <see langword="await"/>able <see cref="Task"/> that, upon completion, yields a new
+        ///   <see cref="Transactor"/>.
+        /// </returns>
+        public static async Task<Transactor> New(
             IEnumerable<EntityTranslation> entityTranslations,
             IEnumerable<LocalizationTranslation> localizationTranslations,
             IConnectionPool connectionPool,
             ICommandsFactory commandsFactory,
             Action<object> entityStorage,
             ILogger logger
-        )
-            : this(entityTranslations, localizationTranslations, connectionPool, commandsFactory, entityStorage, Settings.Default, logger) {}
+        ) {
+            return await New(entityTranslations, localizationTranslations, connectionPool, commandsFactory, entityStorage, Settings.Default, logger);
+        }
 
         /// <summary>
         ///   Constructs a new <see cref="Translator"/> that uses custom <see cref="Settings"/>.
@@ -78,12 +85,16 @@ namespace Kvasir.Transaction {
         /// <param name="logger">
         ///   The <see cref="ILogger">logger</see> with which to issue diagnostics.
         /// </param>
+        /// <returns>
+        ///   An <see langword="await"/>able <see cref="Task"/> that, upon completion, yields a new
+        ///   <see cref="Transactor"/>.
+        /// </returns>
         /// <remarks>
         ///   Note that the settings are not currently used for anything; in fact, there are no traits available in the
         ///   <see cref="Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
         ///   us to provide customization of behaviors in the future without necessitating a significant redesign.
         /// </remarks>
-        public Transactor(
+        public static async Task<Transactor> New(
             IEnumerable<EntityTranslation> entityTranslations,
             IEnumerable<LocalizationTranslation> localizationTranslations,
             IConnectionPool connectionPool,
@@ -92,68 +103,17 @@ namespace Kvasir.Transaction {
             Settings settings,
             ILogger logger
         ) {
-            Debug.Assert(entityTranslations is not null);
-            Debug.Assert(localizationTranslations is not null);
-            Debug.Assert(!entityTranslations.IsEmpty() || !localizationTranslations.IsEmpty());
-            Debug.Assert(connectionPool is not null);
-            Debug.Assert(commandsFactory is not null);
-            Debug.Assert(entityStorage is not null);
-            Debug.Assert(settings is not null);
-            Debug.Assert(logger is not null);
-
-            settings_ = settings;
-            entityTranslations_ = entityTranslations.ToDictionary(t => t.CLRSource, t => t);
-            localizationTranslations_ = localizationTranslations.ToDictionary(t => t.CLRSource, t => t);
-            connectionPool_ = connectionPool;
-            commandsFactory_ = commandsFactory;
-            entityStorage_ = entityStorage;
-            logger_ = logger;
-
-            logger_.LogDebug("Transactor created for {} regular Entities and {} Localizations", entityTranslations_.Count, localizationTranslations_.Count);
-
-            var principalCommands = new List<ICommands>();
-            var relationCommands = new List<ICommands>();
-            var localizationCommands = new List<ICommands>();
-            var tables = new Dictionary<ITable, int>();
-            var sourceTypes = new Dictionary<ITable, Type>();
-            foreach (var principal in Topology.OrderEntities([..entityTranslations])) {
-                tables[principal.Table] = principalCommands.Count;
-                sourceTypes[principal.Table] = principal.Extractor.SourceType;
-                principalCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
-                logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count, principal.Extractor.SourceType.Name);
-
-                // using `Extractor.SourceType` is a little awkward here, but it's the best we have
-                foreach (var relation in entityTranslations_[principal.Extractor.SourceType].Relations) {
-                    tables[relation.Table] = entityTranslations_.Count + relationCommands.Count;
-                    sourceTypes[relation.Table] = relation.Extractor.SourceType;
-                    relationCommands.Add(commandsFactory_.CreateCommands(relation.Table, isPrincipalTable: false));
-                    logger_.LogDebug("Relation #{} is for table {}", relationCommands.Count, relation.Table.Name);
-                }
-            }
-            foreach (var principal in localizationTranslations.Select(x => x.Principal)) {
-                tables[principal.Table] = principalCommands.Count + relationCommands.Count + localizationCommands.Count;
-                sourceTypes[principal.Table] = principal.Extractor.SourceType;
-                localizationCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
-                logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count + localizationCommands.Count, principal.Extractor.SourceType.Name);
-            }
-
-            // The order here is Regular Entities -> Relations -> Localizations, with the former in topological order.
-            // Nothing ever references a Localization Table (we omit foreign keys to support "empty" Localizations), so
-            // they can safely go last. For the same reason, the Localizations can be arbitrarily ordered relative to
-            // one another. The relative order of the Relation Tables is likewise not relevant because they cannot
-            // reference each other, either.
-            localizationStartIdx_ = principalCommands.Count + relationCommands.Count;
-            commands_ = [..principalCommands.Concat(relationCommands).Concat(localizationCommands)];
-            tables_ = tables;
-            sourceTypes_ = sourceTypes;
+            Transactor transactor = new Transactor(entityTranslations, localizationTranslations, connectionPool, commandsFactory, entityStorage, settings, logger);
 
             // There is administrative work that has to be done before any other queries can be executed. This work
             // involves tables reserved by the framework. However, if any of the types being transacted upon is itself
             // an administrative type, then we're already in the process of managing administration and don't want to
             // get ourselves into an infinite loop.
             if (entityTranslations.Select(t => t.Principal.Extractor.SourceType).All(t => !t.TranslationCategory().Equals(TypeCategory.Administrative))) {
-                ManageAdministration();
+                await transactor.ManageAdministration();
             }
+
+            return transactor;
         }
 
         /// <summary>
@@ -167,31 +127,31 @@ namespace Kvasir.Transaction {
         ///   if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
         ///   fails.
         /// </exception>
-        public void CreateTables() {
-            using var connection = connectionPool_.MakeConnection();
-            using var transaction = connection.BeginTransaction();
+        public async Task CreateTables() {
+            await using var connection = await connectionPool_.MakeConnectionAsync();
+            await using var transaction = await connection.BeginTransactionAsync();
             foreach (var command in commands_.Select(c => c.CreateTableCommand)) {
                 command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
-            TryCommitTransaction(transaction);
+            await TryCommitTransaction(transaction);
 
             // Rather than do the ordering ourselves here, just let the insertion function handle it. This will also
             // make everything one transaction, though that's not really super important.
             var preDefineds = entityTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances);
             preDefineds = preDefineds.Concat(localizationTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances));
             if (!preDefineds.IsEmpty()) {
-                Insert([..preDefineds]);
+                await Insert([..preDefineds]);
             }
         }
 
         /// <summary>
         ///   Selects all of the data out of the back-end database and creates corresponding CLR objects.
         /// </summary>
-        public void SelectAll() {
-            using var connection = connectionPool_.MakeConnection();
+        public async Task SelectAll() {
+            await using var connection = await connectionPool_.MakeConnectionAsync();
 
             var entityTranslations = entityTranslations_.Values.OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = localizationTranslations_.Values.ToList();
@@ -206,7 +166,7 @@ namespace Kvasir.Transaction {
                 var query = commands_[idx + localizationStartIdx_].SelectAllQuery;
                 logger_.LogDebug("Executing SQL: {}", query.CommandText);
                 query.Connection = connection;
-                var reader = query.ExecuteReader();
+                var reader = await query.ExecuteReaderAsync();
 
                 var rows = new Dictionary<DBValue, List<List<DBValue>>>();
                 var instances = new Dictionary<DBValue, object>();
@@ -237,7 +197,7 @@ namespace Kvasir.Transaction {
                 var query = commands_[idx].SelectAllQuery;
                 logger_.LogDebug("Executing SQL: {}", query.CommandText);
                 query.Connection = connection;
-                var reader = query.ExecuteReader();
+                var reader = await query.ExecuteReaderAsync();
 
                 var creations = new List<object>();
                 while (reader.Read()) {
@@ -261,7 +221,7 @@ namespace Kvasir.Transaction {
                     var query = commands_[tables_[relation.Table]].SelectAllQuery;
                     logger_.LogDebug("Executing SQL: {}", query.CommandText);
                     query.Connection = connection;
-                    var reader = query.ExecuteReader();
+                    var reader = await query.ExecuteReaderAsync();
 
                     var rows = options.ToDictionary(e => e, _ => new List<IReadOnlyList<DBValue>>());
                     while (reader.Read()) {
@@ -300,7 +260,7 @@ namespace Kvasir.Transaction {
         ///   if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
         ///   fails.
         /// </exception>
-        public void Insert(IEnumerable<object> entities) {
+        public async Task Insert(IEnumerable<object> entities) {
             Debug.Assert(entities is not null);
             Debug.Assert(!entities.IsEmpty());
 
@@ -308,8 +268,8 @@ namespace Kvasir.Transaction {
             var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
 
-            using var connection = connectionPool_.MakeConnection();
-            using var transaction = connection.BeginTransaction();
+            await using var connection = await connectionPool_.MakeConnectionAsync();
+            await using var transaction = await connection.BeginTransactionAsync();
 
             // Insert all the data into Principal Tables first
             foreach (var translation in entityTranslations) {
@@ -322,7 +282,7 @@ namespace Kvasir.Transaction {
                 command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
 
             // Insert all the data into Relation Tables second
@@ -346,7 +306,7 @@ namespace Kvasir.Transaction {
                     command.Connection = connection;
                     command.Transaction = transaction;
                     logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
 
@@ -368,12 +328,12 @@ namespace Kvasir.Transaction {
                 command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
 
             // Commit the transaction; if it succeeds (failure is indicated by a `throw`), then we run all of the
             // canonicalization functions
-            TryCommitTransaction(transaction);
+            await TryCommitTransaction(transaction);
             foreach (var canonicalize in canonicalizations) {
                 canonicalize();
             }
@@ -393,7 +353,7 @@ namespace Kvasir.Transaction {
         ///   if the transaction updating the necessary data fails, and the attempt to roll the transaction back also
         ///   fails.
         /// </exception>
-        public void Update(IEnumerable<object> entities) {
+        public async Task Update(IEnumerable<object> entities) {
             Debug.Assert(entities is not null);
             Debug.Assert(!entities.IsEmpty());
 
@@ -401,8 +361,8 @@ namespace Kvasir.Transaction {
             var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
 
-            using var connection = connectionPool_.MakeConnection();
-            using var transaction = connection.BeginTransaction();
+            await using var connection = await connectionPool_.MakeConnectionAsync();
+            await using var transaction = await connection.BeginTransactionAsync();
 
             // Update all the data in Principal Tables first
             foreach (var translation in entityTranslations) {
@@ -415,7 +375,7 @@ namespace Kvasir.Transaction {
                 command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
 
             // Update all the data in Relation Tables second: deletes, then updates, then inserts
@@ -445,7 +405,7 @@ namespace Kvasir.Transaction {
                             command.Connection = connection;
                             command.Transaction = transaction;
                             logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                            command.ExecuteNonQuery();
+                            await command.ExecuteNonQueryAsync();
                         }
                     }
                 }
@@ -476,14 +436,14 @@ namespace Kvasir.Transaction {
                         command.Connection = connection;
                         command.Transaction = transaction;
                         logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
             }
 
             // Commit the transaction; if it succeeds (failure is indicated by a `throw`), then we run all of the
             // canonicalization functions
-            TryCommitTransaction(transaction);
+            await TryCommitTransaction(transaction);
             foreach (var canonicalize in canonicalizations) {
                 canonicalize();
             }
@@ -503,7 +463,7 @@ namespace Kvasir.Transaction {
         ///   if the transaction deleting the necessary data fails, and the attempt to roll the transaction back also
         ///   fails.
         /// </exception>
-        public void Delete(IEnumerable<object> entities) {
+        public async Task Delete(IEnumerable<object> entities) {
             Debug.Assert(entities is not null);
             Debug.Assert(!entities.IsEmpty());
 
@@ -511,8 +471,8 @@ namespace Kvasir.Transaction {
             var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
             var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
 
-            using var connection = connectionPool_.MakeConnection();
-            using var transaction = connection.BeginTransaction();
+            await using var connection = await connectionPool_.MakeConnectionAsync();
+            await using var transaction = await connection.BeginTransactionAsync();
 
             // Delete all the data from Localization Tables first
             foreach (var translation in localizationTranslations) {
@@ -529,7 +489,7 @@ namespace Kvasir.Transaction {
                 command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
 
             // Delete all the data from Relation Tables second
@@ -550,7 +510,7 @@ namespace Kvasir.Transaction {
                     command.Connection = connection;
                     command.Transaction = transaction;
                     logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
 
@@ -565,25 +525,122 @@ namespace Kvasir.Transaction {
                 command.Connection = connection;
                 command.Transaction = transaction;
                 logger_.LogDebug("Executing SQL: {}", command.CommandText);
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
 
             // Commit the transaction; since we're doing deletes, we don't need to canonicalize anything - it's on the
             // caller to throw away their objects and create new ones
-            TryCommitTransaction(transaction);
+            await TryCommitTransaction(transaction);
+        }
+
+        /// <summary>
+        ///   Constructs a new <see cref="Translator"/> that uses specific <see cref="Settings"/>.
+        /// </summary>
+        /// <param name="entityTranslations">
+        ///   The set of <see cref="EntityTranslation">translations</see> for non-Localization types that define the
+        ///   schema of the back-end database on which the new <see cref="Transactor"/> will operate.
+        /// </param>
+        /// <param name="localizationTranslations">
+        ///   The set of <see cref="LocalizationTranslation">translations</see> for Localization types that define the
+        ///   schema of the back-end database on which the new <see cref="Transactor"/> will operate.
+        /// </param>
+        /// <param name="connectionPool">
+        ///   The <see cref="IConnectionPool">connection pool</see> with which to create database connections as needed.
+        /// </param>
+        /// <param name="commandsFactory">
+        ///   The <see cref="ICommandsFactory"/> with which to create the necessary commands and queries to interact
+        ///   with the tables for <paramref name="entityTranslations"/> and <paramref name="localizationTranslations"/>.
+        /// </param>
+        /// <param name="entityStorage">
+        ///   The functor through which reconstituted Entities will be stored for later look-up.
+        /// </param>
+        /// <param name="settings">
+        ///   The <see cref="Settings"/> according to which to perform the transaction activity.
+        /// </param>
+        /// <param name="logger">
+        ///   The <see cref="ILogger">logger</see> with which to issue diagnostics.
+        /// </param>
+        /// <remarks>
+        ///   Note that the settings are not currently used for anything; in fact, there are no traits available in the
+        ///   <see cref="Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
+        ///   us to provide customization of behaviors in the future without necessitating a significant redesign.
+        /// </remarks>
+        private Transactor(
+            IEnumerable<EntityTranslation> entityTranslations,
+            IEnumerable<LocalizationTranslation> localizationTranslations,
+            IConnectionPool connectionPool,
+            ICommandsFactory commandsFactory,
+            Action<object> entityStorage,
+            Settings settings,
+            ILogger logger
+        ) {
+            Debug.Assert(entityTranslations is not null);
+            Debug.Assert(localizationTranslations is not null);
+            Debug.Assert(!entityTranslations.IsEmpty() || !localizationTranslations.IsEmpty());
+            Debug.Assert(connectionPool is not null);
+            Debug.Assert(commandsFactory is not null);
+            Debug.Assert(entityStorage is not null);
+            Debug.Assert(settings is not null);
+            Debug.Assert(logger is not null);
+
+            settings_ = settings;
+            entityTranslations_ = entityTranslations.ToDictionary(t => t.CLRSource, t => t);
+            localizationTranslations_ = localizationTranslations.ToDictionary(t => t.CLRSource, t => t);
+            connectionPool_ = connectionPool;
+            commandsFactory_ = commandsFactory;
+            entityStorage_ = entityStorage;
+            logger_ = logger;
+
+            logger_.LogDebug("Transactor created for {} regular Entities and {} Localizations", entityTranslations_.Count, localizationTranslations_.Count);
+
+            var principalCommands = new List<ICommands>();
+            var relationCommands = new List<ICommands>();
+            var localizationCommands = new List<ICommands>();
+            var tables = new Dictionary<ITable, int>();
+            var sourceTypes = new Dictionary<ITable, Type>();
+            foreach (var principal in Topology.OrderEntities([.. entityTranslations])) {
+                tables[principal.Table] = principalCommands.Count;
+                sourceTypes[principal.Table] = principal.Extractor.SourceType;
+                principalCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
+                logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count, principal.Extractor.SourceType.Name);
+
+                // using `Extractor.SourceType` is a little awkward here, but it's the best we have
+                foreach (var relation in entityTranslations_[principal.Extractor.SourceType].Relations) {
+                    tables[relation.Table] = entityTranslations_.Count + relationCommands.Count;
+                    sourceTypes[relation.Table] = relation.Extractor.SourceType;
+                    relationCommands.Add(commandsFactory_.CreateCommands(relation.Table, isPrincipalTable: false));
+                    logger_.LogDebug("Relation #{} is for table {}", relationCommands.Count, relation.Table.Name);
+                }
+            }
+            foreach (var principal in localizationTranslations.Select(x => x.Principal)) {
+                tables[principal.Table] = principalCommands.Count + relationCommands.Count + localizationCommands.Count;
+                sourceTypes[principal.Table] = principal.Extractor.SourceType;
+                localizationCommands.Add(commandsFactory_.CreateCommands(principal.Table, isPrincipalTable: true));
+                logger_.LogDebug("Entity #{} is `{}`", principalCommands.Count + localizationCommands.Count, principal.Extractor.SourceType.Name);
+            }
+
+            // The order here is Regular Entities -> Relations -> Localizations, with the former in topological order.
+            // Nothing ever references a Localization Table (we omit foreign keys to support "empty" Localizations), so
+            // they can safely go last. For the same reason, the Localizations can be arbitrarily ordered relative to
+            // one another. The relative order of the Relation Tables is likewise not relevant because they cannot
+            // reference each other, either.
+            localizationStartIdx_ = principalCommands.Count + relationCommands.Count;
+            commands_ = [.. principalCommands.Concat(relationCommands).Concat(localizationCommands)];
+            tables_ = tables;
+            sourceTypes_ = sourceTypes;
         }
 
         /// <summary>
         ///   Executes all of the administrative business logic.
         /// </summary>
-        private void ManageAdministration() {
+        private async Task ManageAdministration() {
             // I don't love that we have to create our own Translator here, but the administrative CLR types are not
             // provided on construction and we need to translate them. We'll use default settings since we're only
             // dealing with framework-controlled Tables anyway, and we know that the table names are reserved. There
             // also won't be any referential fields, so we don't have to worry about the Entity lookup.
             var translator = new Translator(t => [], logger_);
 
-            ManageSchemaMigration(translator);
+            await ManageSchemaMigration(translator);
         }
 
         /// <summary>
@@ -593,7 +650,7 @@ namespace Kvasir.Transaction {
         /// <param name="translator">
         ///   The <see cref="Translator"/> with which to translate any administrative Entity types.
         /// </param>
-        private void ManageSchemaMigration(Translator translator) {
+        private async Task ManageSchemaMigration(Translator translator) {
             // We are going to need direct access to the reconstituted `TableHash` instances to perform the migration
             // check. The `entityStorage_` functor that *this* Transactor is using is opaque to us, so we'll use an
             // entirely different one.
@@ -602,12 +659,12 @@ namespace Kvasir.Transaction {
 
             // We need a translation of the `TableHash` administrative type in order to create a Transactor.
             var translation = translator[typeof(TableHash)];
-            var transactor = new Transactor([translation], [], connectionPool_, commandsFactory_, hashStorage, logger_);
+            var transactor = await New([translation], [], connectionPool_, commandsFactory_, hashStorage, logger_);
 
             // First, create the tables; this will create the administrative table if it does not yet exist. Then,
             // select all the data; this will load all existing administrative hashes into the `hashes` dictionary.
-            transactor.CreateTables();
-            transactor.SelectAll();
+            await transactor.CreateTables();
+            await transactor.SelectAll();
 
             // For each table that *this* Transactor is responsible for, we have to look up its expected hash in the
             // existing data. It's okay for a table to not exist in the administrative data yet: that just means it is
@@ -633,7 +690,7 @@ namespace Kvasir.Transaction {
                 throw new SchemaMigrationException(hashes.Keys.First());
             }
             if (!tablesToRecord.IsEmpty()) {
-                transactor.Insert(tablesToRecord);
+                await transactor.Insert(tablesToRecord);
             }
         }
 
@@ -650,15 +707,15 @@ namespace Kvasir.Transaction {
         /// <exception cref="AggregateException">
         ///   if the attempt to commit <paramref name="transaction"/> fails, and the attempt to roll it back also fails.
         /// </exception>
-        private void TryCommitTransaction(IDbTransaction transaction) {
+        private async Task TryCommitTransaction(DbTransaction transaction) {
             try {
                 logger_.LogDebug("Committing Transaction");
-                transaction.Commit();
+                await transaction.CommitAsync();
             }
             catch (InvalidOperationException commitEx) {
                 try {
                     logger_.LogError("Rolling Back Transaction (cause: {})", commitEx.Message);
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
                 catch (InvalidOperationException rollbackEx) {
                     logger_.LogError("Roll Back Failed (cause: {})", rollbackEx.Message);

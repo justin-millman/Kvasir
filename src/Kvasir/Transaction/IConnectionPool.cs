@@ -1,8 +1,9 @@
-﻿using System.Data;
+﻿using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace Kvasir.Transaction {
     /// <summary>
-    ///   The interface that abstracts the creation of <see cref="IDbConnection">database connections</see> without
+    ///   The interface that abstracts the creation of <see cref="DbConnection">database connections</see> without
     ///   exposing details about the connection or the back-end provider.
     /// </summary>
     internal interface IConnectionPool {
@@ -15,8 +16,8 @@ namespace Kvasir.Transaction {
         ///   and it *may* be the same object as returned on previous invocations, though that is not requried.
         /// </remarks>
         /// <returns>
-        ///   An open <see cref="IDbConnection">database connection</see>.
+        ///   A task that, when `await`ed, resolves to an open <see cref="DbConnection">database connection</see>.
         /// </returns>
-        IDbConnection MakeConnection();
+        Task<DbConnection> MakeConnectionAsync();
     }
 }

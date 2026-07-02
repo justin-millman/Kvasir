@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 using static UT.Kvasir.Transaction.Deletion;
 using static UT.Kvasir.Translation.TestLocalizations;
@@ -14,7 +14,7 @@ using static UT.Kvasir.Translation.TestLocalizations;
 namespace UT.Kvasir.Transaction {
     [TestClass, TestCategory("Deletion")]
     public class DeletionTests {
-        [TestMethod] public void SingleInstanceSingleEntityNoRelationsSingleFieldPrimaryKey() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNoRelationsSingleFieldPrimaryKey() {
             // Arrange
             var pinata = new Pinata() {
                 PinataID = Guid.NewGuid(),
@@ -26,7 +26,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Pinata));
 
             // Act
-            fixture.Transactor.Delete([pinata]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([pinata]);
             var pinataCmd = fixture.PrincipalCommands<Pinata>().DeleteCommand(ANY_ROWS);
             var pinataDeletions = fixture.DeletionsFor(pinataCmd);
 
@@ -36,10 +37,10 @@ namespace UT.Kvasir.Transaction {
             pinataDeletions.Should().HaveCount(1);
             pinataDeletions.Should().ContainRow(pinata.PinataID);
             fixture.ShouldBeOrdered(pinataCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNoRelationsMultiFieldPrimaryKey() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNoRelationsMultiFieldPrimaryKey() {
             // Arrange
             var choir = new Choir() {
                 GroupName = "The LaLaLambourghinis",
@@ -53,7 +54,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Choir));
 
             // Act
-            fixture.Transactor.Delete([choir]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([choir]);
             var choirCmd = fixture.PrincipalCommands<Choir>().DeleteCommand(ANY_ROWS);
             var choirDeletions = fixture.DeletionsFor(choirCmd);
 
@@ -63,10 +65,10 @@ namespace UT.Kvasir.Transaction {
             choirDeletions.Should().HaveCount(1);
             choirDeletions.Should().ContainRow(choir.GroupName, choir.Level, choir.Established);
             fixture.ShouldBeOrdered(choirCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleInstancesSingleEntityNoRelations() {
+        [TestMethod] public async Task MultipleInstancesSingleEntityNoRelations() {
             // Arrange
             var microsoft = new EquityOption() {
                 Underlying = "MSFT",
@@ -98,7 +100,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(EquityOption));
 
             // Act
-            fixture.Transactor.Delete([microsoft, nvidia, disney]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([microsoft, nvidia, disney]);
             var optionCmd = fixture.PrincipalCommands<EquityOption>().DeleteCommand(ANY_ROWS);
             var optionDeletions = fixture.DeletionsFor(optionCmd);
 
@@ -110,10 +113,10 @@ namespace UT.Kvasir.Transaction {
             optionDeletions.Should().ContainRow(nvidia.Underlying, nvidia.Expiration, nvidia.Strike, ConversionOf(nvidia.Side));
             optionDeletions.Should().ContainRow(disney.Underlying, disney.Expiration, disney.Strike, ConversionOf(disney.Side));
             fixture.ShouldBeOrdered(optionCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelationsSavedElements() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNonEmptyScalarRelationsSavedElements() {
             // Arrange
             var k401 = new K401() {
                 AccountID = Guid.NewGuid(),
@@ -134,7 +137,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(K401));
 
             // Act
-            fixture.Transactor.Delete([k401]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([k401]);
             var k401Cmd = fixture.PrincipalCommands<K401>().DeleteCommand(ANY_ROWS);
             var k401Deletions = fixture.DeletionsFor(k401Cmd);
             var depositsCmd = fixture.RelationCommands<K401>(0).DeleteCommand(ANY_ROWS);
@@ -150,10 +154,10 @@ namespace UT.Kvasir.Transaction {
             depositsDeletions.Should().HaveCount(1);
             depositsDeletions.Should().ContainRow(k401.AccountID);
             fixture.ShouldBeOrdered(depositsCmd, k401Cmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelationsDeletedElements() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNonEmptyScalarRelationsDeletedElements() {
             // Arrange
             var jumpBall = new JumpBall() {
                 GameID = Guid.NewGuid(),
@@ -170,7 +174,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(JumpBall));
 
             // Act
-            fixture.Transactor.Delete([jumpBall]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([jumpBall]);
             var jumpBallCmd = fixture.PrincipalCommands<JumpBall>().DeleteCommand(ANY_ROWS);
             var jumpBallDeletions = fixture.DeletionsFor(jumpBallCmd);
             var participantsCmd = fixture.RelationCommands<JumpBall>(0).DeleteCommand(ANY_ROWS);
@@ -186,10 +191,10 @@ namespace UT.Kvasir.Transaction {
             participantsDeletions.Should().HaveCount(1);
             participantsDeletions.Should().ContainRow(jumpBall.GameID, jumpBall.Instance);
             fixture.ShouldBeOrdered(participantsCmd, jumpBallCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelationsNewElements() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNonEmptyScalarRelationsNewElements() {
             // Arrange
             var vault = new BankVault() {
                 BankID = Guid.NewGuid(),
@@ -211,7 +216,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(BankVault));
 
             // Act
-            fixture.Transactor.Delete([vault]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([vault]);
             var vaultCmd = fixture.PrincipalCommands<BankVault>().DeleteCommand(ANY_ROWS);
             var vaultDeletions = fixture.DeletionsFor(vaultCmd);
             var combinationCmd = fixture.RelationCommands<BankVault>(0).DeleteCommand(ANY_ROWS);
@@ -229,10 +235,10 @@ namespace UT.Kvasir.Transaction {
             storageDeletions.Should().HaveCount(1);
             storageDeletions.Should().ContainRow(vault.BankID, vault.Branch, vault.VaultNumber);
             fixture.ShouldBeOrdered(vaultCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleEntityNonEmptyScalarRelationsMixedElements() {
+        [TestMethod] public async Task SingleInstanceSingleEntityNonEmptyScalarRelationsMixedElements() {
             // Arrange
             var sushi = new SushiRoll() {
                 RollType = "Dragon",
@@ -253,7 +259,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(SushiRoll));
 
             // Act
-            fixture.Transactor.Delete([sushi]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([sushi]);
             var sushiCmd = fixture.PrincipalCommands<SushiRoll>().DeleteCommand(ANY_ROWS);
             var sushiDeletions = fixture.DeletionsFor(sushiCmd);
             var ingredientsCmd = fixture.RelationCommands<SushiRoll>(0).DeleteCommand(ANY_ROWS);
@@ -269,10 +276,10 @@ namespace UT.Kvasir.Transaction {
             ingredientsDeletions.Should().HaveCount(1);
             ingredientsDeletions.Should().ContainRow(sushi.RollType, sushi.Restaurant);
             fixture.ShouldBeOrdered(ingredientsCmd, sushiCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
         
-        [TestMethod] public void SingleInstanceSingleEntityEmptyScalarRelations() {
+        [TestMethod] public async Task SingleInstanceSingleEntityEmptyScalarRelations() {
             // Arrange
             var woodshop = new Woodshop() {
                 WoodshopID = Guid.NewGuid(),
@@ -285,7 +292,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Woodshop));
 
             // Act
-            fixture.Transactor.Delete([woodshop]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([woodshop]);
             var woodshopCmd = fixture.PrincipalCommands<Woodshop>().DeleteCommand(ANY_ROWS);
             var woodshopDeletions = fixture.DeletionsFor(woodshopCmd);
             var toolsCmd = fixture.RelationCommands<Woodshop>(0).DeleteCommand(ANY_ROWS);
@@ -303,10 +311,10 @@ namespace UT.Kvasir.Transaction {
             woodsDeletions.Should().HaveCount(1);
             woodsDeletions.Should().ContainRow(woodshop.WoodshopID);
             fixture.ShouldBeOrdered(woodshopCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleInstancesSingleEntityScalarRelations() {
+        [TestMethod] public async Task MultipleInstancesSingleEntityScalarRelations() {
             // Arrange
             var store0 = new ConvenienceStore() {
                 StoreBrand = "7-Eleven",
@@ -345,7 +353,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(ConvenienceStore));
 
             // Act
-            fixture.Transactor.Delete([store0, store1]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([store0, store1]);
             var storeCmd = fixture.PrincipalCommands<ConvenienceStore>().DeleteCommand(ANY_ROWS);
             var storeDeletions = fixture.DeletionsFor(storeCmd);
             var employeesCmd = fixture.RelationCommands<ConvenienceStore>(0).DeleteCommand(ANY_ROWS);
@@ -370,10 +379,10 @@ namespace UT.Kvasir.Transaction {
             productsDeletions.Should().ContainRow(store0.StoreBrand, store0.StoreNumber);
             productsDeletions.Should().ContainRow(store1.StoreBrand, store1.StoreNumber);
             fixture.ShouldBeOrdered((employeesCmd, productsCmd), storeCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleLocalizationSavedValues() {
+        [TestMethod] public async Task SingleInstanceSingleLocalizationSavedValues() {
             // Arrange
             var showtime = new Showtime("LOC_SPAMALOT_SHOWTIME");
             showtime["US_CENTRAL"] = 1900;
@@ -383,7 +392,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Showtime));
 
             // Act
-            fixture.Transactor.Delete([showtime]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([showtime]);
             var showtimeCmd = fixture.PrincipalCommands<Showtime>().DeleteCommand(ANY_ROWS);
             var showtimeDeletions = fixture.DeletionsFor(showtimeCmd);
 
@@ -393,10 +403,10 @@ namespace UT.Kvasir.Transaction {
             showtimeDeletions.Should().HaveCount(1);
             showtimeDeletions.Should().ContainRow(showtime.Key);
             fixture.ShouldBeOrdered(showtimeCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleLocalizationDeletedValues() {
+        [TestMethod] public async Task SingleInstanceSingleLocalizationDeletedValues() {
             // Arrange
             var termOfEndearment = new TermOfEndearment("LOC_SWEETHEART");
             termOfEndearment[Language.English] = "Sweetheart";
@@ -405,7 +415,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(TermOfEndearment));
 
             // Act
-            fixture.Transactor.Delete([termOfEndearment]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([termOfEndearment]);
             var termOfEndearmentCmd = fixture.PrincipalCommands<TermOfEndearment>().DeleteCommand(ANY_ROWS);
             var termOfEndearmentDeletions = fixture.DeletionsFor(termOfEndearmentCmd);
 
@@ -415,10 +426,10 @@ namespace UT.Kvasir.Transaction {
             termOfEndearmentDeletions.Should().HaveCount(1);
             termOfEndearmentDeletions.Should().ContainRow(termOfEndearment.Key);
             fixture.ShouldBeOrdered(termOfEndearmentCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleLocalizationNewValues() {
+        [TestMethod] public async Task SingleInstanceSingleLocalizationNewValues() {
             // Arrange
             var label = new Label(81929125024);
             label['E'] = "Fragile but Unimportant Airborne Cargo";
@@ -427,7 +438,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Label));
 
             // Act
-            fixture.Transactor.Delete([label]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([label]);
             var labelCmd = fixture.PrincipalCommands<Label>().DeleteCommand(ANY_ROWS);
             var labelDeletions = fixture.DeletionsFor(labelCmd);
 
@@ -437,10 +449,10 @@ namespace UT.Kvasir.Transaction {
             labelDeletions.Should().HaveCount(1);
             labelDeletions.Should().ContainRow(label.Key);
             fixture.ShouldBeOrdered(labelCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SingleInstanceSingleLocalizationMixedValues() {
+        [TestMethod] public async Task SingleInstanceSingleLocalizationMixedValues() {
             // Arrange
             var verb = new ConjugatedVerb(-19033);
             verb[1.10] = "(yo) tengo";
@@ -454,7 +466,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(ConjugatedVerb));
 
             // Act
-            fixture.Transactor.Delete([verb]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([verb]);
             var conjugationCmd = fixture.PrincipalCommands<ConjugatedVerb>().DeleteCommand(ANY_ROWS);
             var conjugationDeletions = fixture.DeletionsFor(conjugationCmd);
 
@@ -464,10 +477,10 @@ namespace UT.Kvasir.Transaction {
             conjugationDeletions.Should().HaveCount(1);
             conjugationDeletions.Should().ContainRow(verb.Key);
             fixture.ShouldBeOrdered(conjugationCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleInstancesSingleLocalization() {
+        [TestMethod] public async Task MultipleInstancesSingleLocalization() {
             // Arrange
             var coordinate0 = new Coordinate(Guid.NewGuid());
             var coordinate1 = new Coordinate(Guid.NewGuid());
@@ -475,7 +488,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Coordinate));
 
             // Act
-            fixture.Transactor.Delete([coordinate0, coordinate1, coordinate2]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([coordinate0, coordinate1, coordinate2]);
             var coordinateCmd = fixture.PrincipalCommands<Coordinate>().DeleteCommand(ANY_ROWS);
             var coordinateDeletions = fixture.DeletionsFor(coordinateCmd);
 
@@ -487,10 +501,10 @@ namespace UT.Kvasir.Transaction {
             coordinateDeletions.Should().ContainRow(coordinate1.Key);
             coordinateDeletions.Should().ContainRow(coordinate2.Key);
             fixture.ShouldBeOrdered(coordinateCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleUnrelatedEntities() {
+        [TestMethod] public async Task MultipleUnrelatedEntities() {
             // Arrange
             var shanty = new SeaShanty() {
                 Title = "Spanish Ladies",
@@ -514,7 +528,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(SeaShanty), typeof(ElginMarble), typeof(CepheidVariable));
 
             // Act
-            fixture.Transactor.Delete([shanty, marble, cepheid]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([shanty, marble, cepheid]);
             var shantyCmd = fixture.PrincipalCommands<SeaShanty>().DeleteCommand(ANY_ROWS);
             var shantyDeletions = fixture.DeletionsFor(shantyCmd);
             var marbleCmd = fixture.PrincipalCommands<ElginMarble>().DeleteCommand(ANY_ROWS);
@@ -536,10 +551,10 @@ namespace UT.Kvasir.Transaction {
             cepheidDeletions.Should().HaveCount(1);
             cepheidDeletions.Should().ContainRow(cepheid.Name);
             fixture.ShouldBeOrdered((shantyCmd, marbleCmd, cepheidCmd));
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleUnrelatedLocalizations() {
+        [TestMethod] public async Task MultipleUnrelatedLocalizations() {
             // Arrange
             var sunset = new Sunset(new DateOnly(1983, 4, 19));
             sunset["CHICAGO"] = 2013;
@@ -558,7 +573,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Sunset), typeof(Wingding), typeof(Sprite));
 
             // Act
-            fixture.Transactor.Delete([sunset, wingding, sprite]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([sunset, wingding, sprite]);
             var sunsetCmd = fixture.PrincipalCommands<Sunset>().DeleteCommand(ANY_ROWS);
             var sunsetDeletions = fixture.DeletionsFor(sunsetCmd);
             var wingdingCmd = fixture.PrincipalCommands<Wingding>().DeleteCommand(ANY_ROWS);
@@ -580,10 +596,10 @@ namespace UT.Kvasir.Transaction {
             spriteDeletions.Should().HaveCount(1);
             spriteDeletions.Should().ContainRow(sprite.Key);
             fixture.ShouldBeOrdered((sunsetCmd, wingdingCmd, spriteCmd));
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByReferenceChain() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByReferenceChain() {
             // Arrange
             var costume = new CostumeParty.Costume() {
                 CostumeID = Guid.NewGuid(),
@@ -606,7 +622,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(CostumeParty), typeof(CostumeParty.Partygoer), typeof(CostumeParty.Costume));
 
             // Act
-            fixture.Transactor.Delete([costume, party, partygoer]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([costume, party, partygoer]);
             var costumeCmd = fixture.PrincipalCommands<CostumeParty.Costume>().DeleteCommand(ANY_ROWS);
             var costumeDeletios = fixture.DeletionsFor(costumeCmd);
             var partygoerCmd = fixture.PrincipalCommands<CostumeParty.Partygoer>().DeleteCommand(ANY_ROWS);
@@ -628,10 +645,10 @@ namespace UT.Kvasir.Transaction {
             partyDeletios.Should().HaveCount(1);
             partyDeletios.Should().ContainRow(party.PartyID);
             fixture.ShouldBeOrdered(costumeCmd, partygoerCmd, partyCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByReferenceTree() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByReferenceTree() {
             // Arrange
             var album = new WeirdAlParody.Album() {
                 Title = "Straight Outta Lynwood",
@@ -654,7 +671,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(WeirdAlParody), typeof(WeirdAlParody.Song), typeof(WeirdAlParody.Album));
 
             // Act
-            fixture.Transactor.Delete([album, beatIt, eatIt]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([album, beatIt, eatIt]);
             var albumCmd = fixture.PrincipalCommands<WeirdAlParody.Album>().DeleteCommand(ANY_ROWS);
             var albumDeletions = fixture.DeletionsFor(albumCmd);
             var songCmd = fixture.PrincipalCommands<WeirdAlParody.Song>().DeleteCommand(ANY_ROWS);
@@ -676,10 +694,10 @@ namespace UT.Kvasir.Transaction {
             parodyDeletions.Should().HaveCount(1);
             parodyDeletions.Should().ContainRow(eatIt.Title);
             fixture.ShouldBeOrdered((songCmd, albumCmd), parodyCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByRelation() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByRelation() {
             // Arrange
             var lawyer0 = new Affidavit.Lawyer() {
                 BarNumber = Guid.NewGuid(),
@@ -712,7 +730,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Affidavit), typeof(Affidavit.Lawyer));
 
             // Act
-            fixture.Transactor.Delete([affidavit, lawyer0, lawyer1, lawyer2]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([affidavit, lawyer0, lawyer1, lawyer2]);
             var affidavitCmd = fixture.PrincipalCommands<Affidavit>().DeleteCommand(ANY_ROWS);
             var affidavitDeletions = fixture.DeletionsFor(affidavitCmd);
             var lawyerCmd = fixture.PrincipalCommands<Affidavit.Lawyer>().DeleteCommand(ANY_ROWS);
@@ -736,10 +755,10 @@ namespace UT.Kvasir.Transaction {
             involvementDeletions.Should().HaveCount(1);
             involvementDeletions.Should().ContainRow(affidavit.ID);
             fixture.ShouldBeOrdered(involvementCmd, (lawyerCmd, affidavitCmd));
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByScalarLocalization() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByScalarLocalization() {
             // Arrange
             var bandeirante = new Bandeirante() {
                 ID = Guid.NewGuid(),
@@ -752,7 +771,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Bandeirante), typeof(LocalizedText), typeof(LocalizedCurrency));
 
             // Act
-            fixture.Transactor.Delete([bandeirante, bandeirante.HomeState, bandeirante.TotalLooted]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([bandeirante, bandeirante.HomeState, bandeirante.TotalLooted]);
             var bandeiranteCmd = fixture.PrincipalCommands<Bandeirante>().DeleteCommand(ANY_ROWS);
             var bandeiranteDeletions = fixture.DeletionsFor(bandeiranteCmd);
             var textCmd = fixture.PrincipalCommands<LocalizedText>().DeleteCommand(ANY_ROWS);
@@ -774,10 +794,10 @@ namespace UT.Kvasir.Transaction {
             currencyDeletions.Should().HaveCount(1);
             currencyDeletions.Should().ContainRow(bandeirante.TotalLooted.Key);
             fixture.ShouldBeOrdered((bandeiranteCmd, textCmd, currencyCmd));
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByReferenceLocalization() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByReferenceLocalization() {
             // Arrange
             var yyyymmdd = new BirthdayParty.YearMonthDay() {
                 Year = 1873,
@@ -807,7 +827,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(BirthdayParty), typeof(BirthdayParty.YearMonthDay), typeof(BirthdayParty.LocalizedYearMonthDay));
 
             // Act
-            fixture.Transactor.Delete([yyyymmdd, wordyDate, party, party.Date]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([yyyymmdd, wordyDate, party, party.Date]);
             var partyCmd = fixture.PrincipalCommands<BirthdayParty>().DeleteCommand(ANY_ROWS);
             var partyDeletions = fixture.DeletionsFor(partyCmd);
             var dateCmd = fixture.PrincipalCommands<BirthdayParty.YearMonthDay>().DeleteCommand(ANY_ROWS);
@@ -833,7 +854,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered(localizationCmd, dateCmd);
         }
 
-        [TestMethod] public void MultipleEntitiesRelatedByRelationLocalization() {
+        [TestMethod] public async Task MultipleEntitiesRelatedByRelationLocalization() {
             // Arrange
             var text0 = new LocalizedNullableText("LOC_SCANDERRA");
             var text1 = new LocalizedNullableText("LOC_TA_FLUMIN");
@@ -854,7 +875,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Lawyer), typeof(LocalizedNullableText));
 
             // Act
-            fixture.Transactor.Delete([text0, text1, lawyer]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([text0, text1, lawyer]);
             var lawyerCmd = fixture.PrincipalCommands<Lawyer>().DeleteCommand(ANY_ROWS);
             var lawyerDeletions = fixture.DeletionsFor(lawyerCmd);
             var textCmd = fixture.PrincipalCommands<LocalizedNullableText>().DeleteCommand(ANY_ROWS);
@@ -880,7 +902,7 @@ namespace UT.Kvasir.Transaction {
             fixture.ShouldBeOrdered((employersCmd, textCmd));
         }
 
-        [TestMethod] public void SelfReferentialEntityViaRelation() {
+        [TestMethod] public async Task SelfReferentialEntityViaRelation() {
             // Arrange
             var masseuse0 = new Masseuse() {
                 LicenseNumber = Guid.NewGuid(),
@@ -917,7 +939,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Masseuse));
 
             // Act
-            fixture.Transactor.Delete([masseuse0, masseuse1, masseuse2]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([masseuse0, masseuse1, masseuse2]);
             var masseuseCmd = fixture.PrincipalCommands<Masseuse>().DeleteCommand(ANY_ROWS);
             var masseuseDeletions = fixture.DeletionsFor(masseuseCmd);
             var teachersCmd = fixture.RelationCommands<Masseuse>(0).DeleteCommand(ANY_ROWS);
@@ -935,10 +958,10 @@ namespace UT.Kvasir.Transaction {
             teachersDeletions.Should().ContainRow(masseuse1.LicenseNumber, ConversionOf(masseuse1.Style));
             teachersDeletions.Should().ContainRow(masseuse2.LicenseNumber, ConversionOf(masseuse2.Style));
             fixture.ShouldBeOrdered(teachersCmd, masseuseCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void SelfReferentialEntityViaLocalization() {
+        [TestMethod] public async Task SelfReferentialEntityViaLocalization() {
             // Arrange
             var radiologist0 = new Radiologist() {
                 MedicalID = Guid.NewGuid(),
@@ -972,7 +995,8 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Radiologist), typeof(Radiologist.OnCallEscalation));
 
             // Act
-            fixture.Transactor.Delete([radiologist0, radiologist1, radiologist2, radiologist0.Superior]);
+            await fixture.InitializeSchema();
+            await fixture.Transactor.Delete([radiologist0, radiologist1, radiologist2, radiologist0.Superior]);
             var radiologistCmd = fixture.PrincipalCommands<Radiologist>().DeleteCommand(ANY_ROWS);
             var radiologistDeletions = fixture.DeletionsFor(radiologistCmd);
             var onCallCmd = fixture.PrincipalCommands<Radiologist.OnCallEscalation>().DeleteCommand(ANY_ROWS);
@@ -989,10 +1013,10 @@ namespace UT.Kvasir.Transaction {
             radiologistDeletions.Should().ContainRow(radiologist2.MedicalID);
             onCallDeletions.Should().ContainRow(radiologist0.Superior.Key);
             fixture.ShouldBeOrdered(onCallCmd, radiologistCmd);
-            fixture.Transaction.Received(1).Commit();
+            await fixture.Transaction.Received(1).CommitAsync();
         }
 
-        [TestMethod] public void TransactionRolledBack() {
+        [TestMethod] public async Task TransactionRolledBack() {
             // Arrange
             var gazebo = new Gazebo() {
                 GazeboID = Guid.NewGuid(),
@@ -1003,15 +1027,16 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Gazebo)).WithCommitError();
 
             // Act
-            var action = () => fixture.Transactor.Insert([gazebo]);
+            await fixture.InitializeSchema();
+            var action = async () => await fixture.Transactor.Delete([gazebo]);
 
             // Assert
-            action.Should().ThrowExactly<InvalidOperationException>();
-            fixture.Transaction.Received(1).Commit();
-            fixture.Transaction.Received(1).Rollback();
+            await action.Should().ThrowExactlyAsync<InvalidOperationException>();
+            await fixture.Transaction.Received(1).CommitAsync();
+            await fixture.Transaction.Received(1).RollbackAsync();
         }
 
-        [TestMethod] public void RollbackFails() {
+        [TestMethod] public async Task RollbackFails() {
             // Arrange
             var moai = new Moai() {
                 Site = "Ahu Tongariki",
@@ -1023,12 +1048,13 @@ namespace UT.Kvasir.Transaction {
             var fixture = new TestFixture(typeof(Moai)).WithRollbackError();
 
             // Act
-            var action = () => fixture.Transactor.Delete([moai]);
+            await fixture.InitializeSchema();
+            var action = async () => await fixture.Transactor.Delete([moai]);
 
             // Assert
-            action.Should().ThrowExactly<AggregateException>();
-            fixture.Transaction.Received(1).Commit();
-            fixture.Transaction.Received(1).Rollback();
+            await action.Should().ThrowExactlyAsync<AggregateException>();
+            await fixture.Transaction.Received(1).CommitAsync();
+            await fixture.Transaction.Received(1).RollbackAsync();
         }
 
 

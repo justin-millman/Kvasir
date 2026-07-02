@@ -1,7 +1,8 @@
 ﻿using Kvasir.Transaction;
 using MySql.Data.MySqlClient;
-using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Kvasir.Providers.MySQL {
     /// <summary>
@@ -37,10 +38,10 @@ namespace Kvasir.Providers.MySQL {
             }.ConnectionString;
         }
 
-        /// <see cref="IConnectionPool.MakeConnection"/>
-        public IDbConnection MakeConnection() {
+        /// <see cref="IConnectionPool.MakeConnectionAsync"/>
+        public async Task<DbConnection> MakeConnectionAsync() {
             var connection = new MySqlConnection(connectionString_);
-            connection.Open();
+            await connection.OpenAsync();
             return connection;
         }
 

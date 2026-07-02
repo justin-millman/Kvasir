@@ -1,7 +1,7 @@
 ﻿using Kvasir.Schema;
 using Kvasir.Transaction;
 using MySql.Data.MySqlClient;
-using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +12,14 @@ namespace Kvasir.Providers.MySQL {
     /// </summary>
     internal sealed class Commands : ICommands {
         /// <inheritdoc/>
-        public IDbCommand CreateTableCommand {
+        public DbCommand CreateTableCommand {
             get {
                 return new MySqlCommand(createCmdText_);
             }
         }
 
         /// <inheritdoc/>
-        public IDbCommand SelectAllQuery {
+        public DbCommand SelectAllQuery {
             get {
                 return new MySqlCommand(selectAllQueryText_);
             }
@@ -104,7 +104,7 @@ namespace Kvasir.Providers.MySQL {
         }
 
         /// <inheritdoc/>
-        public IDbCommand InsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows) {
+        public DbCommand InsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows) {
             var command = new MySqlCommand();
             string paramName() => $"@v{command.Parameters.Count}";
 
@@ -130,7 +130,7 @@ namespace Kvasir.Providers.MySQL {
         }
 
         /// <inheritdoc/>
-        public IDbCommand UpdateCommand(IEnumerable<IReadOnlyList<DBValue>> rows) {
+        public DbCommand UpdateCommand(IEnumerable<IReadOnlyList<DBValue>> rows) {
             var command = new MySqlCommand();
             string paramName() => $"@v{command.Parameters.Count}";
 
@@ -162,7 +162,7 @@ namespace Kvasir.Providers.MySQL {
         }
 
         /// <inheritdoc/>
-        public IDbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> keys) {
+        public DbCommand DeleteCommand(IEnumerable<IReadOnlyList<DBValue>> keys) {
             int longMatchCount = table_.PrimaryKey.Fields.Count;
 
             var command = new MySqlCommand();
