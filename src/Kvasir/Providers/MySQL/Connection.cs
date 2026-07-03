@@ -15,6 +15,9 @@ namespace Kvasir.Providers.MySQL {
         /// <param name="server">
         ///   The database server.
         /// </param>
+        /// <param name="port">
+        ///   The connection port.
+        /// </param>
         /// <param name="database">
         ///   The database name.
         /// </param>
@@ -24,7 +27,7 @@ namespace Kvasir.Providers.MySQL {
         /// <param name="password">
         ///   The connection password.
         /// </param>
-        public ConnectionPool(string server, string database, string username, string password) {
+        public ConnectionPool(string server, uint port, string database, string username, string password) {
             Debug.Assert(server is not null && server != "");
             Debug.Assert(database is not null && database != "");
             Debug.Assert(username is not null && username != "");
@@ -32,6 +35,7 @@ namespace Kvasir.Providers.MySQL {
 
             connectionString_ = new MySqlConnectionStringBuilder() {
                 Server = server,
+                Port = port,
                 Database = database,
                 UserID = username,
                 Password = password
