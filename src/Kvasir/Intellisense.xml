@@ -1859,12 +1859,15 @@
               The <see cref="T:Kvasir.Transaction.IConnectionPool"/> implementation for the MySQL provider.
             </summary>
         </member>
-        <member name="M:Kvasir.Providers.MySQL.ConnectionPool.#ctor(System.String,System.String,System.String,System.String)">
+        <member name="M:Kvasir.Providers.MySQL.ConnectionPool.#ctor(System.String,System.UInt32,System.String,System.String,System.String)">
             <summary>
               Creates a new MySQL <see cref="T:Kvasir.Providers.MySQL.ConnectionPool"/>.
             </summary>
             <param name="server">
               The database server.
+            </param>
+            <param name="port">
+              The connection port.
             </param>
             <param name="database">
               The database name.
@@ -1987,6 +1990,200 @@
         </member>
         <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.Build">
             <inheritdoc/>
+        </member>
+        <member name="T:Kvasir.Providers.MySQL.Credentials">
+            <summary>
+              The set of credentials needed to connect to a MySQL database.
+            </summary>
+            <param name="Server">The MySQL database server.</param>
+            <param name="Port">The MySQL database connection port.</param>
+            <param name="Database">The name of the MySQL database.</param>
+            <param name="Username">The username / ID with which to connect to <paramref name="Database"/>.</param>
+            <param name="Password">The password for <paramref name="Username"/>.</param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Credentials.#ctor(System.String,System.UInt32,System.String,System.String,System.String)">
+            <summary>
+              The set of credentials needed to connect to a MySQL database.
+            </summary>
+            <param name="Server">The MySQL database server.</param>
+            <param name="Port">The MySQL database connection port.</param>
+            <param name="Database">The name of the MySQL database.</param>
+            <param name="Username">The username / ID with which to connect to <paramref name="Database"/>.</param>
+            <param name="Password">The password for <paramref name="Username"/>.</param>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.Credentials.Server">
+            <summary>The MySQL database server.</summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.Credentials.Port">
+            <summary>The MySQL database connection port.</summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.Credentials.Database">
+            <summary>The name of the MySQL database.</summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.Credentials.Username">
+            <summary>The username / ID with which to connect to <paramref name="Database"/>.</summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.Credentials.Password">
+            <summary>The password for <paramref name="Username"/>.</summary>
+        </member>
+        <member name="T:Kvasir.Providers.MySQL.Database">
+            <summary>
+              A back-end MySQL database.
+            </summary>
+            <remarks>
+              This class is the user's entry point into Kvasir for the MySQL database provider. It is responsible for
+              establishing a connection to the back-end system (through user-provided credentials), translating the user's
+              CLR types into a data model, and creating the SQL queries/statements for manipulating the database. It exposes
+              a number of APIs for the user to execute selections, insertions, updates, and deletes, and it also keeps track
+              of the current state of the database to expose Entity sets.
+            </remarks>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.New(Kvasir.Providers.MySQL.Credentials,System.String)">
+            <summary>
+              Creates a new <see cref="T:Kvasir.Providers.MySQL.Database"/> with a model based on all types from a given namespace in the calling
+              assembly.
+            </summary>
+            <remarks>
+              This function must be called from the assembly in the user-space code that contains the type definitions
+              that are to make up the data model. Each non-abstract, non-generic, top-level <see langword="public"/>
+              class type that is not a <see cref="T:System.Delegate"/> and is defined in exactly the given namespace is included
+              in the model, as are any types thereby referenced. (Of course, exclusion annotations are honored.)
+            </remarks>
+            <param name="credentials">
+              The <see cref="T:Kvasir.Providers.MySQL.Credentials"/> with which to establish the connection to the back-end database.
+            </param>
+            <param name="entityNamespace">
+              The target namespace.
+            </param>
+            <returns>
+              A new <see cref="T:Kvasir.Providers.MySQL.Database"/>, with a connection established through <see cref="T:Kvasir.Providers.MySQL.Credentials"/> and a model
+              consisting of the types defined in <paramref name="entityNamespace"/> in the calling assembly.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if any of the types in discovered in <paramref name="entityNamespace"/>, or any types referenced thereby,
+              are not valid Entity types or have an impermissible model (e.g. a field of unsupported type, an
+              indiscernable primary key, etc.).
+            </exception>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.New(Kvasir.Providers.MySQL.Credentials,System.Collections.Generic.IEnumerable{System.Type})">
+            <summary>
+              Creates a new <see cref="T:Kvasir.Providers.MySQL.Database"/> with a model based on a set of <see cref="T:System.Type">Entity types</see>.
+            </summary>
+            <remarks>
+              <para>
+                The set of types provided is an initial starter set: additional Entity types may be discovered through
+                reflection, because of references and Relations. This overload can be used to exclude certain types from
+                the model that do not belong, either because they are not valid (and not annotated for exclusion) or
+                because they are auxiliaries/utilities.
+              </para>
+              <para>
+                This function must be called from the assembly in the user-space code that contains the type definitions
+                of <paramref name="entityTypes"/>.
+              </para>
+            </remarks>
+            <param name="credentials">
+              The <see cref="T:Kvasir.Providers.MySQL.Credentials"/> with which to establish the connection to the back-end database.
+            </param>
+            <param name="entityTypes">
+              The set of Entity types with which to seed the model.
+            </param>
+            <returns>
+              A new <see cref="T:Kvasir.Providers.MySQL.Database"/>, with a connection established through <see cref="T:Kvasir.Providers.MySQL.Credentials"/> and a model
+              consisting of <i>at least</i> the types in <paramref name="entityTypes"/>.
+            </returns>
+            <exception cref="T:Kvasir.Exceptions.KvasirException">
+              if any of the types in <paramref name="entityTypes"/>, or any types referenced thereby, are not valid
+              Entity types or have an impermissible model (e.g. a field of unsupported type, an indiscernable primary
+              key, etc.).
+            </exception>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.AllOf``1">
+            <summary>
+              Gets all of the saved instances of a particular Entity type in the current <see cref="T:Kvasir.Providers.MySQL.Database"/>.
+            </summary>
+            <typeparam name="T">
+              The Entity type.
+            </typeparam>
+            <returns>
+              A collection of all Entity instances of type <typeparamref name="T"/> that have been saved to the back-end
+              database. The order in which the Entities are returned is undefined.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.Save(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Saves one or more Entities of any type to the back-end database.
+            </summary>
+            <remarks>
+              <para>
+                Saving an Entity results in either an <c>INSERT</c> operation or an <c>UPDATE</c> operation. The
+                <see cref="T:Kvasir.Providers.MySQL.Database"/> keeps track of all Entities that have already been inserted to determine which
+                operation is to be undertaken. Identification is done by object ID rather than by extracting the
+                Entity's Primary Key fields.
+              </para>
+              <para>
+                A new Entity can produce only <c>INSERT</c> operations: one for the Entity into its Principal Table, and
+                potentially many into the connection Relation Tables. However, an <c>UPDATE</c> operation can produce
+                <c>INSERT</c>s, <c>UPDATE</c>s, and <c>DELETE</c>s, depending on the state of the Entity's relations.
+                At the conclusion of the save operation, the back-end database reflects the state of the CLR objects.
+              </para>
+            </remarks>
+            <param name="entities">
+              The Entities to save.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.Delete(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+              Deletes one or more Entities of any type from the back-end database.
+            </summary>
+            <remarks>
+              It is the user's responsibility to ensure that any references to the deleted Entities have been redirected
+              prior to the <c>DELETE</c> operation. The framework will take care of the Relations attached to the
+              various Entities, but the back-end database's <c>ON DELETE</c> behavior can cause the CLR objects to
+              become out of sync if referential integrity is not maintained directly.
+            </remarks>
+            <param name="entities">
+              The Entities to delete.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.#ctor(Kvasir.Providers.MySQL.Credentials)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Providers.MySQL.Database"/>.
+            </summary>
+            <param name="credentials">
+              The <see cref="T:Kvasir.Providers.MySQL.Credentials"/> with which to establish the connection to the back-end database.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.InternalLookup(System.Type)">
+            <summary>
+              Looks up the set of known Entities of a given type.
+            </summary>
+            <remarks>
+              There are two use cases for looking up Entities: the public <see cref="M:Kvasir.Providers.MySQL.Database.AllOf``1"/> API exposed to users
+              (essentially equivalent to a <c>SELECT *</c> query) and the storage callback for when objects are
+              reconstituted from the back-end database. The former exposes Entities via an <see cref="T:System.Collections.Generic.IEnumerable`1"/>,
+              because it is intended to be read-only; however, the latter needs to be able to actually update the
+              collection. This function fulfills both, since a <see cref="T:System.Collections.Generic.HashSet`1"/> implements the
+              <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface.
+            </remarks>
+            <param name="type">
+              The probe Entity type.
+            </param>
+            <returns>
+              The set of known, saved Entities of type <paramref name="type"/>, in no particular order.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.Database.MakeLogger">
+            <summary>
+              Creates a logger to trace the operations of the <see cref="T:Kvasir.Providers.MySQL.Database"/>.
+            </summary>
+            <remarks>
+              The logger is connected to a file in the <c>%APPDATA%</c> directory for Kvasir, nested within a
+              subdirectory for the running application. The log files are set up to rotate every day, and are retained
+              for two weeks (14 days).
+            </remarks>
+            <returns>
+              A new logger for Kvasir.
+            </returns>
         </member>
         <member name="T:Kvasir.Providers.MySQL.FieldDecl">
             <summary>
