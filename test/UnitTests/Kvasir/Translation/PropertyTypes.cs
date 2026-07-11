@@ -244,13 +244,18 @@ namespace UT.Kvasir.Translation {
             var source = typeof(SlackChannel);
 
             // Act
-            var translate = () => translator[source];
+            var translation = translator[source];
 
             // Assert
-            translate.Should().FailWith<InvalidPropertyInDataModelException>()
-                .WithLocation("`SlackChannel` → NumMessages")
-                .WithProblem("type `MessageCount<short>` is a closed generic type and cannot be the backing type of a property")
-                .EndMessage();
+            translation.Relations.Should().BeEmpty();
+            translation.Principal.Table.Should()
+                .HaveField("ID").OfTypeGuid().BeingNonNullable().And
+                .HaveField("ChannelName").OfTypeText().BeingNonNullable().And
+                .HaveField("Members").OfTypeInt64().BeingNonNullable().And
+                .HaveField("IsPrivate").OfTypeBoolean().BeingNonNullable().And
+                .HaveField("NumMessages.Count").OfTypeInt16().BeingNullable().And
+                .HaveNoOtherFields().And
+                .HaveNoOtherForeignKeys();
         }
 
         [TestMethod] public void PropertyTypeIsAbstractClass_IsError() {
@@ -959,7 +964,7 @@ namespace UT.Kvasir.Translation {
             // Assert
             translate.Should().FailWith<InvalidPropertyInDataModelException>()
                 .WithLocation("`Caricature` → <synthetic> `SaleHistory` → Item")
-                .WithProblem("type `KeyValuePair<DateTime, decimal>` is a closed generic type and cannot be the backing type of a property")
+                .WithProblem("type `KeyValuePair<DateTime, decimal>` comes from assembly *, not from user assembly*")
                 .EndMessage();
         }
 

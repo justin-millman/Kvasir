@@ -39,10 +39,6 @@ namespace Kvasir.Translation {
             else if (self.IsGenericTypeDefinition) {
                 return TypeCategory.OpenGeneric;
             }
-            else if (self.IsGenericType) {
-                // Relation containers (e.g. `RelationList`) are closed generics, so this has to come later
-                return TypeCategory.ClosedGeneric;
-            }
             else if (self == typeof(object)) {
                 return TypeCategory.Object;
             }
@@ -133,7 +129,6 @@ namespace Kvasir.Translation {
         public static TypeCategory Array { get; } = new TypeCategory("an array (even of an otherwise supported type)");
         public static TypeCategory ByRef { get; } = new TypeCategory("a type by-ref");
         public static TypeCategory Class { get; } = new TypeCategory("a class or a record class");
-        public static TypeCategory ClosedGeneric { get; } = new TypeCategory("a closed generic type");
         public static TypeCategory Delegate { get; } = new TypeCategory("a delegate");
         public static TypeCategory Enumeration { get; } = new TypeCategory("an enumeration type");
         public static TypeCategory Interface { get; } = new TypeCategory("an interface");

@@ -439,8 +439,29 @@ namespace Kvasir.Translation {
                 }
             }
 
+            // For closed generic types, we want to enclose the generic parameters in angle brackets. We have to do this
+            // recursively, because the generic parameters themselves could be closed generics. We also have to apply
+            // the rules to enclosing types, in the event of a nested type definition.
+            static string typenameContribution(Type type) {
+                string result = "";
+                if (type.DeclaringType is not null) {
+                    result = typenameContribution(type.DeclaringType) + "+";
+                }
+
+                if (!type.IsGenericType) {
+                    return result + type.Name;
+                }
+                else {
+                    var genericParams = type.GetGenericArguments();
+                    var genericParamNames = genericParams.Select(p => typenameContribution(p));
+                    return $"{result}{type.Name[..type.Name.IndexOf("`")]}<{string.Join(',', genericParamNames)}>";
+                }
+            };
+
             if (annotation is null) {
-                return new TableName((excludeNS ? source.Name : source.FullName!) + "Table");
+                var ns = source.Namespace;
+                var typename = typenameContribution(source);
+                return new TableName((excludeNS ? typename : $"{ns}.{typename}") + "Table");
             }
             else if (!excludeNS) {
                 return new TableName(annotation.Name);

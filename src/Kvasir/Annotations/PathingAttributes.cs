@@ -10,7 +10,7 @@ namespace Kvasir.Annotations {
     ///   and name of the POCO. The namespace is included to ensure uniqueness among all Tables, since different C#
     ///   namespaces can define classes with the same name. The <see cref="ExcludeNamespaceFromNameAttribute"/> directs
     ///   Kvasir to ignore the POCO's namespace entirely, making a promise that the POCO's name is globally unique among
-    ///   types being treated by the framework.
+    ///   types being treated by the framework. Nested class names are <b>not</b> excluded by this annotation.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed class ExcludeNamespaceFromNameAttribute : Attribute {}

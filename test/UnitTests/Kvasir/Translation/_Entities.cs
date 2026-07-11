@@ -118,7 +118,7 @@ namespace UT.Kvasir.Translation {
             public ArrayList Vector { get; set; } = [];
         }
 
-        // Test Scenario: Struct Type from the C# Standard Library (✓recognized✓)
+        // Test Scenario: Struct Type from the C# Standard Library (✗not permitted✗)
         public class Emoji {
             [Flags] public enum Platform { iOS = 1, Android = 2, Slack = 4, Facebook = 8 }
 
@@ -149,8 +149,10 @@ namespace UT.Kvasir.Translation {
             public short Year { get; set; }
         }
 
-        // Test Scenario: User-Defined Closed Generic (✗not permitted✗)
-        public class MessageCount<T> {}
+        // Test Scenario: User-Defined Closed Generic (✓recognized✓)
+        public struct MessageCount<T> {
+            public T Count { get; set; }
+        }
         public class SlackChannel {
             [PrimaryKey] public Guid ID { get; set; }
             public string ChannelName { get; set; } = "";
@@ -911,14 +913,14 @@ namespace UT.Kvasir.Translation {
             protected Trademark(int key) : base(key) {}
         }
 
-        // Test Scenario: Generic Type (✗not permitted✗)
+        // Test Scenario: Generic Type (✓✗allowed if closed✗✓)
         public class Speedometer<TUnit> {
-            [PrimaryKey] public long MinSpeed { get; set; }
-            [PrimaryKey] public long MaxSpeed { get; set; }
+            [PrimaryKey] public required TUnit MinSpeed { get; set; }
+            [PrimaryKey] public required TUnit MaxSpeed { get; set; }
             public string Brand { get; set; } = "";
         }
 
-        // Test Scenario: Generic Localization (✗not permitted✗)
+        // Test Scenario: Generic Localization (✓✗allowed if closed✗✓)
         public class Emoticon<TChar> : Localization<TChar, double, ulong> where TChar : notnull {
             public Emoticon(TChar key) : base(key) {}
         }
