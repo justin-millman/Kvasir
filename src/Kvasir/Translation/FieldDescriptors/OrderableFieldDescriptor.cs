@@ -27,7 +27,7 @@ namespace Kvasir.Translation {
         }
 
         protected OrderableFieldDescriptor(Context context, PropertyInfo source)
-            : base(context,source) {
+            : base(context, source) {
 
             comparisonConstraint_ = new Interval(Option.None<Bound>(), Option.None<Bound>());
         }

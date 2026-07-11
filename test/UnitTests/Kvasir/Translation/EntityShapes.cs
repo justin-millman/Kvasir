@@ -246,19 +246,23 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
-        [TestMethod] public void EntityTypeIsClosedGeneric_IsError() {
+        [TestMethod] public void EntityTypeIsClosedGeneric() {
             // Arrange
             var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Speedometer<double>);
 
             // Act
-            var translate = () => translator[source];
+            var translation = translator[source];
 
             // Assert
-            translate.Should().FailWith<InvalidEntityTypeException>()
-                .WithLocation("`Speedometer<double>`")
-                .WithProblem("a closed generic type cannot be an Entity type")
-                .EndMessage();
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.EntityShapes+Speedometer<Double>Table");
+            translation.Principal.Table.Should()
+                .HaveField("MinSpeed").OfTypeDouble().BeingNonNullable().And
+                .HaveField("MaxSpeed").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Brand").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsInterface_IsError() {

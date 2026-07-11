@@ -42,7 +42,7 @@ namespace UT.Kvasir.Translation {
             var translation = translator[source];
 
             // Assert
-            translation.Principal.Table.Name.Should().Be("PokemonTable");
+            translation.Principal.Table.Name.Should().Be("TableNaming+PokemonTable");
         }
 
         [TestMethod] public void NamespaceExcludedFromRelationTableName() {
