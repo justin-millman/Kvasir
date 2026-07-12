@@ -921,7 +921,9 @@ namespace UT.Kvasir.Translation {
         }
 
         // Test Scenario: Generic Localization (✓✗allowed if closed✗✓)
-        public class Emoticon<TChar> : Localization<TChar, double, ulong> where TChar : notnull {
+        public class Emoticon<TChar, TDouble, TUlong> : Localization<TChar, TDouble, TUlong>
+            where TChar : notnull where TDouble : notnull {
+
             public Emoticon(TChar key) : base(key) {}
         }
 

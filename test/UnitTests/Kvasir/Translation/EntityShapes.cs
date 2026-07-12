@@ -234,7 +234,7 @@ namespace UT.Kvasir.Translation {
         [TestMethod] public void EntityTypeIsOpenGenericLocalization_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
-            var source = typeof(Emoticon<>);
+            var source = typeof(Emoticon<,,>);
 
             // Act
             var translate = () => translator[source, Translator.AsLocalzation];
@@ -261,6 +261,25 @@ namespace UT.Kvasir.Translation {
                 .HaveField("MinSpeed").OfTypeDouble().BeingNonNullable().And
                 .HaveField("MaxSpeed").OfTypeDouble().BeingNonNullable().And
                 .HaveField("Brand").OfTypeText().BeingNonNullable().And
+                .HaveNoOtherFields();
+            translation.Principal.PreDefinedInstances.Should().BeEmpty();
+        }
+
+        [TestMethod] public void EntityTypeIsClosedGenericLocalization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Emoticon<char, double, ulong>);
+
+            // Act
+            var translation = translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translation.CLRSource.Should().Be(source);
+            translation.Principal.Table.Name.Should().Be("UT.Kvasir.Translation.EntityShapes+Emoticon<Char,Double,UInt64>Table");
+            translation.Principal.Table.Should()
+                .HaveField("Key").OfTypeCharacter().BeingNonNullable().And
+                .HaveField("Locale").OfTypeDouble().BeingNonNullable().And
+                .HaveField("Value").OfTypeUInt64().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
         }
