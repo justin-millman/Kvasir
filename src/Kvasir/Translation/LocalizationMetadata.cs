@@ -49,6 +49,7 @@ namespace Kvasir.Translation {
         public static LocalizationMetadata GetMetadataFor(Type source) {
             Debug.Assert(Translator.IsLocalizationType(source));
 
+            var declaringType = source.IsGenericType ? source.GetGenericTypeDefinition() : source;
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy;
             var properties = source.GetProperties(flags);
             var baseProperties = properties.Where(p => p.DeclaringType!.IsGenericType && p.DeclaringType.GetGenericTypeDefinition() == typeof(Localization<,,>));
@@ -77,9 +78,9 @@ namespace Kvasir.Translation {
 
             return new LocalizationMetadata() {
                 RepresentativeProperty = keyProperty,
-                KeyProperty = new SyntheticPropertyInfo("Key", source, keyProperty.PropertyType, keyLocaleAttributes),
-                LocaleProperty = new SyntheticPropertyInfo("Locale", source, localeProperty.PropertyType, keyLocaleAttributes),
-                ValueProperty = new SyntheticPropertyInfo("Value", source, valueProperty.PropertyType, valueAttributes),
+                KeyProperty = new SyntheticPropertyInfo("Key", declaringType!, keyProperty.PropertyType, keyLocaleAttributes),
+                LocaleProperty = new SyntheticPropertyInfo("Locale", declaringType!, localeProperty.PropertyType, keyLocaleAttributes),
+                ValueProperty = new SyntheticPropertyInfo("Value", declaringType!, valueProperty.PropertyType, valueAttributes),
                 ValueType = valueProperty.PropertyType,
                 IsKeyNullable = keyNullabilityInfo.ReadState == NullabilityState.Nullable,
                 IsLocaleNullable = relationNullabilityInfo.GenericTypeArguments[0].ReadState == NullabilityState.Nullable,
