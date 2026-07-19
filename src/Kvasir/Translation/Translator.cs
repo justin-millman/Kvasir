@@ -44,8 +44,12 @@ namespace Kvasir.Translation {
                 }
 
                 var context = new Context(source);
-                var principal = TranslatePrincipalTable(context, source);
+                TranslatePrincipalTable(context, source);
                 var relations = TranslateRelationTables(source);
+
+                // translating the Relation Tables can cause the principal translation to change because of the
+                // discovery of Relation-nested Localizations
+                var principal = principalTableCache_[source];
 
                 var traits = IsPreDefined(source) ? TranslationTraits.RequirePreDefined : TranslationTraits.None;
                 var sourceTypes = Enumerable.Repeat(source, 1).Concat(relationTypesFromEntity_[source]);

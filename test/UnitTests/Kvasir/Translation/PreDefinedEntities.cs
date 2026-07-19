@@ -3,6 +3,7 @@ using Kvasir.Schema;
 using Kvasir.Translation;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 using static UT.Kvasir.Translation.Globals;
 using static UT.Kvasir.Translation.PreDefinedEntities;
@@ -72,6 +73,7 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Thaddeus);
             translation.Principal.PreDefinedInstances.Should().Contain(Disciple.SimonII);
             translation.Principal.PreDefinedInstances.Should().Contain(Disciple.Judas);
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void Localization() {
@@ -126,6 +128,11 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(BrainLobe.Parietal);
             translation.Principal.PreDefinedInstances.Should().Contain(BrainLobe.Temporal);
             translation.Principal.PreDefinedInstances.Should().Contain(BrainLobe.Frontal);
+            translation.Principal.Localizations.Should().HaveCount(4);
+            translation.Principal.Localizations.Should().Contain(BrainLobe.Occipital.Name);
+            translation.Principal.Localizations.Should().Contain(BrainLobe.Parietal.Name);
+            translation.Principal.Localizations.Should().Contain(BrainLobe.Temporal.Name);
+            translation.Principal.Localizations.Should().Contain(BrainLobe.Frontal.Name);
         }
 
         [TestMethod] public void PubliclyWriteableFieldProperty_IsError() {
@@ -202,6 +209,7 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.Hyphen);
             translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.OpenParenthesis);
             translation.Principal.PreDefinedInstances.Should().Contain(PunctuationMark.CloseParenthesis);
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void PublicConstructor_IsError() {
@@ -259,6 +267,7 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Golgari);
             translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Boros);
             translation.Principal.PreDefinedInstances.Should().Contain(RavnicaGuild.Simic);
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void AggregateNestedReferenceToPreDefinedEntity() {
@@ -292,6 +301,7 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Groucho);
             translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Gummo);
             translation.Principal.PreDefinedInstances.Should().Contain(MarxBrother.Zeppo);
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void RelationToPreDefinedEntity() {
@@ -367,6 +377,7 @@ namespace UT.Kvasir.Translation {
                 .HavePrimaryKey().OfFields("Index").And
                 .HaveNoOtherCandidateKeys().And
                 .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(7);
             translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Lust);
             translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Greed);
             translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Gluttony);
@@ -374,6 +385,14 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Pride);
             translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Envy);
             translation.Principal.PreDefinedInstances.Should().Contain(DeadlySin.Wrath);
+            translation.Principal.Localizations.Should().HaveCount(7);
+            translation.Principal.Localizations.Should().Contain(DeadlySin.Lust.AssociatedColor);
+            translation.Principal.Localizations.Should().Contain(DeadlySin.Greed.AssociatedColor);
+            translation.Principal.Localizations.Should().Contain(DeadlySin.Gluttony.AssociatedColor);
+            translation.Principal.Localizations.Should().Contain(DeadlySin.Sloth.AssociatedColor);
+            translation.Principal.Localizations.Should().Contain(DeadlySin.Pride.AssociatedColor);
+            translation.Principal.Localizations.Should().Contain(DeadlySin.Envy.AssociatedColor);
+            translation.Principal.Localizations.Should().Contain(DeadlySin.Wrath.AssociatedColor);
         }
 
         [TestMethod] public void AggregateLocalizationToPreDefinedEntity() {
@@ -396,6 +415,7 @@ namespace UT.Kvasir.Translation {
                 .HavePrimaryKey().OfFields("Phase").And
                 .HaveNoOtherCandidateKeys().And
                 .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(8);
             translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.New);
             translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.WaxingCrescent);
             translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.FirstQuarter);
@@ -404,7 +424,8 @@ namespace UT.Kvasir.Translation {
             translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.WaningGibbous);
             translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.LastQuarter);
             translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.WaningCrescent);
-            translation.Principal.PreDefinedInstances.Should().Contain(LunarPhase.New);
+            translation.Principal.Localizations.Should().HaveCount(1);
+            translation.Principal.Localizations.Should().Contain(LunarPhase.New.Visibility.Hemisphere);
         }
 
         [TestMethod] public void RelationNestedLocalizationToPreDefinedEntity() {
@@ -427,6 +448,35 @@ namespace UT.Kvasir.Translation {
                     .WithOnDeleteBehavior(OnDelete.Cascade)
                     .WithOnUpdateBehavior(OnUpdate.Cascade).And
                 .HaveNoOtherForeignKeys();
+            translation.Principal.PreDefinedInstances.Should().HaveCount(9);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Syros);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Santorini);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Mykonos);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Naxos);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Folegandros);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Milos);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Irakleia);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Rineia);
+            translation.Principal.PreDefinedInstances.Should().Contain(Cyclade.Koufonisia);
+            translation.Principal.Localizations.Should().HaveCount(18);
+            translation.Principal.Localizations.Should().Contain(Cyclade.Syros.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Syros.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Santorini.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Santorini.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Mykonos.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Mykonos.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Naxos.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Naxos.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Folegandros.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Folegandros.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Milos.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Milos.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Irakleia.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Irakleia.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Rineia.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Rineia.MentionedBy.Skip(1).First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Koufonisia.MentionedBy.First());
+            translation.Principal.Localizations.Should().Contain(Cyclade.Koufonisia.MentionedBy.Skip(1).First());
         }
 
         [TestMethod] public void ReferenceToNonPreDefinedEntity_IsError() {

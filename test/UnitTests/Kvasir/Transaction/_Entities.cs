@@ -542,6 +542,38 @@ namespace UT.Kvasir.Transaction {
             [Column(3)] public bool IsPluripotent { get; set; }
             [Column(4)] public string Owner { get; set; } = "";
         }
+
+        // Test Scenario: Localization on Pre-Defined Entity and Regular Entity
+        public class Laxative {
+            [PrimaryKey, Column(0)] public Guid ProductID { get; set; }
+            [Column(1)] public string Name { get; set; } = "";
+            [Column(2)] public bool IsNatural { get; set; }
+            [Column(3)] public LocalizedText Keyword { get; set; } = new("");
+            [Column(4)] public uint ActionTime { get; set; }
+        }
+        [PreDefined] public class Cervid {
+            [PrimaryKey, Column(0)] public LocalizedText CommonName { get; init; } = new("");
+            [Column(1)] public string Genus { get; init; } = "";
+            [Column(2)] public string Species { get; init; } = "";
+
+            public static Cervid Moose { get; } = new Cervid("Moose", "Alces", "alces");
+            public static Cervid Reindeer { get; } = new Cervid("Reindeer", "Rangifer", "tarandus");
+            public static Cervid Elk { get; } = new Cervid("Elk", "Cervus", "canadensis");
+            public static Cervid Deer { get; } = new Cervid("Deer", "Dama", "dama");
+            public static Cervid Muntjac { get; } = new Cervid("Muntjac", "Cervus", "muntjak");
+            public static Cervid Sambar { get; } = new Cervid("Sambar", "Rusa", "unicolor");
+            public static Cervid Barasingha { get; } = new Cervid("Barasingha", "Rucervus", "duvaucelli");
+            public static Cervid Chital { get; } = new Cervid("Chital", "Axis", "axis");
+            public static Cervid Taruca { get; } = new Cervid("Tarcua", "Hippocamelus", "antisensis");
+            public static Cervid Pudu { get; } = new Cervid("Pudu", "Pudu", "puda");
+
+            private Cervid(string name, string genus, string species) {
+                CommonName = new LocalizedText($"LOC_{name.ToUpper()}_NAME");
+                CommonName[Language.English] = name;
+                Genus = genus;
+                Species = species;
+            }
+        }
     }
 
     internal static class Insertion {

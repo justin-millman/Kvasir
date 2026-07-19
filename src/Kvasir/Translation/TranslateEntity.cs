@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Kvasir.Relations;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace Kvasir.Translation {
     internal sealed partial class Translator {
@@ -130,13 +130,27 @@ namespace Kvasir.Translation {
             if (!IsPreDefined(source)) {
                 var reconstitutor = ReconstitutionHelper.MakeCreator(context, source, fieldGroups, false, false);
                 var creator = new DataReconstitutionPlan(reconstitutor);
-                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, []);
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, [], new HashSet<object>());
             }
             else {
                 var instances = GetPreDefinedInstances(context, source);
+                var localizationChains = localizationTrackersCache_[source].Select(t => t.AsChainFrom(source));
                 var matcher = new KeyMatcher(() => instances, pkExtractor);
                 var creator = MakePreDefinedReconstitutionPlan(context, table, matcher, source);
-                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, [..instances]);
+
+                // put the chains on the outside of the double loop because they will most often be empty, so the entire
+                // thing can be quickly short-circuited
+                var localizations = new HashSet<object>();
+                foreach (var chain in localizationChains) {
+                    foreach (var instance in instances) {
+                        var localization = chain.GetValue(instance);
+                        if (localization is not null) {
+                            localizations.Add(localization);
+                        }
+                    }
+                }
+
+                principal = new PrincipalTableDef(table, extractor, creator, pkExtractor, [..instances], localizations);
             }
 
             principalTableCache_.Add(source, principal);
@@ -246,6 +260,30 @@ namespace Kvasir.Translation {
                 var elementExtractor = new DataExtractionPlan(Enumerable.Repeat(relationGroup.Extractor, 1));
                 var table = new Table(tableName, fields, primaryKey, candidateKeys, foreignKeys, constraints);
                 var extractor = new RelationExtractionPlan(extractRelationProperty, elementExtractor);
+
+                if (IsPreDefined(source)) {
+                    var localizationChains = localizationTrackersCache_[syntheticType].Select(t => t.AsChainFrom(syntheticType));
+                    var instances = principalTableCache_[source].PreDefinedInstances;
+
+                    var localizations = new HashSet<object>(principalTableCache_[source].Localizations);
+                    foreach (var chain in localizationChains) {
+                        foreach (var instance in instances) {
+                            var relation = (IRelation?)extractRelationProperty.ExtractFrom(instance);
+                            if (relation is not null) {
+                                var iter = relation.GetEnumerator();
+                                while (iter.MoveNext()) {
+                                    Debug.Assert(iter.Current.Status == Status.New);
+                                    var localization = chain.GetValue(iter.Current.Item);
+                                    if (localization is not null) {
+                                        localizations.Add(localization);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    principalTableCache_[source] = principalTableCache_[source] with { Localizations = localizations };
+                }
 
                 RelationRepopulationPlan? repopulationPlan = null;
                 if (relationGroup.Creator.HasValue) {

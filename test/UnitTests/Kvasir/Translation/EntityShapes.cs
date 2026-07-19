@@ -27,6 +27,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Hash").OfTypeInt32().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsRecordClass() {
@@ -46,6 +47,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Blue").OfTypeUInt8().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsPartialClass() {
@@ -69,6 +71,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("RepublicanEVs").OfTypeUInt16().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsStaticClass_IsError() {
@@ -104,6 +107,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Timestamp").OfTypeDateTime().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsInternal() {
@@ -124,6 +128,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("IsBuckled").OfTypeBoolean().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsLocalization() {
@@ -263,6 +268,7 @@ namespace UT.Kvasir.Translation {
                 .HaveField("Brand").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
+            translation.Principal.Localizations.Should().BeEmpty();
         }
 
         [TestMethod] public void EntityTypeIsClosedGenericLocalization() {

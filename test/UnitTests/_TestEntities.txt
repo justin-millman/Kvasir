@@ -252,6 +252,7 @@ Cenote
 Census
 Cepheid Variable
 Cereal
+Cervid
 Ceviche
 Chainsaw
 Chakra
@@ -795,6 +796,7 @@ Law Firm
 Lawn Gnome
 Lawn Mower
 Lawyer
+Laxative
 Layer of Skin
 Lazarus Pit
 Lease

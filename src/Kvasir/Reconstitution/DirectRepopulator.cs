@@ -10,7 +10,7 @@ namespace Kvasir.Reconstitution {
     internal sealed class DirectRepopulator : IRepopulator {
         /// <inheritdoc/>
         public void Repopulate(IRelation relation, IEnumerable<object> elements) {
-            Debug.Assert(relation is not null && !relation.GetEnumerator().MoveNext());
+            Debug.Assert(relation is not null);
             Debug.Assert(elements is not null);
 
             foreach (var element in elements) {

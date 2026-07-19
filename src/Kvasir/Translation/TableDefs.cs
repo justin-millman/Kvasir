@@ -13,12 +13,14 @@ namespace Kvasir.Translation {
     /// <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
     /// <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Principal Table.</param>
     /// <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
+    /// <param name="Localizations">The Localiaztions referenced by the <see cref="PreDefinedInstances"/> of the Entity.</param>
     internal sealed record class PrincipalTableDef(
         ITable Table,
         DataExtractionPlan Extractor,
         DataReconstitutionPlan Reconstitutor,
         DataExtractionPlan KeyExtractor,
-        IReadOnlyList<object> PreDefinedInstances
+        IReadOnlyList<object> PreDefinedInstances,
+        IReadOnlySet<object> Localizations
     );
 
     /// <summary>
@@ -29,7 +31,7 @@ namespace Kvasir.Translation {
     /// <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
     /// <param name="Reconstitutor">The plan that can rercreate a CLR object from the key of a Localization Table.</param>
     /// <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</param>
-    /// /// <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</param>
+    /// <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</param>
     /// <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
     internal sealed record class LocalizationTableDef(
         ITable Table,
