@@ -1,7 +1,9 @@
-﻿using Cybele.Extensions;
+﻿using Cybele.Core;
+using Cybele.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace Kvasir.Translation {
@@ -90,6 +92,24 @@ namespace Kvasir.Translation {
             }
             context.Push(Property.PropertyType);
             return context;
+        }
+
+        /// <summary>
+        ///   Creates a <see cref="PropertyChain"/> reflecting the access path to the <see cref="LocalizationTracker"/>.
+        /// </summary>
+        /// <param name="source">
+        ///   The starting Entity type.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="PropertyChain"/> reflecting the translation state of the Localiaztion represented by the
+        ///   <see cref="LocalizationTracker"/> when starting from <paramref name="source"/>.
+        /// </returns>
+        public PropertyChain AsChainFrom(Type source) {
+            var chain = new PropertyChain(source, decontextualizedAccessPath_[0]);
+            foreach (var propertyName in decontextualizedAccessPath_.Skip(1)) {
+                chain = chain.Append(propertyName);
+            }
+            return chain;
         }
 
 

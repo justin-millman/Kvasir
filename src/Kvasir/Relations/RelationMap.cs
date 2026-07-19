@@ -569,11 +569,9 @@ namespace Kvasir.Relations {
         void IRelation.Repopulate(object item) {
             Debug.Assert(item.GetType() == typeof(KeyValuePair<TKey, TValue>));
             Debug.Assert(deletions_.Count == 0);
-            Debug.Assert(statuses_.Values.All(v => v == Status.Saved));
+            Debug.Assert(statuses_.Values.All(v => v == Status.Saved || v == Status.New));
 
             var castedItem = (KeyValuePair<TKey, TValue>)item;
-            Debug.Assert(!impl_.ContainsKey(castedItem.Key));
-
             impl_[castedItem.Key] = castedItem.Value;
             statuses_[castedItem.Key] = Status.Saved;
         }

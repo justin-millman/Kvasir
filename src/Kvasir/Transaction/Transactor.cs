@@ -159,6 +159,27 @@ namespace Kvasir.Transaction {
             int numLocalizationTypes = localizationTranslations_.Count;
             var allEntities = new Dictionary<int, List<object>>();
 
+            // Before doing any actual loads, we need to track all Localizations present on Pre-Defined Entities so that
+            // we can find them when performing Reconstitution later. We won't put them into the Entity storage yet, as
+            // that will happen during the Localizations' load step.
+            var preDefinedLocalizations = new Dictionary<Type, HashSet<object>>();
+            var preDefinedLocInstanceByKey = new Dictionary<Type, Dictionary<DBValue, object>>();
+            foreach (var translation in entityTranslations) {
+                foreach (var localization in translation.Principal.Localizations) {
+                    preDefinedLocalizations.TryAdd(localization.GetType(), []);
+                    preDefinedLocalizations[localization.GetType()].Add(localization);
+                }
+            }
+            foreach (var (type, localizations) in preDefinedLocalizations) {
+                var mapping = new Dictionary<DBValue, object>();
+                var translation = localizationTranslations.First(t => t.CLRSource == type);
+                var extractor = translation.Principal.KeyExtractor;
+                foreach (var localization in localizations) {
+                    mapping[extractor.ExtractFrom(localization)[0]] = localization;
+                }
+                preDefinedLocInstanceByKey[type] = mapping;
+            }
+
             // Load all the data from Localization Tables and create the Localization instances first
             var locRowsByKey = new List<Dictionary<DBValue, List<List<DBValue>>>>();
             var locInstByKey = new List<Dictionary<DBValue, object>>();
@@ -169,15 +190,17 @@ namespace Kvasir.Transaction {
                 var reader = await query.ExecuteReaderAsync();
 
                 var rows = new Dictionary<DBValue, List<List<DBValue>>>();
-                var instances = new Dictionary<DBValue, object>();
+                var instances = preDefinedLocInstanceByKey.GetValueOrDefault(localizationTranslations[idx].CLRSource, []);
 
                 while (reader.Read()) {
                     var fields = Enumerable.Range(0, reader.FieldCount).Select(i => DBValue.Create(reader[i])).ToList();
                     if (!rows.TryGetValue(fields[0], out List<List<DBValue>>? currentRows)) {
                         currentRows = [];
-                        var instance = localizationTranslations[idx].Principal.Reconstitutor.ReconstituteFrom([..fields.Take(1)]);
+                        var instance = localizationTranslations[idx].Principal.Reconstitutor.ReconstituteFrom([fields[0]]);
                         rows[fields[0]] = currentRows;
-                        instances[fields[0]] = instance;
+                        if (!instances.ContainsKey(fields[0])) {
+                            instances[fields[0]] = instance;
+                        }
                     }
                     currentRows.Add(fields);
                 }
@@ -206,7 +229,7 @@ namespace Kvasir.Transaction {
                     entityStorage_(entity);
                     creations.Add(entity);
                 }
-                
+
                 allEntities[idx] = creations;
                 logger_.LogDebug("{} instances of {} loaded", creations.Count, entityTranslations[idx].Principal.Reconstitutor.ResultType.Name);
             }

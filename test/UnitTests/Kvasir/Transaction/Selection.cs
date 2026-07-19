@@ -846,6 +846,71 @@ namespace UT.Kvasir.Transaction {
             localizedCell[2].Should().Be(localizedCells[0][true].CellID);
         }
 
+        [TestMethod] public async Task LocalizationReferencedByPreDefinedEntityAndRegularEntity() {
+            // Arrange
+            var laxative = new object[] { Guid.NewGuid(), "Poo-Max", false, Cervid.Moose.CommonName.Key, 3U };
+            var moose = new object[] { Cervid.Moose.CommonName.Key, Cervid.Moose.Genus, Cervid.Moose.Species };
+            var reindeer = new object[] { Cervid.Reindeer.CommonName.Key, Cervid.Reindeer.Genus, Cervid.Reindeer.Species };
+            var elk = new object[] { Cervid.Elk.CommonName.Key, Cervid.Elk.Genus, Cervid.Elk.Species };
+            var deer = new object[] { Cervid.Deer.CommonName.Key, Cervid.Deer.Genus, Cervid.Deer.Species };
+            var muntjac = new object[] { Cervid.Muntjac.CommonName.Key, Cervid.Muntjac.Genus, Cervid.Muntjac.Species };
+            var sambar = new object[] { Cervid.Sambar.CommonName.Key, Cervid.Sambar.Genus, Cervid.Sambar.Species };
+            var barasingha = new object[] { Cervid.Barasingha.CommonName.Key, Cervid.Barasingha.Genus, Cervid.Barasingha.Species };
+            var chital = new object[] { Cervid.Chital.CommonName.Key, Cervid.Chital.Genus, Cervid.Chital.Species };
+            var taruca = new object[] { Cervid.Taruca.CommonName.Key, Cervid.Taruca.Genus, Cervid.Taruca.Species };
+            var pudu = new object[] { Cervid.Pudu.CommonName.Key, Cervid.Pudu.Genus, Cervid.Pudu.Species };
+            var loc0a = new object[] { Cervid.Moose.CommonName.Key, ConversionOf(Language.English), Cervid.Moose.CommonName[Language.English] };
+            var loc0b = new object[] { Cervid.Moose.CommonName.Key, ConversionOf(Language.German), "Elch" };
+            var loc0c = new object[] { Cervid.Moose.CommonName.Key, ConversionOf(Language.Italian), "Alce" };
+            var loc1 = new object[] { Cervid.Reindeer.CommonName.Key, ConversionOf(Language.English), Cervid.Reindeer.CommonName[Language.English] };
+            var loc2 = new object[] { Cervid.Elk.CommonName.Key, ConversionOf(Language.English), Cervid.Elk.CommonName[Language.English] };
+            var loc3 = new object[] { Cervid.Deer.CommonName.Key, ConversionOf(Language.English), Cervid.Deer.CommonName[Language.English] };
+            var loc4 = new object[] { Cervid.Muntjac.CommonName.Key, ConversionOf(Language.English), Cervid.Muntjac.CommonName[Language.English] };
+            var loc5 = new object[] { Cervid.Sambar.CommonName.Key, ConversionOf(Language.English), Cervid.Sambar.CommonName[Language.English] };
+            var loc6 = new object[] { Cervid.Barasingha.CommonName.Key, ConversionOf(Language.English), Cervid.Barasingha.CommonName[Language.English] };
+            var loc7 = new object[] { Cervid.Chital.CommonName.Key, ConversionOf(Language.English), Cervid.Chital.CommonName[Language.English] };
+            var loc8 = new object[] { Cervid.Taruca.CommonName.Key, ConversionOf(Language.English), Cervid.Taruca.CommonName[Language.English] };
+            var loc9 = new object[] { Cervid.Pudu.CommonName.Key, ConversionOf(Language.English), Cervid.Pudu.CommonName[Language.English] };
+            var fixture = new TestFixture(typeof(LocalizedText), typeof(Cervid), typeof(Laxative))
+                .WithEntityRow<Laxative>(laxative)
+                .WithEntityRow<Cervid>(moose)
+                .WithEntityRow<Cervid>(reindeer)
+                .WithEntityRow<Cervid>(elk)
+                .WithEntityRow<Cervid>(deer)
+                .WithEntityRow<Cervid>(muntjac)
+                .WithEntityRow<Cervid>(sambar)
+                .WithEntityRow<Cervid>(barasingha)
+                .WithEntityRow<Cervid>(chital)
+                .WithEntityRow<Cervid>(taruca)
+                .WithEntityRow<Cervid>(pudu)
+                .WithLocalizationRow<LocalizedText>(loc0a)
+                .WithLocalizationRow<LocalizedText>(loc0b)
+                .WithLocalizationRow<LocalizedText>(loc0c)
+                .WithLocalizationRow<LocalizedText>(loc1)
+                .WithLocalizationRow<LocalizedText>(loc2)
+                .WithLocalizationRow<LocalizedText>(loc3)
+                .WithLocalizationRow<LocalizedText>(loc4)
+                .WithLocalizationRow<LocalizedText>(loc5)
+                .WithLocalizationRow<LocalizedText>(loc6)
+                .WithLocalizationRow<LocalizedText>(loc7)
+                .WithLocalizationRow<LocalizedText>(loc8)
+                .WithLocalizationRow<LocalizedText>(loc9);
+
+            // Act
+            await fixture.InitializeSchema();
+            await fixture.Transactor.SelectAll();
+            var laxatives = fixture.Depot[typeof(Laxative)].Cast<Laxative>().ToList();
+
+            // Assert
+            loc0b[2].Should().Be(Cervid.Moose.CommonName[Language.German]);
+            loc0c[2].Should().Be(Cervid.Moose.CommonName[Language.Italian]);
+            laxative[0].Should().Be(laxatives[0].ProductID);
+            laxative[1].Should().Be(laxatives[0].Name);
+            laxative[2].Should().Be(laxatives[0].IsNatural);
+            laxatives[0].Keyword.Should().BeSameAs(Cervid.Moose.CommonName);
+            laxative[4].Should().Be(laxatives[0].ActionTime);
+        }
+
 
         private static string ConversionOf<T>(T enumerator) where T : Enum {
             var converter = new EnumToStringConverter(typeof(T)).ConverterImpl;

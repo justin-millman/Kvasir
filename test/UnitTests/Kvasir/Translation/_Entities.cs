@@ -1448,7 +1448,7 @@ namespace UT.Kvasir.Translation {
 
             private LunarPhase(string phase, ushort moonrise) {
                 Phase = phase;
-                Visibility = new Illumination();
+                Visibility = new Illumination() { Hemisphere = new LocalizedHemisphere("LOC_NORTHERN_HEMI") } ;
                 AverageMoonriseTime = moonrise;
             }
         }
@@ -1499,7 +1499,10 @@ namespace UT.Kvasir.Translation {
                 Name = name;
                 Population = population;
                 LandArea = area;
-                MentionedBy = new RelationSet<LocalizedGeographer>();
+                MentionedBy = new RelationSet<LocalizedGeographer>() {
+                    new LocalizedGeographer(islandNumber),
+                    new LocalizedGeographer(islandNumber * 100)
+                };
             }
         }
 

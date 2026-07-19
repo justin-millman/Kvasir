@@ -11826,6 +11826,18 @@
               <see cref="T:Kvasir.Translation.LocalizationTracker"/> when starting from <paramref name="source"/>.
             </returns>
         </member>
+        <member name="M:Kvasir.Translation.LocalizationTracker.AsChainFrom(System.Type)">
+            <summary>
+              Creates a <see cref="T:Cybele.Core.PropertyChain"/> reflecting the access path to the <see cref="T:Kvasir.Translation.LocalizationTracker"/>.
+            </summary>
+            <param name="source">
+              The starting Entity type.
+            </param>
+            <returns>
+              A <see cref="T:Cybele.Core.PropertyChain"/> reflecting the translation state of the Localiaztion represented by the
+              <see cref="T:Kvasir.Translation.LocalizationTracker"/> when starting from <paramref name="source"/>.
+            </returns>
+        </member>
         <member name="T:Kvasir.Translation.ReconstitutionHelper">
             <summary>
               A helper class for evaluating a type's constructors for usability in Reconstitution.
@@ -12391,8 +12403,9 @@
             <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
             <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Principal Table.</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
+            <param name="Localizations">The Localiaztions referenced by the <see cref="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances"/> of the Entity.</param>
         </member>
-        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Extraction.DataExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
+        <member name="M:Kvasir.Translation.PrincipalTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.DataExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Extraction.DataExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object},System.Collections.Generic.IReadOnlySet{System.Object})">
             <summary>
               The definition of a Principal Table.
             </summary>
@@ -12402,6 +12415,7 @@
             <param name="Reconstitutor">The plan that can recreate a CLR object from a row of data stored in the Principal Table.</param>
             <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Principal Table.</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</param>
+            <param name="Localizations">The Localiaztions referenced by the <see cref="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances"/> of the Entity.</param>
         </member>
         <member name="P:Kvasir.Translation.PrincipalTableDef.Table">
             <summary>The schema model for the Principal Table.</summary>
@@ -12418,6 +12432,9 @@
         <member name="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances">
             <summary>The pre-defined instances to be populated into the Principal Table; empty for regular Entities.</summary>
         </member>
+        <member name="P:Kvasir.Translation.PrincipalTableDef.Localizations">
+            <summary>The Localiaztions referenced by the <see cref="P:Kvasir.Translation.PrincipalTableDef.PreDefinedInstances"/> of the Entity.</summary>
+        </member>
         <member name="T:Kvasir.Translation.LocalizationTableDef">
             <summary>
               The definition of a Localization Table.
@@ -12427,7 +12444,7 @@
             <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
             <param name="Reconstitutor">The plan that can rercreate a CLR object from the key of a Localization Table.</param>
             <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</param>
-            /// <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
         </member>
         <member name="M:Kvasir.Translation.LocalizationTableDef.#ctor(Kvasir.Schema.ITable,Kvasir.Extraction.LocalizationExtractionPlan,Kvasir.Reconstitution.DataReconstitutionPlan,Kvasir.Reconstitution.RelationRepopulationPlan,Kvasir.Extraction.DataExtractionPlan,System.Collections.Generic.IReadOnlyList{System.Object})">
@@ -12439,7 +12456,7 @@
             <param name="Extractor">The plan that can extract the rows of data to be stored into the Localization Table.</param>
             <param name="Reconstitutor">The plan that can rercreate a CLR object from the key of a Localization Table.</param>
             <param name="Repopulator">The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</param>
-            /// <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</param>
+            <param name="KeyExtractor">The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</param>
             <param name="PreDefinedInstances">The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</param>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.Table">
@@ -12455,7 +12472,7 @@
             <summary>The plan that can populate elements into a CLR Relation from a row of data stored in the Localization Table</summary>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.KeyExtractor">
-            /// <summary>The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</summary>
+            <summary>The plan that can extract the subset of a row of data that constitutes the Primary Key in the Localization Table.</summary>
         </member>
         <member name="P:Kvasir.Translation.LocalizationTableDef.PreDefinedInstances">
             <summary>The pre-defined instances to be populated into the Localization Table; empty for regular Localizations.</summary>
