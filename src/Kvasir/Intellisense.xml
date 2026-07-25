@@ -9832,6 +9832,32 @@
               The actual number of pre-defined instances that were exposed.
             </param>
         </member>
+        <member name="T:Kvasir.Translation.NotReadOnlyException">
+            <summary>
+              An exception that is raised when a Relation or Localization that should be read-only (because it is part of a
+              Pre-Defined Entity) but is not.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Translation.NotReadOnlyException.#ctor(Kvasir.Translation.Context)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.NotReadOnlyException"/> for a Relation on a Pre-Defined Entity that is not
+              read-only.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> at which the problematic Relation was encountered.
+            </param>
+        </member>
+        <member name="M:Kvasir.Translation.NotReadOnlyException.#ctor(Kvasir.Translation.Context,System.Type)">
+            <summary>
+              Constructs a new <see cref="T:Kvasir.Translation.NotReadOnlyException"/> for a Pre-Defined Localization taht is not read-only.
+            </summary>
+            <param name="context">
+              The <see cref="T:Kvasir.Translation.Context"/> at which the problematic Localization type was encountered.
+            </param>
+            <param name="_">
+              [tag dispatch]
+            </param>
+        </member>
         <member name="T:Kvasir.Translation.NotRelationException">
             <summary>
               An exception that is raised when an annotation that is only applicable to Relations is applied to a property

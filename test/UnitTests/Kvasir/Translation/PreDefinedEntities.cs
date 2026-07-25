@@ -581,5 +581,35 @@ namespace UT.Kvasir.Translation {
                 .WithProblem("a Pre-Defined Entity cannot contain a Relation or a Localization involving non-Pre-Defined Entity type `Deity`")
                 .EndMessage();
         }
+
+        [TestMethod] public void PreDefinedEntityWithNonReadOnlyRelation_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(EgyptianKingdom);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<NotReadOnlyException>()
+                .WithLocation("`EgyptianKingdom` → Pharaohs")
+                .WithProblem("a Relation on a Pre-Defined Entity must be read-only")
+                .EndMessage();
+        }
+
+        [TestMethod] public void NonReadOnlyPreDefinedLocalization() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Woodwind);
+
+            // Act
+            var translate = () => translator[source, Translator.AsLocalzation];
+
+            // Assert
+            translate.Should().FailWith<NotReadOnlyException>()
+                .WithLocation("`Woodwind`")
+                .WithProblem("a Pre-Defined Localization must be read-only")
+                .EndMessage();
+        }
     }
 }

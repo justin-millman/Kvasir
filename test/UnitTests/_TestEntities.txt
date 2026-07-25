@@ -481,6 +481,7 @@ Ecumenical Council
 Edible Arrangement
 Egg Roll
 Egyptian God
+Egyptian Kingdom
 Egyptian Pyramid
 Eigenvector
 Elegy
@@ -1520,6 +1521,7 @@ Wiretap
 Witch Hunt
 Wizard
 Woodshop
+Woodwind
 Word of the Day
 Word Search
 Wordle
