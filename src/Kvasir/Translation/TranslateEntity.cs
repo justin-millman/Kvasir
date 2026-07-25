@@ -332,6 +332,12 @@ namespace Kvasir.Translation {
 
             var traits = TranslationTraits.None;
             if (IsPreDefined(source)) {
+                var indexer = source.GetProperties().FirstOrDefault(p => !p.GetIndexParameters().IsEmpty());
+                var setter = indexer?.GetSetMethod()!;
+                if (setter is not null && setter.IsPublic) {
+                    throw new NotReadOnlyException(context, source);
+                }
+
                 traits |= TranslationTraits.RequirePreDefined;
             }
 

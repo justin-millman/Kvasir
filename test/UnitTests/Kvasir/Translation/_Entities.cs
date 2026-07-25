@@ -1274,7 +1274,7 @@ namespace UT.Kvasir.Translation {
             [PrimaryKey] public ulong GameID { get; private init; }
             public string Title { get; private init; }
             public DateTime ReleaseDate { get; private init; }
-            public RelationSet<GamingMode> Modes { get; }
+            public IReadOnlyRelationSet<GamingMode> Modes { get; }
 
             public static ResidentEvil Original { get; } = new ResidentEvil(41099, "Resident Evil", new DateTime(1996, 3, 22));
             public static ResidentEvil Two { get; } = new ResidentEvil(875, "Resident Evil 2", new DateTime(1998, 1, 21));
@@ -1291,7 +1291,7 @@ namespace UT.Kvasir.Translation {
                 GameID = id;
                 Title = title;
                 ReleaseDate = release;
-                Modes = [GamingMode.SinglePlayer, GamingMode.MultiPlayer];
+                Modes = new RelationSet<GamingMode>() { GamingMode.SinglePlayer, GamingMode.MultiPlayer };
             }
         }
 
@@ -1639,7 +1639,7 @@ namespace UT.Kvasir.Translation {
             public record struct Theory {
                 public string? Name { get; set; }
                 public DateTime FirstProposed { get; set; }
-                public RelationSet<Scientist> Namesakes { get; }
+                public IReadOnlyRelationSet<Scientist> Namesakes { get; }
             }
 
             [PrimaryKey] public string Name { get; private init; }
@@ -1870,6 +1870,57 @@ namespace UT.Kvasir.Translation {
                 Domain = domain;
                 Parents = new RelationList<LocalizedGod>();
             }
+        }
+
+        // Test Scenario: Pre-Defined Entity with Non-Read-Only Relation (✗not permitted✗)
+        [PreDefined] public class EgyptianKingdom {
+            public record struct Dynasty(sbyte Index, ushort Year);
+
+            [PrimaryKey] public string Title { get; init; } = "";
+            public Dynasty FirstDynasty { get; init; }
+            public Dynasty LastDynasty { get; init; }
+            public RelationOrderedList<string> Pharaohs { get; init; } = new();
+
+            public static EgyptianKingdom EarlyDynastic { get; } = new EgyptianKingdom("Early");
+            public static EgyptianKingdom OldKingdom { get; } = new EgyptianKingdom("Old");
+            public static EgyptianKingdom FirstIntermediate { get; } = new EgyptianKingdom("First Intermediate");
+            public static EgyptianKingdom MiddleKingdom { get; } = new EgyptianKingdom("Middle");
+            public static EgyptianKingdom SecondIntermediate { get; } = new EgyptianKingdom("Second Intermediate");
+            public static EgyptianKingdom Hyksos { get; } = new EgyptianKingdom("Hyksos");
+            public static EgyptianKingdom NewKingdom { get; } = new EgyptianKingdom("New");
+            public static EgyptianKingdom ThirdIntermediate { get; } = new EgyptianKingdom("Third Intermediate");
+            public static EgyptianKingdom LatePeriod { get; } = new EgyptianKingdom("Late");
+
+            private EgyptianKingdom(string title) {
+                Title = title;
+                FirstDynasty = new Dynasty();
+                LastDynasty = new Dynasty();
+            }
+        }
+
+        // Test Scenario: Non-Read-Only Pre-Defined Localization (✗not permitted✗)
+        [PreDefined] public class Woodwind : Localization<string, char, bool> {
+            public static Woodwind Flute { get; } = new Woodwind("LOC_FLUTE_NAME");
+            public static Woodwind Piccolo { get; } = new Woodwind("LOC_PICCOLO_NAME");
+            public static Woodwind Bagpipes { get; } = new Woodwind("LOC_BAGPIPES_NAME");
+            public static Woodwind Oboe { get; } = new Woodwind("LOC_OBOE_NAME");
+            public static Woodwind Bassoon { get; } = new Woodwind("LOC_BASSOON_NAME");
+            public static Woodwind CorAnglais { get; } = new Woodwind("LOC_COR_ANGLAIS_NAME");
+            public static Woodwind Saxophone { get; } = new Woodwind("LOC_SAXOPHONE_NAME");
+            public static Woodwind Clarinet { get; } = new Woodwind("LOC_CLARINET_NAME");
+            public static Woodwind Harmonica { get; } = new Woodwind("LOC_HARMONICA_NAME");
+            public static Woodwind Recorder { get; } = new Woodwind("LOC_RECORDER_NAME");
+            public static Woodwind Contrabassoon { get; } = new Woodwind("LOC_CONTRABASSOON_NAME");
+            public static Woodwind Fife { get; } = new Woodwind("LOC_FIFE_NAME");
+            public static Woodwind Ocarina { get; } = new Woodwind("LOC_OCARINA_NAME");
+            public static Woodwind Aulos { get; } = new Woodwind("LOC_AULOS_NAME");
+
+            public new bool this[char locale] {
+                get { return base[locale]; }
+                set { base[locale] = value; }
+            }
+
+            private Woodwind(string key) : base(key) {}
         }
     }
 

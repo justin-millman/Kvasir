@@ -144,9 +144,12 @@ namespace Kvasir.Translation {
                     if (typeCategory.Equals(TypeCategory.Enumeration) || typeCategory.Equals(TypeCategory.Supported)) {
                         translation.Add(new SingleFieldGroup(context, property));
                     }
-                    else if (typeCategory.Equals(TypeCategory.Relation)) {
+                    else if (typeCategory.Equals(TypeCategory.Relation) || typeCategory.Equals(TypeCategory.ReadOnlyRelation)) {
                         if (!allowRelations) {
                             throw new NestedRelationException(context);
+                        }
+                        else if (requirePreDefined && !typeCategory.Equals(TypeCategory.ReadOnlyRelation)) {
+                            throw new NotReadOnlyException(context);
                         }
                         else if (property.CanWrite && !property.IsInitOnly()) {
                             throw new WriteableRelationException(context);
