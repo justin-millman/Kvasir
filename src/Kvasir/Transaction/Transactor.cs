@@ -255,7 +255,13 @@ namespace Kvasir.Transaction {
                     }
 
                     foreach (var (owningEntity, relationRows) in rows) {
+                        // Pre-Defined Entities are not loaded from the database, and their Relations are not
+                        // repopulated. This means that all the values hard-coded into the Relations are still in the
+                        // 'NEW' state, but we don't want that. This really shouldn't be a problem, because Pre-Defined
+                        // Entities cannot be changed, so there's never a reason to save them. But we may as well ensure
+                        // that the data model is internally consistent.
                         relation.Repopulator.Repopulate(owningEntity, relationRows);
+                        relation.Extractor.Canonicalize(owningEntity);
                     }
                 }
             }
@@ -265,6 +271,7 @@ namespace Kvasir.Transaction {
                 foreach (var (key, rows) in locRowsByKey[idx].OrderBy(kvp => kvp.Key.Datum)) {
                     var instance = locInstByKey[idx][key];
                     localizationTranslations[idx].Principal.Repopulator.Repopulate(instance, rows);
+                    localizationTranslations[idx].Principal.Extractor.Canonicalize(instance);
                 }
             }
         }
