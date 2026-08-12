@@ -655,6 +655,26 @@ namespace UT.Kvasir.Providers {
             ((BasicConstraintDecl)decl).DDL.Should().Be($"CHECK (LENGTH(`{field.Name}`) > {length})");
         }
 
+        [TestMethod] public void LengthConstraint_Equal() {
+            // Arrange
+            var field = Substitute.For<IField>();
+            field.Name.Returns(new FieldName("Daevabad"));
+            field.DataType.Returns(DBType.Text);
+            var length = 9;
+            var constraint = new ConstantClause(new FieldExpression(FieldFunction.LengthOf, field), ComparisonOperator.EQ, DBValue.Create(length));
+
+            // Act
+            var builder = new ConstraintBuilder();
+            builder.AddClause(constraint);
+            var decl = builder.Build();
+
+            // Assert
+            decl.Should().BeOfType<ExactlyLengthConstraintDecl>();
+            ((ExactlyLengthConstraintDecl)decl).Exact.DDL.Should().Be($"CHECK (LENGTH(`{field.Name}`) = {length})");
+            ((ExactlyLengthConstraintDecl)decl).Max.Field.Should().Be(field.Name.ToString());
+            ((ExactlyLengthConstraintDecl)decl).Max.MaxLength.Should().Be((ulong)length);
+        }
+
         [TestMethod] public void ComparisonConstraint_Equal() {
             // Arrange
             var field = Substitute.For<IField>();
@@ -2342,6 +2362,7 @@ namespace UT.Kvasir.Providers {
             var field3 = new FieldDecl(new FieldName("Harpers Ferry"), "`Harpers Ferry` BOOLEAN NOT NULL");
             var field4 = new FieldDecl(new FieldName("La Jolla"), "`La Jolla` VARCHAR(255) NOT NULL");
             var field5 = new FieldDecl(new FieldName("Compton"), "`Compton` INT UNSIGNED NOT NULL");
+            var field6 = new FieldDecl(new FieldName("Voorhees"), "`Voorhees` VARCHAR(255) NOT NULL");
             var pk = new SqlSnippet($"PRIMARY KEY (`{field0.Name}`, `{field5.Name}`)");
             var ck0 = new SqlSnippet($"UNIQUE (`{field2.Name}`)");
             var ck1 = new SqlSnippet($"UNIQUE (`{field3.Name}`, `{field0.Name}`)");
@@ -2349,6 +2370,7 @@ namespace UT.Kvasir.Providers {
             var check0 = new MaxLengthConstraintDecl(field1.Name, 45);
             var check1 = new BasicConstraintDecl(new SqlSnippet($"CHECK (`{field4.Name}` != \"Salt Lake City\")"));
             var check2 = new BasicConstraintDecl(new SqlSnippet($"CHECK (`{field2.Name}` < `{field5.Name}`)"));
+            var check3 = new ExactlyLengthConstraintDecl(new BasicConstraintDecl(new SqlSnippet($"CHECK (LENGTH(`{field6.Name}`) = 17")), new MaxLengthConstraintDecl(field6.Name, 17));
 
             // Act
             var builder = new TableBuilder();
@@ -2359,6 +2381,7 @@ namespace UT.Kvasir.Providers {
             builder.AddFieldDeclaration(field3);
             builder.AddFieldDeclaration(field4);
             builder.AddFieldDeclaration(field5);
+            builder.AddFieldDeclaration(field6);
             builder.SetPrimaryKeyDeclaration(pk);
             builder.AddCandidateKeyDeclaration(ck0);
             builder.AddCandidateKeyDeclaration(ck1);
@@ -2366,6 +2389,7 @@ namespace UT.Kvasir.Providers {
             builder.AddCheckConstraintDeclaration(check0);
             builder.AddCheckConstraintDeclaration(check1);
             builder.AddCheckConstraintDeclaration(check2);
+            builder.AddCheckConstraintDeclaration(check3);
             var decl = builder.Build();
 
             // Assert
@@ -2377,11 +2401,13 @@ namespace UT.Kvasir.Providers {
                 "`Harpers Ferry` BOOLEAN NOT NULL\n" +
                 "`La Jolla` VARCHAR(255) NOT NULL\n" +
                 "`Compton` INT UNSIGNED NOT NULL\n" +
+                "`Voorhees` VARCHAR(17) NOT NULL\n" +
                 $"{pk}\n" +
                 $"{ck0}\n" +
                 $"{ck1}\n" +
                 $"{check1.DDL}\n" +
                 $"{check2.DDL}\n" +
+                $"{check3.Exact.DDL}\n" +
                 fk.ToString()
             );
         }

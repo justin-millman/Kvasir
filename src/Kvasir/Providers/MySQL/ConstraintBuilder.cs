@@ -42,6 +42,17 @@ namespace Kvasir.Providers.MySQL {
     /// </param>
     internal readonly record struct MaxLengthConstraintDecl(FieldName Field, ulong MaxLength) : IConstraintDecl {}
 
+    /// <summary>
+    ///   A MySQL declaration for a constraint that imposes an exact length constraint on a field.
+    /// </summary>
+    /// <param name="Exact">
+    ///   The SQL declaration of the constraint.
+    /// </param>
+    /// <param name="Max">
+    ///   The <see cref="MaxLengthConstraintDecl"/> of the constraint.
+    /// </param>
+    internal readonly record struct ExactlyLengthConstraintDecl(BasicConstraintDecl Exact, MaxLengthConstraintDecl Max) : IConstraintDecl {}
+
 
     /// <summary>
     ///   An implementation of the <see cref="IConstraintDeclBuilder{TDecl}"/> interface for a MySQL provider.
@@ -54,6 +65,7 @@ namespace Kvasir.Providers.MySQL {
             clauses_ = new Stack<string>();
             declaration_ = CONSTRAINT_TEMPLATE;
             maxLengthDecl_ = Option.None<MaxLengthConstraintDecl>();
+            exactLengthDecl_ = Option.None<ExactlyLengthConstraintDecl>();
         }
 
         /// <inheritdoc/>
@@ -96,6 +108,7 @@ namespace Kvasir.Providers.MySQL {
 
             clauses_.Push("&&");
             maxLengthDecl_.Filter(false);       // empties the optional
+            exactLengthDecl_.Filter(false);     // empties the optional
         }
 
         /// <inheritdoc/>
@@ -104,6 +117,7 @@ namespace Kvasir.Providers.MySQL {
 
             clauses_.Push("||");
             maxLengthDecl_.Filter(false);       // empties the optional
+            exactLengthDecl_.Filter(false);     // empties the optional
         }
 
         /// <inheritdoc/>
@@ -119,16 +133,22 @@ namespace Kvasir.Providers.MySQL {
 
                     maxLengthDecl_ = Option.Some(new MaxLengthConstraintDecl(clause.LHS.Field.Name, max));
                 }
+                else if (clause.Operator == ComparisonOperator.EQ) {
+                    var fullDecl = declaration_.Replace(NAME_PLACEHOLDER, "");
+                    fullDecl = fullDecl.Replace(PREDICATE_PLACEHOLDER, GenerateConstantClauseDDL(clause));
+                    var minDecl = new BasicConstraintDecl(new SqlSnippet(fullDecl));
+
+                    ulong length = (ulong)Convert.ChangeType(clause.RHS.Datum, typeof(ulong));
+                    var maxDecl = new MaxLengthConstraintDecl(clause.LHS.Field.Name, length);
+
+                    exactLengthDecl_ = Option.Some(new ExactlyLengthConstraintDecl(minDecl, maxDecl));
+                }
             }
-            
-            // Even if we just processed a maximum length constraint, we still want to fill in the clause; otherwise, if
-            // the maximum length constraint was the first in a compound constraint, we would lose its information.
-            bool forBoolean = clause.RHS.Datum.GetType() == typeof(bool);
-            var newClause = CLAUSE_TEMPLATE;
-            newClause = newClause.Replace(LHS_PLACEHOLDER, clause.LHS.Render());
-            newClause = newClause.Replace(OPERATOR_PLACEHOLDER, clause.Operator.Render(forBoolean));
-            newClause = newClause.Replace(RHS_PLACEHOLDER, clause.RHS.Render());
-            clauses_.Push(newClause);
+
+            // Even if we just processed a maximum length or an exact length constraint, we still want to fill in the
+            // clause; otherwise, if the maximum length constraint was the first in a compound constraint, we would lose
+            // its information.
+            clauses_.Push(GenerateConstantClauseDDL(clause));
         }
 
         /// <inheritdoc/>
@@ -172,10 +192,31 @@ namespace Kvasir.Providers.MySQL {
             declaration_ = declaration_.Replace(NAME_PLACEHOLDER, "");          // by default, a constraint has no name
             declaration_ = declaration_.Replace(PREDICATE_PLACEHOLDER, clause); // fill in the conditional clause
 
-            return maxLengthDecl_.Match<IConstraintDecl>(
+            return maxLengthDecl_.Match(
                 some: decl => decl,
-                none: () => new BasicConstraintDecl(new SqlSnippet(declaration_))
+                none: () => exactLengthDecl_.Match<IConstraintDecl>(
+                    some: decl => decl,
+                    none: () => new BasicConstraintDecl(new SqlSnippet(declaration_))
+                )
             );
+        }
+
+        /// <summary>
+        ///   Generates the SQL for a <see cref="ConstantClause"/>.
+        /// </summary>
+        /// <param name="clause">
+        ///   The <see cref="ConstantClause"/>.
+        /// </param>
+        /// <returns>
+        ///   The SQL clause for <paramref name="clause"/>.
+        /// </returns>
+        private static string GenerateConstantClauseDDL(ConstantClause clause) {
+            bool forBoolean = clause.RHS.Datum.GetType() == typeof(bool);
+            var ddl = CLAUSE_TEMPLATE;
+            ddl = ddl.Replace(LHS_PLACEHOLDER, clause.LHS.Render());
+            ddl = ddl.Replace(OPERATOR_PLACEHOLDER, clause.Operator.Render(forBoolean));
+            ddl = ddl.Replace(RHS_PLACEHOLDER, clause.RHS.Render());
+            return ddl;
         }
 
 
@@ -191,5 +232,6 @@ namespace Kvasir.Providers.MySQL {
         private readonly Stack<string> clauses_;
         private string declaration_;
         private Option<MaxLengthConstraintDecl> maxLengthDecl_;
+        private Option<ExactlyLengthConstraintDecl> exactLengthDecl_;
     }
 }

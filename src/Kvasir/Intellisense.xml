@@ -1948,6 +1948,38 @@
               The constraint value.
             </summary>
         </member>
+        <member name="T:Kvasir.Providers.MySQL.ExactlyLengthConstraintDecl">
+            <summary>
+              A MySQL declaration for a constraint that imposes an exact length constraint on a field.
+            </summary>
+            <param name="Exact">
+              The SQL declaration of the constraint.
+            </param>
+            <param name="Max">
+              The <see cref="T:Kvasir.Providers.MySQL.MaxLengthConstraintDecl"/> of the constraint.
+            </param>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ExactlyLengthConstraintDecl.#ctor(Kvasir.Providers.MySQL.BasicConstraintDecl,Kvasir.Providers.MySQL.MaxLengthConstraintDecl)">
+            <summary>
+              A MySQL declaration for a constraint that imposes an exact length constraint on a field.
+            </summary>
+            <param name="Exact">
+              The SQL declaration of the constraint.
+            </param>
+            <param name="Max">
+              The <see cref="T:Kvasir.Providers.MySQL.MaxLengthConstraintDecl"/> of the constraint.
+            </param>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.ExactlyLengthConstraintDecl.Exact">
+            <summary>
+              The SQL declaration of the constraint.
+            </summary>
+        </member>
+        <member name="P:Kvasir.Providers.MySQL.ExactlyLengthConstraintDecl.Max">
+            <summary>
+              The <see cref="T:Kvasir.Providers.MySQL.MaxLengthConstraintDecl"/> of the constraint.
+            </summary>
+        </member>
         <member name="T:Kvasir.Providers.MySQL.ConstraintBuilder">
             <summary>
               An implementation of the <see cref="T:Kvasir.Transcription.IConstraintDeclBuilder`1"/> interface for a MySQL provider.
@@ -1987,6 +2019,17 @@
         </member>
         <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.Build">
             <inheritdoc/>
+        </member>
+        <member name="M:Kvasir.Providers.MySQL.ConstraintBuilder.GenerateConstantClauseDDL(Kvasir.Schema.ConstantClause)">
+            <summary>
+              Generates the SQL for a <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </summary>
+            <param name="clause">
+              The <see cref="T:Kvasir.Schema.ConstantClause"/>.
+            </param>
+            <returns>
+              The SQL clause for <paramref name="clause"/>.
+            </returns>
         </member>
         <member name="T:Kvasir.Providers.MySQL.FieldDecl">
             <summary>
