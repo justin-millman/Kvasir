@@ -686,6 +686,23 @@
         <member name="M:Kvasir.Annotations.Check.LengthIsBetweenAttribute.WithPath(System.String)">
             <inheritdoc/>
         </member>
+        <member name="T:Kvasir.Annotations.Check.LengthIsExactlyAttribute">
+            <summary>
+              An annotation that specifies that the value for a Field backing a particular string-type property must
+              have a specific length.
+            </summary>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsExactlyAttribute.#ctor(System.Int32)">
+            <summary>
+              Constructs a new instance of the <see cref="T:Kvasir.Annotations.Check.LengthIsExactlyAttribute"/> class.
+            </summary>
+            <param name="length">
+              The length that the Field backing the annotated property must be.
+            </param>
+        </member>
+        <member name="M:Kvasir.Annotations.Check.LengthIsExactlyAttribute.WithPath(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="T:Kvasir.Annotations.ColumnAttribute">
             <summary>
               An annotation that specifies the column index for the Field backing a particular property.
@@ -10416,8 +10433,9 @@
             <summary>
               Applies a <see cref="T:Kvasir.Annotations.Check.IsNonEmptyAttribute">[Check.IsNonEmpty]</see>,
               <see cref="T:Kvasir.Annotations.Check.LengthIsAtLeastAttribute">[Check.LengthIsAtLeast</see>,
-              <see cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute">[Check.LengthIsAtMost</see>, or
-              <see cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute"/> constraint to the Field.
+              <see cref="T:Kvasir.Annotations.Check.LengthIsAtMostAttribute">[Check.LengthIsAtMost</see>,
+              <see cref="T:Kvasir.Annotations.Check.LengthIsBetweenAttribute">[Check.LengthIsBetween]</see>, or
+              <see cref="T:Kvasir.Annotations.Check.LengthIsExactlyAttribute">[Check.LengthIsExactly]</see> constraint to the Field.
             </summary>
             <param name="context">
               The <see cref="T:Kvasir.Translation.Context"/> in which the string length constraint annotation was translated via reflection.
