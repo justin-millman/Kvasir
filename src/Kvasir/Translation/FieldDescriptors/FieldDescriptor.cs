@@ -182,8 +182,9 @@ namespace Kvasir.Translation {
         /// <summary>
         ///   Applies a <see cref="Check.IsNonEmptyAttribute">[Check.IsNonEmpty]</see>,
         ///   <see cref="Check.LengthIsAtLeastAttribute">[Check.LengthIsAtLeast</see>,
-        ///   <see cref="Check.LengthIsAtMostAttribute">[Check.LengthIsAtMost</see>, or
-        ///   <see cref="Check.LengthIsBetweenAttribute"/> constraint to the Field.
+        ///   <see cref="Check.LengthIsAtMostAttribute">[Check.LengthIsAtMost</see>,
+        ///   <see cref="Check.LengthIsBetweenAttribute">[Check.LengthIsBetween]</see>, or
+        ///   <see cref="Check.LengthIsExactlyAttribute">[Check.LengthIsExactly]</see> constraint to the Field.
         /// </summary>
         /// <param name="context">
         ///   The <see cref="Context"/> in which the string length constraint annotation was translated via reflection.

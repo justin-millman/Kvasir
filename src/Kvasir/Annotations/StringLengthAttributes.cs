@@ -144,5 +144,27 @@ namespace Kvasir.Annotations {
                 return new LengthIsBetweenAttribute((int)Minimum, (int)Maximum) { Path = path };
             }
         }
+
+        /// <summary>
+        ///   An annotation that specifies that the value for a Field backing a particular string-type property must
+        ///   have a specific length.
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
+        public sealed class LengthIsExactlyAttribute : StringLengthAttribute {
+            /// <summary>
+            ///   Constructs a new instance of the <see cref="LengthIsExactlyAttribute"/> class.
+            /// </summary>
+            /// <param name="length">
+            ///   The length that the Field backing the annotated property must be.
+            /// </param>
+            public LengthIsExactlyAttribute(int length)
+                : base(minimum: length, maximum: length)
+            {}
+
+            /// <inheritdoc/>
+            private protected sealed override LengthIsExactlyAttribute WithPath(string path) {
+                return new LengthIsExactlyAttribute((int)Minimum) { Path = path };
+            }
+        }
     }
 }

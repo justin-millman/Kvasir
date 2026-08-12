@@ -4,6 +4,7 @@
 A Capella Group
 Abbey
 Abortion Clinic
+ABS Challenge
 Accountant
 Achaean Naval Contingent
 Acid
@@ -31,6 +32,7 @@ Almanac
 Alpha Monster
 Alphabet
 Alter Ego
+Amazing Race
 Amazon Service
 Ambassador
 Amber Alert
@@ -76,10 +78,11 @@ Arthurian Knight
 Artificial Intelligence
 Artiodactyl
 Assassination
-Asteroid-
+Asteroid
 Astronaut
 Atmospheric Layer
 Atoll
+Attorney General
 Attribute (C#)
 Auction Lot
 Aurora
@@ -161,6 +164,7 @@ Blockade
 Blockbuster Store
 Blood Drive
 Blood Type
+Bloomin' Onion
 Boarding School
 Bodhisattva
 Bodybuilder
@@ -184,6 +188,7 @@ Brazilian State
 Bread
 Bridge
 Briefcase
+Brit Milah
 Brontë Sister
 Brothel
 Bullfight
@@ -194,6 +199,7 @@ Bug Zapper
 Build-a-Bear Workshop
 Burrito
 Bust
+But Better
 Butterfly
 Button (UI)
 Buzzer System
@@ -243,6 +249,7 @@ Casino
 Casserole
 Castle
 Catacombs
+Catapult
 Cathedral
 Cave
 Cave Painting
@@ -270,6 +277,7 @@ Chemical Element
 Chess Grandmaster
 Chess Piece
 Chewing Gum
+Chicken Coop
 Chinatown
 Chinese Character
 Chinese Dynasty
@@ -297,6 +305,7 @@ Citrus Fruit
 Civilization VI City State
 Civilization VI District
 Civilization VI Military Unit
+Civilization VI Pantheon
 Civilization VI Policy Card
 Civilization VI Technology
 Civilization VI Terrain
@@ -370,6 +379,7 @@ Coven
 Crab Rangoon
 Credit Card
 Credit Report
+Croissant
 Crossbow
 Crossword Clue
 Crown Jewel
@@ -412,6 +422,7 @@ Dead Sea Scroll
 Deadly Sin
 Debate
 Debit Card
+Decade
 Decathlon
 DDos Attack
 DEFCON
@@ -425,6 +436,7 @@ Deposition
 Dermatitis
 Dermatologist
 Desert
+Diabetes
 Diacritic
 Diadochos
 Dial
@@ -453,8 +465,10 @@ Doctor (Doctor Who)
 Documentary
 Dog Show
 Dog Walker
+Dogcatcher
 Domino
 Donut
+Doorbell
 Dormitory
 Dosage
 Doula
@@ -471,6 +485,7 @@ Drum
 Drunk History
 DSM
 Dubbing
+Duck Hunt
 Dueling Pianos
 Duo Push
 Dwarf
@@ -516,6 +531,7 @@ Eurovision Song Contest
 Event Contract
 Excel Range
 Exclamation
+Excommunication
 Execution
 Executive Order
 Existentialist
@@ -543,6 +559,7 @@ Filibuster
 Fin (fish)
 Final Four
 Final Jeopardy!
+Finnish God
 Firearm
 Firefighter
 Fishing Rod
@@ -614,10 +631,12 @@ Gorgon
 Gorilla Troop
 Government Shutdown
 GPU
+Graffiti
 Grammatical Case
 Grand Prix
 Grand Relic
 Grand Wizard of the KKK
+Grape
 Grasslands
 Great Old One
 Greek God
@@ -645,6 +664,7 @@ Haka
 Halide
 Hall of Fame
 Hall Pass
+Hallucination
 Hamentaschen
 Handshake
 Happy Hour
@@ -752,6 +772,7 @@ Jack-o-Lantern
 Japanese Emperor
 Japanese Prefecture
 Jedi
+Jellycat
 Jester
 Jigsaw Puzzle
 Jötunn
@@ -789,6 +810,7 @@ Land Mine
 Landfill
 Language
 Large Language Model
+Lasagna
 Laundromat
 Laundry Detergent
 Law & Order
@@ -810,6 +832,7 @@ Letter of Recommendation
 Library (books)
 Library Card
 License Plate
+Lich
 Lifeguard
 Ligament
 Lighthouse
@@ -834,6 +857,7 @@ Logic Puzzle
 Lollipop
 Longbow
 Lorcana Character
+Lost Boy
 Lottery Ticket
 Luau
 Lunar Crater
@@ -872,6 +896,7 @@ Masked Singer
 Mass Extinction
 Massacre
 Masseuse
+Massif
 MasterClass
 Match Pair (Babel)
 Mathematical Conjecture
@@ -881,6 +906,7 @@ Mattress
 Mausoleum
 Mayan God
 Mayor
+Meatball
 Medal of Honor
 Medical Specialty
 Megafauna
@@ -916,6 +942,7 @@ Month
 Monty Python Skit
 Moon of Jupiter
 Morgue
+Mortgage
 Mosque
 Motorcycle
 Motto
@@ -985,6 +1012,7 @@ Octopus
 Ode
 Oil (cooking)
 Oil Field
+Oil Pipeline
 Oil Spill
 Ointment
 Olive
@@ -992,6 +1020,7 @@ Olympiad
 Olympian Boon (Hades)
 Onomatopoeia
 Opera
+Operetta
 Opioid
 Opium War
 Option (security)
@@ -1023,6 +1052,7 @@ Papal Bull
 Papal Conclave
 Parable
 Parabola
+Paradox
 Parashah
 Parking Garage
 Parking Ticket
@@ -1037,6 +1067,7 @@ Pawn Shop
 Paycheck
 Peace Treaty
 Peanut Butter
+Pedicure
 Peerage
 Penalty (NFL)
 Pencil
@@ -1088,6 +1119,7 @@ Playing Card
 Playlist
 Pleasantry
 Plumber
+Pneumonia
 PO Box
 Poacher
 Podcast
@@ -1122,6 +1154,7 @@ Press Secretary
 Pretzel
 Pride Parade
 Primate
+Primatologist
 Prime Minister of Israel
 Printer
 Prison
@@ -1170,6 +1203,7 @@ Rape Kit
 Raptor
 Ravnica Guild
 Readymade
+Real Housewife
 Refugee Camp
 Register (computing)
 Regular Expression
@@ -1207,6 +1241,7 @@ Runway
 Russian Tsar
 Russo (Wizards of Waverly Place)
 Sabermetric
+Sacrament
 Safari
 Saint
 Salsa
@@ -1216,6 +1251,7 @@ Sarcophagus
 Satellite
 Scattergories Round
 Scholarship
+Science Fair
 Scooby-Doo Movie
 Scooter
 Scorpion
@@ -1330,6 +1366,7 @@ State Quarter
 Steak
 Stem Cell
 Step Pyramid
+Steroid
 Stock
 Stock Index
 Stock Split
@@ -1337,6 +1374,7 @@ Stooge
 Stove
 Stratego Piece
 Strike (labor)
+String Quartet
 Strip Club
 Stuffed Animal
 Submarine
@@ -1392,6 +1430,7 @@ Term of Endearment
 Terms of Service
 Territory (Pendragon)
 Terrorist Organization
+Tesselation
 Therapist
 Thesis
 Thought Experiment
@@ -1402,6 +1441,7 @@ Ticket2Ride Route
 Tie-Dye
 Tier List
 TikTok
+Time Machine
 Time Traveler
 Time Zone
 Timestamp
@@ -1453,6 +1493,7 @@ Umbrella
 Umpire
 UN Resolution
 UN Secretary General
+Undercover Boss
 Underworld
 Unicorn
 Union
@@ -1470,6 +1511,7 @@ Vase
 Vasectomy
 Vault (bank)
 Venmo Request
+Ventriloquist
 Venus Fly Trap
 Verb
 Vertebra
@@ -1541,6 +1583,7 @@ xkcd Comic
 Yacht
 Yahtzee Game
 Yeshiva
+YMCA
 Yoga Position
 Yogurt
 YouTube Video

@@ -9,6 +9,7 @@ using static UT.Kvasir.Translation.StringLengthConstraints.IsNonEmpty;
 using static UT.Kvasir.Translation.StringLengthConstraints.LengthIsAtLeast;
 using static UT.Kvasir.Translation.StringLengthConstraints.LengthIsAtMost;
 using static UT.Kvasir.Translation.StringLengthConstraints.LengthIsBetween;
+using static UT.Kvasir.Translation.StringLengthConstraints.LengthIsExactly;
 
 namespace UT.Kvasir.Translation {
     [TestClass, TestCategory("Constraints - String Length")]
@@ -2343,7 +2344,7 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
-        [TestMethod] public void LengthIsBetwen_RelationNestedInapplicableScalar_IsError() {
+        [TestMethod] public void LengthIsBetween_RelationNestedInapplicableScalar_IsError() {
             // Arrange
             var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
             var source = typeof(Wormhole);
@@ -2736,6 +2737,572 @@ namespace UT.Kvasir.Translation {
                 .WithPath("Name")
                 .WithProblem("the Field's default value of \"Ezekiel's Meat-on-a-Stick Emporium\" does not pass the constraint")
                 .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+    }
+
+    [TestClass, TestCategory("Constraints - String Length")]
+    public class LengthIsExactlyTests {
+        [TestMethod] public void LengthIsExactly_NonNullableStringField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Graffiti);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Artist", ComparisonOperator.EQ, 19).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_NullableStringField() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(UndercoverBoss);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Company", ComparisonOperator.EQ, 28).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_NumericField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Grape);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Grape` → Weight")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `double`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_CharacterField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Croissant);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Croissant` → Rating")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `char`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_BooleanField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Catapult);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Catapult` → IsWooden")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `bool`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_DateOnlyField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(ChickenCoop);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`ChickenCoop` → DateEstablished")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateOnly`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_DateTimeField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Primatologist);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Primatologist` → DateOfDeath")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateTime`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_GuidField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Decade);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Decade` → ID")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_EnumerationField_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(RealHousewife);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`RealHousewife` → Series")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Location`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_LocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Jellycat);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.EQ, 34).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_LocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(OilPipeline);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`OilPipeline` → CrudeVolume")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `ulong`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_AggregateNestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(AttorneyGeneral);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Name.Last", ComparisonOperator.EQ, 80).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_AggregateNestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Steroid);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Steroid` → Carbons")
+                .WithPath("GonaneIndex")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `uint`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NestedAggregate_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(BritMilah);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`BritMilah` → Mohel")
+                .WithPath("Name")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `JewishName`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_ReferenceNestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Paradox);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Naming.Name", ComparisonOperator.EQ, 7).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_ReferenceNestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(LostBoy);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`LostBoy` → Escape")
+                .WithPath("Timestamp")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateTime`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NestedReference_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Operetta);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Operetta` → Creators")
+                .WithPath("Lyricist")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Person`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NestedLocalizationFieldWithStringKey() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Dogcatcher);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "ID.Issuer", ComparisonOperator.EQ, 47).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_NestedLocalizationFieldWithNonStringKey_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(FinnishGod);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`FinnishGod` → Opinion")
+                .WithPath("AmongGods")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `short`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_PreDefinedInstance_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Diabetes);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Diabetes` → Gestational")
+                .WithProblem("the annotation cannot be applied to a pre-defined instance property")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_OriginalOnReferenceNestedScalar() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(BloominOnion);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_RelationNestedApplicableScalar() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(CivVIPantheon);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Relations[0].Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Item", ComparisonOperator.EQ, 90).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_RelationNestedInapplicableScalar_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Lich);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Lich` → <synthetic> `PhylacteryLocations`")
+                .WithPath("Item")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `Guid`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NestedRelation_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Excommunication);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Excommunication` → Targets")
+                .WithPath("Organizations")
+                .WithProblem("the annotation cannot be applied to a property of Relation type `RelationSet<string>`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+        
+        [TestMethod] public void LengthIsExactly_FieldWithStringDataConversionTarget() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(YMCA);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Inaugurated", ComparisonOperator.EQ, 10).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_FieldWithStringDataConversionSource_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(DuckHunt);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`DuckHunt` → Date")
+                .WithProblem("the annotation cannot be applied to a Field of non-string type `DateTime`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NegativeValue_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(StringQuartet);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`StringQuartet` → Cello")
+                .WithProblem("the exact string length (-934) cannot be negative")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_SameValueMultipleTimes() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(ScienceFair);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "School", ComparisonOperator.EQ, 77).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsExactly_DifferentValuesMultipleTimes_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Meatball);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Meatball` → <synthetic> `Meats`")
+                .WithPath("Item.Meat")
+                .WithProblem("the interval [109, 4] of valid string lengths is empty")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_PathIsNull_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Ventriloquist);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Ventriloquist` → Name")
+                .WithProblem("the path cannot be 'null'")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_PathOnScalar_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Tesselation);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Tesselation` → Shape")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NonExistentPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Pedicure);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Pedicure` → RightFoot")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NoPathOnAggregate_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Hallucination);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`Hallucination` → UTC")
+                .WithProblem("the annotation cannot be applied to a property of Aggregate type `Timestamp`")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NonExistentPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(ABSChallenge);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`ABSChallenge` → Ump")
+                .WithProblem("the path \"---\" does not exist")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NonPrimaryKeyPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Pneumonia);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InvalidPathException>()
+                .WithLocation("`Pneumonia` → Diagnoser")
+                .WithProblem("the path \"MedicalSchool\" does not exist")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsExactly_NoPathOnReference_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(AmazingRace);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<InapplicableAnnotationException>()
+                .WithLocation("`AmazingRace` → FirstPrize")
+                .WithProblem("the annotation cannot be applied to a property of Reference type `Reward`")
+                .WithAnnotations("[Check.LengthIsExactly]")
                 .EndMessage();
         }
     }

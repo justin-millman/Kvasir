@@ -546,7 +546,7 @@ namespace UT.Kvasir.Translation {
 
             [PrimaryKey] public string File { get; set; } = "";
             [PrimaryKey] public string Symbol { get; set; } = "";
-            public LocalizedArgs Arguments { get; set; }
+            public LocalizedArgs Arguments { get; set; } = new('\0');
             public bool IsOverloaded { get; set; }
             public bool StandardCompliant { get; set; }
         }
@@ -13472,7 +13472,7 @@ namespace UT.Kvasir.Translation {
                 public bool InEpicOfGilgamesh { get; set; }
             }
 
-            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            // Test Scenario: <Path> on Reference Does Not Exist (✗non-existent path✗)
             public class HeatWave {
                 public enum Unit { Fahrenheit, Celsius, Kelvin }
 
@@ -13507,7 +13507,7 @@ namespace UT.Kvasir.Translation {
                 public string? AttributedLinguist { get; set; }
             }
 
-            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            // Test Scenario: <Path> on Reference Not Specified (✗missing path✗)
             public class Leprechaun {
                 public class WalkingStick {
                     [PrimaryKey] public Guid StickID { get; set; }
@@ -13611,6 +13611,486 @@ namespace UT.Kvasir.Translation {
                 [Check.LengthIsBetween(13, 21, Path = "Name")] public StreetVendor? Vendor { get; set; }
                 public decimal Price { get; set; }
             }
+        }
+
+        internal static class LengthIsExactly {
+            // Test Scenario: Applied to Non-Nullable String Field (✓constrained✓)
+            public class Graffiti {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.LengthIsExactly(19)] public string Artist { get; set; } = "";
+                public ushort NumColors { get; set; }
+                public bool IsTagged { get; set; }
+                public float Latitude { get; set; }
+                public float Longtiude { get; set; }
+                public bool HasBeenCoveredOver { get; set; }
+            }
+
+            // Test Scenario: Applied to Nullable String Field (✓constrained✓)
+            public class UndercoverBoss {
+                [PrimaryKey] public sbyte Season { get; set; }
+                [PrimaryKey] public sbyte Episode { get; set; }
+                public string Name { get; set; } = "";
+                [Check.LengthIsExactly(28)] public string? Company { get; set; }
+                public bool FiredSomeone { get; set; }
+                public bool WasDiscovered { get; set; }
+            }
+
+            // Test Scenario: Applied to Numeric Field (✗impermissible✗)
+            public class Grape {
+                public enum Variety { Table, Wine };
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public Variety Kind { get; set; }
+                public string GrapeVariety { get; set; } = "";
+                [Check.LengthIsExactly(104)] public double Weight { get; set; }
+                public bool IsSeedless { get; set; }
+            }
+
+            // Test Scenario: Applied to Character Field (✗impermissible✗)
+            public class Croissant {
+                [PrimaryKey] public Guid ID { get; set; }
+                public double Calories { get; set; }
+                public string? Baker { get; set; }
+                [Check.LengthIsExactly(1)] public char Rating { get; set; }
+                public string Flavor { get; set; } = "";
+                public double CupsButter { get; set; }
+                public bool IsAuthenticFrench { get; set; }
+            }
+
+            // Test Scenario: Applied to Boolean Field (✗impermissible✗)
+            public class Catapult {
+                [PrimaryKey] public Guid ID { get; set; }
+                public ushort YearConstructed { get; set; }
+                [Check.LengthIsExactly(49103)] public bool IsWooden { get; set; }
+                public float MaxFlingableWeight { get; set; }
+                public string? Commander { get; set; }
+                public double FlingTension { get; set; }
+            }
+
+            // Test Scenario: Applied to DateOnly Field (✗impermissible✗)
+            public class ChickenCoop {
+                [PrimaryKey] public Guid ID { get; set; }
+                public sbyte ChickenCount { get; set; }
+                [Check.LengthIsExactly(2)] public DateOnly DateEstablished { get; set; }
+                public bool IsFederallyRegulated { get; set; }
+                public ulong EggsProduced { get; set; }
+                public bool ForConsumption { get; set; }
+            }
+
+            // Test Scenario: Applied to DateTime Field (✗impermissible✗)
+            public class Primatologist {
+                [PrimaryKey] public string Name { get; set; } = "";
+                public DateTime DateOfBirth { get; set; }
+                [Check.LengthIsExactly(1291000)] public DateTime? DateOfDeath { get; set; }
+                public string PrimateStudied { get; set; } = "";
+                public string? Advisor { get; set; }
+                public ushort DaysEmbedded { get; set; }
+                public string? Thesis { get; set; }
+            }
+
+            // Test Scenario: Applied to Guid Field (✗impermissible✗)
+            public class Decade {
+                [PrimaryKey, Check.LengthIsExactly(2000)] public Guid ID { get; set; }
+                public ushort Century { get; set; }
+                public sbyte FirstYear { get; set; }
+                public sbyte LastYear { get; set; }
+                public ushort TotalDays { get; set; }
+                public string StringForm { get; set; } = "";
+            }
+
+            // Test Scenario: Applied to Enumeration Field (✗impermissible✗)
+            public class RealHousewife {
+                public enum Location { OrangeCounty, NewYorkCity, Atlanta, NewJersey, DC, BeverlyHills, Miami, Potomac, Dallas, SaltLakeCity, Dubai, RhodeIsland, Athens, Cheshire }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                [Check.LengthIsExactly(93)] public Location Series { get; set; }
+                public ulong NumEpisodes { get; set; }
+                public double IMDbRating { get; set; }
+                public byte NumChildren { get; set; }
+                public bool IsMarried { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with String Key (✓constrained in principal table✓)
+            public class Jellycat {
+                [PrimaryKey] public Guid JellycatID { get; set; }
+                [Check.LengthIsExactly(34)] public LocalizedText Name { get; set; } = new("");
+                public decimal RetailPrice { get; set; }
+                public bool LimitedTime { get; set; }
+                public ulong NumberCirculating { get; set; }
+                public DateOnly InitialRelease { get; set; }
+            }
+
+            // Test Scenario: Applied to Localization with Non-String Key (✗impermissible✗)
+            public class OilPipeline {
+                [PrimaryKey] public string PipelineName { get; set; } = "";
+                public string Proprietor { get; set; } = "";
+                [Check.LengthIsExactly(102)] public LocalizedMeasure CrudeVolume { get; set; } = new(0);
+                public LocalizedMeasure Length { get; set; } = new(0);
+                public DateOnly? Opened { get; set; }
+                public bool WasProtested { get; set; }
+                public ushort NumPumpingStations { get; set; }
+            }
+
+            // Test Scenario: Applied to Aggregate-Nested String Scalar (✓constrained✓)
+            public class AttorneyGeneral {
+                public enum Stratum { Federal, State }
+                public record struct Naming(string First, string? Last);
+
+                [Check.LengthIsExactly(80, Path = "Last")] public Naming Name { get; set; }
+                [PrimaryKey] public Stratum Level { get; set; }
+                [PrimaryKey] public string Polity { get; set; } = "";
+                [PrimaryKey] public DateTime TermStart { get; set; }
+                public DateTime TermEnd { get; set; }
+                public uint CasesBrought { get; set; }
+                public decimal FinesEarned { get; set; }
+                public ulong SubpoenasIssued { get; set; }
+            }
+
+            // Test Scenario: Applied to Aggregate-Nested Non-String Scalar (✗impermissible✗)
+            public class Steroid {
+                public enum Kind { Corticosteroid, SexSteroid, Anabolic, Secosteroid, BileAcid, Neurosteroid, Norsteroid }
+                public record struct Carbonization(uint Count, uint GonaneIndex);
+
+                [PrimaryKey] public string ChemicalFormula { get; set; } = "";
+                public string? CommonName { get; set; }
+                public Kind Category { get; set; }
+                [Check.LengthIsExactly(12, Path = "GonaneIndex")] public Carbonization Carbons { get; set; }
+                public string PrimaryOxidizingEnzyme { get; set; } = "";
+                public float MolarMass { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Aggregate (✗impermissible✗)
+            public class BritMilah {
+                public record struct JewishName(string English, string Hebrew);
+                public record struct MohelInfo(JewishName Name, DateOnly Certification, bool IsOrthodox);
+
+                [PrimaryKey] public string Subject { get; set; } = "";
+                public DateOnly Date { get; set; }
+                [Check.LengthIsExactly(101, Path = "Name")] public MohelInfo Mohel { get; set; }
+                public double DurationSeconds { get; set; }
+            }
+
+            // Test Scenario: Applied to Reference-Nested String Scalar (✓constrained✓)
+            public class Paradox {
+                [Flags] public enum Feature { SelfContradiction = 1, SelfReference = 2, InfiniteRegress = 4, Impossibility = 8 }
+                public enum Kind { Veridical, Falsidical, Antimony, Koan }
+
+                public class NamingOfThing {
+                    [PrimaryKey] public string Name { get; set; } = "";
+                    public string? EponymousPerson { get; set; }
+                    public bool StiglersLaw { get; set; }
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public bool IsThoughtExperiment { get; set; }
+                [Check.LengthIsExactly(7, Path = "Name")] public NamingOfThing Naming { get; set; } = new();
+                public Feature Features { get; set; }
+                public Kind Variety { get; set; }
+            }
+
+            // Test Scenario: Applied to Reference-Nested Non-String Scalar (✗impermissible✗)
+            public class LostBoy {
+                public class EscapeToNeverland {
+                    public enum Person { Tinkerbell, PeterPan, Other }
+
+                    [PrimaryKey] public DateTime Timestamp { get; set; }
+                    public string SourceAddress { get; set; } = "";
+                    public Person Guide { get; set; } 
+                }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public byte Age { get; set; }
+                public bool WearsHat { get; set; }
+                [Check.LengthIsExactly(28, Path = "Timestamp")] public EscapeToNeverland Escape { get; set; } = new();
+            }
+
+            // Test Scenario: Applied to Nested Reference (✗impermissible✗)
+            public class Operetta {
+                public class Person {
+                    [PrimaryKey] public Guid ID { get; set; }
+                    public string Name { get; set; } = "";
+                    public DateOnly BirthDate { get; set; }
+                    public DateOnly? DeathDate { get; set; }
+                }
+                public class Creatorship {
+                    [PrimaryKey] public Person Composer { get; set; } = new();
+                    [PrimaryKey] public Person Lyricist { get; set; } = new();
+                }
+
+                [PrimaryKey] public Guid WorkID { get; set; }
+                public string Title { get; set; } = "";
+                public bool IsComedic { get; set; }
+                [Check.LengthIsExactly(73, Path = "Lyricist")] public Creatorship Creators { get; set; } = new();
+                public byte NumActs { get; set; }
+                public byte NumCharacters { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with String Key (✓constrained in principal table✓)
+            public class Dogcatcher {
+                public record struct License(ulong Number, LocalizedText Issuer);
+
+                [PrimaryKey, Check.LengthIsExactly(47, Path = "Issuer")] public License ID { get; set; }
+                public string Name { get; set; } = "";
+                public uint DogsCaught { get; set; }
+                public bool IsProfessional { get; set; }
+                public bool IsVeteriarin { get; set; }
+                public double NetPoleLength { get; set; }
+            }
+
+            // Test Scenario: Applied to Nested Localization with Non-String Key (✗impermissible✗)
+            public class FinnishGod {
+                public record struct Ratings(LocalizedRating AmongGods, LocalizedRating AmongMortals);
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Domain { get; set; } = "";
+                public bool HasVisitedTuonela { get; set; }
+                [Check.LengthIsExactly(3, Path = "AmongGods")] public Ratings Opinion { get; set; }
+                public string? PrimaryFestival { get; set; }
+            }
+
+            // Test Scenario: Applied to Pre-Defined Instance (✗impermissible✗)
+            [PreDefined] public class Diabetes {
+                [PrimaryKey] public ushort Code { get; init; }
+                public string Name { get; init; }
+                public float Prevalence { get; init; }
+
+                public static Diabetes Type1 { get; } = new Diabetes(0, "Type 1 Diabetes", 0.006f);
+                public static Diabetes Type2 { get; } = new Diabetes(1, "Type 2 Diabetes", 0.001f);
+                public static Diabetes Juvenile { get; } = new Diabetes(2, "Juvenile Diabetes", 0.0004f);
+                [Check.LengthIsExactly(1085)] public static Diabetes Gestational { get; } = new Diabetes(3, "Gestational Diabetes", 0.0002f);
+                public static Diabetes PreDiabetes { get; } = new Diabetes(4, "Pre-Diabetes", 0.334f);
+
+                private Diabetes(ushort code, string name, float prevalence) {
+                    Code = code;
+                    Name = name;
+                    Prevalence = prevalence;
+                }
+            }
+
+            // Test Scenario: Original Constraint on Reference-Nested Field (✓not propagated✓)
+            public class BloominOnion {
+                public class OutbackSteakhouse {
+                    [PrimaryKey, Check.LengthIsExactly(53)] public string Address { get; set; } = "";
+                    public DateOnly Opened { get; set; }
+                    public bool IsOperational { get; set; }
+                    public decimal AnnualRevenue { get; set; }
+                    public string? GeneralManager { get; set; }
+                }
+
+                [PrimaryKey] public Guid ProductID { get; set; }
+                public double Calories { get; set; }
+                public OutbackSteakhouse Restaurant { get; set; } = new();
+                public bool WithDippingSauce { get; set; }
+                public bool Salted { get; set; }
+                public float PercentageBattered { get; set; }
+            }
+
+            // Test Scenario: Applied to Relation-Nested String Scalar (✓constrained✓)
+            public class CivVIPantheon {
+                public enum Yield { Gold, Culture, Faith, Science, Tourism, Production, Amenities }
+
+                [PrimaryKey] public string Name { get; set; } = "";
+                public string Description { get; set; } = "";
+                [Check.LengthIsExactly(90, Path = "Item")] public RelationSet<string> PreferringLeaders { get; init; } = [];
+                public Guid IconID { get; set; }
+                public RelationMap<Yield, sbyte> Yields { get; init; } = [];
+            }
+
+            // Test Scenario: Applied to Relation-Nested Non-String Scalar (✗impermissible✗)
+            public class Lich {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string? NameInLife { get; set; }
+                public string NameInDeath { get; set; } = "";
+                public double Strength { get; set; }
+                [Check.LengthIsExactly(14, Path = "Item")] public IReadOnlyRelationOrderedList<Guid> PhylacteryLocations { get; init; } = new RelationOrderedList<Guid>();
+            }
+
+            // Test Scenario: Applied to Nested Relation (✗impermissible✗)
+            public class Excommunication {
+                public record struct Targeting {
+                    public RelationSet<string> People { get; init; }
+                    public RelationSet<string> Organizations { get; init; }
+                }
+
+                [PrimaryKey] public string Pope { get; set; } = "";
+                [PrimaryKey] public ushort Index { get; set; }
+                [Check.LengthIsExactly(555, Path = "Organizations")] public Targeting Targets { get; set; }
+                public DateOnly Date { get; set; }
+                public bool WasRescinded { get; set; }
+            }
+
+            // Test Scenario: Applied to Field Data-Converted to String Type (✓constrained✓)
+            public class YMCA {
+                [PrimaryKey] public Guid ID { get; set; }
+                public ushort Membership { get; set; }
+                [Check.LengthIsExactly(10), DataConverter<ToString<DateOnly>>] public DateOnly Inaugurated { get; set; }
+                public string? ChurchAffiliation { get; set; }
+                public sbyte BasketballTeams { get; set; }
+                public double SquareFootage { get; set; }
+            }
+
+            // Test Scenario: Applied to Field Data-Converted from String Type (✗impermissible✗)
+            public class DuckHunt {
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Leader { get; set; } = "";
+                public string Location { get; set; } = "";
+                [Check.LengthIsExactly(10), DataConverter<MakeDate<string>>] public string Date { get; set; } = "";
+                public sbyte DucksKilled { get; set; }
+                public float Accuracy { get; set; }
+                public bool Licensed { get; set; }
+                public bool PartOfRegulatedCull { get; set; }
+            }
+
+            // Test Scenario: Value is Negative (✗illegal✗)
+            public class StringQuartet {
+                [PrimaryKey] public Guid GroupID { get; set; }
+                public string FirstViolin { get; set; } = "";
+                public string SecondViolin { get; set; } = "";
+                [Check.LengthIsExactly(-934)] public string Cello { get; set; } = "";
+                public string Bass { get; set; } = "";
+                public ulong Performances { get; set; }
+                public bool IsProfessional { get; set; }
+                public decimal AnnualRevenue { get; set; }
+            }
+
+            // Test Scenario: Scalar Property Constrained Multiple Times with Same Value (✓redundant✓)
+            public class ScienceFair {
+                [PrimaryKey, Check.LengthIsExactly(77), Check.LengthIsExactly(77)] public string School { get; set; } = "";
+                [PrimaryKey] public ushort Year { get; set; }
+                public int NumStudents { get; set; }
+                public byte NumVolcanoes { get; set; }
+                public bool IsJudged { get; set; }
+                public bool IsOptional { get; set; }
+            }
+
+            // Test Scenario: Scalar Property Constrained Multiple Times with Different Values (✗conflicting✗)
+            public class Meatball {
+                [Flags] public enum Spice { Salt = 1, BlackPepper = 2, WhitePepper = 4, RedPepper = 8, Oregano = 16, Mint = 32, Thyme = 64, Rosemary = 128, Cinnamon = 256, Nutmeg = 512, MustardSeed = 1024, Clove = 2048, StarAnise = 4096 }
+
+                public record struct Component(string Meat, double Percentage);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.LengthIsExactly(4, Path = "Item.Meat"), Check.LengthIsExactly(109, Path = "Item.Meat")] public RelationList<Component> Meats { get; init; } = [];
+                public double Calories { get; set; }
+                public float Diameter { get; set; }
+                public bool ContainsGarlic { get; set; }
+            }
+
+            // Test Scenario: <Path> is `null` (✗illegal✗)
+            public class Ventriloquist {
+                [PrimaryKey, Check.LengthIsExactly(38, Path = null!)] public string Name { get; set; } = "";
+                public sbyte NumDummies { get; set; }
+                public decimal AnnualRevenue { get; set; }
+                public byte NumStandUpSpecials { get; set; }
+                public bool Vaudevillian { get; set; }
+            }
+
+            // Test Scenario: <Path> on Scalar Does Not Exist (✗non-existent path✗)
+            public class Tesselation {
+                [PrimaryKey] public Guid ID { get; set; }
+                [Check.LengthIsExactly(18, Path = "---")] public string Shape { get; set; } = "";
+                public bool IsFullPlane { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Does Not Exist (✗non-existent path✗)
+            public class Pedicure {
+                public record struct Color(byte R, byte G, byte B);
+                public record struct Foot(Color BigToe, Color SecondToe, Color MiddleToe, Color FourthToe, Color PinkieToe);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Pedicurist { get; set; } = "";
+                public string Patient { get; set; } = "";
+                public string? Salon { get; set; }
+                public Foot LeftFoot { get; set; }
+                [Check.LengthIsExactly(184, Path = "---")] public Foot RightFoot { get; set; }
+                public bool Exfoliated { get; set; }
+            }
+
+            // Test Scenario: <Path> on Aggregate Not Specified (✗missing path✗)
+            public class Hallucination {
+                public enum Kind { Visual, Auditory, Gustatory, Sensory }
+
+                public record struct Timestamp(ulong Seconds, ulong SubSecondNanos);
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Sufferer { get; set; } = "";
+                [Check.LengthIsExactly(9)] public Timestamp UTC { get; set; }
+                public double Duration { get; set; }
+                public bool MedicallyInduced { get; set; }
+            }
+
+            // Test Scenario: <Path> on Reference Does Not Exist (✗non-existent path✗)
+            public class ABSChallenge {
+                public enum Pos { Pitcher, Catcher, Batter }
+                public enum Outcome { BallToStrike, StrikeToBall, BallConfirmed, StrikeConfirmed }
+
+                public class Umpire {
+                    [PrimaryKey] public Guid OfficialID { get; set; }
+                    public string Name { get; set; } = "";
+                    public byte UniformNumber { get; set; }
+                    public DateOnly Debut { get; set; }
+                    public bool IsTenured { get; set; }
+                }
+
+                [PrimaryKey] public Guid ChallengeID { get; set; }
+                public DateTime Timestamp { get; set; }
+                public string Challenger { get; set; } = "";
+                public Pos ChallengerPosition { get; set; }
+                public Outcome Result { get; set; }
+                [Check.LengthIsExactly(8900031, Path = "---")] public Umpire Ump { get; set; } = new();
+            }
+
+            // Test Scenario: <Path> on Reference Refers to Non-Primary-Key Field (✗non-existent path✗)
+            public class Pneumonia {
+                public class Doctor {
+                    [PrimaryKey] public Guid MedicalID { get; set; }
+                    public string Name { get; set; } = "";
+                    public string MedicalSchool { get; set; } = "";
+                    public string Specialty { get; set; } = "";
+                }
+
+                [PrimaryKey] public Guid ID { get; set; }
+                public string Patient { get; set; } = "";
+                [Check.LengthIsExactly(0, Path = "MedicalSchool")] public Doctor? Diagnoser { get; set; }
+                public bool IsFatal { get; set; }
+            }
+
+            // Test Scenario: <Path> on Reference Not Specified (✗missing path✗)
+            public class AmazingRace {
+                public class Reward {
+                    [PrimaryKey] public Guid ID { get; set; }
+                    public decimal PrizeMoney { get; set; }
+                    public string VacationDestination { get; set; } = "";
+                }
+
+                [PrimaryKey] public byte Season { get; set; }
+                public sbyte NumParticipants { get; set; }
+                [Check.LengthIsExactly(66)] public Reward FirstPrize { get; set; } = new();
+                public string StartingCity { get; set; } = "";
+                public string EndingCity { get; set; } = "";
+                public double TotalFlightMiles { get; set; }
+            }
+
+            // Test Scenario: <Path> on Relation Does Not Exist (✗non-existent path✗)
+            // [TODO] - Lasagna
+
+            // Test Scenario: <Path> on Relation Refers to Non-Primary-Key Field of Anchor Entity (✗non-existent path✗)
+            // [TODO] - Mortgage
+
+            // Test Scenario: <Path> on Relation Not Specified (✗missing path✗)
+            // [TODO] - Time Machine
+
+            // Test Scenario: <Path> on Localization Does Not Exist (✗non-existent path✗)
+            // [TODO] - But Better
+
+            // Test Scenario: <Path> on Localization Refers to Nested Field (✗non-existent path✗)
+            // [TODO] - Sacrament
+
+            // Test Scenario: Default Value Does Not Satisfy Constraint (✗contradiction✗)
+            // [TODO] - Doorbell
+
+            // Test Scenario: Originally Valid Default Value No Longer Satisfies Constraint (✗contradiction✗)
+            // [TODO] - Massif
         }
     }
     
