@@ -61,9 +61,15 @@ namespace Kvasir.Providers.MySQL {
         /// <inheritdoc/>
         public void AddCheckConstraintDeclaration(IConstraintDecl decl) {
             Debug.Assert(decl is not null);
-            Debug.Assert(decl is BasicConstraintDecl || decl is MaxLengthConstraintDecl);
+            Debug.Assert(decl is BasicConstraintDecl || decl is MaxLengthConstraintDecl || decl is ExactlyLengthConstraintDecl);
 
-            constraints_.Add(decl);
+            if (decl is ExactlyLengthConstraintDecl exactDecl) {
+                constraints_.Add(exactDecl.Max);
+                constraints_.Add(exactDecl.Exact);
+            }
+            else {
+                constraints_.Add(decl);
+            }
         }
 
         /// <inheritdoc/>
