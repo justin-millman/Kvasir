@@ -48,7 +48,8 @@ namespace Kvasir.Translation {
             // min/max value are guaranteed never to match what the user might actually provide.
 
             if (annotation.Minimum != long.MinValue && annotation.Minimum < 0) {
-                var msg = $"the minimum string length ({annotation.Minimum}) cannot be negative";
+                var identifier = annotation is Check.LengthIsExactlyAttribute ? "exact" : "minimum";
+                var msg = $"the {identifier} string length ({annotation.Minimum}) cannot be negative";
                 throw new UnsatisfiableConstraintException(context, annotation, msg);
             }
             if (annotation.Maximum < 0) {

@@ -250,6 +250,20 @@ namespace UT.Kvasir.Translation {
                 .HaveNoOtherConstraints();
         }
 
+        [TestMethod] public void LengthIsExactlyIsNonEmpty() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Steakhouse);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Name", ComparisonOperator.EQ, 38).And
+                .HaveNoOtherConstraints();
+        }
+
         [TestMethod] public void LengthIsAtLeastBoundNoLargerThanLengthIsAtMostBound() {
             // Arrange
             var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
@@ -318,6 +332,36 @@ namespace UT.Kvasir.Translation {
                 .EndMessage();
         }
 
+        [TestMethod] public void LengthIsAtLeastLengthIsExactly() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(CppCon);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "KeynoteSpeaker", ComparisonOperator.EQ, 22).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtLeastBoundGreaterThanLengthIsExactlyBound_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Razor);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`Razor` → Brand")
+                .WithProblem("the interval [25, 3] of valid string lengths is empty")
+                .WithAnnotations("[Check.LengthIsExactly]")
+                .EndMessage();
+        }
+
         [TestMethod] public void LengthIsAtMostLengthIsBetween() {
             // Arrange
             var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
@@ -351,6 +395,36 @@ namespace UT.Kvasir.Translation {
                 .WithLocation("`NuGetPackage` → Version")
                 .WithProblem("the interval [15, 10] of valid string lengths is empty")
                 .WithAnnotations("[Check.LengthIsBetween]")
+                .EndMessage();
+        }
+
+        [TestMethod] public void LengthIsAtMostLengthIsExactly() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(Jury);
+
+            // Act
+            var translation = translator[source];
+
+            // Assert
+            translation.Principal.Table.Should()
+                .HaveConstraint(FieldFunction.LengthOf, "Foreperson", ComparisonOperator.EQ, 92).And
+                .HaveNoOtherConstraints();
+        }
+
+        [TestMethod] public void LengthIsAtMostBoundLessThanLengthIsExactlyBound_IsError() {
+            // Arrange
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var source = typeof(WildcardKitchen);
+
+            // Act
+            var translate = () => translator[source];
+
+            // Assert
+            translate.Should().FailWith<UnsatisfiableConstraintException>()
+                .WithLocation("`WildcardKitchen` → Chef2")
+                .WithProblem("the interval [8907, 106] of valid string lengths is empty")
+                .WithAnnotations("[Check.LengthIsExactly]")
                 .EndMessage();
         }
 
