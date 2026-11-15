@@ -1,4 +1,5 @@
-﻿using Kvasir.Core;
+﻿using Cybele.Core;
+using Kvasir.Core;
 using Kvasir.Localization;
 using Kvasir.Reconstitution;
 using Kvasir.Schema;
@@ -172,19 +173,8 @@ namespace Kvasir.Translation {
             keyMatchers_ = [];
             relationTypesFromEntity_ = [];
             logger_ = logger;
+            callingAssembly_ = AssemblyFinder.CallerNotFrom(typeof(Translator).Assembly)!;
 
-            // We want the `callingAssembly_` to be the *user's* assembly, not our own, even though the `Translator` is
-            // `internal` and therefore can only be constructed by Kvasir itself. (There's even a delegating
-            // constructor!) To do this, we walk the call stack until we find the first non-Kvasir assembly. This also
-            // should help guard against certain kinds of inlining and JIT.
-            var selfAssembly = typeof(Translator).Assembly;
-            foreach (var frame in new StackTrace().GetFrames()) {
-                var assembly = frame.GetMethod()?.DeclaringType?.Assembly;
-                if (assembly != selfAssembly) {
-                    callingAssembly_ = assembly!;
-                    break;
-                }
-            }
             Debug.Assert(callingAssembly_ is not null, "the user must have been involved somewhere!");
         }
 
