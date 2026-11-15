@@ -40,7 +40,7 @@ namespace Kvasir.Translation {
                 Debug.Assert(!IsLocalizationType(source));
 
                 if (translationCache_.TryGetValue(source, out var translation)) {
-                    logger_.LogDebug("{} already translated; returning memoization from `operator[]`", source.Name);
+                    logger_.LogDebug("{EntityType} already translated; returning memoization from `operator[]`", source.Name);
                     return translation;
                 }
 
@@ -90,7 +90,7 @@ namespace Kvasir.Translation {
                 Debug.Assert(IsLocalizationType(source));
 
                 if (localizationCache_.TryGetValue(source, out var translation)) {
-                    logger_.LogDebug("{} already translated; returning memoization from `operator[]`", source.Name);
+                    logger_.LogDebug("{EntityType} already translated; returning memoization from `operator[]`", source.Name);
                     return translation;
                 }
 
