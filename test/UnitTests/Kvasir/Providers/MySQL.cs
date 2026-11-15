@@ -2234,10 +2234,12 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                "`Ojai` INT UNSIGNED NOT NULL\n" +
-                "`West Hartford` BOOLEAN NOT NULL DEFAULT TRUE\n" +
-                "`Blackfoot` DOUBLE\n" +
-                pk.ToString()
+                "(\n" +
+                "`Ojai` INT UNSIGNED NOT NULL,\n" +
+                "`West Hartford` BOOLEAN NOT NULL DEFAULT TRUE,\n" +
+                "`Blackfoot` DOUBLE,\n" +
+                pk.ToString() + "\n" +
+                ")"
             );
         }
 
@@ -2263,9 +2265,11 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                $"`East Rutherford` VARCHAR({constraint0.MaxLength}) NOT NULL\n" +
-                $"`West Bloomfield` VARCHAR({constraint1.MaxLength}) NOT NULL\n" +
-                pk.ToString()
+                "(\n" +
+                $"`East Rutherford` VARCHAR({constraint0.MaxLength}) NOT NULL,\n" +
+                $"`West Bloomfield` VARCHAR({constraint1.MaxLength}) NOT NULL,\n" +
+                pk.ToString() + "\n" +
+                ")"
             );
         }
 
@@ -2291,11 +2295,13 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                "`Greenville` VARCHAR(255) NOT NULL\n" +
-                "`Buffalo Grove` BIGINT UNSIGNED NOT NULL\n" +
-                "`Grambling` FLOAT NOT NULL\n" +
-                $"{pk}\n" +
-                ck.ToString()
+                "(\n" +
+                "`Greenville` VARCHAR(255) NOT NULL,\n" +
+                "`Buffalo Grove` BIGINT UNSIGNED NOT NULL,\n" +
+                "`Grambling` FLOAT NOT NULL,\n" +
+                $"{pk},\n" +
+                ck.ToString() + "\n" +
+                ")"
             );
         }
 
@@ -2319,10 +2325,12 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                "`Muskegon` SMALLINT NOT NULL\n" +
-                "`Poughkeepsie` TINYINT UNSIGNED NOT NULL\n" +
-                $"{pk}\n" +
-                fk.ToString()
+                "(\n" +
+                "`Muskegon` SMALLINT NOT NULL,\n" +
+                "`Poughkeepsie` TINYINT UNSIGNED NOT NULL,\n" +
+                $"{pk},\n" +
+                fk.ToString() + "\n" +
+                ")"
             );
         }
 
@@ -2346,10 +2354,12 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                "`Santa Claus` INT UNSIGNED NOT NULL\n" +
-                "`Independence` VARCHAR(255) NOT NULL\n" +
-                $"{pk}\n" +
-                check.DDL.ToString()
+                "(\n" +
+                "`Santa Claus` INT UNSIGNED NOT NULL,\n" +
+                "`Independence` VARCHAR(255) NOT NULL,\n" +
+                $"{pk},\n" +
+                check.DDL.ToString() + "\n" +
+                ")"
             );
         }
 
@@ -2395,20 +2405,22 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                "`Appomattox` BIGINT UNSIGNED NOT NULL\n" +
-                $"`Chickamauga` VARCHAR({check0.MaxLength}) NOT NULL DEFAULT \"--none--\"\n" +
-                "`Kitty Hawk` INT DEFAULT NULL\n" +
-                "`Harpers Ferry` BOOLEAN NOT NULL\n" +
-                "`La Jolla` VARCHAR(255) NOT NULL\n" +
-                "`Compton` INT UNSIGNED NOT NULL\n" +
-                "`Voorhees` VARCHAR(17) NOT NULL\n" +
-                $"{pk}\n" +
-                $"{ck0}\n" +
-                $"{ck1}\n" +
-                $"{check1.DDL}\n" +
-                $"{check2.DDL}\n" +
-                $"{check3.Exact.DDL}\n" +
-                fk.ToString()
+                "(\n" +
+                "`Appomattox` BIGINT UNSIGNED NOT NULL,\n" +
+                $"`Chickamauga` VARCHAR({check0.MaxLength}) NOT NULL DEFAULT \"--none--\",\n" +
+                "`Kitty Hawk` INT DEFAULT NULL,\n" +
+                "`Harpers Ferry` BOOLEAN NOT NULL,\n" +
+                "`La Jolla` VARCHAR(255) NOT NULL,\n" +
+                "`Compton` INT UNSIGNED NOT NULL,\n" +
+                "`Voorhees` VARCHAR(17) NOT NULL,\n" +
+                $"{pk},\n" +
+                $"{ck0},\n" +
+                $"{ck1},\n" +
+                $"{check1.DDL},\n" +
+                $"{check2.DDL},\n" +
+                $"{check3.Exact.DDL},\n" +
+                fk.ToString() + "\n" +
+                ")"
             );
         }
 
@@ -2432,10 +2444,12 @@ namespace UT.Kvasir.Providers {
             // Assert
             decl.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{name}`\n" +
-                "`Battle Ground` SMALLINT UNSIGNED NOT NULL\n" +
-                "`Ponce` DECIMAL NOT NULL\n" +
-                "`Līhuʻe` DATETIME\n" +
-                pk.ToString()
+                "(\n" +
+                "`Battle Ground` SMALLINT UNSIGNED NOT NULL,\n" +
+                "`Ponce` DECIMAL NOT NULL,\n" +
+                "`Līhuʻe` DATETIME,\n" +
+                pk.ToString() + "\n" +
+                ")"
             );
         }
 
@@ -2535,12 +2549,14 @@ namespace UT.Kvasir.Providers {
             command.Transaction.Should().BeNull();
             command.CommandText.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
-                "`Date` DATETIME NOT NULL\n" +
-                "`Ship` VARCHAR(255) NOT NULL\n" +
-                "`LeadMutineer` VARCHAR(255)\n" +
-                "`OustedCaptain` VARCHAR(255) NOT NULL\n" +
-                "`Casualties` INT UNSIGNED NOT NULL\n" +
-                "PRIMARY KEY (`Date`, `Ship`);"
+                "(\n" +
+                "`Date` DATETIME NOT NULL,\n" +
+                "`Ship` VARCHAR(255) NOT NULL,\n" +
+                "`LeadMutineer` VARCHAR(255),\n" +
+                "`OustedCaptain` VARCHAR(255) NOT NULL,\n" +
+                "`Casualties` INT UNSIGNED NOT NULL,\n" +
+                "PRIMARY KEY (`Date`, `Ship`)\n" +
+                ");"
             );
         }
 
@@ -2560,11 +2576,13 @@ namespace UT.Kvasir.Providers {
             command.Transaction.Should().BeNull();
             command.CommandText.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{relationTable.Name}`\n" +
-                "`CyrillicLetter.LetterName` VARCHAR(255) NOT NULL\n" +
-                "`Key` BIGINT UNSIGNED NOT NULL\n" +
-                "`Value` CHAR(1) NOT NULL\n" +
-                "PRIMARY KEY (`CyrillicLetter.LetterName`, `Key`)\n" +
-                $"FOREIGN KEY (`CyrillicLetter.LetterName`) REFERENCES `{principalTable.Name}` (`LetterName`) ON DELETE CASCADE ON UPDATE CASCADE;"
+                "(\n" +
+                "`CyrillicLetter.LetterName` VARCHAR(255) NOT NULL,\n" +
+                "`Key` BIGINT UNSIGNED NOT NULL,\n" +
+                "`Value` CHAR(1) NOT NULL,\n" +
+                "PRIMARY KEY (`CyrillicLetter.LetterName`, `Key`),\n" +
+                $"FOREIGN KEY (`CyrillicLetter.LetterName`) REFERENCES `{principalTable.Name}` (`LetterName`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                ");"
             );
         }
 
@@ -2583,10 +2601,12 @@ namespace UT.Kvasir.Providers {
             command.Transaction.Should().BeNull();
             command.CommandText.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
-                "`FirstName` VARCHAR(255) NOT NULL\n" +
-                "`LastName` VARCHAR(255) NOT NULL\n" +
-                "`Birthdate` DATETIME NOT NULL\n" +
-                "PRIMARY KEY (`FirstName`, `LastName`);"
+                "(\n" +
+                "`FirstName` VARCHAR(255) NOT NULL,\n" +
+                "`LastName` VARCHAR(255) NOT NULL,\n" +
+                "`Birthdate` DATETIME NOT NULL,\n" +
+                "PRIMARY KEY (`FirstName`, `LastName`)\n" +
+                ");"
             );
         }
 
@@ -2605,10 +2625,12 @@ namespace UT.Kvasir.Providers {
             command.Transaction.Should().BeNull();
             command.CommandText.Should().Be(
                 $"CREATE TABLE IF NOT EXISTS `{table.Name}`\n" +
-                "`Key` VARCHAR(255) NOT NULL\n" +
-                "`Locale` CHAR(1) NOT NULL\n" +
-                "`Value` DOUBLE NOT NULL\n" +
-                "PRIMARY KEY (`Key`, `Locale`);"
+                "(\n" +
+                "`Key` VARCHAR(255) NOT NULL,\n" +
+                "`Locale` CHAR(1) NOT NULL,\n" +
+                "`Value` DOUBLE NOT NULL,\n" +
+                "PRIMARY KEY (`Key`, `Locale`)\n" +
+                ");"
             );
         }
 
