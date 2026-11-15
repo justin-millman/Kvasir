@@ -93,15 +93,15 @@ namespace Kvasir.Providers.MySQL {
             }
 
             var regularConstraints = constraints_.OfType<BasicConstraintDecl>();
-            var fields = string.Join("\n", fields_.Select(f => f.Build()));
-            var cks = string.Join("\n", candidateKeys_.Select(ck => ck.ToString()));
-            var constraints = string.Join("\n", regularConstraints.Select(chk => chk.DDL.ToString()));
-            var fks = string.Join("\n", foreignKeys_.Select(fk => fk.ToString()));
+            var fields = string.Join(",\n", fields_.Select(f => f.Build()));
+            var cks = string.Join(",\n", candidateKeys_.Select(ck => ck.ToString()));
+            var constraints = string.Join(",\n", regularConstraints.Select(chk => chk.DDL.ToString()));
+            var fks = string.Join(",\n", foreignKeys_.Select(fk => fk.ToString()));
 
             declaration_ = declaration_.Replace(FIELDS_PLACEHOLDER, fields);
-            declaration_ = declaration_.Replace(CKS_PLACEHOLDER, cks == "" ? "" : $"{cks}\n");
-            declaration_ = declaration_.Replace(CONSTRAINTS_PLACEHOLDER, constraints == "" ? "" : $"{constraints}\n");
-            declaration_ = declaration_.Replace(FKS_PLACEHOLDER, fks == "" ? "" : $"{fks}\n");
+            declaration_ = declaration_.Replace(CKS_PLACEHOLDER, cks == "" ? "" : $",\n{cks}");
+            declaration_ = declaration_.Replace(CONSTRAINTS_PLACEHOLDER, constraints == "" ? "" : $",\n{constraints}");
+            declaration_ = declaration_.Replace(FKS_PLACEHOLDER, fks == "" ? "" : $",\n{fks}");
 
             // SqlSnippet automatically strips whitespace, so we don't have to worry about the trailing newline
             // character that is guaranteed to be present
@@ -117,11 +117,13 @@ namespace Kvasir.Providers.MySQL {
         private static readonly string FKS_PLACEHOLDER = "{:5:}";
         private static readonly string TEMPLATE =
             $"CREATE TABLE IF NOT EXISTS {NAME_PLACEHOLDER}\n" +
-            FIELDS_PLACEHOLDER + "\n" +
-            PK_PLACEHOLDER + "\n" +
+            "(" + "\n" +
+            FIELDS_PLACEHOLDER + ",\n" +
+            PK_PLACEHOLDER +
             CKS_PLACEHOLDER +
             CONSTRAINTS_PLACEHOLDER +
-            FKS_PLACEHOLDER;
+            FKS_PLACEHOLDER +
+            "\n" + ")";
 
         private string declaration_;
         private readonly List<FieldDecl> fields_;
