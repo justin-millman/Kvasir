@@ -143,13 +143,13 @@ namespace UT.Cybele.Extensions {
 
         [TestMethod] public void DisplayEnumerator() {
             // Arrange
-            var enumerator = TestTimeout.Infinite;
+            var enumerator = TestArchitectures.Wasm;
 
             // Act
             var characterDisplay = enumerator.ForDisplay();
 
             // Assert
-            characterDisplay.Should().Be($"{nameof(TestTimeout)}.{enumerator}");
+            characterDisplay.Should().Be($"{nameof(TestArchitectures)}.{enumerator}");
         }
 
         [TestMethod] public void DisplayEmptyString() {
