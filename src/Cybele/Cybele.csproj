@@ -3,11 +3,21 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
 
+    <PackageId>Cybele</PackageId>
+    <Version>1.0.0-dev.1</Version>
+    <Authors>Justin Millman</Authors>
+    <Description>A hodgepodge collection of utilities, extension methods, and helpers</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>.\Intellisense.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>

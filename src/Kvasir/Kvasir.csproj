@@ -1,13 +1,25 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    
+    <PackageId>Kvasir</PackageId>
+    <Version>1.0.0-dev.1</Version>
+    <Authors>Justin Millman</Authors>
+    <Description>A minimally invasive ORM that supports multiple back-end database providers</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <LocalDevelopment Condition="'$(LocalDevelopment)' == ''">true</LocalDevelopment>
 
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>.\Intellisense.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,8 +30,11 @@
     <PackageReference Include="Optional" Version="4.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(LocalDevelopment)' == 'true'">
     <ProjectReference Include="..\Cybele\Cybele.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(LocalDevelopment)' != 'true'">
+    <PackageReference Include="Cybele" Version="[1.0.0-dev.1]" />
   </ItemGroup>
 
 </Project>
