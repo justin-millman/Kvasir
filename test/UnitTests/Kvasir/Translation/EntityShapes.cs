@@ -14,7 +14,7 @@ namespace UT.Kvasir.Translation {
     public class EntityShapeTests {
         [TestMethod] public void EntityTypeIsAdministrative() {
             var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
-            var source = typeof(TableHash);
+            var source = typeof(TableFingerprint);
 
             // Act
             var translation = translator[source];
@@ -24,7 +24,7 @@ namespace UT.Kvasir.Translation {
             translation.Principal.Table.Name.Should().Be("_Kvasir_TableSchemaAdmin");
             translation.Principal.Table.Should()
                 .HaveField("TableName").OfTypeText().BeingNonNullable().And
-                .HaveField("Hash").OfTypeInt32().BeingNonNullable().And
+                .HaveField("Fingerprint").OfTypeText().BeingNonNullable().And
                 .HaveNoOtherFields();
             translation.Principal.PreDefinedInstances.Should().BeEmpty();
             translation.Principal.Localizations.Should().BeEmpty();

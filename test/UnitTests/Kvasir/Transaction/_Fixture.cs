@@ -49,7 +49,7 @@ namespace UT.Kvasir.Transaction {
             connectionPool_.MakeConnectionAsync().Returns(Connection);
             Connection.BeginTransactionAsync().Returns(Transaction);
 
-            var adminTypes = new Type[] { typeof(TableHash) };
+            var adminTypes = new Type[] { typeof(TableFingerprint) };
 
             var entityTranslations = types.Where(t => !Translator.IsLocalizationType(t)).Select(t => translator_[t]);
             var localizationTranslations = types.Where(t => Translator.IsLocalizationType(t)).Select(t => translator_[t, Translator.AsLocalzation]);

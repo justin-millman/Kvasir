@@ -23,7 +23,7 @@ namespace Kvasir.Translation {
         public static TypeCategory TranslationCategory(this Type self) {
             self = Nullable.GetUnderlyingType(self) ?? self;
 
-            if (self == typeof(TableHash)) {
+            if (self == typeof(TableFingerprint)) {
                 return TypeCategory.Administrative;
             }
             else if (self.IsByRef) {
