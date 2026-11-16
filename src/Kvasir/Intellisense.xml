@@ -4,21 +4,33 @@
         <name>Kvasir</name>
     </assembly>
     <members>
-        <member name="T:Kvasir.Administration.TableHash">
+        <member name="T:Kvasir.Administration.TableFingerprint">
             <summary>
               The CLR object representation of the administrative table for managing <see cref="T:Kvasir.Schema.ITable">Table</see> schemas.
             </summary>
         </member>
-        <member name="P:Kvasir.Administration.TableHash.TableName">
+        <member name="P:Kvasir.Administration.TableFingerprint.TableName">
             <summary>
               The name of the <see cref="T:Kvasir.Schema.ITable">Table</see>.
             </summary>
         </member>
-        <member name="P:Kvasir.Administration.TableHash.Hash">
+        <member name="P:Kvasir.Administration.TableFingerprint.Fingerprint">
             <summary>
-              The hash value for the <see cref="T:Kvasir.Schema.ITable">Table</see>, synthesized from all the constituent pieces
+              The fingerprint for the <see cref="T:Kvasir.Schema.ITable">Table</see>, synthesized from all the constituent pieces
               (fields, keys, and constraints).
             </summary>
+        </member>
+        <member name="M:Kvasir.Administration.TableFingerprint.For(System.Data.Common.DbCommand)">
+            <summary>
+              Produces the <see cref="P:Kvasir.Administration.TableFingerprint.Fingerprint">fingerprint</see> for a given <see cref="T:Kvasir.Schema.ITable">Table</see>, based
+              on its <c>CREATE TABLE</c> command.
+            </summary>
+            <param name="createTableCommand">
+              The <c>CREATE TABLE</c> command from which the fingerprint is calculated.
+            </param>
+            <returns>
+              The fingerprint calculated from <paramref name="createTableCommand"/>.
+            </returns>
         </member>
         <member name="T:Kvasir.Annotations.INestableAnnotation">
             <summary>

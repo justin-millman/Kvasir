@@ -17,7 +17,7 @@ namespace UT.Kvasir.Transaction {
             await fixture.InitializeSchema();
 
             // Act
-            var adminCmd = fixture.PrincipalCommands<TableHash>().CreateTableCommand;
+            var adminCmd = fixture.PrincipalCommands<TableFingerprint>().CreateTableCommand;
 
             // Assert
             adminCmd.Connection.Should().Be(fixture.Connection);
@@ -32,12 +32,15 @@ namespace UT.Kvasir.Transaction {
             await fixture.InitializeSchema();
 
             // Act
-            var creationCmd = fixture.PrincipalCommands<TableHash>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<TableHash>().InsertCommand(ANY_ROWS);
+            var creationCmd = fixture.PrincipalCommands<TableFingerprint>().CreateTableCommand;
+            var insertCmd = fixture.PrincipalCommands<TableFingerprint>().InsertCommand(ANY_ROWS);
             var insertions = fixture.InsertionsFor(insertCmd);
             var projectionTable = fixture.PrincipalTableOf<MapProjection>();
+            var projectionCommand = fixture.PrincipalCommands<MapProjection>().CreateTableCommand;
             var designersTable = fixture.RelationTableOf<MapProjection>(0);
+            var designersCommand = fixture.RelationCommands<MapProjection>(0).CreateTableCommand;
             var hymnTable = fixture.PrincipalTableOf<Hymn>();
+            var hymnCommand = fixture.PrincipalCommands<Hymn>().CreateTableCommand;
 
             // Assert
             creationCmd.Connection.Should().Be(fixture.Connection);
@@ -45,9 +48,9 @@ namespace UT.Kvasir.Transaction {
             insertCmd.Connection.Should().Be(fixture.Connection);
             insertCmd.Transaction.Should().Be(fixture.Transaction);
             insertions.Should().HaveCount(3);
-            insertions.Should().ContainRow(projectionTable.Name.ToString(), projectionTable.GetHashCode());
-            insertions.Should().ContainRow(designersTable.Name.ToString(), designersTable.GetHashCode());
-            insertions.Should().ContainRow(hymnTable.Name.ToString(), hymnTable.GetHashCode());
+            insertions.Should().ContainRow(projectionTable.Name.ToString(), TableFingerprint.For(projectionCommand));
+            insertions.Should().ContainRow(designersTable.Name.ToString(), TableFingerprint.For(designersCommand));
+            insertions.Should().ContainRow(hymnTable.Name.ToString(), TableFingerprint.For(hymnCommand));
             fixture.ShouldBeOrdered(creationCmd, insertCmd);
             fixture.AdminCommits.Should().Be(2);
         }
@@ -56,17 +59,20 @@ namespace UT.Kvasir.Transaction {
             // Arrange
             var fixture = new TestFixture(typeof(Amulet), typeof(Outlier), typeof(Shaman));
             var amuletTable = fixture.PrincipalTableOf<Amulet>();
-            var amuletMetadata = new object[] { amuletTable.Name.ToString(), amuletTable.GetHashCode() };
+            var amuletCommand = fixture.PrincipalCommands<Amulet>().CreateTableCommand;
+            var amuletMetadata = new object[] { amuletTable.Name.ToString(), TableFingerprint.For(amuletCommand) };
             var outlierTable = fixture.PrincipalTableOf<Outlier>();
-            var outlierMetadata = new object[] { outlierTable.Name.ToString(), outlierTable.GetHashCode() };
+            var outlierCommand = fixture.PrincipalCommands<Outlier>().CreateTableCommand;
+            var outlierMetadata = new object[] { outlierTable.Name.ToString(), TableFingerprint.For(outlierCommand) };
             var shamanTable = fixture.PrincipalTableOf<Shaman>();
-            var shamanMetadata = new object[] {shamanTable.Name.ToString(), shamanTable.GetHashCode() };
-            fixture = fixture.WithEntityRow<TableHash>(amuletMetadata).WithEntityRow<TableHash>(outlierMetadata).WithEntityRow<TableHash>(shamanMetadata);
+            var shamanCommand = fixture.PrincipalCommands<Shaman>().CreateTableCommand;
+            var shamanMetadata = new object[] {shamanTable.Name.ToString(), TableFingerprint.For(shamanCommand) };
+            fixture = fixture.WithEntityRow<TableFingerprint>(amuletMetadata).WithEntityRow<TableFingerprint>(outlierMetadata).WithEntityRow<TableFingerprint>(shamanMetadata);
             await fixture.InitializeSchema();
 
             // Act
-            var creationCmd = fixture.PrincipalCommands<TableHash>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<TableHash>().InsertCommand(ANY_ROWS);
+            var creationCmd = fixture.PrincipalCommands<TableFingerprint>().CreateTableCommand;
+            var insertCmd = fixture.PrincipalCommands<TableFingerprint>().InsertCommand(ANY_ROWS);
             var insertions = fixture.InsertionsFor(insertCmd);
 
             // Assert
@@ -81,15 +87,17 @@ namespace UT.Kvasir.Transaction {
             // Arrange
             var fixture = new TestFixture(typeof(IndenturedServant), typeof(Oatmeal));
             var servantTable = fixture.PrincipalTableOf<IndenturedServant>();
-            var servantMetadata = new object[] { servantTable.Name.ToString(), servantTable.GetHashCode() };
-            fixture = fixture.WithEntityRow<TableHash>(servantMetadata);
+            var servantCommand = fixture.PrincipalCommands<IndenturedServant>().CreateTableCommand;
+            var servantMetadata = new object[] { servantTable.Name.ToString(), TableFingerprint.For(servantCommand) };
+            fixture = fixture.WithEntityRow<TableFingerprint>(servantMetadata);
             await fixture.InitializeSchema();
 
             // Act
-            var creationCmd = fixture.PrincipalCommands<TableHash>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<TableHash>().InsertCommand(ANY_ROWS);
+            var creationCmd = fixture.PrincipalCommands<TableFingerprint>().CreateTableCommand;
+            var insertCmd = fixture.PrincipalCommands<TableFingerprint>().InsertCommand(ANY_ROWS);
             var insertions = fixture.InsertionsFor(insertCmd);
             var oatmealTable = fixture.PrincipalTableOf<Oatmeal>();
+            var oatmealCommand = fixture.PrincipalCommands<Oatmeal>().CreateTableCommand;
 
             // Assert
             creationCmd.Connection.Should().Be(fixture.Connection);
@@ -97,7 +105,7 @@ namespace UT.Kvasir.Transaction {
             insertCmd.Connection.Should().Be(fixture.Connection);
             insertCmd.Transaction.Should().Be(fixture.Transaction);
             insertions.Should().HaveCount(1);
-            insertions.Should().ContainRow(oatmealTable.Name.ToString(), oatmealTable.GetHashCode());
+            insertions.Should().ContainRow(oatmealTable.Name.ToString(), TableFingerprint.For(oatmealCommand));
             fixture.ShouldBeOrdered(creationCmd, insertCmd);
             fixture.AdminCommits.Should().Be(2);
         }
@@ -106,15 +114,17 @@ namespace UT.Kvasir.Transaction {
             // Arrange
             var fixture = new TestFixture(typeof(LorcanaCharacter));
             var characterTable = fixture.PrincipalTableOf<LorcanaCharacter>();
-            var characterMetadata = new object[] { characterTable.Name.ToString(), characterTable.GetHashCode() };
-            fixture = fixture.WithEntityRow<TableHash>(characterMetadata);
+            var characterCommand = fixture.PrincipalCommands<LorcanaCharacter>().CreateTableCommand;
+            var characterMetadata = new object[] { characterTable.Name.ToString(), TableFingerprint.For(characterCommand) };
+            fixture = fixture.WithEntityRow<TableFingerprint>(characterMetadata);
             await fixture.InitializeSchema();
 
             // Act
-            var creationCmd = fixture.PrincipalCommands<TableHash>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<TableHash>().InsertCommand(ANY_ROWS);
+            var creationCmd = fixture.PrincipalCommands<TableFingerprint>().CreateTableCommand;
+            var insertCmd = fixture.PrincipalCommands<TableFingerprint>().InsertCommand(ANY_ROWS);
             var insertions = fixture.InsertionsFor(insertCmd);
             var effectsTable = fixture.RelationTableOf<LorcanaCharacter>(0);
+            var effectsCommand = fixture.RelationCommands<LorcanaCharacter>(0).CreateTableCommand;
 
             // Assert
             creationCmd.Connection.Should().Be(fixture.Connection);
@@ -122,7 +132,7 @@ namespace UT.Kvasir.Transaction {
             insertCmd.Connection.Should().Be(fixture.Connection);
             insertCmd.Transaction.Should().Be(fixture.Transaction);
             insertions.Should().HaveCount(1);
-            insertions.Should().ContainRow(effectsTable.Name.ToString(), effectsTable.GetHashCode());
+            insertions.Should().ContainRow(effectsTable.Name.ToString(), TableFingerprint.For(effectsCommand));
             fixture.ShouldBeOrdered(creationCmd, insertCmd);
             fixture.AdminCommits.Should().Be(2);
         }
@@ -131,8 +141,8 @@ namespace UT.Kvasir.Transaction {
             // Arrange
             var fixture = new TestFixture(typeof(GrandRelic));
             var relicTable = fixture.PrincipalTableOf<GrandRelic>();
-            var relicMetadata = new object[] { relicTable.Name.ToString(), relicTable.GetHashCode() / 2 };
-            fixture = fixture.WithEntityRow<TableHash>(relicMetadata);
+            var relicMetadata = new object[] { relicTable.Name.ToString(), "xyzabc123" };
+            fixture = fixture.WithEntityRow<TableFingerprint>(relicMetadata);
 
             // Act
             var action = async () => await fixture.InitializeSchema();
@@ -147,8 +157,8 @@ namespace UT.Kvasir.Transaction {
             // Arrange
             var fixture = new TestFixture(typeof(Metazooa));
             var scientificTable = fixture.RelationTableOf<Metazooa>(0);
-            var scientificMetadata = new object[] { scientificTable.Name.ToString(), scientificTable.GetHashCode() / 2 };
-            fixture = fixture.WithEntityRow<TableHash>(scientificMetadata);
+            var scientificMetadata = new object[] { scientificTable.Name.ToString(), "ffffffff" };
+            fixture = fixture.WithEntityRow<TableFingerprint>(scientificMetadata);
 
             // Act
             var action = async () => await fixture.InitializeSchema();
@@ -162,8 +172,8 @@ namespace UT.Kvasir.Transaction {
         [TestMethod] public async Task SchemaManagement_TableHasBeenDeleted() {
             // Arrange
             var fixture = new TestFixture(typeof(PillPocket));
-            var nonexistentMetadata = new object[] { "NonExistentEntityTable", 871725 };
-            fixture = fixture.WithEntityRow<TableHash>(nonexistentMetadata);
+            var nonexistentMetadata = new object[] { "NonExistentEntityTable", "0000000000000000000000" };
+            fixture = fixture.WithEntityRow<TableFingerprint>(nonexistentMetadata);
 
             // Act
             var action = async () => await fixture.InitializeSchema();

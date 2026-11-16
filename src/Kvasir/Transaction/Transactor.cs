@@ -681,14 +681,14 @@ namespace Kvasir.Transaction {
         ///   The <see cref="Translator"/> with which to translate any administrative Entity types.
         /// </param>
         private async Task ManageSchemaMigration(Translator translator) {
-            // We are going to need direct access to the reconstituted `TableHash` instances to perform the migration
-            // check. The `entityStorage_` functor that *this* Transactor is using is opaque to us, so we'll use an
-            // entirely different one.
-            var hashes = new Dictionary<string, int>();
-            Action<object> hashStorage = o => hashes[((TableHash)o).TableName] = ((TableHash)o).Hash;
+            // We are going to need direct access to the reconstituted `TableFingerprint` instances to perform the
+            // migration check. The `entityStorage_` functor that *this* Transactor is using is opaque to us, so we'll
+            // use an entirely different one.
+            var fingerprints = new Dictionary<string, string>();
+            Action<object> hashStorage = o => fingerprints[((TableFingerprint)o).TableName] = ((TableFingerprint)o).Fingerprint;
 
             // We need a translation of the `TableHash` administrative type in order to create a Transactor.
-            var translation = translator[typeof(TableHash)];
+            var translation = translator[typeof(TableFingerprint)];
             var transactor = await New([translation], [], connectionPool_, commandsFactory_, hashStorage, logger_);
 
             // First, create the tables; this will create the administrative table if it does not yet exist. Then,
@@ -696,28 +696,29 @@ namespace Kvasir.Transaction {
             await transactor.CreateTables();
             await transactor.SelectAll();
 
-            // For each table that *this* Transactor is responsible for, we have to look up its expected hash in the
-            // existing data. It's okay for a table to not exist in the administrative data yet: that just means it is
-            // new, which is allowed. If there are any mismatches, we throw an exception. Then, any new tables are added
-            // using the secondary Transactor. If, after evaluating all the Tables, there are hashes for tables that are
-            // unaccounted for, that is also an error, as it means something has been deleted.
-            var tablesToRecord = new List<TableHash>();
+            // For each table that *this* Transactor is responsible for, we have to look up its expected fingerprint in
+            // the existing data. It's okay for a table to not exist in the administrative data yet: that just means it
+            // is new, which is allowed. If there are any mismatches, we throw an exception. Then, any new tables are
+            // added using the secondary Transactor. If, after evaluating all the Tables, there are fingerprints for
+            // Tables that are unaccounted for, that is also an error, as it means something has been deleted.
+            var tablesToRecord = new List<TableFingerprint>();
             foreach (var table in tables_.Keys) {
                 var name = table.Name.ToString();
-                var expectedHash = table.GetHashCode();
+                var index = tables_[table];
+                var expectedFingerprint = TableFingerprint.For(commands_[index].CreateTableCommand);
 
-                if (hashes.TryGetValue(name, out int hash)) {
-                    if (hash != expectedHash) {
+                if (fingerprints.TryGetValue(name, out string? fingerprint)) {
+                    if (fingerprint != expectedFingerprint) {
                         throw new SchemaMigrationException(sourceTypes_[table], table);
                     }
-                    hashes.Remove(name);
+                    fingerprints.Remove(name);
                 }
                 else {
-                    tablesToRecord.Add(new TableHash() { TableName = name, Hash = expectedHash });
+                    tablesToRecord.Add(new TableFingerprint() { TableName = name, Fingerprint = expectedFingerprint });
                 }
             }
-            if (!hashes.IsEmpty()) {
-                throw new SchemaMigrationException(hashes.Keys.First());
+            if (!fingerprints.IsEmpty()) {
+                throw new SchemaMigrationException(fingerprints.Keys.First());
             }
             if (!tablesToRecord.IsEmpty()) {
                 await transactor.Insert(tablesToRecord);
