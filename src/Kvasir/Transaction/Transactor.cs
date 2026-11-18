@@ -140,10 +140,11 @@ namespace Kvasir.Transaction {
 
             // Rather than do the ordering ourselves here, just let the insertion function handle it. This will also
             // make everything one transaction, though that's not really super important.
-            var preDefineds = entityTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances);
-            preDefineds = preDefineds.Concat(localizationTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances));
-            if (!preDefineds.IsEmpty()) {
-                await Insert([..preDefineds]);
+            var hardCoded = entityTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances);
+            hardCoded = hardCoded.Concat(localizationTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances));
+            hardCoded = hardCoded.Concat(entityTranslations_.Values.SelectMany(translation => translation.Principal.Localizations));
+            if (!hardCoded.IsEmpty()) {
+                await Insert([..hardCoded]);
             }
         }
 
