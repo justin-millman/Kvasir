@@ -867,7 +867,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint("BoughtFor", ComparisonOperator.LT, (decimal)57182391.33167994).And
+                .HaveConstraint("BoughtFor", ComparisonOperator.LT, 57182391.3319M).And
                 .HaveNoOtherConstraints();
         }
 
@@ -2453,7 +2453,7 @@ namespace UT.Kvasir.Translation {
 
             // Assert
             translation.Principal.Table.Should()
-                .HaveConstraint("Population", ComparisonOperator.LTE, (decimal)8192481241.412841).And
+                .HaveConstraint("Population", ComparisonOperator.LTE, 81241.411M).And
                 .HaveNoOtherConstraints();
         }
 
