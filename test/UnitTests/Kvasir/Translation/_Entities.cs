@@ -9027,7 +9027,7 @@ namespace UT.Kvasir.Translation {
             // Test Scenario: Applied to Decimal Field (✓constrained✓)
             public class TreasuryBond {
                 [PrimaryKey] public Guid BondID { get; set; }
-                [Check.IsLessThan(57182391.33167994)] public decimal BoughtFor { get; set; }
+                [Check.IsLessThan(57182391.3319)] public decimal BoughtFor { get; set; }
                 public ushort Maturity { get; set; }
                 public double AverageYield { get; set; }
             }
@@ -10265,7 +10265,7 @@ namespace UT.Kvasir.Translation {
                 public string FirstCaliph { get; set; } = "";
                 public DateTime Founded { get; set; }
                 public DateTime? Crumbled { get; set; }
-                [Check.IsLessOrEqualTo(8192481241.412841)] public decimal Population { get; set; }
+                [Check.IsLessOrEqualTo(81241.411)] public decimal Population { get; set; }
                 public ulong Area { get; set; }
             }
 
