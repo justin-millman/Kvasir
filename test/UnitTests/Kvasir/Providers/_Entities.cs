@@ -271,6 +271,81 @@ namespace UT.Kvasir.Providers {
             [Column(3)] public double YearOverYear { get; set; }
         }
 
+        // Scenario: UPSERT - 1 Row of Principal Table with No Non-Primary-Key Fields
+        public class Pocketknife {
+            [PrimaryKey, Column(0)] public Guid BrandID { get; set; }
+            [PrimaryKey, Column(1)] public Guid InstanceID { get; set; }
+            [PrimaryKey, Column(2)] public float Weight { get; set; }
+            [PrimaryKey, Column(3)] public bool IsSwissArmyKnife { get; set; }
+        }
+
+        // Scenario: UPSERT - 1 Row of Principal Table with Single Non-Primary-Key Field
+        public class Triumph {
+            [PrimaryKey, Column(0)] public string General { get; set; } = "";
+            [PrimaryKey, Column(1)] public short Year { get; set; }
+            [PrimaryKey, Column(2)] public byte Index { get; set; }
+            [Column(3)] public ulong Attendees { get; set; }
+        }
+
+        // Scenario: UPSERT - 1 Row of Princiapl Table with Multiple Non-Primary-Key Fields
+        public class MeteorShower {
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public uint Declination { get; set; }
+            [Column(2)] public double Velocity { get; set; }
+            [Column(3)] public string? Association { get; set; }
+            [Column(4)] public double ZenithalHourlyRate { get; set; }
+        }
+
+        // Scenario: UPSERT - 2 Rows
+        public class OttomanSultan {
+            [PrimaryKey, Column(0)] public string RegnalName { get; set; } = "";
+            [PrimaryKey, Column(1)] public uint RegnalNumber { get; set; }
+            [Column(2)] public DateTime ReignStart { get; set; }
+            [Column(3)] public DateTime ReignEnd { get; set; }
+            [Column(4)] public byte NumChildren { get; set; }
+            [Column(5)] public bool WasSunni { get; set; }
+        }
+
+        // Scenario: UPSERT - 3+ Rows
+        public class CivVIImprovement {
+            public enum Creator { Builder, MilitaryEngineer }
+            public enum Yield { None, Gold, Science, Culture, Faith, Health }
+
+            [PrimaryKey, Column(0)] public string Name { get; set; } = "";
+            [Column(1)] public string? Prerequisite { get; set; }
+            [Column(2)] public Creator BuiltBy { get; set; }
+            [Column(3)] public Yield Plunder { get; set; }
+        }
+
+        // Scenario: UPSERT - Null Value
+        public class FountainPen {
+            public enum NibType { Italic, Fine, ExtraFine, Medium, Broad, DoubleBroad, Oblique, ReverseOblique, Music, ThreeSixtyDegree }
+
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public string Brand { get; set; } = "";
+            [Column(2)] public NibType Nib { get; set; }
+            [Column(3)] public decimal? Price { get; set; }
+            [Column(4)] public bool IsRefillable { get; set; }
+        }
+
+        // Scenario: UPSERT - Non-Associative Relation Table
+        public class Quiche {
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public decimal Price { get; set; }
+            [Column(2)] public double Calories { get; set; }
+            public IReadOnlyRelationSet<string> Cheeses { get; init; } = new RelationSet<string>();
+            [Column(3)] public bool IsVegetarian { get; set; }
+            [Column(4)] public bool IsQuicheLorraine { get; set; }
+        }
+
+        // Scenario: UPSERT - Associative Relation Table
+        public class Tailgate {
+            [PrimaryKey, Column(0)] public Guid ID { get; set; }
+            [Column(1)] public Guid GameID { get; set; }
+            public RelationMap<string, int> FoodsServed { get; init; } = new();
+            [Column(2)] public ushort Length { get; set; }
+        }
+
         // Scenario: DELETE – 1 Row from Principal Table with Single-Field Primary Key
         public class Mansa {
             [Column(0)] public string Name { get; set; } = "";
