@@ -42,7 +42,7 @@ namespace Kvasir.Providers.MySQL {
             table_ = table;
 
             // Primary Key Matching Clause for UPDATE and DELETE
-            // (UPDATE commands get the full row and therefore need to index relative to the whole schema.)
+            // (UPDATE commands get the full row and therefore needs to index relative to the whole schema.)
             string updateMatcher = "(";
             longRowMatcher_ = "(";
             for (int idx = 0, longCounter = 0; idx < table.Dimension; ++idx) {
@@ -58,7 +58,7 @@ namespace Kvasir.Providers.MySQL {
             updateMatcher += ")";
             longRowMatcher_ += ")";
 
-            // Primary Key of Owning Entity Matching Clause for DELTE
+            // Primary Key of Owning Entity Matching Clause for DELETE
             shortRowMatcher_ = "";
             if (!isPrincipalTable) {
                 shortRowMatcher_ = "(";
@@ -99,6 +99,18 @@ namespace Kvasir.Providers.MySQL {
             }
             updateCmdTemplate_ += $"\nWHERE {updateMatcher};";
 
+            // INSERT INTO ... ON DUPLICATE KEY UPDATE
+            upsertCmdPostamble_ = "\n  AS `new_row`\nON DUPLICATE KEY UPDATE ";
+            for (int idx = 0; idx < table.Dimension; ++idx) {
+                if (!table.PrimaryKey.Fields.Contains(table.Fields[idx])) {
+                    if (upsertCmdPostamble_[^1] != ' ') {
+                        upsertCmdPostamble_ += ", ";
+                    }
+                    upsertCmdPostamble_ += $"`{table.Fields[idx].Name}` = `new_row`.`{table.Fields[idx].Name}`";
+                }
+            }
+            upsertCmdPostamble_ += ";";
+
             // DELETE
             deleteCmdPreamble_ = $"DELETE FROM `{table.Name}`\nWHERE ";
         }
@@ -125,7 +137,7 @@ namespace Kvasir.Providers.MySQL {
                 commandText += ")";
             }
 
-            command.CommandText = commandText+ ";";
+            command.CommandText = commandText + ";";
             return command;
         }
 
@@ -159,6 +171,25 @@ namespace Kvasir.Providers.MySQL {
 
             command.CommandText = commandText;
             return command;
+        }
+
+        /// <inheritdoc/>
+        public DbCommand UpsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows) {
+            // If there are no non-Primary-Key Fields, then an upsert is not possible: if there's a duplicate Primary
+            // Key, then it is a whole-row duplicate and there are no fields to actually update. We indicate this with
+            // a command carrying empty command text.
+            if (table_.Dimension == table_.PrimaryKey.Fields.Count) {
+                return new MySqlCommand();
+            }
+            else {
+                var command = InsertCommand(rows);
+
+                // The `InsertCommand` will end with a semicolon; we want to strip that away and add on the upsert
+                // postamble, which itself will end with a semicolon
+                command.CommandText = command.CommandText[..^1];
+                command.CommandText += upsertCmdPostamble_;
+                return command;
+            }
         }
 
         /// <inheritdoc/>
@@ -196,6 +227,7 @@ namespace Kvasir.Providers.MySQL {
         private readonly string selectAllQueryText_;
         private readonly string insertCmdPreamble_;
         private readonly string updateCmdTemplate_;
+        private readonly string upsertCmdPostamble_;
         private readonly string deleteCmdPreamble_;
     }
 }

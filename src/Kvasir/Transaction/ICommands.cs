@@ -10,6 +10,11 @@ namespace Kvasir.Transaction {
         /// <summary>
         ///   The command that creates the target <see cref="Table"/> in the back-end database.
         /// </summary>
+        /// <remarks>
+        ///   The <see cref="CreateTableCommand"/> cannot fail. If the <see cref="Table"/> being created already exists,
+        ///   as identified by its name, then the execution of the command should result in no change being applied to
+        ///   the back-end database.
+        /// </remarks>
         DbCommand CreateTableCommand { get; }
 
         /// <summary>
@@ -25,6 +30,9 @@ namespace Kvasir.Transaction {
         /// <param name="rows">
         ///   The rows of data to be inserted.
         /// </param>
+        /// <returns>
+        ///   A <see cref="DbCommand"/> that, when executed, performs an insert of <paramref name="rows"/>.
+        /// </returns>
         DbCommand InsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
 
         /// <summary>
@@ -41,7 +49,28 @@ namespace Kvasir.Transaction {
         /// <param name="rows">
         ///   The full rows of data that should exist in the back-end database after the update.
         /// </param>
+        /// <returns>
+        ///   A <see cref="DbCommand"/> that, when executed, performs an update of <paramref name="rows"/>.
+        /// </returns>
         DbCommand UpdateCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
+
+        /// <summary>
+        ///   Produce a command that, when executed against a back-end database and committed, inserts or updates one or
+        ///   more rows of data into the target <see cref="Table"/>.
+        /// </summary>
+        /// <remarks>
+        ///   An "upsert" is a command that, given a row of data, either inserts that data if it does not yet exist in
+        ///   the target table (based on its primary key) or updates the existing row if it does already exist. Kvasir
+        ///   uses upserts at start-up only for Pre-Defined Entities, where tracking if the Entity has already been
+        ///   saved to the back-end database on a previous start with the exact same values is cumbersome. An upsert
+        ///   will not be used to save an Entity instance after start-up. To indicate that an upsert is not possible
+        ///   (because the entire row is the primary key), return a <see cref="DbCommand"/> with an empty string for its
+        ///   command text.
+        /// </remarks>
+        /// <returns>
+        ///   A <see cref="DbCommand"/> that, when executed, performs an insert-or-update of <paramref name="rows"/>.
+        /// </returns>
+        DbCommand UpsertCommand(IEnumerable<IReadOnlyList<DBValue>> rows);
 
         /// <summary>
         ///   Produce a command that, when executed against a back-end database and committed, deleted one or more rows
@@ -59,6 +88,10 @@ namespace Kvasir.Transaction {
         ///   responsible for a Principal Table, this should be the Primary Key; otherwise, it should be the Primary Key
         ///   of the "owning Entity" of the relation.
         /// </param>
+        /// <returns>
+        ///   A <see cref="DbCommand"/> that, when executed, performs a delete of the database rows identified by
+        ///   <paramref name="keys"/>.
+        /// </returns>
         /// <note>
         ///   The expected shape of the <paramref name="keys"/> depends on whether the <see cref="ICommands"/> instance
         ///   is targeting a Principal Table or a Relation Table. Each element can always be the Primary Key of a single

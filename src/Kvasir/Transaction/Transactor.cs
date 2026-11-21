@@ -144,7 +144,7 @@ namespace Kvasir.Transaction {
             hardCoded = hardCoded.Concat(localizationTranslations_.Values.SelectMany(translation => translation.Principal.PreDefinedInstances));
             hardCoded = hardCoded.Concat(entityTranslations_.Values.SelectMany(translation => translation.Principal.Localizations));
             if (!hardCoded.IsEmpty()) {
-                await Insert([..hardCoded]);
+                await InsertOrUpsert([..hardCoded], doUpsert: true);
             }
         }
 
@@ -285,89 +285,13 @@ namespace Kvasir.Transaction {
         ///   collection can contain Entities of any number of types.
         /// </param>
         /// <exception cref="InvalidOperationException">
-        ///   if the transaction creating the necessary tables fails and is successfully rolled back.
+        ///   if the transaction performing the insert fails and is successfully rolled back.
         /// </exception>
         /// <exception cref="AggregateException">
-        ///   if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
-        ///   fails.
+        ///   if the transaction performing the inser fails, and the attempt to roll the transaction back also fails.
         /// </exception>
         public async Task Insert(IEnumerable<object> entities) {
-            Debug.Assert(entities is not null);
-            Debug.Assert(!entities.IsEmpty());
-
-            var mapping = entities.GroupBy(e => e.GetType()).ToDictionary(g => g.Key, g => g.ToList());
-            var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
-            var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
-
-            await using var connection = await connectionPool_.MakeConnectionAsync();
-            await using var transaction = await connection.BeginTransactionAsync();
-
-            // Insert all the data into Principal Tables first
-            foreach (var translation in entityTranslations) {
-                var rows = new List<IReadOnlyList<DBValue>>();
-                foreach (var entity in mapping[translation.CLRSource]) {
-                    rows.Add(translation.Principal.Extractor.ExtractFrom(entity));
-                }
-
-                var command = commands_[tables_[translation.Principal.Table]].InsertCommand(rows);
-                command.Connection = connection;
-                command.Transaction = transaction;
-                logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
-                await command.ExecuteNonQueryAsync();
-            }
-
-            // Insert all the data into Relation Tables second
-            var canonicalizations = new List<Action>();
-            foreach (var translation in entityTranslations) {
-                foreach (var relation in translation.Relations) {
-                    var rows = new List<IReadOnlyList<DBValue>>();
-                    foreach (var entity in mapping[translation.CLRSource]) {
-                        var ownerFields = translation.Principal.KeyExtractor.ExtractFrom(entity);
-                        var relationFields = relation.Extractor.ExtractFrom(entity);
-
-                        var insertionRows = relationFields.Insertions.Select(r => ownerFields.Concat(r).ToList()).ToList();
-                        Debug.Assert(relationFields.Modifications.IsEmpty());
-                        Debug.Assert(relationFields.Deletions.IsEmpty());
-
-                        rows.AddRange(insertionRows);
-                        canonicalizations.Add(() => relation.Extractor.Canonicalize(entity));
-                    }
-
-                    var command = commands_[tables_[relation.Table]].InsertCommand(rows);
-                    command.Connection = connection;
-                    command.Transaction = transaction;
-                    logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
-
-            // Insert all the data into Localization Tables third
-            foreach (var translation in localizationTranslations) {
-                var rows = new List<IReadOnlyList<DBValue>>();
-                foreach (var entity in mapping[translation.CLRSource]) {
-                    var localizationFields = translation.Principal.Extractor.ExtractFrom(entity);
-
-                    var insertionRows = localizationFields.Insertions;
-                    Debug.Assert(localizationFields.Modifications.IsEmpty());
-                    Debug.Assert(localizationFields.Deletions.IsEmpty());
-
-                    rows.AddRange(insertionRows);
-                    canonicalizations.Add(() => translation.Principal.Extractor.Canonicalize(entity));
-                }
-
-                var command = commands_[tables_[translation.Principal.Table]].InsertCommand(rows);
-                command.Connection = connection;
-                command.Transaction = transaction;
-                logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
-                await command.ExecuteNonQueryAsync();
-            }
-
-            // Commit the transaction; if it succeeds (failure is indicated by a `throw`), then we run all of the
-            // canonicalization functions
-            await TryCommitTransaction(transaction);
-            foreach (var canonicalize in canonicalizations) {
-                canonicalize();
-            }
+            await InsertOrUpsert(entities, doUpsert: false);
         }
 
         /// <summary>
@@ -659,6 +583,112 @@ namespace Kvasir.Transaction {
             commands_ = [.. principalCommands.Concat(relationCommands).Concat(localizationCommands)];
             tables_ = tables;
             sourceTypes_ = sourceTypes;
+        }
+
+        /// <summary>
+        ///   For one or more Entities, either inserts the Entity into the back-end database if it is not yet there or
+        ///   updates its row if it is.
+        /// </summary>
+        /// <param name="entities">
+        ///   The Entities to be inserted or updated. This collection must not be empty, and the order is irrelevant.
+        ///   The collection can contain Entities of any number of types.
+        /// </param>
+        /// <param name="doUpsert">
+        ///   Whether to perform an upsert (<see langword="true"/>) or a straight insert (<see langword="false"/>).
+        /// </param>
+        /// <exception cref="InvalidOperationException">
+        ///   if the transaction performing the insert-or-update fails and is successfully rolled back.
+        /// </exception>
+        /// <exception cref="AggregateException">
+        ///   if the transaction performign the insert-or-update fails, and the attempt to roll the transaction back
+        ///   also fails.
+        /// </exception>
+        private async Task InsertOrUpsert(IEnumerable<object> entities, bool doUpsert) {
+            Debug.Assert(entities is not null);
+            Debug.Assert(!entities.IsEmpty());
+
+            DbCommand getCommand(ICommands commands, IReadOnlyList<IReadOnlyList<DBValue>> rows) {
+                if (doUpsert) {
+                    return commands.UpsertCommand(rows);
+                }
+                else {
+                    return commands.InsertCommand(rows);
+                }
+            }
+
+            var mapping = entities.GroupBy(e => e.GetType()).ToDictionary(g => g.Key, g => g.ToList());
+            var entityTranslations = mapping.Keys.Where(t => !Translator.IsLocalizationType(t)).Select(k => entityTranslations_[k]).OrderBy(t => tables_[t.Principal.Table]).ToList();
+            var localizationTranslations = mapping.Keys.Where(t => Translator.IsLocalizationType(t)).Select(k => localizationTranslations_[k]).ToList();
+
+            await using var connection = await connectionPool_.MakeConnectionAsync();
+            await using var transaction = await connection.BeginTransactionAsync();
+
+            // Insert all the data into Principal Tables first
+            foreach (var translation in entityTranslations) {
+                var rows = new List<IReadOnlyList<DBValue>>();
+                foreach (var entity in mapping[translation.CLRSource]) {
+                    rows.Add(translation.Principal.Extractor.ExtractFrom(entity));
+                }
+
+                var command = getCommand(commands_[tables_[translation.Principal.Table]], rows);
+                command.Connection = connection;
+                command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            // Insert all the data into Relation Tables second
+            var canonicalizations = new List<Action>();
+            foreach (var translation in entityTranslations) {
+                foreach (var relation in translation.Relations) {
+                    var rows = new List<IReadOnlyList<DBValue>>();
+                    foreach (var entity in mapping[translation.CLRSource]) {
+                        var ownerFields = translation.Principal.KeyExtractor.ExtractFrom(entity);
+                        var relationFields = relation.Extractor.ExtractFrom(entity);
+
+                        var insertionRows = relationFields.Insertions.Select(r => ownerFields.Concat(r).ToList()).ToList();
+                        Debug.Assert(relationFields.Modifications.IsEmpty());
+                        Debug.Assert(relationFields.Deletions.IsEmpty());
+
+                        rows.AddRange(insertionRows);
+                        canonicalizations.Add(() => relation.Extractor.Canonicalize(entity));
+                    }
+
+                    var command = getCommand(commands_[tables_[relation.Table]], rows);
+                    command.Connection = connection;
+                    command.Transaction = transaction;
+                    logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+
+            // Insert all the data into Localization Tables third
+            foreach (var translation in localizationTranslations) {
+                var rows = new List<IReadOnlyList<DBValue>>();
+                foreach (var entity in mapping[translation.CLRSource]) {
+                    var localizationFields = translation.Principal.Extractor.ExtractFrom(entity);
+
+                    var insertionRows = localizationFields.Insertions;
+                    Debug.Assert(localizationFields.Modifications.IsEmpty());
+                    Debug.Assert(localizationFields.Deletions.IsEmpty());
+
+                    rows.AddRange(insertionRows);
+                    canonicalizations.Add(() => translation.Principal.Extractor.Canonicalize(entity));
+                }
+
+                var command = getCommand(commands_[tables_[translation.Principal.Table]], rows);
+                command.Connection = connection;
+                command.Transaction = transaction;
+                logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            // Commit the transaction; if it succeeds (failure is indicated by a `throw`), then we run all of the
+            // canonicalization functions
+            await TryCommitTransaction(transaction);
+            foreach (var canonicalize in canonicalizations) {
+                canonicalize();
+            }
         }
 
         /// <summary>

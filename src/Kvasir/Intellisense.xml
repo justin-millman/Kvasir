@@ -1872,6 +1872,9 @@
         <member name="M:Kvasir.Providers.MySQL.Commands.UpdateCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <inheritdoc/>
         </member>
+        <member name="M:Kvasir.Providers.MySQL.Commands.UpsertCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <inheritdoc/>
+        </member>
         <member name="M:Kvasir.Providers.MySQL.Commands.DeleteCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <inheritdoc/>
         </member>
@@ -7536,6 +7539,11 @@
             <summary>
               The command that creates the target <see cref="T:Kvasir.Schema.Table"/> in the back-end database.
             </summary>
+            <remarks>
+              The <see cref="P:Kvasir.Transaction.ICommands.CreateTableCommand"/> cannot fail. If the <see cref="T:Kvasir.Schema.Table"/> being created already exists,
+              as identified by its name, then the execution of the command should result in no change being applied to
+              the back-end database.
+            </remarks>
         </member>
         <member name="P:Kvasir.Transaction.ICommands.SelectAllQuery">
             <summary>
@@ -7551,6 +7559,9 @@
             <param name="rows">
               The rows of data to be inserted.
             </param>
+            <returns>
+              A <see cref="T:System.Data.Common.DbCommand"/> that, when executed, performs an insert of <paramref name="rows"/>.
+            </returns>
         </member>
         <member name="M:Kvasir.Transaction.ICommands.UpdateCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
@@ -7567,6 +7578,27 @@
             <param name="rows">
               The full rows of data that should exist in the back-end database after the update.
             </param>
+            <returns>
+              A <see cref="T:System.Data.Common.DbCommand"/> that, when executed, performs an update of <paramref name="rows"/>.
+            </returns>
+        </member>
+        <member name="M:Kvasir.Transaction.ICommands.UpsertCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
+            <summary>
+              Produce a command that, when executed against a back-end database and committed, inserts or updates one or
+              more rows of data into the target <see cref="T:Kvasir.Schema.Table"/>.
+            </summary>
+            <remarks>
+              An "upsert" is a command that, given a row of data, either inserts that data if it does not yet exist in
+              the target table (based on its primary key) or updates the existing row if it does already exist. Kvasir
+              uses upserts at start-up only for Pre-Defined Entities, where tracking if the Entity has already been
+              saved to the back-end database on a previous start with the exact same values is cumbersome. An upsert
+              will not be used to save an Entity instance after start-up. To indicate that an upsert is not possible
+              (because the entire row is the primary key), return a <see cref="T:System.Data.Common.DbCommand"/> with an empty string for its
+              command text.
+            </remarks>
+            <returns>
+              A <see cref="T:System.Data.Common.DbCommand"/> that, when executed, performs an insert-or-update of <paramref name="rows"/>.
+            </returns>
         </member>
         <member name="M:Kvasir.Transaction.ICommands.DeleteCommand(System.Collections.Generic.IEnumerable{System.Collections.Generic.IReadOnlyList{Kvasir.Schema.DBValue}})">
             <summary>
@@ -7585,6 +7617,10 @@
               responsible for a Principal Table, this should be the Primary Key; otherwise, it should be the Primary Key
               of the "owning Entity" of the relation.
             </param>
+            <returns>
+              A <see cref="T:System.Data.Common.DbCommand"/> that, when executed, performs a delete of the database rows identified by
+              <paramref name="keys"/>.
+            </returns>
             <note>
               The expected shape of the <paramref name="keys"/> depends on whether the <see cref="T:Kvasir.Transaction.ICommands"/> instance
               is targeting a Principal Table or a Relation Table. Each element can always be the Primary Key of a single
@@ -7773,11 +7809,10 @@
               collection can contain Entities of any number of types.
             </param>
             <exception cref="T:System.InvalidOperationException">
-              if the transaction creating the necessary tables fails and is successfully rolled back.
+              if the transaction performing the insert fails and is successfully rolled back.
             </exception>
             <exception cref="T:System.AggregateException">
-              if the transaction creating the necessary tables fails, and the attempt to roll the transaction back also
-              fails.
+              if the transaction performing the inser fails, and the attempt to roll the transaction back also fails.
             </exception>
         </member>
         <member name="M:Kvasir.Transaction.Transactor.Update(System.Collections.Generic.IEnumerable{System.Object})">
@@ -7845,6 +7880,26 @@
               <see cref="T:Kvasir.Core.Settings"/> class. Instead, the settings serve as a forward compatibility mechanism that allows
               us to provide customization of behaviors in the future without necessitating a significant redesign.
             </remarks>
+        </member>
+        <member name="M:Kvasir.Transaction.Transactor.InsertOrUpsert(System.Collections.Generic.IEnumerable{System.Object},System.Boolean)">
+            <summary>
+              For one or more Entities, either inserts the Entity into the back-end database if it is not yet there or
+              updates its row if it is.
+            </summary>
+            <param name="entities">
+              The Entities to be inserted or updated. This collection must not be empty, and the order is irrelevant.
+              The collection can contain Entities of any number of types.
+            </param>
+            <param name="doUpsert">
+              Whether to perform an upsert (<see langword="true"/>) or a straight insert (<see langword="false"/>).
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+              if the transaction performing the insert-or-update fails and is successfully rolled back.
+            </exception>
+            <exception cref="T:System.AggregateException">
+              if the transaction performign the insert-or-update fails, and the attempt to roll the transaction back
+              also fails.
+            </exception>
         </member>
         <member name="M:Kvasir.Transaction.Transactor.ManageAdministration">
             <summary>
