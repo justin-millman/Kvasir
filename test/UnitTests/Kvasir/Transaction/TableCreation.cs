@@ -295,14 +295,14 @@ namespace UT.Kvasir.Transaction {
             await fixture.InitializeSchema();
             await fixture.Transactor.CreateTables();
             var createCmd = fixture.PrincipalCommands<Dashavatara>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<Dashavatara>().InsertCommand([]);
-            var inserts = fixture.InsertionsFor(insertCmd);
+            var upsertCmd = fixture.PrincipalCommands<Dashavatara>().UpsertCommand([]);
+            var inserts = fixture.InsertionsFor(upsertCmd);
 
             // Assert
             createCmd.Connection.Should().Be(fixture.Connection);
             createCmd.Transaction.Should().Be(fixture.Transaction);
-            insertCmd.Connection.Should().Be(fixture.Connection);
-            insertCmd.Transaction.Should().Be(fixture.Transaction);
+            upsertCmd.Connection.Should().Be(fixture.Connection);
+            upsertCmd.Transaction.Should().Be(fixture.Transaction);
             inserts.Should().HaveCount(10);
             inserts.Should().ContainRow(Dashavatara.Matsaya.Index, Dashavatara.Matsaya.Name, Dashavatara.Matsaya.Form);
             inserts.Should().ContainRow(Dashavatara.Kurma.Index, Dashavatara.Kurma.Name, Dashavatara.Kurma.Form);
@@ -314,7 +314,7 @@ namespace UT.Kvasir.Transaction {
             inserts.Should().ContainRow(Dashavatara.Krishna.Index, Dashavatara.Krishna.Name, Dashavatara.Krishna.Form);
             inserts.Should().ContainRow(Dashavatara.Buddha.Index, Dashavatara.Buddha.Name, Dashavatara.Buddha.Form);
             inserts.Should().ContainRow(Dashavatara.Kalki.Index, Dashavatara.Kalki.Name, Dashavatara.Kalki.Form);
-            fixture.ShouldBeOrdered(createCmd, insertCmd);
+            fixture.ShouldBeOrdered(createCmd, upsertCmd);
             await fixture.Transaction.Received(2).CommitAsync();
         }
 
@@ -326,14 +326,14 @@ namespace UT.Kvasir.Transaction {
             await fixture.InitializeSchema();
             await fixture.Transactor.CreateTables();
             var createCmd = fixture.PrincipalCommands<CivVITerrain>().CreateTableCommand;
-            var insertCmd = fixture.PrincipalCommands<CivVITerrain>().InsertCommand([]);
-            var inserts = fixture.InsertionsFor(insertCmd);
+            var upsertCmd = fixture.PrincipalCommands<CivVITerrain>().UpsertCommand([]);
+            var inserts = fixture.InsertionsFor(upsertCmd);
 
             // Assert
             createCmd.Connection.Should().Be(fixture.Connection);
             createCmd.Transaction.Should().Be(fixture.Transaction);
-            insertCmd.Connection.Should().Be(fixture.Connection);
-            insertCmd.Transaction.Should().Be(fixture.Transaction);
+            upsertCmd.Connection.Should().Be(fixture.Connection);
+            upsertCmd.Transaction.Should().Be(fixture.Transaction);
             inserts.Should().HaveCount(16);
             inserts.Should().ContainRow(CivVITerrain.Plains.Key, "FULL", CivVITerrain.Plains["FULL"]);
             inserts.Should().ContainRow(CivVITerrain.Plains.Key, "SHORT", CivVITerrain.Plains["SHORT"]);
@@ -351,7 +351,7 @@ namespace UT.Kvasir.Transaction {
             inserts.Should().ContainRow(CivVITerrain.Coast.Key, "SHORT", CivVITerrain.Coast["SHORT"]);
             inserts.Should().ContainRow(CivVITerrain.Ocean.Key, "FULL", CivVITerrain.Ocean["FULL"]);
             inserts.Should().ContainRow(CivVITerrain.Ocean.Key, "SHORT", CivVITerrain.Ocean["SHORT"]);
-            fixture.ShouldBeOrdered(createCmd, insertCmd);
+            fixture.ShouldBeOrdered(createCmd, upsertCmd);
             await fixture.Transaction.Received(2).CommitAsync();
         }
 

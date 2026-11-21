@@ -3395,6 +3395,366 @@ namespace UT.Kvasir.Providers {
                 .HaveParameter("@v3", rows[0][3].Datum);
         }
 
+        [TestMethod] public void Upsert_NoNonPrimaryKeyFields() {
+            // Arrange
+            var source = typeof(Pocketknife);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create(0.67103f),
+                    DBValue.Create(true)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be("");
+        }
+
+        [TestMethod] public void Upsert_SingleNonPrimaryKeyField() {
+            // Arrange
+            var source = typeof(Triumph);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Julius Caesar"),
+                    DBValue.Create((short)-46),
+                    DBValue.Create((byte)1),
+                    DBValue.Create(8351025UL)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`General`, `Year`, `Index`, `Attendees`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3)\n" +
+                "  AS `new_row`\n" +
+                "ON DUPLICATE KEY UPDATE `Attendees` = `new_row`.`Attendees`;"
+            );
+            command.Parameters.Should().HaveCount(4).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum);
+        }
+
+        [TestMethod] public void Upsert_MultipleNonPrimaryKeyFields() {
+            // Arrange
+            var source = typeof(MeteorShower);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Perseid Meteor Shower"),
+                    DBValue.Create(58U),
+                    DBValue.Create(58.8f),
+                    DBValue.Create("comet Swift-Tuttle"),
+                    DBValue.Create(100.0f)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`Name`, `Declination`, `Velocity`, `Association`, `ZenithalHourlyRate`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4)\n" +
+                "  AS `new_row`\n" +
+                "ON DUPLICATE KEY UPDATE `Declination` = `new_row`.`Declination`, `Velocity` = `new_row`.`Velocity`, `Association` = `new_row`.`Association`, `ZenithalHourlyRate` = `new_row`.`ZenithalHourlyRate`;"
+            );
+            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum);
+        }
+
+        [TestMethod] public void Upsert_TwoRows() {
+            // Arrange
+            var source = typeof(OttomanSultan);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Bayezid"),
+                    DBValue.Create(2U),
+                    DBValue.Create(new DateTime(1481, 5, 22)),
+                    DBValue.Create(new DateTime(1512, 4, 24)),
+                    DBValue.Create((byte)8),
+                    DBValue.Create(true)
+                },
+                new() {
+                    DBValue.Create("Suleiman"),
+                    DBValue.Create(1U),
+                    DBValue.Create(new DateTime(1520, 9, 30)),
+                    DBValue.Create(new DateTime(1566, 9, 6)),
+                    DBValue.Create((byte)10),
+                    DBValue.Create(true)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`RegnalName`, `RegnalNumber`, `ReignStart`, `ReignEnd`, `NumChildren`, `WasSunni`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4, @v5),\n" +
+                "(@v6, @v7, @v8, @v9, @v10, @v11)\n" +
+                "  AS `new_row`\n" +
+                "ON DUPLICATE KEY UPDATE `ReignStart` = `new_row`.`ReignStart`, `ReignEnd` = `new_row`.`ReignEnd`, `NumChildren` = `new_row`.`NumChildren`, `WasSunni` = `new_row`.`WasSunni`;"
+            );
+            command.Parameters.Should().HaveCount(12).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum).And
+                .HaveParameter("@v5", rows[0][5].Datum).And
+                .HaveParameter("@v6", rows[1][0].Datum).And
+                .HaveParameter("@v7", rows[1][1].Datum).And
+                .HaveParameter("@v8", rows[1][2].Datum).And
+                .HaveParameter("@v9", rows[1][3].Datum).And
+                .HaveParameter("@v10", rows[1][4].Datum).And
+                .HaveParameter("@v11", rows[1][5].Datum);
+        }
+
+        [TestMethod] public void Upsert_ThreePlusRows() {
+            // Arrange
+            var source = typeof(CivVIImprovement);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create("Mine"),
+                    DBValue.Create("Mining"),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Creator.Builder)),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Yield.Gold))
+                },
+                new() {
+                    DBValue.Create("Airstrip"),
+                    DBValue.Create("Flight"),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Creator.MilitaryEngineer)),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Yield.None))
+                },
+                new() {
+                    DBValue.Create("Oil Well"),
+                    DBValue.Create("Steel"),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Creator.Builder)),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Yield.Gold))
+                },
+                new() {
+                    DBValue.Create("Fishing Boats"),
+                    DBValue.Create("Sailing"),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Creator.Builder)),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Yield.Health))
+                },
+                new() {
+                    DBValue.Create("Plantation"),
+                    DBValue.Create("Irrigation"),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Creator.Builder)),
+                    DBValue.Create(ConversionOf(CivVIImprovement.Yield.Faith))
+                },
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`Name`, `Prerequisite`, `BuiltBy`, `Plunder`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3),\n" +
+                "(@v4, @v5, @v6, @v7),\n" +
+                "(@v8, @v9, @v10, @v11),\n" +
+                "(@v12, @v13, @v14, @v15),\n" +
+                "(@v16, @v17, @v18, @v19)\n" +
+                "  AS `new_row`\n" +
+                "ON DUPLICATE KEY UPDATE `Prerequisite` = `new_row`.`Prerequisite`, `BuiltBy` = `new_row`.`BuiltBy`, `Plunder` = `new_row`.`Plunder`;"
+            );
+            command.Parameters.Should().HaveCount(20).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[1][0].Datum).And
+                .HaveParameter("@v5", rows[1][1].Datum).And
+                .HaveParameter("@v6", rows[1][2].Datum).And
+                .HaveParameter("@v7", rows[1][3].Datum).And
+                .HaveParameter("@v8", rows[2][0].Datum).And
+                .HaveParameter("@v9", rows[2][1].Datum).And
+                .HaveParameter("@v10", rows[2][2].Datum).And
+                .HaveParameter("@v11", rows[2][3].Datum).And
+                .HaveParameter("@v12", rows[3][0].Datum).And
+                .HaveParameter("@v13", rows[3][1].Datum).And
+                .HaveParameter("@v14", rows[3][2].Datum).And
+                .HaveParameter("@v15", rows[3][3].Datum).And
+                .HaveParameter("@v16", rows[4][0].Datum).And
+                .HaveParameter("@v17", rows[4][1].Datum).And
+                .HaveParameter("@v18", rows[4][2].Datum).And
+                .HaveParameter("@v19", rows[4][3].Datum);
+
+
+        }
+
+        [TestMethod] public void Upsert_NullValue() {
+            // Arrange
+            var source = typeof(FountainPen);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Principal.Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Waterman"),
+                    DBValue.Create(ConversionOf(FountainPen.NibType.ExtraFine)),
+                    DBValue.NULL,
+                    DBValue.Create(true)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, true);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`ID`, `Brand`, `Nib`, `Price`, `IsRefillable`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2, @v3, @v4)\n" +
+                "  AS `new_row`\n" +
+                "ON DUPLICATE KEY UPDATE `Brand` = `new_row`.`Brand`, `Nib` = `new_row`.`Nib`, `Price` = `new_row`.`Price`, `IsRefillable` = `new_row`.`IsRefillable`;"
+            );
+            command.Parameters.Should().HaveCount(5).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[0][3].Datum).And
+                .HaveParameter("@v4", rows[0][4].Datum);
+        }
+
+        [TestMethod] public void Upsert_NonAssociativeRelation() {
+            // Arrange
+            var source = typeof(Quiche);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("goat cheese")
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("cheddar cheeese")
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be("");
+        }
+
+        [TestMethod] public void Upsert_AssociativeRelation() {
+            // Arrange
+            var source = typeof(Tailgate);
+            var translator = new Translator(NO_ENTITIES, NullLogger.Instance);
+            var table = translator[source].Relations[0].Table;
+            var rows = new List<List<DBValue>>() {
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Hamburger"),
+                    DBValue.Create(37)
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Cheeseburger"),
+                    DBValue.Create(44)
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Hot Dog"),
+                    DBValue.Create(11)
+                },
+                new() {
+                    DBValue.Create(Guid.NewGuid()),
+                    DBValue.Create("Bratwurst"),
+                    DBValue.Create(4)
+                }
+            };
+
+            // Act
+            var commands = new Commands(table, false);
+            var command = commands.UpsertCommand(rows);
+
+            // Assert
+            command.Connection.Should().BeNull();
+            command.Transaction.Should().BeNull();
+            command.CommandText.Should().Be(
+                $"INSERT INTO `{table.Name}`\n" +
+                "(`Tailgate.ID`, `Key`, `Value`)\n" +
+                "VALUES\n" +
+                "(@v0, @v1, @v2),\n" +
+                "(@v3, @v4, @v5),\n" +
+                "(@v6, @v7, @v8),\n" +
+                "(@v9, @v10, @v11)\n" +
+                "  AS `new_row`\n" +
+                "ON DUPLICATE KEY UPDATE `Value` = `new_row`.`Value`;"
+            );
+            command.Parameters.Should().HaveCount(12).And.BeForMySql().And
+                .HaveParameter("@v0", rows[0][0].Datum).And
+                .HaveParameter("@v1", rows[0][1].Datum).And
+                .HaveParameter("@v2", rows[0][2].Datum).And
+                .HaveParameter("@v3", rows[1][0].Datum).And
+                .HaveParameter("@v4", rows[1][1].Datum).And
+                .HaveParameter("@v5", rows[1][2].Datum).And
+                .HaveParameter("@v6", rows[2][0].Datum).And
+                .HaveParameter("@v7", rows[2][1].Datum).And
+                .HaveParameter("@v8", rows[2][2].Datum).And
+                .HaveParameter("@v9", rows[3][0].Datum).And
+                .HaveParameter("@v10", rows[3][1].Datum).And
+                .HaveParameter("@v11", rows[3][2].Datum);
+        }
+
         [TestMethod] public void Delete_SingleFieldPrimaryKey() {
             // Arrange
             var source = typeof(Mansa);

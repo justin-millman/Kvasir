@@ -304,6 +304,7 @@ Circus
 Citrus Fruit
 Civilization VI City State
 Civilization VI District
+Civilization VI Improvement
 Civilization VI Military Unit
 Civilization VI Pantheon
 Civilization VI Policy Card
@@ -582,6 +583,7 @@ Food Truck
 Forecast
 Fortune Cookie
 Fountain
+Fountain Pen
 Fractal
 Fraction
 Fraternity
@@ -921,6 +923,7 @@ Merit Badge
 Mermaid
 Mesopotamian God
 Metazooa
+Meteor Shower
 Metra Route
 Metric Prefix
 Mezuzah
@@ -1124,6 +1127,7 @@ Plumber
 Pneumonia
 PO Box
 Poacher
+Pocketknife
 Podcast
 Poet Laurete
 Pokémon
@@ -1188,6 +1192,7 @@ Quarterback
 Quasar
 Quatrain
 Quesadilla
+Quiche
 Quilt
 Quinceañera
 Rabbi
@@ -1233,6 +1238,7 @@ Roman Baths
 Roman Emperor
 Roman Festival
 Roman Numeral
+Roman Triumph
 Rorschach Ink Blot
 Royal House
 Royal Title
@@ -1385,6 +1391,7 @@ Submarine
 Subreddit
 Sudoku Puzzle
 Sukkah
+Sultan of the Ottoman Empire
 Sumo Wrestler
 Sundial
 Sunset
@@ -1411,6 +1418,7 @@ Symbiosis
 Symphony
 Synagogue
 Tagline
+Tailgate
 Talk Show
 Tamagotchi
 Tapestry

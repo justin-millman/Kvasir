@@ -97,6 +97,12 @@ namespace UT.Kvasir.Transaction {
                 commands.UpdateCommand(Arg.Any<Rows>()).Returns(update);
                 commands.When(c => c.UpdateCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, update));
 
+                var upsert = Substitute.For<DbCommand>();
+                upsert.CommandText = $"UPSERT {table.Name}";
+                upsert.When(c => c.ExecuteNonQueryAsync()).Do(_ => ordering_[upsert] = ordering_.Count + 1);
+                commands.UpsertCommand(Arg.Any<Rows>()).Returns(upsert);
+                commands.When(c => c.UpsertCommand(Arg.Any<Rows>())).Do(call => SetInvocationArguments(call, upsert));
+
                 commandsFactory_.CreateCommands(Arg.Is<ITable>(t => t.Name == table.Name), Arg.Any<bool>()).Returns(commands);
                 commands_[table] = commands;
                 dbRows_[table] = new List<IReadOnlyList<object>>().GetEnumerator();
