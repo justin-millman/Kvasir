@@ -205,6 +205,7 @@ namespace Kvasir.Transaction {
                     }
                     currentRows.Add(fields);
                 }
+                reader.Close();
 
                 locRowsByKey.Add(rows);
                 locInstByKey.Add(instances);
@@ -230,6 +231,7 @@ namespace Kvasir.Transaction {
                     entityStorage_(entity);
                     creations.Add(entity);
                 }
+                reader.Close();
 
                 allEntities[idx] = creations;
                 logger_.LogDebug("{Count} instances of {EntityType} loaded", creations.Count, entityTranslations[idx].Principal.Reconstitutor.ResultType.Name);
@@ -254,6 +256,7 @@ namespace Kvasir.Transaction {
                         var owningEntity = matcher.Lookup(owningEntityKey);
                         rows[owningEntity].Add(fields);
                     }
+                    reader.Close();
 
                     foreach (var (owningEntity, relationRows) in rows) {
                         // Pre-Defined Entities are not loaded from the database, and their Relations are not
