@@ -443,6 +443,7 @@ namespace Kvasir.Transaction {
                     // does mean that we'll issue a DELETE command for empty Localizations.
                     rows.Add(translation.Principal.KeyExtractor.ExtractFrom(entity));
                 }
+
                 var command = commands_[tables_[translation.Principal.Table]].DeleteCommand(rows);
                 command.Connection = connection;
                 command.Transaction = transaction;
@@ -464,11 +465,13 @@ namespace Kvasir.Transaction {
                         rows.Add(translation.Principal.KeyExtractor.ExtractFrom(entity));
                     }
 
-                    var command = commands_[tables_[relation.Table]].DeleteCommand(rows);
-                    command.Connection = connection;
-                    command.Transaction = transaction;
-                    logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
-                    await command.ExecuteNonQueryAsync();
+                    if (!rows.IsEmpty()) {
+                        var command = commands_[tables_[relation.Table]].DeleteCommand(rows);
+                        command.Connection = connection;
+                        command.Transaction = transaction;
+                        logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
+                        await command.ExecuteNonQueryAsync();
+                    }
                 }
             }
 
@@ -657,11 +660,13 @@ namespace Kvasir.Transaction {
                         canonicalizations.Add(() => relation.Extractor.Canonicalize(entity));
                     }
 
-                    var command = getCommand(commands_[tables_[relation.Table]], rows);
-                    command.Connection = connection;
-                    command.Transaction = transaction;
-                    logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
-                    await command.ExecuteNonQueryAsync();
+                    if (!rows.IsEmpty()) {
+                        var command = getCommand(commands_[tables_[relation.Table]], rows);
+                        command.Connection = connection;
+                        command.Transaction = transaction;
+                        logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
+                        await command.ExecuteNonQueryAsync();
+                    }
                 }
             }
 
@@ -679,11 +684,17 @@ namespace Kvasir.Transaction {
                     canonicalizations.Add(() => translation.Principal.Extractor.Canonicalize(entity));
                 }
 
-                var command = getCommand(commands_[tables_[translation.Principal.Table]], rows);
-                command.Connection = connection;
-                command.Transaction = transaction;
-                logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
-                await command.ExecuteNonQueryAsync();
+                // It is possible, though unlikely, that a Localization has no localized values or that all of the
+                // localized values have already been saved. In those cases, there will be no insertions to execute, and
+                // that is valid. This is different than elsewhere when we deal with Localizations, such as DELETEs,
+                // where we are extacting only the primary key for the operation.
+                if (!rows.IsEmpty()) {
+                    var command = getCommand(commands_[tables_[translation.Principal.Table]], rows);
+                    command.Connection = connection;
+                    command.Transaction = transaction;
+                    logger_.LogDebug("Executing SQL: {CommandText}", command.CommandText);
+                    await command.ExecuteNonQueryAsync();
+                }
             }
 
             // Commit the transaction; if it succeeds (failure is indicated by a `throw`), then we run all of the
