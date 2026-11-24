@@ -1,4 +1,3 @@
-using Kvasir.Schema;
 using Kvasir.Transcription;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,5 +1,4 @@
 using Cybele.Extensions;
-using Kvasir.Schema;
 using Kvasir.Transcription;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,7 +46,7 @@ namespace Kvasir.Schema {
         ///   the <see cref="FieldExpression.DataType">data type</see> of <paramref name="lhs"/> is the same as that of
         ///   <paramref name="rhs"/>.
         /// </pre>
-        internal CrossFieldClause(FieldExpression lhs, ComparisonOperator op, FieldExpression rhs) {
+        public CrossFieldClause(FieldExpression lhs, ComparisonOperator op, FieldExpression rhs) {
             Debug.Assert(lhs is not null);
             Debug.Assert(op.IsValid());
             Debug.Assert(rhs is not null);
