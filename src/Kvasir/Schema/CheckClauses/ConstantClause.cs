@@ -1,5 +1,4 @@
 using Cybele.Extensions;
-using Kvasir.Schema;
 using Kvasir.Transcription;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -46,7 +45,7 @@ namespace Kvasir.Schema {
         ///   <paramref name="rhs"/> is compatible with the <see cref="FieldExpression.DataType">data type</see> of
         ///   <paramref name="lhs"/>.
         /// </pre>
-        internal ConstantClause(FieldExpression lhs, ComparisonOperator op, DBValue rhs) {
+        public ConstantClause(FieldExpression lhs, ComparisonOperator op, DBValue rhs) {
             Debug.Assert(lhs is not null);
             Debug.Assert(op.IsValid());
             Debug.Assert(rhs != DBValue.NULL);

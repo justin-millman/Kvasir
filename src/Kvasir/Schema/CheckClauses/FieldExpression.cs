@@ -34,7 +34,7 @@ namespace Kvasir.Schema {
         /// <pre>
         ///   <paramref name="field"/> is not <see langword="null"/>.
         /// </pre>
-        internal FieldExpression(IField field) {
+        public FieldExpression(IField field) {
             Debug.Assert(field is not null);
 
             Function = Option.None<FieldFunction>();
@@ -57,7 +57,7 @@ namespace Kvasir.Schema {
         ///   if <paramref name="function"/> is <see cref="FieldFunction.LengthOf"/>, then the
         ///   <see cref="IField.DataType">data type</see> of <paramref name="field"/> is <see cref="DBType.Text"/>.
         /// </pre>
-        internal FieldExpression(FieldFunction function, IField field) {
+        public FieldExpression(FieldFunction function, IField field) {
             Debug.Assert(function.IsValid());
             Debug.Assert(field is not null);
             Debug.Assert(function != FieldFunction.LengthOf || field.DataType == DBType.Text);

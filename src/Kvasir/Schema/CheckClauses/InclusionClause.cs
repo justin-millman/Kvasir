@@ -1,5 +1,4 @@
 using Cybele.Extensions;
-using Kvasir.Schema;
 using Kvasir.Transcription;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,7 +46,7 @@ namespace Kvasir.Schema {
         ///   each element of <paramref name="rhs"/> is compatible with the
         ///   <see cref="FieldExpression.DataType">data type</see> of <paramref name="lhs"/>.
         /// </pre>
-        internal InclusionClause(FieldExpression lhs, InclusionOperator op, IEnumerable<DBValue> rhs) {
+        public InclusionClause(FieldExpression lhs, InclusionOperator op, IEnumerable<DBValue> rhs) {
             Debug.Assert(lhs is not null);
             Debug.Assert(op.IsValid());
             Debug.Assert(rhs is not null);

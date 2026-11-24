@@ -1,5 +1,4 @@
 using Cybele.Extensions;
-using Kvasir.Schema;
 using Kvasir.Transcription;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,7 +31,7 @@ namespace Kvasir.Schema {
         /// <pre>
         ///   <paramref name="field"/> is not <see langword="null"/>.
         /// </pre>
-        internal NullityClause(IField field, NullityOperator op) {
+        public NullityClause(IField field, NullityOperator op) {
             Debug.Assert(field is not null);
             Debug.Assert(op.IsValid());
 
